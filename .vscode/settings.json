@@ -1,0 +1,20 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.organizeImports": true
+    },
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "search.exclude": {
+        "out": true,
+        "**/node_modules": true,
+        ".vscode-test": true
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "azure.authenticationLibrary": "MSAL"
+}

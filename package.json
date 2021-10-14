@@ -1,0 +1,167 @@
+{
+    "name": "vscode-azurecontainerapps",
+    "displayName": "Azure Container Apps",
+    "description": "%containerApps.description%",
+    "version": "0.0.1-alpha",
+    "publisher": "ms-azuretools",
+    "icon": "resources/azure-containerapps.png",
+    "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+    "engines": {
+        "vscode": "^1.57.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/vscode-azurecontainerapps"
+    },
+    "galleryBanner": {
+        "color": "#3a3d41",
+        "theme": "dark"
+    },
+    "homepage": "https://github.com/microsoft/vscode-azurecontainerapps/blob/main/README.md",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "categories": [
+        "Azure"
+    ],
+    "keywords": [
+        "Azure",
+        "multi-root ready"
+    ],
+    "preview": true,
+    "activationEvents": [
+        "onView:containerApps"
+    ],
+    "main": "./main.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "containerApps.loadMore",
+                "title": "%containerApps.loadMore%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.refresh",
+                "title": "%containerApps.refresh%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.selectSubscriptions",
+                "title": "%containerApps.selectSubscriptions%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.reportIssue",
+                "title": "%containerApps.reportIssue%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.createApp",
+                "title": "Create App",
+                "category": "Azure Container Apps"
+            }
+        ],
+        "views": {
+            "azure": [
+                {
+                    "id": "containerApps",
+                    "name": "Container Apps"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                // TODO: Add all commands to ribbon
+            ],
+            "view/item/context": [
+                // TODO: Add all commands to tree items
+            ],
+            "commandPalette": [
+                {
+                    "command": "containerApps.loadMore",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.refresh",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.selectSubscriptions",
+                    "when": "never"
+                }
+            ]
+        },
+        "configuration": [
+            {
+                "title": "Azure Container Apps",
+                "properties": {
+                    "containerApps.enableOutputTimestamps": {
+                        "type": "boolean",
+                        "description": "%containerApps.enableOutputTimestamps%",
+                        "default": true
+                    }
+                }
+            }
+        ]
+    },
+    "capabilities": {
+        "virtualWorkspaces": {
+            "supported": "limited",
+            "description": "Some features are not supported in virtual workspaces."
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run webpack-prod",
+        "build": "tsc",
+        "cleanReadme": "gulp cleanReadme",
+        "compile": "tsc -watch",
+        "package": "vsce package --githubBranch main",
+        "lint": "eslint --ext .ts .",
+        "lint-fix": "eslint --ext .ts . --fix",
+        "pretest": "npm run webpack-prod && gulp preTest",
+        "test": "node ./out/test/runTest.js",
+        "webpack": "npm run build && gulp webpack-dev",
+        "webpack-prod": "npm run build && gulp webpack-prod",
+        "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
+        "prepare": "husky install"
+    },
+    "devDependencies": {
+        "@microsoft/eslint-config-azuretools": "^0.1.0",
+        "@types/fs-extra": "^8.1.1",
+        "@types/git-url-parse": "^9.0.0",
+        "@types/gulp": "^4.0.6",
+        "@types/mocha": "^8.2.2",
+        "@types/node": "^14.0.0",
+        "@types/semver": "^7.3.8",
+        "@types/vscode": "1.57.0",
+        "@typescript-eslint/eslint-plugin": "^4.28.3",
+        "eslint": "^7.19.0",
+        "eslint-plugin-import": "^2.22.1",
+        "fs-extra": "^8.1.0",
+        "glob": "^7.1.6",
+        "gulp": "^4.0.2",
+        "husky": "^7.0.2",
+        "mocha": "^8.3.2",
+        "mocha-junit-reporter": "^2.0.0",
+        "mocha-multi-reporters": "^1.1.7",
+        "ts-node": "^7.0.1",
+        "typescript": "^4.3.5",
+        "vsce": "^1.87.1",
+        "vscode-azureextensiondev": "^0.10.2",
+        "vscode-test": "^1.5.2",
+        "webpack": "^5.28.0",
+        "webpack-cli": "^4.6.0"
+    },
+    "dependencies": {
+        "@azure/arm-appservice": "9.0.0",
+        "@azure/arm-resources": "^4.2.2",
+        "@azure/identity": "^1.5.2",
+        "@azure/ms-rest-js": "^2.2.1",
+        "open": "^8.0.4",
+        "semver": "^7.3.5",
+        "vscode-azureextensionui": "0.48.5",
+        "vscode-nls": "^4.1.1"
+    },
+    "extensionDependencies": [
+        "ms-vscode.azure-account",
+        "ms-azuretools.vscode-azureresourcegroups"
+    ]
+}

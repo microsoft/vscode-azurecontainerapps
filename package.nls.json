@@ -1,0 +1,10 @@
+{
+    "containerApps.refresh": "Refresh",
+    "containerApps.reportIssue": "Report Issue...",
+    "containerApps.revealResource": "Reveal Resource",
+    "containerApps.viewProperties": "View Properties",
+    "containerApps.loadMore": "Load more...",
+    "containerApps.selectSubscriptions": "Select Subscriptions...",
+    "containerApps.description": "An Azure Container Apps extension for Visual Studio Code.",
+    "containerApps.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp."
+}
