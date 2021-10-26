@@ -13,6 +13,8 @@ import { createContainerApp } from './createContainerApp/createContainerApp';
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { openInPortal } from './openInPortal';
+import { openLogs } from './openLogs';
+import { toggleIngress } from './toggleIngress';
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
@@ -26,6 +28,10 @@ export function registerCommands(): void {
     registerCommand('containerApps.createContainerApp', createContainerApp);
     registerCommand('containerApps.deployImage', deployImage);
     registerCommand('containerApps.deleteContainerApp', async (context: IActionContext, node?: ContainerAppTreeItem) => await deleteNode(context, ContainerAppTreeItem.contextValue, node));
+    registerCommand('containerApps.openLogs', openLogs);
+    registerCommand('containerApps.enableIngress', toggleIngress);
+    registerCommand('containerApps.disableIngress', toggleIngress);
+
     // TODO: Remove, this is just for testing
     registerCommand('containerApps.testCommand', async (context: IActionContext, node?: SubscriptionTreeItem) => {
         if (!node) {

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Secret, WebSiteManagementClient } from "@azure/arm-appservice";
-import { AzExtRequestPrepareOptions, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, sendRequestWithTimeout, VerifyProvidersStep } from "vscode-azureextensionui";
+import { WebSiteManagementClient } from "@azure/arm-appservice";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, VerifyProvidersStep } from "vscode-azureextensionui";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
@@ -41,35 +41,20 @@ export async function deployImage(context: IActionContext & Partial<IDeployImage
     await wizard.prompt();
     await wizard.execute();
 
-    // TODO: Extract this to its own step?
-    // make a copy, we don't want to modify the one that is cached
-    const containerAppEnvelope = { ...node.data };
+    const containerAppEnvelope = await node.getContainerEnvelopeWithSecrets(context);
 
-    const options: AzExtRequestPrepareOptions = {
-        method: 'POST',
-        queryParameters: { 'api-version': '2021-03-01' },
-        pathTemplate: `${node.id}/listSecrets`,
-    };
-
-    containerAppEnvelope.configuration ||= {};
-
-    const response = await sendRequestWithTimeout(wizardContext, options, 5000, wizardContext.credentials);
-    // if 204, needs to be an empty []
-    containerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
-
-    containerAppEnvelope.configuration.registries ||= [];
     // if this loginServer doesn't exist, then we need to add new credentials
     const registry = nonNullProp(wizardContext, 'registry');
-    if (!containerAppEnvelope.configuration.registries.some(r => r.server === registry.loginServer)) {
+    if (!containerAppEnvelope.configuration?.registries?.some(r => r.server === registry.loginServer)) {
         const { username, password } = await listCredentialsFromRegistry(wizardContext, registry);
-        containerAppEnvelope.configuration?.registries.push(
+        containerAppEnvelope.configuration?.registries?.push(
             {
                 server: registry.loginServer,
                 username: username,
                 passwordSecretRef: password.name
             }
         )
-        containerAppEnvelope.configuration.secrets.push({ name: password.name, value: password.value });
+        containerAppEnvelope.configuration?.secrets?.push({ name: password.name, value: password.value });
     }
 
     if (containerAppEnvelope.template?.containers) {
