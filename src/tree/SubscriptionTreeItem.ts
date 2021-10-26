@@ -4,15 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KubeEnvironment, WebSiteManagementClient } from '@azure/arm-appservice';
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, ResourceGroupListStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
 import { IKubeEnvironmentContext } from '../commands/createKubeEnvironment/IKubeEnvironmentContext';
+import { webProvider } from '../constants';
 import { createWebSiteClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
 import { KubeEnvironmentTreeItem } from './KubeEnvironmentTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
-    public readonly childTypeLabel: string = localize('containerApp', 'Kubernetes Environment');
+    public readonly childTypeLabel: string = localize('kubeEnvironment', 'Kubernetes Environment');
     private readonly _nextLink: string | undefined;
 
     public hasMoreChildrenImpl(): boolean {
@@ -44,8 +45,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         // TODO: Confirm whether or not the provider is Microsoft.Web or Microsoft.Web/kubeenvironments
         // TODO: Write prompt/execute steps to actually create resource
-        const webProvider: string = 'Microsoft.Web';
 
+        promptSteps.push(new ResourceGroupListStep());
         executeSteps.push(new VerifyProvidersStep([webProvider]));
 
         const wizard: AzureWizard<IKubeEnvironmentContext> = new AzureWizard(wizardContext, {
@@ -58,6 +59,17 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         await wizard.prompt();
         await wizard.execute();
 
+        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+
+        // This endpoint is currently broken-- doesn't recognize environmentType as the property that I need it to return
+        // wizardContext.kubeEnvironment = await client.kubeEnvironments.beginCreateOrUpdateAndWait(wizardContext!.resourceGroup!.name, 'naturins-myenv2',
+        //     {
+        //         location: 'centraluseuap',
+        //         environmentType: 'Managed'
+        //     }
+        // );
+
         return new KubeEnvironmentTreeItem(this, nonNullProp(wizardContext, 'kubeEnvironment'));
     }
 }
+

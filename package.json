@@ -28,7 +28,19 @@
     ],
     "preview": true,
     "activationEvents": [
-        "onView:containerApps"
+        "onView:containerApps",
+        "onCommand:containerApps.loadMore",
+        "onCommand:containerApps.refresh",
+        "onCommand:containerApps.selectSubscriptions",
+        "onCommand:containerApps.reportIssue",
+        "onCommand:containerApps.viewProperties",
+        "onCommand:containerApps.openInPortal",
+        "onCommand:containerApps.createContainerApp",
+        "onCommand:containerApps.deployImage",
+        "onCommand:containerApps.deleteContainerApp",
+        "onCommand:containerApps.openLogs",
+        "onCommand:containerApps.disableIngress",
+        "onCommand:containerApps.enableIngress"
     ],
     "main": "./main.js",
     "contributes": {
@@ -41,7 +53,8 @@
             {
                 "command": "containerApps.refresh",
                 "title": "%containerApps.refresh%",
-                "category": "Azure Container Apps"
+                "category": "Azure Container Apps",
+                "icon": "$(refresh)"
             },
             {
                 "command": "containerApps.selectSubscriptions",
@@ -54,8 +67,48 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.createApp",
-                "title": "Create App",
+                "command": "containerApps.viewProperties",
+                "title": "%containerApps.viewProperties%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.openInPortal",
+                "title": "%containerApps.openInPortal%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.createContainerApp",
+                "title": "%containerApps.createContainerApp%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deployImage",
+                "title": "%containerApps.deployImage%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deleteContainerApp",
+                "title": "%containerApps.deleteContainerApp%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.openLogs",
+                "title": "%containerApps.openLogs%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.disableIngress",
+                "title": "%containerApps.disableIngress%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.enableIngress",
+                "title": "%containerApps.enableIngress%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.testCommand",
+                "title": "Test Command",
                 "category": "Azure Container Apps"
             }
         ],
@@ -69,10 +122,53 @@
         },
         "menus": {
             "view/title": [
-                // TODO: Add all commands to ribbon
+                {
+                    "command": "containerApps.refresh",
+                    "when": "view == containerApps",
+                    "group": "navigation@z"
+                }
             ],
             "view/item/context": [
-                // TODO: Add all commands to tree items
+                {
+                    "command": "containerApps.refresh",
+                    "when": "view == containerApps && viewItem =~ /azureSubscription|kubeEnvironment|containerApp/",
+                    "group": "z@1"
+                },
+                {
+                    "command": "containerApps.createContainerApp",
+                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deployImage",
+                    "when": "view == containerApps && viewItem =~ /containerApp/",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deleteContainerApp",
+                    "when": "view == containerApps && viewItem =~ /containerApp/",
+                    "group": "2@1"
+                },
+                {
+                    "command": "containerApps.disableIngress",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.enableIngress",
+                    "when": "view == containerApps && viewItem =~ /ingress.+disabled/",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.viewProperties",
+                    "when": "view == containerApps && viewItem =~ /azResource/",
+                    "group": "2@1"
+                },
+                {
+                    "command": "containerApps.openInPortal",
+                    "when": "view == containerApps && viewItem =~ /kubeEnvironment|containerApp/",
+                    "group": "2@2"
+                }
             ],
             "commandPalette": [
                 {
@@ -152,8 +248,12 @@
     },
     "dependencies": {
         "@azure/arm-appservice": "9.0.0",
+        "@azure/arm-containerregistry": "^8.1.1",
+        "@azure/arm-operationalinsights": "^7.1.1",
         "@azure/arm-resources": "^4.2.2",
+        "@azure/container-registry": "^1.0.0-beta.5",
         "@azure/identity": "^1.5.2",
+        "@azure/loganalytics": "^0.3.0",
         "@azure/ms-rest-js": "^2.2.1",
         "open": "^8.0.4",
         "semver": "^7.3.5",
