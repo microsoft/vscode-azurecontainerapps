@@ -12,13 +12,6 @@ export namespace treeUtils {
         return Uri.joinPath(getResourcesUri(), `${iconName}.svg`);
     }
 
-    export function getThemedIconPath(iconName: string): TreeItemIconPath {
-        return {
-            light: Uri.joinPath(getResourcesUri(), 'light', `${iconName}.svg`),
-            dark: Uri.joinPath(getResourcesUri(), 'dark', `${iconName}.svg`)
-        };
-    }
-
     function getResourcesUri(): Uri {
         return Uri.joinPath(ext.context.extensionUri, 'resources')
     }
