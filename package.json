@@ -28,7 +28,19 @@
     ],
     "preview": true,
     "activationEvents": [
-        "onView:containerApps"
+        "onView:containerApps",
+        "onCommand:containerApps.loadMore",
+        "onCommand:containerApps.refresh",
+        "onCommand:containerApps.selectSubscriptions",
+        "onCommand:containerApps.reportIssue",
+        "onCommand:containerApps.viewProperties",
+        "onCommand:containerApps.openInPortal",
+        "onCommand:containerApps.createContainerApp",
+        "onCommand:containerApps.deployImage",
+        "onCommand:containerApps.deleteContainerApp",
+        "onCommand:containerApps.openLogs",
+        "onCommand:containerApps.disableIngress",
+        "onCommand:containerApps.enableIngress"
     ],
     "main": "./main.js",
     "contributes": {
@@ -80,6 +92,21 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.openLogs",
+                "title": "%containerApps.openLogs%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.disableIngress",
+                "title": "%containerApps.disableIngress%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.enableIngress",
+                "title": "%containerApps.enableIngress%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -109,22 +136,32 @@
                 },
                 {
                     "command": "containerApps.createContainerApp",
-                    "when": "view == containerApps && viewItem == kubeEnvironment",
+                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.deployImage",
-                    "when": "view == containerApps && viewItem == containerApp",
+                    "when": "view == containerApps && viewItem =~ /containerApp/",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.deleteContainerApp",
-                    "when": "view == containerApps && viewItem == containerApp",
+                    "when": "view == containerApps && viewItem =~ /containerApp/",
                     "group": "2@1"
                 },
                 {
+                    "command": "containerApps.disableIngress",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.enableIngress",
+                    "when": "view == containerApps && viewItem =~ /ingress.+disabled/",
+                    "group": "1@1"
+                },
+                {
                     "command": "containerApps.viewProperties",
-                    "when": "view == containerApps && viewItem =~ /kubeEnvironment|containerApp/",
+                    "when": "view == containerApps && viewItem =~ /azResource/",
                     "group": "2@1"
                 },
                 {

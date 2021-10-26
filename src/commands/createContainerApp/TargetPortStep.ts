@@ -12,11 +12,22 @@ export class TargetPortStep extends AzureWizardPromptStep<IContainerAppContext> 
         context.targetPort = Number(await context.ui.showInputBox({
             prompt: localize('targetPort', 'This is the port your container is listening on that will receive traffic. Set this value to the port number that your container uses.'),
             value: '80',
-            validateInput: val => isNaN(Number(val)) ? localize('enterNumber', 'Enter a valid port number') : undefined
+            validateInput: this.validateInput
         }));
     }
 
     public shouldPrompt(context: IContainerAppContext): boolean {
-        return !context.targetPort;
+        return !context.targetPort && context.enableIngress === true;
+    }
+
+    private validateInput(val: string): string | undefined {
+        const num = Number(val);
+        if (isNaN(num)) {
+            return localize('enterNumber', 'Enter a valid port number')
+        } else if (num < 1 || num > 65535) {
+            return localize('portRange', 'Enter a number between 1-65535');
+        }
+
+        return undefined;
     }
 }
