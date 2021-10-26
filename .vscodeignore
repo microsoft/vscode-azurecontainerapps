@@ -1,4 +1,5 @@
 .azure-pipelines/**
+.eslint*
 .github/**
 .gitignore
 .vscode-test/**
