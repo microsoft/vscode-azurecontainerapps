@@ -113,7 +113,6 @@
                 "category": "Azure Container Apps"
             },
             {
-<<<<<<< HEAD
                 "command": "containerApps.toggleVisibility",
                 "title": "%containerApps.toggleVisibility%",
                 "category": "Azure Container Apps"
@@ -124,8 +123,6 @@
                 "category": "Azure Container Apps"
             },
             {
-=======
->>>>>>> bf393a9c443a71a545730be2268c3ad297bb1ef8
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -179,7 +176,6 @@
                     "group": "1@1"
                 },
                 {
-<<<<<<< HEAD
                     "command": "containerApps.toggleVisibility",
                     "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
                     "group": "1@2"
@@ -190,8 +186,6 @@
                     "group": "1@3"
                 },
                 {
-=======
->>>>>>> bf393a9c443a71a545730be2268c3ad297bb1ef8
                     "command": "containerApps.viewProperties",
                     "when": "view == containerApps && viewItem =~ /azResource/",
                     "group": "2@1"
