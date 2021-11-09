@@ -10,10 +10,14 @@
     "containerApps.openInPortal": "Open in Portal",
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.deployImage": "Deploy Image to Container App...",
+<<<<<<< HEAD
     "containerApps.deleteContainerApp": "Delete Container App...",
     "containerApps.openLogs": "Open Logs",
     "containerApps.disableIngress": "Disable Ingress for Container App..",
     "containerApps.enableIngress": "Enable Ingress for Container App..",
     "containerApps.toggleVisibility": "Switch Ingress Visibility",
     "containerApps.editTargetPort": "Edit Target Port..."
+=======
+    "containerApps.deleteContainerApp": "Delete Container App..."
+>>>>>>> bf393a9c443a71a545730be2268c3ad297bb1ef8
 }
