@@ -40,13 +40,9 @@
         "onCommand:containerApps.deleteContainerApp",
         "onCommand:containerApps.openLogs",
         "onCommand:containerApps.disableIngress",
-<<<<<<< HEAD
         "onCommand:containerApps.enableIngress",
         "onCommand:containerApps.toggleVisibility",
         "onCommand:containerApps.editTargetPort"
-=======
-        "onCommand:containerApps.enableIngress"
->>>>>>> bf393a9c443a71a545730be2268c3ad297bb1ef8
     ],
     "main": "./main.js",
     "contributes": {
