@@ -6,6 +6,7 @@
 import { KnownRevisionProvisioningState, Revision } from "@azure/arm-appservice";
 import { ThemeColor, ThemeIcon } from "vscode";
 import { AzExtTreeItem, TreeItemIconPath } from "vscode-azureextensionui";
+import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { RevisionsTreeItem } from "./RevisionsTreeItem";
@@ -26,6 +27,10 @@ export class RevisionTreeItem extends AzExtTreeItem implements IAzureResourceTre
         this.id = nonNullProp(this.data, 'id');
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
+    }
+
+    public get description(): string | undefined {
+        return this.name === this.parent.parent.data.latestRevisionName ? localize('latest', 'Latest') : undefined;
     }
 
     public get iconPath(): TreeItemIconPath {

@@ -13,10 +13,12 @@ import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { openUrl } from "../utils/openUrl";
 import { treeUtils } from "../utils/treeUtils";
+import { DaprTreeItem } from "./DaprTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { IngressDisabledTreeItem, IngressTreeItem } from "./IngressTreeItem";
 import { LogsTreeItem } from "./LogsTreeItem";
 import { RevisionsTreeItem } from "./RevisionsTreeItem";
+import { ScaleTreeItem } from "./ScaleTreeItem";
 
 export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'containerApp|azResource';
@@ -47,14 +49,18 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        const children: AzExtTreeItem[] = [new LogsTreeItem(this)];
-        this.data.configuration?.activeRevisionsMode?.toLocaleLowerCase() === 'multiple' ? children.push(new RevisionsTreeItem(this)) : undefined;
-        this.data.configuration?.ingress ? children.unshift(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.unshift(new IngressDisabledTreeItem(this));
+        const children: AzExtTreeItem[] = [new RevisionsTreeItem(this), new DaprTreeItem(this, this.data.template?.dapr)];
+        this.data.configuration?.ingress ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
+        children.push(new ScaleTreeItem(this, this.data.template?.scale), new LogsTreeItem(this))
         return children;
     }
 
     public hasMoreChildrenImpl(): boolean {
         return false;
+    }
+
+    public compareChildrenImpl(): number {
+        return 0;
     }
 
     public async browse(): Promise<void> {

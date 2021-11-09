@@ -17,7 +17,7 @@ export class TargetPortStep extends AzureWizardPromptStep<IContainerAppContext> 
     }
 
     public shouldPrompt(context: IContainerAppContext): boolean {
-        return !context.targetPort && context.enableIngress === true;
+        return !context.targetPort;
     }
 
     private validateInput(val: string): string | undefined {

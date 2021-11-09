@@ -3,18 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { WebSiteManagementClient } from '@azure/arm-appservice';
 import { commands } from 'vscode';
-import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from 'vscode-azureextensionui';
+import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, sendRequestWithTimeout } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
+import { createWebSiteClient } from '../utils/azureClients';
 import { browse } from './browse';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
+import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
 import { openInPortal } from './openInPortal';
 import { openLogs } from './openLogs';
-import { toggleIngress } from './toggleIngress';
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
@@ -31,14 +32,78 @@ export function registerCommands(): void {
     registerCommand('containerApps.openLogs', openLogs);
     registerCommand('containerApps.enableIngress', toggleIngress);
     registerCommand('containerApps.disableIngress', toggleIngress);
+    registerCommand('containerApps.toggleVisibility', toggleIngressVisibility);
+    registerCommand('containerApps.editTargetPort', editTargetPort);
 
     // TODO: Remove, this is just for testing
-    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: SubscriptionTreeItem) => {
+    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: ContainerAppTreeItem) => {
+        const url = 'https://hub.docker.com/v2/repositories/velikriss';
+        const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
+        console.log(dockerhub);
+
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<SubscriptionTreeItem>(SubscriptionTreeItem.contextValue, context);
+            node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValue, context);
         }
 
-        await node.createChild(context);
+        const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
+
+        containerEnv.template ||= {};
+        containerEnv.template.dapr = {
+            "enabled": true,
+            "appId": "nodeapp",
+            "appPort": 3000,
+            "components": [
+                {
+                    "name": "statestore",
+                    "type": "state.azure.blobstorage",
+                    "version": "v1",
+                    "metadata": [
+                        {
+                            "name": "accountName",
+                            "value": "naturinsdapr",
+                            "secretRef": ""
+                        },
+                        {
+                            "name": "accountKey",
+                            "value": "zOvri+bDG4HHDpng621F/5kq/tzYBNiat5f91TRfIScqqXaU+AXX/jE4YAj4LIXUQZsvbpLJXy6V8cEq7uUMkg==",
+                            "secretRef": ""
+                        },
+                        {
+                            "name": "containerName",
+                            "value": "nodeapp",
+                            "secretRef": ""
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
+        await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
+
+        // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, 'dockercontainer3', {
+        //     location: node.data.location,
+        //     kubeEnvironmentId: node.id,
+        //     configuration: {
+        //         ingress: {
+        //             targetPort: 80,
+        //             external: true,
+        //             transport: 'auto',
+        //             allowInsecure: false,
+        //             traffic: [
+        //                 {
+        //                     "weight": 100,
+        //                     "latestRevision": true
+        //                 }
+        //             ],
+        //         }
+        //     },
+        //     template: {
+        //         containers: [
+        //             { image: 'docker.io/velikriss/gettingstarted:latest', name: 'velikriss-gettingstarted-latest' }
+        //         ]
+        //     }
+        // });
     });
 
     // Suppress "Report an Issue" button for all errors in favor of the command
