@@ -8,6 +8,7 @@ import { ThemeIcon } from "vscode";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, IActionContext, TreeItemIconPath } from "vscode-azureextensionui";
 import { IngressConstants } from "../constants";
 import { localize } from "../utils/localize";
+import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 
@@ -42,8 +43,7 @@ export class IngressTreeItem extends AzExtParentTreeItem implements IAzureResour
     }
 
     public get iconPath(): TreeItemIconPath {
-        // TODO: need proper icon
-        return new ThemeIcon('plug');
+        return treeUtils.getIconPath('10061-icon-Virtual Networks-Networking');
     }
 }
 

@@ -33,6 +33,6 @@ export class ScaleRuleTreeItem extends AzExtTreeItem implements IAzureResourceTr
     }
 
     public get iconPath(): TreeItemIconPath {
-        return new ThemeIcon('symbol-constant');
+        return new ThemeIcon('dash');
     }
 }

@@ -7,6 +7,7 @@ import { Scale } from "@azure/arm-appservice";
 import { ThemeIcon } from "vscode";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, TreeItemIconPath } from "vscode-azureextensionui";
 import { localize } from "../utils/localize";
+import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 import { ScaleRuleGroupTreeItem } from "./ScaleRuleGroupTreeItem";
@@ -26,13 +27,13 @@ export class ScaleTreeItem extends AzExtParentTreeItem implements IAzureResource
     }
 
     public get iconPath(): TreeItemIconPath {
-        return new ThemeIcon('extensions');
+        return treeUtils.getIconPath('02887-icon-menu-Container-Scale');
     }
 
     public async loadMoreChildrenImpl(): Promise<AzExtTreeItem[]> {
         return [
-            new GenericTreeItem(this, { label: localize('min', 'Min replicas'), description: String(this.data.minReplicas ?? 0), contextValue: 'minReplica' }),
-            new GenericTreeItem(this, { label: localize('max', 'Max replicas'), description: String(this.data.maxReplicas ?? 0), contextValue: 'maxReplica' }),
+            new GenericTreeItem(this, { label: localize('min', 'Min replicas'), description: String(this.data.minReplicas ?? 0), contextValue: 'minReplica', iconPath: new ThemeIcon('dash') }),
+            new GenericTreeItem(this, { label: localize('max', 'Max replicas'), description: String(this.data.maxReplicas ?? 0), contextValue: 'maxReplica', iconPath: new ThemeIcon('dash') }),
             new ScaleRuleGroupTreeItem(this, this.data.rules ?? [])]
     }
 

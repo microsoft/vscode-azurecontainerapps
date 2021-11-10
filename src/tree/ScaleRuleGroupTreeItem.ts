@@ -34,7 +34,7 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
             this.data,
             'invalidRule',
             rule => new ScaleRuleTreeItem(this, rule),
-            _rule => localize('invalidScalingRule', 'Invalid Scaling Rule');
+            _rule => localize('invalidScalingRule', 'Invalid Scaling Rule')
         );
 
     }
