@@ -33,8 +33,8 @@ export class IngressTreeItem extends AzExtParentTreeItem implements IAzureResour
         const description: string = this.data.external ? IngressConstants.externalDesc : IngressConstants.internalDesc;
 
         return [
-            new GenericTreeItem(this, { label: localize('targetPort', 'Target Port'), contextValue: 'targetPort', description: String(this.data.targetPort) }),
-            new GenericTreeItem(this, { label, contextValue: 'visibility', description })
+            new GenericTreeItem(this, { label: localize('targetPort', 'Target Port'), contextValue: 'targetPort', description: String(this.data.targetPort), iconPath: new ThemeIcon('dash') }),
+            new GenericTreeItem(this, { label, contextValue: 'visibility', description, iconPath: new ThemeIcon('dash') })
         ];
     }
 
