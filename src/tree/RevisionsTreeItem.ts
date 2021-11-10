@@ -27,7 +27,7 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
 
     public get iconPath(): TreeItemIconPath {
         // TODO: need proper icon
-        return treeUtils.getIconPath('azure-containerapps');
+        return treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active');
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

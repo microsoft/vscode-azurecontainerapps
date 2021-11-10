@@ -45,8 +45,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
     }
 
     public get iconPath(): TreeItemIconPath {
-        // TODO: need proper icon
-        return treeUtils.getIconPath('azure-containerapps');
+        return treeUtils.getIconPath('Container App Environments placeholder icon icon');
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
