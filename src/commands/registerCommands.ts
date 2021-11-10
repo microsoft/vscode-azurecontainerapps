@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 import { WebSiteManagementClient } from '@azure/arm-appservice';
 import { commands } from 'vscode';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, sendRequestWithTimeout } from 'vscode-azureextensionui';
@@ -17,6 +18,14 @@ import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingres
 import { openInPortal } from './openInPortal';
 import { openLogs } from './openLogs';
 import { viewProperties } from './viewProperties';
+=======
+import { commands } from 'vscode';
+import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from 'vscode-azureextensionui';
+import { ext } from '../extensionVariables';
+import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
+import { browse } from './browse';
+import { openInPortal } from './openInPortal';
+>>>>>>> 14c2b852407862c4c077329e9704ea1250b0e8cc
 
 export function registerCommands(): void {
 

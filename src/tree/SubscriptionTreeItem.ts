@@ -59,7 +59,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         await wizard.prompt();
         await wizard.execute();
 
-        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        // const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
 
         // This endpoint is currently broken-- doesn't recognize environmentType as the property that I need it to return
         // wizardContext.kubeEnvironment = await client.kubeEnvironments.beginCreateOrUpdateAndWait(wizardContext!.resourceGroup!.name, 'naturins-myenv2',

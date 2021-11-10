@@ -28,6 +28,7 @@
     ],
     "preview": true,
     "activationEvents": [
+<<<<<<< HEAD
         "onView:containerApps",
         "onCommand:containerApps.loadMore",
         "onCommand:containerApps.refresh",
@@ -43,6 +44,9 @@
         "onCommand:containerApps.enableIngress",
         "onCommand:containerApps.toggleVisibility",
         "onCommand:containerApps.editTargetPort"
+=======
+        "onView:containerApps"
+>>>>>>> 14c2b852407862c4c077329e9704ea1250b0e8cc
     ],
     "main": "./main.js",
     "contributes": {
@@ -55,8 +59,12 @@
             {
                 "command": "containerApps.refresh",
                 "title": "%containerApps.refresh%",
+<<<<<<< HEAD
                 "category": "Azure Container Apps",
                 "icon": "$(refresh)"
+=======
+                "category": "Azure Container Apps"
+>>>>>>> 14c2b852407862c4c077329e9704ea1250b0e8cc
             },
             {
                 "command": "containerApps.selectSubscriptions",
