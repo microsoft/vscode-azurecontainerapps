@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerApp, Secret, WebSiteManagementClient } from "@azure/arm-appservice";
 import { ProgressLocation, window } from "vscode";
-import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "vscode-azureextensionui";
+import { AzExtParentTreeItem, AzExtRequestPrepareOptions, AzExtTreeItem, DialogResponses, IActionContext, parseError, sendRequestWithTimeout, TreeItemIconPath } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { createWebSiteClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
@@ -13,10 +13,15 @@ import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { openUrl } from "../utils/openUrl";
 import { treeUtils } from "../utils/treeUtils";
+import { DaprTreeItem } from "./DaprTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
+import { IngressDisabledTreeItem, IngressTreeItem } from "./IngressTreeItem";
+import { LogsTreeItem } from "./LogsTreeItem";
+import { RevisionsTreeItem } from "./RevisionsTreeItem";
+import { ScaleTreeItem } from "./ScaleTreeItem";
 
-export class ContainerAppTreeItem extends AzExtTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'containerApp';
+export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
+    public static contextValue: string = 'containerApp|azResource';
     public readonly contextValue: string = ContainerAppTreeItem.contextValue;
     public data: ContainerApp;
     public resourceGroupName: string;
@@ -33,14 +38,33 @@ export class ContainerAppTreeItem extends AzExtTreeItem implements IAzureResourc
 
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
-
     }
 
     public get iconPath(): TreeItemIconPath {
         return treeUtils.getIconPath('azure-containerapps');
     }
 
+    public get description(): string | undefined {
+        return this.data.provisioningState === 'Succeeded' ? undefined : this.data.provisioningState;
+    }
+
+    public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
+        const children: AzExtTreeItem[] = [new RevisionsTreeItem(this), new DaprTreeItem(this, this.data.template?.dapr)];
+        this.data.configuration?.ingress ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
+        children.push(new ScaleTreeItem(this, this.data.template?.scale), new LogsTreeItem(this))
+        return children;
+    }
+
+    public hasMoreChildrenImpl(): boolean {
+        return false;
+    }
+
+    public compareChildrenImpl(): number {
+        return 0;
+    }
+
     public async browse(): Promise<void> {
+        // make sure that ingress is enabled
         await openUrl(nonNullProp(this.data, 'latestRevisionFqdn'));
     }
 
@@ -69,8 +93,27 @@ export class ContainerAppTreeItem extends AzExtTreeItem implements IAzureResourc
         });
     }
 
+    public async refreshImpl(context: IActionContext): Promise<void> {
+        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        const data = await client.containerApps.get(this.resourceGroupName, this.name);
+        this.data = data;
+    }
 
-    // TODO: show provisioningState as description if not "succeeded"
-    // TODO: Container settings
-    // TODO: View container logs
+    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<ContainerApp> {
+        // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
+        // make a copy, we don't want to modify the one that is cached
+        const containerAppEnvelope = { ...this.data };
+        containerAppEnvelope.configuration ||= {};
+        const options: AzExtRequestPrepareOptions = {
+            method: 'POST',
+            queryParameters: { 'api-version': '2021-03-01' },
+            pathTemplate: `${this.id}/listSecrets`,
+        };
+        const response = await sendRequestWithTimeout(context, options, 5000, this.subscription.credentials);
+        // if 204, needs to be an empty []
+        containerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
+
+        containerAppEnvelope.configuration.registries ||= [];
+        return containerAppEnvelope;
+    }
 }

@@ -33,7 +33,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             configuration: {
                 ingress: {
                     targetPort: context.targetPort,
-                    external: context.enableIngress,
+                    external: context.enableExternal,
                     transport: 'auto',
                     allowInsecure: false,
                     traffic: [

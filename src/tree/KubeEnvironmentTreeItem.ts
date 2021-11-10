@@ -9,7 +9,6 @@ import { ContainerAppCreateStep } from "../commands/createContainerApp/Container
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
-import { TargetPortStep } from "../commands/createContainerApp/TargetPortStep";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { RegistryEnableAdminUserStep } from "../commands/deployImage/RegistryEnableAdminUserStep";
 import { RegistryRepositoriesListStep } from "../commands/deployImage/RegistryRepositoriesListStep";
@@ -24,7 +23,7 @@ import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 
 export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'kubeEnvironment';
+    public static contextValue: string = 'kubeEnvironment|azResource';
     public readonly contextValue: string = KubeEnvironmentTreeItem.contextValue;
     public readonly data: KubeEnvironment;
     public resourceGroupName: string;
@@ -79,7 +78,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
         const title: string = localize('createContainerApp', 'Create Container App');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
             [new ContainerAppNameStep(), new ContainerRegistryListStep(), new RegistryEnableAdminUserStep(),
-            new RegistryRepositoriesListStep(), new RepositoryTagListStep(), new EnableIngressStep(), new TargetPortStep()];
+            new RegistryRepositoriesListStep(), new RepositoryTagListStep(), new EnableIngressStep()];
         const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [new VerifyProvidersStep([webProvider]), new ContainerAppCreateStep()];
 
         wizardContext.newResourceGroupName = this.resourceGroupName;

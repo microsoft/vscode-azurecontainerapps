@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp } from '@azure/arm-appservice';
-import { ICreateChildImplContext, IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
 
-export interface IContainerAppContext extends IResourceGroupWizardContext, ICreateChildImplContext, IDeployImageContext {
+export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
     kubeEnvironmentId?: string;
     newContainerAppName?: string;
 
     enableIngress?: boolean;
+    enableExternal?: boolean;
     targetPort?: number;
 
     // created when the wizard is done executing

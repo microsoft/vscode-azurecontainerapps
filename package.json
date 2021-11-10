@@ -40,7 +40,9 @@
         "onCommand:containerApps.deleteContainerApp",
         "onCommand:containerApps.openLogs",
         "onCommand:containerApps.disableIngress",
-        "onCommand:containerApps.enableIngress"
+        "onCommand:containerApps.enableIngress",
+        "onCommand:containerApps.toggleVisibility",
+        "onCommand:containerApps.editTargetPort"
     ],
     "main": "./main.js",
     "contributes": {
@@ -107,6 +109,16 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.toggleVisibility",
+                "title": "%containerApps.toggleVisibility%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.editTargetPort",
+                "title": "%containerApps.editTargetPort%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -158,6 +170,16 @@
                     "command": "containerApps.enableIngress",
                     "when": "view == containerApps && viewItem =~ /ingress.+disabled/",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.toggleVisibility",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "group": "1@2"
+                },
+                {
+                    "command": "containerApps.editTargetPort",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "group": "1@3"
                 },
                 {
                     "command": "containerApps.viewProperties",
