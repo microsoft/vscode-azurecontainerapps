@@ -4,8 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, KubeEnvironment, WebSiteManagementClient } from "@azure/arm-appservice";
-import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
+import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
+import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
+import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
+import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
+import { RegistryEnableAdminUserStep } from "../commands/deployImage/RegistryEnableAdminUserStep";
+import { RegistryRepositoriesListStep } from "../commands/deployImage/RegistryRepositoriesListStep";
+import { RepositoryTagListStep } from "../commands/deployImage/RepositoryTagListStep";
+import { webProvider } from "../constants";
 import { createWebSiteClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
@@ -15,7 +23,7 @@ import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 
 export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'kubeEnvironment';
+    public static contextValue: string = 'kubeEnvironment|azResource';
     public readonly contextValue: string = KubeEnvironmentTreeItem.contextValue;
     public readonly data: KubeEnvironment;
     public resourceGroupName: string;
@@ -37,15 +45,18 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
     }
 
     public get iconPath(): TreeItemIconPath {
-        // TODO: need proper icon
-        return treeUtils.getIconPath('azure-containerapps');
+        return treeUtils.getIconPath('Container App Environments placeholder icon icon');
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
         const containerApps: ContainerApp[] = [];
-        for await (const ca of client.containerApps.listByResourceGroup(this.resourceGroupName)) {
-            containerApps.push(ca);
+        // could be more efficient to call this once at Subscription level, and filter based off that
+        // but then risk stale data
+        for await (const ca of client.containerApps.listBySubscription()) {
+            if (ca.kubeEnvironmentId && ca.kubeEnvironmentId === this.id) {
+                containerApps.push(ca);
+            }
         }
 
         return await this.createTreeItemsWithErrorHandling(
@@ -64,14 +75,14 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
         const wizardContext: IContainerAppContext = { ...context, ...this.subscription };
 
         const title: string = localize('createContainerApp', 'Create Container App');
-        const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [];
+        const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
+            [new ContainerAppNameStep(), new ContainerRegistryListStep(), new RegistryEnableAdminUserStep(),
+            new RegistryRepositoriesListStep(), new RepositoryTagListStep(), new EnableIngressStep()];
+        const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [new VerifyProvidersStep([webProvider]), new ContainerAppCreateStep()];
 
-        // TODO: Confirm whether or not the provider is Microsoft.Web or Microsoft.Web/ContainerApps
-        // TODO: Write prompt/execute steps to actually create resource
-
-        const webProvider: string = 'Microsoft.Web';
-        executeSteps.push(new VerifyProvidersStep([webProvider]));
+        wizardContext.newResourceGroupName = this.resourceGroupName;
+        await LocationListStep.setLocation(wizardContext, this.data.location);
+        wizardContext.kubeEnvironmentId = this.id;
 
         const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
             title,

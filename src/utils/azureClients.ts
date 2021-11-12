@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { WebSiteManagementClient } from '@azure/arm-appservice';
-import { ResourceManagementClient } from '@azure/arm-resources';
+import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
+import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { VisualStudioCodeCredential } from '@azure/identity';
 import { appendExtensionUserAgent, AzExtClientContext, parseClientContext } from 'vscode-azureextensionui';
 
@@ -13,24 +14,21 @@ import { appendExtensionUserAgent, AzExtClientContext, parseClientContext } from
 
 export async function createWebSiteClient(context: AzExtClientContext): Promise<WebSiteManagementClient> {
     const clientContext = parseClientContext(context);
-    if (clientContext.credentials.getToken) {
-        const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
-        return new WebSiteManagementClient(cred, clientContext.subscriptionId,
-            {
-                endpoint: 'https://brazilus.management.azure.com/',
-                userAgentOptions: { userAgentPrefix: appendExtensionUserAgent() }
-            });
-    }
-
-    throw new Error();
+    const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
+    return new WebSiteManagementClient(cred, clientContext.subscriptionId,
+        {
+            endpoint: 'https://brazilus.management.azure.com/',
+            userAgentOptions: { userAgentPrefix: appendExtensionUserAgent() }
+        });
 }
 
-export async function createResourceClient(context: AzExtClientContext): Promise<ResourceManagementClient> {
+export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
     const clientContext = parseClientContext(context);
-    if (clientContext.credentials.getToken) {
-        const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
-        return new ResourceManagementClient(cred, clientContext.subscriptionId);
-    }
+    const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
+    return new ContainerRegistryManagementClient(cred, clientContext.subscriptionId);
+}
 
-    throw new Error();
+export function createContainerRegistryClient(registry: ContainerRegistryManagementModels.Registry): ContainerRegistryClient {
+    return new ContainerRegistryClient(`https://${registry.loginServer}`, new VisualStudioCodeCredential({}),
+        { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
 }
