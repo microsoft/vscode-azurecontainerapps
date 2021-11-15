@@ -42,7 +42,10 @@
         "onCommand:containerApps.disableIngress",
         "onCommand:containerApps.enableIngress",
         "onCommand:containerApps.toggleVisibility",
-        "onCommand:containerApps.editTargetPort"
+        "onCommand:containerApps.editTargetPort",
+        "onCommand:containerApps.activateRevision",
+        "onCommand:containerApps.deactivateRevision",
+        "onCommand:containerApps.restartRevision"
     ],
     "main": "./main.js",
     "contributes": {
@@ -119,6 +122,21 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.activateRevision",
+                "title": "%containerApps.activateRevision%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deactivateRevision",
+                "title": "%containerApps.deactivateRevision%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.restartRevision",
+                "title": "%containerApps.restartRevision%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -160,6 +178,21 @@
                     "command": "containerApps.deleteContainerApp",
                     "when": "view == containerApps && viewItem =~ /containerApp/",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.activateRevision",
+                    "when": "view == containerApps && viewItem =~ /revision[^s]/",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deactivateRevision",
+                    "when": "view == containerApps && viewItem =~ /revision[^s]/",
+                    "group": "1@2"
+                },
+                {
+                    "command": "containerApps.restartRevision",
+                    "when": "view == containerApps && viewItem =~ /revision[^s]/",
+                    "group": "1@3"
                 },
                 {
                     "command": "containerApps.disableIngress",

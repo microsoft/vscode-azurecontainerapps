@@ -5,7 +5,7 @@
 
 import { KnownRevisionProvisioningState, Revision } from "@azure/arm-appservice";
 import { ThemeColor, ThemeIcon } from "vscode";
-import { AzExtTreeItem, TreeItemIconPath } from "vscode-azureextensionui";
+import { AzExtTreeItem, IActionContext, TreeItemIconPath } from "vscode-azureextensionui";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
@@ -14,7 +14,7 @@ import { RevisionsTreeItem } from "./RevisionsTreeItem";
 export class RevisionTreeItem extends AzExtTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'revision|azResource';
     public readonly contextValue: string = RevisionTreeItem.contextValue;
-    public readonly data: Revision;
+    public data: Revision;
     public readonly parent: RevisionsTreeItem;
 
     public name: string;
@@ -30,34 +30,46 @@ export class RevisionTreeItem extends AzExtTreeItem implements IAzureResourceTre
     }
 
     public get description(): string | undefined {
-        return this.name === this.parent.parent.data.latestRevisionName ? localize('latest', 'Latest') : undefined;
+        return !this.data.active ?
+            localize('inactive', 'Inactive') :
+            this.name === this.parent.parent.data.latestRevisionName ?
+                localize('latest', 'Latest') :
+                undefined;
     }
 
     public get iconPath(): TreeItemIconPath {
         let id: string;
         let colorId: string;
 
-        switch (this.data.provisioningState) {
-            case KnownRevisionProvisioningState.Deprovisioning:
-            case KnownRevisionProvisioningState.Provisioning:
-                id = 'play-circle';
-                colorId = 'testing.iconUnset';
-                break;
-            case KnownRevisionProvisioningState.Failed:
-                id = 'error';
-                colorId = 'testing.iconFailed';
-                break;
-            case KnownRevisionProvisioningState.Provisioned:
-                id = 'pass'
-                colorId = 'testing.iconPassed';
-                break;
-            case KnownRevisionProvisioningState.Deprovisioned:
-            default:
-                id = 'circle-slash';
-                colorId = 'testing.iconUnset';
-
+        if (!this.data.active) {
+            id = 'circle-slash';
+            colorId = 'testing.iconUnset';
+        } else {
+            switch (this.data.provisioningState) {
+                case KnownRevisionProvisioningState.Deprovisioning:
+                case KnownRevisionProvisioningState.Provisioning:
+                    id = 'play-circle';
+                    colorId = 'testing.iconUnset';
+                    break;
+                case KnownRevisionProvisioningState.Failed:
+                    id = 'error';
+                    colorId = 'testing.iconFailed';
+                    break;
+                case KnownRevisionProvisioningState.Provisioned:
+                    id = 'pass'
+                    colorId = 'testing.iconPassed';
+                    break;
+                case KnownRevisionProvisioningState.Deprovisioned:
+                default:
+                    id = 'circle-slash';
+                    colorId = 'testing.iconUnset';
+            }
         }
 
         return new ThemeIcon(id, colorId ? new ThemeColor(colorId) : undefined);
+    }
+
+    public async refreshImpl(context: IActionContext): Promise<void> {
+        this.data = await this.parent.getRevision(context, this.name);
     }
 }

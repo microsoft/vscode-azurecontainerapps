@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from '@azure/arm-appservice';
 import { commands } from 'vscode';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, sendRequestWithTimeout } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { createWebSiteClient } from '../utils/azureClients';
+import { RevisionTreeItem } from '../tree/RevisionTreeItem';
 import { browse } from './browse';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { deleteNode } from './deleteNode';
@@ -16,6 +15,7 @@ import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
 import { openInPortal } from './openInPortal';
 import { openLogs } from './openLogs';
+import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
@@ -34,52 +34,55 @@ export function registerCommands(): void {
     registerCommand('containerApps.disableIngress', toggleIngress);
     registerCommand('containerApps.toggleVisibility', toggleIngressVisibility);
     registerCommand('containerApps.editTargetPort', editTargetPort);
+    registerCommand('containerApps.activateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'activate', node));
+    registerCommand('containerApps.deactivateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'deactivate', node));
+    registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
 
     // TODO: Remove, this is just for testing
-    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: ContainerAppTreeItem) => {
+    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: RevisionTreeItem) => {
         const url = 'https://hub.docker.com/v2/repositories/velikriss';
         const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
         console.log(dockerhub);
 
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValue, context);
+            node = await ext.tree.showTreeItemPicker<RevisionTreeItem>(RevisionTreeItem.contextValue, context);
         }
 
-        const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
+        // const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
 
-        containerEnv.template ||= {};
-        containerEnv.template.dapr = {
-            "enabled": true,
-            "appId": "nodeapp",
-            "appPort": 3000,
-            "components": [
-                {
-                    "name": "statestore",
-                    "type": "state.azure.blobstorage",
-                    "version": "v1",
-                    "metadata": [
-                        {
-                            "name": "accountName",
-                            "value": "naturinsdapr",
-                            "secretRef": ""
-                        },
-                        {
-                            "name": "accountKey",
-                            "value": "zOvri+bDG4HHDpng621F/5kq/tzYBNiat5f91TRfIScqqXaU+AXX/jE4YAj4LIXUQZsvbpLJXy6V8cEq7uUMkg==",
-                            "secretRef": ""
-                        },
-                        {
-                            "name": "containerName",
-                            "value": "nodeapp",
-                            "secretRef": ""
-                        }
-                    ]
-                }
-            ]
-        };
+        // containerEnv.template ||= {};
+        // containerEnv.template.dapr = {
+        //     "enabled": true,
+        //     "appId": "nodeapp",
+        //     "appPort": 3000,
+        //     "components": [
+        //         {
+        //             "name": "statestore",
+        //             "type": "state.azure.blobstorage",
+        //             "version": "v1",
+        //             "metadata": [
+        //                 {
+        //                     "name": "accountName",
+        //                     "value": "naturinsdapr",
+        //                     "secretRef": ""
+        //                 },
+        //                 {
+        //                     "name": "accountKey",
+        //                     "value": "zOvri+bDG4HHDpng621F/5kq/tzYBNiat5f91TRfIScqqXaU+AXX/jE4YAj4LIXUQZsvbpLJXy6V8cEq7uUMkg==",
+        //                     "secretRef": ""
+        //                 },
+        //                 {
+        //                 "name": "containerName",
+        //                     "value": "nodeapp",
+        //                     "secretRef": ""
+        //                 }
+        //             ]
+        //         }
+        //     ]
+        // };
 
-        const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
-        await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
+        // const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
+        // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
 
         // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, 'dockercontainer3', {
         //     location: node.data.location,
