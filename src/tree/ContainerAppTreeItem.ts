@@ -18,6 +18,7 @@ import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { IngressDisabledTreeItem, IngressTreeItem } from "./IngressTreeItem";
 import { LogsTreeItem } from "./LogsTreeItem";
 import { RevisionsTreeItem } from "./RevisionsTreeItem";
+import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleTreeItem } from "./ScaleTreeItem";
 
 export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
@@ -28,6 +29,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public name: string;
     public label: string;
+
+    public revisionsTreeItem: RevisionsTreeItem;
 
     constructor(parent: AzExtParentTreeItem, ca: ContainerApp) {
         super(parent);
@@ -49,7 +52,9 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        const children: AzExtTreeItem[] = [new RevisionsTreeItem(this), new DaprTreeItem(this, this.data.template?.dapr)];
+        this.revisionsTreeItem = new RevisionsTreeItem(this);
+
+        const children: AzExtTreeItem[] = [this.revisionsTreeItem, new DaprTreeItem(this, this.data.template?.dapr)];
         this.data.configuration?.ingress ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
         children.push(new ScaleTreeItem(this, this.data.template?.scale), new LogsTreeItem(this))
         return children;
@@ -96,10 +101,25 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     public async refreshImpl(context: IActionContext): Promise<void> {
         const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
+
+        this.revisionsTreeItem = new RevisionsTreeItem(this);
         this.data = data;
     }
 
-    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<Concrete<ContainerApp>> {
+    public pickTreeItemImpl(expectedContextValues: (string | RegExp)[]): AzExtTreeItem | undefined {
+        for (const expectedContextValue of expectedContextValues) {
+            switch (expectedContextValue) {
+                case RevisionTreeItem.contextValue:
+                case RevisionsTreeItem.contextValue:
+                    return this.revisionsTreeItem;
+                default:
+            }
+        }
+
+        return undefined;
+    }
+
+    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<ContainerApp> {
         // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
         // make a deep copy, we don't want to modify the one that is cached
         const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(this.data));

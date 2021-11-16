@@ -7,7 +7,7 @@ import { commands } from 'vscode';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, sendRequestWithTimeout } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { RevisionsTreeItem } from '../tree/RevisionsTreeItem';
+import { RevisionTreeItem } from '../tree/RevisionTreeItem';
 import { browse } from './browse';
 import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
@@ -16,6 +16,7 @@ import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
 import { openInPortal } from './openInPortal';
 import { openLogs } from './openLogs';
+import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
@@ -35,18 +36,19 @@ export function registerCommands(): void {
     registerCommand('containerApps.toggleVisibility', toggleIngressVisibility);
     registerCommand('containerApps.editTargetPort', editTargetPort);
     registerCommand('containerApps.chooseRevisionMode', chooseRevisionMode);
+    registerCommand('containerApps.activateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'activate', node));
+    registerCommand('containerApps.deactivateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'deactivate', node));
+    registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
 
     // TODO: Remove, this is just for testing
-    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: RevisionsTreeItem) => {
+    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: RevisionTreeItem) => {
         const url = 'https://hub.docker.com/v2/repositories/velikriss';
         const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
         console.log(dockerhub);
 
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<RevisionsTreeItem>(RevisionsTreeItem.contextValue, context);
+            node = await ext.tree.showTreeItemPicker<RevisionTreeItem>(RevisionTreeItem.contextValue, context);
         }
-
-        await chooseRevisionMode(context, node);
 
         // const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
 
@@ -72,7 +74,7 @@ export function registerCommands(): void {
         //                     "secretRef": ""
         //                 },
         //                 {
-        //                     "name": "containerName",
+        //                 "name": "containerName",
         //                     "value": "nodeapp",
         //                     "secretRef": ""
         //                 }
