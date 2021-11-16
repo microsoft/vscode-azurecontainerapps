@@ -41,7 +41,3 @@ export async function changeRevisionActiveState(context: IActionContext, command
 
     await node.refresh(context);
 }
-
-
-
-
