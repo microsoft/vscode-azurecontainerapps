@@ -49,4 +49,9 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
     public hasMoreChildrenImpl(): boolean {
         return false;
     }
+
+    public async getRevision(context: IActionContext, name: string): Promise<Revision> {
+        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        return await client.containerAppsRevisions.getRevision(this.parent.resourceGroupName, this.parent.name, name);
+    }
 }
