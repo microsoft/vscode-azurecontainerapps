@@ -42,7 +42,8 @@
         "onCommand:containerApps.disableIngress",
         "onCommand:containerApps.enableIngress",
         "onCommand:containerApps.toggleVisibility",
-        "onCommand:containerApps.editTargetPort"
+        "onCommand:containerApps.editTargetPort",
+        "onCommand:containerApps.chooseRevisionMode"
     ],
     "main": "./main.js",
     "contributes": {
@@ -119,6 +120,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.chooseRevisionMode",
+                "title": "%containerApps.chooseRevisionMode%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -160,6 +166,11 @@
                     "command": "containerApps.deleteContainerApp",
                     "when": "view == containerApps && viewItem =~ /containerApp/",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.chooseRevisionMode",
+                    "when": "view == containerApps && viewItem =~ /revisions/",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.disableIngress",

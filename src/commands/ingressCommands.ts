@@ -109,7 +109,6 @@ async function updateIngressSettings(context: IActionContext,
     const { ingress, node, working, workCompleted } = options;
 
     const containerAppEnvelope = await node.parent.getContainerEnvelopeWithSecrets(context);
-    containerAppEnvelope.configuration ||= {};
     containerAppEnvelope.configuration.ingress = ingress;
 
     const client: WebSiteManagementClient = await createWebSiteClient([context, node]);

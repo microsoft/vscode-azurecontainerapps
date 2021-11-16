@@ -15,5 +15,6 @@
     "containerApps.disableIngress": "Disable Ingress for Container App..",
     "containerApps.enableIngress": "Enable Ingress for Container App..",
     "containerApps.toggleVisibility": "Switch Ingress Visibility",
-    "containerApps.editTargetPort": "Edit Target Port..."
+    "containerApps.editTargetPort": "Edit Target Port...",
+    "containerApps.chooseRevisionMode": "Choose Revision Mode..."
 }

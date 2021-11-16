@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from '@azure/arm-appservice';
 import { commands } from 'vscode';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, sendRequestWithTimeout } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { createWebSiteClient } from '../utils/azureClients';
+import { RevisionsTreeItem } from '../tree/RevisionsTreeItem';
 import { browse } from './browse';
+import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
@@ -34,52 +34,55 @@ export function registerCommands(): void {
     registerCommand('containerApps.disableIngress', toggleIngress);
     registerCommand('containerApps.toggleVisibility', toggleIngressVisibility);
     registerCommand('containerApps.editTargetPort', editTargetPort);
+    registerCommand('containerApps.chooseRevisionMode', chooseRevisionMode);
 
     // TODO: Remove, this is just for testing
-    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: ContainerAppTreeItem) => {
+    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: RevisionsTreeItem) => {
         const url = 'https://hub.docker.com/v2/repositories/velikriss';
         const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
         console.log(dockerhub);
 
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValue, context);
+            node = await ext.tree.showTreeItemPicker<RevisionsTreeItem>(RevisionsTreeItem.contextValue, context);
         }
 
-        const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
+        await chooseRevisionMode(context, node);
 
-        containerEnv.template ||= {};
-        containerEnv.template.dapr = {
-            "enabled": true,
-            "appId": "nodeapp",
-            "appPort": 3000,
-            "components": [
-                {
-                    "name": "statestore",
-                    "type": "state.azure.blobstorage",
-                    "version": "v1",
-                    "metadata": [
-                        {
-                            "name": "accountName",
-                            "value": "naturinsdapr",
-                            "secretRef": ""
-                        },
-                        {
-                            "name": "accountKey",
-                            "value": "zOvri+bDG4HHDpng621F/5kq/tzYBNiat5f91TRfIScqqXaU+AXX/jE4YAj4LIXUQZsvbpLJXy6V8cEq7uUMkg==",
-                            "secretRef": ""
-                        },
-                        {
-                            "name": "containerName",
-                            "value": "nodeapp",
-                            "secretRef": ""
-                        }
-                    ]
-                }
-            ]
-        };
+        // const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
 
-        const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
-        await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
+        // containerEnv.template ||= {};
+        // containerEnv.template.dapr = {
+        //     "enabled": true,
+        //     "appId": "nodeapp",
+        //     "appPort": 3000,
+        //     "components": [
+        //         {
+        //             "name": "statestore",
+        //             "type": "state.azure.blobstorage",
+        //             "version": "v1",
+        //             "metadata": [
+        //                 {
+        //                     "name": "accountName",
+        //                     "value": "naturinsdapr",
+        //                     "secretRef": ""
+        //                 },
+        //                 {
+        //                     "name": "accountKey",
+        //                     "value": "zOvri+bDG4HHDpng621F/5kq/tzYBNiat5f91TRfIScqqXaU+AXX/jE4YAj4LIXUQZsvbpLJXy6V8cEq7uUMkg==",
+        //                     "secretRef": ""
+        //                 },
+        //                 {
+        //                     "name": "containerName",
+        //                     "value": "nodeapp",
+        //                     "secretRef": ""
+        //                 }
+        //             ]
+        //         }
+        //     ]
+        // };
+
+        // const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
+        // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
 
         // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, 'dockercontainer3', {
         //     location: node.data.location,
