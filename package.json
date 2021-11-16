@@ -43,6 +43,7 @@
         "onCommand:containerApps.enableIngress",
         "onCommand:containerApps.toggleVisibility",
         "onCommand:containerApps.editTargetPort",
+        "onCommand:containerApps.chooseRevisionMode",
         "onCommand:containerApps.activateRevision",
         "onCommand:containerApps.deactivateRevision",
         "onCommand:containerApps.restartRevision"
@@ -122,6 +123,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.chooseRevisionMode",
+                "title": "%containerApps.chooseRevisionMode%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.activateRevision",
                 "title": "%containerApps.activateRevision%",
                 "category": "Azure Container Apps"
@@ -178,6 +184,11 @@
                     "command": "containerApps.deleteContainerApp",
                     "when": "view == containerApps && viewItem =~ /containerApp/",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.chooseRevisionMode",
+                    "when": "view == containerApps && viewItem =~ /revisions/",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.activateRevision",

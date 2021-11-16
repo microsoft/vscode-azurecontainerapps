@@ -5,6 +5,7 @@
 
 import { Revision, WebSiteManagementClient } from "@azure/arm-appservice";
 import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath } from "vscode-azureextensionui";
+import { RevisionConstants } from "../constants";
 import { createWebSiteClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
@@ -28,6 +29,10 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
     public get iconPath(): TreeItemIconPath {
         // TODO: need proper icon
         return treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active');
+    }
+
+    public get description(): string {
+        return this.parent.data.configuration?.activeRevisionsMode?.toLowerCase() === 'single' ? RevisionConstants.single : RevisionConstants.multiple;
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

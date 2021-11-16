@@ -121,9 +121,15 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<ContainerApp> {
         // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
-        // make a copy, we don't want to modify the one that is cached
-        const containerAppEnvelope = { ...this.data };
-        containerAppEnvelope.configuration ||= {};
+        // make a deep copy, we don't want to modify the one that is cached
+        const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(this.data));
+
+        // verify all top-level properties
+        for (const key of Object.keys(containerAppEnvelope)) {
+            containerAppEnvelope[key] = nonNullProp(containerAppEnvelope, <keyof ContainerApp>key);
+        }
+
+        const concreteContainerAppEnvelope = <Concrete<ContainerApp>>containerAppEnvelope;
         const options: AzExtRequestPrepareOptions = {
             method: 'POST',
             queryParameters: { 'api-version': '2021-03-01' },
@@ -131,9 +137,11 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         };
         const response = await sendRequestWithTimeout(context, options, 5000, this.subscription.credentials);
         // if 204, needs to be an empty []
-        containerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
-
-        containerAppEnvelope.configuration.registries ||= [];
-        return containerAppEnvelope;
+        concreteContainerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
+        return concreteContainerAppEnvelope;
     }
+}
+
+type Concrete<ContainerApp> = {
+    [Property in keyof ContainerApp]-?: ContainerApp[Property];
 }

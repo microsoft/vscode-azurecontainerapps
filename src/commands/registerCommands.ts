@@ -9,6 +9,7 @@ import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 import { RevisionTreeItem } from '../tree/RevisionTreeItem';
 import { browse } from './browse';
+import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
@@ -34,6 +35,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.disableIngress', toggleIngress);
     registerCommand('containerApps.toggleVisibility', toggleIngressVisibility);
     registerCommand('containerApps.editTargetPort', editTargetPort);
+    registerCommand('containerApps.chooseRevisionMode', chooseRevisionMode);
     registerCommand('containerApps.activateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'activate', node));
     registerCommand('containerApps.deactivateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'deactivate', node));
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));

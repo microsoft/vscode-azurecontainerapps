@@ -14,3 +14,8 @@ export namespace IngressConstants {
     export const externalDesc: string = localize('externalDesc', 'Accepting traffic from anywhere');
     export const internalDesc: string = localize('internalDesc', 'Only allowing traffic within your vNet');
 }
+
+export namespace RevisionConstants {
+    export const multiple: string = localize('multiple', 'Multiple');
+    export const single: string = localize('single', 'Single');
+}
