@@ -13,7 +13,7 @@ export interface IDeployImageContext extends ISubscriptionActionContext {
     registryDomain?: SupportedRegistries;
 
     registry?: ContainerRegistryManagementModels.Registry
-    dockerNamespace?: string;
+    dockerHubNamespace?: string;
 
     repositoryName?: string;
     tag?: string

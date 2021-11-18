@@ -23,7 +23,7 @@ export namespace RevisionConstants {
 }
 
 export const acrDomain = 'azurecr.io';
-export const dockerDomain = 'docker.io';
+export const dockerHubDomain = 'docker.io';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 

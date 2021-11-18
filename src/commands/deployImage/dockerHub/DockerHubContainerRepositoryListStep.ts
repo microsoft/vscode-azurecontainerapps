@@ -5,16 +5,21 @@
 
 import { QuickPickItem } from "vscode";
 import { loadMoreQp, QuickPicksCache } from "../../../constants";
+import { localize } from "../../../utils/localize";
 import { nonNullProp } from "../../../utils/nonNull";
 import { IDeployImageContext } from "../IDeployImageContext";
-import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
-import { getTagsForRepo } from "./DockerHubV2ApiCalls";
+import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
+import { getReposForNamespace } from "./DockerHubV2ApiCalls";
 
-export class DockerContainerTagListStep extends RepositoryTagListStepBase {
+export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesListStepBase {
     public async getPicks(context: IDeployImageContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
-        const response = await getTagsForRepo(context, nonNullProp(context, 'dockerNamespace'), nonNullProp(context, 'repositoryName'), cachedPicks.next);
+        const response = await getReposForNamespace(context, nonNullProp(context, 'dockerHubNamespace'), cachedPicks.next);
 
-        cachedPicks.cache.push(...response.results.map((t) => { return { label: t.name } }));
+        if (response.count === 0) {
+            await context.ui.showWarningMessage(localize('noRepos', 'Unable to find any repositories associated to namespace "{0}"', context.dockerHubNamespace), { modal: true });
+        }
+
+        cachedPicks.cache.push(...response.results.map((r) => { return { label: r.name, description: r.description } }));
 
         if (response.next) {
             cachedPicks.next = response.next;

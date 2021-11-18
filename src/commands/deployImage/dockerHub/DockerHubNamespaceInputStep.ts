@@ -8,20 +8,20 @@ import { localize } from "../../../utils/localize";
 import { IDeployImageContext } from "../IDeployImageContext";
 
 let checkNameLength: boolean = false;
-export class DockerNamespaceInputStep extends AzureWizardPromptStep<IDeployImageContext> {
+export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IDeployImageContext> {
     public async prompt(context: IDeployImageContext): Promise<void> {
-        const prompt: string = localize('dockernameSpacePrompt', 'Enter a Docker Hub namespace');
-        context.dockerNamespace = (await context.ui.showInputBox({
+        const prompt: string = localize('dockerHubNamespacePrompt', 'Enter a Docker Hub namespace');
+        context.dockerHubNamespace = (await context.ui.showInputBox({
             prompt,
             value: 'library',
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
         })).toLowerCase();
 
-        context.valuesToMask.push(context.dockerNamespace);
+        context.valuesToMask.push(context.dockerHubNamespace);
     }
 
     public shouldPrompt(context: IDeployImageContext): boolean {
-        return !context.dockerNamespace;
+        return !context.dockerHubNamespace;
     }
 
     private async validateInput(name: string | undefined): Promise<string | undefined> {
