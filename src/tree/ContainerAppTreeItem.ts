@@ -119,7 +119,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         return undefined;
     }
 
-    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<ContainerApp> {
+    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<Concrete<ContainerApp>> {
         // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
         // make a deep copy, we don't want to modify the one that is cached
         const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(this.data));

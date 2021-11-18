@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { QuickPickItem } from "vscode";
+import { IAzureQuickPickItem } from "vscode-azureextensionui";
 import { localize } from "./utils/localize";
 
 export const webProvider: string = 'Microsoft.Web';
@@ -19,3 +21,11 @@ export namespace RevisionConstants {
     export const multiple: string = localize('multiple', 'Multiple');
     export const single: string = localize('single', 'Single');
 }
+
+export const acrDomain = 'azurecr.io';
+export const dockerDomain = 'docker.io';
+
+export type SupportedRegistries = 'azurecr.io' | 'docker.io';
+
+export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
+export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };

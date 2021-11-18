@@ -12,6 +12,8 @@ import { IContainerAppContext } from './IContainerAppContext';
 
 let checkNameLength: boolean = false;
 export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppContext> {
+    public hideStepCount: boolean = true;
+
     public async prompt(context: IContainerAppContext): Promise<void> {
         const prompt: string = localize('staticWebAppNamePrompt', 'Enter a name for the new static web app.');
         context.newContainerAppName = (await context.ui.showInputBox({

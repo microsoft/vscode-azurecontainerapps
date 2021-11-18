@@ -10,9 +10,6 @@ import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAp
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
-import { RegistryEnableAdminUserStep } from "../commands/deployImage/RegistryEnableAdminUserStep";
-import { RegistryRepositoriesListStep } from "../commands/deployImage/RegistryRepositoriesListStep";
-import { RepositoryTagListStep } from "../commands/deployImage/RepositoryTagListStep";
 import { webProvider } from "../constants";
 import { createWebSiteClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
@@ -76,8 +73,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
 
         const title: string = localize('createContainerApp', 'Create Container App');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
-            [new ContainerAppNameStep(), new ContainerRegistryListStep(), new RegistryEnableAdminUserStep(),
-            new RegistryRepositoriesListStep(), new RepositoryTagListStep(), new EnableIngressStep()];
+            [new ContainerAppNameStep(), new ContainerRegistryListStep(), new EnableIngressStep()];
         const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [new VerifyProvidersStep([webProvider]), new ContainerAppCreateStep()];
 
         wizardContext.newResourceGroupName = this.resourceGroupName;
