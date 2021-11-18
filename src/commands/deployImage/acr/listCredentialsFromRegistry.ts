@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
-import { createContainerRegistryManagementClient } from "../../utils/azureClients";
-import { getResourceGroupFromId } from "../../utils/azureUtils";
-import { nonNullProp, nonNullValue } from "../../utils/nonNull";
-import { IDeployImageContext } from "./IDeployImageContext";
+import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
+import { getResourceGroupFromId } from "../../../utils/azureUtils";
+import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
+import { IDeployImageContext } from "../IDeployImageContext";
 
 export async function listCredentialsFromRegistry(context: IDeployImageContext, registry: ContainerRegistryManagementModels.Registry):
     Promise<{ username: string, password: ContainerRegistryManagementModels.RegistryPassword }> {

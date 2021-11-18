@@ -3,24 +3,38 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep, IAzureQuickPickItem } from "vscode-azureextensionui";
-import { createContainerRegistryManagementClient } from "../../utils/azureClients";
+import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "vscode-azureextensionui";
+import { acrDomain, dockerHubDomain, SupportedRegistries } from "../../constants";
 import { localize } from "../../utils/localize";
-import { nonNullProp } from "../../utils/nonNull";
-import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";
+import { AcrListStep } from "./acr/AcrListStep";
+import { AcrRepositoriesListStep } from "./acr/AcrRepositoriesListStep";
+import { AcrTagListStep } from "./acr/AcrTagListStep";
+import { DockerHubContainerRepositoryListStep } from "./dockerHub/DockerHubContainerRepositoryListStep";
+import { DockerHubContainerTagListStep } from "./dockerHub/DockerHubContainerTagListStep";
+import { DockerHubNamespaceInputStep } from "./dockerHub/DockerHubNamespaceInputStep";
+import { IDeployImageContext } from "./IDeployImageContext";
 
-export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerAppContext> {
-    public async prompt(context: IContainerAppContext): Promise<void> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const registries = await client.registries.list();
-        const picks: IAzureQuickPickItem<ContainerRegistryManagementModels.Registry>[] = registries.map((r) => { return { label: nonNullProp(r, 'name'), data: r, description: r.loginServer } });
+export class ContainerRegistryListStep extends AzureWizardPromptStep<IDeployImageContext> {
+    public hideStepCount: boolean = true;
 
-        const placeHolder: string = localize('selectACR', 'Select a Azure Container Registry to pull a container from');
-        context.registry = (await context.ui.showQuickPick(picks, { placeHolder })).data;
+    public async prompt(context: IDeployImageContext): Promise<void> {
+        const placeHolder: string = localize('selectTag', 'Select a container registry');
+        const picks: IAzureQuickPickItem<SupportedRegistries>[] = [{ label: 'Azure Container Registries', data: acrDomain }, { label: 'Docker Hub Registry', data: dockerHubDomain }];
+        context.registryDomain = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
-        return !context.registry;
+    public shouldPrompt(context: IDeployImageContext): boolean {
+        return !context.tag;
+    }
+
+    public async getSubWizard(context: IDeployImageContext): Promise<IWizardOptions<IDeployImageContext>> {
+        const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] = [];
+        if (context.registryDomain === acrDomain) {
+            promptSteps.push(new AcrListStep(), new AcrRepositoriesListStep(), new AcrTagListStep())
+        } else {
+            promptSteps.push(new DockerHubNamespaceInputStep(), new DockerHubContainerRepositoryListStep(), new DockerHubContainerTagListStep())
+        }
+
+        return { promptSteps };
     }
 }

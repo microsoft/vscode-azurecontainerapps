@@ -6,11 +6,15 @@
 import { ContainerApp } from '@azure/arm-appservice';
 import { ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
 import { ISubscriptionActionContext } from 'vscode-azureextensionui';
+import { SupportedRegistries } from '../../constants';
 
 export interface IDeployImageContext extends ISubscriptionActionContext {
     targetContainer?: ContainerApp;
+    registryDomain?: SupportedRegistries;
 
-    registry?: ContainerRegistryManagementModels.Registry;
+    registry?: ContainerRegistryManagementModels.Registry
+    dockerHubNamespace?: string;
+
     repositoryName?: string;
     tag?: string
 }
