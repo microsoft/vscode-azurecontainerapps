@@ -15,7 +15,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppCon
     public hideStepCount: boolean = true;
 
     public async prompt(context: IContainerAppContext): Promise<void> {
-        const prompt: string = localize('staticWebAppNamePrompt', 'Enter a name for the new container app.');
+        const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new container app.');
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt,
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(context, value)
