@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { RegistryCredentials, Secret, WebSiteManagementClient } from "@azure/arm-appservice";
+import { Ingress, RegistryCredentials, Secret, WebSiteManagementClient } from "@azure/arm-appservice";
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { containerAppProvider } from "../../constants";
@@ -44,6 +44,19 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             registries = [];
         }
 
+        const ingress: Ingress | undefined = context.enableIngress ? {
+            targetPort: context.targetPort,
+            external: context.enableExternal,
+            transport: 'auto',
+            allowInsecure: false,
+            traffic: [
+                {
+                    "weight": 100,
+                    "latestRevision": true
+                }
+            ],
+        } : undefined;
+
         const creatingSwa: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
         progress.report({ message: creatingSwa });
         ext.outputChannel.appendLog(creatingSwa);
@@ -52,18 +65,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             location: (await LocationListStep.getLocation(context, containerAppProvider)).name,
             kubeEnvironmentId: context.kubeEnvironmentId,
             configuration: {
-                ingress: {
-                    targetPort: context.targetPort,
-                    external: context.enableExternal,
-                    transport: 'auto',
-                    allowInsecure: false,
-                    traffic: [
-                        {
-                            "weight": 100,
-                            "latestRevision": true
-                        }
-                    ],
-                },
+                ingress,
                 secrets,
                 registries
             },
