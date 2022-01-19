@@ -29,7 +29,7 @@ export class LogAnalyticsListStep extends AzureWizardPromptStep<IKubeEnvironment
     }
 
     private async getQuickPicks(context: IKubeEnvironmentContext): Promise<IAzureQuickPickItem<OperationalInsightsManagementModels.Workspace | undefined>[]> {
-        const picks: IAzureQuickPickItem<OperationalInsightsManagementModels.Workspace | undefined>[] = [];
+        const picks: IAzureQuickPickItem<Workspace | undefined>[] = [];
 
         picks.push({
             label: localize('newLogAnalytics', '$(plus) Create new Log Analytics workspace'),
@@ -39,15 +39,13 @@ export class LogAnalyticsListStep extends AzureWizardPromptStep<IKubeEnvironment
 
         const opClient = createOperationalInsightsManagementClient(context);
 
-        const containerApps: Workspace[] = [];
+        const workspaces: Workspace[] = [];
         // could be more efficient to call this once at Subscription level, and filter based off that
         // but then risk stale data
-        for await (const ca of client.containerApps.listBySubscription()) {
-            if (ca.kubeEnvironmentId && ca.kubeEnvironmentId === this.id) {
-                containerApps.push(ca);
-            }
+        for await (const ws of opClient.workspaces.list()) {
+            workspaces.push(ws);
         }
-        return picks.concat((await opClient.workspaces.list()).map(ws => {
+        return picks.concat(workspaces.map(ws => {
             return { label: nonNullProp(ws, 'name'), data: ws }
         }));
     }
