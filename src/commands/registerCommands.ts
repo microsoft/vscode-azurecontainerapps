@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { commands } from 'vscode';
-import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, sendRequestWithTimeout } from 'vscode-azureextensionui';
+import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 import { RevisionTreeItem } from '../tree/RevisionTreeItem';
+import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
 import { browse } from './browse';
 import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
@@ -41,14 +42,16 @@ export function registerCommands(): void {
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
 
     // TODO: Remove, this is just for testing
-    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: RevisionTreeItem) => {
-        const url = 'https://hub.docker.com/v2/repositories/velikriss';
-        const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
-        console.log(dockerhub);
+    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: SubscriptionTreeItem) => {
+        // const url = 'https://hub.docker.com/v2/repositories/velikriss';
+        // const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
+        // console.log(dockerhub);
 
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<RevisionTreeItem>(RevisionTreeItem.contextValue, context);
+            node = await ext.tree.showTreeItemPicker<SubscriptionTreeItem>(SubscriptionTreeItem.contextValue, context);
         }
+
+        await node.createChild(context);
 
         // const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
 

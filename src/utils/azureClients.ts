@@ -5,8 +5,10 @@
 
 import { WebSiteManagementClient } from '@azure/arm-appservice';
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
+import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { VisualStudioCodeCredential } from '@azure/identity';
+import { LogAnalyticsClient } from '@azure/loganalytics';
 import { appendExtensionUserAgent, AzExtClientContext, parseClientContext } from 'vscode-azureextensionui';
 
 // Lazy-load @azure packages to improve startup performance.
@@ -31,4 +33,17 @@ export async function createContainerRegistryManagementClient(context: AzExtClie
 export function createContainerRegistryClient(registry: ContainerRegistryManagementModels.Registry): ContainerRegistryClient {
     return new ContainerRegistryClient(`https://${registry.loginServer}`, new VisualStudioCodeCredential({}),
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
+}
+
+
+
+export function createLogAnalyticsClient(context: AzExtClientContext): LogAnalyticsClient {
+    const clientContext = parseClientContext(context);
+    return new LogAnalyticsClient(clientContext.credentials);
+}
+
+export function createOperationalInsightsManagementClient(context: AzExtClientContext): OperationalInsightsManagementClient {
+    const clientContext = parseClientContext(context);
+    const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
+    return new OperationalInsightsManagementClient(cred, clientContext.subscriptionId);
 }

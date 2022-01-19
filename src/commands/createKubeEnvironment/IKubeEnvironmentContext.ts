@@ -4,9 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KubeEnvironment } from '@azure/arm-appservice';
+import { OperationalInsightsManagementModels } from '@azure/arm-operationalinsights';
 import { ICreateChildImplContext, IResourceGroupWizardContext } from 'vscode-azureextensionui';
 
 export interface IKubeEnvironmentContext extends IResourceGroupWizardContext, ICreateChildImplContext {
+
+    newKubeEnvironmentName?: string;
+    logAnalyticsWorkspace?: OperationalInsightsManagementModels.Workspace;
 
     // created when the wizard is done executing
     kubeEnvironment?: KubeEnvironment;
