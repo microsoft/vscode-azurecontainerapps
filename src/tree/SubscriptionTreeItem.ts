@@ -16,7 +16,7 @@ import { nonNullProp } from '../utils/nonNull';
 import { KubeEnvironmentTreeItem } from './KubeEnvironmentTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
-    public readonly childTypeLabel: string = localize('kubeEnvironment', 'Kubernetes Environment');
+    public readonly childTypeLabel: string = localize('kubeEnvironment', 'Container App environment');
     private readonly _nextLink: string | undefined;
 
     public hasMoreChildrenImpl(): boolean {
@@ -43,7 +43,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
         const wizardContext: IKubeEnvironmentContext = { ...context, ...this.subscription };
 
-        const title: string = localize('createKubeEnv', 'Create Kubernetes Environment');
+        const title: string = localize('createKubeEnv', 'Create Container App environment');
         const promptSteps: AzureWizardPromptStep<IKubeEnvironmentContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IKubeEnvironmentContext>[] = [];
 

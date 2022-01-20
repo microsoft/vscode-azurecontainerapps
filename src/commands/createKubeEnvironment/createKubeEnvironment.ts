@@ -18,7 +18,7 @@ export async function createKubeEnvironment(context: IActionContext & Partial<IC
     }
 
     const keNode: KubeEnvironmentTreeItem = await node.createChild(context);
-    const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Kubernetes Environment "{0}".', nonNullProp(context, 'newKubeEnvironmentName'));
+    const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container App environment "{0}".', nonNullProp(context, 'newKubeEnvironmentName'));
     ext.outputChannel.appendLog(createdKuEnv);
     void window.showInformationMessage(createdKuEnv);
 

@@ -22,7 +22,7 @@ export class KubeEnvironmentCreateStep extends AzureWizardExecuteStep<IKubeEnvir
         const rgName = nonNullValueAndProp(context.resourceGroup, 'name');
         const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 
-        const creatingKuEnv: string = localize('creatingKubeEnvironment', 'Creating new Kubernetes Environment "{0}"...', context.newKubeEnvironmentName);
+        const creatingKuEnv: string = localize('creatingKubeEnvironment', 'Creating new Container App environment "{0}"...', context.newKubeEnvironmentName);
         progress.report({ message: creatingKuEnv });
         ext.outputChannel.appendLog(creatingKuEnv);
 
