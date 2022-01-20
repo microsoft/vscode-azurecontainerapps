@@ -12,6 +12,7 @@ import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
 import { browse } from './browse';
 import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
+import { createKubeEnvironment } from './createKubeEnvironment/createKubeEnvironment';
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
@@ -28,6 +29,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.selectSubscriptions', () => commands.executeCommand('azure-account.selectSubscriptions'));
     registerCommand('containerApps.viewProperties', viewProperties);
     registerCommand('containerApps.browse', browse);
+    registerCommand('containerApps.createKubeEnvironment', createKubeEnvironment);
     registerCommand('containerApps.createContainerApp', createContainerApp);
     registerCommand('containerApps.deployImage', deployImage);
     registerCommand('containerApps.deleteContainerApp', async (context: IActionContext, node?: ContainerAppTreeItem) => await deleteNode(context, ContainerAppTreeItem.contextValue, node));

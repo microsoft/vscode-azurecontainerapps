@@ -4,11 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KubeEnvironment, WebSiteManagementClient } from '@azure/arm-appservice';
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, ResourceGroupListStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, ResourceGroupListStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { IKubeEnvironmentContext } from '../commands/createKubeEnvironment/IKubeEnvironmentContext';
+import { KubeEnvironmentCreateStep } from '../commands/createKubeEnvironment/KubeEnvironmentCreateStep';
 import { KubeEnvironmentNameStep } from '../commands/createKubeEnvironment/KubeEnvironmentNameStep';
+import { LogAnalyticsCreateStep } from '../commands/createKubeEnvironment/LogAnalyticsCreateStep';
 import { LogAnalyticsListStep } from '../commands/createKubeEnvironment/LogAnalyticsListStep';
-import { webProvider } from '../constants';
 import { createWebSiteClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
@@ -25,6 +26,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
         const environments: KubeEnvironment[] = [];
+
         for await (const env of client.kubeEnvironments.listBySubscription()) {
             environments.push(env);
         }
@@ -45,11 +47,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const promptSteps: AzureWizardPromptStep<IKubeEnvironmentContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IKubeEnvironmentContext>[] = [];
 
-        // TODO: Confirm whether or not the provider is Microsoft.Web or Microsoft.Web/kubeenvironments
-        // TODO: Write prompt/execute steps to actually create resource
-
         promptSteps.push(new ResourceGroupListStep(), new KubeEnvironmentNameStep(), new LogAnalyticsListStep());
-        executeSteps.push(new VerifyProvidersStep([webProvider]));
+        executeSteps.push(new LogAnalyticsCreateStep(), new KubeEnvironmentCreateStep());
+        LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.Web', 'kubeEnvironments');
+        LocationListStep.addStep(wizardContext, promptSteps);
 
         const wizard: AzureWizard<IKubeEnvironmentContext> = new AzureWizard(wizardContext, {
             title,
@@ -59,6 +60,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         });
 
         await wizard.prompt();
+        context.showCreatingTreeItem(nonNullProp(wizardContext, 'newKubeEnvironmentName'));
         await wizard.execute();
 
         return new KubeEnvironmentTreeItem(this, nonNullProp(wizardContext, 'kubeEnvironment'));

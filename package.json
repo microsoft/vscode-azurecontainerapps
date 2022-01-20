@@ -46,7 +46,8 @@
         "onCommand:containerApps.chooseRevisionMode",
         "onCommand:containerApps.activateRevision",
         "onCommand:containerApps.deactivateRevision",
-        "onCommand:containerApps.restartRevision"
+        "onCommand:containerApps.restartRevision",
+        "onCommand:containerApps.createKubeEnvironment"
     ],
     "main": "./main.js",
     "contributes": {
@@ -143,6 +144,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.createKubeEnvironment",
+                "title": "%containerApps.createKubeEnvironment%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -169,6 +175,11 @@
                     "command": "containerApps.refresh",
                     "when": "view == containerApps && viewItem =~ /azureSubscription|kubeEnvironment|containerApp/",
                     "group": "z@1"
+                },
+                {
+                    "command": "containerApps.createKubeEnvironment",
+                    "when": "view == containerApps && viewItem =~ /azureSubscription/",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",

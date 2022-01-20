@@ -19,5 +19,6 @@
     "containerApps.chooseRevisionMode": "Choose Revision Mode...",
     "containerApps.activateRevision": "Activate",
     "containerApps.deactivateRevision": "Deactivate",
-    "containerApps.restartRevision": "Restart"
+    "containerApps.restartRevision": "Restart",
+    "containerApps.createKubeEnvironment": "Create Container App Environment..."
 }

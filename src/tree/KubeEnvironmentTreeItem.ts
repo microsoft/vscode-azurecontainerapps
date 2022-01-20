@@ -38,7 +38,6 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
 
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
-
     }
 
     public get iconPath(): TreeItemIconPath {
@@ -88,6 +87,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
         });
 
         await wizard.prompt();
+        context.showCreatingTreeItem(nonNullProp(wizardContext, 'newContainerAppName'));
         await wizard.execute();
 
         return new ContainerAppTreeItem(this, nonNullProp(wizardContext, 'containerApp'));
