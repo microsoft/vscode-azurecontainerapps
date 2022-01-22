@@ -25,8 +25,8 @@ let config = dev.getDefaultWebpackConfig({
         '../build/Release/validation': 'commonjs ../build/Release/validation',
         '../build/default/validation': 'commonjs ../build/default/validation',
         '../build/Release/bufferutil': 'commonjs ../build/Release/bufferutil',
-        '../build/default/bufferutil': 'commonjs ../build/default/bufferutil',
-    }
+        '../build/default/bufferutil': 'commonjs ../build/default/bufferutil'
+    },
 });
 
 if (DEBUG_WEBPACK) {
@@ -34,3 +34,11 @@ if (DEBUG_WEBPACK) {
 }
 
 module.exports = config;
+
+config.module = {
+    rules: [
+        {
+            loader: 'node-loader'
+        }
+    ]
+};

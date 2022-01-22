@@ -304,6 +304,7 @@
         "mocha": "^8.3.2",
         "mocha-junit-reporter": "^2.0.0",
         "mocha-multi-reporters": "^1.1.7",
+        "node-loader": "^2.0.0",
         "ts-node": "^7.0.1",
         "typescript": "^4.3.5",
         "vsce": "^1.87.1",
@@ -313,7 +314,7 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-appservice": "9.0.0",
+        "@azure/arm-appservice": "11.0.0",
         "@azure/arm-containerregistry": "^8.1.1",
         "@azure/arm-operationalinsights": "^7.1.1",
         "@azure/arm-resources": "^4.2.2",
