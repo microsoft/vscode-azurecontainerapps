@@ -46,7 +46,8 @@
         "onCommand:containerApps.chooseRevisionMode",
         "onCommand:containerApps.activateRevision",
         "onCommand:containerApps.deactivateRevision",
-        "onCommand:containerApps.restartRevision"
+        "onCommand:containerApps.restartRevision",
+        "onCommand:containerApps.createKubeEnvironment"
     ],
     "main": "./main.js",
     "contributes": {
@@ -143,6 +144,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.createKubeEnvironment",
+                "title": "%containerApps.createKubeEnvironment%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -169,6 +175,11 @@
                     "command": "containerApps.refresh",
                     "when": "view == containerApps && viewItem =~ /azureSubscription|kubeEnvironment|containerApp/",
                     "group": "z@1"
+                },
+                {
+                    "command": "containerApps.createKubeEnvironment",
+                    "when": "view == containerApps && viewItem =~ /azureSubscription/",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",
@@ -316,7 +327,7 @@
     "dependencies": {
         "@azure/arm-appservice": "11.0.0",
         "@azure/arm-containerregistry": "^8.1.1",
-        "@azure/arm-operationalinsights": "^7.1.1",
+        "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^4.2.2",
         "@azure/container-registry": "^1.0.0-beta.5",
         "@azure/identity": "^1.5.2",
