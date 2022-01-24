@@ -286,7 +286,7 @@
         "build": "tsc",
         "cleanReadme": "gulp cleanReadme",
         "compile": "tsc -watch",
-        "package": "vsce package --githubBranch main",
+        "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --ext .ts .",
         "lint-fix": "eslint --ext .ts . --fix",
         "pretest": "npm run webpack-prod && gulp preTest",
