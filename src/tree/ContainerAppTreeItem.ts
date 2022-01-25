@@ -88,7 +88,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             } catch (error) {
                 const pError = parseError(error);
                 // a 204 indicates a success, but sdk is catching it as an exception
-                if (pError.errorType !== '204') {
+                // accept any 2xx reponse code
+                if (Number(pError.errorType) < 200 || Number(pError.errorType) >= 300) {
                     throw error;
                 }
             }

@@ -109,7 +109,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
                 const pError = parseError(error);
                 // a 204 indicates a success, but sdk is catching it as an exception:
                 // Received unexpected HTTP status code 204 while polling. This may indicate a server issue.
-                if (pError.errorType !== '204') {
+                if (Number(pError.errorType) < 200 || Number(pError.errorType) >= 300) {
                     throw error;
                 }
             }
