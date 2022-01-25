@@ -20,5 +20,6 @@
     "containerApps.activateRevision": "Activate",
     "containerApps.deactivateRevision": "Deactivate",
     "containerApps.restartRevision": "Restart",
-    "containerApps.createKubeEnvironment": "Create Container App Environment..."
+    "containerApps.createKubeEnvironment": "Create Container App Environment...",
+    "containerApps.deleteKubeEnvironment": "Delete Container App Environment...",
 }

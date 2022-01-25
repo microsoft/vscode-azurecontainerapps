@@ -9,7 +9,6 @@ import { ext } from "../../extensionVariables";
 import { KubeEnvironmentTreeItem } from "../../tree/KubeEnvironmentTreeItem";
 import { SubscriptionTreeItem } from "../../tree/SubscriptionTreeItem";
 import { localize } from "../../utils/localize";
-import { nonNullProp } from "../../utils/nonNull";
 import { IKubeEnvironmentContext } from "./IKubeEnvironmentContext";
 
 export async function createKubeEnvironment(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IKubeEnvironmentContext>, node?: SubscriptionTreeItem): Promise<KubeEnvironmentTreeItem> {
@@ -18,7 +17,7 @@ export async function createKubeEnvironment(context: IActionContext & Partial<IC
     }
 
     const keNode: KubeEnvironmentTreeItem = await node.createChild(context);
-    const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container App environment "{0}".', nonNullProp(context, 'newKubeEnvironmentName'));
+    const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container App environment "{0}".', keNode.name);
     ext.outputChannel.appendLog(createdKuEnv);
     void window.showInformationMessage(createdKuEnv);
 

@@ -7,6 +7,7 @@ import { commands } from 'vscode';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
+import { KubeEnvironmentTreeItem } from '../tree/KubeEnvironmentTreeItem';
 import { RevisionTreeItem } from '../tree/RevisionTreeItem';
 import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
 import { browse } from './browse';
@@ -32,6 +33,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.createKubeEnvironment', createKubeEnvironment);
     registerCommand('containerApps.createContainerApp', createContainerApp);
     registerCommand('containerApps.deployImage', deployImage);
+    registerCommand('containerApps.deleteKubeEnvironment', async (context: IActionContext, node?: KubeEnvironmentTreeItem) => await deleteNode(context, KubeEnvironmentTreeItem.contextValue, node));
     registerCommand('containerApps.deleteContainerApp', async (context: IActionContext, node?: ContainerAppTreeItem) => await deleteNode(context, ContainerAppTreeItem.contextValue, node));
     registerCommand('containerApps.openLogs', openLogs);
     registerCommand('containerApps.enableIngress', toggleIngress);

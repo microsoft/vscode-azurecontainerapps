@@ -4,13 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, KubeEnvironment, WebSiteManagementClient } from "@azure/arm-appservice";
-import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
+import { ProgressLocation, window } from "vscode";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { webProvider } from "../constants";
+import { ext } from "../extensionVariables";
 import { createWebSiteClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
@@ -93,6 +95,27 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
         return new ContainerAppTreeItem(this, nonNullProp(wizardContext, 'containerApp'));
     }
 
-    // TODO: deleteTreeItemImpl
-    // TODO: Create container logs
+    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
+        const message: string = localize('ConfirmDeleteKubeEnv', 'Are you sure you want to delete Container App environment "{0}"?', this.name);
+        const deleting: string = localize('DeletingKubeEnv', 'Deleting Container App environment "{0}"...', this.name);
+        const deleteSucceeded: string = localize('DeleteKubeEnvSucceeded', 'Successfully deleted Container App environment "{0}".', this.name);
+        await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
+        await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
+            ext.outputChannel.appendLog(deleting);
+            const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+            try {
+                await client.kubeEnvironments.beginDeleteAndWait(this.resourceGroupName, this.name);
+            } catch (error) {
+                const pError = parseError(error);
+                // a 204 indicates a success, but sdk is catching it as an exception:
+                // Received unexpected HTTP status code 204 while polling. This may indicate a server issue.
+                if (pError.errorType !== '204') {
+                    throw error;
+                }
+            }
+
+            void window.showInformationMessage(deleteSucceeded);
+            ext.outputChannel.appendLog(deleteSucceeded);
+        });
+    }
 }
