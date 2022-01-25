@@ -37,6 +37,7 @@
         "onCommand:containerApps.openInPortal",
         "onCommand:containerApps.createContainerApp",
         "onCommand:containerApps.deployImage",
+        "onCommand:containerApps.deleteKubeEnvironment",
         "onCommand:containerApps.deleteContainerApp",
         "onCommand:containerApps.openLogs",
         "onCommand:containerApps.disableIngress",
@@ -91,6 +92,11 @@
             {
                 "command": "containerApps.deployImage",
                 "title": "%containerApps.deployImage%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deleteKubeEnvironment",
+                "title": "%containerApps.deleteKubeEnvironment%",
                 "category": "Azure Container Apps"
             },
             {
@@ -185,6 +191,11 @@
                     "command": "containerApps.createContainerApp",
                     "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deleteKubeEnvironment",
+                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.deployImage",

@@ -88,7 +88,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             } catch (error) {
                 const pError = parseError(error);
                 // a 204 indicates a success, but sdk is catching it as an exception
-                if (pError.errorType !== '204') {
+                // accept any 2xx reponse code
+                if (Number(pError.errorType) < 200 || Number(pError.errorType) >= 300) {
                     throw error;
                 }
             }
@@ -135,6 +136,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             queryParameters: { 'api-version': '2021-03-01' },
             pathTemplate: `${this.id}/listSecrets`,
         };
+
         const response = await sendRequestWithTimeout(context, options, 5000, this.subscription.credentials);
         // if 204, needs to be an empty []
         concreteContainerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
