@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KubeEnvironment, WebSiteManagementClient } from '@azure/arm-appservice';
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, ResourceGroupListStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils } from 'vscode-azureextensionui';
 import { IKubeEnvironmentContext } from '../commands/createKubeEnvironment/IKubeEnvironmentContext';
 import { KubeEnvironmentCreateStep } from '../commands/createKubeEnvironment/KubeEnvironmentCreateStep';
 import { KubeEnvironmentNameStep } from '../commands/createKubeEnvironment/KubeEnvironmentNameStep';
 import { LogAnalyticsCreateStep } from '../commands/createKubeEnvironment/LogAnalyticsCreateStep';
-import { LogAnalyticsListStep } from '../commands/createKubeEnvironment/LogAnalyticsListStep';
 import { createWebSiteClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
@@ -33,7 +32,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
             ke => new KubeEnvironmentTreeItem(this, ke),
             ke => ke.name
         );
-
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
@@ -43,8 +41,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const promptSteps: AzureWizardPromptStep<IKubeEnvironmentContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IKubeEnvironmentContext>[] = [];
 
-        promptSteps.push(new ResourceGroupListStep(), new KubeEnvironmentNameStep(), new LogAnalyticsListStep());
-        executeSteps.push(new LogAnalyticsCreateStep(), new KubeEnvironmentCreateStep());
+        promptSteps.push(new KubeEnvironmentNameStep());
+        executeSteps.push(new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new KubeEnvironmentCreateStep());
         LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.Web', 'kubeEnvironments');
         LocationListStep.addStep(wizardContext, promptSteps);
 
@@ -56,7 +54,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         });
 
         await wizard.prompt();
-        context.showCreatingTreeItem(nonNullProp(wizardContext, 'newKubeEnvironmentName'));
+        const newKubeEnvName = nonNullProp(wizardContext, 'newKubeEnvironmentName');
+        context.showCreatingTreeItem(newKubeEnvName);
+        wizardContext.newResourceGroupName = newKubeEnvName;
         await wizard.execute();
 
         return new KubeEnvironmentTreeItem(this, nonNullProp(wizardContext, 'kubeEnvironment'));

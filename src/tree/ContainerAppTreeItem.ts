@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, Secret, WebSiteManagementClient } from "@azure/arm-appservice";
-import { ProgressLocation, window } from "vscode";
+import { MarkdownString, ProgressLocation, window } from "vscode";
 import { AzExtParentTreeItem, AzExtRequestPrepareOptions, AzExtTreeItem, DialogResponses, IActionContext, parseError, sendRequestWithTimeout, TreeItemIconPath } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { createWebSiteClient } from "../utils/azureClients";
@@ -73,9 +73,15 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         await openUrl(nonNullProp(this.data, 'latestRevisionFqdn'));
     }
 
-    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
+    public async deleteTreeItem(context: IActionContext, skipConfirmation: boolean = false): Promise<void> {
+        await this.deleteTreeItemImpl(context, skipConfirmation);
+    }
+
+    public async deleteTreeItemImpl(context: IActionContext, skipConfirmation: boolean = false): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        await context.ui.showWarningMessage(confirmMessage, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
+        if (!skipConfirmation) {
+            await context.ui.showWarningMessage(confirmMessage, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
+        }
 
         const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', this.name);
         const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', this.name);
@@ -141,6 +147,23 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         // if 204, needs to be an empty []
         concreteContainerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
         return concreteContainerAppEnvelope;
+    }
+
+    public async resolveTooltip(): Promise<MarkdownString> {
+        return new MarkdownString(`
+## ${this.name}
+
+---
+
+### Latest Revision
+${this.data.latestRevisionName}
+
+### Fully Qualified Domain Name
+[${this.data.latestRevisionFqdn}](https://${this.data.latestRevisionFqdn})
+
+### Traffic Weight
+${JSON.stringify(this.data.configuration?.ingress?.traffic)}
+        `)
     }
 }
 

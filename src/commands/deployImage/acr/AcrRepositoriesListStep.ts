@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { QuickPickItem } from "vscode";
+import { uiUtils } from "vscode-azureextensionui";
 import { createContainerRegistryClient } from "../../../utils/azureClients";
 import { nonNullValue } from "../../../utils/nonNull";
 import { IDeployImageContext } from "../IDeployImageContext";

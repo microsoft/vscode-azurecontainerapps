@@ -18,7 +18,7 @@ export class KubeEnvironmentCreateStep extends AzureWizardExecuteStep<IKubeEnvir
 
     public async execute(context: IKubeEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: WebSiteManagementClient = await createWebSiteClient(context);
-        const opClient = createOperationalInsightsManagementClient(context);
+        const opClient = await createOperationalInsightsManagementClient(context);
         const rgName = nonNullValueAndProp(context.resourceGroup, 'name');
         const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 

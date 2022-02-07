@@ -15,7 +15,7 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IKubeEnvironm
     public priority: number = 200;
 
     public async execute(context: IKubeEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const opClient = createOperationalInsightsManagementClient(context);
+        const opClient = await createOperationalInsightsManagementClient(context);
         const rg = nonNullValue(context.resourceGroup);
 
         const creatingLaw: string = localize('creatingLogAnalyticWorkspace', 'Creating new Log Analytic workspace...');
