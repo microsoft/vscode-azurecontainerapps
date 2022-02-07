@@ -7,43 +7,31 @@ import { WebSiteManagementClient } from '@azure/arm-appservice';
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
-import { VisualStudioCodeCredential } from '@azure/identity';
 import { LogAnalyticsClient } from '@azure/loganalytics';
-import { appendExtensionUserAgent, AzExtClientContext, parseClientContext } from 'vscode-azureextensionui';
+import { AzExtClientContext, createAzureClient, parseClientContext } from 'vscode-azureextensionui';
 
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript
 
 export async function createWebSiteClient(context: AzExtClientContext): Promise<WebSiteManagementClient> {
-    const clientContext = parseClientContext(context);
-    const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
-    return new WebSiteManagementClient(cred, clientContext.subscriptionId,
-        {
-            endpoint: 'https://brazilus.management.azure.com/',
-            userAgentOptions: { userAgentPrefix: appendExtensionUserAgent() }
-        });
+    return createAzureClient(context, (await import('@azure/arm-appservice')).WebSiteManagementClient);
 }
 
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
-    const clientContext = parseClientContext(context);
-    const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
-    return new ContainerRegistryManagementClient(cred, clientContext.subscriptionId);
+    return createAzureClient(context, (await import('@azure/arm-containerregistry')).ContainerRegistryManagementClient);
 }
 
-export function createContainerRegistryClient(registry: ContainerRegistryManagementModels.Registry): ContainerRegistryClient {
-    return new ContainerRegistryClient(`https://${registry.loginServer}`, new VisualStudioCodeCredential({}),
+export function createContainerRegistryClient(context: AzExtClientContext, registry: ContainerRegistryManagementModels.Registry): ContainerRegistryClient {
+    const clientContext = parseClientContext(context);
+    return new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
 }
-
-
 
 export function createLogAnalyticsClient(context: AzExtClientContext): LogAnalyticsClient {
     const clientContext = parseClientContext(context);
     return new LogAnalyticsClient(clientContext.credentials);
 }
 
-export function createOperationalInsightsManagementClient(context: AzExtClientContext): OperationalInsightsManagementClient {
-    const clientContext = parseClientContext(context);
-    const cred = new VisualStudioCodeCredential({ tenantId: clientContext.tenantId })
-    return new OperationalInsightsManagementClient(cred, clientContext.subscriptionId);
+export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
+    return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
 }

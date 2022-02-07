@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Workspace } from '@azure/arm-operationalinsights';
-import { AzureWizardPromptStep, IAzureQuickPickItem } from 'vscode-azureextensionui';
+import { AzureWizardPromptStep, IAzureQuickPickItem, uiUtils } from 'vscode-azureextensionui';
 import { createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from '../../utils/localize';
 import { nonNullProp } from '../../utils/nonNull';
@@ -29,14 +29,10 @@ export class LogAnalyticsListStep extends AzureWizardPromptStep<IKubeEnvironment
             data: undefined
         });
 
-        const opClient = createOperationalInsightsManagementClient(context);
+        const opClient = await createOperationalInsightsManagementClient(context);
 
-        const workspaces: Workspace[] = [];
-        // could be more efficient to call this once at Subscription level, and filter based off that
-        // but then risk stale data
-        for await (const ws of opClient.workspaces.list()) {
-            workspaces.push(ws);
-        }
+        const workspaces: Workspace[] = await uiUtils.listAllIterator(opClient.workspaces.list);
+
         return picks.concat(workspaces.map(ws => {
             return { label: nonNullProp(ws, 'name'), data: ws }
         }));

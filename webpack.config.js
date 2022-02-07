@@ -16,10 +16,7 @@ let DEBUG_WEBPACK = !/^(false|0)?$/i.test(process.env.DEBUG_WEBPACK || '');
 
 let config = dev.getDefaultWebpackConfig({
     projectRoot: __dirname,
-    verbosity: DEBUG_WEBPACK ? 'debug' : 'normal',
-    loaderRules: [
-        { test: /\.node$/, loader: 'node-loader', }
-    ]
+    verbosity: DEBUG_WEBPACK ? 'debug' : 'normal'
 });
 
 if (DEBUG_WEBPACK) {

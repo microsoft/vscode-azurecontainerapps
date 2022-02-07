@@ -5,7 +5,7 @@
 
 import { ContainerApp, KubeEnvironment, WebSiteManagementClient } from "@azure/arm-appservice";
 import { ProgressLocation, window } from "vscode";
-import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, UserCancelledError, VerifyProvidersStep } from "vscode-azureextensionui";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
@@ -17,6 +17,7 @@ import { createWebSiteClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
+import { settingUtils } from "../utils/settingUtils";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
@@ -90,20 +91,29 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
 
         await wizard.prompt();
         context.showCreatingTreeItem(nonNullProp(wizardContext, 'newContainerAppName'));
-        await wizard.execute();
+        try {
+            await wizard.execute();
+        } finally {
+            // refresh this node even if create fails because container app provision failure throws an error, but still creates a container app
+            await this.refresh(context);
+        }
 
         return new ContainerAppTreeItem(this, nonNullProp(wizardContext, 'containerApp'));
     }
 
     public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
-        const message: string = localize('ConfirmDeleteKubeEnv', 'Are you sure you want to delete Container App environment "{0}"?', this.name);
+        const containerApps = <ContainerAppTreeItem[]>(await this.loadAllChildren(context));
+        await promptForDelete(this, containerApps);
+
+        if (containerApps.length) {
+            await this.deleteAllContainerApps(context, containerApps);
+        }
+
         const deleting: string = localize('DeletingKubeEnv', 'Deleting Container App environment "{0}"...', this.name);
-        const deleteSucceeded: string = localize('DeleteKubeEnvSucceeded', 'Successfully deleted Container App environment "{0}".', this.name);
-        await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            ext.outputChannel.appendLog(deleting);
             const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
             try {
+                ext.outputChannel.appendLog(deleting);
                 await client.kubeEnvironments.beginDeleteAndWait(this.resourceGroupName, this.name);
             } catch (error) {
                 const pError = parseError(error);
@@ -113,9 +123,46 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
                     throw error;
                 }
             }
-
+            const deleteSucceeded: string = localize('DeleteKubeEnvSucceeded', 'Successfully deleted container app environment "{0}".', this.name);
             void window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });
+
+        async function promptForDelete(node: KubeEnvironmentTreeItem, containerApps: ContainerAppTreeItem[]): Promise<void> {
+            const numOfResources = containerApps.length;
+            const hasNoResources: boolean = !numOfResources;
+
+            const deleteEnv: string = localize('ConfirmDeleteKubeEnv', 'Are you sure you want to delete container app environment "{0}"?', node.name);
+            const deleteEnvAndApps: string = localize('ConfirmDeleteEnvAndApps', 'Are you sure you want to delete Container App environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
+                node.name, numOfResources);
+
+            const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSetting('deleteConfirmation');
+            if (deleteConfirmation === 'ClickButton' || hasNoResources) {
+                const message: string = hasNoResources ? deleteEnv : deleteEnvAndApps;
+                await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse); // no need to check result - cancel will throw error
+            } else {
+                const prompt: string = localize('enterToDelete', 'Enter "{0}" to delete this Container App environment. Deleting this will delete {1} container app(s) in this environment.',
+                    node.name, numOfResources);
+
+                const result: string = await context.ui.showInputBox({ prompt, validateInput });
+                if (!isNameEqual(result, node)) { // Check again just in case `validateInput` didn't prevent the input box from closing
+                    context.telemetry.properties.cancelStep = 'mismatchDelete';
+                    throw new UserCancelledError();
+                }
+
+                function validateInput(val: string | undefined): string | undefined {
+                    return isNameEqual(val, node) ? undefined : prompt;
+                }
+
+                function isNameEqual(val: string | undefined, node: KubeEnvironmentTreeItem): boolean {
+                    return !!val && val.toLowerCase() === node.name.toLowerCase();
+                }
+            }
+        }
+    }
+
+    private async deleteAllContainerApps(context: IActionContext, containerApps: ContainerAppTreeItem[]): Promise<void> {
+        const deletePromises = containerApps.map(c => c.deleteTreeItem(context, true));
+        await Promise.all(deletePromises);
     }
 }
