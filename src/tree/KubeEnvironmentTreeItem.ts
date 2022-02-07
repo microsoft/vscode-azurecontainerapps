@@ -5,7 +5,7 @@
 
 import { ContainerApp, KubeEnvironment, WebSiteManagementClient } from "@azure/arm-appservice";
 import { ProgressLocation, window } from "vscode";
-import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, uiUtils, VerifyProvidersStep } from "vscode-azureextensionui";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
@@ -48,14 +48,9 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
-        const containerApps: ContainerApp[] = [];
-        // could be more efficient to call this once at Subscription level, and filter based off that
-        // but then risk stale data
-        for await (const ca of client.containerApps.listBySubscription()) {
-            if (ca.kubeEnvironmentId && ca.kubeEnvironmentId === this.id) {
-                containerApps.push(ca);
-            }
-        }
+        // could be more efficient to call this once at Subscription level, and filter based off that but then risk stale data
+        const containerApps: ContainerApp[] = (await uiUtils.listAllIterator(client.containerApps.listBySubscription()))
+            .filter(ca => ca.kubeEnvironmentId && ca.kubeEnvironmentId === this.id)
 
         return await this.createTreeItemsWithErrorHandling(
             containerApps,

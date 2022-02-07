@@ -19,6 +19,7 @@ export class AcrTagListStep extends RepositoryTagListStepBase {
             manifests.push(manifest);
         }
 
+        const manifests: ArtifactManifestProperties[] = await uiUtils.listAllIterator(repoClient.listManifestProperties());
         return manifests[0].tags.map((t) => { { return { label: t } } });
     }
 }

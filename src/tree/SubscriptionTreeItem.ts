@@ -25,11 +25,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
-        const environments: KubeEnvironment[] = [];
-
-        for await (const env of client.kubeEnvironments.listBySubscription()) {
-            environments.push(env);
-        }
+        const environments: KubeEnvironment[] = await uiUtils.listAllIterator(client.kubeEnvironments.listBySubscription());
 
         return await this.createTreeItemsWithErrorHandling(
             environments,

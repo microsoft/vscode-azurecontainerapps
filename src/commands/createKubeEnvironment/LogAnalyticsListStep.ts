@@ -29,14 +29,9 @@ export class LogAnalyticsListStep extends AzureWizardPromptStep<IKubeEnvironment
             data: undefined
         });
 
-        const opClient = createOperationalInsightsManagementClient(context);
+        const opClient = await createOperationalInsightsManagementClient(context);
+        const workspaces: Workspace[] = await uiUtils.listAllIterator(opClient.workspaces.list());
 
-        const workspaces: Workspace[] = [];
-        // could be more efficient to call this once at Subscription level, and filter based off that
-        // but then risk stale data
-        for await (const ws of opClient.workspaces.list()) {
-            workspaces.push(ws);
-        }
         return picks.concat(workspaces.map(ws => {
             return { label: nonNullProp(ws, 'name'), data: ws }
         }));
