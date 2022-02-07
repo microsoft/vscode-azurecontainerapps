@@ -21,10 +21,6 @@ import { settingUtils } from "../utils/settingUtils";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
-<<<<<<< HEAD
-=======
-import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, VerifyProvidersStep } from "vscode-azureextensionui";
->>>>>>> efefe1438395e2d9f254b82be51b6651da50cdab
 
 export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'kubeEnvironment|azResource';
