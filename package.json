@@ -198,6 +198,11 @@
                     "group": "3@1"
                 },
                 {
+                    "command": "containerApps.deleteKubeEnvironment",
+                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
+                    "group": "2@1"
+                },
+                {
                     "command": "containerApps.deployImage",
                     "when": "view == containerApps && viewItem =~ /containerApp/",
                     "group": "2@1"
