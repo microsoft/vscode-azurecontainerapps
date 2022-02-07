@@ -23,7 +23,6 @@ import { changeRevisionActiveState } from './revisionCommands/changeRevisionActi
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
-
     registerCommand('containerApps.loadMore', async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context));
     registerCommand('containerApps.openInPortal', openInPortal);
     registerCommand('containerApps.refresh', async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));

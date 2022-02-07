@@ -12,7 +12,6 @@ import { localize } from "../../utils/localize";
 import { nonNullValue } from "../../utils/nonNull";
 
 export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: RevisionTreeItem): Promise<void> {
-
     if (!node) {
         node = await ext.tree.showTreeItemPicker<RevisionTreeItem>(RevisionTreeItem.contextValue, context);
     }

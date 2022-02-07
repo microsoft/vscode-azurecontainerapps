@@ -180,32 +180,32 @@
                 {
                     "command": "containerApps.refresh",
                     "when": "view == containerApps && viewItem =~ /azureSubscription|kubeEnvironment|containerApp/",
-                    "group": "z@1"
+                    "group": "z@2"
                 },
                 {
                     "command": "containerApps.createKubeEnvironment",
                     "when": "view == containerApps && viewItem =~ /azureSubscription/",
-                    "group": "1@1"
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",
                     "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
-                    "group": "1@1"
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteKubeEnvironment",
                     "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
-                    "group": "2@1"
+                    "group": "3@1"
                 },
                 {
                     "command": "containerApps.deployImage",
                     "when": "view == containerApps && viewItem =~ /containerApp/",
-                    "group": "1@1"
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteContainerApp",
                     "when": "view == containerApps && viewItem =~ /containerApp/",
-                    "group": "2@1"
+                    "group": "3@1"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
@@ -250,12 +250,12 @@
                 {
                     "command": "containerApps.viewProperties",
                     "when": "view == containerApps && viewItem =~ /azResource/",
-                    "group": "2@1"
+                    "group": "z@1"
                 },
                 {
                     "command": "containerApps.openInPortal",
                     "when": "view == containerApps && viewItem =~ /kubeEnvironment|containerApp/",
-                    "group": "2@2"
+                    "group": "1@1"
                 }
             ],
             "commandPalette": [
@@ -282,6 +282,19 @@
                         "description": "%containerApps.enableOutputTimestamps%",
                         "default": true
                     }
+                },
+                "containerApps.deleteConfirmation": {
+                    "type": "string",
+                    "enum": [
+                        "EnterName",
+                        "ClickButton"
+                    ],
+                    "description": "%containerApps.deleteConfirmation%",
+                    "enumDescriptions": [
+                        "%containerApps.deleteConfirmation.EnterName%",
+                        "%containerApps.deleteConfirmation.ClickButton%"
+                    ],
+                    "default": "EnterName"
                 }
             }
         ]
@@ -326,7 +339,6 @@
         "mocha": "^8.3.2",
         "mocha-junit-reporter": "^2.0.0",
         "mocha-multi-reporters": "^1.1.7",
-        "node-loader": "^2.0.0",
         "ts-node": "^7.0.1",
         "typescript": "^4.3.5",
         "vsce": "^1.87.1",
@@ -341,12 +353,11 @@
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^4.2.2",
         "@azure/container-registry": "^1.0.0-beta.5",
-        "@azure/identity": "^1.5.2",
         "@azure/loganalytics": "^0.3.0",
         "@azure/ms-rest-js": "^2.2.1",
         "open": "^8.0.4",
         "semver": "^7.3.5",
-        "vscode-azureextensionui": "0.48.5",
+        "vscode-azureextensionui": "file:../vscode-azuretools/ui/vscode-azureextensionui-0.50.0.tgz",
         "vscode-nls": "^4.1.1"
     },
     "extensionDependencies": [
