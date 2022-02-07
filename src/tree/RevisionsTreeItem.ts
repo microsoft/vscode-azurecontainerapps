@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Revision, WebSiteManagementClient } from "@azure/arm-appservice";
-import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath } from "vscode-azureextensionui";
+import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath, uiUtils } from "vscode-azureextensionui";
 import { RevisionConstants } from "../constants";
 import { createWebSiteClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
@@ -37,11 +37,7 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
-        const revisions: Revision[] = [];
-
-        for await (const re of client.containerAppsRevisions.listRevisions(this.parent.resourceGroupName, this.parent.name)) {
-            revisions.push(re);
-        }
+        const revisions: Revision[] = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.parent.resourceGroupName, this.parent.name));
 
         return await this.createTreeItemsWithErrorHandling(
             revisions,
