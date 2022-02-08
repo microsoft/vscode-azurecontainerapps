@@ -16,7 +16,7 @@ export class AcrTagListStep extends RepositoryTagListStepBase {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
         const repoClient = client.getRepository(nonNullProp(context, 'repositoryName'));
 
-        const manifests: ArtifactManifestProperties[] = await uiUtils.listAllIterator(repoClient.listManifestProperties);
+        const manifests: ArtifactManifestProperties[] = await uiUtils.listAllIterator(repoClient.listManifestProperties());
         return manifests[0].tags.map((t) => { { return { label: t } } });
     }
 }

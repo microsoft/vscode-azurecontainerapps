@@ -30,8 +30,7 @@ export class LogAnalyticsListStep extends AzureWizardPromptStep<IKubeEnvironment
         });
 
         const opClient = await createOperationalInsightsManagementClient(context);
-
-        const workspaces: Workspace[] = await uiUtils.listAllIterator(opClient.workspaces.list);
+        const workspaces: Workspace[] = await uiUtils.listAllIterator(opClient.workspaces.list());
 
         return picks.concat(workspaces.map(ws => {
             return { label: nonNullProp(ws, 'name'), data: ws }

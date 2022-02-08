@@ -13,7 +13,7 @@ import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBas
 export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
     public async getPicks(context: IDeployImageContext): Promise<QuickPickItem[]> {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
-        const repositoryNames: string[] = await uiUtils.listAllIterator(client.listRepositoryNames);
+        const repositoryNames: string[] = await uiUtils.listAllIterator(client.listRepositoryNames());
 
         return repositoryNames.map((rn) => { return { label: rn } });
     }
