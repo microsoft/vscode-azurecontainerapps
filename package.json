@@ -48,7 +48,8 @@
         "onCommand:containerApps.activateRevision",
         "onCommand:containerApps.deactivateRevision",
         "onCommand:containerApps.restartRevision",
-        "onCommand:containerApps.createKubeEnvironment"
+        "onCommand:containerApps.createKubeEnvironment",
+        "onCommand:containerApps.browse"
     ],
     "main": "./main.js",
     "contributes": {
@@ -155,6 +156,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.browse",
+                "title": "%containerApps.browse%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.testCommand",
                 "title": "Test Command",
                 "category": "Azure Container Apps"
@@ -196,11 +202,6 @@
                     "command": "containerApps.deleteKubeEnvironment",
                     "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
                     "group": "3@1"
-                },
-                {
-                    "command": "containerApps.deleteKubeEnvironment",
-                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
-                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.deployImage",
@@ -261,6 +262,11 @@
                     "command": "containerApps.openInPortal",
                     "when": "view == containerApps && viewItem =~ /kubeEnvironment|containerApp/",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.browse",
+                    "when": "view == containerApps && viewItem =~ /containerApp/",
+                    "group": "1@2"
                 }
             ],
             "commandPalette": [

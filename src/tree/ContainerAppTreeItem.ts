@@ -70,7 +70,11 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async browse(): Promise<void> {
         // make sure that ingress is enabled
-        await openUrl(nonNullProp(this.data, 'latestRevisionFqdn'));
+        if (!this.data.latestRevisionFqdn) {
+            throw new Error(localize('enableIngress', 'Enable ingress to perform this action.'));
+        }
+
+        await openUrl(`https://${this.data.latestRevisionFqdn}`);
     }
 
     public async deleteTreeItem(context: IActionContext, skipConfirmation: boolean = false): Promise<void> {
