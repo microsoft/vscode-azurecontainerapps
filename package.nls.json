@@ -7,6 +7,7 @@
     "containerApps.selectSubscriptions": "Select Subscriptions...",
     "containerApps.description": "An Azure Container Apps extension for Visual Studio Code.",
     "containerApps.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
+    "containerApps.browse": "Browse",
     "containerApps.openInPortal": "Open in Portal",
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.deployImage": "Deploy Image to Container App...",

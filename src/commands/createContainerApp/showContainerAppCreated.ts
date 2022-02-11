@@ -19,7 +19,7 @@ export async function showContainerAppCreated(caNode: ContainerAppTreeItem): Pro
             context.telemetry.properties.clicked = 'canceled';
             if (result === browse) {
                 await caNode.browse();
-                context.telemetry.properties.clicked = 'showActions';
+                context.telemetry.properties.clicked = 'browse';
             }
         });
     });
