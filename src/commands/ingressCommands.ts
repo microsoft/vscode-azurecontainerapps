@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Ingress, WebSiteManagementClient } from '@azure/arm-appservice';
+import { ContainerAppsAPIClient, Ingress } from "@azure/arm-app";
 import { ProgressLocation, window } from 'vscode';
 import { AzureWizard, AzureWizardPromptStep, IActionContext } from 'vscode-azureextensionui';
 import { IngressConstants } from '../constants';
 import { ext } from '../extensionVariables';
 import { IngressDisabledTreeItem, IngressTreeItem } from '../tree/IngressTreeItem';
-import { createWebSiteClient } from '../utils/azureClients';
+import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullValueAndProp } from '../utils/nonNull';
 import { EnableIngressStep } from './createContainerApp/EnableIngressStep';
@@ -111,7 +111,7 @@ async function updateIngressSettings(context: IActionContext,
     const containerAppEnvelope = await node.parent.getContainerEnvelopeWithSecrets(context);
     containerAppEnvelope.configuration.ingress = ingress;
 
-    const client: WebSiteManagementClient = await createWebSiteClient([context, node]);
+    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
     const resourceGroupName = node.parent.resourceGroupName;
     const name = node.parent.name;
 

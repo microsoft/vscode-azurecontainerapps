@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KubeEnvironment } from '@azure/arm-appservice';
+import { ManagedEnvironment } from '@azure/arm-app';
 import { Workspace } from '@azure/arm-operationalinsights';
 import { ICreateChildImplContext, IResourceGroupWizardContext } from 'vscode-azureextensionui';
 
-export interface IKubeEnvironmentContext extends IResourceGroupWizardContext, ICreateChildImplContext {
+export interface IManagedEnvironmentContext extends IResourceGroupWizardContext, ICreateChildImplContext {
 
-    newKubeEnvironmentName?: string;
+    newManagedEnvironmentName?: string;
     logAnalyticsWorkspace?: Workspace;
 
     // created when the wizard is done executing
-    kubeEnvironment?: KubeEnvironment;
+    ManagedEnvironment?: ManagedEnvironment;
 }

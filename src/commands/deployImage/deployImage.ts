@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { ProgressLocation, window } from "vscode";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, VerifyProvidersStep } from "vscode-azureextensionui";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
-import { createWebSiteClient } from "../../utils/azureClients";
+import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullValue } from "../../utils/nonNull";
 import { getLoginServer } from "../createContainerApp/getLoginServer";
@@ -66,7 +66,7 @@ export async function deployImage(context: IActionContext & Partial<IDeployImage
     await node.runWithTemporaryDescription(context, localize('addingContainer', 'Creating...'), async () => {
         await window.withProgress({ location: ProgressLocation.Notification, title: creatingRevision }, async (): Promise<void> => {
             node = nonNullValue(node);
-            const webClient: WebSiteManagementClient = await createWebSiteClient([wizardContext, node]);
+            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([wizardContext, node]);
 
             ext.outputChannel.appendLog(creatingRevision);
             node.data = await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerAppEnvelope);

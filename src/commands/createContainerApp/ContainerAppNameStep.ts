@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from '@azure/arm-appservice';
+import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
-import { containerAppProvider } from '../../constants';
-import { createWebSiteClient } from '../../utils/azureClients';
+import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { IContainerAppContext } from './IContainerAppContext';
 
@@ -41,10 +40,12 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppCon
         }
 
         // do the API call last
-        const client: WebSiteManagementClient = await createWebSiteClient(context);
-        const availability = await client.checkNameAvailability(name, containerAppProvider);
-        if (!availability.nameAvailable) {
-            return availability.reason;
+        try {
+            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+            await client.containerApps.get(name, name);
+            return 'Name exists';
+        } catch (err) {
+            // do nothing
         }
 
 

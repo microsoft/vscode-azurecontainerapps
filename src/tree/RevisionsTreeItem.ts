@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Revision, WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerAppsAPIClient, Revision } from "@azure/arm-app";
 import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath, uiUtils } from "vscode-azureextensionui";
 import { RevisionConstants } from "../constants";
-import { createWebSiteClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
@@ -36,7 +36,7 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
-        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         const revisions: Revision[] = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.parent.resourceGroupName, this.parent.name));
 
         return await this.createTreeItemsWithErrorHandling(
@@ -52,7 +52,7 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
     }
 
     public async getRevision(context: IActionContext, name: string): Promise<Revision> {
-        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         return await client.containerAppsRevisions.getRevision(this.parent.resourceGroupName, this.parent.name, name);
     }
 }

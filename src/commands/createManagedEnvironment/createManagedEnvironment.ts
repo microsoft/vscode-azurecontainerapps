@@ -6,17 +6,17 @@
 import { window } from "vscode";
 import { IActionContext, ICreateChildImplContext } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
-import { KubeEnvironmentTreeItem } from "../../tree/KubeEnvironmentTreeItem";
+import { ManagedEnvironmentTreeItem } from "../../tree/ManagedEnvironmentTreeItem";
 import { SubscriptionTreeItem } from "../../tree/SubscriptionTreeItem";
 import { localize } from "../../utils/localize";
-import { IKubeEnvironmentContext } from "./IKubeEnvironmentContext";
+import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
-export async function createKubeEnvironment(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IKubeEnvironmentContext>, node?: SubscriptionTreeItem): Promise<KubeEnvironmentTreeItem> {
+export async function createManagedEnvironment(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IManagedEnvironmentContext>, node?: SubscriptionTreeItem): Promise<ManagedEnvironmentTreeItem> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<SubscriptionTreeItem>(SubscriptionTreeItem.contextValue, context);
     }
 
-    const keNode: KubeEnvironmentTreeItem = await node.createChild(context);
+    const keNode: ManagedEnvironmentTreeItem = await node.createChild(context);
     const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container App environment "{0}".', keNode.name);
     ext.outputChannel.appendLog(createdKuEnv);
     void window.showInformationMessage(createdKuEnv);

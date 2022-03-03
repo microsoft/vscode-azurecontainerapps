@@ -3,26 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
-import { createOperationalInsightsManagementClient, createWebSiteClient } from '../../utils/azureClients';
+import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { getResourceGroupFromId } from "../../utils/azureUtils";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
-import { IKubeEnvironmentContext } from "./IKubeEnvironmentContext";
+import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
-export class KubeEnvironmentCreateStep extends AzureWizardExecuteStep<IKubeEnvironmentContext> {
+export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
     public priority: number = 250;
 
-    public async execute(context: IKubeEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const client: WebSiteManagementClient = await createWebSiteClient(context);
+    public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const opClient = await createOperationalInsightsManagementClient(context);
         const rgName = nonNullValueAndProp(context.resourceGroup, 'name');
         const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 
-        const creatingKuEnv: string = localize('creatingKubeEnvironment', 'Creating new Container App environment "{0}"...', context.newKubeEnvironmentName);
+        const creatingKuEnv: string = localize('creatingManagedEnvironment', 'Creating new Container App environment "{0}"...', context.newManagedEnvironmentName);
         progress.report({ message: creatingKuEnv });
         ext.outputChannel.appendLog(creatingKuEnv);
 
@@ -30,10 +30,9 @@ export class KubeEnvironmentCreateStep extends AzureWizardExecuteStep<IKubeEnvir
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
             nonNullProp(logAnalyticsWorkspace, 'name'));
 
-        context.kubeEnvironment = await client.kubeEnvironments.beginCreateOrUpdateAndWait(rgName, nonNullProp(context, 'newKubeEnvironmentName'),
+        context.ManagedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(rgName, nonNullProp(context, 'newManagedEnvironmentName'),
             {
                 location: (await LocationListStep.getLocation(context)).name,
-                environmentType: 'Managed',
                 appLogsConfiguration: {
                     "destination": "log-analytics",
                     "logAnalyticsConfiguration": {
@@ -45,7 +44,7 @@ export class KubeEnvironmentCreateStep extends AzureWizardExecuteStep<IKubeEnvir
         );
     }
 
-    public shouldExecute(context: IKubeEnvironmentContext): boolean {
-        return !context.kubeEnvironment;
+    public shouldExecute(context: IManagedEnvironmentContext): boolean {
+        return !context.ManagedEnvironment;
     }
 }

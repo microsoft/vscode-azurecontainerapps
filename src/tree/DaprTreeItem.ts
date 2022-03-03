@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Dapr } from "@azure/arm-appservice";
+import { Dapr } from "@azure/arm-app";
 import { AzExtTreeItem, TreeItemIconPath } from "vscode-azureextensionui";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";

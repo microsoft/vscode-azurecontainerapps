@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { ProgressLocation, window } from "vscode";
 import { IActionContext, IAzureQuickPickItem } from "vscode-azureextensionui";
 import { RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { RevisionsTreeItem } from "../tree/RevisionsTreeItem";
-import { createWebSiteClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { nonNullValue } from "../utils/nonNull";
 
@@ -29,7 +29,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Revisio
 
     if (currentModeQp !== result) {
         // only update it if it's actually different
-        const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
+        const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
         const containerAppEnvelope = await node.parent.getContainerEnvelopeWithSecrets(context);
         const updating = localize('updatingRevision', 'Updating revision mode of "{0}" to "{1}"...', node.parent.name, result.label.toLowerCase());
         const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', node.parent.name, result.label.toLowerCase());
@@ -42,7 +42,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Revisio
         await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
             const pNode = nonNullValue(node).parent;
             ext.outputChannel.appendLog(updating);
-            await webClient.containerApps.beginCreateOrUpdateAndWait(pNode.resourceGroupName, pNode.name, containerAppEnvelope);
+            await appClient.containerApps.beginCreateOrUpdateAndWait(pNode.resourceGroupName, pNode.name, containerAppEnvelope);
 
             void window.showInformationMessage(updated);
             ext.outputChannel.appendLog(updated);

@@ -37,7 +37,7 @@
         "onCommand:containerApps.openInPortal",
         "onCommand:containerApps.createContainerApp",
         "onCommand:containerApps.deployImage",
-        "onCommand:containerApps.deleteKubeEnvironment",
+        "onCommand:containerApps.deleteManagedEnvironment",
         "onCommand:containerApps.deleteContainerApp",
         "onCommand:containerApps.openLogs",
         "onCommand:containerApps.disableIngress",
@@ -48,7 +48,7 @@
         "onCommand:containerApps.activateRevision",
         "onCommand:containerApps.deactivateRevision",
         "onCommand:containerApps.restartRevision",
-        "onCommand:containerApps.createKubeEnvironment",
+        "onCommand:containerApps.createManagedEnvironment",
         "onCommand:containerApps.browse"
     ],
     "main": "./main.js",
@@ -96,8 +96,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.deleteKubeEnvironment",
-                "title": "%containerApps.deleteKubeEnvironment%",
+                "command": "containerApps.deleteManagedEnvironment",
+                "title": "%containerApps.deleteManagedEnvironment%",
                 "category": "Azure Container Apps"
             },
             {
@@ -151,8 +151,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.createKubeEnvironment",
-                "title": "%containerApps.createKubeEnvironment%",
+                "command": "containerApps.createManagedEnvironment",
+                "title": "%containerApps.createManagedEnvironment%",
                 "category": "Azure Container Apps"
             },
             {
@@ -185,22 +185,22 @@
             "view/item/context": [
                 {
                     "command": "containerApps.refresh",
-                    "when": "view == containerApps && viewItem =~ /azureSubscription|kubeEnvironment|containerApp/",
+                    "when": "view == containerApps && viewItem =~ /azureSubscription|ManagedEnvironment|containerApp/",
                     "group": "z@2"
                 },
                 {
-                    "command": "containerApps.createKubeEnvironment",
+                    "command": "containerApps.createManagedEnvironment",
                     "when": "view == containerApps && viewItem =~ /azureSubscription/",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",
-                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
+                    "when": "view == containerApps && viewItem =~ /ManagedEnvironment/",
                     "group": "2@1"
                 },
                 {
-                    "command": "containerApps.deleteKubeEnvironment",
-                    "when": "view == containerApps && viewItem =~ /kubeEnvironment/",
+                    "command": "containerApps.deleteManagedEnvironment",
+                    "when": "view == containerApps && viewItem =~ /ManagedEnvironment/",
                     "group": "3@1"
                 },
                 {
@@ -260,7 +260,7 @@
                 },
                 {
                     "command": "containerApps.openInPortal",
-                    "when": "view == containerApps && viewItem =~ /kubeEnvironment|containerApp/",
+                    "when": "view == containerApps && viewItem =~ /ManagedEnvironment|containerApp/",
                     "group": "1@1"
                 },
                 {
@@ -359,7 +359,6 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-appservice": "11.0.0",
         "@azure/arm-containerregistry": "^8.1.1",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^4.2.2",

@@ -9,12 +9,12 @@ import { ext } from "../../extensionVariables";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValue } from "../../utils/nonNull";
-import { IKubeEnvironmentContext } from "./IKubeEnvironmentContext";
+import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
-export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IKubeEnvironmentContext> {
+export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
     public priority: number = 200;
 
-    public async execute(context: IKubeEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);
         const rg = nonNullValue(context.resourceGroup);
 
@@ -22,10 +22,10 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IKubeEnvironm
         progress.report({ message: creatingLaw });
         ext.outputChannel.appendLog(creatingLaw);
         context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
-            nonNullProp(rg, 'name'), nonNullProp(context, 'newKubeEnvironmentName'), { location: rg.location });
+            nonNullProp(rg, 'name'), nonNullProp(context, 'newManagedEnvironmentName'), { location: rg.location });
     }
 
-    public shouldExecute(context: IKubeEnvironmentContext): boolean {
+    public shouldExecute(context: IManagedEnvironmentContext): boolean {
         return !context.logAnalyticsWorkspace;
     }
 }

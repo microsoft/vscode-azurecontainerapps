@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WebSiteManagementClient } from '@azure/arm-appservice';
+import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
@@ -13,8 +13,8 @@ import { AzExtClientContext, createAzureClient, parseClientContext } from 'vscod
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript
 
-export async function createWebSiteClient(context: AzExtClientContext): Promise<WebSiteManagementClient> {
-    return createAzureClient(context, (await import('@azure/arm-appservice')).WebSiteManagementClient);
+export async function createContainerAppsAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
+    return createAzureClient(context, (await import('@azure/arm-app')).ContainerAppsAPIClient)
 }
 
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
