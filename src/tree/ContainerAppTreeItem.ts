@@ -29,6 +29,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public name: string;
     public label: string;
+    public managedEnvironmentId: string;
 
     public revisionsTreeItem: RevisionsTreeItem;
 
@@ -41,6 +42,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
+        this.managedEnvironmentId = nonNullProp(this.data, 'managedEnvironmentId');
     }
 
     public get iconPath(): TreeItemIconPath {

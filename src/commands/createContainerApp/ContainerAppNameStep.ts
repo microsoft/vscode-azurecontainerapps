@@ -6,6 +6,7 @@
 import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
+import { getResourceGroupFromId } from "../../utils/azureUtils";
 import { localize } from "../../utils/localize";
 import { IContainerAppContext } from './IContainerAppContext';
 
@@ -42,8 +43,9 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppCon
         // do the API call last
         try {
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-            await client.containerApps.get(name, name);
-            return 'Name exists';
+            const managedEnvironmentRg = getResourceGroupFromId(context.managedEnvironmentId);
+            await client.containerApps.get(managedEnvironmentRg, name);
+            return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}". Please enter a unique name.', name, managedEnvironmentRg);
         } catch (err) {
             // do nothing
         }

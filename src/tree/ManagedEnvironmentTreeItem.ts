@@ -36,15 +36,17 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
         super(parent);
         this.data = ke;
 
-        this.id = nonNullProp(this.data, 'id');
         this.resourceGroupName = getResourceGroupFromId(this.id);
-
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
     }
 
     public get iconPath(): TreeItemIconPath {
         return treeUtils.getIconPath('Container App Environments placeholder icon icon');
+    }
+
+    public get id(): string {
+        return nonNullProp(this.data, 'id');
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
@@ -66,7 +68,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const wizardContext: IContainerAppContext = { ...context, ...this.subscription };
+        const wizardContext: IContainerAppContext = { ...context, ...this.subscription, managedEnvironmentId: this.id };
 
         const title: string = localize('createContainerApp', 'Create Container App');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
@@ -75,7 +77,6 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
 
         wizardContext.newResourceGroupName = this.resourceGroupName;
         await LocationListStep.setLocation(wizardContext, this.data.location);
-        wizardContext.ManagedEnvironmentId = this.id;
 
         const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
             title,

@@ -8,7 +8,7 @@ import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
 
 export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
-    ManagedEnvironmentId?: string;
+    managedEnvironmentId: string;
     newContainerAppName?: string;
 
     enableIngress?: boolean;

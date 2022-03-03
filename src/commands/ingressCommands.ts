@@ -29,7 +29,7 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
         const title: string = localize('enableIngress', 'Enable Ingress');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new EnableIngressStep()];
 
-        const wizardContext: IContainerAppContext = { ...context, ...node.subscription };
+        const wizardContext: IContainerAppContext = { ...context, ...node.subscription, managedEnvironmentId: node.parent.managedEnvironmentId };
         const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
             title,
             promptSteps,
@@ -69,7 +69,7 @@ export async function editTargetPort(context: IActionContext, node?: IngressTree
     const title: string = localize('updateTargetPort', 'Update Target Port');
     const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
 
-    const wizardContext: IContainerAppContext = { ...context, ...node.subscription };
+    const wizardContext: IContainerAppContext = { ...context, ...node.subscription, managedEnvironmentId: node.parent.managedEnvironmentId };
     const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,

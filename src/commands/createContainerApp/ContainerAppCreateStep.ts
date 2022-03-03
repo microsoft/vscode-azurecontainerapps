@@ -63,7 +63,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
 
         context.containerApp = await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppProvider)).name,
-            managedEnvironmentId: context.ManagedEnvironmentId,
+            managedEnvironmentId: context.managedEnvironmentId,
             configuration: {
                 ingress,
                 secrets,
