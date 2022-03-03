@@ -20,7 +20,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
     }
 
     public shouldPrompt(context: IManagedEnvironmentContext): boolean {
-        return !context.ManagedEnvironment;
+        return !context.managedEnvironment;
     }
 
     private async validateInput(name: string | undefined): Promise<string | undefined> {

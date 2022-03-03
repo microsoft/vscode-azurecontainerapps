@@ -13,5 +13,5 @@ export interface IManagedEnvironmentContext extends IResourceGroupWizardContext,
     logAnalyticsWorkspace?: Workspace;
 
     // created when the wizard is done executing
-    ManagedEnvironment?: ManagedEnvironment;
+    managedEnvironment?: ManagedEnvironment;
 }

@@ -30,7 +30,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
             nonNullProp(logAnalyticsWorkspace, 'name'));
 
-        context.ManagedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(rgName, nonNullProp(context, 'newManagedEnvironmentName'),
+        context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(rgName, nonNullProp(context, 'newManagedEnvironmentName'),
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 appLogsConfiguration: {
@@ -45,6 +45,6 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
     }
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
-        return !context.ManagedEnvironment;
+        return !context.managedEnvironment;
     }
 }
