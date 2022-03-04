@@ -3,19 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KubeEnvironment, WebSiteManagementClient } from '@azure/arm-appservice';
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils } from 'vscode-azureextensionui';
-import { IKubeEnvironmentContext } from '../commands/createKubeEnvironment/IKubeEnvironmentContext';
-import { KubeEnvironmentCreateStep } from '../commands/createKubeEnvironment/KubeEnvironmentCreateStep';
-import { KubeEnvironmentNameStep } from '../commands/createKubeEnvironment/KubeEnvironmentNameStep';
-import { LogAnalyticsCreateStep } from '../commands/createKubeEnvironment/LogAnalyticsCreateStep';
-import { createWebSiteClient } from '../utils/azureClients';
+import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-app";
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils, VerifyProvidersStep } from 'vscode-azureextensionui';
+import { IManagedEnvironmentContext } from '../commands/createManagedEnvironment/IManagedEnvironmentContext';
+import { LogAnalyticsCreateStep } from '../commands/createManagedEnvironment/LogAnalyticsCreateStep';
+import { ManagedEnvironmentCreateStep } from '../commands/createManagedEnvironment/ManagedEnvironmentCreateStep';
+import { ManagedEnvironmentNameStep } from '../commands/createManagedEnvironment/ManagedEnvironmentNameStep';
+import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
-import { KubeEnvironmentTreeItem } from './KubeEnvironmentTreeItem';
+import { ManagedEnvironmentTreeItem } from './ManagedEnvironmentTreeItem';
+
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
-    public readonly childTypeLabel: string = localize('kubeEnvironment', 'Container App environment');
+    public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container App environment');
     private readonly _nextLink: string | undefined;
 
     public hasMoreChildrenImpl(): boolean {
@@ -23,30 +24,30 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
-        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
-        const environments: KubeEnvironment[] = await uiUtils.listAllIterator(client.kubeEnvironments.listBySubscription());
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+        const environments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
 
         return await this.createTreeItemsWithErrorHandling(
             environments,
-            'invalidKubeEnvironment',
-            ke => new KubeEnvironmentTreeItem(this, ke),
+            'invalidManagedEnvironment',
+            ke => new ManagedEnvironmentTreeItem(this, ke),
             ke => ke.name
         );
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const wizardContext: IKubeEnvironmentContext = { ...context, ...this.subscription };
+        const wizardContext: IManagedEnvironmentContext = { ...context, ...this.subscription };
 
-        const title: string = localize('createKubeEnv', 'Create Container App environment');
-        const promptSteps: AzureWizardPromptStep<IKubeEnvironmentContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<IKubeEnvironmentContext>[] = [];
+        const title: string = localize('createManagedEnv', 'Create Container App environment');
+        const promptSteps: AzureWizardPromptStep<IManagedEnvironmentContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 
-        promptSteps.push(new KubeEnvironmentNameStep());
-        executeSteps.push(new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new KubeEnvironmentCreateStep());
-        LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.Web', 'kubeEnvironments');
+        promptSteps.push(new ManagedEnvironmentNameStep());
+        executeSteps.push(new VerifyProvidersStep(['Microsoft.App']), new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new ManagedEnvironmentCreateStep());
+        LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.App', 'managedEnvironments');
         LocationListStep.addStep(wizardContext, promptSteps);
 
-        const wizard: AzureWizard<IKubeEnvironmentContext> = new AzureWizard(wizardContext, {
+        const wizard: AzureWizard<IManagedEnvironmentContext> = new AzureWizard(wizardContext, {
             title,
             promptSteps,
             executeSteps,
@@ -54,12 +55,12 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         });
 
         await wizard.prompt();
-        const newKubeEnvName = nonNullProp(wizardContext, 'newKubeEnvironmentName');
-        context.showCreatingTreeItem(newKubeEnvName);
-        wizardContext.newResourceGroupName = newKubeEnvName;
+        const newManagedEnvName = nonNullProp(wizardContext, 'newManagedEnvironmentName');
+        context.showCreatingTreeItem(newManagedEnvName);
+        wizardContext.newResourceGroupName = newManagedEnvName;
         await wizard.execute();
 
-        return new KubeEnvironmentTreeItem(this, nonNullProp(wizardContext, 'kubeEnvironment'));
+        return new ManagedEnvironmentTreeItem(this, nonNullProp(wizardContext, 'ManagedEnvironment'));
     }
 }
 

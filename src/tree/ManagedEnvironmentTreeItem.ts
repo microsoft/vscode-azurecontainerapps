@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, KubeEnvironment, WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-app";
 import { ProgressLocation, window } from "vscode";
 import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, LocationListStep, parseError, TreeItemIconPath, uiUtils, UserCancelledError, VerifyProvidersStep } from "vscode-azureextensionui";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
@@ -13,7 +13,7 @@ import { IContainerAppContext } from "../commands/createContainerApp/IContainerA
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { webProvider } from "../constants";
 import { ext } from "../extensionVariables";
-import { createWebSiteClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
@@ -22,23 +22,21 @@ import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 
-export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'kubeEnvironment|azResource';
-    public readonly contextValue: string = KubeEnvironmentTreeItem.contextValue;
-    public readonly data: KubeEnvironment;
+export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
+    public static contextValue: string = 'managedEnvironment|azResource';
+    public readonly contextValue: string = ManagedEnvironmentTreeItem.contextValue;
+    public readonly data: ManagedEnvironment;
     public resourceGroupName: string;
     public readonly childTypeLabel: string = localize('containerApp', 'Container App');
 
     public name: string;
     public label: string;
 
-    constructor(parent: AzExtParentTreeItem, ke: KubeEnvironment) {
+    constructor(parent: AzExtParentTreeItem, ke: ManagedEnvironment) {
         super(parent);
         this.data = ke;
 
-        this.id = nonNullProp(this.data, 'id');
         this.resourceGroupName = getResourceGroupFromId(this.id);
-
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
     }
@@ -47,11 +45,15 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
         return treeUtils.getIconPath('Container App Environments placeholder icon icon');
     }
 
+    public get id(): string {
+        return nonNullProp(this.data, 'id');
+    }
+
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
-        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         // could be more efficient to call this once at Subscription level, and filter based off that but then risk stale data
         const containerApps: ContainerApp[] = (await uiUtils.listAllIterator(client.containerApps.listBySubscription()))
-            .filter(ca => ca.kubeEnvironmentId && ca.kubeEnvironmentId === this.id)
+            .filter(ca => ca.managedEnvironmentId && ca.managedEnvironmentId === this.id)
 
         return await this.createTreeItemsWithErrorHandling(
             containerApps,
@@ -66,7 +68,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const wizardContext: IContainerAppContext = { ...context, ...this.subscription };
+        const wizardContext: IContainerAppContext = { ...context, ...this.subscription, managedEnvironmentId: this.id };
 
         const title: string = localize('createContainerApp', 'Create Container App');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
@@ -75,7 +77,6 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
 
         wizardContext.newResourceGroupName = this.resourceGroupName;
         await LocationListStep.setLocation(wizardContext, this.data.location);
-        wizardContext.kubeEnvironmentId = this.id;
 
         const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
             title,
@@ -104,12 +105,12 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
             await this.deleteAllContainerApps(context, containerApps);
         }
 
-        const deleting: string = localize('DeletingKubeEnv', 'Deleting Container App environment "{0}"...', this.name);
+        const deleting: string = localize('DeletingManagedEnv', 'Deleting Container App environment "{0}"...', this.name);
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
             try {
                 ext.outputChannel.appendLog(deleting);
-                await client.kubeEnvironments.beginDeleteAndWait(this.resourceGroupName, this.name);
+                await client.managedEnvironments.beginDeleteAndWait(this.resourceGroupName, this.name);
             } catch (error) {
                 const pError = parseError(error);
                 // a 204 indicates a success, but sdk is catching it as an exception:
@@ -118,16 +119,16 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
                     throw error;
                 }
             }
-            const deleteSucceeded: string = localize('DeleteKubeEnvSucceeded', 'Successfully deleted container app environment "{0}".', this.name);
+            const deleteSucceeded: string = localize('DeleteManagedEnvSucceeded', 'Successfully deleted container app environment "{0}".', this.name);
             void window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });
 
-        async function promptForDelete(node: KubeEnvironmentTreeItem, containerApps: ContainerAppTreeItem[]): Promise<void> {
+        async function promptForDelete(node: ManagedEnvironmentTreeItem, containerApps: ContainerAppTreeItem[]): Promise<void> {
             const numOfResources = containerApps.length;
             const hasNoResources: boolean = !numOfResources;
 
-            const deleteEnv: string = localize('ConfirmDeleteKubeEnv', 'Are you sure you want to delete container app environment "{0}"?', node.name);
+            const deleteEnv: string = localize('ConfirmDeleteManagedEnv', 'Are you sure you want to delete container app environment "{0}"?', node.name);
             const deleteEnvAndApps: string = localize('ConfirmDeleteEnvAndApps', 'Are you sure you want to delete Container App environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
                 node.name, numOfResources);
 
@@ -149,7 +150,7 @@ export class KubeEnvironmentTreeItem extends AzExtParentTreeItem implements IAzu
                     return isNameEqual(val, node) ? undefined : prompt;
                 }
 
-                function isNameEqual(val: string | undefined, node: KubeEnvironmentTreeItem): boolean {
+                function isNameEqual(val: string | undefined, node: ManagedEnvironmentTreeItem): boolean {
                     return !!val && val.toLowerCase() === node.name.toLowerCase();
                 }
             }

@@ -6,13 +6,13 @@
 import { IActionContext, ICreateChildImplContext } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
-import { KubeEnvironmentTreeItem } from "../../tree/KubeEnvironmentTreeItem";
+import { ManagedEnvironmentTreeItem } from "../../tree/ManagedEnvironmentTreeItem";
 import { IContainerAppContext } from "./IContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
-export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: KubeEnvironmentTreeItem): Promise<ContainerAppTreeItem> {
+export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentTreeItem): Promise<ContainerAppTreeItem> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<KubeEnvironmentTreeItem>(KubeEnvironmentTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValue, context);
     }
 
     const caNode: ContainerAppTreeItem = await node.createChild(context);

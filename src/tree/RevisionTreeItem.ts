@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KnownRevisionProvisioningState, Revision } from "@azure/arm-appservice";
+import { KnownRevisionProvisioningState, Revision } from "@azure/arm-app";
 import { ThemeColor, ThemeIcon } from "vscode";
 import { AzExtTreeItem, IActionContext, TreeItemIconPath } from "vscode-azureextensionui";
 import { localize } from "../utils/localize";

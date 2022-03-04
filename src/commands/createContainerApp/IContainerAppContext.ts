@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp } from '@azure/arm-appservice';
+import { ContainerApp } from '@azure/arm-app';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
 
 export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
-    kubeEnvironmentId?: string;
+    managedEnvironmentId: string;
     newContainerAppName?: string;
 
     enableIngress?: boolean;

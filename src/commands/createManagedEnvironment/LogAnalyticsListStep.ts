@@ -8,19 +8,19 @@ import { AzureWizardPromptStep, IAzureQuickPickItem, uiUtils } from 'vscode-azur
 import { createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from '../../utils/localize';
 import { nonNullProp } from '../../utils/nonNull';
-import { IKubeEnvironmentContext } from './IKubeEnvironmentContext';
+import { IManagedEnvironmentContext } from './IManagedEnvironmentContext';
 
-export class LogAnalyticsListStep extends AzureWizardPromptStep<IKubeEnvironmentContext> {
-    public async prompt(context: IKubeEnvironmentContext): Promise<void> {
+export class LogAnalyticsListStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
+    public async prompt(context: IManagedEnvironmentContext): Promise<void> {
         const placeHolder: string = localize('selectLogAnalytics', 'Select Log Analytics workspace. Your Log Analytics workspace will contain all your application logs.');
         context.logAnalyticsWorkspace = (await context.ui.showQuickPick(this.getQuickPicks(context), { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IKubeEnvironmentContext): boolean {
+    public shouldPrompt(context: IManagedEnvironmentContext): boolean {
         return !context.logAnalyticsWorkspace;
     }
 
-    private async getQuickPicks(context: IKubeEnvironmentContext): Promise<IAzureQuickPickItem<Workspace | undefined>[]> {
+    private async getQuickPicks(context: IManagedEnvironmentContext): Promise<IAzureQuickPickItem<Workspace | undefined>[]> {
         const picks: IAzureQuickPickItem<Workspace | undefined>[] = [];
 
         picks.push({

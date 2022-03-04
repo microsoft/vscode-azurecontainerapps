@@ -6,13 +6,13 @@
 import { IActionContext, openReadOnlyJson } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { IAzureResourceTreeItem } from '../tree/IAzureResourceTreeItem';
-import { KubeEnvironmentTreeItem } from '../tree/KubeEnvironmentTreeItem';
+import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
 
 export async function viewProperties(context: IActionContext, node?: IAzureResourceTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<KubeEnvironmentTreeItem>(KubeEnvironmentTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValue, context);
     }
 
     if (!node.data) {

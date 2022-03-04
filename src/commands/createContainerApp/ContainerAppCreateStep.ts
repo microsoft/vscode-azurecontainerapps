@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Ingress, RegistryCredentials, Secret, WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerAppsAPIClient, Ingress, RegistryCredentials, Secret } from "@azure/arm-app";
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { containerAppProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { createWebSiteClient } from "../../utils/azureClients";
+import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { listCredentialsFromRegistry } from "../deployImage/acr/listCredentialsFromRegistry";
@@ -19,7 +19,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
     public priority: number = 250;
 
     public async execute(context: IContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const webClient: WebSiteManagementClient = await createWebSiteClient(context);
+        const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         let secrets: Secret[], registries: RegistryCredentials[];
 
         if (context.registry) {
@@ -61,9 +61,9 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
         progress.report({ message: creatingSwa });
         ext.outputChannel.appendLog(creatingSwa);
 
-        context.containerApp = await webClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
+        context.containerApp = await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppProvider)).name,
-            kubeEnvironmentId: context.kubeEnvironmentId,
+            managedEnvironmentId: context.managedEnvironmentId,
             configuration: {
                 ingress,
                 secrets,

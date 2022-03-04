@@ -7,13 +7,13 @@ import { commands } from 'vscode';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { KubeEnvironmentTreeItem } from '../tree/KubeEnvironmentTreeItem';
+import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
 import { RevisionTreeItem } from '../tree/RevisionTreeItem';
 import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
 import { browse } from './browse';
 import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
-import { createKubeEnvironment } from './createKubeEnvironment/createKubeEnvironment';
+import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
@@ -29,10 +29,10 @@ export function registerCommands(): void {
     registerCommand('containerApps.selectSubscriptions', () => commands.executeCommand('azure-account.selectSubscriptions'));
     registerCommand('containerApps.viewProperties', viewProperties);
     registerCommand('containerApps.browse', browse);
-    registerCommand('containerApps.createKubeEnvironment', createKubeEnvironment);
+    registerCommand('containerApps.createManagedEnvironment', createManagedEnvironment);
     registerCommand('containerApps.createContainerApp', createContainerApp);
     registerCommand('containerApps.deployImage', deployImage);
-    registerCommand('containerApps.deleteKubeEnvironment', async (context: IActionContext, node?: KubeEnvironmentTreeItem) => await deleteNode(context, KubeEnvironmentTreeItem.contextValue, node));
+    registerCommand('containerApps.deleteManagedEnvironment', async (context: IActionContext, node?: ManagedEnvironmentTreeItem) => await deleteNode(context, ManagedEnvironmentTreeItem.contextValue, node));
     registerCommand('containerApps.deleteContainerApp', async (context: IActionContext, node?: ContainerAppTreeItem) => await deleteNode(context, ContainerAppTreeItem.contextValue, node));
     registerCommand('containerApps.openLogs', openLogs);
     registerCommand('containerApps.enableIngress', toggleIngress);
@@ -89,12 +89,12 @@ export function registerCommands(): void {
         //     ]
         // };
 
-        // const webClient: WebSiteManagementClient = await createWebSiteClient([context, node]);
+        // const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
         // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
 
         // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, 'dockercontainer3', {
         //     location: node.data.location,
-        //     kubeEnvironmentId: node.id,
+        //     ManagedEnvironmentId: node.id,
         //     configuration: {
         //         ingress: {
         //             targetPort: 80,

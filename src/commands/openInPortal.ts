@@ -6,15 +6,15 @@
 import * as ui from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { KubeEnvironmentTreeItem } from '../tree/KubeEnvironmentTreeItem';
+import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
 
 export async function openInPortal(context: ui.IActionContext, node?: ui.AzExtTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<KubeEnvironmentTreeItem>(KubeEnvironmentTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValue, context);
     }
 
     if (node instanceof ContainerAppTreeItem) {
-        // ContainerApp's id don't include the KubeEnvironment (ie the parent) so don't use fullId
+        // ContainerApp's id don't include the ManagedEnvironment (ie the parent) so don't use fullId
         await ui.openInPortal(node, <string>node.data.id);
     } else {
         await ui.openInPortal(node, node.fullId);

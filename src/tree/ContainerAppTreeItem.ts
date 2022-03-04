@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, Secret, WebSiteManagementClient } from "@azure/arm-appservice";
+import { ContainerApp, ContainerAppsAPIClient, Secret } from "@azure/arm-app";
 import { MarkdownString, ProgressLocation, window } from "vscode";
 import { AzExtParentTreeItem, AzExtRequestPrepareOptions, AzExtTreeItem, DialogResponses, IActionContext, parseError, sendRequestWithTimeout, TreeItemIconPath } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
-import { createWebSiteClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
@@ -29,6 +29,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public name: string;
     public label: string;
+    public managedEnvironmentId: string;
 
     public revisionsTreeItem: RevisionsTreeItem;
 
@@ -41,6 +42,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
+        this.managedEnvironmentId = nonNullProp(this.data, 'managedEnvironmentId');
     }
 
     public get iconPath(): TreeItemIconPath {
@@ -92,7 +94,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             ext.outputChannel.appendLog(deleting);
-            const webClient: WebSiteManagementClient = await createWebSiteClient([context, this]);
+            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
             try {
                 await webClient.containerApps.beginDeleteAndWait(this.resourceGroupName, this.name);
             } catch (error) {
@@ -110,7 +112,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async refreshImpl(context: IActionContext): Promise<void> {
-        const client: WebSiteManagementClient = await createWebSiteClient([context, this]);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
 
         this.revisionsTreeItem = new RevisionsTreeItem(this);

@@ -5,22 +5,22 @@
 
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
 import { localize } from "../../utils/localize";
-import { IKubeEnvironmentContext } from './IKubeEnvironmentContext';
+import { IManagedEnvironmentContext } from './IManagedEnvironmentContext';
 
 let checkNameLength: boolean = false;
-export class KubeEnvironmentNameStep extends AzureWizardPromptStep<IKubeEnvironmentContext> {
-    public async prompt(context: IKubeEnvironmentContext): Promise<void> {
+export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
+    public async prompt(context: IManagedEnvironmentContext): Promise<void> {
         const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new container app environment.');
-        context.newKubeEnvironmentName = (await context.ui.showInputBox({
+        context.newManagedEnvironmentName = (await context.ui.showInputBox({
             prompt,
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
         })).trim();
 
-        context.valuesToMask.push(context.newKubeEnvironmentName);
+        context.valuesToMask.push(context.newManagedEnvironmentName);
     }
 
-    public shouldPrompt(context: IKubeEnvironmentContext): boolean {
-        return !context.kubeEnvironment;
+    public shouldPrompt(context: IManagedEnvironmentContext): boolean {
+        return !context.managedEnvironment;
     }
 
     private async validateInput(name: string | undefined): Promise<string | undefined> {
