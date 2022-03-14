@@ -67,7 +67,8 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             configuration: {
                 ingress,
                 secrets,
-                registries
+                registries,
+                activeRevisionsMode: 'single'
             },
             template: {
                 containers: [
