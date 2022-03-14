@@ -32,7 +32,7 @@ export class RevisionsTreeItem extends AzExtParentTreeItem {
     }
 
     public get description(): string {
-        return this.parent.data.configuration?.activeRevisionsMode?.toLowerCase() === 'single' ? RevisionConstants.single : RevisionConstants.multiple;
+        return this.parent.data.configuration?.activeRevisionsMode?.toLowerCase() === 'single' ? RevisionConstants.single.label : RevisionConstants.multiple.label;
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

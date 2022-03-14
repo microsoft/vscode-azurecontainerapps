@@ -18,8 +18,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Revisio
         node = await ext.tree.showTreeItemPicker<RevisionsTreeItem>(RevisionsTreeItem.contextValue, context);
     }
 
-    const picks: IAzureQuickPickItem<string>[] = [{ label: RevisionConstants.single, description: localize('singleDesc', 'One active revision at a time'), data: 'single' },
-    { label: RevisionConstants.multiple, description: localize('multipleDesc', 'Several revisions active simultaneously'), data: 'multiple' }];
+    const picks: IAzureQuickPickItem<string>[] = [RevisionConstants.single, RevisionConstants.multiple];
     const placeHolder = localize('chooseRevision', 'Choose revision mode');
 
     const currentModeQp = picks.find(mode => mode.data === node?.parent.data.configuration?.activeRevisionsMode?.toLowerCase());

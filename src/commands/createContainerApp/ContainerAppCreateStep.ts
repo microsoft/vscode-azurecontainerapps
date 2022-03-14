@@ -6,7 +6,7 @@
 import { ContainerAppsAPIClient, Ingress, RegistryCredentials, Secret } from "@azure/arm-app";
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
-import { containerAppProvider } from "../../constants";
+import { containerAppProvider, RevisionConstants } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -67,7 +67,8 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             configuration: {
                 ingress,
                 secrets,
-                registries
+                registries,
+                activeRevisionsMode: RevisionConstants.single.data
             },
             template: {
                 containers: [

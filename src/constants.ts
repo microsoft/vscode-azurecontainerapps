@@ -18,8 +18,8 @@ export namespace IngressConstants {
 }
 
 export namespace RevisionConstants {
-    export const multiple: string = localize('multiple', 'Multiple');
-    export const single: string = localize('single', 'Single');
+    export const multiple: IAzureQuickPickItem<string> = { label: localize('multiple', 'Multiple'), description: localize('multipleDesc', 'Several revisions active simultaneously'), data: 'multiple' };
+    export const single: IAzureQuickPickItem<string> = { label: localize('single', 'Single'), description: localize('singleDesc', 'One active revision at a time'), data: 'single' };
 }
 
 export const acrDomain = 'azurecr.io';
