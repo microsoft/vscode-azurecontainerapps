@@ -365,6 +365,7 @@
         "@azure/container-registry": "^1.0.0-beta.5",
         "@azure/loganalytics": "^0.3.0",
         "@azure/ms-rest-js": "^2.2.1",
+        "dotenv": "^16.0.0",
         "open": "^8.0.4",
         "semver": "^7.3.5",
         "vscode-azureextensionui": "file:../vscode-azuretools/ui/vscode-azureextensionui-0.50.0.tgz",
