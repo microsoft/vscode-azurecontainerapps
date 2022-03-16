@@ -13,7 +13,7 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
     let quickPicks: IAzureQuickPickItem<string | undefined>[] = [];
     if (workspace.workspaceFolders?.length === 1) {
         // if there's a fileExtension, then only populate the quickPick menu with that, otherwise show the current folders in the workspace
-        const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*')
+        const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
         quickPicks = files.map((uri: Uri) => {
             return {
                 label: basename(uri.fsPath),
