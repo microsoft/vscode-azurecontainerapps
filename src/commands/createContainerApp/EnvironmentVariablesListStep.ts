@@ -24,7 +24,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IContain
     }
 
     public shouldPrompt(context: IContainerAppContext): boolean {
-        return context.environmentVariables === undefined
+        return context.environmentVariables === undefined;
     }
 
     private async selectEnvironmentSettings(context: IContainerAppContext) {
