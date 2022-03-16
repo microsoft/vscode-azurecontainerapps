@@ -8,12 +8,12 @@ import { OpenDialogOptions, Uri, workspace } from "vscode";
 import { IActionContext, IAzureQuickPickItem } from "vscode-azureextensionui";
 import { localize } from "./localize";
 
-export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: OpenDialogOptions, fileExtension?: string): Promise<string> {
+export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: OpenDialogOptions, globPattern?: string): Promise<string> {
     let input: IAzureQuickPickItem<string | undefined> | undefined;
     let quickPicks: IAzureQuickPickItem<string | undefined>[] = [];
     if (workspace.workspaceFolders?.length === 1) {
         // if there's a fileExtension, then only populate the quickPick menu with that, otherwise show the current folders in the workspace
-        const files = fileExtension ? await workspace.findFiles(`**/*.${fileExtension}`) : await workspace.findFiles('**/*')
+        const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*')
         quickPicks = files.map((uri: Uri) => {
             return {
                 label: basename(uri.fsPath),

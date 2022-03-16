@@ -28,7 +28,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IContain
     }
 
     private async selectEnvironmentSettings(context: IContainerAppContext) {
-        const envFileFsPath: string = await selectWorkspaceFile(context, 'Select a .env file', { filters: { 'env file': ['env'] } }, 'env');
+        const envFileFsPath: string = await selectWorkspaceFile(context, 'Select a .env file', { filters: { 'env file': ['env', 'env.*'] } }, '**/*.{env,env.*}');
         const data = await AzExtFsExtra.readFile(envFileFsPath);
         return parse(data);
     }
