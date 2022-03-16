@@ -9,7 +9,7 @@ import { localize } from "../../utils/localize";
 import { selectWorkspaceFile } from "../../utils/workspaceUtils";
 import { IContainerAppContext } from "./IContainerAppContext";
 
-const skipForNowLabel: string = '$(clock) Skip for now';
+const skipForNowLabel: string = localize('skipForNow', '$(clock) Skip for now');
 
 export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IContainerAppContext> {
     public async prompt(context: IContainerAppContext): Promise<void> {
