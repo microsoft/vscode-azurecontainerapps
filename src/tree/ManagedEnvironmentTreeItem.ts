@@ -9,6 +9,7 @@ import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
+import { EnvironmentVariablesListStep } from "../commands/createContainerApp/EnvironmentVariablesListStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { webProvider } from "../constants";
@@ -72,7 +73,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
 
         const title: string = localize('createContainerApp', 'Create Container App');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
-            [new ContainerAppNameStep(), new ContainerRegistryListStep(), new EnableIngressStep()];
+            [new ContainerAppNameStep(), new ContainerRegistryListStep(), new EnvironmentVariablesListStep(), new EnableIngressStep()];
         const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [new VerifyProvidersStep([webProvider]), new ContainerAppCreateStep()];
 
         wizardContext.newResourceGroupName = this.resourceGroupName;

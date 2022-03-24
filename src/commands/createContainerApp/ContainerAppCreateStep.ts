@@ -73,7 +73,8 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             template: {
                 containers: [
                     {
-                        image: `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`, name: `${context.repositoryName}-${context.tag}`
+                        image: `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`, name: `${context.repositoryName}-${context.tag}`,
+                        env: context.environmentVariables
                     }
                 ]
             }

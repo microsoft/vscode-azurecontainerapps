@@ -60,7 +60,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         wizardContext.newResourceGroupName = newManagedEnvName;
         await wizard.execute();
 
-        return new ManagedEnvironmentTreeItem(this, nonNullProp(wizardContext, 'ManagedEnvironment'));
+        return new ManagedEnvironmentTreeItem(this, nonNullProp(wizardContext, 'managedEnvironment'));
     }
 }
 
