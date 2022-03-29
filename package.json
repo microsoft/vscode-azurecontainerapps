@@ -220,17 +220,17 @@
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view == containerApps && viewItem =~ /revision|/",
+                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view == containerApps && viewItem =~ /revision|/",
+                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view == containerApps && viewItem =~ /revision|/",
+                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/",
                     "group": "1@3"
                 },
                 {

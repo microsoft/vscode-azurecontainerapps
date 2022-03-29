@@ -26,17 +26,18 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
     const picks: IAzureQuickPickItem<string>[] = [RevisionConstants.single, RevisionConstants.multiple];
     const placeHolder = localize('chooseRevision', 'Choose revision mode');
 
-    const currentModeQp = picks.find(mode => mode.data === node?.data.configuration?.activeRevisionsMode?.toLowerCase());
-    currentModeQp ? currentModeQp.detail = localize('current', ' current') : undefined;
+    for (const pick of picks) {
+        pick.description = pick.data === node.getRevisionMode() ? localize('current', ' current') : undefined;
+    }
 
     const result = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
 
-    if (currentModeQp !== result) {
+    if (node.getRevisionMode() !== result.data) {
         // only update it if it's actually different
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
         const containerAppEnvelope = await node.getContainerEnvelopeWithSecrets(context);
-        const updating = localize('updatingRevision', 'Updating revision mode of "{0}" to "{1}"...', node.name, result.label.toLowerCase());
-        const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', node.name, result.label.toLowerCase());
+        const updating = localize('updatingRevision', 'Updating revision mode of "{0}" to "{1}"...', node.name, result.data);
+        const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', node.name, result.data);
 
         containerAppEnvelope.configuration.activeRevisionsMode = result.data;
 
@@ -50,8 +51,8 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
 
             void window.showInformationMessage(updated);
             ext.outputChannel.appendLog(updated);
+
+            await node?.refresh(context);
         });
     }
-
-    await node.refresh(context);
 }

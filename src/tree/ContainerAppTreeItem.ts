@@ -120,7 +120,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
 
-        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionMode${this.getRevisionMode()}`;
+        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionmode:${this.getRevisionMode()}`;
         this.data = data;
     }
 
