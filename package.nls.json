@@ -10,7 +10,7 @@
     "containerApps.browse": "Browse",
     "containerApps.openInPortal": "Open in Portal",
     "containerApps.createContainerApp": "Create Container App...",
-    "containerApps.deployImage": "Deploy Image to Container App...",
+    "containerApps.deployImage": "Update Image in Container App...",
     "containerApps.deleteContainerApp": "Delete Container App...",
     "containerApps.openLogs": "Open Logs",
     "containerApps.disableIngress": "Disable Ingress for Container App..",

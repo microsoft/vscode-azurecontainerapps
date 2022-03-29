@@ -215,22 +215,22 @@
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view == containerApps && viewItem =~ /revisions/",
-                    "group": "1@1"
+                    "when": "view == containerApps && viewItem =~ /revisionmode:single|revisions$/",
+                    "group": "2@2"
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view == containerApps && viewItem =~ /revision[^s]/",
+                    "when": "view == containerApps && viewItem =~ /revision|/",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view == containerApps && viewItem =~ /revision[^s]/",
+                    "when": "view == containerApps && viewItem =~ /revision|/",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view == containerApps && viewItem =~ /revision[^s]/",
+                    "when": "view == containerApps && viewItem =~ /revision|/",
                     "group": "1@3"
                 },
                 {

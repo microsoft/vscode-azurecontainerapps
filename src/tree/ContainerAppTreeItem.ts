@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, Secret } from "@azure/arm-app";
+import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-app";
 import { MarkdownString, ProgressLocation, window } from "vscode";
-import { AzExtParentTreeItem, AzExtRequestPrepareOptions, AzExtTreeItem, DialogResponses, IActionContext, parseError, sendRequestWithTimeout, TreeItemIconPath } from "vscode-azureextensionui";
+import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "vscode-azureextensionui";
+import { RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
@@ -13,7 +14,6 @@ import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { openUrl } from "../utils/openUrl";
 import { treeUtils } from "../utils/treeUtils";
-import { DaprTreeItem } from "./DaprTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { IngressDisabledTreeItem, IngressTreeItem } from "./IngressTreeItem";
 import { LogsTreeItem } from "./LogsTreeItem";
@@ -23,7 +23,7 @@ import { ScaleTreeItem } from "./ScaleTreeItem";
 
 export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'containerApp|azResource';
-    public readonly contextValue: string = ContainerAppTreeItem.contextValue;
+    public contextValue: string;
     public data: ContainerApp;
     public resourceGroupName: string;
 
@@ -43,6 +43,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         this.name = nonNullProp(this.data, 'name');
         this.label = this.name;
         this.managedEnvironmentId = nonNullProp(this.data, 'managedEnvironmentId');
+
+        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionmode:${this.getRevisionMode()}`;
     }
 
     public get iconPath(): TreeItemIconPath {
@@ -54,9 +56,12 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        this.revisionsTreeItem = new RevisionsTreeItem(this);
+        const children: AzExtTreeItem[] = [/* new DaprTreeItem(this, this.data.template?.dapr) */];
+        if (this.getRevisionMode() === 'multiple') {
+            this.revisionsTreeItem = new RevisionsTreeItem(this);
+            children.push(this.revisionsTreeItem);
+        }
 
-        const children: AzExtTreeItem[] = [this.revisionsTreeItem, new DaprTreeItem(this, this.data.template?.dapr)];
         this.data.configuration?.ingress ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
         children.push(new ScaleTreeItem(this, this.data.template?.scale), new LogsTreeItem(this))
         return children;
@@ -115,7 +120,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
 
-        this.revisionsTreeItem = new RevisionsTreeItem(this);
+        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionMode${this.getRevisionMode()}`;
         this.data = data;
     }
 
@@ -143,16 +148,26 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         }
 
         const concreteContainerAppEnvelope = <Concrete<ContainerApp>>containerAppEnvelope;
-        const options: AzExtRequestPrepareOptions = {
-            method: 'POST',
-            queryParameters: { 'api-version': '2021-03-01' },
-            pathTemplate: `${this.id}/listSecrets`,
-        };
 
-        const response = await sendRequestWithTimeout(context, options, 5000, this.subscription.credentials);
-        // if 204, needs to be an empty []
-        concreteContainerAppEnvelope.configuration.secrets = response.status === 204 ? [] : <Secret[]>response.parsedBody;
+        // bug that returns 204 if there are no secrets
+        let secrets: ContainerAppSecret[] = [];
+        try {
+            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+            secrets = ((await webClient.containerApps.listSecrets(this.resourceGroupName, this.name)).value);
+        } catch (error) {
+            const pError = parseError(error);
+            if (pError.errorType !== '204') {
+                throw error;
+            }
+        }
+
+        concreteContainerAppEnvelope.configuration.secrets = secrets;
         return concreteContainerAppEnvelope;
+    }
+
+    public getRevisionMode(): string {
+        return this.data.configuration?.activeRevisionsMode?.toLowerCase() === 'single' ?
+            RevisionConstants.single.data : RevisionConstants.multiple.data;
     }
 
     public async resolveTooltip(): Promise<MarkdownString> {
