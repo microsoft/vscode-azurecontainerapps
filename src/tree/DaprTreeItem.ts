@@ -22,7 +22,7 @@ export class DaprTreeItem extends AzExtTreeItem implements IAzureResourceTreeIte
         super(parent);
         this.label = localize('dapr', 'Dapr');
         this.data = data || {};
-        this.description = this.parent.data.template?.dapr ? 'Enabled' : 'Disabled';
+        // this.description = this.parent.data.template?.dapr ? 'Enabled' : 'Disabled';
     }
 
     public get iconPath(): TreeItemIconPath {
