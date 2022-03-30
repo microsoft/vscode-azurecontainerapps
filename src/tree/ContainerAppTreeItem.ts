@@ -56,6 +56,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
+        // https://github.com/microsoft/vscode-azurecontainerapps/issues/55
         const children: AzExtTreeItem[] = [/* new DaprTreeItem(this, this.data.template?.dapr) */];
         if (this.getRevisionMode() === 'multiple') {
             this.revisionsTreeItem = new RevisionsTreeItem(this);
