@@ -14,7 +14,7 @@ import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { nonNullValue } from "../utils/nonNull";
 
-export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppTreeItem): Promise<void> {
+export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppTreeItem | RevisionsTreeItem): Promise<void> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(new RegExp(ContainerAppTreeItem.contextValue), context);
     }
@@ -45,7 +45,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
         containerAppEnvelope.configuration.ingress.traffic = result.data === 'single' ? undefined : containerAppEnvelope.configuration.ingress.traffic;
 
         await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
-            const pNode = nonNullValue(node);
+            const pNode = nonNullValue(node) as ContainerAppTreeItem;
             ext.outputChannel.appendLog(updating);
             await appClient.containerApps.beginCreateOrUpdateAndWait(pNode.resourceGroupName, pNode.name, containerAppEnvelope);
 

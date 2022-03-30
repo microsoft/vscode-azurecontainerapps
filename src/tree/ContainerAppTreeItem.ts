@@ -149,7 +149,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         const concreteContainerAppEnvelope = <Concrete<ContainerApp>>containerAppEnvelope;
 
-        // bug that returns 204 if there are no secrets
+        // https://github.com/Azure/azure-sdk-for-js/issues/21101
+        // a 204 indicates no secrets, but sdk is catching it as an exception
         let secrets: ContainerAppSecret[] = [];
         try {
             const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
