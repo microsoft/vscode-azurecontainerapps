@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient, Ingress, RegistryCredentials, Secret } from "@azure/arm-app";
+import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { containerAppProvider, RevisionConstants } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ScaleRule } from "@azure/arm-app";
+import { AzExtTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
-import { AzExtTreeItem, TreeItemIconPath } from "vscode-azureextensionui";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";

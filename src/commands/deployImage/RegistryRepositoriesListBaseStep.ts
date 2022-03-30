@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { QuickPickItem } from "vscode";
-import { AzureWizardPromptStep } from "vscode-azureextensionui";
 import { loadMoreQp, QuickPicksCache } from "../../constants";
 import { localize } from "../../utils/localize";
 import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";

@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-app";
+import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { getResourceGroupFromId } from "../../utils/azureUtils";

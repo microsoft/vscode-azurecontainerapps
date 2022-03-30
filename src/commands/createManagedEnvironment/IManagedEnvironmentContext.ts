@@ -5,7 +5,8 @@
 
 import { ManagedEnvironment } from '@azure/arm-app';
 import { Workspace } from '@azure/arm-operationalinsights';
-import { ICreateChildImplContext, IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
 export interface IManagedEnvironmentContext extends IResourceGroupWizardContext, ICreateChildImplContext {
 
