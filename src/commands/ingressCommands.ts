@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient, Ingress } from "@azure/arm-app";
+import { AzureWizard, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
-import { AzureWizard, AzureWizardPromptStep, IActionContext } from 'vscode-azureextensionui';
 import { IngressConstants } from '../constants';
 import { ext } from '../extensionVariables';
 import { IngressDisabledTreeItem, IngressTreeItem } from '../tree/IngressTreeItem';

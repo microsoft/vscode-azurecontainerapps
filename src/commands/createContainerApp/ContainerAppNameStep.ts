@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-app";
-import { AzureWizardPromptStep } from "vscode-azureextensionui";
+import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { getResourceGroupFromId } from "../../utils/azureUtils";
 import { localize } from "../../utils/localize";

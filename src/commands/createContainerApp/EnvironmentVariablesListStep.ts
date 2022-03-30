@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { AzExtFsExtra, AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { parse } from "dotenv";
-import { AzExtFsExtra, AzureWizardPromptStep } from "vscode-azureextensionui";
 import { localize } from "../../utils/localize";
 import { selectWorkspaceFile } from "../../utils/workspaceUtils";
 import { IContainerAppContext } from "./IContainerAppContext";

@@ -363,7 +363,7 @@
         "@azure/arm-containerregistry": "^8.1.1",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^4.2.2",
-        "@azure/container-registry": "^1.0.0-beta.5",
+        "@azure/container-registry": "^1.0.0",
         "@azure/loganalytics": "^0.3.0",
         "@azure/ms-rest-js": "^2.2.1",
         "@microsoft/vscode-azext-azureutils": "^0.1.3",

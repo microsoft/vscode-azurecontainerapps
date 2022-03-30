@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { basename } from 'path';
 import { OpenDialogOptions, Uri, workspace } from "vscode";
-import { IActionContext, IAzureQuickPickItem } from "vscode-azureextensionui";
 import { localize } from "./localize";
 
 export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: OpenDialogOptions, globPattern?: string): Promise<string> {

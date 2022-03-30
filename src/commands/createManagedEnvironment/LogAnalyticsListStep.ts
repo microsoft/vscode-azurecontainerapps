@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Workspace } from '@azure/arm-operationalinsights';
-import { AzureWizardPromptStep, IAzureQuickPickItem, uiUtils } from 'vscode-azureextensionui';
+import { uiUtils } from '@microsoft/vscode-azext-azureutils';
+import { AzureWizardPromptStep, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from '../../utils/localize';
 import { nonNullProp } from '../../utils/nonNull';

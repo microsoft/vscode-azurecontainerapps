@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownRevisionProvisioningState, Revision } from "@azure/arm-app";
+import { AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon } from "vscode";
-import { AzExtTreeItem, IActionContext, TreeItemIconPath } from "vscode-azureextensionui";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
