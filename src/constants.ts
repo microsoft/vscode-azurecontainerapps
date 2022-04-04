@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { QuickPickItem } from "vscode";
-import { IAzureQuickPickItem } from "vscode-azureextensionui";
 import { localize } from "./utils/localize";
 
 export const webProvider: string = 'Microsoft.Web';

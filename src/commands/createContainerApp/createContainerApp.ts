@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext, ICreateChildImplContext } from "vscode-azureextensionui";
+import { IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
 import { ManagedEnvironmentTreeItem } from "../../tree/ManagedEnvironmentTreeItem";

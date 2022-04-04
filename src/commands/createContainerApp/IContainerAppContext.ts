@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, EnvironmentVar } from '@azure/arm-app';
-import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
 
 export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {

@@ -6,7 +6,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep } from "vscode-azureextensionui";
+import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../constants";
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
 import { getResourceGroupFromId } from "../../../utils/azureUtils";

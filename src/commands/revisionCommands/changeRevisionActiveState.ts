@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from '@azure/arm-app';
-import { IActionContext } from "vscode-azureextensionui";
+import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";

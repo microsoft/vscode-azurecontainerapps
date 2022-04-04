@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ArtifactManifestProperties } from "@azure/container-registry";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { QuickPickItem } from "vscode";
-import { uiUtils } from "vscode-azureextensionui";
 import { createContainerRegistryClient } from "../../../utils/azureClients";
 import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
 import { IDeployImageContext } from "../IDeployImageContext";

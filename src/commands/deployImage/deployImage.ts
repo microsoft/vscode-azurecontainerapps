@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-app";
+import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, VerifyProvidersStep } from "vscode-azureextensionui";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";

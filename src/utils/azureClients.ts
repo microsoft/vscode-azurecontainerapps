@@ -8,7 +8,7 @@ import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } 
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { LogAnalyticsClient } from '@azure/loganalytics';
-import { AzExtClientContext, createAzureClient, parseClientContext } from 'vscode-azureextensionui';
+import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
 
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript

@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient, Revision } from "@azure/arm-app";
-import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath, uiUtils } from "vscode-azureextensionui";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { RevisionConstants } from "../constants";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";

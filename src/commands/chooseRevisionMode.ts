@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-app";
+import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { IActionContext, IAzureQuickPickItem } from "vscode-azureextensionui";
 import { RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { ContainerAppTreeItem } from "../tree/ContainerAppTreeItem";

@@ -5,7 +5,7 @@
 
 import { ContainerApp } from '@azure/arm-app';
 import { ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
-import { ISubscriptionActionContext } from 'vscode-azureextensionui';
+import { ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
 import { SupportedRegistries } from '../../constants';
 
 export interface IDeployImageContext extends ISubscriptionActionContext {
