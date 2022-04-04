@@ -6,7 +6,7 @@
 import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-app";
 import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { MarkdownString, ProgressLocation, window } from "vscode";
-import { RevisionConstants } from "../constants";
+import { azResourceContextValue, RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
@@ -22,7 +22,8 @@ import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleTreeItem } from "./ScaleTreeItem";
 
 export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'containerApp|azResource';
+    public static contextValue: string = 'containerApp';
+    public static contextValueRegExp: RegExp = new RegExp(ContainerAppTreeItem.contextValue);
     public contextValue: string;
     public data: ContainerApp;
     public resourceGroupName: string;
@@ -32,6 +33,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     public managedEnvironmentId: string;
 
     public revisionsTreeItem: RevisionsTreeItem;
+    public ingressTreeItem: IngressTreeItem | IngressDisabledTreeItem;
+    public logTreeItem: LogsTreeItem;
 
     constructor(parent: AzExtParentTreeItem, ca: ContainerApp) {
         super(parent);
@@ -44,7 +47,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         this.label = this.name;
         this.managedEnvironmentId = nonNullProp(this.data, 'managedEnvironmentId');
 
-        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionmode:${this.getRevisionMode()}`;
+        this.contextValue = `${ContainerAppTreeItem.contextValue}|${azResourceContextValue}|revisionmode:${this.getRevisionMode()}`;
     }
 
     public get iconPath(): TreeItemIconPath {
@@ -63,8 +66,9 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             children.push(this.revisionsTreeItem);
         }
 
-        this.data.configuration?.ingress ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
-        children.push(new ScaleTreeItem(this, this.data.template?.scale), new LogsTreeItem(this))
+        this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
+        this.logTreeItem = new LogsTreeItem(this);
+        children.push(this.ingressTreeItem, new ScaleTreeItem(this, this.data.template?.scale), this.logTreeItem)
         return children;
     }
 
@@ -121,7 +125,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
 
-        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionmode:${this.getRevisionMode()}`;
+        this.contextValue = `${new RegExp(ContainerAppTreeItem.contextValue)}|revisionmode:${this.getRevisionMode()}`;
         this.data = data;
     }
 
@@ -131,6 +135,11 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
                 case RevisionTreeItem.contextValue:
                 case RevisionsTreeItem.contextValue:
                     return this.revisionsTreeItem;
+                case IngressTreeItem.contextValue:
+                case IngressDisabledTreeItem.contextValue:
+                    return this.ingressTreeItem;
+                case LogsTreeItem.contextValue:
+                    return this.logTreeItem;
                 default:
             }
         }

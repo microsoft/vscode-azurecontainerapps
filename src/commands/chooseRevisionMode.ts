@@ -16,7 +16,7 @@ import { nonNullValue } from "../utils/nonNull";
 
 export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppTreeItem | RevisionsTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(new RegExp(ContainerAppTreeItem.contextValue), context);
+        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(new RegExp(ContainerAppTreeItem.contextValueRegExp), context);
     }
 
     if (node instanceof RevisionsTreeItem) {

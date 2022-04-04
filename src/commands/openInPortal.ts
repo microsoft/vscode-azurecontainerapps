@@ -10,7 +10,7 @@ import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
 
 export async function openInPortal(context: IActionContext, node?: AzExtTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValueRegExp, context);
     }
 
     if (node instanceof ContainerAppTreeItem) {
