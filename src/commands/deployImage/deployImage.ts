@@ -15,6 +15,7 @@ import { localize } from "../../utils/localize";
 import { nonNullValue } from "../../utils/nonNull";
 import { EnvironmentVariablesListStep } from "../createContainerApp/EnvironmentVariablesListStep";
 import { getLoginServer } from "../createContainerApp/getLoginServer";
+import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
 import { IDeployImageContext } from "./IDeployImageContext";
@@ -80,9 +81,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
             ext.outputChannel.appendLog(creatingRevision);
             node.data = await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerAppEnvelope);
 
-            const createdRevision = localize('createdRevision', 'Created a new revision "{1}" for container app "{0}"', node.name, node.data.latestRevisionName);
-            void window.showInformationMessage(createdRevision);
-            ext.outputChannel.appendLog(createdRevision);
+            void showContainerAppCreated(node, true);
         });
     });
 

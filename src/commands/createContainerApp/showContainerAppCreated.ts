@@ -9,16 +9,20 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
 import { localize } from "../../utils/localize";
 
-export async function showContainerAppCreated(caNode: ContainerAppTreeItem): Promise<void> {
+export async function showContainerAppCreated(node: ContainerAppTreeItem, isUpdate: boolean = false): Promise<void> {
     return await callWithTelemetryAndErrorHandling('containerApps.showCaCreated', async (context: IActionContext) => {
-        const createdCa: string = localize('createdCa', 'Successfully created new container app "{0}".', caNode.name);
-        ext.outputChannel.appendLog(createdCa);
+        const createdCa: string = localize('createdCa', 'Successfully created new container app "{0}".', node.name);
+        const createdRevision = localize('createdRevision', 'Created a new revision "{1}" for container app "{0}"', node.name, node.data.latestRevisionName);
+        const message = isUpdate ? createdRevision : createdCa;
+        ext.outputChannel.appendLog(message);
 
         const browse: MessageItem = { title: localize('browse', 'Browse') };
-        await window.showInformationMessage(createdCa, browse).then(async (result) => {
+        const buttons: MessageItem[] = [];
+        if (node.ingressEnabled()) { buttons.push(browse) }
+        await window.showInformationMessage(message, ...buttons).then(async (result) => {
             context.telemetry.properties.clicked = 'canceled';
             if (result === browse) {
-                await caNode.browse();
+                await node.browse();
                 context.telemetry.properties.clicked = 'browse';
             }
         });

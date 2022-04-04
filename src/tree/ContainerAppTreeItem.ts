@@ -63,7 +63,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             children.push(this.revisionsTreeItem);
         }
 
-        this.data.configuration?.ingress ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
+        this.ingressEnabled() ? children.push(new IngressTreeItem(this, this.data.configuration?.ingress)) : children.push(new IngressDisabledTreeItem(this));
         children.push(new ScaleTreeItem(this, this.data.template?.scale), new LogsTreeItem(this))
         return children;
     }
@@ -78,11 +78,11 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async browse(): Promise<void> {
         // make sure that ingress is enabled
-        if (!this.data.latestRevisionFqdn) {
+        if (this.ingressEnabled()) {
             throw new Error(localize('enableIngress', 'Enable ingress to perform this action.'));
         }
 
-        await openUrl(`https://${this.data.latestRevisionFqdn}`);
+        await openUrl(`https://${this.data.configuration?.ingress?.fqdn}`);
     }
 
     public async deleteTreeItem(context: IActionContext, skipConfirmation: boolean = false): Promise<void> {
@@ -170,6 +170,10 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     public getRevisionMode(): string {
         return this.data.configuration?.activeRevisionsMode?.toLowerCase() === 'single' ?
             RevisionConstants.single.data : RevisionConstants.multiple.data;
+    }
+
+    public ingressEnabled(): boolean {
+        return !!this.data.configuration?.ingress;
     }
 
     public async resolveTooltip(): Promise<MarkdownString> {
