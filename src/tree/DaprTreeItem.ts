@@ -10,6 +10,7 @@ import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 
+// https://github.com/microsoft/vscode-azurecontainerapps/issues/55
 export class DaprTreeItem extends AzExtTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'dapr|azResource';
     public readonly contextValue: string = DaprTreeItem.contextValue;
