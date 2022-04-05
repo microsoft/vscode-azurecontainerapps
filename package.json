@@ -88,7 +88,8 @@
             {
                 "command": "containerApps.createContainerApp",
                 "title": "%containerApps.createContainerApp%",
-                "category": "Azure Container Apps"
+                "category": "Azure Container Apps",
+                "icon": "$(add)"
             },
             {
                 "command": "containerApps.deployImage",
@@ -177,9 +178,14 @@
         "menus": {
             "view/title": [
                 {
+                    "command": "containerApps.createContainerApp",
+                    "when": "view == containerApps",
+                    "group": "navigation@1"
+                },
+                {
                     "command": "containerApps.refresh",
                     "when": "view == containerApps",
-                    "group": "navigation@z"
+                    "group": "navigation@2"
                 }
             ],
             "view/item/context": [
