@@ -14,6 +14,7 @@ import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { openUrl } from "../utils/openUrl";
 import { treeUtils } from "../utils/treeUtils";
+import { DaprTreeItem } from "./DaprTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { IngressDisabledTreeItem, IngressTreeItem } from "./IngressTreeItem";
 import { LogsTreeItem } from "./LogsTreeItem";
@@ -59,8 +60,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        // https://github.com/microsoft/vscode-azurecontainerapps/issues/55
-        const children: AzExtTreeItem[] = [/* new DaprTreeItem(this, this.data.template?.dapr) */];
+        const children: AzExtTreeItem[] = [new DaprTreeItem(this, this.data.configuration?.dapr)];
         if (this.getRevisionMode() === 'multiple') {
             this.revisionsTreeItem = new RevisionsTreeItem(this);
             children.push(this.revisionsTreeItem);
