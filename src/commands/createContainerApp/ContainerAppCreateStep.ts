@@ -26,9 +26,10 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
         if (context.registry) {
             // for ACR usage
             const { username, password } = await listCredentialsFromRegistry(context, context.registry);
+            const passwordName = `${context.registry.name?.toLowerCase()}-${password?.name}`;
             secrets = [
                 {
-                    name: password?.name,
+                    name: passwordName,
                     value: password?.value
                 }
             ]
@@ -36,7 +37,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
                 {
                     server: context.registry.loginServer,
                     username,
-                    passwordSecretRef: password?.name
+                    passwordSecretRef: passwordName
                 }
             ]
         } else {

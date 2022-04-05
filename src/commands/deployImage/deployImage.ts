@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-app";
+import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
@@ -43,25 +43,26 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     await wizard.prompt();
     await wizard.execute();
 
-    const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(node.data));
-
-    containerAppEnvelope.configuration ||= {};
-    // we need to remove stale secrets and registries if they exist
-    containerAppEnvelope.configuration.secrets = []
-    containerAppEnvelope.configuration.registries = [];
+    const containerAppEnvelope = await node.getContainerEnvelopeWithSecrets(wizardContext);
 
     // for ACR
     if (wizardContext.registry) {
         const registry = wizardContext.registry;
         const { username, password } = await listCredentialsFromRegistry(wizardContext, registry);
-        containerAppEnvelope.configuration.registries.push(
+        const passwordName = `${wizardContext.registry.name?.toLocaleLowerCase()}-${password?.name}`;
+        // remove duplicate registry
+        containerAppEnvelope.configuration.registries = containerAppEnvelope.configuration.registries?.filter(r => r.server !== registry.loginServer);
+        containerAppEnvelope.configuration.registries?.push(
             {
                 server: registry.loginServer,
                 username: username,
-                passwordSecretRef: password.name
+                passwordSecretRef: passwordName
             }
         )
-        containerAppEnvelope.configuration.secrets.push({ name: password.name, value: password.value });
+
+        // remove duplicate secretRef
+        containerAppEnvelope.configuration.secrets = containerAppEnvelope.configuration.secrets?.filter(s => s.name !== passwordName);
+        containerAppEnvelope.configuration.secrets?.push({ name: passwordName, value: password.value });
     }
 
     // we want to replace the old image
