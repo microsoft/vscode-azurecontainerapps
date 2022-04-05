@@ -23,7 +23,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
 
     if (!node) {
         context.suppressCreatePick = true;
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
     }
 
     const wizardContext: IDeployImageContext = { ...context, ...node.subscription, targetContainer: node.data };

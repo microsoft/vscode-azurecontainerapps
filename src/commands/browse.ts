@@ -9,7 +9,7 @@ import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 
 export async function browse(context: IActionContext, node?: ContainerAppTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
     }
 
     await node.browse();

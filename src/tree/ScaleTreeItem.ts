@@ -6,21 +6,23 @@
 import { Scale } from "@azure/arm-app";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
+import { azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
+import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleRuleGroupTreeItem } from "./ScaleRuleGroupTreeItem";
 
 export class ScaleTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'scale|azResource';
-    public readonly contextValue: string = ScaleTreeItem.contextValue;
-    public readonly parent: ContainerAppTreeItem;
+    public static contextValue: string = 'scale';
+    public readonly contextValue: string = `${ScaleTreeItem.contextValue}|${azResourceContextValue}`;
+    public readonly parent: ContainerAppTreeItem | RevisionTreeItem;
     public data: Scale;
 
     public label: string;
 
-    constructor(parent: ContainerAppTreeItem, data: Scale | undefined) {
+    constructor(parent: ContainerAppTreeItem | RevisionTreeItem, data: Scale | undefined) {
         super(parent);
         this.label = localize('scale', 'Scaling');
         this.data = data || {};

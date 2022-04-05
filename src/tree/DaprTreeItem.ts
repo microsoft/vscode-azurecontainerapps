@@ -5,6 +5,7 @@
 
 import { Dapr } from "@azure/arm-app";
 import { AzExtTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
@@ -12,8 +13,8 @@ import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 
 // https://github.com/microsoft/vscode-azurecontainerapps/issues/55
 export class DaprTreeItem extends AzExtTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'dapr|azResource';
-    public readonly contextValue: string = DaprTreeItem.contextValue;
+    public static contextValue: string = 'dapr';
+    public readonly contextValue: string = `${DaprTreeItem.contextValue}|${azResourceContextValue}`;
     public readonly parent: ContainerAppTreeItem;
     public data: Dapr;
 
