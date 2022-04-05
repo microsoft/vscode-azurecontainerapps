@@ -68,7 +68,11 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     containerAppEnvelope.template ||= {};
     containerAppEnvelope.template.containers = [];
     containerAppEnvelope.template.containers.push(
-        { image: `${getLoginServer(wizardContext)}/${wizardContext.repositoryName}:${wizardContext.tag}`, name: `${wizardContext.repositoryName}-${wizardContext.tag}` }
+        {
+            image: `${getLoginServer(wizardContext)}/${wizardContext.repositoryName}:${wizardContext.tag}`,
+            name: `${wizardContext.repositoryName}-${wizardContext.tag}`,
+            env: wizardContext.environmentVariables
+        }
     )
 
     const creatingRevision = localize('creatingRevision', 'Creating a new revision for container app "{0}"...', node.name);
