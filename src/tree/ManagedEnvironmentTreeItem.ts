@@ -13,7 +13,7 @@ import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressS
 import { EnvironmentVariablesListStep } from "../commands/createContainerApp/EnvironmentVariablesListStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
-import { webProvider } from "../constants";
+import { azResourceContextValue, webProvider } from "../constants";
 import { ext } from "../extensionVariables";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
@@ -25,8 +25,9 @@ import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 
 export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'managedEnvironment|azResource';
-    public readonly contextValue: string = ManagedEnvironmentTreeItem.contextValue;
+    public static contextValue: string = 'managedEnvironment';
+    public static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentTreeItem.contextValue);
+    public readonly contextValue: string = `${ManagedEnvironmentTreeItem.contextValue}|${azResourceContextValue}`;
     public readonly data: ManagedEnvironment;
     public resourceGroupName: string;
     public readonly childTypeLabel: string = localize('containerApp', 'Container App');

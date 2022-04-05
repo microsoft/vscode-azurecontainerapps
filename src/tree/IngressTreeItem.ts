@@ -6,7 +6,7 @@
 import { Ingress } from "@azure/arm-app";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
-import { IngressConstants } from "../constants";
+import { azResourceContextValue, IngressConstants } from "../constants";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
@@ -15,8 +15,8 @@ import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 const label: string = localize('ingress', 'Ingress');
 
 export class IngressTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'ingress|enabled|azResource';
-    public readonly contextValue: string = IngressTreeItem.contextValue;
+    public static contextValue: string = 'ingress|enabled';
+    public readonly contextValue: string = `${IngressTreeItem.contextValue}|${azResourceContextValue}`;
     public readonly parent: ContainerAppTreeItem;
     public data: Ingress
 

@@ -4,16 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownRevisionProvisioningState, Revision } from "@azure/arm-app";
-import { AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon } from "vscode";
+import { azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { RevisionsTreeItem } from "./RevisionsTreeItem";
+import { ScaleTreeItem } from "./ScaleTreeItem";
 
-export class RevisionTreeItem extends AzExtTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'revision|azResource';
-    public readonly contextValue: string = RevisionTreeItem.contextValue;
+export class RevisionTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
+    public static contextValue: string = 'revision';
+    public readonly contextValue: string = `${RevisionTreeItem.contextValue}|${azResourceContextValue}`;
     public data: Revision;
     public readonly parent: RevisionsTreeItem;
 
@@ -71,5 +73,13 @@ export class RevisionTreeItem extends AzExtTreeItem implements IAzureResourceTre
 
     public async refreshImpl(context: IActionContext): Promise<void> {
         this.data = await this.parent.getRevision(context, this.name);
+    }
+
+    public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
+        return [new ScaleTreeItem(this, this.data.template?.scale)]
+    }
+
+    public hasMoreChildrenImpl(): boolean {
+        return false;
     }
 }

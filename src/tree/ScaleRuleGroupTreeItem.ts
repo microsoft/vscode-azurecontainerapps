@@ -6,14 +6,15 @@
 import { ScaleRule } from "@azure/arm-app";
 import { AzExtParentTreeItem, AzExtTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
+import { azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 import { ScaleRuleTreeItem } from "./ScaleRuleTreeItem";
 import { ScaleTreeItem } from "./ScaleTreeItem";
 
 export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'scaleRules|azResource';
-    public readonly contextValue: string = ScaleRuleGroupTreeItem.contextValue;
+    public static contextValue: string = 'scaleRules';
+    public readonly contextValue: string = `${ScaleRuleGroupTreeItem.contextValue}|${azResourceContextValue}`;
     public readonly parent: ScaleTreeItem;
 
     public label: string;
