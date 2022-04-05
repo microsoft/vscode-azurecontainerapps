@@ -365,7 +365,7 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-app": "^1.0.0-beta.1",
+        "@azure/arm-app": "^1.0.0-alpha.20220330.1",
         "@azure/arm-containerregistry": "^8.1.1",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^4.2.2",
