@@ -173,6 +173,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         }
 
         concreteContainerAppEnvelope.configuration.secrets = secrets;
+        concreteContainerAppEnvelope.configuration.registries ||= [];
+
         return concreteContainerAppEnvelope;
     }
 
