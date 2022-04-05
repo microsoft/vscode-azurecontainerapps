@@ -18,5 +18,6 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     const caNode: ContainerAppTreeItem = await node.createChild(context);
     void showContainerAppCreated(caNode);
 
+    await node.refresh(context);
     return caNode;
 }
