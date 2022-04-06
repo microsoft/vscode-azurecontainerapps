@@ -61,7 +61,6 @@ export class IngressDisabledTreeItem extends AzExtTreeItem {
     }
 
     public get iconPath(): TreeItemIconPath {
-        // TODO: need proper icon
         return new ThemeIcon('debug-disconnect');
     }
 }
