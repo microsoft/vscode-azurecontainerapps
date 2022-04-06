@@ -14,7 +14,6 @@ import { localize } from "../../../utils/localize";
 import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
 import { IContainerAppContext } from "../../createContainerApp/IContainerAppContext";
 
-// TODO: More testing with different ACR configurations
 export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IContainerAppContext> {
     public async prompt(context: IContainerAppContext): Promise<void> {
         const message = localize('enableAdminUser', 'An admin user is required to continue. If enabled, you can use the registry name as username and admin user access key as password to docker login to your container registry.');

@@ -23,7 +23,6 @@ export class LogsTreeItem extends AzExtTreeItem {
     }
 
     public get iconPath(): TreeItemIconPath {
-        // TODO: need proper icon
         return new ThemeIcon('book');
     }
 }
