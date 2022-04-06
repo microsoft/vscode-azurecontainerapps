@@ -9,7 +9,6 @@ import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
 import { RevisionTreeItem } from '../tree/RevisionTreeItem';
-import { SubscriptionTreeItem } from '../tree/SubscriptionTreeItem';
 import { browse } from './browse';
 import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
@@ -43,79 +42,6 @@ export function registerCommands(): void {
     registerCommand('containerApps.activateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'activate', node));
     registerCommand('containerApps.deactivateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'deactivate', node));
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
-
-    // TODO: Remove, this is just for testing
-    registerCommand('containerApps.testCommand', async (context: IActionContext, node?: SubscriptionTreeItem) => {
-        // const url = 'https://hub.docker.com/v2/repositories/velikriss';
-        // const dockerhub = await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)
-        // console.log(dockerhub);
-
-        if (!node) {
-            node = await ext.tree.showTreeItemPicker<SubscriptionTreeItem>(SubscriptionTreeItem.contextValue, context);
-        }
-
-        await node.createChild(context);
-
-        // const containerEnv = await node.getContainerEnvelopeWithSecrets(context);
-
-        // containerEnv.template ||= {};
-        // containerEnv.template.dapr = {
-        //     "enabled": true,
-        //     "appId": "nodeapp",
-        //     "appPort": 3000,
-        //     "components": [
-        //         {
-        //             "name": "statestore",
-        //             "type": "state.azure.blobstorage",
-        //             "version": "v1",
-        //             "metadata": [
-        //                 {
-        //                     "name": "accountName",
-        //                     "value": "naturinsdapr",
-        //                     "secretRef": ""
-        //                 },
-        //                 {
-        //                     "name": "accountKey",
-        //                     "value": "zOvri+bDG4HHDpng621F/5kq/tzYBNiat5f91TRfIScqqXaU+AXX/jE4YAj4LIXUQZsvbpLJXy6V8cEq7uUMkg==",
-        //                     "secretRef": ""
-        //                 },
-        //                 {
-        //                 "name": "containerName",
-        //                     "value": "nodeapp",
-        //                     "secretRef": ""
-        //                 }
-        //             ]
-        //         }
-        //     ]
-        // };
-
-        // const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
-        // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, node.name, containerEnv);
-
-        // await webClient.containerApps.beginCreateOrUpdateAndWait(node.resourceGroupName, 'dockercontainer3', {
-        //     location: node.data.location,
-        //     ManagedEnvironmentId: node.id,
-        //     configuration: {
-        //         ingress: {
-        //             targetPort: 80,
-        //             external: true,
-        //             transport: 'auto',
-        //             allowInsecure: false,
-        //             traffic: [
-        //                 {
-        //                     "weight": 100,
-        //                     "latestRevision": true
-        //                 }
-        //             ],
-        //         }
-        //     },
-        //     template: {
-        //         containers: [
-        //             { image: 'docker.io/velikriss/gettingstarted:latest', name: 'velikriss-gettingstarted-latest' }
-        //         ]
-        //     }
-        // });
-    });
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
