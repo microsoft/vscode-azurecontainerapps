@@ -262,7 +262,7 @@
                 },
                 {
                     "command": "containerApps.editTargetPort",
-                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled|targetPort/",
                     "group": "1@3"
                 },
                 {
