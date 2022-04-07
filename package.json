@@ -304,20 +304,20 @@
                         "type": "boolean",
                         "description": "%containerApps.enableOutputTimestamps%",
                         "default": true
+                    },
+                    "containerApps.deleteConfirmation": {
+                        "type": "string",
+                        "enum": [
+                            "EnterName",
+                            "ClickButton"
+                        ],
+                        "description": "%containerApps.deleteConfirmation%",
+                        "enumDescriptions": [
+                            "%containerApps.deleteConfirmation.EnterName%",
+                            "%containerApps.deleteConfirmation.ClickButton%"
+                        ],
+                        "default": "EnterName"
                     }
-                },
-                "containerApps.deleteConfirmation": {
-                    "type": "string",
-                    "enum": [
-                        "EnterName",
-                        "ClickButton"
-                    ],
-                    "description": "%containerApps.deleteConfirmation%",
-                    "enumDescriptions": [
-                        "%containerApps.deleteConfirmation.EnterName%",
-                        "%containerApps.deleteConfirmation.ClickButton%"
-                    ],
-                    "default": "EnterName"
                 }
             }
         ]
