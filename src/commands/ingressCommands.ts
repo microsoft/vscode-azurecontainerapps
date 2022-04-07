@@ -41,7 +41,7 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
 
         ingress = {
             targetPort: wizardContext.targetPort,
-            external: wizardContext.enableIngress,
+            external: wizardContext.enableExternal,
             transport: 'auto',
             allowInsecure: false,
             traffic: [
@@ -57,7 +57,6 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
     const working = node instanceof IngressTreeItem ? localize('disabling', 'Disabling ingress for container app "{0}"...', name) : localize('enabling', 'Enabling ingress for container app "{0}"...', name);
     const workCompleted = node instanceof IngressTreeItem ? localize('disableCompleted', 'Disabled ingress for container app "{0}"', name) : localize('enableCompleted', 'Enabled ingress for container app "{0}"', name);
 
-    // enabling doesn't seem to work, getting internal server errors.  Same as portal
     await updateIngressSettings(context, { ingress, node, working, workCompleted });
 }
 
@@ -120,8 +119,8 @@ async function updateIngressSettings(context: IActionContext,
         await client.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, name, containerAppEnvelope);
 
         void window.showInformationMessage(workCompleted);
-        ext.outputChannel.appendLog(workCompleted, { resourceName: name });
+        ext.outputChannel.appendLog(workCompleted);
     });
 
-    node instanceof IngressTreeItem ? await node.parent.refresh(context) : await node.refresh(context);
+    await node.parent.refresh(context);
 }
