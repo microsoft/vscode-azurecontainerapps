@@ -25,7 +25,7 @@ import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 
 export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = 'manaGedEnvironment';
+    public static contextValue: string = 'managedEnvironment';
     public static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentTreeItem.contextValue);
     public readonly contextValue: string = `${ManagedEnvironmentTreeItem.contextValue}|${azResourceContextValue}`;
     public readonly data: ManagedEnvironment;
