@@ -68,7 +68,8 @@
             {
                 "command": "containerApps.selectSubscriptions",
                 "title": "%containerApps.selectSubscriptions%",
-                "category": "Azure Container Apps"
+                "category": "Azure Container Apps",
+                "icon": "$(filter)"
             },
             {
                 "command": "containerApps.reportIssue",
@@ -189,6 +190,11 @@
                 }
             ],
             "view/item/context": [
+                {
+                    "command": "containerApps.selectSubscriptions",
+                    "when": "view == containerApps && viewItem == azureextensionui.azureSubscription",
+                    "group": "inline"
+                },
                 {
                     "command": "containerApps.refresh",
                     "when": "view == containerApps && viewItem =~ /azureSubscription|managedEnvironment|containerApp/",
