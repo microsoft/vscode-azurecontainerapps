@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient, Ingress } from "@azure/arm-app";
-import { AzureWizard, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, AzureWizardPromptStep, GenericTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
 import { IngressConstants } from '../constants';
 import { ext } from '../extensionVariables';
@@ -41,7 +41,7 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
 
         ingress = {
             targetPort: wizardContext.targetPort,
-            external: wizardContext.enableIngress,
+            external: wizardContext.enableExternal,
             transport: 'auto',
             allowInsecure: false,
             traffic: [
@@ -57,19 +57,27 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
     const working = node instanceof IngressTreeItem ? localize('disabling', 'Disabling ingress for container app "{0}"...', name) : localize('enabling', 'Enabling ingress for container app "{0}"...', name);
     const workCompleted = node instanceof IngressTreeItem ? localize('disableCompleted', 'Disabled ingress for container app "{0}"', name) : localize('enableCompleted', 'Enabled ingress for container app "{0}"', name);
 
-    // enabling doesn't seem to work, getting internal server errors.  Same as portal
     await updateIngressSettings(context, { ingress, node, working, workCompleted });
 }
 
-export async function editTargetPort(context: IActionContext, node?: IngressTreeItem): Promise<void> {
-    if (!node) {
-        node = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
+export async function editTargetPort(context: IActionContext, target?: IngressTreeItem | GenericTreeItem): Promise<void> {
+    if (!target) {
+        target = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
     }
+
+    // GenericTreeItem will be a targetPort node
+    const node: IngressTreeItem = target instanceof IngressTreeItem ? target : target.parent as IngressTreeItem;
 
     const title: string = localize('updateTargetPort', 'Update Target Port');
     const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
 
-    const wizardContext: IContainerAppContext = { ...context, ...node.subscription, managedEnvironmentId: node.parent.managedEnvironmentId };
+    const wizardContext: IContainerAppContext = {
+        ...context,
+        ...node.subscription,
+        managedEnvironmentId: node.parent.managedEnvironmentId,
+        defaultPort: node.data.targetPort
+    };
+
     const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
@@ -120,8 +128,8 @@ async function updateIngressSettings(context: IActionContext,
         await client.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, name, containerAppEnvelope);
 
         void window.showInformationMessage(workCompleted);
-        ext.outputChannel.appendLog(workCompleted, { resourceName: name });
+        ext.outputChannel.appendLog(workCompleted);
     });
 
-    node instanceof IngressTreeItem ? await node.parent.refresh(context) : await node.refresh(context);
+    await node.parent.refresh(context);
 }
