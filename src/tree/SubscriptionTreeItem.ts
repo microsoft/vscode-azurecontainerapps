@@ -18,7 +18,7 @@ import { ManagedEnvironmentTreeItem } from './ManagedEnvironmentTreeItem';
 
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
-    public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container App environment');
+    public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container Apps environment');
     private readonly _nextLink: string | undefined;
 
     public hasMoreChildrenImpl(): boolean {
@@ -40,7 +40,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
         const wizardContext: IManagedEnvironmentContext = { ...context, ...this.subscription };
 
-        const title: string = localize('createManagedEnv', 'Create Container App environment');
+        const title: string = localize('createManagedEnv', 'Create Container Apps environment');
         const promptSteps: AzureWizardPromptStep<IManagedEnvironmentContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 

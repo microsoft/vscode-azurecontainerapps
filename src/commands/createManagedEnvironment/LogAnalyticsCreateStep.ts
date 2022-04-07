@@ -18,7 +18,7 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
         const opClient = await createOperationalInsightsManagementClient(context);
         const rg = nonNullValue(context.resourceGroup);
 
-        const creatingLaw: string = localize('creatingLogAnalyticWorkspace', 'Creating new Log Analytic workspace...');
+        const creatingLaw: string = localize('creatingLogAnalyticsWorkspace', 'Creating new Log Analytics workspace...');
         progress.report({ message: creatingLaw });
         ext.outputChannel.appendLog(creatingLaw);
         context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(

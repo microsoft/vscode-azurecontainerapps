@@ -17,7 +17,7 @@ export async function createManagedEnvironment(context: IActionContext & Partial
     }
 
     const keNode: ManagedEnvironmentTreeItem = await node.createChild(context);
-    const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container App environment "{0}".', keNode.name);
+    const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container Apps environment "{0}".', keNode.name);
     ext.outputChannel.appendLog(createdKuEnv);
     void window.showInformationMessage(createdKuEnv);
 

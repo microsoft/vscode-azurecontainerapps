@@ -108,7 +108,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
             await this.deleteAllContainerApps(context, containerApps);
         }
 
-        const deleting: string = localize('DeletingManagedEnv', 'Deleting Container App environment "{0}"...', this.name);
+        const deleting: string = localize('DeletingManagedEnv', 'Deleting Container Apps environment "{0}"...', this.name);
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
             try {
@@ -122,7 +122,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
                     throw error;
                 }
             }
-            const deleteSucceeded: string = localize('DeleteManagedEnvSucceeded', 'Successfully deleted container app environment "{0}".', this.name);
+            const deleteSucceeded: string = localize('DeleteManagedEnvSucceeded', 'Successfully deleted Container Apps environment "{0}".', this.name);
             void window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });
@@ -131,8 +131,8 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
             const numOfResources = containerApps.length;
             const hasNoResources: boolean = !numOfResources;
 
-            const deleteEnv: string = localize('ConfirmDeleteManagedEnv', 'Are you sure you want to delete container app environment "{0}"?', node.name);
-            const deleteEnvAndApps: string = localize('ConfirmDeleteEnvAndApps', 'Are you sure you want to delete Container App environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
+            const deleteEnv: string = localize('ConfirmDeleteManagedEnv', 'Are you sure you want to delete Container Apps environment "{0}"?', node.name);
+            const deleteEnvAndApps: string = localize('ConfirmDeleteEnvAndApps', 'Are you sure you want to delete Container Apps environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
                 node.name, numOfResources);
 
             const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSetting('deleteConfirmation');
@@ -140,7 +140,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
                 const message: string = hasNoResources ? deleteEnv : deleteEnvAndApps;
                 await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse); // no need to check result - cancel will throw error
             } else {
-                const prompt: string = localize('enterToDelete', 'Enter "{0}" to delete this Container App environment. Deleting this will delete {1} container app(s) in this environment.',
+                const prompt: string = localize('enterToDelete', 'Enter "{0}" to delete this Container Apps environment. Deleting this will delete {1} container app(s) in this environment.',
                     node.name, numOfResources);
 
                 const result: string = await context.ui.showInputBox({ prompt, validateInput });
