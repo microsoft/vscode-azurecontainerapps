@@ -266,7 +266,7 @@
                 },
                 {
                     "command": "containerApps.openInPortal",
-                    "when": "view == containerApps && viewItem =~ /ManagedEnvironment|containerApp/",
+                    "when": "view == containerApps && viewItem =~ /managedEnvironment|containerApp/",
                     "group": "1@1"
                 },
                 {
