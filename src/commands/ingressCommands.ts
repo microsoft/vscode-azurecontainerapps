@@ -73,9 +73,12 @@ export async function editTargetPort(context: IActionContext, target?: IngressTr
     const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
 
     const wizardContext: IContainerAppContext = {
-        ...context, ...node.subscription,
-        managedEnvironmentId: node.parent.managedEnvironmentId, defaultPort: node.data.targetPort
+        ...context,
+        ...node.subscription,
+        managedEnvironmentId: node.parent.managedEnvironmentId,
+        defaultPort: node.data.targetPort
     };
+
     const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
