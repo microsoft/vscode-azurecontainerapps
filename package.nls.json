@@ -24,6 +24,6 @@
     "containerApps.createManagedEnvironment": "Create Container Apps Environment...",
     "containerApps.deleteManagedEnvironment": "Delete Container Apps Environment...",
     "containerApps.deleteConfirmation": "The behavior to use when confirming delete of a Container Apps environment.",
-    "containerApps.deleteConfirmation.EnterName": "Prompts with an input box where you enter the Container App enviornment name to delete.",
+    "containerApps.deleteConfirmation.EnterName": "Prompts with an input box where you enter the Container Apps environment name to delete.",
     "containerApps.deleteConfirmation.ClickButton": "Prompts with a warning dialog where you click a button to delete."
 }
