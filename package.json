@@ -197,87 +197,87 @@
                 },
                 {
                     "command": "containerApps.refresh",
-                    "when": "view == containerApps && viewItem =~ /azureSubscription|managedEnvironment|containerApp/",
+                    "when": "view == containerApps && viewItem =~ /azureSubscription|managedEnvironment|containerApp/i",
                     "group": "z@2"
                 },
                 {
                     "command": "containerApps.createManagedEnvironment",
-                    "when": "view == containerApps && viewItem =~ /azureSubscription/",
+                    "when": "view == containerApps && viewItem =~ /azureSubscription/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",
-                    "when": "view == containerApps && viewItem =~ /managedEnvironment/",
+                    "when": "view == containerApps && viewItem =~ /managedEnvironment/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteManagedEnvironment",
-                    "when": "view == containerApps && viewItem =~ /managedEnvironment/",
+                    "when": "view == containerApps && viewItem =~ /managedEnvironment/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.deployImage",
-                    "when": "view == containerApps && viewItem =~ /containerApp/",
+                    "when": "view == containerApps && viewItem =~ /containerApp/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteContainerApp",
-                    "when": "view == containerApps && viewItem =~ /containerApp/",
+                    "when": "view == containerApps && viewItem =~ /containerApp/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view == containerApps && viewItem =~ /revisionmode:single|revisions$/",
+                    "when": "view == containerApps && viewItem =~ /revisionmode:single|revisions$/i",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/",
+                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/",
+                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/i",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/",
+                    "when": "view == containerApps && viewItem =~ /revision[^a-z]/i",
                     "group": "1@3"
                 },
                 {
                     "command": "containerApps.disableIngress",
-                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.enableIngress",
-                    "when": "view == containerApps && viewItem =~ /ingress.+disabled/",
+                    "when": "view == containerApps && viewItem =~ /ingress.+disabled/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.toggleVisibility",
-                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled/i",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.editTargetPort",
-                    "when": "view == containerApps && viewItem =~ /ingress.+enabled|targetPort/",
+                    "when": "view == containerApps && viewItem =~ /ingress.+enabled|targetPort/i",
                     "group": "1@3"
                 },
                 {
                     "command": "containerApps.viewProperties",
-                    "when": "view == containerApps && viewItem =~ /azResource/",
+                    "when": "view == containerApps && viewItem =~ /azResource/i",
                     "group": "z@1"
                 },
                 {
                     "command": "containerApps.openInPortal",
-                    "when": "view == containerApps && viewItem =~ /ManagedEnvironment|containerApp/",
+                    "when": "view == containerApps && viewItem =~ /managedEnvironment|containerApp/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.browse",
-                    "when": "view == containerApps && viewItem =~ /containerApp/",
+                    "when": "view == containerApps && viewItem =~ /containerApp/i",
                     "group": "1@2"
                 }
             ],
