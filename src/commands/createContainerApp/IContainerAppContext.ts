@@ -13,6 +13,8 @@ export interface IContainerAppContext extends IResourceGroupWizardContext, IDepl
 
     enableIngress?: boolean;
     enableExternal?: boolean;
+
+    defaultPort?: number;
     targetPort?: number;
 
     // created when the wizard is done executing

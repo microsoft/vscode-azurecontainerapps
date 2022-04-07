@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient, Ingress } from "@azure/arm-app";
-import { AzureWizard, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, AzureWizardPromptStep, GenericTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
 import { IngressConstants } from '../constants';
 import { ext } from '../extensionVariables';
@@ -61,15 +61,21 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
     await updateIngressSettings(context, { ingress, node, working, workCompleted });
 }
 
-export async function editTargetPort(context: IActionContext, node?: IngressTreeItem): Promise<void> {
-    if (!node) {
-        node = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
+export async function editTargetPort(context: IActionContext, target?: IngressTreeItem | GenericTreeItem): Promise<void> {
+    if (!target) {
+        target = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
     }
+
+    // GenericTreeItem will be a targetPort node
+    const node: IngressTreeItem = target instanceof IngressTreeItem ? target : target.parent as IngressTreeItem;
 
     const title: string = localize('updateTargetPort', 'Update Target Port');
     const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
 
-    const wizardContext: IContainerAppContext = { ...context, ...node.subscription, managedEnvironmentId: node.parent.managedEnvironmentId };
+    const wizardContext: IContainerAppContext = {
+        ...context, ...node.subscription,
+        managedEnvironmentId: node.parent.managedEnvironmentId, defaultPort: node.data.targetPort
+    };
     const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
