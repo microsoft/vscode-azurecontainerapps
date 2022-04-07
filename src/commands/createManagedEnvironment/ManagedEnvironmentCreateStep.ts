@@ -23,7 +23,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         const rgName = nonNullValueAndProp(context.resourceGroup, 'name');
         const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 
-        const creatingKuEnv: string = localize('creatingManagedEnvironment', 'Creating new Container App environment "{0}"...', context.newManagedEnvironmentName);
+        const creatingKuEnv: string = localize('creatingManagedEnvironment', 'Creating new Container Apps environment "{0}"...', context.newManagedEnvironmentName);
         progress.report({ message: creatingKuEnv });
         ext.outputChannel.appendLog(creatingKuEnv);
 

@@ -10,7 +10,7 @@ import { IManagedEnvironmentContext } from './IManagedEnvironmentContext';
 let checkNameLength: boolean = false;
 export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
     public async prompt(context: IManagedEnvironmentContext): Promise<void> {
-        const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new container app environment.');
+        const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new Container Apps environment.');
         context.newManagedEnvironmentName = (await context.ui.showInputBox({
             prompt,
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
