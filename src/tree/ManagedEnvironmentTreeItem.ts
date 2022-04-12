@@ -160,8 +160,9 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
         }
     }
 
-    private async deleteAllContainerApps(context: IActionContext, containerApps: ContainerAppTreeItem[]): Promise<void> {
-        const deletePromises = containerApps.map(c => c.deleteTreeItem(context, true));
+    private async deleteAllContainerApps(context: IActionContext & { suppressPrompt?: boolean }, containerApps: ContainerAppTreeItem[]): Promise<void> {
+        context.suppressPrompt = true;
+        const deletePromises = containerApps.map(c => c.deleteTreeItem(context));
         await Promise.all(deletePromises);
     }
 }

@@ -89,13 +89,9 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         await openUrl(`https://${this.data.configuration?.ingress?.fqdn}`);
     }
 
-    public async deleteTreeItem(context: IActionContext, skipConfirmation: boolean = false): Promise<void> {
-        await this.deleteTreeItemImpl(context, skipConfirmation);
-    }
-
-    public async deleteTreeItemImpl(context: IActionContext, skipConfirmation: boolean = false): Promise<void> {
+    public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        if (!skipConfirmation) {
+        if (!context.suppressPrompt) {
             await context.ui.showWarningMessage(confirmMessage, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
         }
 
