@@ -4,17 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from '@azure/arm-app';
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
+import { ContainerAppTreeItem } from '../../tree/ContainerAppTreeItem';
 import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { nonNullValue } from "../../utils/nonNull";
 
-export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: RevisionTreeItem): Promise<void> {
+export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: ContainerAppTreeItem | RevisionTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<RevisionTreeItem>(RevisionTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem | RevisionTreeItem>(ContainerAppTreeItem.contextValue, context);
     }
+
+    const containerAppName: string = node instanceof RevisionTreeItem ? node.parent.parent.name : node.name;
+    const revisionName: string = node instanceof RevisionTreeItem ? node.name : nonNullProp(node.data, 'latestRevisionName');
+    const resourceGroupName: string = node instanceof RevisionTreeItem ? node.parent.parent.resourceGroupName : node.resourceGroupName;
 
     const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
 
@@ -24,16 +28,15 @@ export async function changeRevisionActiveState(context: IActionContext, command
         'restart': localize('restarting', 'Restarting...'),
     }
     await node.runWithTemporaryDescription(context, temporaryDescriptions[command], async () => {
-        node = nonNullValue(node);
         switch (command) {
             case 'activate':
-                await appClient.containerAppsRevisions.activateRevision(node.parent.parent.resourceGroupName, node.parent.parent.name, node.name);
+                await appClient.containerAppsRevisions.activateRevision(resourceGroupName, containerAppName, revisionName);
                 break;
             case 'deactivate':
-                await appClient.containerAppsRevisions.deactivateRevision(node.parent.parent.resourceGroupName, node.parent.parent.name, node.name);
+                await appClient.containerAppsRevisions.deactivateRevision(resourceGroupName, containerAppName, revisionName);
                 break;
             case 'restart':
-                await appClient.containerAppsRevisions.restartRevision(node.parent.parent.resourceGroupName, node.parent.parent.name, node.name);
+                await appClient.containerAppsRevisions.restartRevision(resourceGroupName, containerAppName, revisionName);
                 break;
         }
     });
