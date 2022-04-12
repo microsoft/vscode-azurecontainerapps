@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-app";
 import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { MarkdownString, ProgressLocation, window } from "vscode";
+import { ProgressLocation, window } from "vscode";
 import { azResourceContextValue, RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
@@ -121,7 +121,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
 
-        this.contextValue = `${ContainerAppTreeItem.contextValue}|revisionmode:${this.getRevisionMode()}`;
+        this.contextValue = `${ContainerAppTreeItem.contextValue}|${azResourceContextValue}|revisionmode:${this.getRevisionMode()}`;
         this.data = data;
     }
 
@@ -181,23 +181,6 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public ingressEnabled(): boolean {
         return !!this.data.configuration?.ingress;
-    }
-
-    public async resolveTooltip(): Promise<MarkdownString> {
-        return new MarkdownString(`
-## ${this.name}
-
----
-
-### Latest Revision
-${this.data.latestRevisionName}
-
-### Fully Qualified Domain Name
-[${this.data.latestRevisionFqdn}](https://${this.data.latestRevisionFqdn})
-
-### Traffic Weight
-${JSON.stringify(this.data.configuration?.ingress?.traffic)}
-        `)
     }
 }
 
