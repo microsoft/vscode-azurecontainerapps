@@ -2,7 +2,8 @@
 
 <!-- region exclude-from-marketplace -->
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-azurecontainerapps.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-azurecontainerapps.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps) [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurecontainerapps?branchName=main)](https://dev.azure.com/ms-azuretools/AzCode/_build?definitionId=39&branchName=main)
+[![Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-azurecontainerapps.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-azurecontainerapps.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps) [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurecontainerapps?branchName=main)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=39&branchName=main)
+
 
 <!-- endregion exclude-from-marketplace -->
 
