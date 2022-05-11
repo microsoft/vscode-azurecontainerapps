@@ -45,7 +45,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 
         promptSteps.push(new ManagedEnvironmentNameStep());
-        executeSteps.push(new VerifyProvidersStep(['Microsoft.App']), new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new ManagedEnvironmentCreateStep());
+        executeSteps.push(new VerifyProvidersStep(['Microsoft.App', 'Microsoft.OperationalInsights']), new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new ManagedEnvironmentCreateStep());
         LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.App', 'managedEnvironments');
         LocationListStep.addStep(wizardContext, promptSteps);
 
