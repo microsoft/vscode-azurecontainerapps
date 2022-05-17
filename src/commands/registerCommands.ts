@@ -19,6 +19,7 @@ import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingres
 import { openInPortal } from './openInPortal';
 import { openLogs } from './openLogs';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
+import { editScalingRange } from './scaling/editScalingRange';
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
@@ -42,6 +43,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.activateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'activate', node));
     registerCommand('containerApps.deactivateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'deactivate', node));
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
+    registerCommand('containerApps.editScalingRange', editScalingRange);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);

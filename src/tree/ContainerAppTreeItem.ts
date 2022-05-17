@@ -64,11 +64,13 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         if (this.getRevisionMode() === 'multiple') {
             this.revisionsTreeItem = new RevisionsTreeItem(this);
             children.push(this.revisionsTreeItem);
+        } else {
+            children.push(new ScaleTreeItem(this, this.data.template?.scale));
         }
 
         this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
         this.logTreeItem = new LogsTreeItem(this);
-        children.push(this.ingressTreeItem, new ScaleTreeItem(this, this.data.template?.scale), this.logTreeItem)
+        children.push(this.ingressTreeItem, this.logTreeItem)
         return children;
     }
 
