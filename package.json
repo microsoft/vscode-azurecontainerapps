@@ -2,7 +2,7 @@
     "name": "vscode-azurecontainerapps",
     "displayName": "Azure Container Apps",
     "description": "%containerApps.description%",
-    "version": "0.1.1-alpha.1",
+    "version": "0.1.1-alpha.2",
     "publisher": "ms-azuretools",
     "icon": "resources/azure-containerapps.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -49,6 +49,7 @@
         "onCommand:containerApps.restartRevision",
         "onCommand:containerApps.createManagedEnvironment",
         "onCommand:containerApps.browse",
+        "onCommand:containerApps.openConsoleInPortal",
         "onCommand:containerApps.editScalingRange"
     ],
     "main": "./main.js",
@@ -158,6 +159,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.openConsoleInPortal",
+                "title": "%containerApps.openConsoleInPortal%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.editScalingRange",
                 "title": "%containerApps.editScalingRange%",
                 "category": "Azure Container Apps"
@@ -218,12 +224,12 @@
                 {
                     "command": "containerApps.deleteContainerApp",
                     "when": "view == containerApps && viewItem =~ /containerApp/i",
-                    "group": "3@1"
+                    "group": "3@2"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
                     "when": "view == containerApps && viewItem =~ /revisionmode:single|revisions$/i",
-                    "group": "3@2"
+                    "group": "2@4"
                 },
                 {
                     "command": "containerApps.activateRevision",
@@ -271,9 +277,14 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "containerApps.browse",
+                    "command": "containerApps.openConsoleInPortal",
                     "when": "view == containerApps && viewItem =~ /containerApp/i",
                     "group": "1@2"
+                },
+                {
+                    "command": "containerApps.browse",
+                    "when": "view == containerApps && viewItem =~ /containerApp/i",
+                    "group": "1@3"
                 },
                 {
                     "command": "containerApps.editScalingRange",

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as azUtil from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
 import { ext } from '../extensionVariables';
@@ -41,6 +42,13 @@ export function registerCommands(): void {
     registerCommand('containerApps.activateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'activate', node));
     registerCommand('containerApps.deactivateRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'deactivate', node));
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
+    registerCommand('containerApps.openConsoleInPortal', async (context: IActionContext, node?: ContainerAppTreeItem) => {
+        if (!node) {
+            node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+        }
+
+        await azUtil.openInPortal(node, `${node.id}/console`);
+    });
     registerCommand('containerApps.editScalingRange', editScalingRange);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
