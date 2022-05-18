@@ -2,7 +2,7 @@
     "name": "vscode-azurecontainerapps",
     "displayName": "Azure Container Apps",
     "description": "%containerApps.description%",
-    "version": "0.1.1-alpha.0",
+    "version": "0.1.1-alpha.1",
     "publisher": "ms-azuretools",
     "icon": "resources/azure-containerapps.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -39,7 +39,6 @@
         "onCommand:containerApps.deployImage",
         "onCommand:containerApps.deleteManagedEnvironment",
         "onCommand:containerApps.deleteContainerApp",
-        "onCommand:containerApps.openLogs",
         "onCommand:containerApps.disableIngress",
         "onCommand:containerApps.enableIngress",
         "onCommand:containerApps.toggleVisibility",
@@ -106,11 +105,6 @@
             {
                 "command": "containerApps.deleteContainerApp",
                 "title": "%containerApps.deleteContainerApp%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.openLogs",
-                "title": "%containerApps.openLogs%",
                 "category": "Azure Container Apps"
             },
             {

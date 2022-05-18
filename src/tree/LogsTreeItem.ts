@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
 import { localize } from "../utils/localize";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 
-export class LogsTreeItem extends AzExtTreeItem {
+export class LogsTreeItem extends AzExtParentTreeItem {
     public static contextValue: string = 'log';
     public readonly contextValue: string = LogsTreeItem.contextValue;
     public readonly parent: ContainerAppTreeItem;
@@ -17,12 +17,23 @@ export class LogsTreeItem extends AzExtTreeItem {
 
     constructor(parent: ContainerAppTreeItem) {
         super(parent);
-        this.id = `${this.parent.id}/logs`;
+        this.id = `${this.parent.id}/logParent`;
         this.label = localize('logs', 'Logs');
-        this.commandId = 'containerApps.openLogs';
     }
 
     public get iconPath(): TreeItemIconPath {
         return new ThemeIcon('book');
+    }
+
+    public async loadMoreChildrenImpl(): Promise<AzExtTreeItem[]> {
+        const iconPath = new ThemeIcon('link-external');
+        return [
+            new GenericTreeItem(this, { label: 'Open Logs', contextValue: 'openLogs', commandId: 'containerApps.openInPortal', iconPath, id: `${this.parent.id}/logs` }),
+            new GenericTreeItem(this, { label: 'Open Log Stream', contextValue: 'openLogStream', commandId: 'containerApps.openInPortal', iconPath, id: `${this.parent.id}/logstream` })
+        ]
+    }
+
+    public hasMoreChildrenImpl(): boolean {
+        return false;
     }
 }
