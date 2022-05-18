@@ -21,11 +21,16 @@ export class ScaleTreeItem extends AzExtParentTreeItem implements IAzureResource
     public data: Scale;
 
     public label: string;
+    public minReplicas: string;
+    public maxReplicas: string;
 
     constructor(parent: ContainerAppTreeItem | RevisionTreeItem, data: Scale | undefined) {
         super(parent);
         this.label = localize('scale', 'Scaling');
+
         this.data = data || {};
+        this.minReplicas = String(this.data.minReplicas ?? 0);
+        this.maxReplicas = String(this.data.maxReplicas ?? this.data.minReplicas ?? 0);
     }
 
     public get iconPath(): TreeItemIconPath {
@@ -34,8 +39,7 @@ export class ScaleTreeItem extends AzExtParentTreeItem implements IAzureResource
 
     public async loadMoreChildrenImpl(): Promise<AzExtTreeItem[]> {
         return [
-            new GenericTreeItem(this, { label: localize('min', 'Min replicas'), description: String(this.data.minReplicas ?? 0), contextValue: 'minReplica', iconPath: new ThemeIcon('dash') }),
-            new GenericTreeItem(this, { label: localize('max', 'Max replicas'), description: String(this.data.maxReplicas ?? 0), contextValue: 'maxReplica', iconPath: new ThemeIcon('dash') }),
+            new GenericTreeItem(this, { label: localize('minMax', 'Min / max replicas'), description: `${this.minReplicas} / ${this.maxReplicas}`, contextValue: 'minMaxReplica', iconPath: new ThemeIcon('dash') }),
             new ScaleRuleGroupTreeItem(this, this.data.rules ?? [])]
     }
 

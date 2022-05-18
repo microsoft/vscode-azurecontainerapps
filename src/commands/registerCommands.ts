@@ -18,8 +18,8 @@ import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
 import { openInPortal } from './openInPortal';
-import { openLogs } from './openLogs';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
+import { editScalingRange } from './scaling/editScalingRange';
 import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
@@ -34,7 +34,6 @@ export function registerCommands(): void {
     registerCommand('containerApps.deployImage', deployImage);
     registerCommand('containerApps.deleteManagedEnvironment', async (context: IActionContext, node?: ManagedEnvironmentTreeItem) => await deleteNode(context, ManagedEnvironmentTreeItem.contextValue, node));
     registerCommand('containerApps.deleteContainerApp', async (context: IActionContext, node?: ContainerAppTreeItem) => await deleteNode(context, ContainerAppTreeItem.contextValueRegExp, node));
-    registerCommand('containerApps.openLogs', openLogs);
     registerCommand('containerApps.enableIngress', toggleIngress);
     registerCommand('containerApps.disableIngress', toggleIngress);
     registerCommand('containerApps.toggleVisibility', toggleIngressVisibility);
@@ -50,6 +49,7 @@ export function registerCommands(): void {
 
         await azUtil.openInPortal(node, `${node.id}/console`);
     });
+    registerCommand('containerApps.editScalingRange', editScalingRange);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);

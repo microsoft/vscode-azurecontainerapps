@@ -12,7 +12,6 @@
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.deployImage": "Update Image in Container App...",
     "containerApps.deleteContainerApp": "Delete Container App...",
-    "containerApps.openLogs": "Open Logs",
     "containerApps.disableIngress": "Disable Ingress for Container App",
     "containerApps.enableIngress": "Enable Ingress for Container App...",
     "containerApps.toggleVisibility": "Switch Ingress Visibility...",
@@ -26,5 +25,6 @@
     "containerApps.deleteConfirmation": "The behavior to use when confirming delete of a Container Apps environment.",
     "containerApps.deleteConfirmation.EnterName": "Prompts with an input box where you enter the Container Apps environment name to delete.",
     "containerApps.deleteConfirmation.ClickButton": "Prompts with a warning dialog where you click a button to delete.",
-    "containerApps.openConsoleInPortal": "Open Console in Portal"
+    "containerApps.openConsoleInPortal": "Open Console in Portal",
+    "containerApps.editScalingRange": "Edit Scale Rule Setting..."
 }
