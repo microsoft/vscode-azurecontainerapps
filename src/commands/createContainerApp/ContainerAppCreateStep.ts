@@ -63,6 +63,9 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
         progress.report({ message: creatingSwa });
         ext.outputChannel.appendLog(creatingSwa);
 
+        context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
+        const name = context.image.substring(context.image.lastIndexOf('/') + 1).replace(':', '-');
+
         context.containerApp = await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppProvider)).name,
             managedEnvironmentId: context.managedEnvironmentId,
@@ -75,8 +78,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             template: {
                 containers: [
                     {
-                        image: `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`, name: `${context.repositoryName}-${context.tag}`,
-                        env: context.environmentVariables
+                        image: context.image, name, env: context.environmentVariables
                     }
                 ]
             }
