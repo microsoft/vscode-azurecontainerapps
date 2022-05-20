@@ -6,8 +6,8 @@
 import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
-import { ProgressLocation, window } from "vscode";
-import { webProvider } from "../../constants";
+import { MessageItem, ProgressLocation, window } from "vscode";
+import { RevisionConstants, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -21,13 +21,21 @@ import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
 import { IDeployImageContext } from "./IDeployImageContext";
 
 export async function deployImage(context: ITreeItemPickerContext & Partial<IDeployImageContext>, node?: ContainerAppTreeItem): Promise<void> {
-
     if (!node) {
         context.suppressCreatePick = true;
         node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
     }
 
     const wizardContext: IDeployImageContext = { ...context, ...node.subscription, targetContainer: node.data };
+
+    if (hasUnsupportedFeatures(node)) {
+        const warning: string = node.getRevisionMode() === RevisionConstants.single.data ?
+            localize('confirmDeploySingle', 'Are you sure you want to deploy to "{0}"? This will overwrite the active revision and unsupported features in VS Code will be lost.', node.name) :
+            localize('confirmDeployMultiple', 'Are you sure you want to deploy to "{0}"? Unsupported features in VS Code will be lost in the new revision.', node.name);
+
+        const items: MessageItem[] = [{ title: localize('deploy', 'Deploy') }];
+        await context.ui.showWarningMessage(warning, { modal: true, stepName: 'confirmDestructiveDeployment' }, ...items);
+    }
 
     const title: string = localize('updateImage', 'Update image in "{0}"', node.name);
     const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] =
@@ -91,4 +99,23 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     });
 
     await node.refresh(context);
+}
+
+// check for any portal features that VS Code doesn't currently support
+function hasUnsupportedFeatures(node: ContainerAppTreeItem): boolean {
+    if (node.data.template?.volumes) {
+        return true;
+    } else if (node.data.template?.containers) {
+        if (node.data.template.containers.length > 1) {
+            return true;
+        }
+
+        for (const container of node.data.template.containers) {
+            // NOTE: these are all arrays so if they are empty, this will still return true
+            // but these should be undefined if not being utilized
+            return !!container.probes || !!container.volumeMounts || !!container.args;
+        }
+    }
+
+    return false;
 }
