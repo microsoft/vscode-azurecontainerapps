@@ -18,6 +18,7 @@ import { getLoginServer } from "../createContainerApp/getLoginServer";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
+import { getContainerNameForImage } from "./getContainerNameForImage";
 import { IDeployImageContext } from "./IDeployImageContext";
 
 export async function deployImage(context: ITreeItemPickerContext & Partial<IDeployImageContext>, node?: ContainerAppTreeItem): Promise<void> {
@@ -79,7 +80,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     containerAppEnvelope.template.containers = [];
 
     wizardContext.image ||= `${getLoginServer(wizardContext)}/${wizardContext.repositoryName}:${wizardContext.tag}`;
-    const name = wizardContext.image.substring(wizardContext.image.lastIndexOf('/') + 1).replace(/[^0-9a-zA-Z-]/g, '-');
+    const name = getContainerNameForImage(wizardContext.image);
 
     containerAppEnvelope.template.containers.push(
         {
