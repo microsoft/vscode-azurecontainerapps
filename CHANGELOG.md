@@ -1,5 +1,19 @@
 # Change Log
 
+## 0.1.1 - 2022-05-20
+
+### Added
+- Deploy container images from any public registry
+- Edit scale rules of a revision
+- Open "Log Streaming" and "Console" via [Azure Portal](https://ms.portal.azure.com/)
+
+### Changed
+- Warning when deploying to container app that has features unsupported by VS Code
+    - Examples include: `volumes`, `volumeMounts`, `probes`
+
+### Fixed
+- [Bugs fixed](https://github.com/microsoft/vscode-azurecontainerapps/milestone/2?closed=1)
+
 ## 0.1.0 - 2022-04-12
 
 ### Added
