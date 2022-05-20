@@ -111,6 +111,8 @@ function hasUnsupportedFeatures(node: ContainerAppTreeItem): boolean {
         }
 
         for (const container of node.data.template.containers) {
+            // NOTE: these are all arrays so if they are empty, this will still return true
+            // but these should be undefined if not being utilized
             return !!container.probes || !!container.volumeMounts || !!container.args;
         }
     }
