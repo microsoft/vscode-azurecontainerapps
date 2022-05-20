@@ -13,6 +13,7 @@ import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { listCredentialsFromRegistry } from "../deployImage/acr/listCredentialsFromRegistry";
+import { getContainerNameForImage } from "../deployImage/getContainerNameForImage";
 import { getLoginServer } from "./getLoginServer";
 import { IContainerAppContext } from "./IContainerAppContext";
 
@@ -64,7 +65,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
         ext.outputChannel.appendLog(creatingSwa);
 
         context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
-        const name = context.image.substring(context.image.lastIndexOf('/') + 1).replace(':', '-');
+        const name = getContainerNameForImage(context.image);
 
         context.containerApp = await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppProvider)).name,
