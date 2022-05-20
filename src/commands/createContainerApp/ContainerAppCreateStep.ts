@@ -64,7 +64,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
         ext.outputChannel.appendLog(creatingSwa);
 
         context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
-        const name = context.image.substring(context.image.lastIndexOf('/') + 1).replace(':', '-');
+        const name = context.image.substring(context.image.lastIndexOf('/') + 1).replace(/[^0-9a-zA-Z-]/g, '-');
 
         context.containerApp = await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppProvider)).name,

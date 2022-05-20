@@ -77,11 +77,13 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     // we want to replace the old image
     containerAppEnvelope.template ||= {};
     containerAppEnvelope.template.containers = [];
+
+    wizardContext.image ||= `${getLoginServer(wizardContext)}/${wizardContext.repositoryName}:${wizardContext.tag}`;
+    const name = wizardContext.image.substring(wizardContext.image.lastIndexOf('/') + 1).replace(/[^0-9a-zA-Z-]/g, '-');
+
     containerAppEnvelope.template.containers.push(
         {
-            image: `${getLoginServer(wizardContext)}/${wizardContext.repositoryName}:${wizardContext.tag}`,
-            name: `${wizardContext.repositoryName}-${wizardContext.tag}`,
-            env: wizardContext.environmentVariables
+            image: wizardContext.image, name, env: wizardContext.environmentVariables
         }
     )
 
