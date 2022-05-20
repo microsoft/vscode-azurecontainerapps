@@ -26,6 +26,8 @@ export class TargetPortStep extends AzureWizardPromptStep<IContainerAppContext> 
             return localize('enterNumber', 'Enter a valid port number')
         } else if (num < 1 || num > 65535) {
             return localize('portRange', 'Enter a number between 1-65535');
+        } else if (/[^0-9]/.test(val)) {
+            return localize('integersOnly', 'Enter only whole integer values.')
         }
 
         return undefined;
