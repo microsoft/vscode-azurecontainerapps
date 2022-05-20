@@ -60,6 +60,8 @@ async function validateInput(range: string | undefined): Promise<string | undefi
         return localize('maxRangeExceeded', 'The maximum number of replicas is 10.');
     } else if (min > max) {
         return localize('minHigherThanMax', 'The minimum range cannot be larger than the maximum range.');
+    } else if (max === 0) {
+        return localize('maxGreaterThan0', 'The maximum replicas must be greater than 0.')
     }
 
     return undefined;
