@@ -36,6 +36,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     public revisionsTreeItem: RevisionsTreeItem;
     public ingressTreeItem: IngressTreeItem | IngressDisabledTreeItem;
     public logTreeItem: LogsTreeItem;
+    public scaleTreeItem: ScaleTreeItem;
 
     constructor(parent: AzExtParentTreeItem, ca: ContainerApp) {
         super(parent);
@@ -61,11 +62,12 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
         const children: AzExtTreeItem[] = [new DaprTreeItem(this, this.data.configuration?.dapr)];
-        if (this.getRevisionMode() === 'multiple') {
+        if (this.getRevisionMode() === RevisionConstants.multiple.data) {
             this.revisionsTreeItem = new RevisionsTreeItem(this);
             children.push(this.revisionsTreeItem);
         } else {
-            children.push(new ScaleTreeItem(this, this.data.template?.scale));
+            this.scaleTreeItem = new ScaleTreeItem(this, this.data.template?.scale);
+            children.push(this.scaleTreeItem);
         }
 
         this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
@@ -129,16 +131,24 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public pickTreeItemImpl(expectedContextValues: (string | RegExp)[]): AzExtTreeItem | undefined {
         for (const expectedContextValue of expectedContextValues) {
-            switch (expectedContextValue) {
-                case RevisionTreeItem.contextValue:
-                case RevisionsTreeItem.contextValue:
-                    return this.revisionsTreeItem;
-                case IngressTreeItem.contextValue:
-                case IngressDisabledTreeItem.contextValue:
-                    return this.ingressTreeItem;
-                case LogsTreeItem.contextValue:
-                    return this.logTreeItem;
-                default:
+            if (expectedContextValue instanceof RegExp) {
+                if (expectedContextValue.test(ScaleTreeItem.contextValue)) {
+                    return this.getRevisionMode() === RevisionConstants.single.data ? this.scaleTreeItem : this.revisionsTreeItem;
+                }
+            } else {
+                switch (expectedContextValue) {
+                    case RevisionTreeItem.contextValue:
+                    case RevisionsTreeItem.contextValue:
+                        return this.revisionsTreeItem;
+                    case IngressTreeItem.contextValue:
+                    case IngressDisabledTreeItem.contextValue:
+                        return this.ingressTreeItem;
+                    case LogsTreeItem.contextValue:
+                        return this.logTreeItem;
+                    case ScaleTreeItem.contextValue:
+                        return this.scaleTreeItem;
+                    default:
+                }
             }
         }
 

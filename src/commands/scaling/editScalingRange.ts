@@ -13,7 +13,11 @@ import { ScaleTreeItem } from "../../tree/ScaleTreeItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 
-export async function editScalingRange(context: IActionContext, node: ScaleTreeItem): Promise<void> {
+export async function editScalingRange(context: IActionContext, node?: ScaleTreeItem): Promise<void> {
+    if (!node) {
+        node = await ext.tree.showTreeItemPicker<ScaleTreeItem>(new RegExp(ScaleTreeItem.contextValue), context);
+    }
+
     const prompt: string = localize('editScalingRange', 'Set the range of application replicas that get created in response to a scale rule. Set any range within the minimum of 0 and the maximum of 10 replicas');
     const value: string = `${node.minReplicas}-${node.maxReplicas}`;
     const range = await context.ui.showInputBox({

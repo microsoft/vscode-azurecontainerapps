@@ -19,6 +19,8 @@ export class RevisionTreeItem extends AzExtParentTreeItem implements IAzureResou
     public data: Revision;
     public readonly parent: RevisionsTreeItem;
 
+    public scaleTreeItem: ScaleTreeItem;
+
     public name: string;
     public label: string;
 
@@ -76,7 +78,24 @@ export class RevisionTreeItem extends AzExtParentTreeItem implements IAzureResou
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        return [new ScaleTreeItem(this, this.data.template?.scale)]
+        this.scaleTreeItem = new ScaleTreeItem(this, this.data.template?.scale);
+        return [this.scaleTreeItem];
+    }
+
+    public pickTreeItemImpl(expectedContextValues: (string | RegExp)[]): AzExtTreeItem | undefined {
+        for (const expectedContextValue of expectedContextValues) {
+            if (expectedContextValue instanceof RegExp) {
+                if (expectedContextValue.test(ScaleTreeItem.contextValue)) return this.scaleTreeItem;
+            } else {
+                switch (expectedContextValue) {
+                    case ScaleTreeItem.contextValue:
+                        return this.scaleTreeItem;
+                    default:
+                }
+            }
+        }
+
+        return undefined;
     }
 
     public hasMoreChildrenImpl(): boolean {
