@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ManagedEnvironment } from '@azure/arm-app';
+import { ManagedEnvironment } from "@azure/arm-appcontainers";
 import { Workspace } from '@azure/arm-operationalinsights';
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import { ICreateChildImplContext } from '@microsoft/vscode-azext-utils';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from '@azure/arm-app';
+import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from '../../tree/ContainerAppTreeItem';

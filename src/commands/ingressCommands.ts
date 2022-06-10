@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, Ingress } from "@azure/arm-app";
+import { Ingress } from "@azure/arm-appcontainers";
 import { AzureWizard, AzureWizardPromptStep, GenericTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
 import { IngressConstants } from '../constants';
 import { ext } from '../extensionVariables';
 import { IngressDisabledTreeItem, IngressTreeItem } from '../tree/IngressTreeItem';
-import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullValueAndProp } from '../utils/nonNull';
 import { EnableIngressStep } from './createContainerApp/EnableIngressStep';
 import { IContainerAppContext } from './createContainerApp/IContainerAppContext';
 import { TargetPortStep } from './createContainerApp/TargetPortStep';
+import { updateContainerApp } from "./updateContainerApp";
 
 export async function toggleIngress(context: IActionContext, node?: IngressTreeItem | IngressDisabledTreeItem): Promise<void> {
     if (!node) {
@@ -116,16 +116,9 @@ async function updateIngressSettings(context: IActionContext,
     }): Promise<void> {
     const { ingress, node, working, workCompleted } = options;
 
-    const containerAppEnvelope = await node.parent.getContainerEnvelopeWithSecrets(context);
-    containerAppEnvelope.configuration.ingress = ingress;
-
-    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
-    const resourceGroupName = node.parent.resourceGroupName;
-    const name = node.parent.name;
-
     await window.withProgress({ location: ProgressLocation.Notification, title: working }, async (): Promise<void> => {
         ext.outputChannel.appendLog(working);
-        await client.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, name, containerAppEnvelope);
+        await updateContainerApp(context, node.parent, { configuration: { ingress: ingress } })
 
         void window.showInformationMessage(workCompleted);
         ext.outputChannel.appendLog(workCompleted);

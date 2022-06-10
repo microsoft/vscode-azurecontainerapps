@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-app";
+import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
@@ -14,7 +14,7 @@ import { AzExtClientContext, createAzureClient, parseClientContext } from '@micr
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript
 
 export async function createContainerAppsAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
-    return createAzureClient(context, (await import('@azure/arm-app')).ContainerAppsAPIClient)
+    return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient)
 }
 
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
