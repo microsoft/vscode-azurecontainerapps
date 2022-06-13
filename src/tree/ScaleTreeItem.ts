@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Scale } from "@azure/arm-appcontainers";
+import { Container, Scale } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
 import { azResourceContextValue } from "../constants";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleRuleGroupTreeItem } from "./ScaleRuleGroupTreeItem";
@@ -17,14 +17,14 @@ import { ScaleRuleGroupTreeItem } from "./ScaleRuleGroupTreeItem";
 export class ScaleTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'scale';
     public readonly contextValue: string = `${ScaleTreeItem.contextValue}|${azResourceContextValue}`;
-    public readonly parent: ContainerAppTreeItem | RevisionTreeItem;
+    public readonly parent: AzExtParentTreeItem & ResolvedContainerAppResource<Container> | RevisionTreeItem;
     public data: Scale;
 
     public label: string;
     public minReplicas: string;
     public maxReplicas: string;
 
-    constructor(parent: ContainerAppTreeItem | RevisionTreeItem, data: Scale | undefined) {
+    constructor(parent: AzExtParentTreeItem, data: Scale | undefined) {
         super(parent);
         this.label = localize('scale', 'Scaling');
 

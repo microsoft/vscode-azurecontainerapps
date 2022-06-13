@@ -8,6 +8,7 @@ import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, pa
 import { ProgressLocation, window } from "vscode";
 import { azResourceContextValue, RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
@@ -22,24 +23,24 @@ import { RevisionsTreeItem } from "./RevisionsTreeItem";
 import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleTreeItem } from "./ScaleTreeItem";
 
-export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
+export class ContainerAppTreeItem implements ResolvedContainerAppResource<ContainerApp>, IAzureResourceTreeItem {
     public static contextValue: string = 'containerApp';
     public static contextValueRegExp: RegExp = new RegExp(ContainerAppTreeItem.contextValue);
-    public contextValue: string;
     public data: ContainerApp;
     public resourceGroupName: string;
+    public id: string;
 
     public name: string;
     public label: string;
     public managedEnvironmentId: string;
+    public contextValuesToAdd: string[] = [];
 
     public revisionsTreeItem: RevisionsTreeItem;
     public ingressTreeItem: IngressTreeItem | IngressDisabledTreeItem;
     public logTreeItem: LogsTreeItem;
     public scaleTreeItem: ScaleTreeItem;
 
-    constructor(parent: AzExtParentTreeItem, ca: ContainerApp) {
-        super(parent);
+    constructor(ca: ContainerApp) {
         this.data = ca;
 
         this.id = nonNullProp(this.data, 'id');
@@ -49,7 +50,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         this.label = this.name;
         this.managedEnvironmentId = nonNullProp(this.data, 'managedEnvironmentId');
 
-        this.contextValue = `${ContainerAppTreeItem.contextValue}|${azResourceContextValue}|revisionmode:${this.getRevisionMode()}`;
+        this.contextValuesToAdd.push(ContainerAppTreeItem.contextValue, azResourceContextValue, `revisionmode:${this.getRevisionMode()}`);
     }
 
     public get iconPath(): TreeItemIconPath {
@@ -61,17 +62,18 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        const children: AzExtTreeItem[] = [new DaprTreeItem(this, this.data.configuration?.dapr)];
+        const parent = this as unknown as AzExtParentTreeItem;
+        const children: AzExtTreeItem[] = [new DaprTreeItem(parent, this.data.configuration?.dapr)];
         if (this.getRevisionMode() === RevisionConstants.multiple.data) {
-            this.revisionsTreeItem = new RevisionsTreeItem(this);
+            this.revisionsTreeItem = new RevisionsTreeItem(parent);
             children.push(this.revisionsTreeItem);
         } else {
-            this.scaleTreeItem = new ScaleTreeItem(this, this.data.template?.scale);
+            this.scaleTreeItem = new ScaleTreeItem(parent, this.data.template?.scale);
             children.push(this.scaleTreeItem);
         }
 
-        this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
-        this.logTreeItem = new LogsTreeItem(this);
+        this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(parent, this.data.configuration?.ingress) : new IngressDisabledTreeItem(parent);
+        this.logTreeItem = new LogsTreeItem(parent);
         children.push(this.ingressTreeItem, this.logTreeItem)
         return children;
     }
@@ -104,7 +106,9 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             ext.outputChannel.appendLog(deleting);
-            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+
+            const parent = this as unknown as AzExtParentTreeItem;
+            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, parent]);
             try {
                 await webClient.containerApps.beginDeleteAndWait(this.resourceGroupName, this.name);
             } catch (error) {
@@ -122,10 +126,11 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 
     public async refreshImpl(context: IActionContext): Promise<void> {
-        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+        const parent = this as unknown as AzExtParentTreeItem;
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, parent]);
         const data = await client.containerApps.get(this.resourceGroupName, this.name);
 
-        this.contextValue = `${ContainerAppTreeItem.contextValue}|${azResourceContextValue}|revisionmode:${this.getRevisionMode()}`;
+        this.contextValuesToAdd.push(ContainerAppTreeItem.contextValue, azResourceContextValue, `revisionmode:${this.getRevisionMode()}`);
         this.data = data;
     }
 
@@ -171,7 +176,8 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         // a 204 indicates no secrets, but sdk is catching it as an exception
         let secrets: ContainerAppSecret[] = [];
         try {
-            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+            const parent = this as unknown as AzExtParentTreeItem;
+            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, parent]);
             secrets = ((await webClient.containerApps.listSecrets(this.resourceGroupName, this.name)).value);
         } catch (error) {
             const pError = parseError(error);

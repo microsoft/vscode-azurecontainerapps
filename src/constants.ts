@@ -7,8 +7,10 @@ import { IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { QuickPickItem } from "vscode";
 import { localize } from "./utils/localize";
 
-export const webProvider: string = 'Microsoft.Web';
-export const containerAppProvider: string = `${webProvider}/containerApps`;
+export const extensionId: string = 'ms-azuretools.vscode-azurecontainerapps';
+export const appProvider: string = 'Microsoft.App';
+export const containerAppProvider: string = `${appProvider}/containerApps`.toLowerCase();
+export const managedEnvironmentProvider: string = `${appProvider}/managedEnvironments`.toLowerCase();
 
 export namespace IngressConstants {
     export const external: string = localize('external', 'External');

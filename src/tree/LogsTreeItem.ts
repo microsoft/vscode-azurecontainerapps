@@ -3,19 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { Container } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { localize } from "../utils/localize";
-import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 
 export class LogsTreeItem extends AzExtParentTreeItem {
     public static contextValue: string = 'log';
     public readonly contextValue: string = LogsTreeItem.contextValue;
-    public readonly parent: ContainerAppTreeItem;
+    public readonly parent: AzExtParentTreeItem & ResolvedContainerAppResource<Container>;
 
     public label: string;
 
-    constructor(parent: ContainerAppTreeItem) {
+    constructor(parent: AzExtParentTreeItem) {
         super(parent);
         this.id = `${this.parent.id}/logParent`;
         this.label = localize('logs', 'Logs');

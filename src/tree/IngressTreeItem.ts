@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Ingress } from "@azure/arm-appcontainers";
+import { Container, Ingress } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
 import { azResourceContextValue, IngressConstants } from "../constants";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 
 const label: string = localize('ingress', 'Ingress');
@@ -17,12 +17,12 @@ const label: string = localize('ingress', 'Ingress');
 export class IngressTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'ingress|enabled';
     public readonly contextValue: string = `${IngressTreeItem.contextValue}|${azResourceContextValue}`;
-    public readonly parent: ContainerAppTreeItem;
+    public readonly parent: AzExtParentTreeItem & ResolvedContainerAppResource<Container>;
     public data: Ingress
 
     public label: string;
 
-    constructor(parent: ContainerAppTreeItem, data?: Ingress) {
+    constructor(parent: AzExtParentTreeItem, data?: Ingress) {
         super(parent);
         this.data = data || {};
         this.label = label;
@@ -50,11 +50,11 @@ export class IngressTreeItem extends AzExtParentTreeItem implements IAzureResour
 export class IngressDisabledTreeItem extends AzExtTreeItem {
     public static contextValue: string = 'ingress|disabled';
     public readonly contextValue: string = IngressDisabledTreeItem.contextValue;
-    public readonly parent: ContainerAppTreeItem;
+    public readonly parent: AzExtParentTreeItem & ResolvedContainerAppResource<Container>;
 
     public label: string;
 
-    constructor(parent: ContainerAppTreeItem) {
+    constructor(parent: AzExtParentTreeItem) {
         super(parent);
         this.label = label;
         this.description = localize('disabled', 'Disabled');

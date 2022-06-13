@@ -15,6 +15,7 @@ import { IContainerAppContext } from "../commands/createContainerApp/IContainerA
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { azResourceContextValue, webProvider } from "../constants";
 import { ext } from "../extensionVariables";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
@@ -24,7 +25,7 @@ import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 
-export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
+export class ManagedEnvironmentTreeItem implements ResolvedContainerAppResource<ManagedEnvironment>, IAzureResourceTreeItem {
     public static contextValue: string = 'managedEnvironment';
     public static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentTreeItem.contextValue);
     public readonly contextValue: string = `${ManagedEnvironmentTreeItem.contextValue}|${azResourceContextValue}`;

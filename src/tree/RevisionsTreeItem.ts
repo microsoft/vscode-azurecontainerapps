@@ -3,26 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, Revision } from "@azure/arm-appcontainers";
+import { Container, ContainerAppsAPIClient, Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { RevisionConstants } from "../constants";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { RevisionTreeItem } from "./RevisionTreeItem";
 
 export class RevisionsTreeItem extends AzExtParentTreeItem {
     public static contextValue: string = 'revisions';
     public readonly contextValue: string = RevisionsTreeItem.contextValue;
     public readonly childTypeLabel: string = localize('revision', 'Revision');
-    public readonly parent: ContainerAppTreeItem;
+    public readonly parent: AzExtParentTreeItem & ResolvedContainerAppResource<Container>;
 
     public name: string;
     public label: string;
 
-    constructor(parent: ContainerAppTreeItem) {
+    constructor(parent: AzExtParentTreeItem) {
         super(parent);
         this.label = localize('revisons', 'Revisions');
     }

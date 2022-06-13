@@ -3,23 +3,23 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Dapr } from "@azure/arm-appcontainers";
+import { Container, Dapr } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, GenericTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { azResourceContextValue } from "../constants";
+import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
 
 export class DaprTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
     public static contextValue: string = 'dapr';
     public readonly contextValue: string = `${DaprTreeItem.contextValue}|${azResourceContextValue}`;
-    public readonly parent: ContainerAppTreeItem;
+    public readonly parent!: AzExtParentTreeItem & ResolvedContainerAppResource<Container>;
     public data: Dapr;
 
     public label: string;
 
-    constructor(parent: ContainerAppTreeItem, data: Dapr | undefined) {
+    constructor(parent: AzExtParentTreeItem, data: Dapr | undefined) {
         super(parent);
         this.label = localize('dapr', 'Dapr');
         this.data = data || {};

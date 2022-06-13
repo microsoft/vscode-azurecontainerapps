@@ -11,7 +11,10 @@ import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-
 import * as vscode from 'vscode';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { registerCommands } from './commands/registerCommands';
+import { extensionId } from './constants';
 import { ext } from './extensionVariables';
+import { getResourceGroupsApi } from './getExtensionApi';
+import { ContainerAppResolver } from './resolver/ContainerAppResolver';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
@@ -36,6 +39,8 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
 
         registerCommands();
         ext.experimentationService = await createExperimentationService(context);
+        ext.rgApi = await getResourceGroupsApi();
+        ext.rgApi.registerApplicationResourceResolver(extensionId, new ContainerAppResolver());
     });
 
     return createApiProvider([<AzureExtensionApi>{

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzExtTreeDataProvider, AzExtTreeItem, IAzExtOutputChannel, IExperimentationServiceAdapter } from "@microsoft/vscode-azext-utils";
+import { AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
 import { ExtensionContext, TreeView } from "vscode";
 
 /**
@@ -17,4 +18,5 @@ export namespace ext {
     export let ignoreBundle: boolean | undefined;
     export const prefix: string = 'containerApps';
     export let experimentationService: IExperimentationServiceAdapter;
+    export let rgApi: AzureHostExtensionApi;
 }
