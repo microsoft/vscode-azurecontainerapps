@@ -10,7 +10,13 @@ import { ResolvedContainerAppResource } from "./ResolvedContainerAppResource";
 
 export class ContainerAppResolver implements AppResourceResolver {
     public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<ResolvedContainerAppResource | null> {
-        if (resource)
+        if (this.isContainerApp(resource)) {
+
+        } else if (this.isManagedEnvironment(resource)) {
+
+        }
+
+        return null;
     }
 
     public matchesResource(resource: AppResource): boolean {

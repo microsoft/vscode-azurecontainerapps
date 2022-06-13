@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, parseError, TreeItemIconPath, UserCancelledError } from "@microsoft/vscode-azext-utils";
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, parseError, TreeItemIconPath, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
@@ -13,7 +13,7 @@ import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressS
 import { EnvironmentVariablesListStep } from "../commands/createContainerApp/EnvironmentVariablesListStep";
 import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
-import { azResourceContextValue, webProvider } from "../constants";
+import { webProvider } from "../constants";
 import { ext } from "../extensionVariables";
 import { ResolvedContainerAppResource } from "../resolver/ResolvedContainerAppResource";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
@@ -28,7 +28,7 @@ import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 export class ManagedEnvironmentTreeItem implements ResolvedContainerAppResource<ManagedEnvironment>, IAzureResourceTreeItem {
     public static contextValue: string = 'managedEnvironment';
     public static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentTreeItem.contextValue);
-    public readonly contextValue: string = `${ManagedEnvironmentTreeItem.contextValue}|${azResourceContextValue}`;
+    // public readonly contextValue: string = `${ManagedEnvironmentTreeItem.contextValue}|${azResourceContextValue}`;
     public readonly data: ManagedEnvironment;
     public resourceGroupName: string;
     public readonly childTypeLabel: string = localize('containerApp', 'Container App');
@@ -36,8 +36,7 @@ export class ManagedEnvironmentTreeItem implements ResolvedContainerAppResource<
     public name: string;
     public label: string;
 
-    constructor(parent: AzExtParentTreeItem, ke: ManagedEnvironment) {
-        super(parent);
+    constructor(ke: ManagedEnvironment) {
         this.data = ke;
 
         this.resourceGroupName = getResourceGroupFromId(this.id);
@@ -59,7 +58,7 @@ export class ManagedEnvironmentTreeItem implements ResolvedContainerAppResource<
         const containerApps: ContainerApp[] = (await uiUtils.listAllIterator(client.containerApps.listBySubscription()))
             .filter(ca => ca.managedEnvironmentId && ca.managedEnvironmentId === this.id)
 
-        return await this.createTreeItemsWithErrorHandling(
+        return await createTreeItemsWithErrorHandling(
             containerApps,
             'invalidContainerApp',
             ca => new ContainerAppTreeItem(this, ca),
@@ -167,3 +166,7 @@ export class ManagedEnvironmentTreeItem implements ResolvedContainerAppResource<
         await Promise.all(deletePromises);
     }
 }
+function createTreeItemsWithErrorHandling(containerApps: ContainerApp[], arg1: string, arg2: (ca: any) => ContainerAppTreeItem, arg3: (ca: any) => any): AzExtTreeItem[] | PromiseLike<AzExtTreeItem[]> {
+    throw new Error("Function not implemented.");
+}
+

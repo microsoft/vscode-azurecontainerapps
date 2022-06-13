@@ -5,4 +5,8 @@
 
 import { ResolvedAppResourceBase } from "@microsoft/vscode-azext-utils/hostapi";
 
-export type ResolvedContainerAppResource = ResolvedAppResourceBase
+export interface ResolvedContainerAppResource<T> extends ResolvedAppResourceBase {
+    data: T;
+    name: string;
+    resourceGroupName: string;
+}
