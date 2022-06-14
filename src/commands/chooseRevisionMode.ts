@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { ContainerAppTreeItem } from "../tree/ContainerAppTreeItem";
 import { RevisionsTreeItem } from "../tree/RevisionsTreeItem";
-import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { nonNullValue } from "../utils/nonNull";
+import { updateContainerApp } from "./updateContainerApp";
 
 export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppTreeItem | RevisionsTreeItem): Promise<void> {
     if (!node) {
@@ -32,22 +31,16 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
 
     const result = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
 
+    // only update it if it's actually different
     if (node.getRevisionMode() !== result.data) {
-        // only update it if it's actually different
-        const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
-        const containerAppEnvelope = await node.getContainerEnvelopeWithSecrets(context);
         const updating = localize('updatingRevision', 'Updating revision mode of "{0}" to "{1}"...', node.name, result.data);
         const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', node.name, result.data);
-
-        containerAppEnvelope.configuration.activeRevisionsMode = result.data;
-
-        containerAppEnvelope.configuration.ingress ||= {};
-        containerAppEnvelope.configuration.ingress.traffic = result.data === 'single' ? undefined : containerAppEnvelope.configuration.ingress.traffic;
 
         await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
             const pNode = nonNullValue(node) as ContainerAppTreeItem;
             ext.outputChannel.appendLog(updating);
-            await appClient.containerApps.beginCreateOrUpdateAndWait(pNode.resourceGroupName, pNode.name, containerAppEnvelope);
+
+            await updateContainerApp(context, pNode, { configuration: { activeRevisionsMode: result.data } });
 
             void window.showInformationMessage(updated);
             ext.outputChannel.appendLog(updated);

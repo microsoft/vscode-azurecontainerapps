@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRule } from "@azure/arm-app";
+import { ScaleRule } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
 import { azResourceContextValue } from "../constants";

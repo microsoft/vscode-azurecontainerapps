@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp } from '@azure/arm-app';
+import { ContainerApp } from "@azure/arm-appcontainers";
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-app";
+import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { getResourceGroupFromId } from "../../utils/azureUtils";

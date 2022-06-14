@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-app";
+import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { azResourceContextValue, RevisionConstants } from "../constants";

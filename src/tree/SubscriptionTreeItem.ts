@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-app";
+import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { IManagedEnvironmentContext } from '../commands/createManagedEnvironment/IManagedEnvironmentContext';

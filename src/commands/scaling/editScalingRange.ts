@@ -3,15 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-app";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
 import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
 import { ScaleTreeItem } from "../../tree/ScaleTreeItem";
-import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { updateContainerApp } from "../updateContainerApp";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleTreeItem): Promise<void> {
     if (!node) {
@@ -29,18 +28,18 @@ export async function editScalingRange(context: IActionContext, node?: ScaleTree
     const [min, max] = range.split('-').map(range => Number(range));
     const containerApp = node.parent instanceof RevisionTreeItem ? node.parent.parent.parent as ContainerAppTreeItem : node.parent as ContainerAppTreeItem;
 
-    const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
-    const containerAppEnvelope = await containerApp.getContainerEnvelopeWithSecrets(context);
     const updating = localize('updatingRevision', 'Updating scale rule setting of "{0}" to min/max replicas of {1}-{2}...', containerApp.name, min, max);
     const updated = localize('updatedRevision', 'Updated scale rule setting of "{0}" to min/max replicas of {1}-{2}.', containerApp.name, min, max);
 
-    containerAppEnvelope.template.scale ||= {};
-    containerAppEnvelope.template.scale.minReplicas = min;
-    containerAppEnvelope.template.scale.maxReplicas = max;
+    const template = containerApp?.data?.template || {};
+    template.scale ||= {};
+
+    template.scale.minReplicas = min;
+    template.scale.maxReplicas = max;
 
     await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
         ext.outputChannel.appendLog(updating);
-        await appClient.containerApps.beginCreateOrUpdateAndWait(containerApp.resourceGroupName, containerApp.name, containerAppEnvelope);
+        await updateContainerApp(context, containerApp, { template })
 
         void window.showInformationMessage(updated);
         ext.outputChannel.appendLog(updated);
