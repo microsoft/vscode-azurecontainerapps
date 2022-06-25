@@ -13,9 +13,8 @@ import { ContainerAppResource } from "../resolver/ContainerAppResource";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { IAzureResource } from "./IAzureResource";
 
-export class DaprResource extends ContainerAppChildResource<Dapr> implements IAzureResource {
+export class DaprResource extends ContainerAppChildResource<Dapr> {
     public static contextValue: string = 'dapr';
     public data: Dapr;
 

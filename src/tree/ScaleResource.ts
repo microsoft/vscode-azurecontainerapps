@@ -14,10 +14,9 @@ import { ContainerAppResource } from "../resolver/ContainerAppResource";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { IAzureResource } from "./IAzureResource";
 import { ScaleRuleGroupResource } from "./ScaleRuleGroupResource";
 
-export class ScaleResource extends ContainerAppChildResource<Scale> implements IAzureResource {
+export class ScaleResource extends ContainerAppChildResource<Scale> {
     public static contextValue: string = 'scale';
     public data: Scale;
 

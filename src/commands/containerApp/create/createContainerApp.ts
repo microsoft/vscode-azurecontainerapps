@@ -59,7 +59,6 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         await node.refresh(context);
     }
 
-
     const ca = nonNullProp(wizardContext, 'containerApp');
     const appResource: AppResource = {
         id: nonNullProp(ca, 'id'),
@@ -67,8 +66,6 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         type: nonNullProp(ca, 'type'),
         ...ca
     };
-
-
 
     const caNode = await new ContainerAppsExtResolver().resolveResource(node.subscription, appResource) as ContainerAppResource;
     void showContainerAppCreated(caNode);

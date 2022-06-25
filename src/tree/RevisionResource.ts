@@ -3,19 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KnownRevisionProvisioningState, Revision, Scale } from "@azure/arm-appcontainers";
+import { ContainerAppsAPIClient, KnownRevisionProvisioningState, Revision, Scale } from "@azure/arm-appcontainers";
 import { AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon } from "vscode";
 import { azResourceContextValue } from "../constants";
 import { ContainerAppChildResource } from "../resolver/ContainerAppChildResource";
 import { ContainerAppResource } from "../resolver/ContainerAppResource";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
+import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
-import { IAzureResource } from './IAzureResource';
 import { ScaleResource } from "./ScaleResource";
 
-export class RevisionResource extends ContainerAppChildResource<Revision> implements IAzureResource {
+export class RevisionResource extends ContainerAppChildResource<Revision> {
     public static contextValue: string = 'revision';
     public data: Revision;
 
@@ -75,8 +75,9 @@ export class RevisionResource extends ContainerAppChildResource<Revision> implem
         return new ThemeIcon(id, colorId ? new ThemeColor(colorId) : undefined);
     }
 
-    public async refreshImpl(_context: IActionContext): Promise<void> {
-        // this.data = await this.parent.getRevision(context, this.name);
+    public async refreshImpl(context: IActionContext): Promise<void> {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this.containerApp.subscriptionContext]);
+        this.data = await client.containerAppsRevisions.getRevision(this.containerApp.resourceGroupName, this.containerApp.name, this.name);
     }
 
     public async getChildren(_context: IActionContext): Promise<ContainerAppsExtResourceBase<Scale | undefined>[]> {

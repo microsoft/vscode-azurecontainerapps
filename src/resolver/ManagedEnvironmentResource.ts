@@ -67,7 +67,7 @@ export class ManagedEnvironmentResource extends ContainerAppsExtResourceBase<Man
         };
 
         const wizard = new AzureWizard<IDeleteWizardContext>(wizardContext, {
-            title: localize('deleteEnv', 'Delete Managed Environment "{0}"', this.name),
+            title: localize('deleteEnv', 'Delete Container Apps environment "{0}"', this.name),
             promptSteps: [new PromptDeleteStep()],
             executeSteps: [new ManagedEnvironmentDeleteStep()]
         });

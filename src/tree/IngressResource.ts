@@ -13,11 +13,10 @@ import { ContainerAppResource } from "../resolver/ContainerAppResource";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { IAzureResource } from "./IAzureResource";
 
 const label: string = localize('ingress', 'Ingress');
 
-export class IngressResource extends ContainerAppChildResource<Ingress | undefined> implements IAzureResource {
+export class IngressResource extends ContainerAppChildResource<Ingress | undefined> {
     public data: Ingress;
 
     public label: string;

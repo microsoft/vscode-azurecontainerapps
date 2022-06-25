@@ -58,9 +58,4 @@ export class RevisionsResource extends ContainerAppChildResource<undefined> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this.containerApp.subscriptionContext]);
         this._revisons = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.containerApp.resourceGroupName, this.containerApp.name));
     }
-
-    public async getRevision(context: IActionContext, name: string): Promise<Revision> {
-        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this.containerApp.subscriptionContext]);
-        return await client.containerAppsRevisions.getRevision(this.containerApp.resourceGroupName, this.containerApp.name, name);
-    }
 }
