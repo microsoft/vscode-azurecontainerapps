@@ -5,22 +5,28 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { appFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppTreeItem } from '../../tree/ContainerAppTreeItem';
-import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
+import { ContainerAppResource } from "../../resolver/ContainerAppResource";
+import { ContainerAppExtTreeItem } from "../../tree/ContainerAppExtTreeItem";
+import { RevisionResource } from "../../tree/RevisionResource";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 
-export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: ContainerAppTreeItem | RevisionTreeItem): Promise<void> {
+export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart',
+    node?: ContainerAppExtTreeItem<ContainerAppResource | RevisionResource>): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem | RevisionTreeItem>(ContainerAppTreeItem.contextValue, context);
+        node = await ext.rgApi.pickAppResource(context, {
+            filter: appFilter,
+        }) as ContainerAppExtTreeItem<ContainerAppResource>;
     }
 
-    const containerAppName: string = node instanceof RevisionTreeItem ? node.parent.parent.name : node.name;
-    const revisionName: string = node instanceof RevisionTreeItem ? node.name : nonNullProp(node.data, 'latestRevisionName');
-    const resourceGroupName: string = node instanceof RevisionTreeItem ? node.parent.parent.resourceGroupName : node.resourceGroupName;
+    const containerApp = node.resource.containerApp;
+    const containerAppName: string = containerApp.name;
+    const revisionName: string = nonNullProp(containerApp.data, 'latestRevisionName');
+    const resourceGroupName: string = containerApp.resourceGroupName;
 
-    const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
+    const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, containerApp.subscriptionContext]);
 
     const temporaryDescriptions = {
         'activate': localize('activating', 'Activating...'),

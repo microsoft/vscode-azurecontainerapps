@@ -4,32 +4,35 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Ingress } from "@azure/arm-appcontainers";
-import { AzureWizard, AzureWizardPromptStep, GenericTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, AzureWizard, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
 import { IngressConstants } from '../constants';
 import { ext } from '../extensionVariables';
-import { IngressDisabledTreeItem, IngressTreeItem } from '../tree/IngressTreeItem';
+import { ContainerAppExtResource } from "../resolver/ContainerAppExtResource";
+import { ContainerAppResource } from "../resolver/ContainerAppResource";
+import { ContainerAppExtParentTreeItem } from "../tree/ContainerAppExtParentTreeItem";
+import { IngressResource } from '../tree/IngressResource';
 import { localize } from '../utils/localize';
 import { nonNullValueAndProp } from '../utils/nonNull';
-import { EnableIngressStep } from './createContainerApp/EnableIngressStep';
-import { IContainerAppContext } from './createContainerApp/IContainerAppContext';
-import { TargetPortStep } from './createContainerApp/TargetPortStep';
+import { EnableIngressStep } from './containerApp/create/EnableIngressStep';
+import { IContainerAppContext } from './containerApp/create/IContainerAppContext';
+import { TargetPortStep } from './containerApp/create/TargetPortStep';
 import { updateContainerApp } from "./updateContainerApp";
 
-export async function toggleIngress(context: IActionContext, node?: IngressTreeItem | IngressDisabledTreeItem): Promise<void> {
+export async function toggleIngress(context: IActionContext, node?: ContainerAppExtParentTreeItem<IngressResource>): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<IngressTreeItem | IngressDisabledTreeItem>([IngressTreeItem.contextValue, IngressDisabledTreeItem.contextValue], context);
+        node = await ext.tree.showTreeItemPicker(['disabled|ingress', 'enabled|ingress'], context) as unknown as ContainerAppExtParentTreeItem<IngressResource>;
     }
 
     let ingress: Ingress | undefined = {};
 
-    if (node instanceof IngressTreeItem) {
+    if (node.resource.isIngressEnabled()) {
         ingress = undefined;
     } else {
         const title: string = localize('enableIngress', 'Enable Ingress');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new EnableIngressStep()];
 
-        const wizardContext: IContainerAppContext = { ...context, ...node.subscription, managedEnvironmentId: node.parent.managedEnvironmentId };
+        const wizardContext: IContainerAppContext = { ...context, ...node.resource.containerApp.subscriptionContext, managedEnvironmentId: node.resource.containerApp.managedEnvironmentId };
         const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
             title,
             promptSteps,
@@ -53,29 +56,31 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
         };
     }
 
-    const name = node.parent.name;
-    const working = node instanceof IngressTreeItem ? localize('disabling', 'Disabling ingress for container app "{0}"...', name) : localize('enabling', 'Enabling ingress for container app "{0}"...', name);
-    const workCompleted = node instanceof IngressTreeItem ? localize('disableCompleted', 'Disabled ingress for container app "{0}"', name) : localize('enableCompleted', 'Enabled ingress for container app "{0}"', name);
+    const name = node.resource.containerApp.name;
+    const working = node.resource.isIngressEnabled() ?
+        localize('disabling', 'Disabling ingress for container app "{0}"...', name) :
+        localize('enabling', 'Enabling ingress for container app "{0}"...', name);
+    const workCompleted = node.resource.isIngressEnabled() ?
+        localize('disableCompleted', 'Disabled ingress for container app "{0}"', name) :
+        localize('enableCompleted', 'Enabled ingress for container app "{0}"', name);
 
-    await updateIngressSettings(context, { ingress, node, working, workCompleted });
+    await updateIngressSettings(context, { node, ingress, containerApp: node.resource.containerApp, working, workCompleted });
 }
 
-export async function editTargetPort(context: IActionContext, target?: IngressTreeItem | GenericTreeItem): Promise<void> {
-    if (!target) {
-        target = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
+export async function editTargetPort(context: IActionContext, node?: ContainerAppExtParentTreeItem<IngressResource>): Promise<void> {
+    if (!node) {
+        node = await ext.tree.showTreeItemPicker('ingress', context) as unknown as ContainerAppExtParentTreeItem<IngressResource>;
     }
-
-    // GenericTreeItem will be a targetPort node
-    const node: IngressTreeItem = target instanceof IngressTreeItem ? target : target.parent as IngressTreeItem;
 
     const title: string = localize('updateTargetPort', 'Update Target Port');
     const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
 
+    const resource = node.resource;
     const wizardContext: IContainerAppContext = {
         ...context,
-        ...node.subscription,
-        managedEnvironmentId: node.parent.managedEnvironmentId,
-        defaultPort: node.data.targetPort
+        ...resource.containerApp.subscriptionContext,
+        managedEnvironmentId: resource.containerApp.managedEnvironmentId,
+        defaultPort: resource.data.targetPort
     };
 
     const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
@@ -85,44 +90,49 @@ export async function editTargetPort(context: IActionContext, target?: IngressTr
     });
 
     await wizard.prompt();
-    const ingress = nonNullValueAndProp(node.parent.data.configuration, 'ingress');
+    const ingress = nonNullValueAndProp(resource.containerApp.data.configuration, 'ingress');
     ingress.targetPort = wizardContext.targetPort;
     const working: string = localize('updatingTargetPort', 'Updating target port to {0}...', ingress.targetPort);
     const workCompleted: string = localize('updatedTargetPort', 'Updated target port to {0}', ingress.targetPort);
-    await updateIngressSettings(context, { ingress, node, working, workCompleted });
+    await updateIngressSettings(context, {
+        node: resource instanceof IngressResource ? node : node.parent,
+        ingress, containerApp: resource.containerApp, working, workCompleted
+    });
 }
 
-export async function toggleIngressVisibility(context: IActionContext, node?: IngressTreeItem): Promise<void> {
+export async function toggleIngressVisibility(context: IActionContext, node?: ContainerAppExtParentTreeItem<ContainerAppExtResource<Ingress>>): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker('ingress', context) as unknown as ContainerAppExtParentTreeItem<ContainerAppExtResource<Ingress>>;
     }
 
-    const ingress = nonNullValueAndProp(node.parent.data.configuration, 'ingress');
+    const resource = node.resource;
+
+    const ingress = nonNullValueAndProp(resource.containerApp.data.configuration, 'ingress');
     const warningPrompt = localize('visibilityWarning', 'This will change the ingress visibility from "{0}" to "{1}".', ingress.external ? IngressConstants.external : IngressConstants.internal, !ingress.external ? IngressConstants.external : IngressConstants.internal)
     await context.ui.showWarningMessage(warningPrompt, { modal: true }, { title: localize('continue', 'Continue') });
 
     ingress.external = !ingress.external;
     const working: string = localize('updatingVisibility', 'Updating ingress visibility to "{0}"...', ingress.external ? IngressConstants.external : IngressConstants.internal);
     const workCompleted: string = localize('updatedVisibility', 'Updated ingress visibility to "{0}"', ingress.external ? IngressConstants.external : IngressConstants.internal);
-    await updateIngressSettings(context, { ingress, node, working, workCompleted });
+    await updateIngressSettings(context, { node, ingress, containerApp: resource.containerApp, working, workCompleted });
 }
 
 async function updateIngressSettings(context: IActionContext,
     options: {
+        node: AzExtTreeItem | undefined,
         ingress: Ingress | undefined,
-        node: IngressTreeItem | IngressDisabledTreeItem,
+        containerApp: ContainerAppResource,
         working: string,
         workCompleted: string
     }): Promise<void> {
-    const { ingress, node, working, workCompleted } = options;
+    const { node, ingress, containerApp, working, workCompleted } = options;
 
     await window.withProgress({ location: ProgressLocation.Notification, title: working }, async (): Promise<void> => {
         ext.outputChannel.appendLog(working);
-        await updateContainerApp(context, node.parent, { configuration: { ingress: ingress } })
+        await updateContainerApp(context, containerApp, { configuration: { ingress: ingress } })
 
         void window.showInformationMessage(workCompleted);
         ext.outputChannel.appendLog(workCompleted);
+        await ext.rgApi.appResourceTree.refresh(context, node);
     });
-
-    await node.parent.refresh(context);
 }

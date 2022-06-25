@@ -3,40 +3,47 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtParentTreeItem, AzExtTreeDataProvider, AzExtTreeItem, IActionContext, IFindTreeItemContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
-import { Disposable, Event, TreeItem, TreeView } from "vscode";
+import { AzExtParentTreeItem, AzExtTreeItem, callWithTelemetryAndErrorHandling, IActionContext } from "@microsoft/vscode-azext-utils";
+import { TreeDataProvider, TreeItem } from "vscode";
+import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
+import { createTreeItemsWithErrorHandling } from "../utils/createTreeItemsWithErrorHandling";
+import { ContainerAppExtParentTreeItem } from "./ContainerAppExtParentTreeItem";
+import { ContainerAppExtTreeItem } from "./ContainerAppExtTreeItem";
 
-export class ContainerAppsBranchDataProvider implements AzExtTreeDataProvider {
-    public onDidChangeTreeData: Event<AzExtTreeItem | undefined>;
-    public onTreeItemCreate: Event<AzExtTreeItem>;
-    public onDidExpandOrRefreshExpandedTreeItem: Event<AzExtTreeItem>;
-    public getTreeItem(_treeItem: AzExtTreeItem): TreeItem {
-        throw new Error("Method not implemented.");
+export class ContainerAppsBranchDataProvider implements Partial<TreeDataProvider<ContainerAppsExtResourceBase<unknown>>> {
+    public getTreeItem(treeItem: ContainerAppsExtResourceBase<unknown>): TreeItem {
+        return {
+            label: treeItem.label,
+            id: treeItem.id,
+            iconPath: treeItem.iconPath,
+            description: treeItem.description
+        }
     }
-    public getChildren(_treeItem?: AzExtParentTreeItem | undefined): Promise<AzExtTreeItem[]> {
-        throw new Error("Method not implemented.");
+
+    // the T should be the ContainerAppsExtResourceBase<unknown>, but that won't work with the current implementation of the resolver because it
+    // is expecting AzExtTreeItem from loadMoreChildrenImpl
+    public async getChildren(element?: ContainerAppsExtResourceBase<unknown>): Promise<ContainerAppsExtResourceBase<unknown>[] | undefined> {
+        return await callWithTelemetryAndErrorHandling('branchGetChildren', async (context: IActionContext) => {
+            if (element?.getChildren) {
+                return (await element.getChildren(context));
+            }
+
+            return [];
+        });
     }
-    public refresh(_context: IActionContext, _treeItem?: AzExtTreeItem | undefined): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    public refreshUIOnly(_treeItem: AzExtTreeItem | undefined): void {
-        throw new Error("Method not implemented.");
-    }
-    public loadMore(_treeItem: AzExtTreeItem, _context: IActionContext): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    public showTreeItemPicker<T extends AzExtTreeItem>(expectedContextValues: string | RegExp | (string | RegExp)[], context: ITreeItemPickerContext & { canPickMany: true; }, startingTreeItem?: AzExtTreeItem | undefined): Promise<T[]>;
-    public showTreeItemPicker<T extends AzExtTreeItem>(expectedContextValues: string | RegExp | (string | RegExp)[], context: ITreeItemPickerContext, startingTreeItem?: AzExtTreeItem | undefined): Promise<T>;
-    public showTreeItemPicker(_expectedContextValues: unknown, _context: unknown, _startingTreeItem?: unknown): Promise<T[]> | Promise<T> {
-        throw new Error("Method not implemented.");
-    }
-    public findTreeItem<T extends AzExtTreeItem>(_fullId: string, _context: IFindTreeItemContext): Promise<T | undefined> {
-        throw new Error("Method not implemented.");
-    }
-    public getParent(_treeItem: AzExtTreeItem): Promise<AzExtTreeItem | undefined> {
-        throw new Error("Method not implemented.");
-    }
-    public trackTreeItemCollapsibleState(_treeView: TreeView<AzExtTreeItem>): Disposable {
-        throw new Error("Method not implemented.");
+
+    public async createAzExtTreeChildren(resources: ContainerAppsExtResourceBase<unknown>[], parent: AzExtParentTreeItem): Promise<AzExtTreeItem[]> {
+        // use resource data to create a tree item for RG extensions (temporarily)
+        return await createTreeItemsWithErrorHandling(
+            parent,
+            resources,
+            'invalidContainerAppTreeItemChildren',
+            resource => {
+                return resource.isParent ?
+                    new ContainerAppExtParentTreeItem(parent, resource) :
+                    new ContainerAppExtTreeItem(parent, resource);
+            },
+            resource => resource.label
+        ) as AzExtTreeItem[];
     }
 }

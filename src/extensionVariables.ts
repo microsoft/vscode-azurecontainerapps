@@ -6,6 +6,7 @@
 import { AzExtTreeDataProvider, AzExtTreeItem, IAzExtOutputChannel, IExperimentationServiceAdapter } from "@microsoft/vscode-azext-utils";
 import { AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
 import { ExtensionContext, TreeView } from "vscode";
+import { ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -19,4 +20,5 @@ export namespace ext {
     export const prefix: string = 'containerApps';
     export let experimentationService: IExperimentationServiceAdapter;
     export let rgApi: AzureHostExtensionApi;
+    export let branch: ContainerAppsBranchDataProvider;
 }
