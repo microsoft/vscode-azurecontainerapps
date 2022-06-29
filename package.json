@@ -52,6 +52,26 @@
     ],
     "main": "./main.js",
     "contributes": {
+        "x-azResources": {
+            "activation": {
+                "onResolve": [
+                    "microsoft.app/containerapps",
+                    "microsoft.app/managedenvironments"
+                ]
+            },
+            "commands": [
+                {
+                    "command": "containerApps.createContainerApp",
+                    "title": "%containerApps.createContainerApp%",
+                    "type": "microsoft.app/containerapps"
+                },
+                {
+                    "command": "containerApps.createManagedEnvironment",
+                    "title": "%containerApps.createManagedEnvironment%",
+                    "type": "microsoft.app/managedenvironments"
+                }
+            ]
+        },
         "commands": [
             {
                 "command": "containerApps.loadMore",
