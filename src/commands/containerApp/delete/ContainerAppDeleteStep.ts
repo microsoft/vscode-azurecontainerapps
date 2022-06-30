@@ -12,20 +12,21 @@ import { deleteUtil } from "../../../utils/deleteUtil";
 import { localize } from "../../../utils/localize";
 import { IDeleteWizardContext } from "../../IDeleteWizardContext";
 
-export class ManagedEnvironmentDeleteStep extends AzureWizardExecuteStep<IDeleteWizardContext> {
-    public priority: number = 150;
+export class ContainerAppDeleteStep extends AzureWizardExecuteStep<IDeleteWizardContext> {
+    public priority: number = 100;
 
     public async execute(context: IDeleteWizardContext, _progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
         const node = context.node;
-        const deleting: string = localize('DeletingManagedEnv', 'Deleting Container Apps environment "{0}"...', node.name);
+        const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', node.name);
+        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', node.name);
+
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
+            ext.outputChannel.appendLog(deleting);
+            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node.subscriptionContext]);
             await deleteUtil(async () => {
-                ext.outputChannel.appendLog(deleting);
-                await client.managedEnvironments.beginDeleteAndWait(node.resourceGroupName, node.name);
+                await webClient.containerApps.beginDeleteAndWait(node.resourceGroupName, node.name);
             });
 
-            const deleteSucceeded: string = localize('DeleteManagedEnvSucceeded', 'Successfully deleted Container Apps environment "{0}".', node.name);
             void window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });

@@ -6,6 +6,7 @@
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AppResource } from "@microsoft/vscode-azext-utils/hostapi";
 import { Progress, window } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../../utils/azureClients';
@@ -43,6 +44,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
                 }
             }
         );
+        context.activityResult = context.managedEnvironment as AppResource;
 
         const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container Apps environment "{0}".', context.newManagedEnvironmentName);
         ext.outputChannel.appendLog(createdKuEnv);

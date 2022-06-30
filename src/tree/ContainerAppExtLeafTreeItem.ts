@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtParentTreeItem, AzExtTreeItem } from "@microsoft/vscode-azext-utils";
+import { AzExtParentTreeItem, IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../extensionVariables";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
+import { ContainerAppExtTreeItemBase } from "./ContainerAppExtTreeItemBase";
 
-export class ContainerAppExtTreeItem<T extends ContainerAppsExtResourceBase<unknown>> extends AzExtTreeItem {
+export class ContainerAppExtLeafTreeItem<T extends ContainerAppsExtResourceBase<unknown>> extends ContainerAppExtTreeItemBase<T> {
     public label: string;
     public contextValue: string;
 
@@ -31,5 +32,13 @@ export class ContainerAppExtTreeItem<T extends ContainerAppsExtResourceBase<unkn
 
     public isAncestorOfImpl(): boolean {
         return this._includeInTreeItemPicker;
+    }
+
+    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
+        if (this.resource.deleteTreeItemImpl) return this.resource.deleteTreeItemImpl(context);
+    }
+
+    public async refreshImpl(context: IActionContext): Promise<void> {
+        if (this.resource.refreshImpl) return this.resource.refreshImpl(context);
     }
 }

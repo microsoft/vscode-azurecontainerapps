@@ -6,6 +6,7 @@
 import { ContainerAppsAPIClient, Ingress, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AppResource } from "@microsoft/vscode-azext-utils/hostapi";
 import { Progress } from "vscode";
 import { containerAppProvider, RevisionConstants } from "../../../constants";
 import { ext } from "../../../extensionVariables";
@@ -60,9 +61,9 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             ],
         } : undefined;
 
-        const creatingSwa: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
-        progress.report({ message: creatingSwa });
-        ext.outputChannel.appendLog(creatingSwa);
+        const creatingCa: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
+        progress.report({ message: creatingCa });
+        ext.outputChannel.appendLog(creatingCa);
 
         context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
         const name = getContainerNameForImage(context.image);
@@ -84,6 +85,8 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
                 ]
             }
         });
+
+        context.activityResult = context.containerApp as AppResource;
     }
 
     public shouldExecute(_wizardContext: IContainerAppContext): boolean {

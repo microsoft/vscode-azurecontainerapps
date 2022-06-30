@@ -1,5 +1,9 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { AzExtParentTreeItem, AzExtTreeItem, InvalidTreeItem } from "@microsoft/vscode-azext-utils";
-import { isNullOrUndefined } from "util";
 import { localize } from "./localize";
 
 export async function createTreeItemsWithErrorHandling<TSource>(
@@ -57,4 +61,8 @@ export async function createTreeItemsWithErrorHandling<TSource>(
     }
 
     return treeItems;
+}
+
+function isNullOrUndefined(value: unknown): boolean {
+    return value === null || value === undefined;
 }

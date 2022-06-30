@@ -10,9 +10,9 @@ import { createContainerAppsAPIClient } from '../../../utils/azureClients';
 import { localize } from '../../../utils/localize';
 import { settingUtils } from '../../../utils/settingUtils';
 import { IDeleteWizardContext } from '../../IDeleteWizardContext';
-import { DeleteContainerAppsDeleteStep } from './AllContainerAppsDeleteStep';
+import { AllContainerAppsDeleteStep } from './AllContainerAppsDeleteStep';
 
-export class PromptDeleteStep extends AzureWizardPromptStep<IDeleteWizardContext> {
+export class DeletePromptStep extends AzureWizardPromptStep<IDeleteWizardContext> {
     public async prompt(context: IDeleteWizardContext): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
         const node = context.node;
@@ -52,7 +52,7 @@ export class PromptDeleteStep extends AzureWizardPromptStep<IDeleteWizardContext
 
     public async getSubWizard(context: IDeleteWizardContext): Promise<IWizardOptions<IDeleteWizardContext> | undefined> {
         if (context.containerApps) {
-            const executeSteps: AzureWizardExecuteStep<IDeleteWizardContext>[] = [new DeleteContainerAppsDeleteStep()];
+            const executeSteps: AzureWizardExecuteStep<IDeleteWizardContext>[] = [new AllContainerAppsDeleteStep()];
             return { promptSteps: [], executeSteps }
         }
 

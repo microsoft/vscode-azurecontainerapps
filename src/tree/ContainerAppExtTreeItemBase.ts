@@ -6,14 +6,14 @@
 import { AzExtParentTreeItem, AzExtTreeItem, IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../extensionVariables";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
-import { ContainerAppExtTreeItemBase } from "./ContainerAppExtTreeItemBase";
 
-export class ContainerAppExtParentTreeItem<T extends ContainerAppsExtResourceBase<unknown>> extends ContainerAppExtTreeItemBase<T> implements AzExtParentTreeItem {
+export abstract class ContainerAppExtTreeItemBase<T extends ContainerAppsExtResourceBase<unknown>> extends AzExtTreeItem {
     public label: string;
     public contextValue: string;
+
+    private _includeInTreeItemPicker: boolean;
     // ideally this would be the branch provider, but that won't work right now
     treeDataProvider = ext.rgApi.appResourceTree;
-
     public resource: T;
 
     constructor(parent: AzExtParentTreeItem | undefined, resource: T) {
@@ -23,18 +23,14 @@ export class ContainerAppExtParentTreeItem<T extends ContainerAppsExtResourceBas
         this.commandId = resource.commandId;
         this.iconPath = resource.iconPath;
         this.description = resource.description;
+        this._includeInTreeItemPicker = !!resource.includeInTreeItemPicker;
         this.contextValue = resource.contextValuesToAdd?.sort().join('|') ?? '';
         this.valuesToMask.push(...resource.maskValuesToAdd);
         this.resource = resource;
     }
 
-    public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
-        if (this.resource.getChildren) return await ext.branch.createAzExtTreeChildren((await this.resource.getChildren(context)), this);
-        return [];
-    }
-
-    public hasMoreChildrenImpl(): boolean {
-        return false;
+    public isAncestorOfImpl(): boolean {
+        return this._includeInTreeItemPicker;
     }
 
     public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
