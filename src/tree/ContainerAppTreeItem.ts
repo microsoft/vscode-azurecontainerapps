@@ -62,16 +62,13 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
         const children: AzExtTreeItem[] = [new DaprTreeItem(this, this.data.configuration?.dapr)];
+        await this.updateChildren();
         if (this.getRevisionMode() === RevisionConstants.multiple.data) {
-            this.revisionsTreeItem = new RevisionsTreeItem(this);
             children.push(this.revisionsTreeItem);
         } else {
-            this.scaleTreeItem = new ScaleTreeItem(this, this.data.template?.scale);
             children.push(this.scaleTreeItem);
         }
 
-        this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
-        this.logTreeItem = new LogsTreeItem(this);
         children.push(this.ingressTreeItem, this.logTreeItem)
         return children;
     }
@@ -127,6 +124,19 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         this.contextValue = `${ContainerAppTreeItem.contextValue}|${azResourceContextValue}|revisionmode:${this.getRevisionMode()}`;
         this.data = data;
+
+        await this.updateChildren();
+    }
+
+    public async updateChildren(): Promise<void> {
+        if (this.getRevisionMode() === RevisionConstants.multiple.data) {
+            this.revisionsTreeItem = new RevisionsTreeItem(this);
+        }
+
+        this.scaleTreeItem = new ScaleTreeItem(this, this.data.template?.scale);
+
+        this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
+        this.logTreeItem = new LogsTreeItem(this);
     }
 
     public pickTreeItemImpl(expectedContextValues: (string | RegExp)[]): AzExtTreeItem | undefined {
