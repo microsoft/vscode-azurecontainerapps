@@ -24,4 +24,5 @@ export abstract class ContainerAppsExtResourceBase<T> implements ResolvedAppReso
 
     public isParent?: boolean;
     public getChildren?(context: IActionContext): Promise<ContainerAppsExtResourceBase<unknown>[]>;
+    public deleteTreeItemImpl?(context: IActionContext): Promise<void>
 }

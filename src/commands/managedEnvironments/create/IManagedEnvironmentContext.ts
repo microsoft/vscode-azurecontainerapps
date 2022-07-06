@@ -6,8 +6,9 @@
 import { ManagedEnvironment } from "@azure/arm-appcontainers";
 import { Workspace } from '@azure/arm-operationalinsights';
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 
-export interface IManagedEnvironmentContext extends IResourceGroupWizardContext {
+export interface IManagedEnvironmentContext extends IResourceGroupWizardContext, ExecuteActivityContext {
 
     newManagedEnvironmentName?: string;
     logAnalyticsWorkspace?: Workspace;

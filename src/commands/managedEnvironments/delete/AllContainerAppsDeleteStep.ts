@@ -12,7 +12,7 @@ import { deleteUtil } from '../../../utils/deleteUtil';
 import { localize } from '../../../utils/localize';
 import { IDeleteWizardContext } from '../../IDeleteWizardContext';
 
-export class DeleteContainerAppsDeleteStep extends AzureWizardExecuteStep<IDeleteWizardContext> {
+export class AllContainerAppsDeleteStep extends AzureWizardExecuteStep<IDeleteWizardContext> {
     public priority: number = 140;
     public async execute(context: IDeleteWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
         if (context.containerApps && context.containerApps.length > 0) {

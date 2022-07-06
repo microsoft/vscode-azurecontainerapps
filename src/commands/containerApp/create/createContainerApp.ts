@@ -52,6 +52,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     });
 
     await wizard.prompt();
+    wizardContext.activityTitle = localize('createContainerApp', 'Created Container App "{0}".', wizardContext.newContainerAppName);
     try {
         await wizard.execute();
     } finally {

@@ -5,9 +5,11 @@
 
 import { ContainerApp } from "@azure/arm-appcontainers";
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { IIngressContext } from "../../ingressCommands";
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
 
-export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
+export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext, ExecuteActivityContext, IIngressContext {
     managedEnvironmentId: string;
     newContainerAppName?: string;
 

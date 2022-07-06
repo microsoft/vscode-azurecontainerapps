@@ -35,11 +35,11 @@ export class LogsResource extends ContainerAppChildResource<undefined> {
         const iconPath = new ThemeIcon('link-external');
         return [
             new ContainerAppExtResource(this.containerApp, {
-                label: 'Open Logs', contextValuesToAdd: ['openLogs'], maskValuesToAdd: [],
+                label: localize('openLogs', 'Open Logs'), contextValuesToAdd: ['openLogs'], maskValuesToAdd: [],
                 commandId: 'containerApps.openInPortal', iconPath, id: `${this.containerApp.id}/logs`, data: undefined
             }),
             new ContainerAppExtResource(this.containerApp, {
-                label: 'Open Log Stream', contextValuesToAdd: ['openLogStream'], maskValuesToAdd: [],
+                label: localize('openLogStream', 'Open Log Stream'), contextValuesToAdd: ['openLogStream'], maskValuesToAdd: [],
                 commandId: 'containerApps.openInPortal', iconPath, id: `${this.containerApp.id}/logstream`, data: undefined
             })
         ];

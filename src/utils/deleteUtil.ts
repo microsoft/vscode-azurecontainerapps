@@ -10,6 +10,7 @@ export async function deleteUtil(deleteFunction: () => Promise<void>): Promise<v
         await deleteFunction();
     } catch (error) {
         const pError = parseError(error);
+        // https://github.com/Azure/azure-rest-api-specs/issues/19196
         // a 204 indicates a success, but sdk is catching it as an exception
         // accept any 2xx reponse code
         if (Number(pError.errorType) < 200 || Number(pError.errorType) >= 300) {

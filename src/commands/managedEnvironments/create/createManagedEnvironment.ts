@@ -27,7 +27,7 @@ export async function createManagedEnvironment(context: IActionContext, node?: S
         ...(await createActivityContext())
     };
 
-    const title: string = localize('createManagedEnv', 'Create Container Apps environment');
+    const title: string = localize('createManagedEnv', 'Create new Container Apps environment');
     const promptSteps: AzureWizardPromptStep<IManagedEnvironmentContext>[] = [];
     const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 
@@ -45,7 +45,9 @@ export async function createManagedEnvironment(context: IActionContext, node?: S
 
     await wizard.prompt();
     const newManagedEnvName = nonNullProp(wizardContext, 'newManagedEnvironmentName');
+    wizardContext.activityTitle = localize('createManagedEnvTitle', 'Create Container Apps Environment "{0}"', newManagedEnvName);
     wizardContext.newResourceGroupName = newManagedEnvName;
+
     await wizard.execute();
     await ext.rgApi.appResourceTree.refresh(context);
 

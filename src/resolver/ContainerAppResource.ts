@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, ISubscriptionContext, nonNullProp, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { ProgressLocation, window } from "vscode";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, DeleteConfirmationStep, IActionContext, ISubscriptionContext, nonNullProp, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { ContainerAppDeleteStep } from "../commands/containerApp/delete/ContainerAppDeleteStep";
 import { getRevisionMode } from "../commands/containerApp/getRevisionMode";
+import { IDeleteWizardContext } from "../commands/IDeleteWizardContext";
 import { azResourceContextValue, RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { DaprResource } from "../tree/DaprResource";
@@ -14,15 +15,15 @@ import { IngressResource } from "../tree/IngressResource";
 import { LogsResource } from "../tree/LogsResource";
 import { RevisionsResource } from "../tree/RevisionsResource";
 import { ScaleResource } from "../tree/ScaleResource";
+import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
-import { deleteUtil } from "../utils/deleteUtil";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppsExtResourceBase } from "./ContainerAppsExtResourceBase";
 
 export class ContainerAppResource extends ContainerAppsExtResourceBase<ContainerApp> {
-    public static contextValue: string = 'containerApp';
+    public static contextValue: string = 'containerAppRc';
     public managedEnvironmentId: string;
     public subscriptionContext: ISubscriptionContext;
     public name: string;
@@ -74,24 +75,22 @@ export class ContainerAppResource extends ContainerAppsExtResourceBase<Container
     }
 
     public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
+        const wizardContext: IDeleteWizardContext = {
+            ...context,
+            node: this,
+            subscription: this.subscriptionContext,
+            ...(await createActivityContext())
+        };
+
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        if (!context.suppressPrompt) {
-            await context.ui.showWarningMessage(confirmMessage, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
-        }
-
-        const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', this.name);
-        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', this.name);
-
-        await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            ext.outputChannel.appendLog(deleting);
-            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this.subscriptionContext]);
-            await deleteUtil(async () => {
-                await webClient.containerApps.beginDeleteAndWait(this.resourceGroupName, this.name);
-            });
-
-            void window.showInformationMessage(deleteSucceeded);
-            ext.outputChannel.appendLog(deleteSucceeded);
+        const wizard = new AzureWizard<IDeleteWizardContext>(wizardContext, {
+            title: localize('deleteEnv', 'Delete Container App "{0}"', this.name),
+            promptSteps: [new DeleteConfirmationStep(confirmMessage)],
+            executeSteps: [new ContainerAppDeleteStep()]
         });
+
+        await wizard.prompt();
+        await wizard.execute();
     }
 
     public async refreshImpl(context: IActionContext): Promise<void> {

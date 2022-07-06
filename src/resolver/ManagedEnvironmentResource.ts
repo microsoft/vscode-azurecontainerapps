@@ -6,9 +6,9 @@
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext, nonNullProp, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { ManagedEnvironmentDeleteStep } from "../commands/containerApp/delete/ContainerAppDeleteStep";
 import { IDeleteWizardContext } from "../commands/IDeleteWizardContext";
-import { PromptDeleteStep } from "../commands/managedEnvironments/delete/PromptDeleteStep";
+import { DeletePromptStep } from "../commands/managedEnvironments/delete/DeletePromptStep";
+import { ManagedEnvironmentDeleteStep } from "../commands/managedEnvironments/delete/ManagedEnvironmentDeleteStep";
 import { azResourceContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
@@ -20,7 +20,7 @@ import { ContainerAppResource } from "./ContainerAppResource";
 import { ContainerAppsExtResourceBase } from "./ContainerAppsExtResourceBase";
 
 export class ManagedEnvironmentResource extends ContainerAppsExtResourceBase<ManagedEnvironment> {
-    public static contextValue: string = 'managedEnvironment';
+    public static contextValue: string = 'managedEnvironmentRc';
     public static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentResource.contextValue);
     public data: ManagedEnvironment;
 
@@ -68,7 +68,7 @@ export class ManagedEnvironmentResource extends ContainerAppsExtResourceBase<Man
 
         const wizard = new AzureWizard<IDeleteWizardContext>(wizardContext, {
             title: localize('deleteEnv', 'Delete Container Apps environment "{0}"', this.name),
-            promptSteps: [new PromptDeleteStep()],
+            promptSteps: [new DeletePromptStep()],
             executeSteps: [new ManagedEnvironmentDeleteStep()]
         });
 

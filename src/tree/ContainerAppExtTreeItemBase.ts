@@ -7,7 +7,7 @@ import { AzExtParentTreeItem, AzExtTreeItem, IActionContext } from "@microsoft/v
 import { ext } from "../extensionVariables";
 import { ContainerAppsExtResourceBase } from "../resolver/ContainerAppsExtResourceBase";
 
-export class ContainerAppExtTreeItem<T extends ContainerAppsExtResourceBase<unknown>> extends AzExtTreeItem {
+export abstract class ContainerAppExtTreeItemBase<T extends ContainerAppsExtResourceBase<unknown>> extends AzExtTreeItem {
     public label: string;
     public contextValue: string;
 

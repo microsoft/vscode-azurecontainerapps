@@ -36,4 +36,11 @@ export class ContainerAppExtParentTreeItem<T extends ContainerAppsExtResourceBas
         return false;
     }
 
+    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
+        if (this.resource.deleteTreeItemImpl) return this.resource.deleteTreeItemImpl(context);
+    }
+
+    public async refreshImpl(context: IActionContext): Promise<void> {
+        if (this.resource.refreshImpl) return this.resource.refreshImpl(context);
+    }
 }

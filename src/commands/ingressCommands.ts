@@ -15,9 +15,16 @@ import { IngressResource } from '../tree/IngressResource';
 import { localize } from '../utils/localize';
 import { nonNullValueAndProp } from '../utils/nonNull';
 import { EnableIngressStep } from './containerApp/create/EnableIngressStep';
-import { IContainerAppContext } from './containerApp/create/IContainerAppContext';
 import { TargetPortStep } from './containerApp/create/TargetPortStep';
 import { updateContainerApp } from "./updateContainerApp";
+
+export interface IIngressContext extends IActionContext {
+    enableIngress?: boolean;
+    enableExternal?: boolean;
+
+    defaultPort?: number;
+    targetPort?: number;
+}
 
 export async function toggleIngress(context: IActionContext, node?: ContainerAppExtParentTreeItem<IngressResource>): Promise<void> {
     if (!node) {
@@ -30,10 +37,10 @@ export async function toggleIngress(context: IActionContext, node?: ContainerApp
         ingress = undefined;
     } else {
         const title: string = localize('enableIngress', 'Enable Ingress');
-        const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new EnableIngressStep()];
+        const promptSteps: AzureWizardPromptStep<IIngressContext>[] = [new EnableIngressStep()];
 
-        const wizardContext: IContainerAppContext = { ...context, ...node.resource.containerApp.subscriptionContext, managedEnvironmentId: node.resource.containerApp.managedEnvironmentId };
-        const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
+        const wizardContext: IIngressContext = { ...context, ...node.resource.containerApp.subscriptionContext };
+        const wizard: AzureWizard<IIngressContext> = new AzureWizard(wizardContext, {
             title,
             promptSteps,
             executeSteps: []
@@ -73,17 +80,16 @@ export async function editTargetPort(context: IActionContext, node?: ContainerAp
     }
 
     const title: string = localize('updateTargetPort', 'Update Target Port');
-    const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
+    const promptSteps: AzureWizardPromptStep<IIngressContext>[] = [new TargetPortStep()];
 
     const resource = node.resource;
-    const wizardContext: IContainerAppContext = {
+    const wizardContext: IIngressContext = {
         ...context,
         ...resource.containerApp.subscriptionContext,
-        managedEnvironmentId: resource.containerApp.managedEnvironmentId,
         defaultPort: resource.data.targetPort
     };
 
-    const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IIngressContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps: []
