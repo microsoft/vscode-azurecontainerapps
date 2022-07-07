@@ -21,10 +21,10 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
         node = await ext.tree.showTreeItemPicker<IngressTreeItem | IngressDisabledTreeItem>([IngressTreeItem.contextValue, IngressDisabledTreeItem.contextValue], context);
     }
 
-    let ingress: Ingress | undefined = {};
+    let ingress: Ingress | null = {};
 
     if (node instanceof IngressTreeItem) {
-        ingress = undefined;
+        ingress = null;
     } else {
         const title: string = localize('enableIngress', 'Enable Ingress');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new EnableIngressStep()];
