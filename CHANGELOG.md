@@ -4,6 +4,7 @@
 
 ### Changed
 - Update @azure/arm-appcontainers SDK to stable api-version
+- Update @vscode/extension-telemetry to 0.6.2
 - Minimum version of VS Code updated to 1.66.0
 
 ### Fixed
