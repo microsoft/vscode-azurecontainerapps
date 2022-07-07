@@ -110,7 +110,7 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
 
 async function updateIngressSettings(context: IActionContext,
     options: {
-        ingress: Ingress | undefined,
+        ingress: Ingress | null,
         node: IngressTreeItem | IngressDisabledTreeItem,
         working: string,
         workCompleted: string
@@ -119,7 +119,7 @@ async function updateIngressSettings(context: IActionContext,
 
     await window.withProgress({ location: ProgressLocation.Notification, title: working }, async (): Promise<void> => {
         ext.outputChannel.appendLog(working);
-        await updateContainerApp(context, node.parent, { configuration: { ingress: ingress } })
+        await updateContainerApp(context, node.parent, { configuration: { ingress: ingress as Ingress | undefined } })
 
         void window.showInformationMessage(workCompleted);
         ext.outputChannel.appendLog(workCompleted);
