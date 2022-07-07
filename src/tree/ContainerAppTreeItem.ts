@@ -165,7 +165,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         return undefined;
     }
 
-    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<Concrete<ContainerApp>> {
+    public async getContainerEnvelopeWithSecrets(context: IActionContext): Promise<Required<ContainerApp>> {
         // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
         // make a deep copy, we don't want to modify the one that is cached
         const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(this.data));
@@ -175,7 +175,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             containerAppEnvelope[key] = nonNullProp(containerAppEnvelope, <keyof ContainerApp>key);
         }
 
-        const concreteContainerAppEnvelope = <Concrete<ContainerApp>>containerAppEnvelope;
+        const concreteContainerAppEnvelope = <Required<ContainerApp>>containerAppEnvelope;
 
         // https://github.com/Azure/azure-sdk-for-js/issues/21101
         // a 204 indicates no secrets, but sdk is catching it as an exception
@@ -206,6 +206,3 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
     }
 }
 
-type Concrete<ContainerApp> = {
-    [Property in keyof ContainerApp]-?: ContainerApp[Property];
-}
