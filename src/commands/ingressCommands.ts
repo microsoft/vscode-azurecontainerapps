@@ -24,6 +24,7 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
     let ingress: Ingress | null = {};
 
     if (node instanceof IngressTreeItem) {
+        // PATCH requires ingress be set to null exclusively to be picked up since undefined means there was no update
         ingress = null;
     } else {
         const title: string = localize('enableIngress', 'Enable Ingress');
