@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -21,7 +22,9 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
         progress.report({ message: creatingLaw });
         ext.outputChannel.appendLog(creatingLaw);
         context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
-            nonNullProp(rg, 'name'), nonNullProp(context, 'newManagedEnvironmentName'), { location: rg.location });
+            nonNullProp(rg, 'name'), nonNullProp(context, 'newManagedEnvironmentName'), { location: (await LocationListStep.getLocation(context)).name });
+
+        console.log((await LocationListStep.getLocation(context)).name);
 
         const createdLaw: string = localize('createdLogAnalyticWorkspace', 'Successfully created new log analytic workspace.');
         ext.outputChannel.appendLog(createdLaw);
