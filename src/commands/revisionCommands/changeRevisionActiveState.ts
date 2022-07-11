@@ -13,7 +13,7 @@ import { localize } from "../../utils/localize";
 
 export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: ContainerAppTreeItem | RevisionTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem | RevisionTreeItem>(ContainerAppTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem | RevisionTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
     }
 
     const containerAppName: string = node instanceof RevisionTreeItem ? node.parent.parent.name : node.name;

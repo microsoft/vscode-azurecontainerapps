@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.2.0 - 2022-07-07
+
+### Changed
+- Update @azure/arm-appcontainers SDK to stable api-version
+- Update @vscode/extension-telemetry to 0.6.2
+- Minimum version of VS Code updated to 1.66.0
+
+### Fixed
+- [Bugs fixed](https://github.com/microsoft/vscode-azurecontainerapps/milestone/4?closed=1)
+
 ## 0.1.1 - 2022-05-20
 
 ### Added
