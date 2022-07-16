@@ -167,6 +167,11 @@
                 "command": "containerApps.editScalingRange",
                 "title": "%containerApps.editScalingRange%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.addScaleRule",
+                "title": "%containerApps.addScaleRule%",
+                "category": "Azure Container Apps"
             }
         ],
         "views": {
@@ -289,6 +294,11 @@
                 {
                     "command": "containerApps.editScalingRange",
                     "when": "view == containerApps && viewItem =~ /scale(?![a-z])/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.addScaleRule",
+                    "when": "view == containerApps && viewItem =~ /scaleRules(?![a-z])/i",
                     "group": "1@1"
                 }
             ],
