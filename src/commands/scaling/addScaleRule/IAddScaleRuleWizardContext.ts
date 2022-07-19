@@ -9,4 +9,6 @@ import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 export interface IAddScaleRuleWizardContext extends IActionContext {
     treeItem: ScaleRuleGroupTreeItem;
     ruleName?: string;
+    ruleType?: string;
+    concurrentRequests?: number;
 }
