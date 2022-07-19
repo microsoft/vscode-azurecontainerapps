@@ -3,7 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { ContainerApp, ContainerAppsAPIClient, ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { createContainerAppsAPIClient } from '../../../utils/azureClients';
+import { getResourceGroupFromId } from '../../../utils/azureUtils';
 import { localize } from '../../../utils/localize';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
 
@@ -13,9 +16,16 @@ export class GetRuleNameInputStep extends AzureWizardPromptStep<IAddScaleRuleWiz
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(context, value)
         });
-
-        // const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.treeItem]);
-        // const scaleRuleRg = getResourceGroupFromId(context.treeItem.fullId);
+        try {
+            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.treeItem]);
+            const containerAppRg: string = getResourceGroupFromId(context.treeItem.fullId);
+            const containerApp: ContainerApp = await client.containerApps.get(containerAppRg, context.treeItem.parent.parent.label);
+            const scaleRules: ScaleRule[] | undefined = containerApp?.template?.scale?.rules;
+            const scaleRuleExists = !!(scaleRules?.filter((rule) => {
+                return rule?.name?.length && rule?.name === context?.ruleName;
+            }).length);
+            if (scaleRuleExists) { /* Duplicate logic goes here */ }
+        } catch (err) { /* TBD */ }
     }
 
     public shouldPrompt(): boolean {
