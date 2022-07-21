@@ -30,10 +30,13 @@ export class AddNewScaleRule extends AzureWizardExecuteStep<IAddScaleRuleWizardC
         template.scale.rules ||= [];
 
         const scaleRule: ScaleRule = this.buildScaleRule(context);
-
         if (this.shouldReplaceRule(context)) {
             const idx: number = template.scale.rules.findIndex((rule) => rule.name === context.ruleName);
-            template.scale.rules[idx] = scaleRule;
+            if (idx !== -1) {
+                template.scale.rules[idx] = scaleRule;
+            } else {
+                template.scale.rules.push(scaleRule);
+            }
         } else {
             template.scale.rules.push(scaleRule);
         }
@@ -64,6 +67,11 @@ export class AddNewScaleRule extends AzureWizardExecuteStep<IAddScaleRuleWizardC
                 };
                 break;
             case ScaleRuleTypes.Queue:
+                scaleRule.azureQueue = {
+                    queueName: context.queueName,
+                    queueLength: Number(context.queueLength),
+                    auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
+                }
                 break;
         }
         return scaleRule;

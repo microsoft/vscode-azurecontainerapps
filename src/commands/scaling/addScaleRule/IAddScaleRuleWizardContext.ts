@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRuleAuth } from "@azure/arm-appcontainers";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 
@@ -14,5 +13,6 @@ export interface IAddScaleRuleWizardContext extends IActionContext {
     concurrentRequests?: string;
     queueName?: string;
     queueLength?: string;
-    authSecrets?: ScaleRuleAuth[];
+    secretRef?: string;
+    triggerParameter?: string;
 }

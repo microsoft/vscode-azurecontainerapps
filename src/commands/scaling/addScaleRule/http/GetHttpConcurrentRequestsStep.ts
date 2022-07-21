@@ -7,10 +7,10 @@ import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
-export class GetConcurrentRequestsStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class GetHttpConcurrentRequestsStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.concurrentRequests = (await context.ui.showInputBox({
-            prompt: localize('concurrentRequests', 'Enter concurrent requests.'),
+            prompt: localize('concurrentRequestsPrompt', 'Enter the number of concurrent requests.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
         })).trim();
     }

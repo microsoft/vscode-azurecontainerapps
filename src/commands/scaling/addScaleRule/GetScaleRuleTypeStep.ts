@@ -6,8 +6,10 @@
 import { AzureWizardPromptStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../constants';
-import { GetConcurrentRequestsStep } from './http/GetConcurrentRequestsStep';
+import { GetHttpConcurrentRequestsStep } from './http/GetHttpConcurrentRequestsStep';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
+import { GetQueueAuthSecretStep } from './queue/GetQueueAuthStep';
+import { GetQueueLengthStep } from './queue/GetQueueLengthStep';
 import { GetQueueNameStep } from './queue/GetQueueNameStep';
 
 export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
@@ -25,10 +27,10 @@ export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWiz
         const promptSteps: AzureWizardPromptStep<IAddScaleRuleWizardContext>[] = [];
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
-                promptSteps.push(new GetConcurrentRequestsStep());
+                promptSteps.push(new GetHttpConcurrentRequestsStep());
                 break;
             case ScaleRuleTypes.Queue:
-                promptSteps.push(new GetQueueNameStep());
+                promptSteps.push(new GetQueueNameStep(), new GetQueueLengthStep(), new GetQueueAuthSecretStep());
                 break;
         }
         return { promptSteps };

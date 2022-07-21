@@ -16,7 +16,7 @@ export class GetQueueNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardC
 
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.queueName = (await context.ui.showInputBox({
-            prompt: localize('concurrentRequests', 'Enter concurrent requests.'),
+            prompt: localize('queueNamePrompt', 'Enter a name for the queue.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(context, value)
         })).trim();
     }
