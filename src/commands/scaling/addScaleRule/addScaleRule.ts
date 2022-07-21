@@ -6,6 +6,7 @@
 import { AzureWizard, IActionContext, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
+import { AddNewScaleRule } from "./AddNewScaleRule";
 import { GetScaleRuleNameStep } from "./GetScaleRuleNameStep";
 import { GetScaleRuleTypeStep } from "./GetScaleRuleTypeStep";
 import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
@@ -20,10 +21,9 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     };
     const wizardOptions: IWizardOptions<IAddScaleRuleWizardContext> = {
         promptSteps: [new GetScaleRuleNameStep(), new GetScaleRuleTypeStep()],
-        executeSteps: [],
+        executeSteps: [new AddNewScaleRule()],
     };
     const wizard: AzureWizard<IAddScaleRuleWizardContext> = new AzureWizard(wizardContext, wizardOptions);
     await wizard.prompt();
     await wizard.execute();
 }
-

@@ -24,8 +24,7 @@ export namespace RevisionConstants {
 
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",
-    Queue = "Azure queue",
-    Custom = "Custom"
+    Queue = "Azure queue"
 }
 
 export const acrDomain = 'azurecr.io';

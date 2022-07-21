@@ -8,6 +8,7 @@ import { QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../constants';
 import { GetConcurrentRequestsStep } from './http/GetConcurrentRequestsStep';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
+import { GetQueueNameStep } from './queue/GetQueueNameStep';
 
 export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
@@ -27,10 +28,7 @@ export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWiz
                 promptSteps.push(new GetConcurrentRequestsStep());
                 break;
             case ScaleRuleTypes.Queue:
-                promptSteps.push();
-                break;
-            case ScaleRuleTypes.Custom:
-                promptSteps.push();
+                promptSteps.push(new GetQueueNameStep());
                 break;
         }
         return { promptSteps };
