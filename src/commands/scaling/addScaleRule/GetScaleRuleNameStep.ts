@@ -11,6 +11,7 @@ import { localize } from '../../../utils/localize';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
 
 export class GetScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+    public hideStepCount: boolean = true;
     containerApp: ContainerApp | undefined;
     scaleRules: ScaleRule[] | undefined;
 

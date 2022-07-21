@@ -9,10 +9,13 @@ import { ScaleRuleTypes } from '../../../constants';
 import { GetHttpConcurrentRequestsStep } from './http/GetHttpConcurrentRequestsStep';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
 import { GetQueueAuthSecretStep } from './queue/GetQueueAuthStep';
+import { GetQueueAuthTriggerStep } from './queue/GetQueueAuthTriggerStep';
 import { GetQueueLengthStep } from './queue/GetQueueLengthStep';
 import { GetQueueNameStep } from './queue/GetQueueNameStep';
 
 export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+    public hideStepCount: boolean = true;
+
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         const qpItems: QuickPickItem[] = [];
         for (const ruleType in ScaleRuleTypes) { qpItems.push({ label: ScaleRuleTypes[ruleType as keyof typeof ScaleRuleTypes] }); }
@@ -30,8 +33,12 @@ export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWiz
                 promptSteps.push(new GetHttpConcurrentRequestsStep());
                 break;
             case ScaleRuleTypes.Queue:
-                promptSteps.push(new GetQueueNameStep(), new GetQueueLengthStep(), new GetQueueAuthSecretStep());
-                break;
+                promptSteps.push(
+                    new GetQueueNameStep(),
+                    new GetQueueLengthStep(),
+                    new GetQueueAuthSecretStep(),
+                    new GetQueueAuthTriggerStep()
+                );
         }
         return { promptSteps };
     }

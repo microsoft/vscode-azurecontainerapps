@@ -30,16 +30,7 @@ export class AddNewScaleRule extends AzureWizardExecuteStep<IAddScaleRuleWizardC
         template.scale.rules ||= [];
 
         const scaleRule: ScaleRule = this.buildScaleRule(context);
-        if (this.shouldReplaceRule(context)) {
-            const idx: number = template.scale.rules.findIndex((rule) => rule.name === context.ruleName);
-            if (idx !== -1) {
-                template.scale.rules[idx] = scaleRule;
-            } else {
-                template.scale.rules.push(scaleRule);
-            }
-        } else {
-            template.scale.rules.push(scaleRule);
-        }
+        this.integrateRule(context, template.scale.rules, scaleRule);
 
         await window.withProgress({ location: ProgressLocation.Notification, title: adding }, async (): Promise<void> => {
             ext.outputChannel.appendLog(adding);
@@ -72,16 +63,22 @@ export class AddNewScaleRule extends AzureWizardExecuteStep<IAddScaleRuleWizardC
                     queueLength: Number(context.queueLength),
                     auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
                 }
-                break;
         }
         return scaleRule;
     }
 
-    private shouldReplaceRule(context: IAddScaleRuleWizardContext): boolean {
-        if (context.ruleType === ScaleRuleTypes.HTTP) {
-            return true;
-        } else {
-            return false;
+    private integrateRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
+        switch (context.ruleType) {
+            case ScaleRuleTypes.HTTP:
+                const idx: number = scaleRules.findIndex((rule) => rule.http);
+                if (idx !== -1) {
+                    scaleRules[idx] = scaleRule;
+                } else {
+                    scaleRules.push(scaleRule);
+                }
+                break;
+            case ScaleRuleTypes.Queue:
+                scaleRules.push(scaleRule);
         }
     }
 }

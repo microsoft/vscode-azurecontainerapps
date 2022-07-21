@@ -21,7 +21,6 @@ export class GetHttpConcurrentRequestsStep extends AzureWizardPromptStep<IAddSca
 
     private async validateInput(requests: string | undefined): Promise<string | undefined> {
         requests = requests ? requests.trim() : '';
-
         if (!/^[1-9]+[0-9]*$/.test(requests)) {
             return localize('invalidConcurrentRequests', 'The number of requests must be a whole number greater than or equal to 1.');
         }
