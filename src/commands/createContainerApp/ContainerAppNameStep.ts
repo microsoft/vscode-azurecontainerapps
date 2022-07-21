@@ -10,7 +10,6 @@ import { getResourceGroupFromId } from "../../utils/azureUtils";
 import { localize } from "../../utils/localize";
 import { IContainerAppContext } from './IContainerAppContext';
 
-let checkNameLength: boolean = false;
 export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppContext> {
     public hideStepCount: boolean = true;
 
@@ -31,12 +30,11 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppCon
     private async validateInput(context: IContainerAppContext, name: string | undefined): Promise<string | undefined> {
         name = name ? name.trim() : '';
         // to prevent showing an error when the character types the first letter
-        checkNameLength = checkNameLength || name.length > 1;
 
         const { minLength, maxLength } = { minLength: 2, maxLength: 20 };
         if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`);
-        } else if ((checkNameLength && name.length < minLength) || name.length > maxLength) {
+        } else if ((name.length < minLength) || name.length > maxLength) {
             return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
         }
 
