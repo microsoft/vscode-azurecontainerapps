@@ -60,9 +60,9 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         return this.data.provisioningState === 'Succeeded' ? undefined : this.data.provisioningState;
     }
 
-    public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
+    public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const children: AzExtTreeItem[] = [new DaprTreeItem(this, this.data.configuration?.dapr)];
-        await this.updateChildren();
+        await this.updateChildren(context);
         if (this.getRevisionMode() === RevisionConstants.multiple.data) {
             children.push(this.revisionsTreeItem);
         } else {
@@ -125,15 +125,17 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         this.contextValue = `${ContainerAppTreeItem.contextValue}|${azResourceContextValue}|revisionmode:${this.getRevisionMode()}`;
         this.data = data;
 
-        await this.updateChildren();
+        await this.updateChildren(context);
     }
 
-    public async updateChildren(): Promise<void> {
+    public async updateChildren(context: IActionContext): Promise<void> {
         if (this.getRevisionMode() === RevisionConstants.multiple.data) {
             this.revisionsTreeItem = new RevisionsTreeItem(this);
         }
 
-        this.scaleTreeItem = new ScaleTreeItem(this, this.data.template?.scale);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+        const revisionData = await client.containerAppsRevisions.getRevision(this.resourceGroupName, this.name, nonNullProp(this.data, 'latestRevisionName'));
+        this.scaleTreeItem = new ScaleTreeItem(this, revisionData.template?.scale);
 
         this.ingressTreeItem = this.data.configuration?.ingress ? new IngressTreeItem(this, this.data.configuration?.ingress) : new IngressDisabledTreeItem(this);
         this.logTreeItem = new LogsTreeItem(this);
