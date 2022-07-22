@@ -26,7 +26,7 @@ export class GetQueueLengthStep extends AzureWizardPromptStep<IAddScaleRuleWizar
             return localize('invalidQueueLength', 'The number of requests must be a whole number greater than or equal to 1.');
         }
         if (Number(length) > thirtyTwoBitMaxSafeInteger) {
-            return localize('numberTooLarge', 'The numbered entered is too large.');
+            return localize('numberTooLarge', 'The number entered is too large.');
         }
         return undefined;
     }
