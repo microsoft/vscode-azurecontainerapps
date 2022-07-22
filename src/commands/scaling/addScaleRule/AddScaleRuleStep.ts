@@ -30,7 +30,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         template.scale.rules ||= [];
 
         const scaleRule: ScaleRule = this.buildScaleRule(context);
-        this.integrateRule(context, template.scale.rules, scaleRule);
+        this.integrateScaleRule(context, template.scale.rules, scaleRule);
 
         await window.withProgress({ location: ProgressLocation.Notification, title: adding }, async (): Promise<void> => {
             ext.outputChannel.appendLog(adding);
@@ -63,23 +63,24 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
                     queueLength: context.queueLength,
                     auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
                 }
+                break;
+            default:
         }
         return scaleRule;
     }
 
-    private integrateRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
+    private integrateScaleRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
                     scaleRules[idx] = scaleRule;
-                } else {
-                    scaleRules.push(scaleRule);
                 }
                 break;
             case ScaleRuleTypes.Queue:
-                scaleRules.push(scaleRule);
+            default:
         }
+        scaleRules.push(scaleRule);
     }
 }
 
