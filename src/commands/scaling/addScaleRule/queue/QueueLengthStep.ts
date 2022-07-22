@@ -10,10 +10,10 @@ import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
 export class QueueLengthStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        context.queueLength = (await context.ui.showInputBox({
+        context.queueLength = Number((await context.ui.showInputBox({
             prompt: localize('queueLengthPrompt', 'Enter a queue length.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
-        })).trim();
+        })).trim());
     }
 
     public shouldPrompt(): boolean {

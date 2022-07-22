@@ -60,7 +60,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
             case ScaleRuleTypes.Queue:
                 scaleRule.azureQueue = {
                     queueName: context.queueName,
-                    queueLength: Number(context.queueLength),
+                    queueLength: context.queueLength,
                     auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
                 }
         }

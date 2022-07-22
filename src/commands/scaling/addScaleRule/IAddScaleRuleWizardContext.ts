@@ -12,7 +12,7 @@ export interface IAddScaleRuleWizardContext extends IActionContext {
     ruleType?: string;
     concurrentRequests?: string;
     queueName?: string;
-    queueLength?: string;
+    queueLength?: number;
     secretRef?: string;
     triggerParameter?: string;
 }
