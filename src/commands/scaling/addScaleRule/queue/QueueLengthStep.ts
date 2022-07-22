@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import { thirtyTwoBitMaxSafeInteger } from '../../../../constants';
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
@@ -22,6 +21,8 @@ export class QueueLengthStep extends AzureWizardPromptStep<IAddScaleRuleWizardCo
 
     private async validateInput(length: string | undefined): Promise<string | undefined> {
         length = length ? length.trim() : '';
+
+        const thirtyTwoBitMaxSafeInteger = 2147483647;
         if (!/^[1-9]+[0-9]*$/.test(length)) {
             return localize('invalidQueueLength', 'The number of requests must be a whole number greater than or equal to 1.');
         }

@@ -27,8 +27,6 @@ export enum ScaleRuleTypes {
     Queue = "Azure queue"
 }
 
-export const thirtyTwoBitMaxSafeInteger = 2147483647;
-
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 
