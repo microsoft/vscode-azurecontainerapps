@@ -4,9 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 
 export interface IAddScaleRuleWizardContext extends IActionContext {
+    containerApp: ContainerAppTreeItem;
     treeItem: ScaleRuleGroupTreeItem;
     ruleName?: string;
     ruleType?: string;

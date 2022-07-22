@@ -8,9 +8,6 @@ import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-uti
 import { Progress, ProgressLocation, window } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
-import { RevisionTreeItem } from "../../../tree/RevisionTreeItem";
-import { ScaleRuleGroupTreeItem } from '../../../tree/ScaleRuleGroupTreeItem';
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
@@ -19,13 +16,10 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
     public priority: number = 100;
 
     public async execute(context: IAddScaleRuleWizardContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const node: ScaleRuleGroupTreeItem = nonNullProp(context, "treeItem");
-        const containerApp: ContainerAppTreeItem = node.parent.parent instanceof RevisionTreeItem ? node.parent.parent.parent.parent : node.parent.parent;
+        const adding = localize('addingScaleRule', 'Adding {0} rule to "{1}"...', context.ruleType, context.containerApp.name);
+        const added = localize('addedScaleRule', 'Added {0} rule to "{1}".', context.ruleType, context.containerApp.name);
 
-        const adding = localize('addingScaleRule', 'Adding {0} rule to "{1}"...', context.ruleType, containerApp.name);
-        const added = localize('addedScaleRule', 'Added {0} rule to "{1}".', context.ruleType, containerApp.name);
-
-        const template: Template = containerApp?.data?.template || {};
+        const template: Template = context.containerApp.data.template || {};
         template.scale ||= {};
         template.scale.rules ||= [];
 
@@ -34,12 +28,12 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
 
         await window.withProgress({ location: ProgressLocation.Notification, title: adding }, async (): Promise<void> => {
             ext.outputChannel.appendLog(adding);
-            await updateContainerApp(context, containerApp, { template });
+            await updateContainerApp(context, context.containerApp, { template });
 
             void window.showInformationMessage(added);
             ext.outputChannel.appendLog(added);
 
-            await containerApp?.refresh(context);
+            await context.containerApp?.refresh(context);
         });
     }
 
