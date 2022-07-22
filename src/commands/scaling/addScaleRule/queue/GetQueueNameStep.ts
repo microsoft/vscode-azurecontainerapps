@@ -25,8 +25,8 @@ export class GetQueueNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardC
 
     private async validateInput(name: string | undefined): Promise<string | undefined> {
         name = name ? name.trim() : '';
-        if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
-            return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character.`);
+        if (!name.length) {
+            return localize('fieldRequired', 'The field is required.');
         }
         return undefined;
     }

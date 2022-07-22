@@ -39,11 +39,8 @@ export class GetScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWiz
         if (!this.containerApp || !this.scaleRules) { await this.initContainerAppClient(context) }
         name = name ? name.trim() : '';
 
-        const { minLength, maxLength } = { minLength: 2, maxLength: 20 };
-        if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
+        if (!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character.`);
-        } else if (name.length < minLength || name.length > maxLength) {
-            return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
         }
 
         const scaleRuleExists = !!(this.scaleRules?.filter((rule) => {
