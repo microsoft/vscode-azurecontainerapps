@@ -15,8 +15,8 @@ export class HttpConcurrentRequestsStep extends AzureWizardPromptStep<IAddScaleR
         })).trim();
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+        return context.concurrentRequests === undefined;
     }
 
     private async validateInput(requests: string | undefined): Promise<string | undefined> {

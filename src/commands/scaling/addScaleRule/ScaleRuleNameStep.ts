@@ -22,8 +22,8 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
         })).trim();
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+        return context.ruleName === undefined;
     }
 
     private async initContainerAppClient(context: IAddScaleRuleWizardContext): Promise<void> {

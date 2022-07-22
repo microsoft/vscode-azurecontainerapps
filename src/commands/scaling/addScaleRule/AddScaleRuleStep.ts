@@ -43,8 +43,8 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         });
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: IAddScaleRuleWizardContext): boolean {
+        return context.ruleName !== undefined && context.ruleType !== undefined;
     }
 
     private buildScaleRule(context: IAddScaleRuleWizardContext): ScaleRule {

@@ -15,8 +15,8 @@ export class QueueAuthTriggerStep extends AzureWizardPromptStep<IAddScaleRuleWiz
         })).trim();
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+        return context.triggerParameter === undefined;
     }
 
     private async validateInput(name: string | undefined): Promise<string | undefined> {

@@ -15,8 +15,8 @@ export class QueueLengthStep extends AzureWizardPromptStep<IAddScaleRuleWizardCo
         })).trim());
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+        return context.queueLength === undefined;
     }
 
     private async validateInput(length: string | undefined): Promise<string | undefined> {

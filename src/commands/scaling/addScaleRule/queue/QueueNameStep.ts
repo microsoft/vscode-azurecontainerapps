@@ -19,8 +19,8 @@ export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardCont
         })).trim();
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+        return context.queueName === undefined;
     }
 
     private async validateInput(name: string | undefined): Promise<string | undefined> {

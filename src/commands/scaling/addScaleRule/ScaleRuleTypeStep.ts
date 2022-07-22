@@ -22,8 +22,8 @@ export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizard
         context.ruleType = (await context.ui.showQuickPick(qpItems, {})).label;
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+        return context.ruleType === undefined;
     }
 
     public async getSubWizard(context: IAddScaleRuleWizardContext): Promise<IWizardOptions<IAddScaleRuleWizardContext>> {
