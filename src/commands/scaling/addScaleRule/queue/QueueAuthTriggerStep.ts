@@ -7,7 +7,7 @@ import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
-export class GetQueueAuthTriggerStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class QueueAuthTriggerStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.triggerParameter = (await context.ui.showInputBox({
             prompt: localize('queueAuthTriggerPrompt', 'Enter a corresponding trigger parameter.'),

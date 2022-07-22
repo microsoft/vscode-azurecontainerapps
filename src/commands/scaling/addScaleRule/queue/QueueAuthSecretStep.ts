@@ -11,7 +11,7 @@ import { RevisionTreeItem } from '../../../../tree/RevisionTreeItem';
 import { ScaleRuleGroupTreeItem } from '../../../../tree/ScaleRuleGroupTreeItem';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
-export class GetQueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         const node: ScaleRuleGroupTreeItem = context.treeItem;
         const containerApp: ContainerAppTreeItem = node.parent.parent instanceof RevisionTreeItem ? node.parent.parent.parent.parent : node.parent.parent;

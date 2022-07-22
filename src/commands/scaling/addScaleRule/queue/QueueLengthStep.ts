@@ -8,7 +8,7 @@ import { thirtyTwoBitMaxSafeInteger } from '../../../../constants';
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
-export class GetQueueLengthStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class QueueLengthStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.queueLength = (await context.ui.showInputBox({
             prompt: localize('queueLengthPrompt', 'Enter a queue length.'),

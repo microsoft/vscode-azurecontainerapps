@@ -3,14 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { ContainerApp, ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
-export class GetHttpConcurrentRequestsStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+    containerApp: ContainerApp | undefined;
+    scaleRules: ScaleRule[] | undefined;
+
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        context.concurrentRequests = (await context.ui.showInputBox({
-            prompt: localize('concurrentRequestsPrompt', 'Enter the number of concurrent requests.'),
+        context.queueName = (await context.ui.showInputBox({
+            prompt: localize('queueNamePrompt', 'Enter a name for the queue.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
         })).trim();
     }
@@ -19,10 +23,10 @@ export class GetHttpConcurrentRequestsStep extends AzureWizardPromptStep<IAddSca
         return true;
     }
 
-    private async validateInput(requests: string | undefined): Promise<string | undefined> {
-        requests = requests ? requests.trim() : '';
-        if (!/^[1-9]+[0-9]*$/.test(requests)) {
-            return localize('invalidConcurrentRequests', 'The number of requests must be a whole number greater than or equal to 1.');
+    private async validateInput(name: string | undefined): Promise<string | undefined> {
+        name = name ? name.trim() : '';
+        if (!name.length) {
+            return localize('fieldRequired', 'The field is required.');
         }
         return undefined;
     }

@@ -15,15 +15,15 @@ import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
 
-export class AddNewScaleRule extends AzureWizardExecuteStep<IAddScaleRuleWizardContext> {
+export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizardContext> {
     public priority: number = 100;
 
     public async execute(context: IAddScaleRuleWizardContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const node: ScaleRuleGroupTreeItem = nonNullProp(context, "treeItem");
         const containerApp: ContainerAppTreeItem = node.parent.parent instanceof RevisionTreeItem ? node.parent.parent.parent.parent : node.parent.parent;
 
-        const adding = localize('addingScaleRule', 'Adding scale rule setting to "{0}"...', containerApp.name);
-        const added = localize('addedScaleRule', 'Added scale rule setting to "{0}".', containerApp.name);
+        const adding = localize('addingScaleRule', 'Adding {0} rule to "{1}"...', context.ruleType, containerApp.name);
+        const added = localize('addedScaleRule', 'Added {0} rule to "{1}".', context.ruleType, containerApp.name);
 
         const template: Template = containerApp?.data?.template || {};
         template.scale ||= {};

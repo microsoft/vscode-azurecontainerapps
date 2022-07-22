@@ -6,14 +6,14 @@
 import { AzureWizardPromptStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../constants';
-import { GetHttpConcurrentRequestsStep } from './http/GetHttpConcurrentRequestsStep';
+import { HttpConcurrentRequestsStep } from './http/HttpConcurrentRequestsStep';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
-import { GetQueueAuthSecretStep } from './queue/GetQueueAuthStep';
-import { GetQueueAuthTriggerStep } from './queue/GetQueueAuthTriggerStep';
-import { GetQueueLengthStep } from './queue/GetQueueLengthStep';
-import { GetQueueNameStep } from './queue/GetQueueNameStep';
+import { QueueAuthSecretStep } from './queue/QueueAuthSecretStep';
+import { QueueAuthTriggerStep } from './queue/QueueAuthTriggerStep';
+import { QueueLengthStep } from './queue/QueueLengthStep';
+import { QueueNameStep } from './queue/QueueNameStep';
 
-export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public hideStepCount: boolean = true;
 
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
@@ -30,14 +30,14 @@ export class GetScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWiz
         const promptSteps: AzureWizardPromptStep<IAddScaleRuleWizardContext>[] = [];
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
-                promptSteps.push(new GetHttpConcurrentRequestsStep());
+                promptSteps.push(new HttpConcurrentRequestsStep());
                 break;
             case ScaleRuleTypes.Queue:
                 promptSteps.push(
-                    new GetQueueNameStep(),
-                    new GetQueueLengthStep(),
-                    new GetQueueAuthSecretStep(),
-                    new GetQueueAuthTriggerStep()
+                    new QueueNameStep(),
+                    new QueueLengthStep(),
+                    new QueueAuthSecretStep(),
+                    new QueueAuthTriggerStep()
                 );
         }
         return { promptSteps };

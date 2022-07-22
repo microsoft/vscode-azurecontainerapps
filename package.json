@@ -50,7 +50,8 @@
         "onCommand:containerApps.createManagedEnvironment",
         "onCommand:containerApps.browse",
         "onCommand:containerApps.openConsoleInPortal",
-        "onCommand:containerApps.editScalingRange"
+        "onCommand:containerApps.editScalingRange",
+        "onCommand:containerApps.addScaleRule"
     ],
     "main": "./main.js",
     "contributes": {

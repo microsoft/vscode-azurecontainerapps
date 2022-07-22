@@ -7,24 +7,24 @@ import { AzureWizard, IActionContext, IWizardOptions } from "@microsoft/vscode-a
 import { ext } from "../../../extensionVariables";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 import { localize } from "../../../utils/localize";
-import { AddNewScaleRule } from "./AddNewScaleRule";
-import { GetScaleRuleNameStep } from "./GetScaleRuleNameStep";
-import { GetScaleRuleTypeStep } from "./GetScaleRuleTypeStep";
+import { AddScaleRuleStep } from "./AddScaleRuleStep";
 import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
+import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
+import { ScaleRuleTypeStep } from "./ScaleRuleTypeStep";
 
 export async function addScaleRule(context: IActionContext, node?: ScaleRuleGroupTreeItem): Promise<void> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<ScaleRuleGroupTreeItem>(new RegExp(ScaleRuleGroupTreeItem.contextValue), context);
     }
 
-    const title: string = localize('addScaleRuleTitle', 'Create Scale Rule');
+    const title: string = localize('addScaleRuleTitle', 'Add Scale Rule');
     const wizardContext: IAddScaleRuleWizardContext = {
         ...context, treeItem: node
     };
     const wizardOptions: IWizardOptions<IAddScaleRuleWizardContext> = {
         title,
-        promptSteps: [new GetScaleRuleNameStep(), new GetScaleRuleTypeStep()],
-        executeSteps: [new AddNewScaleRule()],
+        promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeStep()],
+        executeSteps: [new AddScaleRuleStep()],
     };
     const wizard: AzureWizard<IAddScaleRuleWizardContext> = new AzureWizard(wizardContext, wizardOptions);
     await wizard.prompt();
