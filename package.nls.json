@@ -26,5 +26,6 @@
     "containerApps.deleteConfirmation.EnterName": "Prompts with an input box where you enter the Container Apps environment name to delete.",
     "containerApps.deleteConfirmation.ClickButton": "Prompts with a warning dialog where you click a button to delete.",
     "containerApps.openConsoleInPortal": "Open Console in Portal",
-    "containerApps.editScalingRange": "Edit Scale Rule Setting..."
+    "containerApps.editScalingRange": "Edit Scaling Range...",
+    "containerApps.addScaleRule": "Add Scale Rule..."
 }
