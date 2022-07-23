@@ -4,11 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ScaleRule } from "@azure/arm-appcontainers";
-import { AzExtParentTreeItem, AzExtTreeItem, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, ICreateChildImplContext, IWizardOptions, nonNullProp, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ThemeIcon } from "vscode";
+import { AddScaleRuleStep } from "../commands/scaling/addScaleRule/AddScaleRuleStep";
+import { IAddScaleRuleWizardContext } from "../commands/scaling/addScaleRule/IAddScaleRuleWizardContext";
+import { ScaleRuleNameStep } from "../commands/scaling/addScaleRule/ScaleRuleNameStep";
+import { ScaleRuleTypeStep } from "../commands/scaling/addScaleRule/ScaleRuleTypeStep";
 import { azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
+import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
+import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleRuleTreeItem } from "./ScaleRuleTreeItem";
 import { ScaleTreeItem } from "./ScaleTreeItem";
 
@@ -30,6 +36,24 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
         return new ThemeIcon('symbol-constant');
     }
 
+    public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
+        const title: string = localize('addScaleRuleTitle', 'Add Scale Rule');
+        const containerApp: ContainerAppTreeItem = this.parent.parent instanceof RevisionTreeItem ? this.parent.parent.parent.parent : this.parent.parent;
+        const wizardContext: IAddScaleRuleWizardContext = {
+            ...context, containerApp, treeItem: this
+        };
+        const wizardOptions: IWizardOptions<IAddScaleRuleWizardContext> = {
+            title,
+            promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeStep()],
+            executeSteps: [new AddScaleRuleStep()],
+            showLoadingPrompt: true
+        };
+        const wizard: AzureWizard<IAddScaleRuleWizardContext> = new AzureWizard(wizardContext, wizardOptions);
+        await wizard.prompt();
+        context.showCreatingTreeItem(nonNullProp(wizardContext, 'ruleName'));
+        await wizard.execute();
+    }
+
     public async loadMoreChildrenImpl(): Promise<AzExtTreeItem[]> {
         return this.createTreeItemsWithErrorHandling(
             this.data,
@@ -37,7 +61,6 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
             rule => new ScaleRuleTreeItem(this, rule),
             _rule => localize('invalidScalingRule', 'Invalid Scaling Rule')
         );
-
     }
 
     public hasMoreChildrenImpl(): boolean {
