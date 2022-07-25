@@ -33,7 +33,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character.`);
         }
 
-        const scaleRuleExists: boolean = !!this.scaleRules?.find((rule) => {
+        const scaleRuleExists: boolean = !!this.scaleRules?.some((rule) => {
             return rule?.name?.length && rule?.name === name;
         });
         if (scaleRuleExists) {
