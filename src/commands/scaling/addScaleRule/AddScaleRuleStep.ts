@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ScaleRule, Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress, ProgressLocation, window } from "vscode";
+import { AzureWizardExecuteStep, nonNullProp, parseError } from "@microsoft/vscode-azext-utils";
+import { Progress, window } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
@@ -16,25 +16,31 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
     public priority: number = 100;
 
     public async execute(context: IAddScaleRuleWizardContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const adding = localize('addingScaleRule', 'Adding {0} rule to "{1}"...', context.ruleType, context.containerApp.name);
-        const added = localize('addedScaleRule', 'Added {0} rule to "{1}".', context.ruleType, context.containerApp.name);
+        const adding = localize('addingScaleRule', 'Adding "{0}" {1} type rule to "{2}"...', context.ruleName, context.ruleType, context.containerApp.name);
+        const added = localize('addedScaleRule', 'Successfully added "{0}" {1} type rule to "{2}".', context.ruleName, context.ruleType, context.containerApp.name);
+        const failed = localize('failedAddScaleRule', 'Failed to add "{0}" {1} type rule to "{2}".', context.ruleName, context.ruleType, context.containerApp.name);
 
         const template: Template = context.containerApp.data.template || {};
-        template.scale ||= {};
-        template.scale.rules ||= [];
+        template.scale = context.scale.data || {};
+        template.scale.rules = context.scaleRuleGroup.data || [];
 
+        const revertRuleCopy: ScaleRule[] = JSON.parse(JSON.stringify(context.scaleRuleGroup.data)) as ScaleRule[];
         const scaleRule: ScaleRule = this.buildScaleRule(context);
-        this.integrateScaleRule(context, template.scale.rules, scaleRule);
+        this.integrateRule(context, template.scale.rules, scaleRule);
 
-        await window.withProgress({ location: ProgressLocation.Notification, title: adding }, async (): Promise<void> => {
+        try {
             ext.outputChannel.appendLog(adding);
             await updateContainerApp(context, context.containerApp, { template });
-
             void window.showInformationMessage(added);
             ext.outputChannel.appendLog(added);
-
-            await context.containerApp?.refresh(context);
-        });
+            context.scaleRule = scaleRule;
+            context.scaleRules = template.scale.rules;
+        } catch (error) {
+            context.error = parseError(error);
+            context.scaleRules = revertRuleCopy;
+            void context.ui.showWarningMessage(failed);
+            ext.outputChannel.appendLog(failed);
+        }
     }
 
     public shouldExecute(context: IAddScaleRuleWizardContext): boolean {
@@ -63,7 +69,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         return scaleRule;
     }
 
-    private integrateScaleRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
+    private integrateRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
                 const idx: number = scaleRules.findIndex((rule) => rule.http);

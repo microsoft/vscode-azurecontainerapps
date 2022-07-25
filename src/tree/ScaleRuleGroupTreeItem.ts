@@ -37,10 +37,12 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
+        const scale: ScaleTreeItem = this.parent;
+        const containerApp: ContainerAppTreeItem = scale.parent instanceof RevisionTreeItem ? scale.parent.parent.parent : scale.parent;
+
         const title: string = localize('addScaleRuleTitle', 'Add Scale Rule');
-        const containerApp: ContainerAppTreeItem = this.parent.parent instanceof RevisionTreeItem ? this.parent.parent.parent.parent : this.parent.parent;
         const wizardContext: IAddScaleRuleWizardContext = {
-            ...context, containerApp, treeItem: this
+            ...context, containerApp, scale, scaleRuleGroup: this,
         };
         const wizardOptions: IWizardOptions<IAddScaleRuleWizardContext> = {
             title,
@@ -52,6 +54,13 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
         await wizard.prompt();
         context.showCreatingTreeItem(nonNullProp(wizardContext, 'ruleName'));
         await wizard.execute();
+        this.data = nonNullProp(wizardContext, 'scaleRules');
+
+        if (wizardContext.error !== undefined) {
+            throw wizardContext.error;
+        } else {
+            return new ScaleRuleTreeItem(this, nonNullProp(wizardContext, "scaleRule"));
+        }
     }
 
     public async loadMoreChildrenImpl(): Promise<AzExtTreeItem[]> {

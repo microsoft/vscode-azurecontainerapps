@@ -3,13 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { ScaleRule } from "@azure/arm-appcontainers";
+import { IActionContext, IParsedError } from "@microsoft/vscode-azext-utils";
 import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
+import { ScaleTreeItem } from "../../../tree/ScaleTreeItem";
 
 export interface IAddScaleRuleWizardContext extends IActionContext {
     containerApp: ContainerAppTreeItem;
-    treeItem: ScaleRuleGroupTreeItem;
+    scale: ScaleTreeItem;
+    scaleRuleGroup: ScaleRuleGroupTreeItem;
     ruleName?: string;
     ruleType?: string;
     concurrentRequests?: string;
@@ -17,4 +20,7 @@ export interface IAddScaleRuleWizardContext extends IActionContext {
     queueLength?: number;
     secretRef?: string;
     triggerParameter?: string;
+    scaleRule?: ScaleRule;
+    scaleRules?: ScaleRule[];
+    error?: IParsedError;
 }
