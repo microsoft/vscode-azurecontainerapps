@@ -24,7 +24,6 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         template.scale = context.scale.data || {};
         template.scale.rules = context.scaleRuleGroup.data || [];
 
-        const revertRuleCopy: ScaleRule[] = JSON.parse(JSON.stringify(context.scaleRuleGroup.data)) as ScaleRule[];
         const scaleRule: ScaleRule = this.buildScaleRule(context);
         this.integrateRule(context, template.scale.rules, scaleRule);
 
@@ -34,10 +33,8 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
             void window.showInformationMessage(added);
             ext.outputChannel.appendLog(added);
             context.scaleRule = scaleRule;
-            context.scaleRules = template.scale.rules;
         } catch (error) {
             context.error = parseError(error);
-            context.scaleRules = revertRuleCopy;
             void context.ui.showWarningMessage(failed);
             ext.outputChannel.appendLog(failed);
         }
@@ -74,7 +71,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
             case ScaleRuleTypes.HTTP:
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
-                    scaleRules[idx] = scaleRule;
+                    scaleRules.splice(idx, 0);
                 }
                 break;
             case ScaleRuleTypes.Queue:

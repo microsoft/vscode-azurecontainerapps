@@ -21,6 +21,5 @@ export interface IAddScaleRuleWizardContext extends IActionContext {
     secretRef?: string;
     triggerParameter?: string;
     scaleRule?: ScaleRule;
-    scaleRules?: ScaleRule[];
     error?: IParsedError;
 }

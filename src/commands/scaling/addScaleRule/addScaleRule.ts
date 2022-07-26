@@ -5,6 +5,8 @@
 
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
+import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
+import { RevisionTreeItem } from "../../../tree/RevisionTreeItem";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 
 
@@ -12,6 +14,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     if (!node) {
         node = await ext.tree.showTreeItemPicker<ScaleRuleGroupTreeItem>(new RegExp(ScaleRuleGroupTreeItem.contextValue), context);
     }
+    const containerApp: ContainerAppTreeItem = node.parent.parent instanceof RevisionTreeItem ? node.parent.parent.parent.parent : node.parent.parent;
     await node.createChild(context);
-    await node.refresh(context);
+    await containerApp?.refresh(context);
 }

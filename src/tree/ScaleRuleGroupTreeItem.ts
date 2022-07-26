@@ -54,7 +54,6 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
         await wizard.prompt();
         context.showCreatingTreeItem(nonNullProp(wizardContext, 'ruleName'));
         await wizard.execute();
-        this.data = nonNullProp(wizardContext, 'scaleRules');
 
         if (wizardContext.error !== undefined) {
             throw wizardContext.error;
