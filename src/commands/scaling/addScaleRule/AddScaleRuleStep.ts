@@ -24,7 +24,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         template.scale = context.scale.data || {};
         template.scale.rules = context.scaleRuleGroup.data || [];
 
-        const scaleRule: ScaleRule = this.buildScaleRule(context);
+        const scaleRule: ScaleRule = this.buildRule(context);
         this.integrateRule(context, template.scale.rules, scaleRule);
 
         try {
@@ -44,7 +44,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         return context.ruleName !== undefined && context.ruleType !== undefined;
     }
 
-    private buildScaleRule(context: IAddScaleRuleWizardContext): ScaleRule {
+    private buildRule(context: IAddScaleRuleWizardContext): ScaleRule {
         const scaleRule: ScaleRule = { name: context.ruleName };
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
