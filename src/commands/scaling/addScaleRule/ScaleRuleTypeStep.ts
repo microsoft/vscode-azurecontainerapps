@@ -39,6 +39,8 @@ export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizard
                     new QueueAuthSecretStep(),
                     new QueueAuthTriggerStep()
                 );
+                break;
+            default:
         }
         return { promptSteps };
     }
