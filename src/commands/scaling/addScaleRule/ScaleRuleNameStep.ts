@@ -15,7 +15,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
 
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         this.containerApp = context.containerApp.data;
-        this.scaleRules = this.containerApp?.template?.scale?.rules;
+        this.scaleRules = context.scaleRuleGroup.data;
         context.ruleName = (await context.ui.showInputBox({
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
