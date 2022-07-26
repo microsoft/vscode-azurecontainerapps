@@ -69,6 +69,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
     private integrateRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
+                // Portal only allows one HTTP rule per revision
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
                     scaleRules.splice(idx, 0);
