@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
 
@@ -14,5 +14,19 @@ export namespace treeUtils {
 
     function getResourcesUri(): Uri {
         return Uri.joinPath(ext.context.extensionUri, 'resources')
+    }
+
+    export function findNearestParent<T extends AzExtTreeItem>(node: AzExtTreeItem, parent: T): T | null {
+        const parentInstance: string = parent.constructor.name;
+        let foundParent: boolean = false;
+        let currentNode: AzExtTreeItem = node;
+        while (currentNode.parent) {
+            if (currentNode.constructor.name === parentInstance) {
+                foundParent = true;
+                break;
+            }
+            currentNode = currentNode.parent;
+        }
+        return foundParent ? currentNode as T : null;
     }
 }

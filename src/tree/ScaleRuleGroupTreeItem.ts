@@ -12,9 +12,9 @@ import { ScaleRuleNameStep } from "../commands/scaling/addScaleRule/ScaleRuleNam
 import { ScaleRuleTypeStep } from "../commands/scaling/addScaleRule/ScaleRuleTypeStep";
 import { azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
+import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResourceTreeItem } from "./IAzureResourceTreeItem";
-import { RevisionTreeItem } from "./RevisionTreeItem";
 import { ScaleRuleTreeItem } from "./ScaleRuleTreeItem";
 import { ScaleTreeItem } from "./ScaleTreeItem";
 
@@ -37,8 +37,8 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const scale: ScaleTreeItem = this.parent;
-        const containerApp: ContainerAppTreeItem = scale.parent instanceof RevisionTreeItem ? scale.parent.parent.parent : scale.parent;
+        const scale: ScaleTreeItem = treeUtils.findNearestParent(this, ScaleTreeItem.prototype) as ScaleTreeItem;
+        const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent(this, ContainerAppTreeItem.prototype) as ContainerAppTreeItem;
 
         const title: string = localize('addScaleRuleTitle', 'Add Scale Rule');
         const wizardContext: IAddScaleRuleWizardContext = {
