@@ -6,6 +6,7 @@
 import * as azUtil from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
+import { containerAppProvider } from '../constants';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 import { ResolvedContainerAppsResource } from '../tree/ResolvedContainerAppsResource';
@@ -44,7 +45,10 @@ export function registerCommands(): void {
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
     registerCommand('containerApps.openConsoleInPortal', async (context: IActionContext, node?: ContainerAppTreeItem) => {
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+            node = await ext.rgApi.pickAppResource<ContainerAppTreeItem>(context, {
+                filter: { type: containerAppProvider },
+                expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
+            });
         }
 
         await azUtil.openInPortal(node, `${node.id}/console`);
