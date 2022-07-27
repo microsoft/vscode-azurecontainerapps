@@ -13,9 +13,7 @@ import { ManagedEnvironmentNameStep } from '../commands/createManagedEnvironment
 import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
-import { ManagedEnvironmentTreeItem } from './ManagedEnvironmentTreeItem';
-
-
+import { ResolvedContainerAppsResource } from './ResolvedContainerAppsResource';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container Apps environment');
@@ -32,7 +30,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return await this.createTreeItemsWithErrorHandling(
             environments,
             'invalidManagedEnvironment',
-            ke => new ManagedEnvironmentTreeItem(this, ke),
+            ke => new ResolvedContainerAppsResource(this, ke),
             ke => ke.name
         );
     }
@@ -62,7 +60,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         wizardContext.newResourceGroupName = newManagedEnvName;
         await wizard.execute();
 
-        return new ManagedEnvironmentTreeItem(this, nonNullProp(wizardContext, 'managedEnvironment'));
+        return new ResolvedContainerAppsResource(this, nonNullProp(wizardContext, 'managedEnvironment'));
     }
 }
 

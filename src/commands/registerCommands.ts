@@ -8,7 +8,7 @@ import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, r
 import { commands } from 'vscode';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
-import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
+import { ResolvedContainerAppsResource } from '../tree/ResolvedContainerAppsResource';
 import { RevisionTreeItem } from '../tree/RevisionTreeItem';
 import { browse } from './browse';
 import { chooseRevisionMode } from './chooseRevisionMode';
@@ -32,7 +32,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.createManagedEnvironment', createManagedEnvironment);
     registerCommand('containerApps.createContainerApp', createContainerApp);
     registerCommand('containerApps.deployImage', deployImage);
-    registerCommand('containerApps.deleteManagedEnvironment', async (context: IActionContext, node?: ManagedEnvironmentTreeItem) => await deleteNode(context, ManagedEnvironmentTreeItem.contextValue, node));
+    registerCommand('containerApps.deleteManagedEnvironment', async (context: IActionContext, node?: ResolvedContainerAppsResource) => await deleteNode(context, ResolvedContainerAppsResource.contextValue, node));
     registerCommand('containerApps.deleteContainerApp', async (context: IActionContext, node?: ContainerAppTreeItem) => await deleteNode(context, ContainerAppTreeItem.contextValueRegExp, node));
     registerCommand('containerApps.enableIngress', toggleIngress);
     registerCommand('containerApps.disableIngress', toggleIngress);

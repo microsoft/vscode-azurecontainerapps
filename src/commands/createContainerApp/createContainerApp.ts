@@ -6,13 +6,13 @@
 import { IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
-import { ManagedEnvironmentTreeItem } from "../../tree/ManagedEnvironmentTreeItem";
+import { ResolvedContainerAppsResource } from "../../tree/ResolvedContainerAppsResource";
 import { IContainerAppContext } from "./IContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
-export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentTreeItem): Promise<ContainerAppTreeItem> {
+export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ResolvedContainerAppsResource): Promise<ContainerAppTreeItem> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValueRegExp, context);
+        node = await ext.tree.showTreeItemPicker<ResolvedContainerAppsResource>(ResolvedContainerAppsResource.contextValueRegExp, context);
     }
 
     const caNode: ContainerAppTreeItem = await node.createChild(context);

@@ -5,7 +5,7 @@
 
 import { AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 
-export interface IAzureResourceTreeItem extends AzExtTreeItem {
+export interface IAzureResource {
     data: {} | undefined;
 
     /**
@@ -13,3 +13,5 @@ export interface IAzureResourceTreeItem extends AzExtTreeItem {
      */
     getDataImpl?(): Promise<void>;
 }
+
+export interface IAzureResourceTreeItem extends IAzureResource, AzExtTreeItem { }

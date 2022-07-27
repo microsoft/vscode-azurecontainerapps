@@ -7,13 +7,13 @@ import { IActionContext, openReadOnlyJson } from '@microsoft/vscode-azext-utils'
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 import { IAzureResourceTreeItem } from '../tree/IAzureResourceTreeItem';
-import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
+import { ResolvedContainerAppsResource } from '../tree/ResolvedContainerAppsResource';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
 
 export async function viewProperties(context: IActionContext, node?: IAzureResourceTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+        node = await ext.tree.showTreeItemPicker<ResolvedContainerAppsResource>(ContainerAppTreeItem.contextValueRegExp, context);
     }
 
     if (!node.data) {
