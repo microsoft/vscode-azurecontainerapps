@@ -16,7 +16,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
     public priority: number = 100;
 
     public async execute(context: IAddScaleRuleWizardContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const adding = localize('addingScaleRule', 'Adding {0} rule "{1}"  to "{2}"...', context.ruleType, context.ruleName, context.containerApp.name);
+        const adding = localize('addingScaleRule', 'Adding {0} rule "{1}" to "{2}"...', context.ruleType, context.ruleName, context.containerApp.name);
         const added = localize('addedScaleRule', 'Successfully added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
 
         const template: Template = context.containerApp.data.template || {};
