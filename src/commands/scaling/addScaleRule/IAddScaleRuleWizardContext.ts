@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ScaleRule } from "@azure/arm-appcontainers";
-import { IActionContext, IParsedError } from "@microsoft/vscode-azext-utils";
+import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 import { ScaleTreeItem } from "../../../tree/ScaleTreeItem";
@@ -15,11 +15,14 @@ export interface IAddScaleRuleWizardContext extends IActionContext {
     scaleRuleGroup: ScaleRuleGroupTreeItem;
     ruleName?: string;
     ruleType?: string;
-    concurrentRequests?: string;
-    queueName?: string;
-    queueLength?: number;
-    secretRef?: string;
-    triggerParameter?: string;
+    httpProps: {
+        concurrentRequests?: string;
+    };
+    queueProps: {
+        name?: string;
+        length?: number;
+        secretRef?: string;
+        triggerParameter?: string;
+    };
     scaleRule?: ScaleRule;
-    error?: IParsedError;
 }

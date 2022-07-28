@@ -9,14 +9,14 @@ import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
 export class HttpConcurrentRequestsStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        context.concurrentRequests = (await context.ui.showInputBox({
+        context.httpProps.concurrentRequests = (await context.ui.showInputBox({
             prompt: localize('concurrentRequestsPrompt', 'Enter the number of concurrent requests.'),
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
         })).trim();
     }
 
     public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
-        return context.concurrentRequests === undefined;
+        return context.httpProps.concurrentRequests === undefined;
     }
 
     private async validateInput(requests: string | undefined): Promise<string | undefined> {

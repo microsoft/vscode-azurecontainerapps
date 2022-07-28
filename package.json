@@ -299,7 +299,7 @@
                 },
                 {
                     "command": "containerApps.addScaleRule",
-                    "when": "view == containerApps && viewItem =~ /scaleRules(?![a-z])/i",
+                    "when": "view == containerApps && viewItem =~ /scaleRules/i",
                     "group": "1@1"
                 }
             ],
