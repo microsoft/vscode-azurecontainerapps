@@ -3,15 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
+import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { IManagedEnvironmentContext } from '../commands/createManagedEnvironment/IManagedEnvironmentContext';
 import { LogAnalyticsCreateStep } from '../commands/createManagedEnvironment/LogAnalyticsCreateStep';
 import { ManagedEnvironmentCreateStep } from '../commands/createManagedEnvironment/ManagedEnvironmentCreateStep';
 import { ManagedEnvironmentNameStep } from '../commands/createManagedEnvironment/ManagedEnvironmentNameStep';
+import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
-import { ResolvedContainerAppsResource } from './ResolvedContainerAppsResource';
+import { ManagedEnvironmentTreeItem } from './ManagedEnvironmentTreeItem';
+import { ResolvedContainerAppsResource } from "./ResolvedContainerAppsResource";
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container Apps environment');
@@ -21,8 +24,16 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return !!this._nextLink;
     }
 
-    public async loadMoreChildrenImpl(_clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
-        return [];
+    public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
+        const environments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+
+        return await this.createTreeItemsWithErrorHandling(
+            environments,
+            'invalidManagedEnvironment',
+            ke => new ManagedEnvironmentTreeItem(this, new ResolvedContainerAppsResource(this.subscription, ke)),
+            ke => ke.name
+        );
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
@@ -50,7 +61,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         wizardContext.newResourceGroupName = newManagedEnvName;
         await wizard.execute();
 
-        return new ResolvedContainerAppsResource(this, nonNullProp(wizardContext, 'managedEnvironment'));
+        const resolvedEnvironment = new ResolvedContainerAppsResource(this.subscription, nonNullProp(wizardContext, 'managedEnvironment'));
+        return new ManagedEnvironmentTreeItem(this, resolvedEnvironment);
     }
 }
-

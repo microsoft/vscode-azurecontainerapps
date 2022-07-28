@@ -6,7 +6,7 @@
 import { Ingress } from "@azure/arm-appcontainers";
 import { AzureWizard, AzureWizardPromptStep, GenericTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
-import { IngressConstants } from '../constants';
+import { IngressConstants, rootFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { IngressDisabledTreeItem, IngressTreeItem } from '../tree/IngressTreeItem';
 import { localize } from '../utils/localize';
@@ -18,7 +18,10 @@ import { updateContainerApp } from "./updateContainerApp";
 
 export async function toggleIngress(context: IActionContext, node?: IngressTreeItem | IngressDisabledTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<IngressTreeItem | IngressDisabledTreeItem>([IngressTreeItem.contextValue, IngressDisabledTreeItem.contextValue], context);
+        node = await ext.rgApi.pickAppResource<IngressTreeItem | IngressDisabledTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: [IngressTreeItem.contextValue, IngressDisabledTreeItem.contextValue]
+        });
     }
 
     let ingress: Ingress | null = {};
@@ -63,7 +66,10 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
 
 export async function editTargetPort(context: IActionContext, target?: IngressTreeItem | GenericTreeItem): Promise<void> {
     if (!target) {
-        target = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
+        target = await ext.rgApi.pickAppResource<IngressTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: IngressTreeItem.contextValue
+        });
     }
 
     // GenericTreeItem will be a targetPort node
@@ -95,7 +101,10 @@ export async function editTargetPort(context: IActionContext, target?: IngressTr
 
 export async function toggleIngressVisibility(context: IActionContext, node?: IngressTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<IngressTreeItem>(IngressTreeItem.contextValue, context);
+        node = await ext.rgApi.pickAppResource<IngressTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: IngressTreeItem.contextValue
+        });
     }
 
     const ingress = nonNullValueAndProp(node.parent.data.configuration, 'ingress');

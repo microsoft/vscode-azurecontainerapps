@@ -12,6 +12,8 @@ import { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { registerCommands } from './commands/registerCommands';
+import { managedEnvironmentProvider } from './constants';
+import { ContainerAppsResolver } from './ContainerAppsResolver';
 import { ext } from './extensionVariables';
 import { getApiExport } from './getExtensionApi';
 
@@ -35,7 +37,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         if (rgApiProvider) {
             const api = rgApiProvider.getApi<AzureHostExtensionApi>('0.0.1');
             ext.rgApi = api;
-            // api.registerApplicationResourceResolver('Microsoft.Compute/virtualMachines', new VirtualMachineResolver());
+            api.registerApplicationResourceResolver(managedEnvironmentProvider, new ContainerAppsResolver());
         } else {
             throw new Error('Could not find the Azure Resource Groups extension');
         }

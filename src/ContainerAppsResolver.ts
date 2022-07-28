@@ -6,7 +6,7 @@
 import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { AppResource, AppResourceResolver, ResolvedAppResourceBase } from "@microsoft/vscode-azext-utils/hostapi";
-import { containerAppProvider } from "./constants";
+import { managedEnvironmentProvider } from "./constants";
 import { ResolvedContainerAppsResource } from "./tree/ResolvedContainerAppsResource";
 import { createContainerAppsAPIClient } from "./utils/azureClients";
 import { getResourceGroupFromId } from "./utils/azureUtils";
@@ -27,6 +27,6 @@ export class ContainerAppsResolver implements AppResourceResolver {
     }
 
     public matchesResource(resource: AppResource): boolean {
-        return resource.type.toLowerCase() === containerAppProvider.toLowerCase();
+        return resource.type.toLowerCase() === managedEnvironmentProvider.toLowerCase();
     }
 }

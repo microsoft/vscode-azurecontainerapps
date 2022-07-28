@@ -4,15 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
+import { rootFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
-import { ResolvedContainerAppsResource } from "../../tree/ResolvedContainerAppsResource";
+import { ManagedEnvironmentTreeItem } from "../../tree/ManagedEnvironmentTreeItem";
 import { IContainerAppContext } from "./IContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
-export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ResolvedContainerAppsResource): Promise<ContainerAppTreeItem> {
+export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentTreeItem): Promise<ContainerAppTreeItem> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ResolvedContainerAppsResource>(ResolvedContainerAppsResource.contextValueRegExp, context);
+        node = await ext.rgApi.pickAppResource<ManagedEnvironmentTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: ManagedEnvironmentTreeItem.contextValueRegExp
+        });
     }
 
     const caNode: ContainerAppTreeItem = await node.createChild(context);
