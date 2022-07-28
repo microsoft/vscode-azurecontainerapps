@@ -18,7 +18,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
         this.scaleRules = context.scaleRuleGroup.data;
         context.ruleName = (await context.ui.showInputBox({
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
+            validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
         })).trim();
     }
 
@@ -26,7 +26,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
         return context.ruleName === undefined;
     }
 
-    private async validateInput(name: string | undefined): Promise<string | undefined> {
+    private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
         if (!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(name)) {

@@ -11,7 +11,7 @@ export class QueueAuthTriggerStep extends AzureWizardPromptStep<IAddScaleRuleWiz
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.queueProps.triggerParameter = (await context.ui.showInputBox({
             prompt: localize('queueAuthTriggerPrompt', 'Enter a corresponding trigger parameter.'),
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
+            validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
         })).trim();
     }
 
@@ -19,7 +19,7 @@ export class QueueAuthTriggerStep extends AzureWizardPromptStep<IAddScaleRuleWiz
         return context.queueProps.triggerParameter === undefined;
     }
 
-    private async validateInput(name: string | undefined): Promise<string | undefined> {
+    private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
         if (!name.length) {
             return localize('fieldRequired', 'The field is required.');

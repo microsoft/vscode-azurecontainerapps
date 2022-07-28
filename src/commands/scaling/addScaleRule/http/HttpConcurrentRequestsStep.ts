@@ -11,7 +11,7 @@ export class HttpConcurrentRequestsStep extends PositiveRealNumberStep {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.httpProps.concurrentRequests = (await context.ui.showInputBox({
             prompt: localize('concurrentRequestsPrompt', 'Enter the number of concurrent requests.'),
-            validateInput: async (value: string | undefined): Promise<string | undefined> => this.validateInput(value)
+            validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
         })).trim();
     }
 
