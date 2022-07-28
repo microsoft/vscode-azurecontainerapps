@@ -5,9 +5,9 @@
 
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
-import { PositiveRealNumberStep } from '../PositiveRealNumberStep';
+import { PositiveRealNumberBaseStep } from '../PositiveRealNumberBaseStep';
 
-export class HttpConcurrentRequestsStep extends PositiveRealNumberStep {
+export class HttpConcurrentRequestsStep extends PositiveRealNumberBaseStep {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.httpProps.concurrentRequests = (await context.ui.showInputBox({
             prompt: localize('concurrentRequestsPrompt', 'Enter the number of concurrent requests.'),

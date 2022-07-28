@@ -5,9 +5,9 @@
 
 import { localize } from '../../../../utils/localize';
 import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
-import { PositiveRealNumberStep } from '../PositiveRealNumberStep';
+import { PositiveRealNumberBaseStep } from '../PositiveRealNumberBaseStep';
 
-export class QueueLengthStep extends PositiveRealNumberStep {
+export class QueueLengthStep extends PositiveRealNumberBaseStep {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
         context.queueProps.length = Number((await context.ui.showInputBox({
             prompt: localize('queueLengthPrompt', 'Enter a queue length.'),

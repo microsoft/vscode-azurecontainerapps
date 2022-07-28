@@ -7,7 +7,7 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
 import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
 
-export abstract class PositiveRealNumberStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export abstract class PositiveRealNumberBaseStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public abstract prompt(context: IAddScaleRuleWizardContext): Promise<void>;
     public abstract shouldPrompt(context: IAddScaleRuleWizardContext): boolean;
 
