@@ -54,37 +54,25 @@
     ],
     "main": "./main.js",
     "contributes": {
+        "x-azResources": {
+            "activation": {
+                "onFetch": [
+                    "microsoft.app/managedEnvironments"
+                ]
+            },
+            "commands": [
+                {
+                    "command": "containerApps.createManagedEnvironment",
+                    "title": "%containerApps.createManagedEnvironment%",
+                    "type": "microsoft.app/managedEnvironments",
+                    "detail": "%azureVirtualMachines.createManagedEnvironmentDetail%"
+                }
+            ]
+        },
         "commands": [
-            {
-                "command": "containerApps.loadMore",
-                "title": "%containerApps.loadMore%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.refresh",
-                "title": "%containerApps.refresh%",
-                "category": "Azure Container Apps",
-                "icon": "$(refresh)"
-            },
-            {
-                "command": "containerApps.selectSubscriptions",
-                "title": "%containerApps.selectSubscriptions%",
-                "category": "Azure Container Apps",
-                "icon": "$(filter)"
-            },
             {
                 "command": "containerApps.reportIssue",
                 "title": "%containerApps.reportIssue%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.viewProperties",
-                "title": "%containerApps.viewProperties%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.openInPortal",
-                "title": "%containerApps.openInPortal%",
                 "category": "Azure Container Apps"
             },
             {
