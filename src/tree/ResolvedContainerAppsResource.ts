@@ -59,7 +59,7 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
 
     public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         const proxyTree: ManagedEnvironmentTreeItem = this as unknown as ManagedEnvironmentTreeItem;
-        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, proxyTree]);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this._subscription]);
         // could be more efficient to call this once at Subscription level, and filter based off that but then risk stale data
         const containerApps: ContainerApp[] = (await uiUtils.listAllIterator(client.containerApps.listBySubscription()))
             .filter(ca => ca.managedEnvironmentId && ca.managedEnvironmentId === this.id)
