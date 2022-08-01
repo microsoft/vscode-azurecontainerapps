@@ -6,6 +6,7 @@
 import { AzureWizardPromptStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../constants';
+import { localize } from '../../../utils/localize';
 import { HttpConcurrentRequestsStep } from './http/HttpConcurrentRequestsStep';
 import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
 import { QueueAuthSecretStep } from './queue/QueueAuthSecretStep';
@@ -17,9 +18,9 @@ export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizard
     public hideStepCount: boolean = true;
 
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        const qpItems: QuickPickItem[] = [];
-        for (const ruleType in ScaleRuleTypes) { qpItems.push({ label: ScaleRuleTypes[ruleType as keyof typeof ScaleRuleTypes] }); }
-        context.ruleType = (await context.ui.showQuickPick(qpItems, {})).label;
+        const placeHolder: string = localize('chooseScaleType', 'Choose scale type');
+        const qpItems: QuickPickItem[] = Object.values(ScaleRuleTypes).map(type => { return { label: type } });
+        context.ruleType = (await context.ui.showQuickPick(qpItems, { placeHolder })).label;
     }
 
     public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
