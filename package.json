@@ -28,6 +28,7 @@
     ],
     "preview": true,
     "activationEvents": [
+        "onCommand:containerApps.openLogsInPortal",
         "onCommand:containerApps.reportIssue",
         "onCommand:containerApps.createContainerApp",
         "onCommand:containerApps.deployImage",
@@ -64,6 +65,11 @@
             ]
         },
         "commands": [
+            {
+                "command": "containerApps.openLogsInPortal",
+                "title": "%containerApps.openLogsInPortal%",
+                "category": "Azure Container Apps"
+            },
             {
                 "command": "containerApps.reportIssue",
                 "title": "%containerApps.reportIssue%",

@@ -18,10 +18,12 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
+import { openLogsInPortal } from './openInPortal';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { editScalingRange } from './scaling/editScalingRange';
 
 export function registerCommands(): void {
+    registerCommand('containerApps.openLogsInPortal', openLogsInPortal);
     registerCommand('containerApps.selectSubscriptions', () => commands.executeCommand('azure-account.selectSubscriptions'));
     registerCommand('containerApps.browse', browse);
     registerCommand('containerApps.createManagedEnvironment', createManagedEnvironment);

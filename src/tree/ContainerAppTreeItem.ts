@@ -31,6 +31,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public name: string;
     public label: string;
+    public childTypeLabel: string = 'Container App setting';
     public managedEnvironmentId: string;
 
     public revisionsTreeItem: RevisionsTreeItem;
