@@ -118,7 +118,7 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
 
         const deleting: string = localize('DeletingManagedEnv', 'Deleting Container Apps environment "{0}"...', this.name);
         await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, proxyTree]);
+            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this._subscription]);
             try {
                 ext.outputChannel.appendLog(deleting);
                 await client.managedEnvironments.beginDeleteAndWait(this.resourceGroupName, this.name);

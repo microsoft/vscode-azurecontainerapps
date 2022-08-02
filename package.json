@@ -165,7 +165,7 @@
                 },
                 {
                     "command": "containerApps.deleteManagedEnvironment",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.app/managedenvironments/",
+                    "when": "view == azureResourceGroups && viewItem =~ /managedEnvironment/",
                     "group": "3@1"
                 },
                 {
