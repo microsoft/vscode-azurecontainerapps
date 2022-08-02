@@ -16,7 +16,6 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWiza
         const containerAppWithSecrets = await context.containerApp.getContainerEnvelopeWithSecrets(context);
         const secrets: Secret[] | undefined = containerAppWithSecrets.configuration.secrets;
         if (!secrets?.length) { throw Error(noSecrets) }
-
         const qpItems: QuickPickItem[] = secrets.map((secret) => {
             return { label: nonNullProp(secret, "name") };
         });
