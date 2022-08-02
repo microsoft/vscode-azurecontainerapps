@@ -15,15 +15,12 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWiza
         const placeHolder: string = localize('chooseSecretRef', 'Choose a secret reference');
         const containerAppWithSecrets = await context.containerApp.getContainerEnvelopeWithSecrets(context);
         const secrets: Secret[] | undefined = containerAppWithSecrets.configuration.secrets;
-        const qpItems: (QuickPickItem & { infoOnly?: boolean })[] = secrets?.map((secret) => {
+        if (!secrets?.length) { throw Error(noSecrets) }
+
+        const qpItems: QuickPickItem[] = secrets.map((secret) => {
             return { label: nonNullProp(secret, "name") };
-        }) || [];
-        if (!qpItems?.length) {
-            qpItems.push({ label: noSecrets, infoOnly: true });
-        }
-        const secretRef = await context.ui.showQuickPick(qpItems, { placeHolder });
-        if (secretRef.infoOnly) { throw Error(noSecrets) }
-        context.secretRef = secretRef.label;
+        });
+        context.secretRef = (await context.ui.showQuickPick(qpItems, { placeHolder })).label;
     }
 
     public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
