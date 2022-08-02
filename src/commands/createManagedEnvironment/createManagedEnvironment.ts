@@ -4,16 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { SubscriptionTreeItemBase } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
+import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ManagedEnvironmentTreeItem } from "../../tree/ManagedEnvironmentTreeItem";
+import { SubscriptionTreeItem } from "../../tree/SubscriptionTreeItem";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
-export async function createManagedEnvironment(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IManagedEnvironmentContext>, node?: SubscriptionTreeItemBase): Promise<ManagedEnvironmentTreeItem> {
-    if (!node) {
-        node = await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
-    }
-
-    const keNode: ManagedEnvironmentTreeItem = await node.createChild(context);
+export async function createManagedEnvironment(context: IActionContext, node?: SubscriptionTreeItemBase): Promise<ManagedEnvironmentTreeItem> {
+    node = await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
+    const keNode = await SubscriptionTreeItem.createChild(context as IManagedEnvironmentContext, node);
+    await ext.rgApi.appResourceTree.refresh(context);
     return keNode;
 }
