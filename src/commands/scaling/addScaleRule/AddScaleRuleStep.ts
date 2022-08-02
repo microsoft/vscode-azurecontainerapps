@@ -43,15 +43,15 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
             case ScaleRuleTypes.HTTP:
                 scaleRule.http = {
                     metadata: {
-                        concurrentRequests: nonNullProp(context.httpProps, 'concurrentRequests')
+                        concurrentRequests: nonNullProp(context, 'concurrentRequests')
                     }
                 };
                 break;
             case ScaleRuleTypes.Queue:
                 scaleRule.azureQueue = {
-                    queueName: context.queueProps.name,
-                    queueLength: context.queueProps.length,
-                    auth: [{ secretRef: context.queueProps.secretRef, triggerParameter: context.queueProps.triggerParameter }]
+                    queueName: context.queueName,
+                    queueLength: context.queueLength,
+                    auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
                 }
                 break;
             default:

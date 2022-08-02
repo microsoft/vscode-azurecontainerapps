@@ -13,14 +13,14 @@ export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardCont
     scaleRules: ScaleRule[] | undefined;
 
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        context.queueProps.name = (await context.ui.showInputBox({
+        context.queueName = (await context.ui.showInputBox({
             prompt: localize('queueNamePrompt', 'Enter a name for the queue.'),
             validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
         })).trim();
     }
 
     public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
-        return context.queueProps.name === undefined;
+        return context.queueName === undefined;
     }
 
     private validateInput(name: string | undefined): string | undefined {

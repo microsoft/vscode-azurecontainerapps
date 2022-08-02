@@ -9,7 +9,6 @@ import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
 import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
 import { treeUtils } from "../../../utils/treeUtils";
 
-
 export async function addScaleRule(context: IActionContext, node?: ScaleRuleGroupTreeItem): Promise<void> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<ScaleRuleGroupTreeItem>(new RegExp(ScaleRuleGroupTreeItem.contextValue), context);

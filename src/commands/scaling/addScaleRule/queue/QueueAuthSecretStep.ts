@@ -23,11 +23,11 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWiza
         }
         const secretRef = await context.ui.showQuickPick(qpItems, { placeHolder });
         if (secretRef.infoOnly) { throw Error(noSecrets) }
-        context.queueProps.secretRef = secretRef.label;
+        context.secretRef = secretRef.label;
     }
 
     public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
-        return context.queueProps.secretRef === undefined;
+        return context.secretRef === undefined;
     }
 }
 

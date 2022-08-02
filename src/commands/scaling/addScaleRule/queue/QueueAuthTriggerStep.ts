@@ -9,14 +9,14 @@ import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
 export class QueueAuthTriggerStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        context.queueProps.triggerParameter = (await context.ui.showInputBox({
+        context.triggerParameter = (await context.ui.showInputBox({
             prompt: localize('queueAuthTriggerPrompt', 'Enter a corresponding trigger parameter.'),
             validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
         })).trim();
     }
 
     public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
-        return context.queueProps.triggerParameter === undefined;
+        return context.triggerParameter === undefined;
     }
 
     private validateInput(name: string | undefined): string | undefined {

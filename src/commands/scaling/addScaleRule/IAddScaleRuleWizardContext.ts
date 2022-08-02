@@ -13,16 +13,19 @@ export interface IAddScaleRuleWizardContext extends IActionContext {
     containerApp: ContainerAppTreeItem;
     scale: ScaleTreeItem;
     scaleRuleGroup: ScaleRuleGroupTreeItem;
+
+    // Base Rule Properties
     ruleName?: string;
     ruleType?: string;
-    httpProps: {
-        concurrentRequests?: string;
-    };
-    queueProps: {
-        name?: string;
-        length?: number;
-        secretRef?: string;
-        triggerParameter?: string;
-    };
+
+    // HTTP Rule Properties
+    concurrentRequests?: string;
+
+    // Queue Rule Properties
+    queueName?: string;
+    queueLength?: number;
+    secretRef?: string;
+    triggerParameter?: string;
+
     scaleRule?: ScaleRule;
 }

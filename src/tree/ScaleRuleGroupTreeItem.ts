@@ -43,7 +43,6 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
         const title: string = localize('addScaleRuleTitle', 'Add Scale Rule');
         const wizardContext: IAddScaleRuleWizardContext = {
             ...context, containerApp, scale, scaleRuleGroup: this,
-            httpProps: {}, queueProps: {}
         };
         const wizardOptions: IWizardOptions<IAddScaleRuleWizardContext> = {
             title,
