@@ -13,7 +13,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     if (!node) {
         node = await ext.tree.showTreeItemPicker<ScaleRuleGroupTreeItem>(new RegExp(ScaleRuleGroupTreeItem.contextValue), context);
     }
-    const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent(node, ContainerAppTreeItem.prototype) as ContainerAppTreeItem;
+    const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent(node, ContainerAppTreeItem.prototype);
     await node.createChild(context);
     await containerApp?.refresh(context);
 }

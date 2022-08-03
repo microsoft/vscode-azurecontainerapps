@@ -6,6 +6,7 @@
 import { AzExtTreeItem, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
+import { localize } from './localize';
 
 export namespace treeUtils {
     export function getIconPath(iconName: string): TreeItemIconPath {
@@ -16,7 +17,7 @@ export namespace treeUtils {
         return Uri.joinPath(ext.context.extensionUri, 'resources')
     }
 
-    export function findNearestParent<T extends AzExtTreeItem>(node: AzExtTreeItem, parent: T): T | null {
+    export function findNearestParent<T extends AzExtTreeItem>(node: AzExtTreeItem, parent: T): T {
         const parentInstance: string = parent.constructor.name;
         let foundParent: boolean = false;
         let currentNode: AzExtTreeItem = node;
@@ -27,6 +28,10 @@ export namespace treeUtils {
             }
             currentNode = currentNode.parent;
         }
-        return foundParent ? currentNode as T : null;
+        if (!foundParent) {
+            const notFound: string = localize('parentNotFound', 'Could not find nearest parent "{0}".', parentInstance);
+            throw Error(notFound);
+        }
+        return currentNode as T;
     }
 }

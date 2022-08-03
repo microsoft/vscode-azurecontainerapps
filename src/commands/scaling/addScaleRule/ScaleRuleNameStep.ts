@@ -37,7 +37,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
             return rule?.name?.length && rule?.name === name;
         });
         if (scaleRuleExists) {
-            return localize('scaleRuleExists', 'The scale rule "{0}" already exists in container app "{1}". Please enter a unique name.', name, this.containerApp?.name as string);
+            return localize('scaleRuleExists', 'The scale rule "{0}" already exists in container app "{1}". Please enter a unique name.', name, this.containerApp?.name);
         }
         return undefined;
     }

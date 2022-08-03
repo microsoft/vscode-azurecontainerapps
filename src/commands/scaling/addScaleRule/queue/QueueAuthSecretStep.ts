@@ -11,11 +11,13 @@ import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
 
 export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
     public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
-        const noSecrets: string = localize('noSecretsFound', 'No secrets were found. Create a secret to proceed.');
         const placeHolder: string = localize('chooseSecretRef', 'Choose a secret reference');
         const containerAppWithSecrets = await context.containerApp.getContainerEnvelopeWithSecrets(context);
         const secrets: Secret[] | undefined = containerAppWithSecrets.configuration.secrets;
-        if (!secrets?.length) { throw Error(noSecrets) }
+        if (!secrets?.length) {
+            const noSecrets: string = localize('noSecretsFound', 'No secrets were found. Create a secret to proceed.');
+            throw Error(noSecrets);
+        }
         const qpItems: QuickPickItem[] = secrets.map((secret) => {
             return { label: nonNullProp(secret, "name") };
         });
