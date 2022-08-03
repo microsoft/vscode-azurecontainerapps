@@ -16,6 +16,7 @@ import { IContainerAppContext } from "../commands/createContainerApp/IContainerA
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { azResourceContextValue, webProvider } from "../constants";
 import { ext } from "../extensionVariables";
+import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
@@ -78,7 +79,9 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
         const proxyTree: ManagedEnvironmentTreeItem = this as unknown as ManagedEnvironmentTreeItem;
-        const wizardContext: IContainerAppContext = { ...context, ...this._subscription, managedEnvironmentId: this.id };
+        const wizardContext: IContainerAppContext = {
+            ...context, ...this._subscription, managedEnvironmentId: this.id, ...(await createActivityContext())
+        };
 
         const title: string = localize('createContainerApp', 'Create Container App');
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
