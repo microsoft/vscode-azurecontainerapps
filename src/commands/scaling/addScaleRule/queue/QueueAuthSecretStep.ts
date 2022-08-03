@@ -16,7 +16,7 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWiza
         const secrets: Secret[] | undefined = containerAppWithSecrets.configuration.secrets;
         if (!secrets?.length) {
             const noSecrets: string = localize('noSecretsFound', 'No secrets were found. Create a secret to proceed.');
-            throw Error(noSecrets);
+            throw new Error(noSecrets);
         }
         const qpItems: QuickPickItem[] = secrets.map((secret) => {
             return { label: nonNullProp(secret, "name") };

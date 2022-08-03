@@ -30,7 +30,7 @@ export namespace treeUtils {
         }
         if (!foundParent) {
             const notFound: string = localize('parentNotFound', 'Could not find nearest parent "{0}".', parentInstance);
-            throw Error(notFound);
+            throw new Error(notFound);
         }
         return currentNode as T;
     }

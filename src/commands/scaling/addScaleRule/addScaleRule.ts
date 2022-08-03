@@ -15,5 +15,5 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     }
     const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent(node, ContainerAppTreeItem.prototype);
     await node.createChild(context);
-    await containerApp?.refresh(context);
+    await containerApp.refresh(context);
 }
