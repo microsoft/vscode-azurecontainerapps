@@ -50,7 +50,8 @@
         "onCommand:containerApps.createManagedEnvironment",
         "onCommand:containerApps.browse",
         "onCommand:containerApps.openConsoleInPortal",
-        "onCommand:containerApps.editScalingRange"
+        "onCommand:containerApps.editScalingRange",
+        "onCommand:containerApps.addScaleRule"
     ],
     "main": "./main.js",
     "contributes": {
@@ -166,6 +167,11 @@
             {
                 "command": "containerApps.editScalingRange",
                 "title": "%containerApps.editScalingRange%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.addScaleRule",
+                "title": "%containerApps.addScaleRule%",
                 "category": "Azure Container Apps"
             }
         ],
@@ -289,6 +295,11 @@
                 {
                     "command": "containerApps.editScalingRange",
                     "when": "view == containerApps && viewItem =~ /scale(?![a-z])/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.addScaleRule",
+                    "when": "view == containerApps && viewItem =~ /scaleRules/i",
                     "group": "1@1"
                 }
             ],
