@@ -15,7 +15,7 @@ export class LogsTreeItem extends AzExtParentTreeItem {
     public readonly parent: ContainerAppTreeItem;
 
     public label: string;
-    public childTypeLabel: string = 'log view';
+    public childTypeLabel: string = localize('logView', 'log view');
 
     constructor(parent: ContainerAppTreeItem) {
         super(parent);

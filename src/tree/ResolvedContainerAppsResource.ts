@@ -28,7 +28,7 @@ import { IAzureResource } from "./IAzureResourceTreeItem";
 import { ManagedEnvironmentTreeItem } from "./ManagedEnvironmentTreeItem";
 
 export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, IAzureResource {
-    public static contextValue: string = 'managedEnvironment';
+    public static contextValue: string = 'containerEnvironment';
     public static contextValueRegExp: RegExp = new RegExp(ResolvedContainerAppsResource.contextValue);
     public resolvedContextValue: string = `${ResolvedContainerAppsResource.contextValue}|${azResourceContextValue}`;
     public contextValuesToAdd: string[] = [];

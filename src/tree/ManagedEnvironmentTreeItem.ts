@@ -5,17 +5,16 @@
 
 import { ManagedEnvironment } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, ICreateChildImplContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { localize } from "../utils/localize";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { ResolvedContainerAppsResource } from "./ResolvedContainerAppsResource";
 
 export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string;
-    public static contextValueRegExp: RegExp;
+    public static contextValue: string = ResolvedContainerAppsResource.contextValue;
+    public static contextValueRegExp: RegExp = ResolvedContainerAppsResource.contextValueRegExp;
     public readonly contextValue: string;
     public readonly data: ManagedEnvironment;
+    public readonly childTypeLabel: string;
     public resourceGroupName: string;
-    public readonly childTypeLabel: string = localize('containerApp', 'Container App');
 
     public resolved: ResolvedContainerAppsResource;
 
@@ -31,9 +30,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
         this.name = this.resolved.name;
         this.label = this.resolved.label;
         this.contextValue = this.resolved.resolvedContextValue;
-
-        ManagedEnvironmentTreeItem.contextValue = ResolvedContainerAppsResource.contextValue;
-        ManagedEnvironmentTreeItem.contextValueRegExp = ResolvedContainerAppsResource.contextValueRegExp;
+        this.childTypeLabel = this.resolved.childTypeLabel;
     }
 
     public get iconPath(): TreeItemIconPath {

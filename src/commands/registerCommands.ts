@@ -18,7 +18,7 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
-import { openLogsInPortal } from './openInPortal';
+import { openLogsInPortal } from './openLogsInPortal';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { editScalingRange } from './scaling/editScalingRange';
 
@@ -46,7 +46,6 @@ export function registerCommands(): void {
                 expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
             });
         }
-
         await azUtil.openInPortal(node, `${node.id}/console`);
     });
     registerCommand('containerApps.editScalingRange', editScalingRange);

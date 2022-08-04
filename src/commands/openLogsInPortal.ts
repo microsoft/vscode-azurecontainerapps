@@ -15,6 +15,5 @@ export async function openLogsInPortal(context: IActionContext, node?: AzExtTree
             expectedChildContextValue: new RegExp(LogsTreeItem.openLogsContext)
         });
     }
-
     await azUtil.openInPortal(node, node.id ?? node.fullId);
 }

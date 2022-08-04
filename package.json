@@ -161,17 +161,17 @@
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.app/managedenvironments/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /microsoft.app/managedenvironments/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",
-                    "when": "view == azureResourceGroups && viewItem =~ /managedEnvironment/",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerEnvironment/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteManagedEnvironment",
-                    "when": "view == azureResourceGroups && viewItem =~ /managedEnvironment/",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerEnvironment/i",
                     "group": "3@1"
                 },
                 {
