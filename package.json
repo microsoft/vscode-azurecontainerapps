@@ -51,7 +51,7 @@
     "contributes": {
         "x-azResources": {
             "activation": {
-                "onFetch": [
+                "onResolve": [
                     "microsoft.app/managedenvironments"
                 ]
             },
