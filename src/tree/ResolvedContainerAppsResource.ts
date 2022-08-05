@@ -94,8 +94,9 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
         });
 
         await wizard.prompt();
-        context.showCreatingTreeItem(nonNullProp(wizardContext, 'newContainerAppName'));
-        wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', nonNullProp(wizardContext, 'newContainerAppName'));
+        const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
+        context.showCreatingTreeItem(newContainerAppName);
+        wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
         try {
             await wizard.execute();
         } finally {
