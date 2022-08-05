@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, ISubscriptionContext, parseError, TreeItemIconPath, UserCancelledError } from "@microsoft/vscode-azext-utils";
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, ISubscriptionContext, parseError, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { ResolvedAppResourceBase } from "@microsoft/vscode-azext-utils/hostapi";
 import { ProgressLocation, window } from "vscode";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
@@ -22,7 +22,6 @@ import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { settingUtils } from "../utils/settingUtils";
-import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResource } from "./IAzureResourceTreeItem";
 import { ManagedEnvironmentTreeItem } from "./ManagedEnvironmentTreeItem";
@@ -48,10 +47,6 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
         this.label = this.name;
 
         this.contextValuesToAdd.push(this.resolvedContextValue);
-    }
-
-    public get iconPath(): TreeItemIconPath {
-        return treeUtils.getIconPath('Container App Environments placeholder icon icon');
     }
 
     public get id(): string {

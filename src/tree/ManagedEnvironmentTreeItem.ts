@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ManagedEnvironment } from "@azure/arm-appcontainers";
-import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, ICreateChildImplContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
 import { ResolvedContainerAppsResource } from "./ResolvedContainerAppsResource";
 
@@ -31,10 +31,6 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
         this.label = this.resolved.label;
         this.contextValue = this.resolved.resolvedContextValue;
         this.childTypeLabel = this.resolved.childTypeLabel;
-    }
-
-    public get iconPath(): TreeItemIconPath {
-        return this.resolved.iconPath;
     }
 
     public get id(): string {
