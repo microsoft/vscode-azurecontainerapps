@@ -12,7 +12,7 @@ import { ContainerAppCreateStep } from "../commands/createContainerApp/Container
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { EnvironmentVariablesListStep } from "../commands/createContainerApp/EnvironmentVariablesListStep";
-import { IContainerAppContext } from "../commands/createContainerApp/IContainerAppContext";
+import { IContainerAppWithActivityContext } from "../commands/createContainerApp/IContainerAppContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { azResourceContextValue, webProvider } from "../constants";
 import { ext } from "../extensionVariables";
@@ -74,19 +74,19 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
         const proxyTree: ManagedEnvironmentTreeItem = this as unknown as ManagedEnvironmentTreeItem;
-        const wizardContext: IContainerAppContext = {
+        const wizardContext: IContainerAppWithActivityContext = {
             ...context, ...this._subscription, managedEnvironmentId: this.id, ...(await createActivityContext())
         };
 
         const title: string = localize('createContainerApp', 'Create Container App');
-        const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] =
+        const promptSteps: AzureWizardPromptStep<IContainerAppWithActivityContext>[] =
             [new ContainerAppNameStep(), new ContainerRegistryListStep(), new EnvironmentVariablesListStep(), new EnableIngressStep()];
-        const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [new VerifyProvidersStep([webProvider]), new ContainerAppCreateStep()];
+        const executeSteps: AzureWizardExecuteStep<IContainerAppWithActivityContext>[] = [new VerifyProvidersStep([webProvider]), new ContainerAppCreateStep()];
 
         wizardContext.newResourceGroupName = this.resourceGroupName;
         await LocationListStep.setLocation(wizardContext, this.data.location);
 
-        const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
+        const wizard: AzureWizard<IContainerAppWithActivityContext> = new AzureWizard(wizardContext, {
             title,
             promptSteps,
             executeSteps,
@@ -95,6 +95,7 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
 
         await wizard.prompt();
         context.showCreatingTreeItem(nonNullProp(wizardContext, 'newContainerAppName'));
+        wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', nonNullProp(wizardContext, 'newContainerAppName'));
         try {
             await wizard.execute();
         } finally {

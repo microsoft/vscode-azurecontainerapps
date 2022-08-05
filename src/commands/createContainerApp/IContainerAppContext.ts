@@ -5,8 +5,8 @@
 
 import { ContainerApp } from "@azure/arm-appcontainers";
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
-
 export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
     managedEnvironmentId: string;
     newContainerAppName?: string;
@@ -20,3 +20,5 @@ export interface IContainerAppContext extends IResourceGroupWizardContext, IDepl
     // created when the wizard is done executing
     containerApp?: ContainerApp;
 }
+
+export type IContainerAppWithActivityContext = IContainerAppContext & ExecuteActivityContext;

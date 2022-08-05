@@ -61,6 +61,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         await wizard.prompt();
         const newManagedEnvName = nonNullProp(wizardContext, 'newManagedEnvironmentName');
         wizardContext.newResourceGroupName = newManagedEnvName;
+        wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create Container Apps environment "{0}"', newManagedEnvName);
         await wizard.execute();
 
         const resolvedEnvironment = new ResolvedContainerAppsResource(node.subscription, nonNullProp(wizardContext, 'managedEnvironment'));
