@@ -20,6 +20,7 @@ import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
 import { openLogsInPortal } from './openLogsInPortal';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
+import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 
 export function registerCommands(): void {
@@ -49,6 +50,7 @@ export function registerCommands(): void {
         await azUtil.openInPortal(node, `${node.id}/console`);
     });
     registerCommand('containerApps.editScalingRange', editScalingRange);
+    registerCommand('containerApps.addScaleRule', addScaleRule);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
