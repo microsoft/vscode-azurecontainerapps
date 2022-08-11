@@ -247,7 +247,7 @@
                 },
                 {
                     "command": "containerApps.addScaleRule",
-                    "when": "view == containerApps && viewItem =~ /scaleRules/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /scaleRules/i",
                     "group": "1@1"
                 }
             ]
