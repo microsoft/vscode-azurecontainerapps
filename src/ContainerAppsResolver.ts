@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
+import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { AppResource, AppResourceResolver, ResolvedAppResourceBase } from "@microsoft/vscode-azext-utils/hostapi";
 import { managedEnvironmentProvider } from "./constants";
-import { ResolvedContainerAppsResource } from "./tree/ResolvedContainerAppsResource";
+import { ResolvedContainerEnvironmentResource } from "./tree/ResolvedContainerAppsResource";
 import { createContainerAppsAPIClient } from "./utils/azureClients";
-import { getResourceGroupFromId } from "./utils/azureUtils";
 
 export class ContainerAppsResolver implements AppResourceResolver {
     public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<ResolvedAppResourceBase | null> {
@@ -17,7 +17,7 @@ export class ContainerAppsResolver implements AppResourceResolver {
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);
             const rgName: string = getResourceGroupFromId(resource.id);
             const me: ManagedEnvironment = await client.managedEnvironments.get(rgName, resource.name);
-            return new ResolvedContainerAppsResource(subContext, me);
+            return new ResolvedContainerEnvironmentResource(subContext, me);
         }) ?? null;
     }
 

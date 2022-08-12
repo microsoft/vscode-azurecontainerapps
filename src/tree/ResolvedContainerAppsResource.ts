@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
-import { LocationListStep, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { getResourceGroupFromId, LocationListStep, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, ISubscriptionContext, parseError, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { ResolvedAppResourceBase } from "@microsoft/vscode-azext-utils/hostapi";
 import { ProgressLocation, window } from "vscode";
@@ -18,7 +18,6 @@ import { azResourceContextValue, webProvider } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
-import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { settingUtils } from "../utils/settingUtils";
@@ -26,10 +25,10 @@ import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResource } from "./IAzureResourceTreeItem";
 import { ManagedEnvironmentTreeItem } from "./ManagedEnvironmentTreeItem";
 
-export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, IAzureResource {
+export class ResolvedContainerEnvironmentResource implements ResolvedAppResourceBase, IAzureResource {
     public static contextValue: string = 'containerEnvironment';
-    public static contextValueRegExp: RegExp = new RegExp(ResolvedContainerAppsResource.contextValue);
-    public resolvedContextValue: string = `${ResolvedContainerAppsResource.contextValue}|${azResourceContextValue}`;
+    public static contextValueRegExp: RegExp = new RegExp(ResolvedContainerEnvironmentResource.contextValue);
+    public resolvedContextValue: string = `${ResolvedContainerEnvironmentResource.contextValue}|${azResourceContextValue}`;
     public contextValuesToAdd: string[] = [];
 
     public readonly data: ManagedEnvironment;
@@ -135,7 +134,7 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
             ext.outputChannel.appendLog(deleteSucceeded);
         });
 
-        async function promptForDelete(node: ResolvedContainerAppsResource, containerApps: ContainerAppTreeItem[]): Promise<void> {
+        async function promptForDelete(node: ResolvedContainerEnvironmentResource, containerApps: ContainerAppTreeItem[]): Promise<void> {
             const numOfResources = containerApps.length;
             const hasNoResources: boolean = !numOfResources;
 
@@ -161,7 +160,7 @@ export class ResolvedContainerAppsResource implements ResolvedAppResourceBase, I
                     return isNameEqual(val, node) ? undefined : prompt;
                 }
 
-                function isNameEqual(val: string | undefined, node: ResolvedContainerAppsResource): boolean {
+                function isNameEqual(val: string | undefined, node: ResolvedContainerEnvironmentResource): boolean {
                     return !!val && val.toLowerCase() === node.name.toLowerCase();
                 }
             }

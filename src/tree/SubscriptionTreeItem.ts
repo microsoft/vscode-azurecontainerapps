@@ -15,7 +15,7 @@ import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
 import { ManagedEnvironmentTreeItem } from './ManagedEnvironmentTreeItem';
-import { ResolvedContainerAppsResource } from "./ResolvedContainerAppsResource";
+import { ResolvedContainerEnvironmentResource } from "./ResolvedContainerAppsResource";
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container Apps environment');
@@ -32,7 +32,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return await this.createTreeItemsWithErrorHandling(
             environments,
             'invalidManagedEnvironment',
-            ke => new ManagedEnvironmentTreeItem(this, new ResolvedContainerAppsResource(this.subscription, ke)),
+            ke => new ManagedEnvironmentTreeItem(this, new ResolvedContainerEnvironmentResource(this.subscription, ke)),
             ke => ke.name
         );
     }
@@ -64,7 +64,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create Container Apps environment "{0}"', newManagedEnvName);
         await wizard.execute();
 
-        const resolvedEnvironment = new ResolvedContainerAppsResource(node.subscription, nonNullProp(wizardContext, 'managedEnvironment'));
+        const resolvedEnvironment = new ResolvedContainerEnvironmentResource(node.subscription, nonNullProp(wizardContext, 'managedEnvironment'));
         return new ManagedEnvironmentTreeItem(node, resolvedEnvironment);
     }
 }

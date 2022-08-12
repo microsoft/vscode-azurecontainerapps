@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
+import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
-import { getResourceGroupFromId } from "../../../utils/azureUtils";
 import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
 import { IDeployImageContext } from "../IDeployImageContext";
 

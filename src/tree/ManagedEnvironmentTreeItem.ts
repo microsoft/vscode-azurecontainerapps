@@ -6,22 +6,22 @@
 import { ManagedEnvironment } from "@azure/arm-appcontainers";
 import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
 import { IAzureResourceTreeItem } from './IAzureResourceTreeItem';
-import { ResolvedContainerAppsResource } from "./ResolvedContainerAppsResource";
+import { ResolvedContainerEnvironmentResource } from "./ResolvedContainerAppsResource";
 
 export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements IAzureResourceTreeItem {
-    public static contextValue: string = ResolvedContainerAppsResource.contextValue;
-    public static contextValueRegExp: RegExp = ResolvedContainerAppsResource.contextValueRegExp;
+    public static contextValue: string = ResolvedContainerEnvironmentResource.contextValue;
+    public static contextValueRegExp: RegExp = ResolvedContainerEnvironmentResource.contextValueRegExp;
     public readonly contextValue: string;
     public readonly data: ManagedEnvironment;
     public readonly childTypeLabel: string;
     public resourceGroupName: string;
 
-    public resolved: ResolvedContainerAppsResource;
+    public resolved: ResolvedContainerEnvironmentResource;
 
     public name: string;
     public label: string;
 
-    constructor(parent: AzExtParentTreeItem, resolvedContainerAppsResource: ResolvedContainerAppsResource) {
+    constructor(parent: AzExtParentTreeItem, resolvedContainerAppsResource: ResolvedContainerEnvironmentResource) {
         super(parent);
         this.resolved = resolvedContainerAppsResource;
         this.data = this.resolved.data;

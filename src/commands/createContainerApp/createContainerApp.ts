@@ -13,10 +13,7 @@ import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentTreeItem): Promise<ContainerAppTreeItem> {
     if (!node) {
-        node = await ext.rgApi.pickAppResource<ManagedEnvironmentTreeItem>(context, {
-            filter: rootFilter,
-            expectedChildContextValue: ManagedEnvironmentTreeItem.contextValueRegExp
-        });
+        node = await ext.rgApi.pickAppResource<ManagedEnvironmentTreeItem>(context, { filter: rootFilter });
     }
 
     const caNode: ContainerAppTreeItem = await node.createChild(context);
