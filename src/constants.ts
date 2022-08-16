@@ -9,6 +9,12 @@ import { localize } from "./utils/localize";
 
 export const webProvider: string = 'Microsoft.Web';
 export const containerAppProvider: string = `${webProvider}/containerApps`;
+export const appProvider: string = 'Microsoft.App';
+export const managedEnvironmentProvider: string = `${appProvider}/managedEnvironments`;
+
+export const rootFilter = {
+    type: managedEnvironmentProvider
+}
 
 export namespace IngressConstants {
     export const external: string = localize('external', 'External');

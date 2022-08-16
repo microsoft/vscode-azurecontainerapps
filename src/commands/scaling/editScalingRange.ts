@@ -5,6 +5,7 @@
 
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
+import { rootFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
 import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
@@ -14,7 +15,10 @@ import { updateContainerApp } from "../updateContainerApp";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ScaleTreeItem>(new RegExp(ScaleTreeItem.contextValue), context);
+        node = await ext.rgApi.pickAppResource<ScaleTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: new RegExp(ScaleTreeItem.contextValue)
+        });
     }
 
     const prompt: string = localize('editScalingRange', 'Set the range of application replicas that get created in response to a scale rule. Set any range within the minimum of 0 and the maximum of 10 replicas');

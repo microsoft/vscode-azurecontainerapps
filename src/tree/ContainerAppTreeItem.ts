@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-appcontainers";
+import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { azResourceContextValue, RevisionConstants } from "../constants";
 import { ext } from "../extensionVariables";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
-import { getResourceGroupFromId } from "../utils/azureUtils";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
 import { openUrl } from "../utils/openUrl";
@@ -31,6 +31,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public name: string;
     public label: string;
+    public childTypeLabel: string = localize('containerAppSetting', 'Container App setting');
     public managedEnvironmentId: string;
 
     public revisionsTreeItem: RevisionsTreeItem;

@@ -6,10 +6,9 @@
 import { ManagedEnvironment } from "@azure/arm-appcontainers";
 import { Workspace } from '@azure/arm-operationalinsights';
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
+import { ExecuteActivityContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
-export interface IManagedEnvironmentContext extends IResourceGroupWizardContext, ICreateChildImplContext {
-
+export interface IManagedEnvironmentContext extends IResourceGroupWizardContext, ICreateChildImplContext, ExecuteActivityContext {
     newManagedEnvironmentName?: string;
     logAnalyticsWorkspace?: Workspace;
 

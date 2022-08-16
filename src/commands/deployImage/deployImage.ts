@@ -7,7 +7,7 @@ import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { MessageItem, ProgressLocation, window } from "vscode";
-import { RevisionConstants, webProvider } from "../../constants";
+import { RevisionConstants, rootFilter, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -24,7 +24,10 @@ import { IDeployImageContext } from "./IDeployImageContext";
 export async function deployImage(context: ITreeItemPickerContext & Partial<IDeployImageContext>, node?: ContainerAppTreeItem): Promise<void> {
     if (!node) {
         context.suppressCreatePick = true;
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+        node = await ext.rgApi.pickAppResource<ContainerAppTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
+        });
     }
 
     const wizardContext: IDeployImageContext = { ...context, ...node.subscription, targetContainer: node.data };

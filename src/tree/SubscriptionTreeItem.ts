@@ -10,12 +10,12 @@ import { IManagedEnvironmentContext } from '../commands/createManagedEnvironment
 import { LogAnalyticsCreateStep } from '../commands/createManagedEnvironment/LogAnalyticsCreateStep';
 import { ManagedEnvironmentCreateStep } from '../commands/createManagedEnvironment/ManagedEnvironmentCreateStep';
 import { ManagedEnvironmentNameStep } from '../commands/createManagedEnvironment/ManagedEnvironmentNameStep';
+import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient } from '../utils/azureClients';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
 import { ManagedEnvironmentTreeItem } from './ManagedEnvironmentTreeItem';
-
-
+import { ResolvedContainerEnvironmentResource } from "./ResolvedContainerAppsResource";
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public readonly childTypeLabel: string = localize('ManagedEnvironment', 'Container Apps environment');
@@ -32,13 +32,15 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return await this.createTreeItemsWithErrorHandling(
             environments,
             'invalidManagedEnvironment',
-            ke => new ManagedEnvironmentTreeItem(this, ke),
+            ke => new ManagedEnvironmentTreeItem(this, new ResolvedContainerEnvironmentResource(this.subscription, ke)),
             ke => ke.name
         );
     }
 
-    public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const wizardContext: IManagedEnvironmentContext = { ...context, ...this.subscription };
+    public static async createChild(context: ICreateChildImplContext, node: SubscriptionTreeItemBase): Promise<ManagedEnvironmentTreeItem> {
+        const wizardContext: IManagedEnvironmentContext = {
+            ...context, ...node.subscription, ...(await createActivityContext())
+        };
 
         const title: string = localize('createManagedEnv', 'Create Container Apps environment');
         const promptSteps: AzureWizardPromptStep<IManagedEnvironmentContext>[] = [];
@@ -58,11 +60,11 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         await wizard.prompt();
         const newManagedEnvName = nonNullProp(wizardContext, 'newManagedEnvironmentName');
-        context.showCreatingTreeItem(newManagedEnvName);
         wizardContext.newResourceGroupName = newManagedEnvName;
+        wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create Container Apps environment "{0}"', newManagedEnvName);
         await wizard.execute();
 
-        return new ManagedEnvironmentTreeItem(this, nonNullProp(wizardContext, 'managedEnvironment'));
+        const resolvedEnvironment = new ResolvedContainerEnvironmentResource(node.subscription, nonNullProp(wizardContext, 'managedEnvironment'));
+        return new ManagedEnvironmentTreeItem(node, resolvedEnvironment);
     }
 }
-

@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
+import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
-import { getResourceGroupFromId } from "../../utils/azureUtils";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";

@@ -5,6 +5,7 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { rootFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppTreeItem } from '../../tree/ContainerAppTreeItem';
 import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
@@ -13,7 +14,10 @@ import { localize } from "../../utils/localize";
 
 export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: ContainerAppTreeItem | RevisionTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem | RevisionTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+        node = await ext.rgApi.pickAppResource<ContainerAppTreeItem | RevisionTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
+        });
     }
 
     const containerAppName: string = node instanceof RevisionTreeItem ? node.parent.parent.name : node.name;

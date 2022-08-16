@@ -4,13 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 import * as azUtil from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { rootFilter } from '../constants';
 import { ext } from '../extensionVariables';
-import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
+import { LogsTreeItem } from '../tree/LogsTreeItem';
 
-export async function openInPortal(context: IActionContext, node?: AzExtTreeItem): Promise<void> {
+export async function openLogsInPortal(context: IActionContext, node?: AzExtTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ManagedEnvironmentTreeItem>(ManagedEnvironmentTreeItem.contextValueRegExp, context);
+        node = await ext.rgApi.pickAppResource<AzExtTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: new RegExp(LogsTreeItem.openLogsContext)
+        });
     }
-
     await azUtil.openInPortal(node, node.id ?? node.fullId);
 }

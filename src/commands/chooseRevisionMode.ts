@@ -5,7 +5,7 @@
 
 import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { RevisionConstants } from "../constants";
+import { RevisionConstants, rootFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { ContainerAppTreeItem } from "../tree/ContainerAppTreeItem";
 import { RevisionsTreeItem } from "../tree/RevisionsTreeItem";
@@ -15,7 +15,10 @@ import { updateContainerApp } from "./updateContainerApp";
 
 export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppTreeItem | RevisionsTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+        node = await ext.rgApi.pickAppResource<ContainerAppTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
+        });
     }
 
     if (node instanceof RevisionsTreeItem) {

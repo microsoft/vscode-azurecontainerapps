@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as azUtil from '@microsoft/vscode-azext-azureutils';
-import { AzExtTreeItem, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
+import { IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
+import { rootFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 import { ManagedEnvironmentTreeItem } from '../tree/ManagedEnvironmentTreeItem';
@@ -17,18 +18,14 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
-import { openInPortal } from './openInPortal';
+import { openLogsInPortal } from './openLogsInPortal';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
-import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
-    registerCommand('containerApps.loadMore', async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context));
-    registerCommand('containerApps.openInPortal', openInPortal);
-    registerCommand('containerApps.refresh', async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
+    registerCommand('containerApps.openLogsInPortal', openLogsInPortal);
     registerCommand('containerApps.selectSubscriptions', () => commands.executeCommand('azure-account.selectSubscriptions'));
-    registerCommand('containerApps.viewProperties', viewProperties);
     registerCommand('containerApps.browse', browse);
     registerCommand('containerApps.createManagedEnvironment', createManagedEnvironment);
     registerCommand('containerApps.createContainerApp', createContainerApp);
@@ -45,9 +42,11 @@ export function registerCommands(): void {
     registerCommand('containerApps.restartRevision', async (context: IActionContext, node?: RevisionTreeItem) => await changeRevisionActiveState(context, 'restart', node));
     registerCommand('containerApps.openConsoleInPortal', async (context: IActionContext, node?: ContainerAppTreeItem) => {
         if (!node) {
-            node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+            node = await ext.rgApi.pickAppResource<ContainerAppTreeItem>(context, {
+                filter: rootFilter,
+                expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
+            });
         }
-
         await azUtil.openInPortal(node, `${node.id}/console`);
     });
     registerCommand('containerApps.editScalingRange', editScalingRange);

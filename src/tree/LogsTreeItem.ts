@@ -10,10 +10,12 @@ import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 
 export class LogsTreeItem extends AzExtParentTreeItem {
     public static contextValue: string = 'log';
+    public static openLogsContext: string = 'openLog';
     public readonly contextValue: string = LogsTreeItem.contextValue;
     public readonly parent: ContainerAppTreeItem;
 
     public label: string;
+    public childTypeLabel: string = localize('logView', 'log view');
 
     constructor(parent: ContainerAppTreeItem) {
         super(parent);
@@ -28,8 +30,8 @@ export class LogsTreeItem extends AzExtParentTreeItem {
     public async loadMoreChildrenImpl(): Promise<AzExtTreeItem[]> {
         const iconPath = new ThemeIcon('link-external');
         return [
-            new GenericTreeItem(this, { label: 'Open Logs', contextValue: 'openLogs', commandId: 'containerApps.openInPortal', iconPath, id: `${this.parent.id}/logs` }),
-            new GenericTreeItem(this, { label: 'Open Log Stream', contextValue: 'openLogStream', commandId: 'containerApps.openInPortal', iconPath, id: `${this.parent.id}/logstream` })
+            new GenericTreeItem(this, { label: 'Open Logs', contextValue: 'openLogs', commandId: 'containerApps.openLogsInPortal', iconPath, id: `${this.parent.id}/logs` }),
+            new GenericTreeItem(this, { label: 'Open Log Stream', contextValue: 'openLogStream', commandId: 'containerApps.openLogsInPortal', iconPath, id: `${this.parent.id}/logstream` })
         ]
     }
 

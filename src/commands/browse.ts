@@ -4,12 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { rootFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { ContainerAppTreeItem } from '../tree/ContainerAppTreeItem';
 
 export async function browse(context: IActionContext, node?: ContainerAppTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ContainerAppTreeItem>(ContainerAppTreeItem.contextValueRegExp, context);
+        node = await ext.rgApi.pickAppResource<ContainerAppTreeItem>(context, {
+            filter: rootFilter,
+            expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
+        });
     }
 
     await node.browse();
