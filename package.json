@@ -182,12 +182,12 @@
                 },
                 {
                     "command": "containerApps.deployImage",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.deleteContainerApp",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "3@2"
                 },
                 {
@@ -232,12 +232,12 @@
                 },
                 {
                     "command": "containerApps.openConsoleInPortal",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.browse",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "1@3"
                 },
                 {
