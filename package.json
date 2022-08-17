@@ -172,12 +172,12 @@
                 },
                 {
                     "command": "containerApps.createContainerApp",
-                    "when": "view == azureResourceGroups && viewItem =~ /managedEnvironment/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerEnvironment/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteManagedEnvironment",
-                    "when": "view == azureResourceGroups && viewItem =~ /managedEnvironment/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerEnvironment/i",
                     "group": "3@1"
                 },
                 {
