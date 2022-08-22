@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtTreeItem, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, NoResourceFoundError, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
-import { localize } from './localize';
 
 export namespace treeUtils {
     export function getIconPath(iconName: string): TreeItemIconPath {
@@ -17,21 +16,24 @@ export namespace treeUtils {
         return Uri.joinPath(ext.context.extensionUri, 'resources')
     }
 
-    export function findNearestParent<T extends AzExtTreeItem>(node: AzExtTreeItem, parent: T): T {
-        const parentInstance: string = parent.constructor.name;
-        let foundParent: boolean = false;
+    export function findNearestParent<T extends AzExtTreeItem>(node: AzExtTreeItem, parentContextValues: string | RegExp | (string | RegExp)[]): T {
+        parentContextValues = Array.isArray(parentContextValues) ? parentContextValues : [parentContextValues];
+        if (!parentContextValues.length) throw new NoResourceFoundError();
+
         let currentNode: AzExtTreeItem = node;
+        let foundParent: boolean = false;
         while (currentNode.parent) {
-            if (currentNode.constructor.name === parentInstance) {
-                foundParent = true;
-                break;
+            for (const contextValue of parentContextValues) {
+                const parentRegex: RegExp = contextValue instanceof RegExp ? contextValue : new RegExp(contextValue);
+                if (parentRegex.test(currentNode.contextValue)) {
+                    foundParent = true;
+                    break;
+                }
             }
+            if (foundParent) break;
             currentNode = currentNode.parent;
         }
-        if (!foundParent) {
-            const notFound: string = localize('parentNotFound', 'Could not find nearest parent "{0}".', parentInstance);
-            throw new Error(notFound);
-        }
+        if (!foundParent) throw new NoResourceFoundError();
         return currentNode as T;
     }
 }

@@ -37,8 +37,8 @@ export class ScaleRuleGroupTreeItem extends AzExtParentTreeItem implements IAzur
     }
 
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const scale: ScaleTreeItem = treeUtils.findNearestParent(this, ScaleTreeItem.prototype);
-        const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent(this, ContainerAppTreeItem.prototype);
+        const scale: ScaleTreeItem = treeUtils.findNearestParent<ScaleTreeItem>(this, ScaleTreeItem.contextValue);
+        const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent<ContainerAppTreeItem>(this, ContainerAppTreeItem.contextValue);
 
         const title: string = localize('addScaleRuleTitle', 'Add Scale Rule');
         const wizardContext: IAddScaleRuleWizardContext = {
