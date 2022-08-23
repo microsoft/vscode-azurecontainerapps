@@ -181,7 +181,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         const concreteContainerAppEnvelope = <Required<ContainerApp>>containerAppEnvelope;
         const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
 
-        concreteContainerAppEnvelope.configuration.secrets = ((await webClient.containerApps.listSecrets(this.resourceGroupName, this.name)).value);;
+        concreteContainerAppEnvelope.configuration.secrets = ((await webClient.containerApps.listSecrets(this.resourceGroupName, this.name)).value);
         concreteContainerAppEnvelope.configuration.registries ||= [];
 
         return concreteContainerAppEnvelope;
