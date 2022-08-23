@@ -17,7 +17,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
             expectedChildContextValue: new RegExp(ScaleRuleGroupTreeItem.contextValue)
         });
     }
-    const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent(node, ContainerAppTreeItem.prototype);
+    const containerApp: ContainerAppTreeItem = treeUtils.findNearestParent<ContainerAppTreeItem>(node, ContainerAppTreeItem.contextValue);
     await node.createChild(context);
     await containerApp.refresh(context);
 }
