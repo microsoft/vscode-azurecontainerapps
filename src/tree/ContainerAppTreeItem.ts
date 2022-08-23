@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, ContainerAppSecret } from "@azure/arm-appcontainers";
+import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
@@ -179,21 +179,9 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         }
 
         const concreteContainerAppEnvelope = <Required<ContainerApp>>containerAppEnvelope;
+        const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
 
-        // https://github.com/Azure/azure-sdk-for-js/issues/21101
-        // a 204 indicates no secrets, but sdk is catching it as an exception
-        let secrets: ContainerAppSecret[] = [];
-        try {
-            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
-            secrets = ((await webClient.containerApps.listSecrets(this.resourceGroupName, this.name)).value);
-        } catch (error) {
-            const pError = parseError(error);
-            if (pError.errorType !== '204') {
-                throw error;
-            }
-        }
-
-        concreteContainerAppEnvelope.configuration.secrets = secrets;
+        concreteContainerAppEnvelope.configuration.secrets = ((await webClient.containerApps.listSecrets(this.resourceGroupName, this.name)).value);
         concreteContainerAppEnvelope.configuration.registries ||= [];
 
         return concreteContainerAppEnvelope;
