@@ -22,7 +22,7 @@ export async function viewProperties(context: IActionContext, node?: IAzureResou
         if (node.getDataImpl) {
             await node.getDataImpl();
         } else {
-            throw new Error(localize('No data exists on resource "{0}"', node.label));
+            throw new Error(localize('viewProperties.noData', 'No data exists on resource "{0}"', node.label));
         }
     }
 
