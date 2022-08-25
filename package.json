@@ -28,6 +28,7 @@
     ],
     "preview": true,
     "activationEvents": [
+        "onCommand:containerApps.viewProperties",
         "onCommand:containerApps.openLogsInPortal",
         "onCommand:containerApps.reportIssue",
         "onCommand:containerApps.createContainerApp",
@@ -66,6 +67,11 @@
             ]
         },
         "commands": [
+            {
+                "command": "containerApps.viewProperties",
+                "title": "%containerApps.viewProperties%",
+                "category": "Azure Container Apps"
+            },
             {
                 "command": "containerApps.openLogsInPortal",
                 "title": "%containerApps.openLogsInPortal%",
@@ -165,6 +171,11 @@
         ],
         "menus": {
             "view/item/context": [
+                {
+                    "command": "containerApps.viewProperties",
+                    "when": "view == azureResourceGroups && viewItem =~ /azResource/i",
+                    "group": "z@1"
+                },
                 {
                     "command": "containerApps.createManagedEnvironment",
                     "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /containerAppsEnvironment/i",
