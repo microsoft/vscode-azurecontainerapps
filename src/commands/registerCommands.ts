@@ -22,8 +22,10 @@ import { openLogsInPortal } from './openLogsInPortal';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
+import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
+    registerCommand('containerApps.viewProperties', viewProperties);
     registerCommand('containerApps.openLogsInPortal', openLogsInPortal);
     registerCommand('containerApps.selectSubscriptions', () => commands.executeCommand('azure-account.selectSubscriptions'));
     registerCommand('containerApps.browse', browse);

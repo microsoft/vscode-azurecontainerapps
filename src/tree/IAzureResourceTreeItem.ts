@@ -15,3 +15,5 @@ export interface IAzureResource {
 }
 
 export interface IAzureResourceTreeItem extends IAzureResource, AzExtTreeItem { }
+
+export const azureResourceRegExp = /azResource/i;

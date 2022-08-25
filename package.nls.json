@@ -1,4 +1,5 @@
 {
+    "containerApps.viewProperties": "View Properties",
     "containerApps.reportIssue": "Report Issue...",
     "containerApps.revealResource": "Reveal Resource",
     "containerApps.description": "An Azure Container Apps extension for Visual Studio Code.",
