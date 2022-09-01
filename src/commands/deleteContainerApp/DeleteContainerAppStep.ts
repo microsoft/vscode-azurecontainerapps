@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, parseError } from "@microsoft/vscode-azext-utils";
-import { window } from "vscode";
+import { Progress, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -14,13 +14,14 @@ import { IDeleteContainerAppWizardContext } from "./IDeleteContainerAppWizardCon
 export class DeleteContainerAppStep extends AzureWizardExecuteStep<IDeleteContainerAppWizardContext> {
     public priority: number = 100;
 
-    public async execute(context: IDeleteContainerAppWizardContext): Promise<void> {
+    public async execute(context: IDeleteContainerAppWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const deleting: string = localize('deletingContainerApp', 'Deleting Container App "{0}"...', context.containerAppName);
         const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted Container App "{0}".', context.containerAppName);
         const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
         try {
             ext.outputChannel.appendLog(deleting);
+            progress.report({ message: deleting });
             await webClient.containerApps.beginDeleteAndWait(context.resourceGroupName, context.containerAppName);
         } catch (error) {
             const pError = parseError(error);
