@@ -94,7 +94,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete container app "{0}"...', this.name);
+        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete Container App "{0}"', this.name);
 
         const wizardContext: IDeleteContainerAppWizardContext = {
             activityTitle: deleteContainerApp,

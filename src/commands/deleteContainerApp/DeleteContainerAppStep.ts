@@ -15,8 +15,8 @@ export class DeleteContainerAppStep extends AzureWizardExecuteStep<IDeleteContai
     public priority: number = 100;
 
     public async execute(context: IDeleteContainerAppWizardContext): Promise<void> {
-        const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', context.containerApp.name);
-        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', context.containerApp.name);
+        const deleting: string = localize('deletingContainerApp', 'Deleting Container App "{0}"...', context.containerApp.name);
+        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted Container App "{0}".', context.containerApp.name);
         const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.containerApp]);
 
         try {
