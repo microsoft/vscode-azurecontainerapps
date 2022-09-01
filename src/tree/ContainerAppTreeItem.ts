@@ -99,14 +99,17 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         const wizardContext: IDeleteContainerAppWizardContext = {
             activityTitle: deleteContainerApp,
             containerApp: this,
-            ...context, ...(await createActivityContext())
+            ...context,
+            ...(await createActivityContext())
         };
         const wizard: AzureWizard<IDeleteContainerAppWizardContext> = new AzureWizard(wizardContext, {
             promptSteps: [new DeleteConfirmationStep(confirmMessage)],
             executeSteps: [new DeleteContainerAppStep()]
         });
 
-        if (!context.suppressNotification) { await wizard.prompt(); }
+        if (!context.suppressNotification) {
+            await wizard.prompt();
+        }
         await wizard.execute();
     }
 
