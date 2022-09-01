@@ -5,10 +5,11 @@
 
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, parseError, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { ProgressLocation, window } from "vscode";
+import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, DeleteConfirmationStep, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { DeleteContainerAppStep } from "../commands/deleteContainerApp/DeleteContainerAppStep";
+import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { azResourceContextValue, RevisionConstants } from "../constants";
-import { ext } from "../extensionVariables";
+import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
@@ -93,30 +94,20 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
     public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        if (!context.suppressPrompt) {
-            await context.ui.showWarningMessage(confirmMessage, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse);
-        }
+        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete container app "{0}"...', this.name);
 
-        const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', this.name);
-        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', this.name);
-
-        await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            ext.outputChannel.appendLog(deleting);
-            const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this]);
-            try {
-                await webClient.containerApps.beginDeleteAndWait(this.resourceGroupName, this.name);
-            } catch (error) {
-                const pError = parseError(error);
-                // a 204 indicates a success, but sdk is catching it as an exception
-                // accept any 2xx reponse code
-                if (Number(pError.errorType) < 200 || Number(pError.errorType) >= 300) {
-                    throw error;
-                }
-            }
-
-            void window.showInformationMessage(deleteSucceeded);
-            ext.outputChannel.appendLog(deleteSucceeded);
+        const wizardContext: IDeleteContainerAppWizardContext = {
+            activityTitle: deleteContainerApp,
+            containerApp: this,
+            ...context, ...(await createActivityContext())
+        };
+        const wizard: AzureWizard<IDeleteContainerAppWizardContext> = new AzureWizard(wizardContext, {
+            promptSteps: [new DeleteConfirmationStep(confirmMessage)],
+            executeSteps: [new DeleteContainerAppStep()]
         });
+
+        if (!context.suppressPrompt) { await wizard.prompt(); }
+        await wizard.execute();
     }
 
     public async refreshImpl(context: IActionContext): Promise<void> {
