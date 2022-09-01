@@ -30,7 +30,7 @@ export class DeleteContainerAppStep extends AzureWizardExecuteStep<IDeleteContai
                 throw error;
             }
         }
-        void window.showInformationMessage(deleteSucceeded);
+        if (!context.suppressNotification) { void window.showInformationMessage(deleteSucceeded); }
         ext.outputChannel.appendLog(deleteSucceeded);
     }
 
