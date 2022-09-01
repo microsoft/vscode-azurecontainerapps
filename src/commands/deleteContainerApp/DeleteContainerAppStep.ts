@@ -15,13 +15,13 @@ export class DeleteContainerAppStep extends AzureWizardExecuteStep<IDeleteContai
     public priority: number = 100;
 
     public async execute(context: IDeleteContainerAppWizardContext): Promise<void> {
-        const deleting: string = localize('deletingContainerApp', 'Deleting Container App "{0}"...', context.containerApp.name);
-        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted Container App "{0}".', context.containerApp.name);
-        const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.containerApp]);
+        const deleting: string = localize('deletingContainerApp', 'Deleting Container App "{0}"...', context.containerAppName);
+        const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted Container App "{0}".', context.containerAppName);
+        const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
         try {
             ext.outputChannel.appendLog(deleting);
-            await webClient.containerApps.beginDeleteAndWait(context.containerApp.resourceGroupName, context.containerApp.name);
+            await webClient.containerApps.beginDeleteAndWait(context.resourceGroupName, context.containerAppName);
         } catch (error) {
             const pError = parseError(error);
             // a 204 indicates a success, but sdk is catching it as an exception

@@ -92,13 +92,15 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         await openUrl(`https://${this.data.configuration?.ingress?.fqdn}`);
     }
 
-    public async deleteTreeItemImpl(context: IActionContext & { suppressNotification?: boolean }): Promise<void> {
+    public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
         const deleteContainerApp: string = localize('deleteContainerApp', 'Delete Container App "{0}"', this.name);
 
         const wizardContext: IDeleteContainerAppWizardContext = {
             activityTitle: deleteContainerApp,
-            containerApp: this,
+            containerAppName: this.name,
+            subscription: this.subscription,
+            resourceGroupName: this.resourceGroupName,
             ...context,
             ...(await createActivityContext())
         };
@@ -107,7 +109,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
             executeSteps: [new DeleteContainerAppStep()]
         });
 
-        if (!context.suppressNotification) {
+        if (!context.suppressPrompt) {
             await wizard.prompt();
         }
         await wizard.execute();
