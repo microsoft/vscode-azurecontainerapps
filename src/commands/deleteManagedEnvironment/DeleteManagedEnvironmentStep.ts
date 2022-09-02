@@ -36,7 +36,7 @@ export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDelete
         ext.outputChannel.appendLog(deleteSucceeded);
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: IDeleteManagedEnvironmentWizardContext): boolean {
+        return !!context.managedEnvironmentName && !!context.resourceGroupName && !!context.subscription;
     }
 }
