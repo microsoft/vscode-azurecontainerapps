@@ -49,7 +49,7 @@ export class ManagedEnvironmentTreeItem extends AzExtParentTreeItem implements I
         return this.resolved.createChildImpl(context);
     }
 
-    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
+    public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         return await this.resolved.deleteTreeItemImpl(context);
     }
 }

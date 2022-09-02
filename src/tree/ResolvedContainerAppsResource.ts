@@ -5,22 +5,23 @@
 
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep, uiUtils, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DialogResponses, IActionContext, ICreateChildImplContext, ISubscriptionContext, parseError, UserCancelledError } from "@microsoft/vscode-azext-utils";
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ResolvedAppResourceBase } from "@microsoft/vscode-azext-utils/hostapi";
-import { ProgressLocation, window } from "vscode";
 import { ContainerAppCreateStep } from "../commands/createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAppNameStep";
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { EnvironmentVariablesListStep } from "../commands/createContainerApp/EnvironmentVariablesListStep";
 import { IContainerAppWithActivityContext } from "../commands/createContainerApp/IContainerAppContext";
+import { DeleteContainerAppChildrenStep } from "../commands/deleteManagedEnvironment/DeleteContainerAppChildrenStep";
+import { DeleteEnvironmentConfirmationStep } from "../commands/deleteManagedEnvironment/DeleteEnvironmentConfirmationStep";
+import { DeleteManagedEnvironmentStep } from "../commands/deleteManagedEnvironment/DeleteManagedEnvironmentStep";
+import { IDeleteManagedEnvironmentWizardContext } from "../commands/deleteManagedEnvironment/IDeleteManagedEnvironmentWizardContext";
 import { ContainerRegistryListStep } from "../commands/deployImage/ContainerRegistryListStep";
 import { azResourceContextValue, webProvider } from "../constants";
-import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { nonNullProp } from "../utils/nonNull";
-import { settingUtils } from "../utils/settingUtils";
 import { ContainerAppTreeItem } from "./ContainerAppTreeItem";
 import { IAzureResource } from "./IAzureResourceTreeItem";
 import { ManagedEnvironmentTreeItem } from "./ManagedEnvironmentTreeItem";
@@ -106,70 +107,29 @@ export class ResolvedContainerEnvironmentResource implements ResolvedAppResource
         return new ContainerAppTreeItem(proxyTree, nonNullProp(wizardContext, 'containerApp'));
     }
 
-    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
+    public async deleteTreeItemImpl(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const proxyTree: ManagedEnvironmentTreeItem = this as unknown as ManagedEnvironmentTreeItem;
         const containerApps = <ContainerAppTreeItem[]>(await proxyTree.loadAllChildren(context));
-        await promptForDelete(this, containerApps);
 
-        if (containerApps.length) {
-            await this.deleteAllContainerApps(context, containerApps);
-        }
+        const deleteManagedEnvironment: string = localize('deleteManagedEnvironment', 'Delete Container Apps Environment "{0}"', proxyTree.name);
 
-        const deleting: string = localize('DeletingManagedEnv', 'Deleting Container Apps environment "{0}"...', this.name);
-        await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, this._subscription]);
-            try {
-                ext.outputChannel.appendLog(deleting);
-                await client.managedEnvironments.beginDeleteAndWait(this.resourceGroupName, this.name);
-            } catch (error) {
-                const pError = parseError(error);
-                // a 204 indicates a success, but sdk is catching it as an exception:
-                // Received unexpected HTTP status code 204 while polling. This may indicate a server issue.
-                if (Number(pError.errorType) < 200 || Number(pError.errorType) >= 300) {
-                    throw error;
-                }
-            }
-            const deleteSucceeded: string = localize('DeleteManagedEnvSucceeded', 'Successfully deleted Container Apps environment "{0}".', this.name);
-            void window.showInformationMessage(deleteSucceeded);
-            ext.outputChannel.appendLog(deleteSucceeded);
+        const wizardContext: IDeleteManagedEnvironmentWizardContext = {
+            activityTitle: deleteManagedEnvironment,
+            containerApps,
+            managedEnvironmentName: proxyTree.name,
+            resourceGroupName: proxyTree.resourceGroupName,
+            subscription: proxyTree.subscription,
+            ...context,
+            ...(await createActivityContext())
+        };
+        const wizard: AzureWizard<IDeleteManagedEnvironmentWizardContext> = new AzureWizard(wizardContext, {
+            promptSteps: [new DeleteEnvironmentConfirmationStep()],
+            executeSteps: [new DeleteContainerAppChildrenStep(), new DeleteManagedEnvironmentStep()]
         });
 
-        async function promptForDelete(node: ResolvedContainerEnvironmentResource, containerApps: ContainerAppTreeItem[]): Promise<void> {
-            const numOfResources = containerApps.length;
-            const hasNoResources: boolean = !numOfResources;
-
-            const deleteEnv: string = localize('ConfirmDeleteManagedEnv', 'Are you sure you want to delete Container Apps environment "{0}"?', node.name);
-            const deleteEnvAndApps: string = localize('ConfirmDeleteEnvAndApps', 'Are you sure you want to delete Container Apps environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
-                node.name, numOfResources);
-
-            const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSetting('deleteConfirmation');
-            if (deleteConfirmation === 'ClickButton' || hasNoResources) {
-                const message: string = hasNoResources ? deleteEnv : deleteEnvAndApps;
-                await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse); // no need to check result - cancel will throw error
-            } else {
-                const prompt: string = localize('enterToDelete', 'Enter "{0}" to delete this Container Apps environment. Deleting this will delete {1} container app(s) in this environment.',
-                    node.name, numOfResources);
-
-                const result: string = await context.ui.showInputBox({ prompt, validateInput });
-                if (!isNameEqual(result, node)) { // Check again just in case `validateInput` didn't prevent the input box from closing
-                    context.telemetry.properties.cancelStep = 'mismatchDelete';
-                    throw new UserCancelledError();
-                }
-
-                function validateInput(val: string | undefined): string | undefined {
-                    return isNameEqual(val, node) ? undefined : prompt;
-                }
-
-                function isNameEqual(val: string | undefined, node: ResolvedContainerEnvironmentResource): boolean {
-                    return !!val && val.toLowerCase() === node.name.toLowerCase();
-                }
-            }
+        if (!context.suppressPrompt) {
+            await wizard.prompt();
         }
-    }
-
-    private async deleteAllContainerApps(context: IActionContext & { suppressPrompt?: boolean }, containerApps: ContainerAppTreeItem[]): Promise<void> {
-        context.suppressPrompt = true;
-        const deletePromises = containerApps.map(c => c.deleteTreeItem(context));
-        await Promise.all(deletePromises);
+        await wizard.execute();
     }
 }
