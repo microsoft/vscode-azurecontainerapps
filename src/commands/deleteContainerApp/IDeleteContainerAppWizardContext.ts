@@ -8,5 +8,5 @@ import { ExecuteActivityContext, IActionContext, ISubscriptionContext } from "@m
 export interface IDeleteContainerAppWizardContext extends IActionContext, ExecuteActivityContext {
     subscription: ISubscriptionContext;
     resourceGroupName: string;
-    containerAppName: string;
+    containerAppNames: string | string[];
 }

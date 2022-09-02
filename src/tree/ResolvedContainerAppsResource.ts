@@ -12,7 +12,7 @@ import { ContainerAppNameStep } from "../commands/createContainerApp/ContainerAp
 import { EnableIngressStep } from "../commands/createContainerApp/EnableIngressStep";
 import { EnvironmentVariablesListStep } from "../commands/createContainerApp/EnvironmentVariablesListStep";
 import { IContainerAppWithActivityContext } from "../commands/createContainerApp/IContainerAppContext";
-import { DeleteContainerAppChildrenStep } from "../commands/deleteManagedEnvironment/DeleteContainerAppChildrenStep";
+import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { DeleteEnvironmentConfirmationStep } from "../commands/deleteManagedEnvironment/DeleteEnvironmentConfirmationStep";
 import { DeleteManagedEnvironmentStep } from "../commands/deleteManagedEnvironment/DeleteManagedEnvironmentStep";
 import { IDeleteManagedEnvironmentWizardContext } from "../commands/deleteManagedEnvironment/IDeleteManagedEnvironmentWizardContext";
@@ -115,7 +115,7 @@ export class ResolvedContainerEnvironmentResource implements ResolvedAppResource
 
         const wizardContext: IDeleteManagedEnvironmentWizardContext = {
             activityTitle: deleteManagedEnvironment,
-            containerApps,
+            containerAppNames: containerApps.map(ca => ca.name),
             managedEnvironmentName: proxyTree.name,
             resourceGroupName: proxyTree.resourceGroupName,
             subscription: proxyTree.subscription,
@@ -124,7 +124,7 @@ export class ResolvedContainerEnvironmentResource implements ResolvedAppResource
         };
         const wizard: AzureWizard<IDeleteManagedEnvironmentWizardContext> = new AzureWizard(wizardContext, {
             promptSteps: [new DeleteEnvironmentConfirmationStep()],
-            executeSteps: [new DeleteContainerAppChildrenStep(), new DeleteManagedEnvironmentStep()]
+            executeSteps: [new DeleteAllContainerAppsStep(), new DeleteManagedEnvironmentStep()]
         });
 
         if (!context.suppressPrompt) {

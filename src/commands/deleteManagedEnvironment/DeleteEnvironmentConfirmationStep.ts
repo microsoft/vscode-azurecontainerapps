@@ -14,7 +14,7 @@ export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDe
     public async prompt(context: IDeleteManagedEnvironmentWizardContext): Promise<void> {
         this.managedEnvironmentName = context.managedEnvironmentName;
 
-        const numOfResources = context.containerApps.length;
+        const numOfResources = context.containerAppNames.length;
         const hasNoResources: boolean = !numOfResources;
 
         const deleteEnv: string = localize('confirmDeleteManagedEnv', 'Are you sure you want to delete Container Apps environment "{0}"?', context.managedEnvironmentName);
