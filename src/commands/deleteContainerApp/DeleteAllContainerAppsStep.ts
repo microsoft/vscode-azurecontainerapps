@@ -15,7 +15,7 @@ export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteCo
     public priority: number = 100;
 
     public async execute(context: IDeleteContainerAppWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const containerAppNames: string[] = (Array.isArray(context.containerAppNames)) ? context.containerAppNames : [context.containerAppNames];
+        const containerAppNames: string[] = Array.isArray(context.containerAppNames) ? context.containerAppNames : [context.containerAppNames];
         const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
         for (const containerAppName of containerAppNames) {
