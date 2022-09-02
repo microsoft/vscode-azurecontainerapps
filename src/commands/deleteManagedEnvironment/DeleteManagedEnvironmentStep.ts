@@ -32,7 +32,9 @@ export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDelete
         }
 
         const deleteSucceeded: string = localize('deleteManagedEnvSucceeded', 'Successfully deleted Container Apps environment "{0}".', context.managedEnvironmentName);
-        void window.showInformationMessage(deleteSucceeded);
+        if (!context.suppressNotification) {
+            void window.showInformationMessage(deleteSucceeded);
+        }
         ext.outputChannel.appendLog(deleteSucceeded);
     }
 
