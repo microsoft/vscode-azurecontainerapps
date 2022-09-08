@@ -6,7 +6,7 @@
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzExtParentTreeItem, AzExtTreeItem, AzureWizard, DeleteConfirmationStep, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { DeleteContainerAppStep } from "../commands/deleteContainerApp/DeleteContainerAppStep";
+import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { azResourceContextValue, RevisionConstants } from "../constants";
 import { createActivityContext } from "../utils/activityUtils";
@@ -98,7 +98,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
 
         const wizardContext: IDeleteContainerAppWizardContext = {
             activityTitle: deleteContainerApp,
-            containerAppName: this.name,
+            containerAppNames: this.name,
             subscription: this.subscription,
             resourceGroupName: this.resourceGroupName,
             ...context,
@@ -106,7 +106,7 @@ export class ContainerAppTreeItem extends AzExtParentTreeItem implements IAzureR
         };
         const wizard: AzureWizard<IDeleteContainerAppWizardContext> = new AzureWizard(wizardContext, {
             promptSteps: [new DeleteConfirmationStep(confirmMessage)],
-            executeSteps: [new DeleteContainerAppStep()]
+            executeSteps: [new DeleteAllContainerAppsStep()]
         });
 
         if (!context.suppressPrompt) {

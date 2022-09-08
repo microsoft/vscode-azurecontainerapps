@@ -5,8 +5,10 @@
 
 import { ExecuteActivityContext, IActionContext, ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 
-export interface IDeleteContainerAppWizardContext extends IActionContext, ExecuteActivityContext {
+export interface IDeleteManagedEnvironmentWizardContext extends IActionContext, ExecuteActivityContext {
     subscription: ISubscriptionContext;
     resourceGroupName: string;
-    containerAppNames: string | string[];
+    managedEnvironmentName: string;
+
+    containerAppNames: string[];
 }
