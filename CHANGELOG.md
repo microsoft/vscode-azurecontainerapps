@@ -2,11 +2,14 @@
 
 ## 0.3.0 - 2022-09-08
 
+### Added
+
+- HTTP and Azure queue scale rule support
+
 ### Changed
 
 - Now depends on the "Azure Resources" extension, which provides a unified "Resource Groups" view
-- Added HTTP and Azure queue scale rule support
-- Wired up basic add/delete functionality through the activity log
+- Wired up basic add/delete functionality (Container App & Container Environments) through the activity log
 
 ### Fixed
 
