@@ -47,7 +47,7 @@ export class DaprEnabledTreeItem extends AzExtParentTreeItem implements IAzureRe
 
 export class DaprDisabledTreeItem extends AzExtTreeItem {
     public static contextValue: string = 'dapr|disabled';
-    public readonly contextValue: string = `${DaprDisabledTreeItem.contextValue}|${azResourceContextValue}`;
+    public readonly contextValue: string = DaprDisabledTreeItem.contextValue;
     public readonly parent: ContainerAppTreeItem;
 
     public label: string;
