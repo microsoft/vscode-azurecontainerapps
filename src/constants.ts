@@ -42,3 +42,4 @@ export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', dat
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const azResourceContextValue: string = 'azResource';
+export const azResourceRegExp = new RegExp(azResourceContextValue, 'i');
