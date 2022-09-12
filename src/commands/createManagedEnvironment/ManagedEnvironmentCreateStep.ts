@@ -44,8 +44,9 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         );
 
         const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container Apps environment "{0}".', context.newManagedEnvironmentName);
+        const viewOutput: string = localize('viewOutput', 'View Output');
         ext.outputChannel.appendLog(createdKuEnv);
-        void window.showInformationMessage(createdKuEnv);
+        void window.showInformationMessage(createdKuEnv, viewOutput).then(() => ext.outputChannel.show());
     }
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
