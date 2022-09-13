@@ -44,11 +44,10 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
             ext.outputChannel.appendLog(updating);
 
             await updateContainerApp(context, pNode, { configuration: { activeRevisionsMode: result.data } });
+            await node?.parent?.refresh(context);
 
             void window.showInformationMessage(updated);
             ext.outputChannel.appendLog(updated);
-
-            await node?.refresh(context);
         });
     }
 }
