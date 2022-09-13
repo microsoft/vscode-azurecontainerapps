@@ -13,7 +13,7 @@
 - [Use revision specific data to create scale rule](https://github.com/microsoft/vscode-azurecontainerapps/pull/165)
 - [Fix Container App Name Steps](https://github.com/microsoft/vscode-azurecontainerapps/issues/65)
 - [Change Log Analytics Location to Match Managed Environment Location](https://github.com/microsoft/vscode-azurecontainerapps/issues/130)
-- [Milestone issues](https://github.com/microsoft/vscode-azurecontainerapps/milestone/5?closed=1)
+- [Bugs Fixed](https://github.com/microsoft/vscode-azurecontainerapps/milestone/5?closed=1)
 
 ## 0.2.0 - 2022-07-07
 
