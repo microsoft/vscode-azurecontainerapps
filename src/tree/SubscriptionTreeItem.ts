@@ -39,7 +39,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     public static async createChild(context: ICreateChildImplContext, node: SubscriptionTreeItemBase): Promise<ManagedEnvironmentTreeItem> {
         const wizardContext: IManagedEnvironmentContext = {
-            ...context, ...node.subscription, ...(await createActivityContext())
+            ...context,
+            ...node.subscription,
+            ...(await createActivityContext())
         };
 
         const title: string = localize('createManagedEnv', 'Create Container Apps environment');

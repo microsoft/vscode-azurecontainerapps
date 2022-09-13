@@ -7,7 +7,7 @@ import { ContainerAppsAPIClient, Ingress, RegistryCredentials, Secret } from "@a
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
-import { containerAppProvider, RevisionConstants } from "../../constants";
+import { containerAppsWebProvider, RevisionConstants } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -68,7 +68,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
         const name = getContainerNameForImage(context.image);
 
         context.containerApp = await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
-            location: (await LocationListStep.getLocation(context, containerAppProvider)).name,
+            location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
             managedEnvironmentId: context.managedEnvironmentId,
             configuration: {
                 ingress,
