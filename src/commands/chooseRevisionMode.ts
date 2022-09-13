@@ -48,7 +48,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
             void window.showInformationMessage(updated);
             ext.outputChannel.appendLog(updated);
 
-            await node?.refresh(context);
+            await node?.parent?.refresh(context);
         });
     }
 }
