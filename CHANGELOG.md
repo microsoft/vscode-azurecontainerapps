@@ -1,18 +1,19 @@
 # Change Log
 
-## 0.3.0 - 2022-09-08
+## 0.3.0 - 2022-09-15
 
 ### Added
 - HTTP and Azure queue scale rule support
 
 ### Changed
-- Now depends on the "Azure Resources" extension, which provides a unified "Resource Groups" view
+- Now depends on the "Azure Resources" extension which provides a unified "Resource Groups" view
 - Wired up basic add/delete functionality (Container App & Container Environments) through the activity log
 
 ### Fixed
 - [Use revision specific data to create scale rule](https://github.com/microsoft/vscode-azurecontainerapps/pull/165)
 - [Fix Container App Name Steps](https://github.com/microsoft/vscode-azurecontainerapps/issues/65)
 - [Change Log Analytics Location to Match Managed Environment Location](https://github.com/microsoft/vscode-azurecontainerapps/issues/130)
+- [Milestone issues](https://github.com/microsoft/vscode-azurecontainerapps/milestone/5?closed=1)
 
 ## 0.2.0 - 2022-07-07
 
