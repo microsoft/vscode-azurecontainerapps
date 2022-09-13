@@ -173,7 +173,7 @@
             "view/item/context": [
                 {
                     "command": "containerApps.viewProperties",
-                    "when": "view == azureResourceGroups && viewItem =~ /azResource/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /azResource/i && viewItem =~ /^(?!.*containerEnvironment).*/i",
                     "group": "z@1"
                 },
                 {

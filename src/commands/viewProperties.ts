@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext, openReadOnlyJson } from '@microsoft/vscode-azext-utils';
-import { rootFilter } from '../constants';
+import { azResourceRegExp, rootFilter } from '../constants';
 import { ext } from '../extensionVariables';
-import { azureResourceRegExp, IAzureResourceTreeItem } from '../tree/IAzureResourceTreeItem';
+import { IAzureResourceTreeItem } from '../tree/IAzureResourceTreeItem';
 import { localize } from '../utils/localize';
 import { nonNullProp } from '../utils/nonNull';
 
@@ -14,7 +14,7 @@ export async function viewProperties(context: IActionContext, node?: IAzureResou
     if (!node) {
         node = await ext.rgApi.pickAppResource<IAzureResourceTreeItem>(context, {
             filter: rootFilter,
-            expectedChildContextValue: azureResourceRegExp
+            expectedChildContextValue: azResourceRegExp
         });
     }
 
