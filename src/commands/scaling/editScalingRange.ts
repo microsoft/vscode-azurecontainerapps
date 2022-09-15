@@ -45,10 +45,9 @@ export async function editScalingRange(context: IActionContext, node?: ScaleTree
         ext.outputChannel.appendLog(updating);
         await updateContainerApp(context, containerApp, { template })
 
+        await containerApp?.refresh(context);
         void window.showInformationMessage(updated);
         ext.outputChannel.appendLog(updated);
-
-        await containerApp?.refresh(context);
     });
 }
 
