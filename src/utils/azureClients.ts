@@ -7,7 +7,6 @@ import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
-import { LogAnalyticsClient } from '@azure/loganalytics';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
 
 // Lazy-load @azure packages to improve startup performance.
@@ -30,11 +29,6 @@ export function createContainerRegistryClient(context: AzExtClientContext, regis
 
     return new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
-}
-
-export function createLogAnalyticsClient(context: AzExtClientContext): LogAnalyticsClient {
-    const clientContext = parseClientContext(context);
-    return new LogAnalyticsClient(clientContext.credentials);
 }
 
 export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
