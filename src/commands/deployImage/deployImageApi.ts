@@ -22,5 +22,5 @@ export function deployImageApi(context: IActionContext & Partial<IDeployImageCon
     // TODO: more stuff to fill in
 
     // Call the deployImage function programmatically
-    return deployImage(context);
+    return deployImage(context, undefined);
 }
