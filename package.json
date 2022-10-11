@@ -33,6 +33,7 @@
         "onCommand:containerApps.reportIssue",
         "onCommand:containerApps.createContainerApp",
         "onCommand:containerApps.deployImage",
+        "onCommand:containerApps.deployImageApi",
         "onCommand:containerApps.deleteManagedEnvironment",
         "onCommand:containerApps.deleteContainerApp",
         "onCommand:containerApps.disableIngress",
@@ -91,6 +92,11 @@
             {
                 "command": "containerApps.deployImage",
                 "title": "%containerApps.deployImage%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deployImageApi",
+                "title": "%containerApps.deployImageApi%",
                 "category": "Azure Container Apps"
             },
             {
@@ -265,6 +271,10 @@
             "commandPalette": [
                 {
                     "command": "containerApps.viewProperties",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.deployImageApi",
                     "when": "never"
                 }
             ]
