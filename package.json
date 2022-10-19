@@ -58,7 +58,15 @@
                         "type": "ContainerAppsEnvironment"
                     }
                 ]
-            }
+            },
+            "commands": [
+                {
+                    "command": "containerApps.createManagedEnvironment",
+                    "title": "%containerApps.createManagedEnvironment%",
+                    "type": "microsoft.app/managedenvironments",
+                    "detail": "%containerApps.createManagedEnvironmentDetail%"
+                }
+            ]
         },
         "x-azResources": {
             "activation": {
