@@ -3,7 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { SubscriptionTreeItemBase } from "@microsoft/vscode-azext-azureutils";
+import { IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { acrDomain, dockerHubDomain, RegistryTypes } from "../../constants";
+import { ext } from "../../extensionVariables";
+import { imageNameUtils } from "../../utils/parseImageNameUtils";
 import { deployImage } from "./deployImage";
 import { IDeployImageContext } from "./IDeployImageContext";
 
@@ -16,11 +20,24 @@ interface DeployImageToAcaOptionsContract {
     secret?: string;
 }
 
-export function deployImageApi(context: IActionContext & Partial<IDeployImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
-    // Fill in data from the options into the wizard context
-    context.image = deployImageOptions.imageName;
-    // TODO: more stuff to fill in
+export async function deployImageApi(context: IActionContext & Partial<IDeployImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
+    const node = await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
+    Object.assign(context, node.subscription);
 
-    // Call the deployImage function programmatically
+    const registryType: RegistryTypes = imageNameUtils.detectRegistryType(deployImageOptions.imageName, deployImageOptions.loginServer);
+
+    switch (registryType) {
+        case RegistryTypes.ACR:
+            context.registryDomain = acrDomain;
+            Object.assign(context, await imageNameUtils.parseFromAcrName(<ISubscriptionActionContext>context, deployImageOptions.imageName));
+            break;
+        case RegistryTypes.DH:
+            context.registryDomain = dockerHubDomain;
+            Object.assign(context, imageNameUtils.parseFromDockerHubName(deployImageOptions.imageName));
+            break;
+        case RegistryTypes.Custom:
+        default:
+    }
+
     return deployImage(context, undefined);
 }
