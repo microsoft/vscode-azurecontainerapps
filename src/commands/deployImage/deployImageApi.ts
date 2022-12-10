@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { SubscriptionTreeItemBase } from "@microsoft/vscode-azext-azureutils";
+import { ISubscriptionContext } from "@microsoft/vscode-azext-dev";
 import { IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, RegistryTypes } from "../../constants";
 import { ext } from "../../extensionVariables";
@@ -21,8 +22,8 @@ interface DeployImageToAcaOptionsContract {
 }
 
 export async function deployImageApi(context: IActionContext & Partial<IDeployImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
-    const node = await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
-    Object.assign(context, node.subscription);
+    const subscription: ISubscriptionContext = (await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context)).subscription;
+    Object.assign(context, subscription);
 
     const registryType: RegistryTypes = imageNameUtils.detectRegistryType(deployImageOptions.imageName, deployImageOptions.loginServer);
 
@@ -33,9 +34,10 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
             break;
         case RegistryTypes.DH:
             context.registryDomain = dockerHubDomain;
-            Object.assign(context, imageNameUtils.parseFromDockerHubName(deployImageOptions.imageName));
+            Object.assign(context, imageNameUtils.parseFromDhName(deployImageOptions.imageName));
             break;
         case RegistryTypes.Custom:
+            break;
         default:
     }
 

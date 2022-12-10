@@ -9,18 +9,18 @@ import { acrDomainRegExp, dockerHubDomain, dockerHubDomainRegExp, RegistryTypes 
 import { createContainerRegistryManagementClient } from "./azureClients";
 import { localize } from "./localize";
 
-export interface IParsedDockerImageNameAttributes {
+export interface IParsedImageNameAttributes {
     image: string;
-    dockerHubNamespace: string;
     repositoryName: string;
-    tag: string;
+    tag: string
 }
 
-export interface IParsedAcrImageNameAttributes {
-    image: string;
+export interface IParsedDockerImageNameAttributes extends IParsedImageNameAttributes {
+    dockerHubNamespace: string;
+}
+
+export interface IParsedAcrImageNameAttributes extends IParsedImageNameAttributes {
     registry: ContainerRegistryManagementModels.Registry;
-    repositoryName: string;
-    tag: string;
 }
 
 export namespace imageNameUtils {
@@ -38,30 +38,29 @@ export namespace imageNameUtils {
     export async function parseFromAcrName(context: ISubscriptionActionContext, acrImageName: string): Promise<IParsedAcrImageNameAttributes> {
         const args: number = acrImageName.split('/').length;
 
-        if (args < 2 || args > 3) {
+        if (args !== 2) {
             throw new Error(localize('invalidAcrImageName', 'Invalid Azure Container Registry image name format.'));
-        } else if (args === 2) {
-            acrImageName = '/' + acrImageName;
         }
 
         const attributes: string[] = acrImageName.split('/');
-        const [repositoryName, tag] = attributes[2].split(':');
+        const loginServer: string = attributes[0];
+        const [repositoryName, tag] = attributes[1].split(':');
 
         return {
             image: acrImageName,
-            registry: await getAcrRegistry(context, 'fullstack'),
+            registry: await getAcrRegistry(context, loginServer),
             repositoryName,
             tag
         };
     }
 
-    async function getAcrRegistry(context: ISubscriptionActionContext, registryName: string): Promise<ContainerRegistryManagementModels.Registry> {
+    async function getAcrRegistry(context: ISubscriptionActionContext, loginServer: string): Promise<ContainerRegistryManagementModels.Registry> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
         const registries = await client.registries.list();
-        return registries.find(r => r.loginServer === registryName) as ContainerRegistryManagementModels.Registry;
+        return registries.find(r => r.loginServer === loginServer) as ContainerRegistryManagementModels.Registry;
     }
 
-    export function parseFromDockerHubName(dockerHubImageName: string): IParsedDockerImageNameAttributes {
+    export function parseFromDhName(dockerHubImageName: string): IParsedDockerImageNameAttributes {
         const args: number = dockerHubImageName.split('/').length;
 
         if (args < 2 || args > 3) {
