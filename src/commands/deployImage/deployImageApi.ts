@@ -39,11 +39,13 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
         case RegistryTypes.DH:
             context.registryDomain = dockerHubDomain;
             Object.assign(context, imageNameUtils.parseFromDockerHubName(deployImageOptions.imageName));
+            context.valuesToMask.push(<string>context.dockerHubNamespace);
             break;
         case RegistryTypes.Custom:
         default:
             context.image = deployImageOptions.imageName;
     }
 
+    context.valuesToMask.push(<string>context.image);
     return deployImage(context, undefined);
 }
