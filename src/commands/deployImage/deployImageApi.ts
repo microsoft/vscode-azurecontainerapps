@@ -8,6 +8,7 @@ import { ISubscriptionContext } from "@microsoft/vscode-azext-dev";
 import { IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, RegistryTypes } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { localize } from "../../utils/localize";
 import { imageNameUtils } from "../../utils/parseImageNameUtils";
 import { deployImage } from "./deployImage";
 import { IDeployImageContext } from "./IDeployImageContext";
@@ -26,6 +27,9 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
     Object.assign(context, subscription);
 
     const registryType: RegistryTypes = imageNameUtils.detectRegistryType(deployImageOptions.imageName, deployImageOptions.loginServer);
+    if (registryType !== RegistryTypes.ACR && deployImageOptions.secret) {
+        throw new Error(localize('privateRepositorySupportNotImplemented', 'Deploying from a non-ACR, private repository is not yet supported.'));
+    }
 
     switch (registryType) {
         case RegistryTypes.ACR:
@@ -37,8 +41,8 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
             Object.assign(context, imageNameUtils.parseFromDockerHubName(deployImageOptions.imageName));
             break;
         case RegistryTypes.Custom:
-            break;
         default:
+            context.image = deployImageOptions.imageName;
     }
 
     return deployImage(context, undefined);

@@ -38,7 +38,7 @@ export namespace imageNameUtils {
     export async function parseFromAcrName(context: ISubscriptionActionContext, acrImageName: string): Promise<IParsedAcrImageNameAttributes> {
         const args: number = acrImageName.split('/').length;
         if (args !== 2) {
-            throw new Error(localize('invalidAcrImageName', 'Invalid Azure Container Registry image name format.'));
+            throw new Error(localize('invalidAcrImageName', 'Invalid Azure Container Registry image name.'));
         }
 
         const attributes: string[] = acrImageName.split('/');
@@ -63,9 +63,9 @@ export namespace imageNameUtils {
         const args: number = dockerHubImageName.split('/').length;
 
         if (args < 2 || args > 3) {
-            throw new Error(localize('invalidDockerHubImageName', 'Invalid Docker Hub image name format.'));
+            throw new Error(localize('invalidDockerHubImageName', 'Invalid Docker Hub image name.'));
         } else if (args === 2) {
-            // Standardize Docker Hub image names with the dockerHubDomain prefix (i.e. 'docker.io/...')
+            // Standardize Docker Hub image names so they include the `dockerHubDomain` prefix (i.e. 'docker.io/...')
             dockerHubImageName = dockerHubDomain + '/' + dockerHubImageName;
         }
 
