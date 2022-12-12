@@ -27,7 +27,7 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
     Object.assign(context, subscription);
 
     const registryType: RegistryTypes = imageNameUtils.detectRegistryType(deployImageOptions.imageName, deployImageOptions.loginServer);
-    if (registryType !== RegistryTypes.ACR && deployImageOptions.secret) {
+    if (registryType !== RegistryTypes.ACR && (deployImageOptions.username || deployImageOptions.secret)) {
         throw new Error(localize('privateRepositorySupportNotImplemented', 'Deploying from a non-ACR, private repository is not yet supported.'));
     }
 
