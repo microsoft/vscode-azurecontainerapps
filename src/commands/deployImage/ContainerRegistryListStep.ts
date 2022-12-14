@@ -30,7 +30,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IDeployImag
     }
 
     public shouldPrompt(context: IDeployImageContext): boolean {
-        return !context.tag && !context.registryDomain;
+        return !context.tag && !context.image;
     }
 
     public async getSubWizard(context: IDeployImageContext): Promise<IWizardOptions<IDeployImageContext> | undefined> {
