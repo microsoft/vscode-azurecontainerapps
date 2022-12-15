@@ -44,12 +44,6 @@ export const dockerHubDomainRegExp = new RegExp(dockerHubDomain, 'i');
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
-export enum RegistryTypes {
-    ACR = 'Azure Container Registry',
-    DH = 'Docker Hub',
-    Custom = 'Custom'
-}
-
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
