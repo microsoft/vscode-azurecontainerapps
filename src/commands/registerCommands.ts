@@ -18,7 +18,7 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteNode } from './deleteNode';
 import { deployImage } from './deployImage/deployImage';
 import { editTargetPort, toggleIngress, toggleIngressVisibility } from './ingressCommands';
-import { openLogsInPortal } from './openLogsInPortal';
+import { openInPortal } from './openInPortal';
 import { changeRevisionActiveState } from './revisionCommands/changeRevisionActiveState';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
@@ -26,7 +26,7 @@ import { viewProperties } from './viewProperties';
 
 export function registerCommands(): void {
     registerCommand('containerApps.viewProperties', viewProperties);
-    registerCommand('containerApps.openLogsInPortal', openLogsInPortal);
+    registerCommand('containerApps.openInPortal', openInPortal);
     registerCommand('containerApps.selectSubscriptions', () => commands.executeCommand('azure-account.selectSubscriptions'));
     registerCommand('containerApps.browse', browse);
     registerCommand('containerApps.createManagedEnvironment', createManagedEnvironment);

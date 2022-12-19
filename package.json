@@ -29,7 +29,7 @@
     "preview": true,
     "activationEvents": [
         "onCommand:containerApps.viewProperties",
-        "onCommand:containerApps.openLogsInPortal",
+        "onCommand:containerApps.openInPortal",
         "onCommand:containerApps.reportIssue",
         "onCommand:containerApps.createContainerApp",
         "onCommand:containerApps.deployImage",
@@ -73,8 +73,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.openLogsInPortal",
-                "title": "%containerApps.openLogsInPortal%",
+                "command": "containerApps.openInPortal",
+                "title": "%containerApps.openInPortal%",
                 "category": "Azure Container Apps"
             },
             {
@@ -177,6 +177,11 @@
                     "group": "z@1"
                 },
                 {
+                    "command": "containerApps.openInPortal",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "z@2"
+                },
+                {
                     "command": "containerApps.createManagedEnvironment",
                     "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /containerAppsEnvironment/i",
                     "group": "2@1"
@@ -265,6 +270,10 @@
             "commandPalette": [
                 {
                     "command": "containerApps.viewProperties",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.openInPortal",
                     "when": "never"
                 }
             ]
