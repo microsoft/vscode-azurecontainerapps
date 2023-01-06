@@ -64,7 +64,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
         containerAppEnvelope.configuration.registries = acrRegistryCredentialsAndSecrets.registries;
         containerAppEnvelope.configuration.secrets = acrRegistryCredentialsAndSecrets.secrets;
     } else {
-        // Docker Hub or other...
+        // Docker Hub or other third party registry...
         if (wizardContext.loginServer && wizardContext.username && wizardContext.secret) {
             const thirdPartyRegistryCredentialsAndSecrets = getThirdPartyCredentialsAndSecrets(wizardContext, containerAppEnvelope);
             containerAppEnvelope.configuration.registries = thirdPartyRegistryCredentialsAndSecrets.registries;

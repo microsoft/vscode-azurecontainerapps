@@ -61,8 +61,9 @@ export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext,
     return { registries, secrets };
 }
 
-// Todo: Revisit and test with different login server formats
-// Do we need a fallback for docker hub?  'index.docker.io'
+// Attempts to extract the base-url from the string while remaining compliant with SDK formatting
+// This may involve removing 'http://' or 'https://' as well as any extraneous /'s and extra content
 function getAcaCompliantLoginServer(loginServer: string): string {
-    return loginServer;
+    const baseUrlMatcher: RegExp = /^(?:https?:\/\/)?(?:[\/]*)?([^\/:]+\.*)/;
+    return loginServer.match(baseUrlMatcher)?.[1] || loginServer;
 }

@@ -5,7 +5,7 @@
 
 import { SubscriptionTreeItemBase } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionContext } from "@microsoft/vscode-azext-dev";
-import { IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { callWithMaskHandling, IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { imageNameUtils } from "../../utils/parseImageNameUtils";
@@ -16,7 +16,7 @@ import { IDeployImageContext } from "./IDeployImageContext";
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
 interface DeployImageToAcaOptionsContract {
     imageName: string;  // Todo: change `imageName` to `image` or vice versa
-    loginServer?: string;  // Todo: verify formatting with Brandon, esp for docker hub
+    loginServer?: string;
     username?: string;
     secret?: string;
 }
@@ -26,8 +26,8 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
     Object.assign(context, subscription);
 
     // test case for docker hub, will remove later
-    deployImageOptions.imageName = 'docker.io/' + deployImageOptions.imageName;
-    deployImageOptions.loginServer = 'index.docker.io';
+    // deployImageOptions.imageName = 'docker.io/' + deployImageOptions.imageName;
+    // deployImageOptions.loginServer = 'https://index.docker.io';
 
     context.registryDomain = imageNameUtils.detectRegistryDomain(deployImageOptions.imageName);
     if (context.registryDomain === acrDomain) {
@@ -42,12 +42,20 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
         secret: deployImageOptions.secret
     });
 
-
-    // Todo: Check how to handle username and secret masking
+    // Mask sensitive data
     if (context.secret) {
         context.valuesToMask.push(context.secret);
     }
+    if (context.username) {
+        context.valuesToMask.push(context.username);
+    }
     context.valuesToMask.push(<string>context.image);
 
-    return deployImage(context, undefined);
+    if (context.secret) {
+        return callWithMaskHandling<void>(() => {
+            return deployImage(context, undefined);
+        }, context.secret);
+    } else {
+        return deployImage(context, undefined);
+    }
 }
