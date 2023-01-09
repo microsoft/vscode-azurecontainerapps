@@ -15,7 +15,7 @@ import { IDeployImageContext } from "./IDeployImageContext";
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
 interface DeployImageToAcaOptionsContract {
-    imageName: string;  // Todo: change `imageName` to `image` or vice versa
+    image: string;
     loginServer?: string;
     username?: string;
     secret?: string;
@@ -23,24 +23,12 @@ interface DeployImageToAcaOptionsContract {
 
 export async function deployImageApi(context: IActionContext & Partial<IDeployImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     const subscription: ISubscriptionContext = (await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context)).subscription;
-    Object.assign(context, subscription);
+    Object.assign(context, subscription, deployImageOptions);
 
-    // test case for docker hub, will remove later
-    // deployImageOptions.imageName = 'docker.io/' + deployImageOptions.imageName;
-    // deployImageOptions.loginServer = 'https://index.docker.io';
-
-    context.registryDomain = imageNameUtils.detectRegistryDomain(deployImageOptions.imageName);
+    context.registryDomain = imageNameUtils.detectRegistryDomain(deployImageOptions.image);
     if (context.registryDomain === acrDomain) {
-        context.registry = await imageNameUtils.getRegistryFromAcrName(<ISubscriptionActionContext>context, deployImageOptions.imageName);
+        context.registry = await imageNameUtils.getRegistryFromAcrName(<ISubscriptionActionContext>context, deployImageOptions.image);
     }
-
-    // Todo: change contract from imageName to image (or vice versa) and just run `Object.assign(context, deployImageOptions)`
-    Object.assign(context, {
-        image: deployImageOptions.imageName,
-        loginServer: deployImageOptions.loginServer,
-        username: deployImageOptions.username,
-        secret: deployImageOptions.secret
-    });
 
     // Mask sensitive data
     if (context.secret) {

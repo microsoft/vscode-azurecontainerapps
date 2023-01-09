@@ -36,7 +36,7 @@ export async function getAcrCredentialsAndSecrets(context: IDeployImageContext, 
 }
 
 export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext, containerAppEnvelope: Required<ContainerApp>): IRegistryCredentialsAndSecrets {
-    const loginServer: string = getAcaCompliantLoginServer(nonNullProp(context, 'loginServer'));
+    const loginServer: string = getSdkCompliantLoginServer(nonNullProp(context, 'loginServer'));
     const passwordSecretRef: string = `${loginServer.replace(/[\.]+/g, '')}-${context.username}`;
 
     // Remove duplicate registries
@@ -63,7 +63,7 @@ export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext,
 
 // Attempts to extract the base-url from the string while remaining compliant with SDK formatting
 // This may involve removing 'http://' or 'https://' as well as any extraneous /'s and extra content
-function getAcaCompliantLoginServer(loginServer: string): string {
+function getSdkCompliantLoginServer(loginServer: string): string {
     const baseUrlMatcher: RegExp = /^(?:https?:\/\/)?(?:[\/]*)?([^\/:]+\.*)/;
     return loginServer.match(baseUrlMatcher)?.[1] || loginServer;
 }
