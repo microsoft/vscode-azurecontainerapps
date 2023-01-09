@@ -31,16 +31,16 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
     }
 
     // Mask sensitive data
-    if (context.secret) {
-        context.valuesToMask.push(context.secret);
+    if (deployImageOptions.secret) {
+        context.valuesToMask.push(deployImageOptions.secret);
     }
-    if (context.username) {
-        context.valuesToMask.push(context.username);
+    if (deployImageOptions.username) {
+        context.valuesToMask.push(deployImageOptions.username);
     }
-    context.valuesToMask.push(<string>context.image);
+    context.valuesToMask.push(deployImageOptions.image);
 
-    if (context.secret) {
-        return callWithMaskHandling<void>(() => deployImage(context, undefined), context.secret);
+    if (deployImageOptions.secret) {
+        return callWithMaskHandling<void>(() => deployImage(context, undefined), deployImageOptions.secret);
     } else {
         return deployImage(context, undefined);
     }
