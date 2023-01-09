@@ -40,9 +40,7 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
     context.valuesToMask.push(<string>context.image);
 
     if (context.secret) {
-        return callWithMaskHandling<void>(() => {
-            return deployImage(context, undefined);
-        }, context.secret);
+        return callWithMaskHandling<void>(() => deployImage(context, undefined), context.secret);
     } else {
         return deployImage(context, undefined);
     }
