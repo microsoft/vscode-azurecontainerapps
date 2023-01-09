@@ -8,7 +8,7 @@ import { ISubscriptionContext } from "@microsoft/vscode-azext-dev";
 import { callWithMaskHandling, IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { imageNameUtils } from "../../utils/parseImageNameUtils";
+import { imageNameUtils } from "../../utils/imageNameUtils";
 import { deployImage } from "./deployImage";
 import { IDeployImageContext } from "./IDeployImageContext";
 
