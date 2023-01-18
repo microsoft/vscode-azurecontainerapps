@@ -269,6 +269,10 @@
             ],
             "commandPalette": [
                 {
+                    "command": "containerApps.disableIngress",
+                    "when": "config.containerApps.enableIngress"
+                },
+                {
                     "command": "containerApps.viewProperties",
                     "when": "never"
                 },
@@ -299,6 +303,11 @@
                             "%containerApps.deleteConfirmation.ClickButton%"
                         ],
                         "default": "EnterName"
+                    },
+                    "containerApps.enableIngress": {
+                        "type": "boolean",
+                        "description": "%containerApps.enableIngress%",
+                        "default": true
                     }
                 }
             }

@@ -11,6 +11,7 @@ import { ext } from '../extensionVariables';
 import { IngressDisabledTreeItem, IngressTreeItem } from '../tree/IngressTreeItem';
 import { localize } from '../utils/localize';
 import { nonNullValueAndProp } from '../utils/nonNull';
+import { updateGlobalSetting } from "../utils/settingsUtils";
 import { EnableIngressStep } from './createContainerApp/EnableIngressStep';
 import { IContainerAppContext } from './createContainerApp/IContainerAppContext';
 import { TargetPortStep } from './createContainerApp/TargetPortStep';
@@ -25,6 +26,7 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
     }
 
     let ingress: Ingress | null = {};
+    const settingKey: string = 'enableIngress';
 
     if (node instanceof IngressTreeItem) {
         // PATCH requires ingress be set to null exclusively to be picked up since undefined means there was no update
@@ -55,11 +57,15 @@ export async function toggleIngress(context: IActionContext, node?: IngressTreeI
                 }
             ],
         };
+        await updateGlobalSetting(settingKey, true);
     }
 
     const name = node.parent.name;
     const working = node instanceof IngressTreeItem ? localize('disabling', 'Disabling ingress for container app "{0}"...', name) : localize('enabling', 'Enabling ingress for container app "{0}"...', name);
     const workCompleted = node instanceof IngressTreeItem ? localize('disableCompleted', 'Disabled ingress for container app "{0}"', name) : localize('enableCompleted', 'Enabled ingress for container app "{0}"', name);
+    if (node instanceof IngressTreeItem) {
+        await updateGlobalSetting(settingKey, false);
+    }
 
     await updateIngressSettings(context, { ingress, node, working, workCompleted });
 }
