@@ -111,7 +111,7 @@ export class ResolvedContainerEnvironmentResource implements ResolvedAppResource
         const proxyTree: ManagedEnvironmentTreeItem = this as unknown as ManagedEnvironmentTreeItem;
         const containerApps = <ContainerAppTreeItem[]>(await proxyTree.loadAllChildren(context));
 
-        const deleteManagedEnvironment: string = localize('deleteManagedEnvironment', 'Delete Container Apps Environment "{0}"', proxyTree.name);
+        const deleteManagedEnvironment: string = localize('deleteManagedEnvironment', 'Delete Container Apps environment "{0}"', proxyTree.name);
 
         const wizardContext: IDeleteManagedEnvironmentWizardContext = {
             activityTitle: deleteManagedEnvironment,
