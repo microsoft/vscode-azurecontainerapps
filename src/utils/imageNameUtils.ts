@@ -5,15 +5,16 @@
 
 import type { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { acrDomain, acrDomainRegExp, dockerHubDomain, dockerHubDomainRegExp, SupportedRegistries } from "../constants";
+import { acrDomain, dockerHubDomain, SupportedRegistries } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 import { localize } from "./localize";
 
 export namespace imageNameUtils {
     export function detectRegistryDomain(imageName: string): SupportedRegistries | undefined {
-        if (acrDomainRegExp.test(imageName)) {
+        const registryName: string = imageName.split('/')[0];
+        if (/\.azurecr\.io$/i.test(registryName)) {
             return acrDomain;
-        } else if (dockerHubDomainRegExp.test(imageName)) {
+        } else if (/^docker\.io$/i.test(registryName)) {
             return dockerHubDomain;
         } else {
             return undefined;
