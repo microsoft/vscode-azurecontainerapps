@@ -37,10 +37,7 @@ export enum ScaleRuleTypes {
 }
 
 export const acrDomain = 'azurecr.io';
-export const acrDomainRegExp = new RegExp(acrDomain, 'i');
-
 export const dockerHubDomain = 'docker.io';
-export const dockerHubDomainRegExp = new RegExp(dockerHubDomain, 'i');
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
