@@ -3,51 +3,62 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { RevisionConstants, rootFilter } from "../constants";
 import { ext } from "../extensionVariables";
-import { ContainerAppTreeItem } from "../tree/ContainerAppTreeItem";
-import { RevisionsTreeItem } from "../tree/RevisionsTreeItem";
+import { ContainerAppModel } from "../tree/ContainerAppItem";
+import { ContainerAppsItem } from "../tree/ContainerAppsBranchDataProvider";
 import { localize } from "../utils/localize";
-import { nonNullValue } from "../utils/nonNull";
+import { pickContainerApp } from "../utils/pickContainerApp";
 import { updateContainerApp } from "./updateContainerApp";
 
-export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppTreeItem | RevisionsTreeItem): Promise<void> {
-    if (!node) {
-        node = await ext.rgApi.pickAppResource<ContainerAppTreeItem>(context, {
-            filter: rootFilter,
-            expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
-        });
-    }
+export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
+    const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
-    if (node instanceof RevisionsTreeItem) {
-        node = node.parent;
-    }
-
-    const picks: IAzureQuickPickItem<string>[] = [RevisionConstants.single, RevisionConstants.multiple];
-    const placeHolder = localize('chooseRevision', 'Choose revision mode');
-
-    for (const pick of picks) {
-        pick.description = pick.data === node.getRevisionMode() ? localize('current', ' current') : undefined;
-    }
-
-    const result = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
-
+    const pickedRevisionMode = await pickRevisionsMode(context, containerApp);
     // only update it if it's actually different
-    if (node.getRevisionMode() !== result.data) {
-        const updating = localize('updatingRevision', 'Updating revision mode of "{0}" to "{1}"...', node.name, result.data);
-        const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', node.name, result.data);
+    if (containerApp.revisionsMode !== pickedRevisionMode) {
+        const updating = localize('updatingRevision', 'Updating revision mode of "{0}" to "{1}"...', containerApp.name, pickedRevisionMode);
+        ext.outputChannel.appendLog(updating);
 
         await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
-            const pNode = nonNullValue(node) as ContainerAppTreeItem;
-            ext.outputChannel.appendLog(updating);
-
-            await updateContainerApp(context, pNode, { configuration: { activeRevisionsMode: result.data } });
-            await node?.parent?.refresh(context);
-
-            void window.showInformationMessage(updated);
-            ext.outputChannel.appendLog(updated);
+            await updateContainerApp(context, subscription, containerApp, { configuration: { activeRevisionsMode: pickedRevisionMode } });
+            // TODO: scoped container app refresh
+            ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         });
+
+        const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', containerApp.name, pickedRevisionMode);
+        void window.showInformationMessage(updated);
+        ext.outputChannel.appendLog(updated);
     }
+}
+
+function getRevisionsModePicks(containerApp: ContainerAppModel): IAzureQuickPickItem<KnownActiveRevisionsMode>[] {
+
+    function appendCurrent(description: string, revisionsMode: KnownActiveRevisionsMode): string {
+        return revisionsMode === containerApp.revisionsMode ? `${description} (current)` : description;
+    }
+
+    return [
+        {
+            label: localize('multiple', 'Multiple'),
+            description: appendCurrent(localize('multipleDesc', 'Several revisions active simultaneously'), KnownActiveRevisionsMode.Multiple),
+            data: KnownActiveRevisionsMode.Multiple,
+        },
+        {
+            label: localize('single', 'Single'),
+            description: appendCurrent(localize('singleDesc', 'One active revision at a time'), KnownActiveRevisionsMode.Single),
+            data: KnownActiveRevisionsMode.Multiple,
+        },
+    ];
+}
+
+async function pickRevisionsMode(context: IActionContext, containerApp: ContainerAppModel): Promise<KnownActiveRevisionsMode> {
+    const placeHolder = localize('chooseRevision', 'Choose revision mode');
+    const result = await context.ui.showQuickPick(getRevisionsModePicks(containerApp), {
+        placeHolder,
+        suppressPersistence: true,
+    });
+    return result.data;
 }

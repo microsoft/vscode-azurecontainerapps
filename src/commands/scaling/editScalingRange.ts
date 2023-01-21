@@ -5,24 +5,22 @@
 
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { rootFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppTreeItem } from "../../tree/ContainerAppTreeItem";
-import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
-import { ScaleTreeItem } from "../../tree/ScaleTreeItem";
+import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../updateContainerApp";
 
-export async function editScalingRange(context: IActionContext, node?: ScaleTreeItem): Promise<void> {
+export async function editScalingRange(context: IActionContext, node?: ScaleItem): Promise<void> {
     if (!node) {
-        node = await ext.rgApi.pickAppResource<ScaleTreeItem>(context, {
-            filter: rootFilter,
-            expectedChildContextValue: new RegExp(ScaleTreeItem.contextValue)
-        });
+        // TODO: pick a container app or a revision from the tree
+        throw new Error('Not implemented yet');
     }
 
+    const scale = node.scale;
+    const containerApp = node.containerApp;
+
     const prompt: string = localize('editScalingRange', 'Set the range of application replicas that get created in response to a scale rule. Set any range within the minimum of 0 and the maximum of 10 replicas');
-    const value: string = `${node.minReplicas}-${node.maxReplicas}`;
+    const value: string = `${scale.minReplicas ?? 0}-${scale.maxReplicas ?? 0}`;
     const range = await context.ui.showInputBox({
         prompt,
         value,
@@ -30,12 +28,11 @@ export async function editScalingRange(context: IActionContext, node?: ScaleTree
     });
 
     const [min, max] = range.split('-').map(range => Number(range));
-    const containerApp = node.parent instanceof RevisionTreeItem ? node.parent.parent.parent as ContainerAppTreeItem : node.parent as ContainerAppTreeItem;
 
     const updating = localize('updatingRevision', 'Updating scale rule setting of "{0}" to min/max replicas of {1}-{2}...', containerApp.name, min, max);
     const updated = localize('updatedRevision', 'Updated scale rule setting of "{0}" to min/max replicas of {1}-{2}.', containerApp.name, min, max);
 
-    const template = containerApp?.data?.template || {};
+    const template = containerApp?.template || {};
     template.scale ||= {};
 
     template.scale.minReplicas = min;
@@ -43,9 +40,11 @@ export async function editScalingRange(context: IActionContext, node?: ScaleTree
 
     await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
         ext.outputChannel.appendLog(updating);
-        await updateContainerApp(context, containerApp, { template })
+        await updateContainerApp(context, node.subscription, containerApp, { template })
 
-        await containerApp?.refresh(context);
+        // TODO: scoped container app refresh
+        ext.state.notifyChildrenChanged(node.containerApp.managedEnvironmentId);
+
         void window.showInformationMessage(updated);
         ext.outputChannel.appendLog(updated);
     });
