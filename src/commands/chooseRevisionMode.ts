@@ -49,7 +49,7 @@ function getRevisionsModePicks(containerApp: ContainerAppModel): IAzureQuickPick
         {
             label: localize('single', 'Single'),
             description: appendCurrent(localize('singleDesc', 'One active revision at a time'), KnownActiveRevisionsMode.Single),
-            data: KnownActiveRevisionsMode.Multiple,
+            data: KnownActiveRevisionsMode.Single,
         },
     ];
 }
