@@ -7,12 +7,13 @@ import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, callWithTelemetryAndErrorHandling, DeleteConfirmationStep, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azext-utils/hostapi.v2";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { IDeletable } from "../commands/deleteNode";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
+import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppsItem, createSubscriptionContext, TreeElementBase } from "./ContainerAppsBranchDataProvider";
@@ -49,6 +50,8 @@ export class ContainerAppItem implements ContainerAppsItem, IDeletable {
         data: this.containerApp,
         label: this.containerApp.name,
     }
+
+    portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
     async getChildren(): Promise<TreeElementBase[]> {
 
