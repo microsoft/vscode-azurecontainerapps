@@ -9,7 +9,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPi
 import { MessageItem, ProgressLocation, window } from "vscode";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
+import { ContainerAppItem, getContainerEnvelopeWithSecrets, refreshContainerApp } from "../../tree/ContainerAppItem";
 import { createSubscriptionContext } from "../../tree/ContainerAppsBranchDataProvider";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
@@ -100,7 +100,8 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
         });
 
         // TODO: scoped container app refresh
-        ext.state.notifyChildrenChanged(containerApp.id);
+        refreshContainerApp(containerApp.id);
+        // ext.state.notifyChildrenChanged(containerApp.id);
     });
 }
 

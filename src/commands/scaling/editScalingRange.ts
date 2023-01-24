@@ -6,6 +6,7 @@
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
+import { refreshContainerApp } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../updateContainerApp";
@@ -43,7 +44,8 @@ export async function editScalingRange(context: IActionContext, node?: ScaleItem
         await updateContainerApp(context, node.subscription, containerApp, { template })
 
         // TODO: scoped container app refresh
-        ext.state.notifyChildrenChanged(node.containerApp.managedEnvironmentId);
+        refreshContainerApp(containerApp.id);
+        // ext.state.notifyChildrenChanged(node.containerApp.managedEnvironmentId);
 
         void window.showInformationMessage(updated);
         ext.outputChannel.appendLog(updated);

@@ -23,6 +23,5 @@ export namespace ext {
     export let rgApiV2: AzureResourcesApi;
 
     export let state: TreeItemStateStore;
-
     export let branchDataProvider: ContainerAppsBranchDataProvider;
 }

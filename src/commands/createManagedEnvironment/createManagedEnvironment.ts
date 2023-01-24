@@ -46,5 +46,5 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create Container Apps environment "{0}"', newManagedEnvName);
     await wizard.execute();
 
-    // TODO: signal a root refresh of the branch data provider
+    ext.branchDataProvider.refresh();
 }
