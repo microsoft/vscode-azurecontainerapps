@@ -23,12 +23,16 @@ import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 
 export function registerCommands(): void {
-    registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
+    // managed environments
     registerCommandWithTreeNodeUnwrapping('containerApps.createManagedEnvironment', createManagedEnvironment);
-    registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteManagedEnvironment', deleteManagedEnvironment);
+
+    // container apps
+    registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
+    registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
+    registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
 
     // ingress
     registerCommandWithTreeNodeUnwrapping('containerApps.enableIngress', enableIngress);
@@ -41,8 +45,6 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.activateRevision', activateRevision);
     registerCommandWithTreeNodeUnwrapping('containerApps.deactivateRevision', deactivateRevision);
     registerCommandWithTreeNodeUnwrapping('containerApps.restartRevision', restartRevision);
-
-    registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
 
     // scaling
     registerCommandWithTreeNodeUnwrapping('containerApps.editScalingRange', editScalingRange);
