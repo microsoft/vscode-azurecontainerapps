@@ -59,13 +59,18 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
 
     // TODO: run with temporary child node
-    wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
-    try {
-        await wizard.execute();
-    } finally {
-        // refresh this node even if create fails because container app provision failure throws an error, but still creates a container app
-        ext.state.notifyChildrenChanged(node?.managedEnvironment.id);
-    }
+    await ext.state.showCreatingChild(
+        node.managedEnvironment.id,
+        localize('creatingContainerApp', 'Creating Container App "{0}"...', newContainerAppName),
+        async () => {
+            wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
+            try {
+                await wizard.execute();
+            } finally {
+                // refresh this node even if create fails because container app provision failure throws an error, but still creates a container app
+                // ext.state.notifyChildrenChanged(node.managedEnvironment.id);
+            }
+        });
 
     const createdContainerApp = nonNullProp(wizardContext, 'containerApp');
     void showContainerAppCreated(createdContainerApp);

@@ -160,7 +160,11 @@ export class ContainerAppItem implements ContainerAppsItem, IDeletable {
         if (!context.suppressPrompt) {
             await wizard.prompt();
         }
-        await wizard.execute();
+
+        await ext.state.runWithTemporaryDescription(this.containerApp.id, localize('deleting', 'Deleting...'), async () => {
+            await wizard.execute();
+        });
+        ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);
     }
 }
 

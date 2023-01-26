@@ -43,7 +43,8 @@ export async function deleteManagedEnvironment(context: IActionContext & { suppr
         await wizard.prompt();
     }
 
-    await wizard.execute();
-
-    ext.branchDataProvider.refresh();
+    await ext.state.runWithTemporaryDescription(managedEnvironment.id, localize('deleting', 'Deleting...'), async () => {
+        await wizard.execute();
+        ext.branchDataProvider.refresh();
+    });
 }
