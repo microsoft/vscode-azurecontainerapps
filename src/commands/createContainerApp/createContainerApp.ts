@@ -58,7 +58,6 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     await wizard.prompt();
     const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
 
-    // TODO: run with temporary child node
     await ext.state.showCreatingChild(
         node.managedEnvironment.id,
         localize('creatingContainerApp', 'Creating Container App "{0}"...', newContainerAppName),

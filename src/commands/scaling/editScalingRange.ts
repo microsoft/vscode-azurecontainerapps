@@ -3,23 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { IActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { refreshContainerApp } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../updateContainerApp";
+import { getContainerAppAndRevision } from "./addScaleRule/addScaleRule";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleItem): Promise<void> {
-    if (!node) {
-        // TODO: pick a container app or a revision from the tree
-        throw new Error('Not implemented yet');
-    }
+    const { containerApp, revision, subscription } = node ?? await getContainerAppAndRevision(context);
 
-    const scale = node.scale;
-    const containerApp = node.containerApp;
-
+    const scale = nonNullValue(revision?.template?.scale);
     const prompt: string = localize('editScalingRange', 'Set the range of application replicas that get created in response to a scale rule. Set any range within the minimum of 0 and the maximum of 10 replicas');
     const value: string = `${scale.minReplicas ?? 0}-${scale.maxReplicas ?? 0}`;
     const range = await context.ui.showInputBox({
@@ -41,12 +37,8 @@ export async function editScalingRange(context: IActionContext, node?: ScaleItem
 
     await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
         ext.outputChannel.appendLog(updating);
-        await updateContainerApp(context, node.subscription, containerApp, { template })
-
-        // TODO: scoped container app refresh
+        await updateContainerApp(context, subscription, containerApp, { template })
         refreshContainerApp(containerApp.id);
-        // ext.state.notifyChildrenChanged(node.containerApp.managedEnvironmentId);
-
         void window.showInformationMessage(updated);
         ext.outputChannel.appendLog(updated);
     });
@@ -69,4 +61,3 @@ async function validateInput(range: string | undefined): Promise<string | undefi
 
     return undefined;
 }
-

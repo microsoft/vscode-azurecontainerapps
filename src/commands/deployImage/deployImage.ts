@@ -99,9 +99,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
             void showContainerAppCreated(updatedContainerApp, true);
         });
 
-        // TODO: scoped container app refresh
         refreshContainerApp(containerApp.id);
-        // ext.state.notifyChildrenChanged(containerApp.id);
     });
 }
 

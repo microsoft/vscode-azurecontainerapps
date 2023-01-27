@@ -7,6 +7,7 @@ import { AzExtResourceType, azureResourceExperience, IActionContext } from "@mic
 import { ext } from "../extensionVariables";
 import { ContainerAppItem } from "../tree/ContainerAppItem";
 
+// TODO: support creating a new container app from picker
 export async function pickContainerApp(context: IActionContext): Promise<ContainerAppItem> {
     return await azureResourceExperience<ContainerAppItem>(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, AzExtResourceType.ContainerAppsEnvironment, {
         include: ContainerAppItem.contextValueRegExp,

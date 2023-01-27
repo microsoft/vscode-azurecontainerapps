@@ -24,10 +24,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
 
         await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
             await updateContainerApp(context, subscription, containerApp, { configuration: { activeRevisionsMode: pickedRevisionMode } });
-            // TODO: scoped container app refresh
             refreshContainerApp(containerApp.id);
-
-            // ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         });
 
         const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', containerApp.name, pickedRevisionMode);
