@@ -23,7 +23,7 @@ export interface IDeployImageContext extends ISubscriptionActionContext {
     environmentVariables?: EnvironmentVar[];
 
     // Registry credentials
-    loginServer?: string;
+    registryName?: string;
     username?: string;
     secret?: string;
 }

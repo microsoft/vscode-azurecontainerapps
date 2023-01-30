@@ -7,28 +7,27 @@ import type { ContainerRegistryManagementClient, ContainerRegistryManagementMode
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, SupportedRegistries } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
-import { localize } from "./localize";
 
-export namespace imageNameUtils {
-    export function detectRegistryDomain(imageName: string): SupportedRegistries | undefined {
-        const registryName: string = imageName.split('/')[0];
-        if (/\.azurecr\.io$/i.test(registryName)) {
-            return acrDomain;
-        } else if (/^docker\.io$/i.test(registryName)) {
-            return dockerHubDomain;
-        } else {
-            return undefined;
-        }
+/**
+ *
+ * @param registryName When parsed from a full image name, everything before the first slash
+ */
+export function detectRegistryDomain(registryName: string): SupportedRegistries | undefined {
+    if (/\.azurecr\.io$/i.test(registryName)) {
+        return acrDomain;
+    } else if (/^docker\.io$/i.test(registryName)) {
+        return dockerHubDomain;
+    } else {
+        return undefined;
     }
+}
 
-    export async function getRegistryFromAcrName(context: ISubscriptionActionContext, acrImageName: string): Promise<ContainerRegistryManagementModels.Registry> {
-        const args: string[] = acrImageName.split('/');
-        if (args.length !== 2) {
-            throw new Error(localize('invalidAcrImageName', 'Invalid Azure Container Registry image name.'));
-        }
-
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const registries = await client.registries.list();
-        return registries.find(r => r.loginServer === args[0]) as ContainerRegistryManagementModels.Registry;
-    }
+/**
+ *
+ * @param acrName When parsed from a full ACR image name, everything before the first slash
+ */
+export async function getRegistryFromAcrName(context: ISubscriptionActionContext, acrName: string): Promise<ContainerRegistryManagementModels.Registry> {
+    const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+    const registries = await client.registries.list();
+    return registries.find(r => r.loginServer === acrName) as ContainerRegistryManagementModels.Registry;
 }

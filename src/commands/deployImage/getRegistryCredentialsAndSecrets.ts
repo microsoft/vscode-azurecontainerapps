@@ -5,6 +5,7 @@
 
 import type { ContainerApp, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { dockerHubDomain, dockerHubRegistry } from "../../constants";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 import { IDeployImageContext } from "./IDeployImageContext";
 
@@ -36,7 +37,8 @@ export async function getAcrCredentialsAndSecrets(context: IDeployImageContext, 
 }
 
 export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext, containerAppEnvelope: Required<ContainerApp>): IRegistryCredentialsAndSecrets {
-    const loginServer: string = getSdkCompliantLoginServer(nonNullProp(context, 'loginServer'));
+    // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
+    const loginServer: string = (context.registryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
     const passwordSecretRef: string = `${loginServer.replace(/[\.]+/g, '')}-${context.username}`;
 
     // Remove duplicate registries
@@ -59,11 +61,4 @@ export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext,
     );
 
     return { registries, secrets };
-}
-
-// Attempts to extract the base-url from the string while remaining compliant with SDK formatting
-// This may involve removing 'http://' or 'https://' as well as any extraneous /'s and extra content
-function getSdkCompliantLoginServer(loginServer: string): string {
-    const baseUrlMatcher: RegExp = /^(?:https?:\/\/)?(?:[\/]*)?([^\/:]+\.*)/;
-    return loginServer.match(baseUrlMatcher)?.[1] || loginServer;
 }
