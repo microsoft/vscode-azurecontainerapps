@@ -9,7 +9,7 @@ import { settingUtils } from "../utils/settingUtils";
 
 export async function createActivityContext(): Promise<ExecuteActivityContext> {
     return {
-        registerActivity: async (activity) => ext.rgApi.registerActivity(activity),
+        registerActivity: async (activity) => ext.rgApiV2.activity.registerActivity(activity),
         suppressNotification: await settingUtils.getWorkspaceSetting('suppressActivityNotifications', undefined, 'azureResourceGroups'),
     };
 }

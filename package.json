@@ -7,7 +7,7 @@
     "icon": "resources/azure-containerapps.png",
     "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
     "engines": {
-        "vscode": "^1.66.0"
+        "vscode": "^1.74.0"
     },
     "repository": {
         "type": "git",
@@ -27,31 +27,17 @@
         "multi-root ready"
     ],
     "preview": true,
-    "activationEvents": [
-        "onCommand:containerApps.viewProperties",
-        "onCommand:containerApps.openInPortal",
-        "onCommand:containerApps.reportIssue",
-        "onCommand:containerApps.createContainerApp",
-        "onCommand:containerApps.deployImage",
-        "onCommand:containerApps.deleteManagedEnvironment",
-        "onCommand:containerApps.deleteContainerApp",
-        "onCommand:containerApps.disableIngress",
-        "onCommand:containerApps.enableIngress",
-        "onCommand:containerApps.toggleVisibility",
-        "onCommand:containerApps.editTargetPort",
-        "onCommand:containerApps.chooseRevisionMode",
-        "onCommand:containerApps.activateRevision",
-        "onCommand:containerApps.deactivateRevision",
-        "onCommand:containerApps.restartRevision",
-        "onCommand:containerApps.createManagedEnvironment",
-        "onCommand:containerApps.browse",
-        "onCommand:containerApps.openConsoleInPortal",
-        "onCommand:containerApps.editScalingRange",
-        "onCommand:containerApps.addScaleRule"
-    ],
+    "activationEvents": [],
     "main": "./main.js",
     "contributes": {
         "x-azResources": {
+            "azure": {
+                "branches": [
+                    {
+                        "type": "ContainerAppsEnvironment"
+                    }
+                ]
+            },
             "activation": {
                 "onResolve": [
                     "microsoft.app/managedenvironments"
@@ -67,16 +53,6 @@
             ]
         },
         "commands": [
-            {
-                "command": "containerApps.viewProperties",
-                "title": "%containerApps.viewProperties%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.openInPortal",
-                "title": "%containerApps.openInPortal%",
-                "category": "Azure Container Apps"
-            },
             {
                 "command": "containerApps.reportIssue",
                 "title": "%containerApps.reportIssue%",
@@ -172,16 +148,6 @@
         "menus": {
             "view/item/context": [
                 {
-                    "command": "containerApps.viewProperties",
-                    "when": "view == azureResourceGroups && viewItem =~ /azResource/i && viewItem =~ /^(?!.*containerEnvironment).*/i",
-                    "group": "z@1"
-                },
-                {
-                    "command": "containerApps.openInPortal",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
-                    "group": "z@2"
-                },
-                {
                     "command": "containerApps.createManagedEnvironment",
                     "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /containerAppsEnvironment/i",
                     "group": "2@1"
@@ -266,20 +232,6 @@
                     "when": "view == azureResourceGroups && viewItem =~ /scaleRules/i",
                     "group": "1@1"
                 }
-            ],
-            "commandPalette": [
-                {
-                    "command": "containerApps.disableIngress",
-                    "when": "config.containerApps.enableIngress"
-                },
-                {
-                    "command": "containerApps.viewProperties",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.openInPortal",
-                    "when": "never"
-                }
             ]
         },
         "configuration": [
@@ -336,7 +288,7 @@
     },
     "devDependencies": {
         "@microsoft/eslint-config-azuretools": "^0.1.0",
-        "@microsoft/vscode-azext-dev": "^0.1.2",
+        "@microsoft/vscode-azext-dev": "^0.1.5",
         "@types/fs-extra": "^8.1.1",
         "@types/git-url-parse": "^9.0.0",
         "@types/gulp": "^4.0.6",
@@ -354,8 +306,8 @@
         "mocha": "^10.1.0",
         "mocha-junit-reporter": "^2.0.0",
         "mocha-multi-reporters": "^1.1.7",
-        "ts-node": "^7.0.1",
-        "typescript": "^4.3.5",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.9.4",
         "vsce": "^1.87.1",
         "vscode-test": "^1.5.2",
         "webpack": "^5.28.0",
@@ -368,8 +320,8 @@
         "@azure/arm-resources": "^4.2.2",
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/ms-rest-js": "^2.2.1",
-        "@microsoft/vscode-azext-azureutils": "^0.3.4",
-        "@microsoft/vscode-azext-utils": "^0.3.14",
+        "@microsoft/vscode-azext-azureutils": "^0.3.7",
+        "@microsoft/vscode-azext-utils": "^0.4.0",
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",
         "open": "^8.0.4",

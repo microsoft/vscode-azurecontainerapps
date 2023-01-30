@@ -19,15 +19,15 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         const adding = localize('addingScaleRule', 'Adding {0} rule "{1}" to "{2}"...', context.ruleType, context.ruleName, context.containerApp.name);
         const added = localize('addedScaleRule', 'Successfully added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
 
-        const template: Template = context.containerApp.data.template || {};
-        template.scale = context.scale.data || {};
-        template.scale.rules = context.scaleRuleGroup.data || [];
+        const template: Template = context.containerApp.template || {};
+        template.scale = context.scale || {};
+        template.scale.rules = context.scaleRules || [];
 
         const scaleRule: ScaleRule = this.buildRule(context);
         this.integrateRule(context, template.scale.rules, scaleRule);
 
         ext.outputChannel.appendLog(adding);
-        await updateContainerApp(context, context.containerApp, { template });
+        await updateContainerApp(context, context.subscription, context.containerApp, { template });
         context.scaleRule = scaleRule;
         void window.showInformationMessage(added);
         ext.outputChannel.appendLog(added);
