@@ -10,7 +10,7 @@ import { pickContainerApp } from "../../utils/pickContainerApp";
 import { updateIngressSettings } from "./updateIngressSettings";
 
 export async function disableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
-    const { subscription, containerApp } = node ??= await pickContainerApp(context);
+    const { subscription, containerApp } = node ??= await pickContainerApp(context, true);
 
     await updateIngressSettings(context, {
         ingress: null,
