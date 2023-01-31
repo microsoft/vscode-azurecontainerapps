@@ -9,7 +9,6 @@ import { acrDomain, dockerHubDomain, SupportedRegistries } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 
 /**
- *
  * @param registryName When parsed from a full image name, everything before the first slash
  */
 export function detectRegistryDomain(registryName: string): SupportedRegistries | undefined {
@@ -23,7 +22,6 @@ export function detectRegistryDomain(registryName: string): SupportedRegistries 
 }
 
 /**
- *
  * @param acrName When parsed from a full ACR image name, everything before the first slash
  */
 export async function getRegistryFromAcrName(context: ISubscriptionActionContext, acrName: string): Promise<ContainerRegistryManagementModels.Registry> {
