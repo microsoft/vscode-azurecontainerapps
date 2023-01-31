@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, Dapr } from "@azure/arm-appcontainers";
-import { ViewPropertiesModel } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createGenericItem } from "../utils/GenericItem";
 import { localize } from "../utils/localize";

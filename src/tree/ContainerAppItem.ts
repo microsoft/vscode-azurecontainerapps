@@ -6,7 +6,7 @@
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, callWithTelemetryAndErrorHandling, DeleteConfirmationStep, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { EventEmitter, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";

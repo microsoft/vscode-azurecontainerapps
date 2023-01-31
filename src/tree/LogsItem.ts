@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp } from "@azure/arm-appcontainers";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { createGenericItem } from "../utils/GenericItem";

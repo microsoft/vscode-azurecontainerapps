@@ -9,7 +9,7 @@ import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsig
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
 import { IActionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { createSubscriptionContext } from "../tree/ContainerAppsBranchDataProvider";
 
 // Lazy-load @azure packages to improve startup performance.

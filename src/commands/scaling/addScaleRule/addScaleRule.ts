@@ -6,7 +6,7 @@
 import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, IActionContext, IAzureQuickPickItem, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";

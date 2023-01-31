@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { OpenInPortalOptions } from "@microsoft/vscode-azext-azureutils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as vscode from 'vscode';
 
 // TODO move to shared package

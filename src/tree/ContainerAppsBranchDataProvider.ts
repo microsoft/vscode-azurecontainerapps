@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzExtServiceClientCredentials, callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { AzureResource, AzureResourceBranchDataProvider, AzureSubscription, ResourceModelBase, ViewPropertiesModel } from '@microsoft/vscode-azext-utils/hostapi.v2';
+import { AzureResource, AzureResourceBranchDataProvider, AzureSubscription, ResourceModelBase, ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { ext } from '../extensionVariables';
 import { localize } from '../utils/localize';

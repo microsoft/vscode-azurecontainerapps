@@ -3,7 +3,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzExtResourceType, azureResourceExperience, IActionContext } from "@microsoft/vscode-azext-utils";
+import { azureResourceExperience, IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzExtResourceType } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../extensionVariables";
 import { ManagedEnvironmentItem } from "../tree/ManagedEnvironmentItem";
 

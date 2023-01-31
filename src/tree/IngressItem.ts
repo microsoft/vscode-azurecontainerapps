@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, Ingress } from "@azure/arm-appcontainers";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { azResourceContextValue, IngressConstants } from "../constants";
 import { createGenericItem } from "../utils/GenericItem";
