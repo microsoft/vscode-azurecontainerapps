@@ -5,7 +5,7 @@
 
 import { Scale, ScaleRule } from "@azure/arm-appcontainers";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ContainerAppModel } from "../../../tree/ContainerAppItem";
 
 export interface IAddScaleRuleWizardContext extends IActionContext {

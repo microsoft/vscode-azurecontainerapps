@@ -6,7 +6,7 @@
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { createSubscriptionContext } from "../tree/ContainerAppsBranchDataProvider";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 

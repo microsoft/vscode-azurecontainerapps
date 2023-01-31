@@ -5,7 +5,7 @@
 
 import { IAzExtOutputChannel, IExperimentationServiceAdapter } from "@microsoft/vscode-azext-utils";
 import { AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
-import { AzureResourcesApi } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
 import { ExtensionContext } from "vscode";
 import { ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
 import { TreeItemStateStore } from "./tree/TreeItemState";
@@ -20,7 +20,7 @@ export namespace ext {
     export const prefix: string = 'containerApps';
     export let experimentationService: IExperimentationServiceAdapter;
     export let rgApi: AzureHostExtensionApi;
-    export let rgApiV2: AzureResourcesApi;
+    export let rgApiV2: AzureResourcesExtensionApi;
 
     export let state: TreeItemStateStore;
     export let branchDataProvider: ContainerAppsBranchDataProvider;

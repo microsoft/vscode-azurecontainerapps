@@ -5,7 +5,7 @@
 
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
