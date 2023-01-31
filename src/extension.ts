@@ -6,11 +6,11 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { AzExtResourceType, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { registerCommands } from './commands/registerCommands';
 import { ext } from './extensionVariables';
-import { getResourceGroupsApi } from './getExtensionApi';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { TreeItemStateStore } from './tree/TreeItemState';
 
@@ -31,7 +31,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         ext.experimentationService = await createExperimentationService(context);
 
         ext.state = new TreeItemStateStore();
-        ext.rgApiV2 = await getResourceGroupsApi();
+        ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
         ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
     });

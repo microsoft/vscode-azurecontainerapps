@@ -5,7 +5,7 @@
 
 import { Ingress } from "@azure/arm-appcontainers";
 import { AzureWizard, IActionContext, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 import { ContainerAppsItem, createSubscriptionContext } from "../../tree/ContainerAppsBranchDataProvider";
 import { localize } from '../../utils/localize';

@@ -5,7 +5,7 @@
 
 import { KnownRevisionProvisioningState, Revision } from "@azure/arm-appcontainers";
 import { nonNullProp, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../utils/localize";
 import { ContainerAppModel } from "./ContainerAppItem";

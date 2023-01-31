@@ -5,7 +5,7 @@
 
 import { Ingress } from "@azure/arm-appcontainers";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";

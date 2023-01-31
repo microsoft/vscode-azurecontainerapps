@@ -5,7 +5,7 @@
 
 import { Revision, ScaleRule } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
 import { ContainerAppModel } from "../ContainerAppItem";

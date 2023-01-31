@@ -5,7 +5,7 @@
 
 import { Revision, Scale } from "@azure/arm-appcontainers";
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azext-utils/hostapi.v2";
+import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createGenericItem } from "../../utils/GenericItem";
 import { localize } from "../../utils/localize";
