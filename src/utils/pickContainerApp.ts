@@ -9,10 +9,9 @@ import { ext } from "../extensionVariables";
 import { ContainerAppItem } from "../tree/ContainerAppItem";
 
 // TODO: support creating a new container app from picker
-export async function pickContainerApp(context: IActionContext, excludePick: boolean): Promise<ContainerAppItem> {
-    const doNotInclude: boolean = excludePick && !ContainerAppItem.ingressEnabled;
+export async function pickContainerApp(context: IActionContext, exclude?: string | RegExp | (string | RegExp)[]): Promise<ContainerAppItem> {
     return await azureResourceExperience<ContainerAppItem>(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, AzExtResourceType.ContainerAppsEnvironment, {
         include: ContainerAppItem.contextValueRegExp,
-        exclude: doNotInclude ? ContainerAppItem.contextValueRegExp : undefined,
+        exclude,
     });
 }

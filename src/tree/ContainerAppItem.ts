@@ -106,11 +106,12 @@ export class ContainerAppItem implements ContainerAppsItem, IDeletable {
     }
 
     getTreeItem(): TreeItem {
+        const ingressContext = `ingress:${isIngressEnabled(this.containerApp) ? 'enabled' : 'disabled'}`;
         return {
             id: this.id,
             label: nonNullProp(this.containerApp, 'name'),
             iconPath: treeUtils.getIconPath('azure-containerapps'),
-            contextValue: `containerApp|revisionmode:${this.containerApp.revisionsMode}`,
+            contextValue: `containerApp|revisionmode:${this.containerApp.revisionsMode};${ingressContext}`,
             description: this.containerApp.provisioningState === 'Succeeded' ? undefined : this.containerApp.provisioningState,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
