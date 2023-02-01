@@ -26,7 +26,7 @@
         "Azure",
         "multi-root ready"
     ],
-    "browser": "./dist/web/azure-resources.js",
+    "browser": "./dist/web/extension.bundle.js",
     "preview": true,
     "activationEvents": [],
     "main": "./main.js",
@@ -321,7 +321,8 @@
         "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
         "@microsoft/vscode-azext-azureutils": "file:../vscode-azuretools/azure/microsoft-vscode-azext-azureutils-0.4.0.tgz",
-        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-0.4.0.tgz",
+        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-0.4.1-alpha.0.tgz",
+        "@microsoft/vscode-azureresources-api": "^2.0.2",
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",
         "semver": "^7.3.5",

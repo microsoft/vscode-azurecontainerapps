@@ -7,7 +7,6 @@
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
-import { AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { registerCommands } from './commands/registerCommands';
@@ -15,7 +14,7 @@ import { ext } from './extensionVariables';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { TreeItemStateStore } from './tree/TreeItemState';
 
-export async function activate(context: vscode.ExtensionContext, _perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
+export async function activate(context: vscode.ExtensionContext, _perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<void> {
     ext.context = context;
     ext.ignoreBundle = ignoreBundle;
     ext.outputChannel = createAzExtOutputChannel('Azure Container Apps', ext.prefix);
@@ -29,6 +28,7 @@ export async function activate(context: vscode.ExtensionContext, _perfStats: { l
         // activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
         registerCommands();
+        // TODO Turn experimentation service back on
         // ext.experimentationService = await createExperimentationService(context);
 
         ext.state = new TreeItemStateStore();

@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, callWithTelemetryAndErrorHandling, DeleteConfirmationStep, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { EventEmitter, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
@@ -17,8 +17,8 @@ import { createContainerAppsAPIClient, createContainerAppsClient } from "../util
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppsItem, createSubscriptionContext, TreeElementBase } from "./ContainerAppsBranchDataProvider";
-import { createDaprDisabledItem, DaprEnabledItem } from "./DaprItem";
+import { ContainerAppsItem, TreeElementBase, createSubscriptionContext } from "./ContainerAppsBranchDataProvider";
+import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressItem } from "./IngressItem";
 import { LogsItem } from "./LogsItem";
 import { RevisionsItem } from "./RevisionsItem";
