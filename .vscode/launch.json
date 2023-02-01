@@ -99,6 +99,27 @@
                 "DEBUG_WEBPACK": "1",
                 "ENABLE_LONG_RUNNING_TESTS": ""
             }
+        },
+        {
+            "name": "Launch Extension Web (webpack)",
+            "type": "extensionHost",
+            "request": "launch",
+            "debugWebWorkerHost": true,
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureresourcegroups",
+                "--extensionDevelopmentKind=web"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/dist/web/**/*.js"
+            ],
+            // "preLaunchTask": "npm: webpack",
+            "env": {
+                "DEBUGTELEMETRY": "v",
+                "NODE_DEBUG": "",
+                "DEBUG_WEBPACK": "1"
+            }
         }
     ]
 }

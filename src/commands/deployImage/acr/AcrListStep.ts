@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
+import { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
@@ -29,9 +30,9 @@ export class AcrListStep extends AzureWizardPromptStep<IDeployImageContext> {
         return undefined;
     }
 
-    public async getPicks(context: IDeployImageContext): Promise<IAzureQuickPickItem<ContainerRegistryManagementModels.Registry>[]> {
+    public async getPicks(context: IDeployImageContext): Promise<IAzureQuickPickItem<Registry>[]> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const registries = await client.registries.list();
+        const registries = await uiUtils.listAllIterator(client.registries.list());
         return registries.map((r) => { return { label: nonNullProp(r, 'name'), data: r, description: r.loginServer } });
     }
 }

@@ -23,7 +23,7 @@ export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IContaine
         registry.adminUserEnabled = true;
 
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const updatedRegistry = await client.registries.update(getResourceGroupFromId(nonNullProp(registry, 'id')), nonNullProp(registry, 'name'), registry);
+        const updatedRegistry = await client.registries.beginUpdateAndWait(getResourceGroupFromId(nonNullProp(registry, 'id')), nonNullProp(registry, 'name'), registry);
 
         if (!updatedRegistry.adminUserEnabled) {
             throw new Error(localize('failedToUpdate', 'Failed to enable admin user for registry "{0}". Go to the portal to manually update.', registry.name));

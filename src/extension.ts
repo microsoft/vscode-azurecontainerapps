@@ -6,7 +6,8 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { registerCommands } from './commands/registerCommands';
@@ -14,21 +15,21 @@ import { ext } from './extensionVariables';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { TreeItemStateStore } from './tree/TreeItemState';
 
-export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<void> {
+export async function activate(context: vscode.ExtensionContext, _perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
     ext.context = context;
     ext.ignoreBundle = ignoreBundle;
     ext.outputChannel = createAzExtOutputChannel('Azure Container Apps', ext.prefix);
     context.subscriptions.push(ext.outputChannel);
 
-    registerUIExtensionVariables(ext);
+    await registerUIExtensionVariables(ext);
     registerAzureUtilsExtensionVariables(ext);
 
     await callWithTelemetryAndErrorHandling('containerApps.activate', async (activateContext: IActionContext) => {
         activateContext.telemetry.properties.isActivationEvent = 'true';
-        activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
+        // activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
         registerCommands();
-        ext.experimentationService = await createExperimentationService(context);
+        // ext.experimentationService = await createExperimentationService(context);
 
         ext.state = new TreeItemStateStore();
         ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');
@@ -38,5 +39,5 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export function deactivateInternal(): void {
+export function deactivate(): void {
 }
