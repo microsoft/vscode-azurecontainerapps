@@ -3,16 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRule } from "@azure/arm-appcontainers";
+import { Scale, ScaleRule } from "@azure/arm-appcontainers";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
-import { ContainerAppTreeItem } from "../../../tree/ContainerAppTreeItem";
-import { ScaleRuleGroupTreeItem } from "../../../tree/ScaleRuleGroupTreeItem";
-import { ScaleTreeItem } from "../../../tree/ScaleTreeItem";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { ContainerAppModel } from "../../../tree/ContainerAppItem";
 
 export interface IAddScaleRuleWizardContext extends IActionContext {
-    containerApp: ContainerAppTreeItem;
-    scale: ScaleTreeItem;
-    scaleRuleGroup: ScaleRuleGroupTreeItem;
+    subscription: AzureSubscription;
+    containerApp: ContainerAppModel;
+    scale: Scale;
+    scaleRules: ScaleRule[];
 
     // Base Rule Properties
     ruleName?: string;

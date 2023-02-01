@@ -8,9 +8,16 @@ import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } 
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
+import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { createSubscriptionContext } from "../tree/ContainerAppsBranchDataProvider";
 
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript
+
+export async function createContainerAppsClient(context: IActionContext, subscription: AzureSubscription): Promise<ContainerAppsAPIClient> {
+    return createContainerAppsAPIClient([context, createSubscriptionContext(subscription)]);
+}
 
 export async function createContainerAppsAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
     return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient)

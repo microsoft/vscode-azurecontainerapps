@@ -4,15 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
-import { ContainerAppTreeItem } from "../tree/ContainerAppTreeItem";
+import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
+import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { createSubscriptionContext } from "../tree/ContainerAppsBranchDataProvider";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 
-export async function updateContainerApp(context: IActionContext, node: ContainerAppTreeItem, updatedSetting: Omit<ContainerApp, 'location'>): Promise<void> {
-    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
-    const resourceGroupName = node.resourceGroupName;
-    const name = node.name;
-    const updatedApp: ContainerApp = { ...updatedSetting, location: node.data.location };
+export async function updateContainerApp(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerApp, updatedSetting: Omit<ContainerApp, 'location'>): Promise<void> {
+    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(subscription)]);
+    const resourceGroupName = getResourceGroupFromId(nonNullProp(containerApp, 'id'));
+    const name = nonNullProp(containerApp, 'name');
+    const updatedApp: ContainerApp = { ...updatedSetting, location: containerApp.location };
 
     await client.containerApps.beginUpdateAndWait(resourceGroupName, name, updatedApp);
 }

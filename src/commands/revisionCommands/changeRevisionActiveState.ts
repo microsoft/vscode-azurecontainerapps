@@ -5,45 +5,28 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { rootFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppTreeItem } from '../../tree/ContainerAppTreeItem';
-import { RevisionTreeItem } from "../../tree/RevisionTreeItem";
-import { createContainerAppsAPIClient } from "../../utils/azureClients";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { RevisionItem } from "../../tree/RevisionItem";
+import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { pickContainerApp } from "../../utils/pickContainerApp";
 
-export async function changeRevisionActiveState(context: IActionContext, command: 'activate' | 'deactivate' | 'restart', node?: ContainerAppTreeItem | RevisionTreeItem): Promise<void> {
-    if (!node) {
-        node = await ext.rgApi.pickAppResource<ContainerAppTreeItem | RevisionTreeItem>(context, {
-            filter: rootFilter,
-            expectedChildContextValue: ContainerAppTreeItem.contextValueRegExp
-        });
-    }
+export async function executeRevisionOperation(context: IActionContext, node: ContainerAppItem | RevisionItem | undefined, operation: RevisionOperation): Promise<void> {
+    const item = node ?? await pickContainerApp(context);
 
-    const containerAppName: string = node instanceof RevisionTreeItem ? node.parent.parent.name : node.name;
-    const revisionName: string = node instanceof RevisionTreeItem ? node.name : nonNullProp(node.data, 'latestRevisionName');
-    const resourceGroupName: string = node instanceof RevisionTreeItem ? node.parent.parent.resourceGroupName : node.resourceGroupName;
-
-    const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, node]);
-
-    const temporaryDescriptions = {
-        'activate': localize('activating', 'Activating...'),
-        'deactivate': localize('deactivating', 'Deactivating...'),
-        'restart': localize('restarting', 'Restarting...'),
-    }
-    await node.runWithTemporaryDescription(context, temporaryDescriptions[command], async () => {
-        switch (command) {
-            case 'activate':
-                await appClient.containerAppsRevisions.activateRevision(resourceGroupName, containerAppName, revisionName);
-                break;
-            case 'deactivate':
-                await appClient.containerAppsRevisions.deactivateRevision(resourceGroupName, containerAppName, revisionName);
-                break;
-            case 'restart':
-                await appClient.containerAppsRevisions.restartRevision(resourceGroupName, containerAppName, revisionName);
-                break;
-        }
+    await ext.state.runWithTemporaryDescription(item.id, revisionOperationDescriptions[operation], async () => {
+        const appClient: ContainerAppsAPIClient = await createContainerAppsClient(context, item.subscription);
+        const revisionName: string = item instanceof RevisionItem ? nonNullProp(item.revision, 'name') : nonNullProp(item.containerApp, 'latestRevisionName');
+        await appClient.containerAppsRevisions[operation](item.containerApp.resourceGroup, item.containerApp.name, revisionName);
+        ext.state.notifyChildrenChanged(item.containerApp.id);
     });
-
-    await node.refresh(context);
 }
+
+const revisionOperationDescriptions = {
+    activateRevision: localize('activating', 'Activating...'),
+    deactivateRevision: localize('deactivating', 'Deactivating...'),
+    restartRevision: localize('restarting', 'Restarting...'),
+} satisfies Partial<Record<keyof ContainerAppsAPIClient['containerAppsRevisions'], string>>;
+
+export type RevisionOperation = keyof typeof revisionOperationDescriptions;

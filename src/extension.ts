@@ -6,17 +6,15 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
-import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
+import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
-import { revealTreeItem } from './commands/api/revealTreeItem';
 import { registerCommands } from './commands/registerCommands';
-import { managedEnvironmentsAppProvider } from './constants';
-import { ContainerAppsResolver } from './ContainerAppsResolver';
 import { ext } from './extensionVariables';
-import { getResourceGroupsApi } from './getExtensionApi';
+import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
+import { TreeItemStateStore } from './tree/TreeItemState';
 
-export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
+export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<void> {
     ext.context = context;
     ext.ignoreBundle = ignoreBundle;
     ext.outputChannel = createAzExtOutputChannel('Azure Container Apps', ext.prefix);
@@ -32,14 +30,11 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommands();
         ext.experimentationService = await createExperimentationService(context);
 
-        ext.rgApi = await getResourceGroupsApi();
-        ext.rgApi.registerApplicationResourceResolver(managedEnvironmentsAppProvider, new ContainerAppsResolver());
+        ext.state = new TreeItemStateStore();
+        ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');
+        ext.branchDataProvider = new ContainerAppsBranchDataProvider();
+        ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
     });
-
-    return createApiProvider([<AzureExtensionApi>{
-        revealTreeItem,
-        apiVersion: '1.0.0'
-    }]);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

@@ -31,8 +31,8 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppCon
         name = name ? name.trim() : '';
         // to prevent showing an error when the character types the first letter
 
-        const { minLength, maxLength } = { minLength: 2, maxLength: 20 };
-        if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
+        const { minLength, maxLength } = { minLength: 1, maxLength: 32 };
+        if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`);
         } else if ((name.length < minLength) || name.length > maxLength) {
             return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
