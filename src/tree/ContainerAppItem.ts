@@ -47,7 +47,6 @@ export class ContainerAppItem implements ContainerAppsItem, IDeletable {
 
     private resourceGroup: string;
     private name: string;
-    public static ingressEnabled: boolean;
 
 
     public get containerApp(): ContainerAppModel {
@@ -58,7 +57,6 @@ export class ContainerAppItem implements ContainerAppsItem, IDeletable {
         this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
-        ContainerAppItem.ingressEnabled = isIngressEnabled(this.containerApp);
         refreshContainerAppEvent((id) => {
             if (id === this.id) {
                 void this.refresh();
