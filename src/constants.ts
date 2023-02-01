@@ -38,6 +38,7 @@ export enum ScaleRuleTypes {
 
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
+export const dockerHubRegistry = 'index.docker.io';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
