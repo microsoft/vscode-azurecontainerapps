@@ -50,6 +50,7 @@ export class ContainerAppsBranchDataProvider extends vscode.Disposable implement
         const resourceItem = await callWithTelemetryAndErrorHandling(
             'getResourceItem',
             async (context: IActionContext) => {
+                context.errorHandling.rethrow = true;
                 const managedEnvironment = await ManagedEnvironmentItem.Get(context, element.subscription, nonNullProp(element, 'resourceGroup'), element.name);
                 return new ManagedEnvironmentItem(element.subscription, element, managedEnvironment);
             });
