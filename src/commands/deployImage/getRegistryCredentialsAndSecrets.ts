@@ -9,12 +9,12 @@ import { dockerHubDomain, dockerHubRegistry } from "../../constants";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 import { IDeployImageContext } from "./IDeployImageContext";
 
-export interface IRegistryCredentialsAndSecrets {
+export interface RegistryCredentialsAndSecrets {
     registries: RegistryCredentials[] | undefined;
     secrets: Secret[] | undefined;
 }
 
-export async function getAcrCredentialsAndSecrets(context: IDeployImageContext, containerAppEnvelope: Required<ContainerApp>): Promise<IRegistryCredentialsAndSecrets> {
+export async function getAcrCredentialsAndSecrets(context: IDeployImageContext, containerAppEnvelope: Required<ContainerApp>): Promise<RegistryCredentialsAndSecrets> {
     const registry = nonNullProp(context, 'registry');
     const { username, password } = await listCredentialsFromRegistry(context, registry);
     const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`;
@@ -36,7 +36,7 @@ export async function getAcrCredentialsAndSecrets(context: IDeployImageContext, 
     return { registries, secrets };
 }
 
-export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext, containerAppEnvelope: Required<ContainerApp>): IRegistryCredentialsAndSecrets {
+export function getThirdPartyCredentialsAndSecrets(context: IDeployImageContext, containerAppEnvelope: Required<ContainerApp>): RegistryCredentialsAndSecrets {
     // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
     const loginServer: string = (context.registryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
     const passwordSecretRef: string = `${loginServer.replace(/[\.]+/g, '')}-${context.username}`;
