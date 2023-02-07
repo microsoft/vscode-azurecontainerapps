@@ -4,10 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { createSubscriptionContext } from "../../tree/ContainerAppsBranchDataProvider";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";

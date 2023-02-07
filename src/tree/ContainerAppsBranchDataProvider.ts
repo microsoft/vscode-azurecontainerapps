@@ -3,11 +3,10 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzExtServiceClientCredentials, callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext, nonNullProp } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, IActionContext, nonNullProp } from '@microsoft/vscode-azext-utils';
 import { AzureResource, AzureResourceBranchDataProvider, AzureSubscription, ResourceModelBase, ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { ext } from '../extensionVariables';
-import { localize } from '../utils/localize';
 import { ContainerAppModel } from './ContainerAppItem';
 import { ManagedEnvironmentItem } from './ManagedEnvironmentItem';
 
@@ -70,43 +69,3 @@ export class ContainerAppsBranchDataProvider extends vscode.Disposable implement
 }
 
 export const branchDataProvider = new ContainerAppsBranchDataProvider();
-
-
-/**
- * Converts a VS Code authentication session to an Azure Track 1 & 2 compatible compatible credential.
- */
-export function createCredential(getSession: (scopes?: string[]) => vscode.ProviderResult<vscode.AuthenticationSession>): AzExtServiceClientCredentials {
-    return {
-        getToken: async (scopes?: string | string[]) => {
-            if (typeof scopes === 'string') {
-                scopes = [scopes];
-            }
-
-            const session = await getSession(scopes);
-
-            if (session) {
-                return {
-                    token: session.accessToken
-                };
-            } else {
-                return null;
-            }
-        },
-        signRequest: async () => {
-            throw new Error((localize('signRequestError', 'Track 1 credentials are not (currently) supported.')));
-        }
-    };
-}
-
-/**
- * Creates a subscription context from an application subscription.
- */
-export function createSubscriptionContext(subscription: AzureSubscription): ISubscriptionContext {
-    return {
-        subscriptionDisplayName: '',
-        subscriptionPath: '',
-        userId: '',
-        ...subscription,
-        credentials: createCredential(subscription.authentication.getSession)
-    };
-}

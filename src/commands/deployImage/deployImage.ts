@@ -5,12 +5,11 @@
 
 import { ContainerApp, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { MessageItem, ProgressLocation, window } from "vscode";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, getContainerEnvelopeWithSecrets, refreshContainerApp } from "../../tree/ContainerAppItem";
-import { createSubscriptionContext } from "../../tree/ContainerAppsBranchDataProvider";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { EnvironmentVariablesListStep } from "../createContainerApp/EnvironmentVariablesListStep";
