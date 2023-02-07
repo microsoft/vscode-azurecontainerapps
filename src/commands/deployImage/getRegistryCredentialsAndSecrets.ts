@@ -9,7 +9,7 @@ import { dockerHubDomain, dockerHubRegistry } from "../../constants";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 import { IDeployImageContext } from "./IDeployImageContext";
 
-export interface RegistryCredentialsAndSecrets {
+interface RegistryCredentialsAndSecrets {
     registries: RegistryCredentials[] | undefined;
     secrets: Secret[] | undefined;
 }
