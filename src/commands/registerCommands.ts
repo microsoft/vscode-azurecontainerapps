@@ -11,6 +11,7 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployImage } from './deployImage/deployImage';
+import { deployImageApi } from './deployImage/deployImageApi';
 import { disableIngress } from './ingress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort';
 import { enableIngress } from './ingress/enableIngress';
@@ -31,6 +32,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
 

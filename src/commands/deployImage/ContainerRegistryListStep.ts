@@ -30,10 +30,14 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IDeployImag
     }
 
     public shouldPrompt(context: IDeployImageContext): boolean {
-        return !context.tag;
+        return !context.tag && !context.image;
     }
 
-    public async getSubWizard(context: IDeployImageContext): Promise<IWizardOptions<IDeployImageContext>> {
+    public async getSubWizard(context: IDeployImageContext): Promise<IWizardOptions<IDeployImageContext> | undefined> {
+        if (context.image) {
+            return undefined;
+        }
+
         const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] = [];
         switch (context.registryDomain) {
             case acrDomain:
