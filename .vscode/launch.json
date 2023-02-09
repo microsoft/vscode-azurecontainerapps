@@ -114,7 +114,6 @@
             "outFiles": [
                 "${workspaceFolder}/dist/web/**/*.js"
             ],
-            // "preLaunchTask": "npm: webpack",
             "env": {
                 "DEBUGTELEMETRY": "v",
                 "NODE_DEBUG": "",
