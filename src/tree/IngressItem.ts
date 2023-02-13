@@ -43,6 +43,17 @@ export class IngressItem implements ContainerAppsItem {
         const label: string = this.ingress.external ? IngressConstants.external : IngressConstants.internal;
         const description: string = this.ingress.external ? IngressConstants.externalDesc : IngressConstants.internalDesc;
 
+        const targetPortItem: TreeElementBase & ContainerAppsItem = {
+            containerApp: this.containerApp,
+            subscription: this.subscription,
+            ...createGenericItem({
+                contextValue: 'targetPort',
+                description: String(this.ingress.targetPort),
+                iconPath: new ThemeIcon('dash'),
+                label: localize('targetPort', 'Target Port'),
+            }),
+        };
+
         return [
             createGenericItem({
                 contextValue: 'visibility',
@@ -50,12 +61,7 @@ export class IngressItem implements ContainerAppsItem {
                 iconPath: new ThemeIcon('dash'),
                 label,
             }),
-            createGenericItem({
-                contextValue: 'targetPort',
-                description: String(this.ingress.targetPort),
-                iconPath: new ThemeIcon('dash'),
-                label: localize('targetPort', 'Target Port'),
-            }),
+            targetPortItem,
         ];
     }
 }
