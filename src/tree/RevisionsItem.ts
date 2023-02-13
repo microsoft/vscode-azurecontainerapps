@@ -37,6 +37,7 @@ export class RevisionsItem implements ContainerAppsItem {
             iconPath: treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active'),
             contextValue: 'revisions',
             collapsibleState: TreeItemCollapsibleState.Collapsed,
+            description: this.containerApp.revisionsMode,
         }
     }
 }
