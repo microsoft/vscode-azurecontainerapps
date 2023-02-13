@@ -22,7 +22,7 @@ export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDe
             this.managedEnvironmentName, numOfResources);
 
         const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSetting('deleteConfirmation');
-        if (deleteConfirmation === 'ClickButton' || hasNoResources) {
+        if (deleteConfirmation === 'ClickButton') {
             const message: string = hasNoResources ? deleteEnv : deleteEnvAndApps;
             await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse); // no need to check result - cancel will throw error
         } else {
@@ -44,11 +44,11 @@ export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDe
         return true;
     }
 
-    private validateInput (val: string | undefined, prompt: string): string | undefined {
+    private validateInput(val: string | undefined, prompt: string): string | undefined {
         return this.isNameEqualToEnvironment(val) ? undefined : prompt;
     }
 
-    private isNameEqualToEnvironment (val: string | undefined): boolean {
+    private isNameEqualToEnvironment(val: string | undefined): boolean {
         return !!val && val.toLowerCase() === nonNullValue(this.managedEnvironmentName).toLowerCase();
     }
 }
