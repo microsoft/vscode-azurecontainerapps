@@ -18,6 +18,8 @@ import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
 import { ScaleRuleTypeStep } from "./ScaleRuleTypeStep";
 
+const addScaleRuleTitle = localize('addScaleRuleTitle', 'Add Scale Rule');
+
 export async function addScaleRule(context: IActionContext, node?: ScaleRuleGroupItem): Promise<void> {
     const { subscription, containerApp, revision } = node ?? await getContainerAppAndRevision(context);
 
@@ -31,7 +33,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     };
 
     const wizard: AzureWizard<IAddScaleRuleWizardContext> = new AzureWizard(wizardContext, {
-        title: localize('addScaleRuleTitle', 'Add Scale Rule'),
+        title: addScaleRuleTitle,
         promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeStep()],
         executeSteps: [new AddScaleRuleStep()],
         showLoadingPrompt: true
@@ -43,7 +45,9 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
 }
 
 export async function getContainerAppAndRevision(context: IActionContext): Promise<{ containerApp: ContainerAppModel, revision: Revision, subscription: AzureSubscription }> {
-    const containerAppItem = await pickContainerApp(context);
+    const containerAppItem = await pickContainerApp(context, {
+        title: addScaleRuleTitle,
+    });
     const revision = await pickRevision(context, containerAppItem);
     return { containerApp: containerAppItem.containerApp, revision, subscription: containerAppItem.subscription };
 }
@@ -66,6 +70,7 @@ async function pickRevision(context: IActionContext, node: ContainerAppItem): Pr
         }
         return (await context.ui.showQuickPick<IAzureQuickPickItem<Revision>>(getPicks(), {
             canPickMany: false,
+            placeHolder: localize('selectRevision', 'Select revision'),
         })).data;
     }
 }
