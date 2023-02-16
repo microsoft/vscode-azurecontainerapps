@@ -10,7 +10,6 @@ import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azurer
 import { EventEmitter, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
-import { IDeletable } from "../commands/deleteNode";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
@@ -39,7 +38,7 @@ export interface ContainerAppModel extends ContainerApp {
     revisionsMode: KnownActiveRevisionsMode;
 }
 
-export class ContainerAppItem implements ContainerAppsItem, IDeletable {
+export class ContainerAppItem implements ContainerAppsItem {
     public static contextValue: string = 'containerApp';
     public static contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
 
