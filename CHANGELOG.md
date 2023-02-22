@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.1 - 2023-02-22
+
+### Fixed
+
+* Remove legacy reference to `rgApi` by @MicroFish91 in [#264](https://github.com/microsoft/vscode-azurecontainerapps/pull/264)
+
 ## 0.4.0 - 2023-02-22
 
 ### Added
