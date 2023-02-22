@@ -25,7 +25,7 @@ jobs:
           branch: bot/bump-${{ steps.bump.outputs.new-version }}
           base: main
           author: GitHub <noreply@github.com>
-          with: ${{ secrets.PAT_GITHUB }}
+          token: ${{ secrets.PAT_GITHUB }}
         env:
           RUN_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           MESSAGE: Bump version after release
