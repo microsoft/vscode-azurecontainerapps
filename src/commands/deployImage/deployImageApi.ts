@@ -3,12 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { SubscriptionTreeItemBase } from "@microsoft/vscode-azext-azureutils";
-import { ISubscriptionContext } from "@microsoft/vscode-azext-dev";
-import { callWithMaskHandling, IActionContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { callWithMaskHandling, createSubscriptionContext, ISubscriptionActionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../constants";
-import { ext } from "../../extensionVariables";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
+import { pickContainerApp } from "../../utils/pickContainerApp";
 import { deployImage } from "./deployImage";
 import { IDeployImageContext } from "./IDeployImageContext";
 
@@ -21,9 +19,12 @@ interface DeployImageToAcaOptionsContract {
     secret?: string;
 }
 
-export async function deployImageApi(context: IActionContext & Partial<IDeployImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
-    const subscription: ISubscriptionContext = (await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context)).subscription;
-    Object.assign(context, subscription, deployImageOptions);
+export async function deployImageApi(context: ITreeItemPickerContext & Partial<IDeployImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
+    context.suppressCreatePick = true;
+    const node = await pickContainerApp(context);
+    const { subscription } = node;
+
+    Object.assign(context, {...createSubscriptionContext(subscription) }, deployImageOptions);
 
     context.registryDomain = detectRegistryDomain(deployImageOptions.registryName);
     if (context.registryDomain === acrDomain) {
@@ -40,8 +41,8 @@ export async function deployImageApi(context: IActionContext & Partial<IDeployIm
     context.valuesToMask.push(deployImageOptions.image);
 
     if (deployImageOptions.secret) {
-        return callWithMaskHandling<void>(() => deployImage(context, undefined), deployImageOptions.secret);
+        return callWithMaskHandling<void>(() => deployImage(context, node), deployImageOptions.secret);
     } else {
-        return deployImage(context, undefined);
+        return deployImage(context, node);
     }
 }
