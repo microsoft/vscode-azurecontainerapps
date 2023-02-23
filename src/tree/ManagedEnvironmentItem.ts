@@ -7,21 +7,52 @@ import { ContainerAppsAPIClient, ManagedEnvironment, Resource } from "@azure/arm
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureResource, AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { createContainerAppsAPIClient } from "../utils/azureClients";
+import { EventEmitter, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ext } from "../extensionVariables";
+import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppItem } from "./ContainerAppItem";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
 type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 
+const refreshContainerAppEnvironmentEmitter = new EventEmitter<string>();
+const refreshContainerAppEnvironmentEvent = refreshContainerAppEnvironmentEmitter.event;
+
+export function refreshContainerAppEnvironment(id: string): void {
+    refreshContainerAppEnvironmentEmitter.fire(id);
+}
+
 export class ManagedEnvironmentItem implements TreeElementBase {
 
     public static contextValue: string = 'containerEnvironment';
+
     id: string;
 
-    constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
-        this.id = managedEnvironment.id;
+    private resourceGroup: string;
+    private name: string;
+
+    public get managedEnvironment(): ManagedEnvironmentModel {
+        return this._managedEnvironment;
+    }
+
+    constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, private _managedEnvironment: ManagedEnvironmentModel) {
+        this.id = this.managedEnvironment.id;
+        this.resourceGroup = this.managedEnvironment.resourceGroup;
+        this.name = this.managedEnvironment.name;
+        refreshContainerAppEnvironmentEvent((id) => {
+            if (id === this.id) {
+                void this.refresh();
+            }
+        })
+    }
+
+    private async refresh(): Promise<void> {
+        await callWithTelemetryAndErrorHandling('containerAppItem.refresh', async (context) => {
+            const client: ContainerAppsAPIClient = await createContainerAppsClient(context, this.subscription);
+            this._managedEnvironment = ManagedEnvironmentItem.CreateManagedEnvironmentModel(await client.managedEnvironments.get(this.resourceGroup, this.name));
+            ext.branchDataProvider.refresh(this);
+        });
     }
 
     async getChildren(): Promise<ContainerAppsItem[]> {
