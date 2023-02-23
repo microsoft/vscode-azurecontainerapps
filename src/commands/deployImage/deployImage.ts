@@ -3,13 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { MessageItem, ProgressLocation, window } from "vscode";
 import { acrDomain, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem, getContainerEnvelopeWithSecrets, refreshContainerApp } from "../../tree/ContainerAppItem";
+import { ContainerAppItem, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
+import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { EnvironmentVariablesListStep } from "../createContainerApp/EnvironmentVariablesListStep";
@@ -88,11 +89,13 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     await ext.state.runWithTemporaryDescription(containerApp.id, localize('creating', 'Creating...'), async () => {
         await window.withProgress({ location: ProgressLocation.Notification, title: creatingRevision }, async (): Promise<void> => {
             ext.outputChannel.appendLog(creatingRevision);
+            const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(wizardContext);
+            await appClient.containerApps.beginCreateOrUpdateAndWait(containerApp.resourceGroup, containerApp.name, containerAppEnvelope);
             const updatedContainerApp = await ContainerAppItem.Get(context, subscription, containerApp.resourceGroup, containerApp.name);
             void showContainerAppCreated(updatedContainerApp, true);
         });
 
-        refreshContainerApp(containerApp.id);
+        ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
     });
 }
 
