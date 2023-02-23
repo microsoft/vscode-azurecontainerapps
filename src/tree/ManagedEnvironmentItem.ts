@@ -16,11 +16,11 @@ import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataPro
 
 type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 
-const refreshContainerAppEnvironmentEmitter = new EventEmitter<string>();
-const refreshContainerAppEnvironmentEvent = refreshContainerAppEnvironmentEmitter.event;
+const refreshManagedEnvironmentEmitter = new EventEmitter<string>();
+const refreshManagedEnvironmentEvent = refreshManagedEnvironmentEmitter.event;
 
-export function refreshContainerAppEnvironment(id: string): void {
-    refreshContainerAppEnvironmentEmitter.fire(id);
+export function refreshManagedEnvironment(id: string): void {
+    refreshManagedEnvironmentEmitter.fire(id);
 }
 
 export class ManagedEnvironmentItem implements TreeElementBase {
@@ -40,7 +40,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         this.id = this.managedEnvironment.id;
         this.resourceGroup = this.managedEnvironment.resourceGroup;
         this.name = this.managedEnvironment.name;
-        refreshContainerAppEnvironmentEvent((id) => {
+        refreshManagedEnvironmentEvent((id) => {
             if (id === this.id) {
                 void this.refresh();
             }
@@ -48,7 +48,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     }
 
     private async refresh(): Promise<void> {
-        await callWithTelemetryAndErrorHandling('containerAppEnvironmentItem.refresh', async (context) => {
+        await callWithTelemetryAndErrorHandling('managedEnvironmentItem.refresh', async (context) => {
             const client: ContainerAppsAPIClient = await createContainerAppsClient(context, this.subscription);
             this._managedEnvironment = ManagedEnvironmentItem.CreateManagedEnvironmentModel(await client.managedEnvironments.get(this.resourceGroup, this.name));
             ext.branchDataProvider.refresh(this);

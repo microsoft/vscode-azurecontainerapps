@@ -10,7 +10,7 @@ import { MessageItem, ProgressLocation, window } from "vscode";
 import { acrDomain, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { refreshContainerAppEnvironment } from "../../tree/ManagedEnvironmentItem";
+import { refreshManagedEnvironment } from "../../tree/ManagedEnvironmentItem";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
@@ -96,7 +96,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
             void showContainerAppCreated(updatedContainerApp, true);
         });
 
-        refreshContainerAppEnvironment(containerApp.managedEnvironmentId);
+        refreshManagedEnvironment(containerApp.managedEnvironmentId);
     });
 }
 
