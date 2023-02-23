@@ -6,7 +6,6 @@
 import { IActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
-import { refreshContainerApp } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../updateContainerApp";
@@ -38,7 +37,7 @@ export async function editScalingRange(context: IActionContext, node?: ScaleItem
     await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
         ext.outputChannel.appendLog(updating);
         await updateContainerApp(context, subscription, containerApp, { template })
-        refreshContainerApp(containerApp.id);
+        ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         void window.showInformationMessage(updated);
         ext.outputChannel.appendLog(updated);
     });

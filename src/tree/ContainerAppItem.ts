@@ -7,7 +7,7 @@ import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, callWithTelemetryAndErrorHandling, createSubscriptionContext, DeleteConfirmationStep, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { EventEmitter, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { ext } from "../extensionVariables";
@@ -22,13 +22,6 @@ import { IngressDisabledItem, IngressItem } from "./IngressItem";
 import { LogsItem } from "./LogsItem";
 import { RevisionsItem } from "./RevisionsItem";
 import { ScaleItem } from "./scaling/ScaleItem";
-
-const refreshContainerAppEmitter = new EventEmitter<string>();
-const refreshContainerAppEvent = refreshContainerAppEmitter.event;
-
-export function refreshContainerApp(id: string): void {
-    refreshContainerAppEmitter.fire(id);
-}
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -56,19 +49,6 @@ export class ContainerAppItem implements ContainerAppsItem {
         this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
-        refreshContainerAppEvent((id) => {
-            if (id === this.id) {
-                void this.refresh();
-            }
-        })
-    }
-
-    private async refresh(): Promise<void> {
-        await callWithTelemetryAndErrorHandling('containerAppItem.refresh', async (context) => {
-            const client: ContainerAppsAPIClient = await createContainerAppsClient(context, this.subscription);
-            this._containerApp = ContainerAppItem.CreateContainerAppModel(await client.containerApps.get(this.resourceGroup, this.name));
-            ext.branchDataProvider.refresh(this);
-        });
     }
 
     viewProperties: ViewPropertiesModel = {
