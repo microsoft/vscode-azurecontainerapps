@@ -51,11 +51,9 @@ export class ContainerAppItem implements ContainerAppsItem {
         this.name = this.containerApp.name;
     }
 
-    get viewProperties(): ViewPropertiesModel {
-        return {
-            data: this.containerApp,
-            label: this.containerApp.name,
-        }
+    viewProperties: ViewPropertiesModel = {
+        data: this.containerApp,
+        label: this.containerApp.name,
     }
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
