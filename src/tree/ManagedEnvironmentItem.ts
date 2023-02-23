@@ -48,7 +48,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     }
 
     private async refresh(): Promise<void> {
-        await callWithTelemetryAndErrorHandling('containerAppItem.refresh', async (context) => {
+        await callWithTelemetryAndErrorHandling('containerAppEnvironmentItem.refresh', async (context) => {
             const client: ContainerAppsAPIClient = await createContainerAppsClient(context, this.subscription);
             this._managedEnvironment = ManagedEnvironmentItem.CreateManagedEnvironmentModel(await client.managedEnvironments.get(this.resourceGroup, this.name));
             ext.branchDataProvider.refresh(this);
