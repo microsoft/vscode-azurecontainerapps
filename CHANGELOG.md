@@ -4,7 +4,7 @@
 
 ### Fixed
 
-* Add container app update call back to `deployImage` by @MicroFish91 in [#266](https://github.com/microsoft/vscode-azurecontainerapps/pull/266)
+* Fix `deployImage` by @MicroFish91 in [#266](https://github.com/microsoft/vscode-azurecontainerapps/pull/266) & [#267](https://github.com/microsoft/vscode-azurecontainerapps/pull/267)
 * Remove legacy reference to `rgApi` by @MicroFish91 in [#264](https://github.com/microsoft/vscode-azurecontainerapps/pull/264)
 
 ## 0.4.0 - 2023-02-22
