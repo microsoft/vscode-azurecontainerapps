@@ -15,14 +15,14 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
         const imageSourceLabels: string[] = [
             localize('quickStartImage', 'Use quickstart image'),
             localize('externalRegistry', 'Use existing image'),
-            localize('buildFromProject', 'Build from project'),
+            // localize('buildFromProject', 'Build from project'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
             { label: imageSourceLabels[0], data: ImageSource.QuickStartImage,  suppressPersistence: true },
             { label: imageSourceLabels[1], data: ImageSource.ExternalRegistry, suppressPersistence: true },
-            { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
+            // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
         ];
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
@@ -34,9 +34,11 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
 
     public async getSubWizard(context: IContainerAppContext): Promise<IWizardOptions<IContainerAppContext> | undefined> {
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [];
+
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
                 // Todo: @mmott
+                throw new Error('Not implemented yet');
             case ImageSource.ExternalRegistry:
                 promptSteps.push(new ContainerRegistryListStep(), new EnvironmentVariablesListStep());
                 break;
