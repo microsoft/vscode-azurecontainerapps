@@ -38,7 +38,7 @@ export enum ScaleRuleTypes {
 
 export enum ImageSource {
     /*
-     * Use the default hello-world image with preset configurations
+     * Uses the default hello-world image with preset configurations
      */
     QuickStartImage = 'quickStartImage',
     /*
