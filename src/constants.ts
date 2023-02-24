@@ -38,21 +38,21 @@ export enum ScaleRuleTypes {
 
 export enum ImageSource {
     /*
-     * Use default placeholder image and configurations
+     * Use the default hello-world image with preset configurations
      */
-    QuickStart = 'quickStart',
+    QuickStartImage = 'quickStartImage',
     /*
-     * Use an image hosted in ACR or a third party registry
+     * Use an image stored in ACR or a third party registry
      */
-    Registry = 'registry',
+    ExternalRegistry = 'externalRegistry',
     /*
-     * Use an image that is built first locally using Docker (w/ Dockerfile)
+     * Build the image from your project locally using Docker (reqs. Dockerfile)
      */
-    LocalDocker = 'localDocker',
+    LocalDockerBuild = 'localDockerBuild',
     /*
-     * Use an image that is built in ACR from uploaded project files (w/ Dockerfile)
+     * Build the image from your project remotely using ACR (reqs. Dockerfile)
      */
-    AcrDocker = 'acrDocker'
+    RemoteAcrBuild = 'remoteAcrBuild'
 }
 
 export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
@@ -60,8 +60,6 @@ export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';
-
-export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
