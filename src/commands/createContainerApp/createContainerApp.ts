@@ -16,7 +16,7 @@ import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { EnableIngressStep } from "./EnableIngressStep";
 import { IContainerAppContext, IContainerAppWithActivityContext } from "./IContainerAppContext";
-import { ImageSourceListStep } from "./ImageSourceListSTep";
+import { ImageSourceListStep } from "./ImageSourceListStep";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
