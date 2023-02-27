@@ -9,6 +9,7 @@ import { localize } from "../../utils/localize";
 import { ContainerRegistryListStep } from "../deployImage/ContainerRegistryListStep";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { IContainerAppContext } from './IContainerAppContext';
+import { setQuickStartImage } from "./setQuickStartImage";
 
 export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppContext> {
     public async prompt(context: IContainerAppContext): Promise<void> {
@@ -20,7 +21,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.QuickStartImage,  suppressPersistence: true },
+            { label: imageSourceLabels[0], data: ImageSource.QuickStartImage, suppressPersistence: true },
             { label: imageSourceLabels[1], data: ImageSource.ExternalRegistry, suppressPersistence: true },
             // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
         ];
@@ -37,13 +38,13 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
 
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
-                // Todo: @mmott
-                throw new Error('Not implemented yet');
+                setQuickStartImage(context);
+                break;
             case ImageSource.ExternalRegistry:
                 promptSteps.push(new ContainerRegistryListStep(), new EnvironmentVariablesListStep());
                 break;
             default:
-                // Todo: Steps that lead to additional 'Build from project' options
+            // Todo: Steps that lead to additional 'Build from project' options
         }
 
         return { promptSteps };
