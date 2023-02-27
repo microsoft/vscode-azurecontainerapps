@@ -17,6 +17,6 @@ export class IngressVisibilityStep extends AzureWizardPromptStep<IContainerAppCo
     }
 
     public shouldPrompt(context: IContainerAppContext): boolean {
-        return context.enableIngress === true;
+        return context.enableExternal === undefined;
     }
 }

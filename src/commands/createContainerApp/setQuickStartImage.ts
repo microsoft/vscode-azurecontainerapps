@@ -6,7 +6,7 @@
 import { IContainerAppContext } from "./IContainerAppContext";
 
 export function setQuickStartImage(context: IContainerAppContext): void {
-    context.image = 'mcr.microsoft.com/azuredocs/aci-helloworld';
+    context.image = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
     context.enableIngress = true;
     context.enableExternal = true;
     context.targetPort = 80;
