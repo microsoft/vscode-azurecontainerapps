@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../extensionVariables";
-import { ContainerAppModel, refreshContainerApp } from "../tree/ContainerAppItem";
+import { ContainerAppModel } from "../tree/ContainerAppItem";
 import { ContainerAppsItem } from "../tree/ContainerAppsBranchDataProvider";
 import { localize } from "../utils/localize";
 import { pickContainerApp } from "../utils/pickContainerApp";
@@ -24,7 +24,7 @@ export async function chooseRevisionMode(context: IActionContext, node?: Contain
 
         await window.withProgress({ location: ProgressLocation.Notification, title: updating }, async (): Promise<void> => {
             await updateContainerApp(context, subscription, containerApp, { configuration: { activeRevisionsMode: pickedRevisionMode } });
-            refreshContainerApp(containerApp.id);
+            ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         });
 
         const updated = localize('updatedRevision', 'Updated revision mode of "{0}" to "{1}".', containerApp.name, pickedRevisionMode);
