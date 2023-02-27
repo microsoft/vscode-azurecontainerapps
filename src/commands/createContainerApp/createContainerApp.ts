@@ -12,12 +12,11 @@ import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
-import { ContainerRegistryListStep } from "../deployImage/ContainerRegistryListStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { EnableIngressStep } from "./EnableIngressStep";
-import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { IContainerAppContext, IContainerAppWithActivityContext } from "./IContainerAppContext";
+import { ImageSourceListStep } from "./ImageSourceListStep";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
@@ -36,8 +35,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
 
     const promptSteps: AzureWizardPromptStep<IContainerAppWithActivityContext>[] = [
         new ContainerAppNameStep(),
-        new ContainerRegistryListStep(),
-        new EnvironmentVariablesListStep(),
+        new ImageSourceListStep(),
         new EnableIngressStep(),
     ];
 
