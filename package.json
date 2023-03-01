@@ -148,9 +148,22 @@
                 "command": "containerApps.addScaleRule",
                 "title": "%containerApps.addScaleRule%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deploy",
+                "title": "%containerApps.deploy%",
+                "category": "Azure Container Apps",
+                "icon": "$(cloud-upload)"
             }
         ],
         "menus": {
+            "azureWorkspaceDeploy": [
+                {
+                    "command": "containerApps.deploy",
+                    "when": "view == azureWorkspace",
+                    "group": "navigation@3"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",

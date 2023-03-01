@@ -6,9 +6,11 @@
 import type { ContainerApp, EnvironmentVar } from "@azure/arm-appcontainers";
 import type { ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
 import { ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
-import { SupportedRegistries } from '../../constants';
+import { ImageSourceValues, SupportedRegistries } from '../../constants';
 
 export interface IDeployImageContext extends ISubscriptionActionContext {
+    deployMethod?: ImageSourceValues;
+
     targetContainer?: ContainerApp;
     registryDomain?: SupportedRegistries;
 
