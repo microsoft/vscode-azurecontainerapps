@@ -2,9 +2,12 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
+import { ContainerApp } from "@azure/arm-appcontainers";
 import { AzureWizard, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource, ImageSourceValues } from "../../constants";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
+import { pickContainerApp } from "../../utils/pickContainerApp";
 import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";
 import { IDeployImageContext } from "./IDeployImageContext";
 
@@ -40,6 +43,9 @@ export class deploy extends AzureWizardPromptStep<IContainerAppContext> {
     public async getSubWizard(context: IDeployImageContext): Promise<IWizardOptions<IDeployImageContext> | undefined> {
         const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] = [];
 
+        context.targetContainer = await getContainerApp(context);
+        //to do: add capabilities for creating a new container app at deployment
+
         switch (context.deployMethod) {
             case ImageSource.RemoteAcrBuild:
                 //todo: add implementation for remote acr build
@@ -50,8 +56,15 @@ export class deploy extends AzureWizardPromptStep<IContainerAppContext> {
             default:
             //to do: implement the hookup to deploy image
         }
-        //to do: add steps for selecting container app
 
         return { promptSteps };
     }
+}
+
+async function getContainerApp(context: IDeployImageContext, node?: ContainerAppItem): Promise<ContainerApp> {
+    node ??= await pickContainerApp(context, {
+        title: localize('deployContainerApp', 'Deploy to Container App'),
+    });
+
+    return node.containerApp;
 }
