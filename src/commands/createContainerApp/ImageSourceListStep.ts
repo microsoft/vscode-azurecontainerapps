@@ -11,20 +11,35 @@ import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { IContainerAppContext } from './IContainerAppContext';
 import { setQuickStartImage } from "./setQuickStartImage";
 
+interface ImageSourceOptions {
+    useQuickStartImage?: boolean;
+}
 export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppContext> {
+    constructor(private readonly options?: ImageSourceOptions) {
+        super();
+    }
+
     public async prompt(context: IContainerAppContext): Promise<void> {
         const imageSourceLabels: string[] = [
-            localize('quickStartImage', 'Use quickstart image'),
             localize('externalRegistry', 'Use existing image'),
+            localize('quickStartImage', 'Use quickstart image'),
+            localize('updateImage', 'Update image in Container App')
             // localize('buildFromProject', 'Build from project'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.QuickStartImage, suppressPersistence: true },
-            { label: imageSourceLabels[1], data: ImageSource.ExternalRegistry, suppressPersistence: true },
+            { label: imageSourceLabels[0], data: ImageSource.ExternalRegistry, suppressPersistence: true },
             // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
         ];
+
+        if (this.options?.useQuickStartImage) {
+            picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
+        } else {
+            if (context.targetContainer?.template?.containers?.[0]?.image) {
+                picks.push({ label: imageSourceLabels[2], data: ImageSource.ExternalRegistry, suppressPersistence: true });
+            }
+        }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }

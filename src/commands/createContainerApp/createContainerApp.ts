@@ -32,10 +32,11 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     };
 
     const title: string = localize('createContainerApp', 'Create Container App');
+    const useQuickStartImage: boolean = true;
 
     const promptSteps: AzureWizardPromptStep<IContainerAppWithActivityContext>[] = [
         new ContainerAppNameStep(),
-        new ImageSourceListStep(),
+        new ImageSourceListStep({ useQuickStartImage }),
         new EnableIngressStep(),
     ];
 
