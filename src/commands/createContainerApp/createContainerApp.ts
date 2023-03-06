@@ -4,25 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { createSubscriptionContext } from "../../tree/ContainerAppsBranchDataProvider";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
-import { pickEnvironment } from "../../utils/pickEnvironment";
-import { ContainerRegistryListStep } from "../deployImage/ContainerRegistryListStep";
+import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { EnableIngressStep } from "./EnableIngressStep";
-import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { IContainerAppContext, IContainerAppWithActivityContext } from "./IContainerAppContext";
+import { ImageSourceListStep } from "./ImageSourceListStep";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
-    node ??= await pickEnvironment(context);
+    node ??= await containerAppEnvironmentExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+        title: localize('createContainerApp', 'Create Container App'),
+    });
 
     const wizardContext: IContainerAppWithActivityContext = {
         ...context,
@@ -35,8 +35,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
 
     const promptSteps: AzureWizardPromptStep<IContainerAppWithActivityContext>[] = [
         new ContainerAppNameStep(),
-        new ContainerRegistryListStep(),
-        new EnvironmentVariablesListStep(),
+        new ImageSourceListStep(),
         new EnableIngressStep(),
     ];
 

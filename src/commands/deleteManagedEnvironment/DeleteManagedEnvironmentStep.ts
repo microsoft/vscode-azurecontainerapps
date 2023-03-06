@@ -15,7 +15,7 @@ export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDelete
     public priority: number = 110;
 
     public async execute(context: IDeleteManagedEnvironmentWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const deleting: string = localize('deletingManagedEnv', 'Deleting Container Apps environment "{0}"...', context.managedEnvironmentName);
+        const deleting: string = localize('deletingManagedEnv', 'Deleting Container Apps environment "{0}"... this may take several minutes.', context.managedEnvironmentName);
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
         try {

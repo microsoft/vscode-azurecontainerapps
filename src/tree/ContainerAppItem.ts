@@ -5,31 +5,23 @@
 
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { EventEmitter, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
-import { IDeletable } from "../commands/deleteNode";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppsItem, TreeElementBase, createSubscriptionContext } from "./ContainerAppsBranchDataProvider";
+import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressItem } from "./IngressItem";
 import { LogsItem } from "./LogsItem";
 import { RevisionsItem } from "./RevisionsItem";
 import { ScaleItem } from "./scaling/ScaleItem";
-
-const refreshContainerAppEmitter = new EventEmitter<string>();
-const refreshContainerAppEvent = refreshContainerAppEmitter.event;
-
-export function refreshContainerApp(id: string): void {
-    refreshContainerAppEmitter.fire(id);
-}
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -39,7 +31,7 @@ export interface ContainerAppModel extends ContainerApp {
     revisionsMode: KnownActiveRevisionsMode;
 }
 
-export class ContainerAppItem implements ContainerAppsItem, IDeletable {
+export class ContainerAppItem implements ContainerAppsItem {
     public static contextValue: string = 'containerApp';
     public static contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
 
@@ -57,19 +49,6 @@ export class ContainerAppItem implements ContainerAppsItem, IDeletable {
         this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
-        refreshContainerAppEvent((id) => {
-            if (id === this.id) {
-                void this.refresh();
-            }
-        })
-    }
-
-    private async refresh(): Promise<void> {
-        await callWithTelemetryAndErrorHandling('containerAppItem.refresh', async (context) => {
-            const client: ContainerAppsAPIClient = await createContainerAppsClient(context, this.subscription);
-            this._containerApp = ContainerAppItem.CreateContainerAppModel(await client.containerApps.get(this.resourceGroup, this.name));
-            ext.branchDataProvider.refresh(this);
-        });
     }
 
     viewProperties: ViewPropertiesModel = {

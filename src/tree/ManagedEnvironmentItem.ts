@@ -5,13 +5,13 @@
 
 import { ContainerAppsAPIClient, ManagedEnvironment, Resource } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { callWithTelemetryAndErrorHandling, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling, createSubscriptionContext, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureResource, AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppItem } from "./ContainerAppItem";
-import { ContainerAppsItem, createSubscriptionContext, TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
 type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 

@@ -5,9 +5,8 @@
 
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { createSubscriptionContext, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { createSubscriptionContext } from "../tree/ContainerAppsBranchDataProvider";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 
 export async function updateContainerApp(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerApp, updatedSetting: Omit<ContainerApp, 'location'>): Promise<void> {

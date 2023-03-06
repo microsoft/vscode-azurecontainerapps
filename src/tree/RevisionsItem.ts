@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppModel } from "./ContainerAppItem";
-import { ContainerAppsItem, createSubscriptionContext } from "./ContainerAppsBranchDataProvider";
+import { ContainerAppsItem } from "./ContainerAppsBranchDataProvider";
 import { RevisionItem } from "./RevisionItem";
 
 export class RevisionsItem implements ContainerAppsItem {
@@ -37,6 +37,7 @@ export class RevisionsItem implements ContainerAppsItem {
             iconPath: treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active'),
             contextValue: 'revisions',
             collapsibleState: TreeItemCollapsibleState.Collapsed,
+            description: this.containerApp.revisionsMode,
         }
     }
 }

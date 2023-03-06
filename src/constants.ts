@@ -36,8 +36,30 @@ export enum ScaleRuleTypes {
     Queue = "Azure queue"
 }
 
+export enum ImageSource {
+    /*
+     * Uses the default hello-world image with preset configurations
+     */
+    QuickStartImage = 'quickStartImage',
+    /*
+     * Use an image stored in ACR or a third party registry
+     */
+    ExternalRegistry = 'externalRegistry',
+    /*
+     * Build the image from your project locally using Docker (reqs. Dockerfile)
+     */
+    LocalDockerBuild = 'localDockerBuild',
+    /*
+     * Build the image from your project remotely using ACR (reqs. Dockerfile)
+     */
+    RemoteAcrBuild = 'remoteAcrBuild'
+}
+
+export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
+
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
+export const dockerHubRegistry = 'index.docker.io';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 

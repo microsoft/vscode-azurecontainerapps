@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { MessageItem, ProgressLocation, window } from "vscode";
-import { webProvider } from "../../constants";
+import { acrDomain, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem, getContainerEnvelopeWithSecrets, refreshContainerApp } from "../../tree/ContainerAppItem";
-import { createSubscriptionContext } from "../../tree/ContainerAppsBranchDataProvider";
+import { ContainerAppItem, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
+import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { EnvironmentVariablesListStep } from "../createContainerApp/EnvironmentVariablesListStep";
 import { getLoginServer } from "../createContainerApp/getLoginServer";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
-import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
 import { getContainerNameForImage } from "./getContainerNameForImage";
+import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 import { IDeployImageContext } from "./IDeployImageContext";
 
 export async function deployImage(context: ITreeItemPickerContext & Partial<IDeployImageContext>, node?: ContainerAppItem): Promise<void> {
@@ -60,24 +60,18 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
 
     const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, subscription, containerApp);
 
-    // for ACR
-    if (wizardContext.registry) {
-        const registry = wizardContext.registry;
-        const { username, password } = await listCredentialsFromRegistry(wizardContext, registry);
-        const passwordName = `${wizardContext.registry.name?.toLocaleLowerCase()}-${password?.name}`;
-        // remove duplicate registry
-        containerAppEnvelope.configuration.registries = containerAppEnvelope.configuration.registries?.filter(r => r.server !== registry.loginServer);
-        containerAppEnvelope.configuration.registries?.push(
-            {
-                server: registry.loginServer,
-                username: username,
-                passwordSecretRef: passwordName
-            }
-        )
-
-        // remove duplicate secretRef
-        containerAppEnvelope.configuration.secrets = containerAppEnvelope.configuration.secrets?.filter(s => s.name !== passwordName);
-        containerAppEnvelope.configuration.secrets?.push({ name: passwordName, value: password.value });
+    if (wizardContext.registryDomain === acrDomain) {
+        // ACR
+        const acrRegistryCredentialsAndSecrets = await getAcrCredentialsAndSecrets(wizardContext, containerAppEnvelope);
+        containerAppEnvelope.configuration.registries = acrRegistryCredentialsAndSecrets.registries;
+        containerAppEnvelope.configuration.secrets = acrRegistryCredentialsAndSecrets.secrets;
+    } else {
+        // Docker Hub or other third party registry...
+        if (wizardContext.registryName && wizardContext.username && wizardContext.secret) {
+            const thirdPartyRegistryCredentialsAndSecrets = getThirdPartyCredentialsAndSecrets(wizardContext, containerAppEnvelope);
+            containerAppEnvelope.configuration.registries = thirdPartyRegistryCredentialsAndSecrets.registries;
+            containerAppEnvelope.configuration.secrets = thirdPartyRegistryCredentialsAndSecrets.secrets;
+        }
     }
 
     // we want to replace the old image
@@ -95,11 +89,13 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     await ext.state.runWithTemporaryDescription(containerApp.id, localize('creating', 'Creating...'), async () => {
         await window.withProgress({ location: ProgressLocation.Notification, title: creatingRevision }, async (): Promise<void> => {
             ext.outputChannel.appendLog(creatingRevision);
+            const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(wizardContext);
+            await appClient.containerApps.beginCreateOrUpdateAndWait(containerApp.resourceGroup, containerApp.name, containerAppEnvelope);
             const updatedContainerApp = await ContainerAppItem.Get(context, subscription, containerApp.resourceGroup, containerApp.name);
             void showContainerAppCreated(updatedContainerApp, true);
         });
 
-        refreshContainerApp(containerApp.id);
+        ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
     });
 }
 
