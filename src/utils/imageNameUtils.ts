@@ -29,7 +29,3 @@ export async function getRegistryFromAcrName(context: ISubscriptionActionContext
     const registries = await client.registries.list();
     return registries.find(r => r.loginServer === acrName) as ContainerRegistryManagementModels.Registry;
 }
-
-export function getContainerNameFromImage(imageName: string): string {
-    return imageName.substring(imageName.lastIndexOf('/') + 1).replace(/[^0-9a-zA-Z-]/g, '-');
-}

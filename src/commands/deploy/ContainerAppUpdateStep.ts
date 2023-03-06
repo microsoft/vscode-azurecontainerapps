@@ -9,9 +9,9 @@ import { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
-import { getContainerNameFromImage } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
+import { getContainerNameForImage } from "../deployImage/getContainerNameForImage";
 import { IDeployBaseContext } from "./IDeployBaseContext";
 
 export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployBaseContext> {
@@ -31,7 +31,7 @@ export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployBaseCo
         containerAppEnvelope.template.containers.push({
             env: context.environmentVariables,
             image: context.image,
-            name: getContainerNameFromImage(nonNullProp(context, 'image')),
+            name: getContainerNameForImage(nonNullProp(context, 'image')),
         });
 
         const creatingRevision = localize('creatingRevisionLong', 'Creating a new revision for container app "{0}"...', containerApp.name);
