@@ -14,7 +14,7 @@ import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from 
 export class DeployImageConfigureStep extends AzureWizardExecuteStep<IDeployImageContext> {
     public priority: number = 240;
 
-    // Finalizes 'context.image', 'context.secrets', and 'context.registries'
+    // Configures our base image attributes
     public async execute(context: IDeployImageContext): Promise<void> {
         // Store any existing secrets and registries
         let secrets: Secret[] | undefined;
