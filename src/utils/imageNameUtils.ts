@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { acrDomain, dockerHubDomain, SupportedRegistries } from "../constants";
+import { SupportedRegistries, acrDomain, dockerHubDomain } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 
 /**
@@ -28,4 +28,8 @@ export async function getRegistryFromAcrName(context: ISubscriptionActionContext
     const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
     const registries = await client.registries.list();
     return registries.find(r => r.loginServer === acrName) as ContainerRegistryManagementModels.Registry;
+}
+
+export function getContainerNameFromImage(imageName: string): string {
+    return imageName.substring(imageName.lastIndexOf('/') + 1).replace(/[^0-9a-zA-Z-]/g, '-');
 }

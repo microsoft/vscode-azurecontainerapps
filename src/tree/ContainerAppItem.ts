@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, callWithTelemetryAndErrorHandling, createSubscriptionContext, DeleteConfirmationStep, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, IActionContext, ISubscriptionActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
@@ -17,7 +17,7 @@ import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
-import { createDaprDisabledItem, DaprEnabledItem } from "./DaprItem";
+import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressItem } from "./IngressItem";
 import { LogsItem } from "./LogsItem";
 import { RevisionsItem } from "./RevisionsItem";
@@ -147,7 +147,7 @@ export class ContainerAppItem implements ContainerAppsItem {
     }
 }
 
-export async function getContainerEnvelopeWithSecrets(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerAppModel): Promise<Required<ContainerApp>> {
+export async function getContainerEnvelopeWithSecrets(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<Required<ContainerApp>> {
     // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
     // make a deep copy, we don't want to modify the one that is cached
     const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(containerApp));
@@ -158,7 +158,7 @@ export async function getContainerEnvelopeWithSecrets(context: IActionContext, s
     }
 
     const concreteContainerAppEnvelope = <Required<ContainerApp>>containerAppEnvelope;
-    const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(subscription)]);
+    const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
     concreteContainerAppEnvelope.configuration.secrets = ((await webClient.containerApps.listSecrets(containerApp.resourceGroup, containerApp.name)).value);
     concreteContainerAppEnvelope.configuration.registries ||= [];
