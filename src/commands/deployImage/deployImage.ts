@@ -33,10 +33,16 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     };
 
     const title: string = localize('updateImage', 'Update image in "{0}"', containerApp.name);
-    const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] =
-        [new ContainerAppOverwriteConfirmStep(), new ContainerRegistryListStep(), new EnvironmentVariablesListStep()];
-    const executeSteps: AzureWizardExecuteStep<IDeployImageContext>[] =
-        [new VerifyProvidersStep([webProvider]), new DeployImageConfigureStep(), new ContainerAppUpdateStep()];
+    const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] = [
+        new ContainerAppOverwriteConfirmStep(),
+        new ContainerRegistryListStep(),
+        new EnvironmentVariablesListStep()
+    ];
+    const executeSteps: AzureWizardExecuteStep<IDeployImageContext>[] = [
+        new VerifyProvidersStep([webProvider]),
+        new DeployImageConfigureStep(),
+        new ContainerAppUpdateStep()
+    ];
 
     const wizard: AzureWizard<IDeployImageContext> = new AzureWizard(wizardContext, {
         title,
