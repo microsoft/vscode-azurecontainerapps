@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { SupportedRegistries, acrDomain, dockerHubDomain } from "../constants";
+import { acrDomain, dockerHubDomain, SupportedRegistries } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 
 /**
