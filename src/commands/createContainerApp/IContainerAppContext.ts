@@ -8,7 +8,6 @@ import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ImageSourceValues } from '../../constants';
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 import { IDeployImageContext } from '../deployImage/IDeployImageContext';
-
 export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
     managedEnvironmentId: string;
     newContainerAppName?: string;
