@@ -22,7 +22,7 @@ export class DeployImageConfigureStep extends AzureWizardExecuteStep<IDeployImag
 
         if (context.targetContainer) {
             // Grab existing app secrets and registry credentials
-            const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.targetContainer);
+            const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, context.targetContainer);
             secrets = containerAppEnvelope.configuration.secrets;
             registries = containerAppEnvelope.configuration.registries;
         }
