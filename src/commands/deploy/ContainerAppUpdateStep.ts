@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import type { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { ext } from "../../extensionVariables";

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
+import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../constants";
 import { getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
