@@ -31,6 +31,7 @@ async function promptForIngressConfiguration(context: IActionContext, subscripti
     const wizardContext: IContainerAppContext = {
         ...context,
         ...createSubscriptionContext(subscription),
+        subscription,
         managedEnvironmentId: nonNullProp(containerApp, 'managedEnvironmentId'),
     };
     const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {

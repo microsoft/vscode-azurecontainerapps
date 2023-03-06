@@ -21,6 +21,7 @@ export async function editTargetPort(context: IActionContext, node?: IngressItem
     const wizardContext: IContainerAppContext = {
         ...context,
         ...createSubscriptionContext(subscription),
+        subscription,
         managedEnvironmentId: nonNullProp(containerApp, 'managedEnvironmentId'),
         defaultPort: containerApp.configuration?.ingress?.targetPort
     };
