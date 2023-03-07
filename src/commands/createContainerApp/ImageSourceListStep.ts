@@ -6,8 +6,8 @@
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
-import { ContainerRegistryListStep } from "../deployImage/ContainerRegistryListStep";
-import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
+import { EnvironmentVariablesListStep } from "../deploy/EnvironmentVariablesListStep";
+import { ContainerRegistryListStep } from "../deploy/deployFromRegistry/ContainerRegistryListStep";
 import { IContainerAppContext } from './IContainerAppContext';
 import { setQuickStartImage } from "./setQuickStartImage";
 

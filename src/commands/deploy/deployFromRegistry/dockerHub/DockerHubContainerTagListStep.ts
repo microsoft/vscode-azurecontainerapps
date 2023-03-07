@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { QuickPickItem } from "vscode";
-import { loadMoreQp, QuickPicksCache } from "../../../constants";
-import { nonNullProp } from "../../../utils/nonNull";
-import { IDeployImageContext } from "../IDeployImageContext";
+import { loadMoreQp, QuickPicksCache } from "../../../../constants";
+import { nonNullProp } from "../../../../utils/nonNull";
+import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
 import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
 import { getTagsForRepo } from "./DockerHubV2ApiCalls";
 
 export class DockerHubContainerTagListStep extends RepositoryTagListStepBase {
-    public async getPicks(context: IDeployImageContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
+    public async getPicks(context: IDeployFromRegistryContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
         const response = await getTagsForRepo(context, nonNullProp(context, 'dockerHubNamespace'), nonNullProp(context, 'repositoryName'), cachedPicks.next);
 
         cachedPicks.cache.push(...response.results.map((t) => { return { label: t.name } }));

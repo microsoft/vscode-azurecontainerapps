@@ -5,12 +5,12 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { QuickPickItem } from "vscode";
-import { loadMoreQp, QuickPicksCache } from "../../constants";
-import { localize } from "../../utils/localize";
-import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";
-import { IDeployImageContext } from "./IDeployImageContext";
+import { loadMoreQp, QuickPicksCache } from "../../../constants";
+import { localize } from "../../../utils/localize";
+import { IContainerAppContext } from "../../createContainerApp/IContainerAppContext";
+import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
 
-export abstract class RegistryRepositoriesListStepBase extends AzureWizardPromptStep<IDeployImageContext> {
+export abstract class RegistryRepositoriesListStepBase extends AzureWizardPromptStep<IDeployFromRegistryContext> {
     public async prompt(context: IContainerAppContext): Promise<void> {
         const picksCache: QuickPicksCache = { cache: [], next: null };
         const placeHolder: string = localize('selectRepo', 'Select a repository');
@@ -27,5 +27,5 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
         return !context.repositoryName;
     }
 
-    public abstract getPicks(context: IDeployImageContext, picksCache: QuickPicksCache | undefined): Promise<QuickPickItem[]>
+    public abstract getPicks(context: IDeployFromRegistryContext, picksCache: QuickPicksCache | undefined): Promise<QuickPickItem[]>
 }

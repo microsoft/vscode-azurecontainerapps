@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../utils/localize";
-import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";
+import { localize } from "../../../utils/localize";
+import { IContainerAppContext } from "../../createContainerApp/IContainerAppContext";
 
 export class RegistryImageInputStep extends AzureWizardPromptStep<IContainerAppContext> {
     public async prompt(context: IContainerAppContext): Promise<void> {
