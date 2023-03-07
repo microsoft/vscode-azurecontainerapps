@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -27,6 +27,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     const wizardContext: IContainerAppWithActivityContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
+        subscription: node.subscription,
         managedEnvironmentId: node.managedEnvironment.id,
         ...(await createActivityContext())
     };

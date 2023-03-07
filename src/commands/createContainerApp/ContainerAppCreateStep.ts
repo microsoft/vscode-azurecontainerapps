@@ -15,7 +15,7 @@ import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { listCredentialsFromRegistry } from "../deployImage/acr/listCredentialsFromRegistry";
 import { getContainerNameForImage } from "../deployImage/getContainerNameForImage";
-import { getLoginServer } from "./getLoginServer";
+import { getLoginServer } from "../deployImage/getLoginServer";
 import { IContainerAppContext } from "./IContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerAppContext> {
