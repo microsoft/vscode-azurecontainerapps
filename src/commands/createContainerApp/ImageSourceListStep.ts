@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { EnvironmentVariablesListStep } from "../deploy/EnvironmentVariablesListStep";
 import { ContainerRegistryListStep } from "../deploy/deployFromRegistry/ContainerRegistryListStep";
+import { DeployFromRegistryConfigureStep } from "../deploy/deployFromRegistry/DeployFromRegistryConfigureStep";
 import { IContainerAppContext } from './IContainerAppContext';
 import { setQuickStartImage } from "./setQuickStartImage";
 
@@ -35,18 +36,22 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
 
     public async getSubWizard(context: IContainerAppContext): Promise<IWizardOptions<IContainerAppContext> | undefined> {
         const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [];
 
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
                 setQuickStartImage(context);
                 break;
             case ImageSource.ExternalRegistry:
-                promptSteps.push(new ContainerRegistryListStep(), new EnvironmentVariablesListStep());
+                promptSteps.push(new ContainerRegistryListStep());
+                executeSteps.push(new DeployFromRegistryConfigureStep())
                 break;
             default:
             // Todo: Steps that lead to additional 'Build from project' options
         }
 
-        return { promptSteps };
+        promptSteps.push(new EnvironmentVariablesListStep());
+
+        return { promptSteps, executeSteps };
     }
 }
