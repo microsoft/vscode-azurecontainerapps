@@ -7,6 +7,7 @@ import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils'
 import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 import { IDeployBaseContext } from '../deploy/IDeployBaseContext';
+
 export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployBaseContext {
     managedEnvironmentId: string;
     newContainerAppName?: string;
