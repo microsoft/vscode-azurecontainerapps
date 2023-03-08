@@ -11,8 +11,8 @@ import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } 
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
-import { getContainerNameForImage } from "../deployImage/getContainerNameForImage";
 import { IDeployBaseContext } from "./IDeployBaseContext";
+import { getContainerNameForImage } from "./deployFromRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployBaseContext> {
     public priority: number = 260;

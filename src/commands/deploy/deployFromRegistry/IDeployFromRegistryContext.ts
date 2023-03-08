@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
-import { SupportedRegistries } from '../../constants';
-import { IDeployBaseContext } from "../deploy/IDeployBaseContext";
+import { SupportedRegistries } from '../../../constants';
+import { IDeployBaseContext } from "../IDeployBaseContext";
 
-export interface IDeployImageContext extends IDeployBaseContext {
+export interface IDeployFromRegistryContext extends IDeployBaseContext {
     registryDomain?: SupportedRegistries;
     registry?: ContainerRegistryManagementModels.Registry;
     dockerHubNamespace?: string;

@@ -13,9 +13,9 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
-import { listCredentialsFromRegistry } from "../deployImage/acr/listCredentialsFromRegistry";
-import { getContainerNameForImage } from "../deployImage/getContainerNameForImage";
-import { getLoginServer } from "../deployImage/getLoginServer";
+import { listCredentialsFromRegistry } from "../deploy/deployFromRegistry/acr/listCredentialsFromRegistry";
+import { getContainerNameForImage } from "../deploy/deployFromRegistry/getContainerNameForImage";
+import { getLoginServer } from "../deploy/deployFromRegistry/getLoginServer";
 import { IContainerAppContext } from "./IContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerAppContext> {

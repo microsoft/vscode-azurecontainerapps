@@ -5,18 +5,18 @@
 
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource, webProvider } from "../../constants";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
-import { EnvironmentVariablesListStep } from "../createContainerApp/EnvironmentVariablesListStep";
-import { ContainerAppOverwriteConfirmStep } from "../deploy/ContainerAppOverwriteConfirmStep";
-import { ContainerAppUpdateStep } from "../deploy/ContainerAppUpdateStep";
+import { ImageSource, webProvider } from "../../../constants";
+import { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { localize } from "../../../utils/localize";
+import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
+import { ContainerAppUpdateStep } from "../ContainerAppUpdateStep";
+import { EnvironmentVariablesListStep } from "../EnvironmentVariablesListStep";
 import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
-import { IDeployImageContext } from "./IDeployImageContext";
-import { DeployImageConfigureStep } from "./deployImageConfigureStep";
+import { DeployFromRegistryConfigureStep } from "./DeployFromRegistryConfigureStep";
+import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
 
-export async function deployImage(context: ITreeItemPickerContext & Partial<IDeployImageContext>, node?: ContainerAppItem): Promise<void> {
+export async function deployFromRegistry(context: ITreeItemPickerContext & Partial<IDeployFromRegistryContext>, node?: ContainerAppItem): Promise<void> {
     if (!node) {
         context.suppressCreatePick = true;
         node = await pickContainerApp(context);
@@ -24,7 +24,7 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
 
     const { subscription, containerApp } = node;
 
-    const wizardContext: IDeployImageContext = {
+    const wizardContext: IDeployFromRegistryContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         subscription,
@@ -33,18 +33,18 @@ export async function deployImage(context: ITreeItemPickerContext & Partial<IDep
     };
 
     const title: string = localize('updateImage', 'Update image in "{0}"', containerApp.name);
-    const promptSteps: AzureWizardPromptStep<IDeployImageContext>[] = [
+    const promptSteps: AzureWizardPromptStep<IDeployFromRegistryContext>[] = [
         new ContainerAppOverwriteConfirmStep(),
         new ContainerRegistryListStep(),
         new EnvironmentVariablesListStep()
     ];
-    const executeSteps: AzureWizardExecuteStep<IDeployImageContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<IDeployFromRegistryContext>[] = [
         new VerifyProvidersStep([webProvider]),
-        new DeployImageConfigureStep(),
+        new DeployFromRegistryConfigureStep(),
         new ContainerAppUpdateStep()
     ];
 
-    const wizard: AzureWizard<IDeployImageContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IDeployFromRegistryContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps,

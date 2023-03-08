@@ -5,11 +5,11 @@
 
 import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
-import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
-import { IDeployImageContext } from "../IDeployImageContext";
+import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
+import { nonNullProp, nonNullValue } from "../../../../utils/nonNull";
+import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
 
-export async function listCredentialsFromRegistry(context: IDeployImageContext, registry: ContainerRegistryManagementModels.Registry):
+export async function listCredentialsFromRegistry(context: IDeployFromRegistryContext, registry: ContainerRegistryManagementModels.Registry):
     Promise<{ username: string, password: ContainerRegistryManagementModels.RegistryPassword }> {
 
     const containerClient: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);

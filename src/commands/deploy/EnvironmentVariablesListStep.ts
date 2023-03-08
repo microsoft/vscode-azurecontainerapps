@@ -7,12 +7,12 @@ import { AzExtFsExtra, AzureWizardPromptStep } from "@microsoft/vscode-azext-uti
 import { parse } from "dotenv";
 import { localize } from "../../utils/localize";
 import { selectWorkspaceFile } from "../../utils/workspaceUtils";
-import { IContainerAppContext } from "./IContainerAppContext";
+import { IDeployBaseContext } from "./IDeployBaseContext";
 
 const skipForNowLabel: string = localize('skipForNow', '$(clock) Skip for now');
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IContainerAppContext> {
-    public async prompt(context: IContainerAppContext): Promise<void> {
+export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IDeployBaseContext> {
+    public async prompt(context: IDeployBaseContext): Promise<void> {
         const input = await context.ui.showQuickPick([{ label: localize('set', 'Set with environment variable file') }, { label: skipForNowLabel }],
             { placeHolder: localize('setEnvVar', 'Set environment variables in container instance') });
 
@@ -20,14 +20,13 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IContain
             const envData = await this.selectEnvironmentSettings(context);
             context.environmentVariables = Object.keys(envData).map(name => { return { name, value: envData[name] } });
         }
-
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
+    public shouldPrompt(context: IDeployBaseContext): boolean {
         return context.environmentVariables === undefined;
     }
 
-    private async selectEnvironmentSettings(context: IContainerAppContext) {
+    private async selectEnvironmentSettings(context: IDeployBaseContext) {
         const envFileFsPath: string = await selectWorkspaceFile(context, 'Select a .env file', { filters: { 'env file': ['env', 'env.*'] } }, '**/*.{env,env.*}');
         const data = await AzExtFsExtra.readFile(envFileFsPath);
         return parse(data);
