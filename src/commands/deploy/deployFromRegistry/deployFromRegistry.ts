@@ -13,8 +13,8 @@ import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfir
 import { ContainerAppUpdateStep } from "../ContainerAppUpdateStep";
 import { EnvironmentVariablesListStep } from "../EnvironmentVariablesListStep";
 import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
+import { DeployFromRegistryConfigureStep } from "./DeployFromRegistryConfigureStep";
 import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
-import { DeployImageConfigureStep } from "./deployImageConfigureStep";
 
 export async function deployFromRegistry(context: ITreeItemPickerContext & Partial<IDeployFromRegistryContext>, node?: ContainerAppItem): Promise<void> {
     if (!node) {
@@ -40,7 +40,7 @@ export async function deployFromRegistry(context: ITreeItemPickerContext & Parti
     ];
     const executeSteps: AzureWizardExecuteStep<IDeployFromRegistryContext>[] = [
         new VerifyProvidersStep([webProvider]),
-        new DeployImageConfigureStep(),
+        new DeployFromRegistryConfigureStep(),
         new ContainerAppUpdateStep()
     ];
 

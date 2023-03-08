@@ -12,10 +12,10 @@ import { acrDomain } from "../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
 import { nonNullProp, nonNullValue } from "../../../../utils/nonNull";
-import { IContainerAppContext } from "../../../createContainerApp/IContainerAppContext";
+import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
 
-export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IContainerAppContext> {
-    public async prompt(context: IContainerAppContext): Promise<void> {
+export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IDeployFromRegistryContext> {
+    public async prompt(context: IDeployFromRegistryContext): Promise<void> {
         const message = localize('enableAdminUser', 'An admin user is required to continue. If enabled, you can use the registry name as username and admin user access key as password to docker login to your container registry.');
         await context.ui.showWarningMessage(message, { modal: true }, { title: localize('enable', 'Enable') });
 
@@ -30,7 +30,7 @@ export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IContaine
         }
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
+    public shouldPrompt(context: IDeployFromRegistryContext): boolean {
         // this is only a requirement for ACR
         return context.registryDomain === acrDomain && !!context.registry && !context.registry.adminUserEnabled;
     }

@@ -11,7 +11,7 @@ import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
 import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 
-export class DeployImageConfigureStep extends AzureWizardExecuteStep<IDeployFromRegistryContext> {
+export class DeployFromRegistryConfigureStep extends AzureWizardExecuteStep<IDeployFromRegistryContext> {
     public priority: number = 240;
 
     // Configures 'IDeployBaseContext' base image attributes
