@@ -7,11 +7,10 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { QuickPickItem } from "vscode";
 import { loadMoreQp, QuickPicksCache } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { IContainerAppContext } from "../../createContainerApp/IContainerAppContext";
 import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
 
 export abstract class RegistryRepositoriesListStepBase extends AzureWizardPromptStep<IDeployFromRegistryContext> {
-    public async prompt(context: IContainerAppContext): Promise<void> {
+    public async prompt(context: IDeployFromRegistryContext): Promise<void> {
         const picksCache: QuickPicksCache = { cache: [], next: null };
         const placeHolder: string = localize('selectRepo', 'Select a repository');
         let result: QuickPickItem;
@@ -23,7 +22,7 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
         context.repositoryName = result.label;
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
+    public shouldPrompt(context: IDeployFromRegistryContext): boolean {
         return !context.repositoryName;
     }
 
