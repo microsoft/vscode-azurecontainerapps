@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
+import type { ContainerRegistryManagementClient, Registry } from '@azure/arm-containerregistry';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
@@ -26,7 +26,7 @@ export async function createContainerRegistryManagementClient(context: AzExtClie
     return createAzureClient(context, (await import('@azure/arm-containerregistry')).ContainerRegistryManagementClient);
 }
 
-export function createContainerRegistryClient(context: AzExtClientContext, registry: ContainerRegistryManagementModels.Registry): ContainerRegistryClient {
+export function createContainerRegistryClient(context: AzExtClientContext, registry: Registry): ContainerRegistryClient {
     const clientContext = parseClientContext(context);
     // @azure/container-registry doesn't support ADAL tokens at all.  If it sees `signRequest` is defined
     // it errors, but we don't actually need `signRequest` because this is a T2 package
