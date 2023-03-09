@@ -5,6 +5,7 @@
 
 import { AzExtFsExtra, AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { parse } from "dotenv";
+import { ImageSource } from "../../constants";
 import { localize } from "../../utils/localize";
 import { selectWorkspaceFile } from "../../utils/workspaceUtils";
 import { IDeployBaseContext } from "./IDeployBaseContext";
@@ -23,7 +24,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IDeployB
     }
 
     public shouldPrompt(context: IDeployBaseContext): boolean {
-        return context.environmentVariables === undefined;
+        return context.imageSource !== ImageSource.QuickStartImage && context.environmentVariables === undefined;
     }
 
     private async selectEnvironmentSettings(context: IDeployBaseContext) {

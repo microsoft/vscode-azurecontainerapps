@@ -5,7 +5,7 @@
 
 import { IContainerAppContext } from "./IContainerAppContext";
 
-export function setQuickStartImage(context: IContainerAppContext): void {
+export function setQuickStartImage(context: Partial<IContainerAppContext>): void {
     context.image = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
     context.enableIngress = true;
     context.enableExternal = true;

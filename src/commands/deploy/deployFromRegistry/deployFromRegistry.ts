@@ -11,9 +11,7 @@ import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "../ContainerAppUpdateStep";
-import { EnvironmentVariablesListStep } from "../EnvironmentVariablesListStep";
-import { ContainerRegistryListStep } from "./ContainerRegistryListStep";
-import { DeployFromRegistryConfigureStep } from "./DeployFromRegistryConfigureStep";
+import { ImageSourceListStep } from "../ImageSourceListStep";
 import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
 
 export async function deployFromRegistry(context: ITreeItemPickerContext & Partial<IDeployFromRegistryContext>, node?: ContainerAppItem): Promise<void> {
@@ -33,14 +31,14 @@ export async function deployFromRegistry(context: ITreeItemPickerContext & Parti
     };
 
     const title: string = localize('updateImage', 'Update image in "{0}"', containerApp.name);
+
     const promptSteps: AzureWizardPromptStep<IDeployFromRegistryContext>[] = [
         new ContainerAppOverwriteConfirmStep(),
-        new ContainerRegistryListStep(),
-        new EnvironmentVariablesListStep()
+        new ImageSourceListStep()
     ];
+
     const executeSteps: AzureWizardExecuteStep<IDeployFromRegistryContext>[] = [
         new VerifyProvidersStep([webProvider]),
-        new DeployFromRegistryConfigureStep(),
         new ContainerAppUpdateStep()
     ];
 
