@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
+import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
