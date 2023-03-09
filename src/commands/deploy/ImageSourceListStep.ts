@@ -6,14 +6,14 @@
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
-import { EnvironmentVariablesListStep } from "../deploy/EnvironmentVariablesListStep";
-import { ContainerRegistryListStep } from "../deploy/deployFromRegistry/ContainerRegistryListStep";
-import { DeployFromRegistryConfigureStep } from "../deploy/deployFromRegistry/DeployFromRegistryConfigureStep";
-import { IContainerAppContext } from './IContainerAppContext';
-import { setQuickStartImage } from "./setQuickStartImage";
+import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
+import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
+import { IDeployBaseContext } from "./IDeployBaseContext";
+import { ContainerRegistryListStep } from "./deployFromRegistry/ContainerRegistryListStep";
+import { DeployFromRegistryConfigureStep } from "./deployFromRegistry/DeployFromRegistryConfigureStep";
 
-export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppContext> {
-    public async prompt(context: IContainerAppContext): Promise<void> {
+export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContext> {
+    public async prompt(context: IDeployBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('quickStartImage', 'Use quickstart image'),
             localize('externalRegistry', 'Use existing image'),
@@ -30,13 +30,13 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
+    public shouldPrompt(context: IDeployBaseContext): boolean {
         return !context.imageSource;
     }
 
-    public async getSubWizard(context: IContainerAppContext): Promise<IWizardOptions<IContainerAppContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<IContainerAppContext>[] = [];
+    public async getSubWizard(context: IDeployBaseContext): Promise<IWizardOptions<IDeployBaseContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<IDeployBaseContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<IDeployBaseContext>[] = [];
 
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
@@ -44,7 +44,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IContainerAppCont
                 break;
             case ImageSource.ExternalRegistry:
                 promptSteps.push(new ContainerRegistryListStep());
-                executeSteps.push(new DeployFromRegistryConfigureStep())
+                executeSteps.push(new DeployFromRegistryConfigureStep());
                 break;
             default:
             // Todo: Steps that lead to additional 'Build from project' options

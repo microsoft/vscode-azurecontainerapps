@@ -24,7 +24,7 @@ export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDep
     }
 
     public shouldPrompt(context: IDeployBaseContext): boolean {
-        return this.hasUnsupportedFeatures(context);
+        return !!context.targetContainer && this.hasUnsupportedFeatures(context);
     }
 
     // Check for any portal features that VS Code doesn't currently support
