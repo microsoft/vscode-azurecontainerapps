@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerRegistryManagementModels } from '@azure/arm-containerregistry';
+import type { Registry } from '@azure/arm-containerregistry';
 import { SupportedRegistries } from '../../../constants';
 import { IDeployBaseContext } from "../IDeployBaseContext";
 
 export interface IDeployFromRegistryContext extends IDeployBaseContext {
     registryDomain?: SupportedRegistries;
-    registry?: ContainerRegistryManagementModels.Registry;
+    registry?: Registry;
     dockerHubNamespace?: string;
 
     repositoryName?: string;
