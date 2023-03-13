@@ -68,3 +68,5 @@ export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const azResourceContextValue: string = 'azResource';
 export const azResourceRegExp = new RegExp(azResourceContextValue, 'i');
+
+export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
