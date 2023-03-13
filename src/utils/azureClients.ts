@@ -4,15 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-<<<<<<< HEAD
 import { ContainerRegistryManagementClient, Registry } from '@azure/arm-containerregistry';
-=======
-import type { ContainerRegistryManagementClient, Registry } from '@azure/arm-containerregistry';
->>>>>>> cc32ac04cb42cd58ec18546182011c75814b3078
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
-import { createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
+import { IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
 // Lazy-load @azure packages to improve startup performance.
@@ -37,8 +33,9 @@ export function createContainerRegistryClient(context: AzExtClientContext, regis
     const credential = clientContext.credentials as { signRequest: unknown };
     credential.signRequest = undefined;
 
-    return new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
+    const client = new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
+    return client;
 }
 
 export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
