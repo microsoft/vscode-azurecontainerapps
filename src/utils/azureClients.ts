@@ -4,7 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+<<<<<<< HEAD
 import { ContainerRegistryManagementClient, Registry } from '@azure/arm-containerregistry';
+=======
+import type { ContainerRegistryManagementClient, Registry } from '@azure/arm-containerregistry';
+>>>>>>> cc32ac04cb42cd58ec18546182011c75814b3078
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';

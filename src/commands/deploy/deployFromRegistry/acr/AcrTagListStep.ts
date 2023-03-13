@@ -9,14 +9,14 @@ import * as dayjs from 'dayjs';
 // eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { QuickPickItem } from "vscode";
-import { createContainerRegistryClient } from "../../../utils/azureClients";
-import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
-import { IDeployImageContext } from "../IDeployImageContext";
+import { createContainerRegistryClient } from "../../../../utils/azureClients";
+import { nonNullProp, nonNullValue } from "../../../../utils/nonNull";
+import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
 import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
 
 dayjs.extend(relativeTime);
 export class AcrTagListStep extends RepositoryTagListStepBase {
-    public async getPicks(context: IDeployImageContext): Promise<QuickPickItem[]> {
+    public async getPicks(context: IDeployFromRegistryContext): Promise<QuickPickItem[]> {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
         const repoClient = client.getRepository(nonNullProp(context, 'repositoryName'));
 

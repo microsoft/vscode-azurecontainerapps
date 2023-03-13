@@ -3,19 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
+import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { nonNullProp } from "../../utils/nonNull";
-import { listCredentialsFromRegistry } from "../deployImage/acr/listCredentialsFromRegistry";
-import { getContainerNameForImage } from "../deployImage/getContainerNameForImage";
-import { getLoginServer } from "./getLoginServer";
+import { getContainerNameForImage } from "../deploy/deployFromRegistry/getContainerNameForImage";
 import { IContainerAppContext } from "./IContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerAppContext> {
@@ -23,30 +20,6 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
 
     public async execute(context: IContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-        let secrets: Secret[], registries: RegistryCredentials[];
-
-        if (context.registry) {
-            // for ACR usage
-            const { username, password } = await listCredentialsFromRegistry(context, context.registry);
-            const passwordName = `${context.registry.name?.toLowerCase()}-${password?.name}`;
-            secrets = [
-                {
-                    name: passwordName,
-                    value: password?.value
-                }
-            ]
-            registries = [
-                {
-                    server: context.registry.loginServer,
-                    username,
-                    passwordSecretRef: passwordName
-                }
-            ]
-        } else {
-            // currently only supporting public Docker Hub registries so no secrets required
-            secrets = [];
-            registries = [];
-        }
 
         const ingress: Ingress | undefined = context.enableIngress ? {
             targetPort: context.targetPort,
@@ -61,33 +34,32 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
             ],
         } : undefined;
 
-        const creatingSwa: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
-        progress.report({ message: creatingSwa });
-        ext.outputChannel.appendLog(creatingSwa);
-
-        context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
-        const name = getContainerNameForImage(context.image);
+        const creating: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
+        progress.report({ message: creating });
+        ext.outputChannel.appendLog(creating);
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
             managedEnvironmentId: context.managedEnvironmentId,
             configuration: {
                 ingress,
-                secrets,
-                registries,
+                secrets: context.secrets,
+                registries: context.registries,
                 activeRevisionsMode: KnownActiveRevisionsMode.Multiple,
             },
             template: {
                 containers: [
                     {
-                        image: context.image, name, env: context.environmentVariables
+                        image: context.image,
+                        name: getContainerNameForImage(nonNullProp(context, 'image')),
+                        env: context.environmentVariables
                     }
                 ]
             }
         }));
     }
 
-    public shouldExecute(_wizardContext: IContainerAppContext): boolean {
+    public shouldExecute(): boolean {
         return true;
     }
 }
