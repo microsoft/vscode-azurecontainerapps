@@ -33,11 +33,10 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     };
 
     const title: string = localize('createContainerApp', 'Create Container App');
-    const useQuickStartImage: boolean = true;
 
     const promptSteps: AzureWizardPromptStep<IContainerAppWithActivityContext>[] = [
         new ContainerAppNameStep(),
-        new ImageSourceListStep({ useQuickStartImage }),
+        new ImageSourceListStep(),
         new EnableIngressStep(),
     ];
 
@@ -55,6 +54,9 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         executeSteps,
         showLoadingPrompt: true
     });
+
+    // we want to add the quick start image _only_ for the create scenairo
+    wizardContext.useQuickStartImage = true;
 
     await wizard.prompt();
     const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');

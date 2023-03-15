@@ -7,7 +7,6 @@
     "containerApps.browse": "Browse",
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.deploy": "Deploy to Container App...",
-    "containerApps.deployImage": "Update Image in Container App...",
     "containerApps.deployImageApi": "Update Image in Container App (API)...",
     "containerApps.deleteContainerApp": "Delete Container App...",
     "containerApps.disableIngress": "Disable Ingress for Container App",

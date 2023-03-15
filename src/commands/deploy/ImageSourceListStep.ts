@@ -7,24 +7,16 @@ import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWi
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
-import { ContainerRegistryListStep } from "./deployFromRegistry/ContainerRegistryListStep";
-import { DeployFromRegistryConfigureStep } from "./deployFromRegistry/DeployFromRegistryConfigureStep";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { IDeployBaseContext } from "./IDeployBaseContext";
+import { ContainerRegistryListStep } from "./deployFromRegistry/ContainerRegistryListStep";
+import { DeployFromRegistryConfigureStep } from "./deployFromRegistry/DeployFromRegistryConfigureStep";
 
-interface ImageSourceOptions {
-    useQuickStartImage?: boolean;
-}
 export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContext> {
-    constructor(private readonly options?: ImageSourceOptions) {
-        super();
-    }
-
     public async prompt(context: IDeployBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('externalRegistry', 'Use existing image'),
             localize('quickStartImage', 'Use quickstart image'),
-            localize('updateImage', 'Update image in Container App')
             // localize('buildFromProject', 'Build from project'),
         ];
 
@@ -34,12 +26,8 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
             // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
         ];
 
-        if (this.options?.useQuickStartImage) {
+        if (context.useQuickStartImage !== undefined) {
             picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
-        } else {
-            if (context.targetContainer?.template?.containers?.[0]?.image) {
-                picks.push({ label: imageSourceLabels[2], data: ImageSource.ExternalRegistry, suppressPersistence: true });
-            }
         }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
