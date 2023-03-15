@@ -5,13 +5,12 @@
 
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { ImageSourceValues } from '../../constants';
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
-import { IDeployImageContext } from '../deployImage/IDeployImageContext';
-export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployImageContext {
+import { IDeployBaseContext } from '../deploy/IDeployBaseContext';
+
+export interface IContainerAppContext extends IResourceGroupWizardContext, IDeployBaseContext {
     managedEnvironmentId: string;
     newContainerAppName?: string;
-    imageSource?: ImageSourceValues;
 
     enableIngress?: boolean;
     enableExternal?: boolean;

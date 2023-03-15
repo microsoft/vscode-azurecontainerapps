@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { QuickPickItem } from "vscode";
-import { loadMoreQp, QuickPicksCache } from "../../../constants";
-import { localize } from "../../../utils/localize";
-import { nonNullProp } from "../../../utils/nonNull";
-import { IDeployImageContext } from "../IDeployImageContext";
+import { loadMoreQp, QuickPicksCache } from "../../../../constants";
+import { localize } from "../../../../utils/localize";
+import { nonNullProp } from "../../../../utils/nonNull";
+import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getReposForNamespace } from "./DockerHubV2ApiCalls";
 
 export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesListStepBase {
-    public async getPicks(context: IDeployImageContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
+    public async getPicks(context: IDeployFromRegistryContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
         const response = await getReposForNamespace(context, nonNullProp(context, 'dockerHubNamespace'), cachedPicks.next);
 
         if (response.count === 0) {

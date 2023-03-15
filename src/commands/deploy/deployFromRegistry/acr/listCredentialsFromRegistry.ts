@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, ContainerRegistryManagementModels } from "@azure/arm-containerregistry";
+import type { ContainerRegistryManagementClient, Registry, RegistryPassword } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
-import { nonNullProp, nonNullValue } from "../../../utils/nonNull";
-import { IDeployImageContext } from "../IDeployImageContext";
+import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
+import { nonNullProp, nonNullValue } from "../../../../utils/nonNull";
+import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
 
-export async function listCredentialsFromRegistry(context: IDeployImageContext, registry: ContainerRegistryManagementModels.Registry):
-    Promise<{ username: string, password: ContainerRegistryManagementModels.RegistryPassword }> {
+export async function listCredentialsFromRegistry(context: IDeployFromRegistryContext, registry: Registry):
+    Promise<{ username: string, password: RegistryPassword }> {
 
     const containerClient: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
     const credentials = await containerClient.registries.listCredentials(getResourceGroupFromId(nonNullProp(registry, 'id')), nonNullProp(registry, 'name'));

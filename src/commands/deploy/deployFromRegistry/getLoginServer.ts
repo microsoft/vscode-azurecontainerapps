@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { acrDomain, dockerHubDomain } from "../../constants";
-import { nonNullValue } from "../../utils/nonNull";
-import { IDeployImageContext } from "../deployImage/IDeployImageContext";
+import { acrDomain, dockerHubDomain } from "../../../constants";
+import { nonNullValue } from "../../../utils/nonNull";
+import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
 
-export function getLoginServer(context: IDeployImageContext): string {
+export function getLoginServer(context: IDeployFromRegistryContext): string {
     switch (context.registryDomain) {
         case acrDomain:
             return nonNullValue(context.registry?.loginServer);
