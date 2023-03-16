@@ -28,8 +28,6 @@ export async function deploy(context: ITreeItemPickerContext & Partial<IDeployBa
         targetContainer: containerApp
     };
 
-    const title: string = localize('deploy', 'Deploying to "{0}"', containerApp.name);
-
     const promptSteps: AzureWizardPromptStep<IDeployBaseContext>[] = [
         new ContainerAppOverwriteConfirmStep(),
         new ImageSourceListStep()
@@ -41,7 +39,7 @@ export async function deploy(context: ITreeItemPickerContext & Partial<IDeployBa
     ];
 
     const wizard: AzureWizard<IDeployBaseContext> = new AzureWizard(wizardContext, {
-        title,
+        title: localize('deploy', 'Deploying to "{0}"', containerApp.name),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true
