@@ -55,6 +55,9 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         showLoadingPrompt: true
     });
 
+    // we want to add the quick start image _only_ for the create scenairo
+    wizardContext.showQuickStartImage = true;
+
     await wizard.prompt();
     const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
 

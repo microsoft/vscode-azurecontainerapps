@@ -15,17 +15,20 @@ import { DeployFromRegistryConfigureStep } from "./deployFromRegistry/DeployFrom
 export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContext> {
     public async prompt(context: IDeployBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
-            localize('quickStartImage', 'Use quickstart image'),
             localize('externalRegistry', 'Use existing image'),
+            localize('quickStartImage', 'Use quickstart image'),
             // localize('buildFromProject', 'Build from project'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.QuickStartImage, suppressPersistence: true },
-            { label: imageSourceLabels[1], data: ImageSource.ExternalRegistry, suppressPersistence: true },
+            { label: imageSourceLabels[0], data: ImageSource.ExternalRegistry, suppressPersistence: true },
             // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
         ];
+
+        if (context.showQuickStartImage) {
+            picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
+        }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
