@@ -26,7 +26,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
             // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
         ];
 
-        if (context.useQuickStartImage !== undefined) {
+        if (context.showQuickStartImage) {
             picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
         }
 
