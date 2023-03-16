@@ -65,9 +65,10 @@
                 "icon": "$(add)"
             },
             {
-                "command": "containerApps.deployImage",
-                "title": "%containerApps.deployImage%",
-                "category": "Azure Container Apps"
+                "command": "containerApps.deploy",
+                "title": "%containerApps.deploy%",
+                "category": "Azure Container Apps",
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "containerApps.deployImageApi",
@@ -151,6 +152,13 @@
             }
         ],
         "menus": {
+            "azureWorkspaceDeploy": [
+                {
+                    "command": "containerApps.deploy",
+                    "when": "view == azureWorkspace",
+                    "group": "navigation@3"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
@@ -168,7 +176,7 @@
                     "group": "3@1"
                 },
                 {
-                    "command": "containerApps.deployImage",
+                    "command": "containerApps.deploy",
                     "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "3@1"
                 },
