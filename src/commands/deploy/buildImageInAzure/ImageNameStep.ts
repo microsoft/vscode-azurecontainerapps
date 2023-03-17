@@ -7,7 +7,6 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { URI, Utils } from "vscode-uri";
 import { localize } from "../../../utils/localize";
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
-import path = require("path");
 
 export class ImageNameStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {
@@ -30,7 +29,7 @@ async function getSuggestedName(context: IBuildImageInAzureContext, dockerFilePa
     suggestedImageName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
     if (suggestedImageName === '') {
         if (context.rootFolder) {
-            suggestedImageName = path.basename(context.rootFolder.uri.fsPath).toLowerCase().replace(/\s/g, '');
+            suggestedImageName = Utils.basename(context.rootFolder.uri).toLowerCase().replace(/\s/g, '');
         }
     }
     suggestedImageName += ":{{.Run.ID}}";
