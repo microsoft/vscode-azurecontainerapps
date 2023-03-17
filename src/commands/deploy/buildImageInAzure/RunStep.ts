@@ -4,15 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
-import * as fse from 'fs-extra';
-import { IBuildImageContext } from "./IBuildImageContext";
-import path = require("path");
+import { AzExtFsExtra, AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import * as path from 'path';
+import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
-export class RunStep extends AzureWizardExecuteStep<IBuildImageContext> {
-    public priority: number = 250;
+export class RunStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
+    public priority: number = 200;
 
-    public async execute(context: IBuildImageContext): Promise<void> {
+    public async execute(context: IBuildImageInAzureContext): Promise<void> {
         try {
             const rootUri = context.rootFolder.uri;
 
@@ -22,19 +21,18 @@ export class RunStep extends AzureWizardExecuteStep<IBuildImageContext> {
                 isPushEnabled: true,
                 sourceLocation: context.uploadedSourceLocation,
                 platform: { os: context.os },
-                dockerFilePath: path.relative(rootUri.fsPath, context.dockerFile.absoluteFilePath)
+                dockerFilePath: path.relative(rootUri.path, context.dockerFilePath)
             };
 
             context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
         } finally {
-            if (await fse.pathExists(context.tarFilePath)) {
-                await fse.unlink(context.tarFilePath);
+            if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
+                await AzExtFsExtra.deleteResource(context.tarFilePath);
             }
         }
     }
 
-    public shouldExecute(context: IBuildImageContext): boolean {
+    public shouldExecute(context: IBuildImageInAzureContext): boolean {
         return !context.run
     }
 }
-

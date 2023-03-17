@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../utils/localize";
-import { Item } from "./DockerFileItemStep";
-import { IBuildImageContext } from "./IBuildImageContext";
+import { URI, Utils } from "vscode-uri";
+import { localize } from "../../../utils/localize";
+import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import path = require("path");
 
-export class ImageNameStep extends AzureWizardPromptStep<IBuildImageContext> {
-    public async prompt(context: IBuildImageContext): Promise<void> {
-        const suggestedImageName = await getSuggestedName(context, context.dockerFile);
+export class ImageNameStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
+    public async prompt(context: IBuildImageInAzureContext): Promise<void> {
+        const suggestedImageName = await getSuggestedName(context, context.dockerFilePath);
 
         context.imageName = await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),
@@ -19,21 +19,20 @@ export class ImageNameStep extends AzureWizardPromptStep<IBuildImageContext> {
         });
     }
 
-    public shouldPrompt(context: IBuildImageContext): boolean {
+    public shouldPrompt(context: IBuildImageInAzureContext): boolean {
         return !context.imageName;
     }
 
 }
 
-async function getSuggestedName(context: IBuildImageContext, dockerFileItem: Item): Promise<string | undefined> {
-    let suggestedImageName: string | undefined = path.basename(dockerFileItem.relativeFolderPath).toLowerCase();
-
-    if (suggestedImageName === '.') {
+async function getSuggestedName(context: IBuildImageInAzureContext, dockerFilePath: string): Promise<string | undefined> {
+    let suggestedImageName: string | undefined;
+    suggestedImageName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
+    if (suggestedImageName === '') {
         if (context.rootFolder) {
             suggestedImageName = path.basename(context.rootFolder.uri.fsPath).toLowerCase().replace(/\s/g, '');
         }
     }
     suggestedImageName += ":{{.Run.ID}}";
-
     return suggestedImageName;
 }

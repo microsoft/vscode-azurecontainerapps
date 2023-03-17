@@ -2,20 +2,19 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
-
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as tar from 'tar';
-import { createContainerRegistryManagementClient } from '../../utils/azureClients';
-import { IBuildImageContext } from './IBuildImageContext';
+import { createContainerRegistryManagementClient } from '../../../utils/azureClients';
+import { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
-export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageContext> {
-    public priority: number = 200;
+export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
+    public priority: number = 175;
 
-    public async execute(context: IBuildImageContext): Promise<void> {
+    public async execute(context: IBuildImageInAzureContext): Promise<void> {
         context.registryName = nonNullValue(context.registry?.name);
         context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
         context.client = await createContainerRegistryManagementClient(context);
@@ -36,7 +35,7 @@ export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageCont
         context.uploadedSourceLocation = relativePath;
     }
 
-    public shouldExecute(context: IBuildImageContext): boolean {
+    public shouldExecute(context: IBuildImageInAzureContext): boolean {
         return !context.uploadedSourceLocation
     }
 }

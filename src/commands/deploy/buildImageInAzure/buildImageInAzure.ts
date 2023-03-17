@@ -5,13 +5,13 @@
 
 import type { Run as AcrRun } from '@azure/arm-containerregistry';
 import { delay } from "@azure/ms-rest-js";
-import { IBuildImageContext } from "./IBuildImageContext";
-import { scheduleRunRequest } from "./scheduleRunRequest";
+import { nonNullValue } from '@microsoft/vscode-azext-utils';
+import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 const WAIT_MS = 5000;
 
-export async function buildImageInAzure(context: IBuildImageContext): Promise<AcrRun | undefined> {
-    const getRun = await scheduleRunRequest(context);
+export async function buildImageInAzure(context: IBuildImageInAzureContext): Promise<AcrRun | undefined> {
+    const getRun = async () => context.client.runs.get(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId));
 
     let run = await getRun();
     const { KnownRunStatus } = await import('@azure/arm-containerregistry');

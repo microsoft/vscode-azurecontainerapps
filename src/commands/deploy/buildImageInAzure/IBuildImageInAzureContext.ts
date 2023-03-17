@@ -3,15 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, Run as AcrRun } from '@azure/arm-containerregistry';
+import { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
 import * as vscode from 'vscode';
-import { IContainerAppContext } from '../createContainerApp/IContainerAppContext';
-import { IDeployFromRegistryContext } from '../deploy/deployFromRegistry/IDeployFromRegistryContext';
-import { Item } from "./DockerFileItemStep";
+import { IDeployFromRegistryContext } from '../deployFromRegistry/IDeployFromRegistryContext';
 
-export interface IBuildImageContext extends IContainerAppContext, IDeployFromRegistryContext {
+export interface IBuildImageInAzureContext extends IDeployFromRegistryContext {
     rootFolder: vscode.WorkspaceFolder;
-    dockerFile: Item;
+    dockerFilePath: string;
     imageName: string;
     os: string;
 

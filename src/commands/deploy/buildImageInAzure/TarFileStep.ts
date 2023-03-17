@@ -5,21 +5,21 @@
 
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import * as os from 'os';
-import { IBuildImageContext } from "./IBuildImageContext";
-import path = require("path");
+import { URI, Utils } from "vscode-uri";
+import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 const idPrecision = 6;
 
-export class TarFileStep extends AzureWizardExecuteStep<IBuildImageContext> {
+export class TarFileStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
     public priority: number = 150;
 
-    public async execute(context: IBuildImageContext): Promise<void> {
+    public async execute(context: IBuildImageInAzureContext): Promise<void> {
         const id: number = Math.floor(Math.random() * Math.pow(10, idPrecision));
         const archive = `sourceArchive${id}.tar.gz`;
-        context.tarFilePath = path.join(os.tmpdir(), archive);
+        context.tarFilePath = Utils.joinPath(URI.parse(os.tmpdir()), archive).path;
     }
 
-    public shouldExecute(context: IBuildImageContext): boolean {
+    public shouldExecute(context: IBuildImageInAzureContext): boolean {
         return !context.tarFilePath;
     }
 }

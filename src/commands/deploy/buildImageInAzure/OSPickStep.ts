@@ -4,11 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../utils/localize";
-import { IBuildImageContext } from "./IBuildImageContext";
+import { localize } from "../../../utils/localize";
+import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
-export class OSPickStep extends AzureWizardPromptStep<IBuildImageContext> {
-    public async prompt(context: IBuildImageContext): Promise<void> {
+export class OSPickStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
+    public async prompt(context: IBuildImageInAzureContext): Promise<void> {
         const placeHolder: string = localize('imageOSPrompt', 'Select image base OS');
         const picks: IAzureQuickPickItem<string>[] = [
             { label: 'Linux', data: 'Linux', suppressPersistence: true },
@@ -18,7 +18,7 @@ export class OSPickStep extends AzureWizardPromptStep<IBuildImageContext> {
         context.os = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IBuildImageContext): boolean {
+    public shouldPrompt(context: IBuildImageInAzureContext): boolean {
         return !context.os;
     }
 }
