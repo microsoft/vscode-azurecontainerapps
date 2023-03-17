@@ -52,7 +52,7 @@ export enum ImageSource {
     /*
      * Build the image from your project remotely using ACR (reqs. Dockerfile)
      */
-    RemoteAcrBuild = 'remoteAcrBuild',
+    RemoteAcrBuild = 'remoteAcrBuild'
 }
 
 export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
@@ -70,6 +70,3 @@ export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const azResourceContextValue: string = 'azResource';
 export const azResourceRegExp = new RegExp(azResourceContextValue, 'i');
-
-export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
-export const YAML_GLOB_PATTERN = '**/*.{[yY][aA][mM][lL],[yY][mM][lL]}';
