@@ -334,7 +334,8 @@
         "dotenv": "^16.0.0",
         "open": "^8.0.4",
         "semver": "^7.3.5",
-        "vscode-nls": "^4.1.1"
+        "vscode-nls": "^4.1.1",
+        "vscode-uri": "^3.0.2"
     },
     "extensionDependencies": [
         "ms-vscode.azure-account",

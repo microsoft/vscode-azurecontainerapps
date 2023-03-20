@@ -16,6 +16,8 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
 
         const run = await buildImageInAzure(context);
         const outputImages = run?.outputImages;
+        context.telemetry.properties.outputImages = outputImages?.length?.toString();
+
         if (outputImages) {
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;

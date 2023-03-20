@@ -17,7 +17,7 @@ export class RootFolderStep extends AzureWizardPromptStep<IBuildImageInAzureCont
     }
 }
 
-export async function getRootWorkSpaceFolder(): Promise<vscode.WorkspaceFolder> {
+async function getRootWorkSpaceFolder(): Promise<vscode.WorkspaceFolder> {
     if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
         throw new Error(localize('noOpenFolder', 'No folder is open. Please open a folder and try again.'));
     } else if (vscode.workspace.workspaceFolders.length === 1) {

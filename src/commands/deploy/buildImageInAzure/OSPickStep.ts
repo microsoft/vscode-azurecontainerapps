@@ -10,7 +10,7 @@ import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 export class OSPickStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {
         const placeHolder: string = localize('imageOSPrompt', 'Select image base OS');
-        const picks: IAzureQuickPickItem<string>[] = [
+        const picks: IAzureQuickPickItem<'Windows' | 'Linux'>[] = [
             { label: 'Linux', data: 'Linux', suppressPersistence: true },
             { label: 'Windows', data: 'Windows', suppressPersistence: true },
         ];

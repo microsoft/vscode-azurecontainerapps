@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { Run as AcrRun } from '@azure/arm-containerregistry';
+import { KnownRunStatus } from '@azure/arm-containerregistry';
 import { delay } from "@azure/ms-rest-js";
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
@@ -14,7 +15,6 @@ export async function buildImageInAzure(context: IBuildImageInAzureContext): Pro
     const getRun = async () => context.client.runs.get(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId));
 
     let run = await getRun();
-    const { KnownRunStatus } = await import('@azure/arm-containerregistry');
     while (
         run.status === KnownRunStatus.Started ||
         run.status === KnownRunStatus.Queued ||

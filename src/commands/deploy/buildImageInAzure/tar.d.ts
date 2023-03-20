@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 /**
+ * Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/definitions/tar.d.ts
+ *
  * The `@types/tar` package is riddled with inaccuracies, so it's easier
  * to just declare typings for it here
  */
