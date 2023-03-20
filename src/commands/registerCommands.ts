@@ -11,7 +11,7 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deploy } from './deploy/deploy';
-import { deployImageApi } from './deploy/deployFromRegistry/deployImageApi';
+import { deployImageApi } from './deploy/deployImageApi';
 import { disableIngress } from './ingress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort';
 import { enableIngress } from './ingress/enableIngress';
