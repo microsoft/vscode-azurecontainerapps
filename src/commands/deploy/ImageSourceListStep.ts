@@ -18,7 +18,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
         const imageSourceLabels: string[] = [
             localize('quickStartImage', 'Use quickstart image'),
             localize('externalRegistry', 'Use existing image'),
-            localize('buildFromProject', 'Build from project remotely using Azure'),
+            localize('buildFromProject', 'Build from project remotely using Azure Container Registry'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
