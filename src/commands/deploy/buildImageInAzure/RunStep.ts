@@ -26,7 +26,7 @@ export class RunStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
                 dockerFilePath: path.relative(rootUri.path, context.dockerFilePath)
             };
 
-            const building: string = localize('buildingImage', 'Building image "{0}"...', context.imageName);
+            const building: string = localize('buildingImage', 'Building image "{0}" in registry "{1}"...', context.imageName, context.registryName);
             progress.report({ message: building });
 
             context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
