@@ -18,23 +18,25 @@ import { TarFileStep } from "./TarFileStep";
 import { UploadSourceCodeStep } from "./UploadSourceCodeStep";
 
 const buildImageInAzure = 'buildImageInAzure';
+const buildFromProjectLabels: string[] = [
+    localize('azure', 'Build from project remotely using Azure Container Registry')
+    //localize('docker', 'Build from project locally using Docker')
+];
+
 export class BuildFromProjectListStep extends AzureWizardPromptStep<IDeployBaseContext> {
     public async prompt(context: IDeployBaseContext): Promise<void> {
-        const buildFromProjectLabels: string[] = [
-            localize('azure', 'Build from project remotely using Azure Container Registry')
-            //localize('docker', 'Build from project locally using Docker')
+        const placeHolder: string = localize('buildType', 'Select how you want to build your project');
+        const picks: IAzureQuickPickItem<string | undefined>[] = [
+            { label: buildFromProjectLabels[0], data: buildImageInAzure, suppressPersistence: true },
+            //{ label: buildFromProjectLabels[1], data: buildFromProjectLabels[1], suppressPersistence: true }
         ];
 
+        context.buildType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
+    }
+
+    public async configureBeforePrompt(context: IDeployBaseContext): Promise<void> {
         if (buildFromProjectLabels.length === 1) {
             context.buildType = buildImageInAzure;
-        } else {
-            const placeHolder: string = localize('buildType', 'Select how you want to build your project');
-            const picks: IAzureQuickPickItem<string | undefined>[] = [
-                { label: buildFromProjectLabels[0], data: buildImageInAzure, suppressPersistence: true },
-                //{ label: buildFromProjectLabels[1], data: buildFromProjectLabels[1], suppressPersistence: true }
-            ];
-
-            context.buildType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
         }
     }
 
