@@ -6,7 +6,7 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { registerCommands } from './commands/registerCommands';
@@ -32,7 +32,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
         registerCommands();
         // TODO Turn experimentation service back on
-        // ext.experimentationService = await createExperimentationService(context);
+        ext.experimentationService = await createExperimentationService(context);
 
         ext.state = new TreeItemStateStore();
         ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');
