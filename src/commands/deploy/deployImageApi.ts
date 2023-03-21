@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { callWithMaskHandling, createSubscriptionContext, ISubscriptionActionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
-import { acrDomain } from "../../../constants";
-import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
-import { pickContainerApp } from "../../../utils/pickContainerApp";
-import { deployFromRegistry } from "./deployFromRegistry";
-import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
+import { acrDomain, ImageSource } from "../../constants";
+import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
+import { pickContainerApp } from "../../utils/pickContainerApp";
+import { deploy } from "./deploy";
+import { IDeployFromRegistryContext } from "./deployFromRegistry/IDeployFromRegistryContext";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
@@ -24,7 +24,7 @@ export async function deployImageApi(context: ITreeItemPickerContext & Partial<I
     const node = await pickContainerApp(context);
     const { subscription } = node;
 
-    Object.assign(context, {...createSubscriptionContext(subscription) }, deployImageOptions);
+    Object.assign(context, {...createSubscriptionContext(subscription), imageSource: ImageSource.ExternalRegistry }, deployImageOptions);
 
     context.registryDomain = detectRegistryDomain(deployImageOptions.registryName);
     if (context.registryDomain === acrDomain) {
@@ -41,8 +41,8 @@ export async function deployImageApi(context: ITreeItemPickerContext & Partial<I
     context.valuesToMask.push(deployImageOptions.image);
 
     if (deployImageOptions.secret) {
-        return callWithMaskHandling<void>(() => deployFromRegistry(context, node), deployImageOptions.secret);
+        return callWithMaskHandling<void>(() => deploy(context, node), deployImageOptions.secret);
     } else {
-        return deployFromRegistry(context, node);
+        return deploy(context, node);
     }
 }

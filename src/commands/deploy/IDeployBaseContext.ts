@@ -15,6 +15,7 @@ export interface IDeployBaseContext extends ISubscriptionActionContext {
 
     imageSource?: ImageSourceValues;
     buildType?: string;
+    showQuickStartImage?: boolean;
 
     // Base image attributes used as a precursor for either creating or updating a container app
     image?: string;
