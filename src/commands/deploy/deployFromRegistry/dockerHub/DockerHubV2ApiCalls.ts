@@ -9,10 +9,10 @@ import { DockerHubV2ApiResponse, DockerHubV2Repository, DockerHubV2Tags } from "
 
 export async function getReposForNamespace(context: IActionContext, namespace: string, nextUrl?: string | null): Promise<DockerHubV2ApiResponse<DockerHubV2Repository>> {
     const url = nextUrl || `https://hub.docker.com/v2/repositories/${namespace}`;
-    return <DockerHubV2ApiResponse<DockerHubV2Repository>>JSON.parse((await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)).bodyAsText as string);
+    return <DockerHubV2ApiResponse<DockerHubV2Repository>>(await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)).parsedBody;
 }
 
 export async function getTagsForRepo(context: IActionContext, namespace: string, name: string, nextUrl?: string | null): Promise<DockerHubV2ApiResponse<DockerHubV2Tags>> {
     const url = nextUrl || `https://hub.docker.com/v2/repositories/${namespace}/${name}/tags`;
-    return <DockerHubV2ApiResponse<DockerHubV2Tags>>JSON.parse((await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)).bodyAsText as string);
+    return <DockerHubV2ApiResponse<DockerHubV2Tags>>(await sendRequestWithTimeout(context, { url, method: 'GET' }, 5000, undefined)).parsedBody;
 }

@@ -23,7 +23,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
     ext.outputChannel = createAzExtOutputChannel('Azure Container Apps', ext.prefix);
     context.subscriptions.push(ext.outputChannel);
 
-    await registerUIExtensionVariables(ext);
+    registerUIExtensionVariables(ext);
     registerAzureUtilsExtensionVariables(ext);
 
     await callWithTelemetryAndErrorHandling('containerApps.activate', async (activateContext: IActionContext) => {
@@ -31,7 +31,6 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
         registerCommands();
-        // TODO Turn experimentation service back on
         ext.experimentationService = await createExperimentationService(context);
 
         ext.state = new TreeItemStateStore();

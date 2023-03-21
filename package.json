@@ -303,7 +303,7 @@
     },
     "devDependencies": {
         "@microsoft/eslint-config-azuretools": "^0.1.0",
-        "@microsoft/vscode-azext-dev": "^0.2.0",
+        "@microsoft/vscode-azext-dev": "file:../vscode-azuretools/dev/microsoft-vscode-azext-dev-0.2.0.tgz",
         "@types/fs-extra": "^8.1.1",
         "@types/git-url-parse": "^9.0.0",
         "@types/gulp": "^4.0.6",
@@ -340,7 +340,7 @@
         "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
         "@microsoft/vscode-azext-azureutils": "^0.4.0-alpha.1",
-        "@microsoft/vscode-azext-utils": "0.5.2-alpha.0",
+        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-1.0.0.tgz",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",

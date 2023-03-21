@@ -33,9 +33,8 @@ export function createContainerRegistryClient(context: AzExtClientContext, regis
     const credential = clientContext.credentials as { signRequest: unknown };
     credential.signRequest = undefined;
 
-    const client = new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
+    return new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
-    return client;
 }
 
 export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
