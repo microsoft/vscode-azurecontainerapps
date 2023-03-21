@@ -61,8 +61,6 @@ export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';
 
-export const buildImageInAzure = 'buildImageInAzure';
-
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
