@@ -330,6 +330,7 @@
     "dependencies": {
         "@azure/arm-appcontainers": "^1.1.0",
         "@azure/arm-containerregistry": "^10.0.0",
+        "@azure/storage-blob": "^12.4.1",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^4.2.2",
         "@azure/container-registry": "1.0.0-beta.5",
@@ -341,7 +342,8 @@
         "dotenv": "^16.0.0",
         "open": "^8.0.4",
         "semver": "^7.3.5",
-        "vscode-nls": "^4.1.1"
+        "vscode-nls": "^4.1.1",
+        "vscode-uri": "^3.0.2"
     },
     "extensionDependencies": [
         "ms-vscode.azure-account",

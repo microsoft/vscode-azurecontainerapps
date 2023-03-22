@@ -16,9 +16,9 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
         quickPicks = files.map((uri: Uri) => {
             return {
-                label: basename(uri.fsPath),
-                description: uri.fsPath,
-                data: uri.fsPath
+                label: basename(uri.path),
+                description: uri.path,
+                data: uri.path
             };
         });
 

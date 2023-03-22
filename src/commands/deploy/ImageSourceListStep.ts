@@ -9,6 +9,7 @@ import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { IDeployBaseContext } from "./IDeployBaseContext";
+import { BuildFromProjectListStep } from "./buildImageInAzure/BuildFromProjectListStep";
 import { ContainerRegistryListStep } from "./deployFromRegistry/ContainerRegistryListStep";
 import { DeployFromRegistryConfigureStep } from "./deployFromRegistry/DeployFromRegistryConfigureStep";
 
@@ -17,13 +18,13 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
         const imageSourceLabels: string[] = [
             localize('externalRegistry', 'Use existing image'),
             localize('quickStartImage', 'Use quickstart image'),
-            // localize('buildFromProject', 'Build from project'),
+            localize('buildFromProject', 'Build from project remotely using Azure Container Registry'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
             { label: imageSourceLabels[0], data: ImageSource.ExternalRegistry, suppressPersistence: true },
-            // { label: imageSourceLabels[2], data: undefined, suppressPersistence: true },
+            { label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true },
         ];
 
         if (context.showQuickStartImage) {
@@ -47,6 +48,10 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
                 break;
             case ImageSource.ExternalRegistry:
                 promptSteps.push(new ContainerRegistryListStep());
+                executeSteps.push(new DeployFromRegistryConfigureStep());
+                break;
+            case ImageSource.RemoteAcrBuild:
+                promptSteps.push(new BuildFromProjectListStep());
                 executeSteps.push(new DeployFromRegistryConfigureStep());
                 break;
             default:
