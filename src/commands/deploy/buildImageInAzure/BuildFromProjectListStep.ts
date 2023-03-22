@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { IDeployBaseContext } from "../IDeployBaseContext";
 import { AcrListStep } from "../deployFromRegistry/acr/AcrListStep";
@@ -17,7 +18,6 @@ import { RunStep } from "./RunStep";
 import { TarFileStep } from "./TarFileStep";
 import { UploadSourceCodeStep } from "./UploadSourceCodeStep";
 
-const buildImageInAzure = 'buildImageInAzure';
 const buildFromProjectLabels: string[] = [
     localize('azure', 'Build from project remotely using Azure Container Registry')
     //localize('docker', 'Build from project locally using Docker')
@@ -26,9 +26,9 @@ const buildFromProjectLabels: string[] = [
 export class BuildFromProjectListStep extends AzureWizardPromptStep<IDeployBaseContext> {
     public async prompt(context: IDeployBaseContext): Promise<void> {
         const placeHolder: string = localize('buildType', 'Select how you want to build your project');
-        const picks: IAzureQuickPickItem<string | undefined>[] = [
-            { label: buildFromProjectLabels[0], data: buildImageInAzure, suppressPersistence: true },
-            //{ label: buildFromProjectLabels[1], data: buildFromProjectLabels[1], suppressPersistence: true }
+        const picks: IAzureQuickPickItem<ImageSource.LocalDockerBuild | ImageSource.RemoteAcrBuild>[] = [
+            { label: buildFromProjectLabels[0], data: ImageSource.RemoteAcrBuild, suppressPersistence: true },
+            //{ label: buildFromProjectLabels[1], data: ImageSource.LocalDockerBuild, suppressPersistence: true }
         ];
 
         context.buildType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
@@ -36,7 +36,7 @@ export class BuildFromProjectListStep extends AzureWizardPromptStep<IDeployBaseC
 
     public async configureBeforePrompt(context: IDeployBaseContext): Promise<void> {
         if (buildFromProjectLabels.length === 1) {
-            context.buildType = buildImageInAzure;
+            context.buildType = ImageSource.RemoteAcrBuild;
         }
     }
 
@@ -49,7 +49,7 @@ export class BuildFromProjectListStep extends AzureWizardPromptStep<IDeployBaseC
         const executeSteps: AzureWizardExecuteStep<IDeployBaseContext>[] = [];
 
         switch (context.buildType) {
-            case buildImageInAzure:
+            case ImageSource.RemoteAcrBuild:
                 promptSteps.push(new AcrListStep(), new RootFolderStep(), new DockerFileItemStep(), new ImageNameStep(), new OSPickStep());
                 executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep());
                 break;

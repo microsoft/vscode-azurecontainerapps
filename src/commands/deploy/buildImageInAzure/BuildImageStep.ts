@@ -5,6 +5,7 @@
 
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../constants";
+import { localize } from "../../../utils/localize";
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
@@ -21,6 +22,8 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
         if (outputImages) {
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
+        } else {
+            throw new Error(localize('noImagesBuilt', 'Failed to build image.'));
         }
     }
 

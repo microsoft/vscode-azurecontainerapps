@@ -6,7 +6,7 @@
 import type { EnvironmentVar, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ImageSourceValues } from "../../constants";
+import { ImageSource, ImageSourceValues } from "../../constants";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 
 export interface IDeployBaseContext extends ISubscriptionActionContext {
@@ -14,7 +14,7 @@ export interface IDeployBaseContext extends ISubscriptionActionContext {
     targetContainer?: ContainerAppModel;
 
     imageSource?: ImageSourceValues;
-    buildType?: string;
+    buildType?: ImageSource.LocalDockerBuild | ImageSource.RemoteAcrBuild;
     showQuickStartImage?: boolean;
 
     // Base image attributes used as a precursor for either creating or updating a container app
