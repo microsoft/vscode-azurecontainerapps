@@ -8,12 +8,12 @@ import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-util
 import { MessageItem } from "vscode";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
-import { IDeployBaseContext } from "./IDeployBaseContext";
+import { IDeployContext } from "./deploy";
 
-export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDeployBaseContext> {
+export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDeployContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: IDeployBaseContext): Promise<void> {
+    public async prompt(context: IDeployContext): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
         const warning: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ?
             localize('confirmDeploySingle', 'Are you sure you want to deploy to "{0}"? This will overwrite the active revision and unsupported features in VS Code will be lost.', containerApp.name) :
@@ -23,12 +23,12 @@ export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDep
         await context.ui.showWarningMessage(warning, { modal: true, stepName: 'confirmDestructiveDeployment' }, ...items);
     }
 
-    public shouldPrompt(context: IDeployBaseContext): boolean {
+    public shouldPrompt(context: IDeployContext): boolean {
         return !!context.targetContainer && this.hasUnsupportedFeatures(context);
     }
 
     // Check for any portal features that VS Code doesn't currently support
-    private hasUnsupportedFeatures(context: IDeployBaseContext): boolean {
+    private hasUnsupportedFeatures(context: IDeployContext): boolean {
         const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
         if (containerApp.template?.volumes) {
             return true;

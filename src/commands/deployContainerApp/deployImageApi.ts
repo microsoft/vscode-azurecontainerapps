@@ -7,8 +7,8 @@ import { callWithMaskHandling, createSubscriptionContext, ISubscriptionActionCon
 import { acrDomain, ImageSource } from "../../constants";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
 import { pickContainerApp } from "../../utils/pickContainerApp";
+import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
 import { deploy } from "./deploy";
-import { IDeployFromRegistryContext } from "./deployFromRegistry/IDeployFromRegistryContext";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
@@ -19,12 +19,12 @@ interface DeployImageToAcaOptionsContract {
     secret?: string;
 }
 
-export async function deployImageApi(context: ITreeItemPickerContext & Partial<IDeployFromRegistryContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
+export async function deployImageApi(context: ITreeItemPickerContext & Partial<IContainerRegistryImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     context.suppressCreatePick = true;
     const node = await pickContainerApp(context);
     const { subscription } = node;
 
-    Object.assign(context, {...createSubscriptionContext(subscription), imageSource: ImageSource.ExternalRegistry }, deployImageOptions);
+    Object.assign(context, {...createSubscriptionContext(subscription), imageSource: ImageSource.ContainerRegistry }, deployImageOptions);
 
     context.registryDomain = detectRegistryDomain(deployImageOptions.registryName);
     if (context.registryDomain === acrDomain) {

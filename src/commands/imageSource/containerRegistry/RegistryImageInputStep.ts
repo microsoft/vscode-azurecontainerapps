@@ -5,10 +5,10 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
+import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 
-export class RegistryImageInputStep extends AzureWizardPromptStep<IDeployFromRegistryContext> {
-    public async prompt(context: IDeployFromRegistryContext): Promise<void> {
+export class RegistryImageInputStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
+    public async prompt(context: IContainerRegistryImageContext): Promise<void> {
         const prompt: string = localize('registryImagePrompt', 'Enter the container image with tag');
         const placeHolder: string = localize('registryImagePlaceHolder', 'For example: `mcr.microsoft.com/azuredocs/containerapps-helloworld:latest`')
         context.image = (await context.ui.showInputBox({
@@ -19,7 +19,7 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<IDeployFromReg
         context.valuesToMask.push(context.image);
     }
 
-    public shouldPrompt(context: IDeployFromRegistryContext): boolean {
+    public shouldPrompt(context: IContainerRegistryImageContext): boolean {
         return context.image === undefined;
     }
 }

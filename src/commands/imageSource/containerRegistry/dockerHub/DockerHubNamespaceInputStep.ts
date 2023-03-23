@@ -5,11 +5,11 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
-import { IDeployFromRegistryContext } from "../IDeployFromRegistryContext";
+import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 
 let checkNameLength: boolean = false;
-export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IDeployFromRegistryContext> {
-    public async prompt(context: IDeployFromRegistryContext): Promise<void> {
+export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
+    public async prompt(context: IContainerRegistryImageContext): Promise<void> {
         const prompt: string = localize('dockerHubNamespacePrompt', 'Enter a Docker Hub namespace');
         context.dockerHubNamespace = (await context.ui.showInputBox({
             prompt,
@@ -20,7 +20,7 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IDeployFr
         context.valuesToMask.push(context.dockerHubNamespace);
     }
 
-    public shouldPrompt(context: IDeployFromRegistryContext): boolean {
+    public shouldPrompt(context: IContainerRegistryImageContext): boolean {
         return !context.dockerHubNamespace;
     }
 

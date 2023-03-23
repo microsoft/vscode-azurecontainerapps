@@ -5,9 +5,9 @@
 
 import { acrDomain, dockerHubDomain } from "../../../constants";
 import { nonNullValue } from "../../../utils/nonNull";
-import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
+import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 
-export function getLoginServer(context: IDeployFromRegistryContext): string {
+export function getLoginServer(context: IContainerRegistryImageContext): string {
     switch (context.registryDomain) {
         case acrDomain:
             return nonNullValue(context.registry?.loginServer);

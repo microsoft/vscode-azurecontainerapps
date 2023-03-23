@@ -8,12 +8,14 @@ import { webProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
+import { IImageSourceBaseContext } from "../imageSource/IImageSourceBaseContext";
+import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { ContainerAppOverwriteConfirmStep } from "./ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "./ContainerAppUpdateStep";
-import { IDeployBaseContext } from "./IDeployBaseContext";
-import { ImageSourceListStep } from "./ImageSourceListStep";
 
-export async function deploy(context: ITreeItemPickerContext & Partial<IDeployBaseContext>, node?: ContainerAppItem): Promise<void> {
+export type IDeployContext = IImageSourceBaseContext;
+
+export async function deploy(context: ITreeItemPickerContext & Partial<IDeployContext>, node?: ContainerAppItem): Promise<void> {
     if (!node) {
         context.suppressCreatePick = true;
         node = await pickContainerApp(context);
@@ -21,24 +23,24 @@ export async function deploy(context: ITreeItemPickerContext & Partial<IDeployBa
 
     const { subscription, containerApp } = node;
 
-    const wizardContext: IDeployBaseContext = {
+    const wizardContext: IDeployContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         subscription,
         targetContainer: containerApp
     };
 
-    const promptSteps: AzureWizardPromptStep<IDeployBaseContext>[] = [
+    const promptSteps: AzureWizardPromptStep<IDeployContext>[] = [
         new ContainerAppOverwriteConfirmStep(),
         new ImageSourceListStep()
     ];
 
-    const executeSteps: AzureWizardExecuteStep<IDeployBaseContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<IDeployContext>[] = [
         new VerifyProvidersStep([webProvider]),
         new ContainerAppUpdateStep()
     ];
 
-    const wizard: AzureWizard<IDeployBaseContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IDeployContext> = new AzureWizard(wizardContext, {
         title: localize('deploy', 'Deploying to "{0}"', containerApp.name),
         promptSteps,
         executeSteps,

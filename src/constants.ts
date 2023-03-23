@@ -44,7 +44,7 @@ export enum ImageSource {
     /*
      * Use an image stored in ACR or a third party registry
      */
-    ExternalRegistry = 'externalRegistry',
+    ContainerRegistry = 'containerRegistry',
     /*
      * Build the image from your project locally using Docker (reqs. Dockerfile)
      */

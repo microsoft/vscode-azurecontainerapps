@@ -11,13 +11,13 @@ import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } 
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
-import { IDeployBaseContext } from "./IDeployBaseContext";
-import { getContainerNameForImage } from "./deployFromRegistry/getContainerNameForImage";
+import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
+import { IDeployContext } from "./deploy";
 
-export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployBaseContext> {
+export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployContext> {
     public priority: number = 260;
 
-    public async execute(context: IDeployBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IDeployContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
