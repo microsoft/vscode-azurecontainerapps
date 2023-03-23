@@ -21,7 +21,9 @@ export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAz
 
         const source: string = context.rootFolder.uri.fsPath;
         let items = await fse.readdir(source);
-        items = items.filter(i => !(i in vcsIgnoreList));
+        items = items.filter(i => {
+            return !vcsIgnoreList.includes(i)
+        })
         tar.c({ cwd: source }, items).pipe(fse.createWriteStream(context.tarFilePath));
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);

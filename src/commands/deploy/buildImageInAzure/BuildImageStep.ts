@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
@@ -23,7 +23,9 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
         } else {
-            throw new Error(localize('noImagesBuilt', 'Failed to build image.'));
+            const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
+            const errorMessage = localize('noImagesBuilt', 'Failed to build image. View [logs]({0}) for more details.', logSasUrl);
+            throw new Error(errorMessage);
         }
     }
 
