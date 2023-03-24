@@ -5,15 +5,15 @@
 
 import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { createSubscriptionContext, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { IActionContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { createContainerAppsAPIClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient } from "../../utils/azureClients";
 
-export async function updateContainerApp(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerApp, updatedSetting: Omit<ContainerApp, 'location'>): Promise<void> {
+export async function updateContainerApp(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerApp, updatedSetting?: Omit<ContainerApp, 'location'>): Promise<void> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(subscription)]);
     const resourceGroupName = getResourceGroupFromId(nonNullProp(containerApp, 'id'));
     const name = nonNullProp(containerApp, 'name');
-    const updatedApp: ContainerApp = { ...updatedSetting, location: containerApp.location };
-
+    // If no update setting is provided, just use the original containerApp; otherwise, merge the update settings with the original containerApp
+    const updatedApp: ContainerApp = !updatedSetting ? containerApp : { ...updatedSetting, location: containerApp.location };
     await client.containerApps.beginUpdateAndWait(resourceGroupName, name, updatedApp);
 }
