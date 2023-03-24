@@ -8,7 +8,7 @@ import { acrDomain, ImageSource } from "../../constants";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
-import { deploy } from "./deploy";
+import { deployContainerApp } from "./deployContainerApp";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
@@ -41,8 +41,8 @@ export async function deployImageApi(context: ITreeItemPickerContext & Partial<I
     context.valuesToMask.push(deployImageOptions.image);
 
     if (deployImageOptions.secret) {
-        return callWithMaskHandling<void>(() => deploy(context, node), deployImageOptions.secret);
+        return callWithMaskHandling<void>(() => deployContainerApp(context, node), deployImageOptions.secret);
     } else {
-        return deploy(context, node);
+        return deployContainerApp(context, node);
     }
 }

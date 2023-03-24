@@ -13,9 +13,9 @@ import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { ContainerAppOverwriteConfirmStep } from "./ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "./ContainerAppUpdateStep";
 
-export type IDeployContext = IImageSourceBaseContext;
+export type IDeployContainerAppContext = IImageSourceBaseContext;
 
-export async function deploy(context: ITreeItemPickerContext & Partial<IDeployContext>, node?: ContainerAppItem): Promise<void> {
+export async function deployContainerApp(context: ITreeItemPickerContext & Partial<IDeployContainerAppContext>, node?: ContainerAppItem): Promise<void> {
     if (!node) {
         context.suppressCreatePick = true;
         node = await pickContainerApp(context);
@@ -23,24 +23,24 @@ export async function deploy(context: ITreeItemPickerContext & Partial<IDeployCo
 
     const { subscription, containerApp } = node;
 
-    const wizardContext: IDeployContext = {
+    const wizardContext: IDeployContainerAppContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         subscription,
         targetContainer: containerApp
     };
 
-    const promptSteps: AzureWizardPromptStep<IDeployContext>[] = [
+    const promptSteps: AzureWizardPromptStep<IDeployContainerAppContext>[] = [
         new ContainerAppOverwriteConfirmStep(),
         new ImageSourceListStep()
     ];
 
-    const executeSteps: AzureWizardExecuteStep<IDeployContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<IDeployContainerAppContext>[] = [
         new VerifyProvidersStep([webProvider]),
         new ContainerAppUpdateStep()
     ];
 
-    const wizard: AzureWizard<IDeployContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IDeployContainerAppContext> = new AzureWizard(wizardContext, {
         title: localize('deploy', 'Deploying to "{0}"', containerApp.name),
         promptSteps,
         executeSteps,

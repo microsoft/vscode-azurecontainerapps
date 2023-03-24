@@ -12,12 +12,12 @@ import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
 import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
-import { IDeployContext } from "./deploy";
+import { IDeployContainerAppContext } from "./deployContainerApp";
 
-export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployContext> {
+export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployContainerAppContext> {
     public priority: number = 260;
 
-    public async execute(context: IDeployContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IDeployContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
