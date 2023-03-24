@@ -5,9 +5,9 @@
 
 import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
 import * as vscode from 'vscode';
-import { IDeployFromRegistryContext } from '../deployFromRegistry/IDeployFromRegistryContext';
+import { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
 
-export interface IBuildImageInAzureContext extends IDeployFromRegistryContext {
+export interface IBuildImageInAzureContext extends IContainerRegistryImageContext {
     rootFolder: vscode.WorkspaceFolder;
     dockerFilePath: string;
     imageName: string;

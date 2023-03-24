@@ -3,21 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
-import { IDeployBaseContext } from "./IDeployBaseContext";
-import { getContainerNameForImage } from "./deployFromRegistry/getContainerNameForImage";
+import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
+import { IDeployContainerAppContext } from "./deployContainerApp";
+import { updateContainerApp } from "./updateContainerApp";
 
-export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployBaseContext> {
+export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployContainerAppContext> {
     public priority: number = 260;
 
-    public async execute(context: IDeployBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IDeployContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -39,8 +38,7 @@ export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployBaseCo
         ext.outputChannel.appendLog(creatingRevision);
 
         await ext.state.runWithTemporaryDescription(containerApp.id, localize('creatingRevisionShort', 'Creating revision...'), async () => {
-            const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
-            await appClient.containerApps.beginCreateOrUpdateAndWait(containerApp.resourceGroup, containerApp.name, containerAppEnvelope);
+            await updateContainerApp(context, context.subscription, containerAppEnvelope);
             const updatedContainerApp = await ContainerAppItem.Get(context, context.subscription, containerApp.resourceGroup, containerApp.name);
             void showContainerAppCreated(updatedContainerApp, true);
             ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);

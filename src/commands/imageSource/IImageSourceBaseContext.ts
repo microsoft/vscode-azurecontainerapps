@@ -9,7 +9,7 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 
-export interface IDeployBaseContext extends ISubscriptionActionContext {
+export interface IImageSourceBaseContext extends ISubscriptionActionContext {
     subscription: AzureSubscription;
     targetContainer?: ContainerAppModel;
 

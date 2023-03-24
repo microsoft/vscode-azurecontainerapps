@@ -8,13 +8,13 @@ import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
-import { IDeployBaseContext } from "./IDeployBaseContext";
+import { IImageSourceBaseContext } from "./IImageSourceBaseContext";
 import { BuildFromProjectListStep } from "./buildImageInAzure/BuildFromProjectListStep";
-import { ContainerRegistryListStep } from "./deployFromRegistry/ContainerRegistryListStep";
-import { DeployFromRegistryConfigureStep } from "./deployFromRegistry/DeployFromRegistryConfigureStep";
+import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
+import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
 
-export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContext> {
-    public async prompt(context: IDeployBaseContext): Promise<void> {
+export class ImageSourceListStep extends AzureWizardPromptStep<IImageSourceBaseContext> {
+    public async prompt(context: IImageSourceBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('externalRegistry', 'Use existing image'),
             localize('quickStartImage', 'Use quickstart image'),
@@ -23,7 +23,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.ExternalRegistry, suppressPersistence: true },
+            { label: imageSourceLabels[0], data: ImageSource.ContainerRegistry, suppressPersistence: true },
             { label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true },
         ];
 
@@ -34,28 +34,27 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IDeployBaseContex
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IDeployBaseContext): boolean {
+    public shouldPrompt(context: IImageSourceBaseContext): boolean {
         return !context.imageSource;
     }
 
-    public async getSubWizard(context: IDeployBaseContext): Promise<IWizardOptions<IDeployBaseContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<IDeployBaseContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<IDeployBaseContext>[] = [];
+    public async getSubWizard(context: IImageSourceBaseContext): Promise<IWizardOptions<IImageSourceBaseContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<IImageSourceBaseContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<IImageSourceBaseContext>[] = [];
 
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
                 setQuickStartImage(context);
                 break;
-            case ImageSource.ExternalRegistry:
+            case ImageSource.ContainerRegistry:
                 promptSteps.push(new ContainerRegistryListStep());
-                executeSteps.push(new DeployFromRegistryConfigureStep());
+                executeSteps.push(new ContainerRegistryImageConfigureStep());
                 break;
             case ImageSource.RemoteAcrBuild:
                 promptSteps.push(new BuildFromProjectListStep());
-                executeSteps.push(new DeployFromRegistryConfigureStep());
+                executeSteps.push(new ContainerRegistryImageConfigureStep());
                 break;
             default:
-            // Todo: Steps that lead to additional 'Build from project' options
         }
 
         promptSteps.push(new EnvironmentVariablesListStep());

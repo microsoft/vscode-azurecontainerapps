@@ -11,7 +11,7 @@ import { ContainerAppModel } from "../tree/ContainerAppItem";
 import { ContainerAppsItem } from "../tree/ContainerAppsBranchDataProvider";
 import { localize } from "../utils/localize";
 import { pickContainerApp } from "../utils/pickContainerApp";
-import { updateContainerApp } from "./updateContainerApp";
+import { updateContainerApp } from "./deployContainerApp/updateContainerApp";
 
 export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
     const { subscription, containerApp } = node ?? await pickContainerApp(context);
