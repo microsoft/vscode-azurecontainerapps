@@ -6,8 +6,33 @@
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { acrDomain, dockerHubDomain, SupportedRegistries } from "../constants";
+import { SupportedRegistries, acrDomain, dockerHubDomain } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
+
+interface ParsedImageName {
+    referenceImageName?: string;
+    registryDomain?: string;
+    registryName?: string;
+    namespace?: string;
+    image?: string;
+    tag?: string;
+}
+
+export function parseImageName(imageName?: string): ParsedImageName {
+    if (!imageName) {
+        return {};
+    }
+
+    const match: RegExpMatchArray | null = imageName.match(/^(?:(?<registryName>[^/]+)\/)?(?:(?<namespace>[^/]+)\/)?(?<image>[^/:]+)(?::(?<tag>[^/]+))?$/);
+    return {
+        referenceImageName: imageName,
+        registryDomain: match?.groups?.registryName ? detectRegistryDomain(match.groups.registryName) : undefined,
+        registryName: match?.groups?.registryName,
+        namespace: match?.groups?.namespace,
+        image: match?.groups?.image,
+        tag: match?.groups?.tag
+    };
+}
 
 /**
  * @param registryName When parsed from a full image name, everything before the first slash
