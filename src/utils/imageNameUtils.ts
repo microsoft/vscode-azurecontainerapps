@@ -14,22 +14,37 @@ interface ParsedImageName {
     registryDomain?: string;
     registryName?: string;
     namespace?: string;
-    image?: string;
+    repositoryName?: string;
     tag?: string;
 }
 
+/**
+ * @param imageName The full image name, including any registry, namespace, repository, and tag
+ *
+ * @example The following are some valid examples of a full image name:
+ * 'acrRegistryName.azurecr.io/repositoryName:tagName'
+ * 'docker.io/[...namespace]/repositoryName:tagName'
+ *
+ * @returns A 'ParsedImageName' with the following properties:
+ * (1) 'referenceImageName': The original full image name;
+ * (2) 'registryDomain': The 'SupportedRegistries' domain, if it can be determined from the 'registryName';
+ * (3) 'registryName': Everything before the first slash;
+ * (4) 'namespace': Everything between the 'registryName' and the 'repositoryName', including intermediate slashes;
+ * (5) 'repositoryName': Everything after the last slash (until the tag);
+ * (6) 'tag': Everything after the ":", if it is present
+ */
 export function parseImageName(imageName?: string): ParsedImageName {
     if (!imageName) {
         return {};
     }
 
-    const match: RegExpMatchArray | null = imageName.match(/^(?:(?<registryName>[^/]+)\/)?(?:(?<namespace>[^/]+)\/)?(?<image>[^/:]+)(?::(?<tag>[^/]+))?$/);
+    const match: RegExpMatchArray | null = imageName.match(/^(?:(?<registryName>[^/]+)\/)?(?:(?<namespace>[^/]+(?:\/[^/]+)*)\/)?(?<repositoryName>[^/:]+)(?::(?<tag>[^/]+))?$/);
     return {
         referenceImageName: imageName,
         registryDomain: match?.groups?.registryName ? detectRegistryDomain(match.groups.registryName) : undefined,
         registryName: match?.groups?.registryName,
         namespace: match?.groups?.namespace,
-        image: match?.groups?.image,
+        repositoryName: match?.groups?.repositoryName,
         tag: match?.groups?.tag
     };
 }

@@ -31,6 +31,8 @@ export namespace RevisionConstants {
     export const single: IAzureQuickPickItem<string> = { label: localize('single', 'Single'), description: localize('singleDesc', 'One active revision at a time'), data: 'single' };
 }
 
+export const latestImage: string = localize('latestImage', '(latest image)');
+
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",
     Queue = "Azure queue"

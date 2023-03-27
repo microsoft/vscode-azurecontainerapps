@@ -6,25 +6,20 @@
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, quickStartImageName } from "../../../../constants";
+import { acrDomain, latestImage, quickStartImageName } from "../../../../constants";
+import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
 import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
 import { nonNullProp } from "../../../../utils/nonNull";
 import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
 
 export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {
-        const { registryDomain, registryName, referenceImageName } = parseImageName(context.targetContainer?.template?.containers?.[0]?.image);
-
-        let predictedRegistry: string | undefined;
-        if (registryDomain === acrDomain && referenceImageName !== quickStartImageName) {
-            predictedRegistry = registryName;
-        }
-
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
-        context.registry = (await context.ui.showQuickPick(this.getPicks(context, predictedRegistry), { placeHolder })).data;
+        context.registry = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
     }
 
     public shouldPrompt(context: IContainerRegistryImageContext): boolean {
@@ -39,23 +34,34 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
         return undefined;
     }
 
-    public async getPicks(context: IContainerRegistryImageContext, predictedRegistry?: string): Promise<IAzureQuickPickItem<Registry>[]> {
+    public async getPicks(context: IContainerRegistryImageContext): Promise<IAzureQuickPickItem<Registry>[]> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const registries = await uiUtils.listAllIterator(client.registries.list());
-        const registryPicks = registries.map((r) => { return { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: !!predictedRegistry } });
+        const registries: Registry[] = await uiUtils.listAllIterator(client.registries.list());
 
-        // We should swap and do the registryPicks after this logic in case we can't find the predictedRegistry, that way suppressPersistence will be true when it needs to be....
-        if (predictedRegistry) {
-            const prIndex: number = registryPicks.findIndex((r) => r.data.loginServer === predictedRegistry);
+        const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
+        const { registryDomain, registryName, referenceImageName } = parseImageName(getLatestContainerAppImage(containerApp));
 
-            if (prIndex !== -1) {
-                const predictedPick = registryPicks.splice(prIndex, 1)[0];
-                predictedPick.description += ' (previously used)';
-                registryPicks.unshift(predictedPick);
-            }
+        // If the image is not the default quickstart image, then we can try to suggest a registry based on the latest Container App image
+        let predictedRegistry: string | undefined;
+        if (registryDomain === acrDomain && referenceImageName !== quickStartImageName) {
+            predictedRegistry = registryName;
         }
 
-        return registryPicks;
+        // Does the predicted registry exist in the list of pulled registries?  If so, move it to the front of the list
+        const prIndex: number = registries.findIndex((r) => !!predictedRegistry && r.loginServer === predictedRegistry);
+        const prExists: boolean = prIndex !== -1;
+
+        if (prExists) {
+            const pr: Registry = registries.splice(prIndex, 1)[0];
+            registries.unshift(pr);
+        }
+
+        // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
+        return registries.map((r) => {
+            return !!predictedRegistry && r.loginServer === predictedRegistry ?
+                { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${latestImage}`, suppressPersistence: true } :
+                { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: prExists };
+        });
     }
 }
 
