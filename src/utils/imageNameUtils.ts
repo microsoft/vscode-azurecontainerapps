@@ -21,9 +21,10 @@ interface ParsedImageName {
 /**
  * @param imageName The full image name, including any registry, namespace, repository, and tag
  *
- * @example The following are some valid examples of a full image name:
- * 'acrRegistryName.azurecr.io/repositoryName:tagName'
- * 'docker.io/[...namespace]/repositoryName:tagName'
+ * @example
+ * Format: '<registryName>/<...namespaces>/<repositoryName>:<tagName>'
+ * ACR: 'acrRegistryName.azurecr.io/repositoryName:tagName'
+ * DH: 'docker.io/namespace/repositoryName:tagName'
  *
  * @returns A 'ParsedImageName' with the following properties:
  * (1) 'referenceImageName': The original full image name;
