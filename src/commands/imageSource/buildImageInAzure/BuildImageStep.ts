@@ -26,6 +26,7 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
         } else {
             const contentProvider = getContentProvider();
             await contentProvider.openImageLog(context);
+
             const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
             throw new Error(errorMessage);
         }

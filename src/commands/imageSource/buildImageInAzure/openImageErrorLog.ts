@@ -23,11 +23,11 @@ class ImageLogContentProvider implements TextDocumentContentProvider {
     private _contentMap: Map<string, string> = new Map<string, string>();
 
     public async openImageLog(context: IBuildImageInAzureContext): Promise<void> {
-        const timeout = 4000;
+        const timeout = 15000;
         const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
         const content = (await sendRequestWithTimeout(context, { method: 'GET', url: logSasUrl }, timeout, undefined)).bodyAsText;
         const uri: Uri = Uri.parse(`${contentScheme}:///${context.imageName}.log`);
-         if (content) {
+        if (content) {
             this._contentMap.set(uri.toString(), content);
         }
 
