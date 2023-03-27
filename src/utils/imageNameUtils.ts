@@ -31,7 +31,7 @@ interface ParsedImageName {
  * (2) 'registryDomain': The 'SupportedRegistries' domain, if it can be determined from the 'registryName';
  * (3) 'registryName': Everything before the first slash;
  * (4) 'namespace': Everything between the 'registryName' and the 'repositoryName', including intermediate slashes;
- * (5) 'repositoryName': Everything after the last slash (until the tag);
+ * (5) 'repositoryName': Everything after the last slash (until the tag, if it is present);
  * (6) 'tag': Everything after the ":", if it is present
  */
 export function parseImageName(imageName?: string): ParsedImageName {
