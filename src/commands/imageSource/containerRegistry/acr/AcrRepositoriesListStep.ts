@@ -17,7 +17,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
         const repositoryNames: string[] = await uiUtils.listAllIterator(client.listRepositoryNames());
 
-        // Try to suggest a repository if the user is deploying to a Container App
+        // Try to suggest a repository only when deploying to a Container App
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.targetContainer) {

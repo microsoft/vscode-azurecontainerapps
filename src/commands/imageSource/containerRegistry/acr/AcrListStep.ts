@@ -37,7 +37,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
         const registries: Registry[] = await uiUtils.listAllIterator(client.registries.list());
 
-        // Try to suggest a registry if the user is deploying to a Container App
+        // Try to suggest a registry only when the user is deploying to a Container App
         let suggestedRegistry: string | undefined;
         let srExists: boolean = false;
         if (context.targetContainer) {
