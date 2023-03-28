@@ -7,7 +7,6 @@ import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-con
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../constants";
-import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
 import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
@@ -38,21 +37,24 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
         const registries: Registry[] = await uiUtils.listAllIterator(client.registries.list());
 
-        const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
-        const { registryDomain, registryName, imageNameReference } = parseImageName(getLatestContainerAppImage(containerApp));
-
-        // If the image is not the default quickstart image, then we can try to suggest a registry based on the latest Container App image
+        // Try to suggest a registry if the user is deploying to a Container App
         let suggestedRegistry: string | undefined;
-        if (registryDomain === acrDomain && imageNameReference !== quickStartImageName) {
-            suggestedRegistry = registryName;
-        }
+        let srExists: boolean = false;
+        if (context.targetContainer) {
+            const { registryDomain, registryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.targetContainer));
 
-        // Does the suggested registry exist in the list of pulled registries?  If so, move it to the front of the list
-        const srIndex: number = registries.findIndex((r) => !!suggestedRegistry && r.loginServer === suggestedRegistry);
-        const srExists: boolean = srIndex !== -1;
-        if (srExists) {
-            const sr: Registry = registries.splice(srIndex, 1)[0];
-            registries.unshift(sr);
+            // If the image is not the default quickstart image, then we can try to suggest a registry based on the latest Container App image
+            if (registryDomain === acrDomain && imageNameReference !== quickStartImageName) {
+                suggestedRegistry = registryName;
+            }
+
+            // Does the suggested registry exist in the list of pulled registries?  If so, move it to the front of the list
+            const srIndex: number = registries.findIndex((r) => !!suggestedRegistry && r.loginServer === suggestedRegistry);
+            srExists = srIndex !== -1;
+            if (srExists) {
+                const sr: Registry = registries.splice(srIndex, 1)[0];
+                registries.unshift(sr);
+            }
         }
 
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
