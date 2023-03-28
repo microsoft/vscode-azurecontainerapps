@@ -31,7 +31,7 @@ export namespace RevisionConstants {
     export const single: IAzureQuickPickItem<string> = { label: localize('single', 'Single'), description: localize('singleDesc', 'One active revision at a time'), data: 'single' };
 }
 
-export const latestImage: string = localize('latestImage', '(latest image)');
+export const currentlyDeployed: string = localize('currentlyDeployed', '(currently deployed)');
 
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",

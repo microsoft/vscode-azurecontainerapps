@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { QuickPickItem } from "vscode";
-import { acrDomain, latestImage, quickStartImageName } from "../../../../constants";
+import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../constants";
 import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerRegistryClient } from "../../../../utils/azureClients";
 import { parseImageName } from "../../../../utils/imageNameUtils";
@@ -22,25 +22,25 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         const { registryDomain, repositoryName, referenceImageName } = parseImageName(getLatestContainerAppImage(containerApp));
 
         // If the image is not the default quickstart image, then we can try to suggest a repository based on the latest Container App image
-        let predictedRepository: string | undefined;
+        let suggestedRepository: string | undefined;
         if (registryDomain === acrDomain && referenceImageName !== quickStartImageName) {
-            predictedRepository = repositoryName;
+            suggestedRepository = repositoryName;
         }
 
-        // Does the predicted repositoryName exist in the list of pulled repositories?  If so, move it to the front of the list
-        const prIndex: number = repositoryNames.findIndex((rn) => !!predictedRepository && rn === predictedRepository);
-        const prExists: boolean = prIndex !== -1;
+        // Does the suggested repositoryName exist in the list of pulled repositories?  If so, move it to the front of the list
+        const srIndex: number = repositoryNames.findIndex((rn) => !!suggestedRepository && rn === suggestedRepository);
+        const srExists: boolean = srIndex !== -1;
 
-        if (prExists) {
-            const pr: string = repositoryNames.splice(prIndex, 1)[0];
-            repositoryNames.unshift(pr);
+        if (srExists) {
+            const sr: string = repositoryNames.splice(srIndex, 1)[0];
+            repositoryNames.unshift(sr);
         }
 
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
         return repositoryNames.map((rn) => {
-            return !!predictedRepository && rn === predictedRepository ?
-                { label: rn, description: latestImage, suppressPersistence: true } :
-                { label: rn, suppressPersistence: prExists };
+            return !!suggestedRepository && rn === suggestedRepository ?
+                { label: rn, description: currentlyDeployed, suppressPersistence: true } :
+                { label: rn, suppressPersistence: srExists };
         });
     }
 }

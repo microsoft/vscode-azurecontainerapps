@@ -6,7 +6,7 @@
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, latestImage, quickStartImageName } from "../../../../constants";
+import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../constants";
 import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
 import { parseImageName } from "../../../../utils/imageNameUtils";
@@ -42,25 +42,25 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
         const { registryDomain, registryName, referenceImageName } = parseImageName(getLatestContainerAppImage(containerApp));
 
         // If the image is not the default quickstart image, then we can try to suggest a registry based on the latest Container App image
-        let predictedRegistry: string | undefined;
+        let suggestedRegistry: string | undefined;
         if (registryDomain === acrDomain && referenceImageName !== quickStartImageName) {
-            predictedRegistry = registryName;
+            suggestedRegistry = registryName;
         }
 
-        // Does the predicted registry exist in the list of pulled registries?  If so, move it to the front of the list
-        const prIndex: number = registries.findIndex((r) => !!predictedRegistry && r.loginServer === predictedRegistry);
-        const prExists: boolean = prIndex !== -1;
+        // Does the suggested registry exist in the list of pulled registries?  If so, move it to the front of the list
+        const srIndex: number = registries.findIndex((r) => !!suggestedRegistry && r.loginServer === suggestedRegistry);
+        const srExists: boolean = srIndex !== -1;
 
-        if (prExists) {
-            const pr: Registry = registries.splice(prIndex, 1)[0];
-            registries.unshift(pr);
+        if (srExists) {
+            const sr: Registry = registries.splice(srIndex, 1)[0];
+            registries.unshift(sr);
         }
 
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
         return registries.map((r) => {
-            return !!predictedRegistry && r.loginServer === predictedRegistry ?
-                { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${latestImage}`, suppressPersistence: true } :
-                { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: prExists };
+            return !!suggestedRegistry && r.loginServer === suggestedRegistry ?
+                { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${currentlyDeployed}`, suppressPersistence: true } :
+                { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists };
         });
     }
 }
