@@ -10,7 +10,7 @@ import { SupportedRegistries, acrDomain, dockerHubDomain } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 
 interface ParsedImageName {
-    referenceImageName?: string;
+    imageNameReference?: string;
     registryDomain?: SupportedRegistries;
     registryName?: string;
     namespace?: string;
@@ -27,7 +27,7 @@ interface ParsedImageName {
  * DH: 'docker.io/namespace/repositoryName:tag'
  *
  * @returns A 'ParsedImageName' with the following properties:
- * (1) 'referenceImageName': The original full image name;
+ * (1) 'imageNameReference': The original full image name;
  * (2) 'registryDomain': The 'SupportedRegistries' domain, if it can be determined from the 'registryName';
  * (3) 'registryName': Everything before the first slash;
  * (4) 'namespace': Everything between the 'registryName' and the 'repositoryName', including intermediate slashes;
@@ -41,7 +41,7 @@ export function parseImageName(imageName?: string): ParsedImageName {
 
     const match: RegExpMatchArray | null = imageName.match(/^(?:(?<registryName>[^/]+)\/)?(?:(?<namespace>[^/]+(?:\/[^/]+)*)\/)?(?<repositoryName>[^/:]+)(?::(?<tag>[^/]+))?$/);
     return {
-        referenceImageName: imageName,
+        imageNameReference: imageName,
         registryDomain: match?.groups?.registryName ? detectRegistryDomain(match.groups.registryName) : undefined,
         registryName: match?.groups?.registryName,
         namespace: match?.groups?.namespace,

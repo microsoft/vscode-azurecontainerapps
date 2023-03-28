@@ -19,11 +19,11 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         const repositoryNames: string[] = await uiUtils.listAllIterator(client.listRepositoryNames());
 
         const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
-        const { registryDomain, repositoryName, referenceImageName } = parseImageName(getLatestContainerAppImage(containerApp));
+        const { registryDomain, repositoryName, imageNameReference } = parseImageName(getLatestContainerAppImage(containerApp));
 
         // If the image is not the default quickstart image, then we can try to suggest a repository based on the latest Container App image
         let suggestedRepository: string | undefined;
-        if (registryDomain === acrDomain && referenceImageName !== quickStartImageName) {
+        if (registryDomain === acrDomain && imageNameReference !== quickStartImageName) {
             suggestedRepository = repositoryName;
         }
 
