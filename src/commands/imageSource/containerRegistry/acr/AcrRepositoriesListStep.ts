@@ -30,7 +30,6 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         // Does the suggested repositoryName exist in the list of pulled repositories?  If so, move it to the front of the list
         const srIndex: number = repositoryNames.findIndex((rn) => !!suggestedRepository && rn === suggestedRepository);
         const srExists: boolean = srIndex !== -1;
-
         if (srExists) {
             const sr: string = repositoryNames.splice(srIndex, 1)[0];
             repositoryNames.unshift(sr);

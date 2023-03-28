@@ -50,7 +50,6 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
         // Does the suggested registry exist in the list of pulled registries?  If so, move it to the front of the list
         const srIndex: number = registries.findIndex((r) => !!suggestedRegistry && r.loginServer === suggestedRegistry);
         const srExists: boolean = srIndex !== -1;
-
         if (srExists) {
             const sr: Registry = registries.splice(srIndex, 1)[0];
             registries.unshift(sr);
