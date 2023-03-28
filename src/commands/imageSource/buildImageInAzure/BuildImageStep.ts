@@ -21,8 +21,6 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
         const outputImages = run?.outputImages;
         context.telemetry.properties.outputImages = outputImages?.length?.toString();
 
-        const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
-
         if (outputImages) {
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
@@ -31,7 +29,8 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
             const contentTask = sendRequestWithTimeout(context, { method: 'GET', url: logSasUrl }, 2500, undefined)
 
             const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
-            void window.showErrorMessage(errorMessage, ...[viewLogsButton]).then(async result => {
+            const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
+            void window.showErrorMessage(errorMessage, viewLogsButton).then(async result => {
                 if (result === viewLogsButton) {
                     const content = nonNullProp((await contentTask), 'bodyAsText')
                     await openReadOnlyContent({ label: nonNullValue(context.run.name), fullId: nonNullValue(context.run.id) }, content, '.log');
