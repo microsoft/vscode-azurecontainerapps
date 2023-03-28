@@ -3,12 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValue, openReadOnlyContent } from "@microsoft/vscode-azext-utils";
+import { MessageItem, window } from "vscode";
 import { acrDomain } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
-import { getContentProvider } from "./openImageErrorLog";
 
 export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
     public priority: number = 225;
@@ -20,14 +21,24 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
         const outputImages = run?.outputImages;
         context.telemetry.properties.outputImages = outputImages?.length?.toString();
 
+        const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
+
         if (outputImages) {
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
         } else {
-            const contentProvider = getContentProvider();
-            await contentProvider.openImageLog(context);
+            const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
+            const contentTask = sendRequestWithTimeout(context, { method: 'GET', url: logSasUrl }, 2500, undefined)
 
-            const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
+            const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
+            void window.showErrorMessage(errorMessage, ...[viewLogsButton]).then(async result => {
+                if (result === viewLogsButton) {
+                    const content = nonNullProp((await contentTask), 'bodyAsText')
+                    await openReadOnlyContent({ label: nonNullValue(context.run.name), fullId: nonNullValue(context.run.id) }, content, '.log');
+                }
+            });
+
+            context.errorHandling.suppressDisplay = true;
             throw new Error(errorMessage);
         }
     }
