@@ -31,6 +31,8 @@ export namespace RevisionConstants {
     export const single: IAzureQuickPickItem<string> = { label: localize('single', 'Single'), description: localize('singleDesc', 'One active revision at a time'), data: 'single' };
 }
 
+export const currentlyDeployed: string = localize('currentlyDeployed', '(currently deployed)');
+
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",
     Queue = "Azure queue"
@@ -60,6 +62,7 @@ export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';
+export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
