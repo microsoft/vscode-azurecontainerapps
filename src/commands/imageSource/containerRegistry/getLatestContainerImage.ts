@@ -6,6 +6,6 @@
 import type { ContainerApp } from "@azure/arm-appcontainers";
 
 export function getLatestContainerAppImage(containerApp: ContainerApp): string | undefined {
-    // Currently only support single container
+    // We are currently only supporting one active container image per app
     return containerApp.template?.containers?.[0]?.image;
 }
