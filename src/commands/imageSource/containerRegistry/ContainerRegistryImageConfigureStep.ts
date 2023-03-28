@@ -7,15 +7,15 @@ import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../constants";
 import { getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
-import { IDeployFromRegistryContext } from "./IDeployFromRegistryContext";
+import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 
-export class DeployFromRegistryConfigureStep extends AzureWizardExecuteStep<IDeployFromRegistryContext> {
+export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<IContainerRegistryImageContext> {
     public priority: number = 240;
 
-    // Configures 'IDeployBaseContext' base image attributes
-    public async execute(context: IDeployFromRegistryContext): Promise<void> {
+    // Configures base image attributes
+    public async execute(context: IContainerRegistryImageContext): Promise<void> {
         // Store any existing secrets and registries
         let secrets: Secret[] | undefined;
         let registries: RegistryCredentials[] | undefined;

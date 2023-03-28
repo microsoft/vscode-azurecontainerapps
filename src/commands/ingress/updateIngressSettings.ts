@@ -9,7 +9,7 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
-import { updateContainerApp } from "../updateContainerApp";
+import { updateContainerApp } from "../deployContainerApp/updateContainerApp";
 
 export async function updateIngressSettings(context: IActionContext,
     options: {

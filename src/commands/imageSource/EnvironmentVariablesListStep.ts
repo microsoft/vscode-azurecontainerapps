@@ -8,12 +8,12 @@ import { parse } from "dotenv";
 import { ImageSource } from "../../constants";
 import { localize } from "../../utils/localize";
 import { selectWorkspaceFile } from "../../utils/workspaceUtils";
-import { IDeployBaseContext } from "./IDeployBaseContext";
+import { IImageSourceBaseContext } from "./IImageSourceBaseContext";
 
 const skipForNowLabel: string = localize('skipForNow', '$(clock) Skip for now');
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IDeployBaseContext> {
-    public async prompt(context: IDeployBaseContext): Promise<void> {
+export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IImageSourceBaseContext> {
+    public async prompt(context: IImageSourceBaseContext): Promise<void> {
         const input = await context.ui.showQuickPick([{ label: localize('set', 'Set with environment variable file') }, { label: skipForNowLabel }],
             { placeHolder: localize('setEnvVar', 'Set environment variables in container instance') });
 
@@ -23,11 +23,11 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<IDeployB
         }
     }
 
-    public shouldPrompt(context: IDeployBaseContext): boolean {
+    public shouldPrompt(context: IImageSourceBaseContext): boolean {
         return context.imageSource !== ImageSource.QuickStartImage && context.environmentVariables === undefined;
     }
 
-    private async selectEnvironmentSettings(context: IDeployBaseContext) {
+    private async selectEnvironmentSettings(context: IImageSourceBaseContext) {
         const envFileFsPath: string = await selectWorkspaceFile(context, 'Select a .env file', { filters: { 'env file': ['env', 'env.*'] } }, '**/*.{env,env.*}');
         const data = await AzExtFsExtra.readFile(envFileFsPath);
         return parse(data);
