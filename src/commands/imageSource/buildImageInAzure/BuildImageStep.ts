@@ -5,7 +5,7 @@
 
 import { sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, nonNullProp, nonNullValue, openReadOnlyContent } from "@microsoft/vscode-azext-utils";
-import { MessageItem } from "vscode";
+import { MessageItem, window } from "vscode";
 import { acrDomain } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
@@ -30,7 +30,7 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
 
             const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
             const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
-            void context.ui.showWarningMessage(errorMessage, viewLogsButton).then(async result => {
+            void window.showErrorMessage(errorMessage, viewLogsButton).then(async result => {
                 if (result === viewLogsButton) {
                     const content = nonNullProp((await contentTask), 'bodyAsText')
                     await openReadOnlyContent({ label: nonNullValue(context.run.name), fullId: nonNullValue(context.run.id) }, content, '.log');
