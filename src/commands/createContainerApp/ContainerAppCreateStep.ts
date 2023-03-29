@@ -12,7 +12,7 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { getContainerNameForImage } from "../deploy/deployFromRegistry/getContainerNameForImage";
+import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
 import { IContainerAppContext } from "./IContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerAppContext> {
@@ -45,7 +45,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerApp
                 ingress,
                 secrets: context.secrets,
                 registries: context.registries,
-                activeRevisionsMode: KnownActiveRevisionsMode.Multiple,
+                activeRevisionsMode: KnownActiveRevisionsMode.Single,
             },
             template: {
                 containers: [

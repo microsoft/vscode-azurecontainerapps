@@ -31,6 +31,8 @@ export namespace RevisionConstants {
     export const single: IAzureQuickPickItem<string> = { label: localize('single', 'Single'), description: localize('singleDesc', 'One active revision at a time'), data: 'single' };
 }
 
+export const currentlyDeployed: string = localize('currentlyDeployed', '(currently deployed)');
+
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",
     Queue = "Azure queue"
@@ -44,7 +46,7 @@ export enum ImageSource {
     /*
      * Use an image stored in ACR or a third party registry
      */
-    ExternalRegistry = 'externalRegistry',
+    ContainerRegistry = 'containerRegistry',
     /*
      * Build the image from your project locally using Docker (reqs. Dockerfile)
      */
@@ -60,6 +62,7 @@ export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';
+export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
@@ -68,3 +71,6 @@ export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const azResourceContextValue: string = 'azResource';
 export const azResourceRegExp = new RegExp(azResourceContextValue, 'i');
+
+// Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
+export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
