@@ -21,8 +21,8 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerR
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {
         const placeHolder: string = localize('selectTag', 'Select a container registry');
         const picks: IAzureQuickPickItem<SupportedRegistries | undefined>[] = [
-            { label: 'Azure Container Registries', data: acrDomain },
-            { label: 'Docker Hub Registry', data: dockerHubDomain },
+            { label: 'Azure Container Registry', data: acrDomain },
+            { label: 'Docker Hub', data: dockerHubDomain },
             { label: localize('otherPublicRegistry', 'Other public registry'), data: undefined }
         ];
 
@@ -30,7 +30,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerR
     }
 
     public shouldPrompt(context: IContainerRegistryImageContext): boolean {
-        return !context.tag && !context.image;
+        return !context.image && !context.registryDomain;
     }
 
     public async getSubWizard(context: IContainerRegistryImageContext): Promise<IWizardOptions<IContainerRegistryImageContext> | undefined> {
