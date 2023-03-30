@@ -159,6 +159,13 @@
                     "group": "navigation@3"
                 }
             ],
+            "view/title": [
+                {
+                    "submenu": "azureWorkspaceDeploy",
+                    "when": "view == azureWorkspace",
+                    "group": "navigation@3"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
@@ -253,6 +260,13 @@
                 }
             ]
         },
+        "submenus": [
+            {
+                "id": "azureWorkspaceDeploy",
+                "icon": "$(cloud-upload)",
+                "label": "Deploy..."
+            }
+        ],
         "configuration": [
             {
                 "title": "Azure Container Apps",
