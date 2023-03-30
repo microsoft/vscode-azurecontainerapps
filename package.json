@@ -7,7 +7,7 @@
     "icon": "resources/azure-containerapps.png",
     "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
     "engines": {
-        "vscode": "^1.74.0"
+        "vscode": "^1.76.0"
     },
     "repository": {
         "type": "git",
@@ -26,6 +26,7 @@
         "Azure",
         "multi-root ready"
     ],
+    "browser": "./dist/web/extension.bundle.js",
     "preview": true,
     "activationEvents": [],
     "main": "./main.js",
@@ -316,19 +317,19 @@
     },
     "devDependencies": {
         "@microsoft/eslint-config-azuretools": "^0.1.0",
-        "@microsoft/vscode-azext-dev": "^0.1.5",
+        "@microsoft/vscode-azext-dev": "^1.0.3",
         "@types/fs-extra": "^8.1.1",
         "@types/git-url-parse": "^9.0.0",
         "@types/gulp": "^4.0.6",
         "@types/mocha": "^8.2.2",
         "@types/node": "^14.0.0",
         "@types/semver": "^7.3.8",
-        "@types/vscode": "1.57.0",
+        "@types/vscode": "1.76.0",
         "@typescript-eslint/eslint-plugin": "^4.28.3",
         "@vscode/test-electron": "^2.2.3",
+        "assert": "^2.0.0",
         "eslint": "^7.19.0",
         "eslint-plugin-import": "^2.22.1",
-        "fs-extra": "^8.1.0",
         "glob": "^7.1.6",
         "gulp": "^4.0.2",
         "husky": "^7.0.2",
@@ -344,23 +345,21 @@
     "dependencies": {
         "@azure/arm-appcontainers": "^1.1.0",
         "@azure/arm-containerregistry": "^10.0.0",
-        "@azure/storage-blob": "^12.4.1",
         "@azure/arm-operationalinsights": "^8.0.0",
-        "@azure/arm-resources": "^4.2.2",
+        "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
-        "@azure/ms-rest-js": "^2.2.1",
-        "@microsoft/vscode-azext-azureutils": "^0.3.7",
-        "@microsoft/vscode-azext-utils": "^0.5.1",
+        "@azure/storage-blob": "^12.4.1",
+        "@microsoft/vscode-azext-azureutils": "^1.0.1",
+        "@microsoft/vscode-azext-utils": "^1.1.0",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",
-        "open": "^8.0.4",
+        "fs-extra": "^8.1.0",
         "semver": "^7.3.5",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
     },
     "extensionDependencies": [
-        "ms-vscode.azure-account",
         "ms-azuretools.vscode-azureresourcegroups"
     ]
 }

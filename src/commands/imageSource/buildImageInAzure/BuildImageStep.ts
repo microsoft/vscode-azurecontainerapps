@@ -26,7 +26,7 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
         } else {
             const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
-            const contentTask = sendRequestWithTimeout(context, { method: 'GET', url: logSasUrl }, 2500, undefined)
+            const contentTask = sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined)
 
             const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
             const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');

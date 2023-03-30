@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-azext-utils/activity";
+import type { AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-azext-utils/activity";
 import { ext } from "../extensionVariables";
 import { settingUtils } from "../utils/settingUtils";
 

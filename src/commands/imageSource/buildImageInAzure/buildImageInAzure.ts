@@ -5,7 +5,6 @@
 
 import type { Run as AcrRun } from '@azure/arm-containerregistry';
 import { KnownRunStatus } from '@azure/arm-containerregistry';
-import { delay } from "@azure/ms-rest-js";
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
@@ -25,4 +24,8 @@ export async function buildImageInAzure(context: IBuildImageInAzureContext): Pro
     }
 
     return run;
+}
+
+async function delay(ms: number): Promise<void> {
+    await new Promise<void>((resolve: () => void): NodeJS.Timer => setTimeout(resolve, ms));
 }
