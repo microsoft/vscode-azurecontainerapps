@@ -46,7 +46,10 @@ let webConfig = dev.getDefaultWebpackConfig({
         '../build/default/bufferutil': 'commonjs ../build/default/bufferutil',
     },
     target: 'webworker',
-    suppressCleanDistFolder: true
+    suppressCleanDistFolder: true,
+    resolveFallbackAliases: {
+        'constants': false
+    }
 });
 
 if (DEBUG_WEBPACK) {
