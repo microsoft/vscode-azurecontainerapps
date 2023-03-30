@@ -28,7 +28,8 @@ let nodeConfig = dev.getDefaultWebpackConfig({
         '../build/Release/bufferutil': 'commonjs ../build/Release/bufferutil',
         '../build/default/bufferutil': 'commonjs ../build/default/bufferutil',
     },
-    target: 'node'
+    target: 'node',
+    suppressCleanDistFolder: true
 });
 
 let webConfig = dev.getDefaultWebpackConfig({
@@ -44,7 +45,8 @@ let webConfig = dev.getDefaultWebpackConfig({
         '../build/Release/bufferutil': 'commonjs ../build/Release/bufferutil',
         '../build/default/bufferutil': 'commonjs ../build/default/bufferutil',
     },
-    target: 'webworker'
+    target: 'webworker',
+    suppressCleanDistFolder: true
 });
 
 if (DEBUG_WEBPACK) {
