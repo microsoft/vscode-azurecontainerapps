@@ -16,7 +16,7 @@ import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistry
 export class ImageSourceListStep extends AzureWizardPromptStep<IImageSourceBaseContext> {
     public async prompt(context: IImageSourceBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
-            localize('externalRegistry', 'Use existing image'),
+            localize('containerRegistry', 'Use image from registry'),
             localize('quickStartImage', 'Use quickstart image'),
             localize('buildFromProject', 'Build from project remotely using Azure Container Registry'),
         ];
