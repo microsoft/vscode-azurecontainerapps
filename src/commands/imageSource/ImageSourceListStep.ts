@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { UIKind, env, workspace } from "vscode";
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
@@ -23,12 +24,16 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IImageSourceBaseC
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.ContainerRegistry, suppressPersistence: true },
-            { label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true },
+            { label: imageSourceLabels[0], data: ImageSource.ContainerRegistry, suppressPersistence: true }
         ];
 
         if (context.showQuickStartImage) {
             picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
+        }
+
+        const isVirtualWorkspace = workspace.workspaceFolders && workspace.workspaceFolders.every(f => f.uri.scheme !== 'file');
+        if (env.uiKind === UIKind.Desktop && !isVirtualWorkspace) {
+            picks.push({ label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true })
         }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
