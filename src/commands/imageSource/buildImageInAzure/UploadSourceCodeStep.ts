@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, AzureWizardExecuteStep, nonNullValue } from '@microsoft/vscode-azext-utils';
-import * as fse from 'fs-extra';
-import * as tar from 'tar';
+import { fse } from '../../../node/fs-extra';
+import { tar } from '../../../node/tar';
 import { createContainerRegistryManagementClient } from '../../../utils/azureClients';
 import { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 

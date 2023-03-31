@@ -12,6 +12,7 @@
 const process = require('process');
 const dev = require("@microsoft/vscode-azext-dev");
 const webpack = require('webpack');
+const path = require('path');
 
 let DEBUG_WEBPACK = !/^(false|0)?$/i.test(process.env.DEBUG_WEBPACK || '');
 
@@ -32,6 +33,11 @@ let nodeConfig = dev.getDefaultWebpackConfig({
     suppressCleanDistFolder: true
 });
 
+const nodeSrcPath = path.resolve(__dirname, 'src/node');
+
+const alias = {};
+alias[nodeSrcPath] = path.resolve(__dirname, 'src/browser');
+
 let webConfig = dev.getDefaultWebpackConfig({
     projectRoot: __dirname,
     verbosity: DEBUG_WEBPACK ? 'debug' : 'normal',
@@ -46,10 +52,14 @@ let webConfig = dev.getDefaultWebpackConfig({
         '../build/default/bufferutil': 'commonjs ../build/default/bufferutil',
     },
     target: 'webworker',
+    plugins: [new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+    })],
     suppressCleanDistFolder: true,
     resolveFallbackAliases: {
         'constants': false
-    }
+    },
+    alias
 });
 
 if (DEBUG_WEBPACK) {
