@@ -1,5 +1,30 @@
 # Change Log
 
+## 0.5.0 - TBD
+
+### Added
+
+* Enable extension to run on a web environment (`.dev`) by @nturinski in [#288](https://github.com/microsoft/vscode-azurecontainerapps/pull/288), [#327](https://github.com/microsoft/vscode-azurecontainerapps/pull/327), [#328](https://github.com/microsoft/vscode-azurecontainerapps/pull/328)
+    * Expansive list of changes that were required are documented under [#239](https://github.com/microsoft/vscode-azurecontainerapps/issues/239)
+* Add a more generic deploy command by @motm32 in [#277](https://github.com/microsoft/vscode-azurecontainerapps/pull/277)
+* Implement the `Use quickstart image` method when creating a Container App by @motm32 in [#274](https://github.com/microsoft/vscode-azurecontainerapps/pull/274)
+* Implement `Build from project remotely using Azure` command by @motm32 in [#292](https://github.com/microsoft/vscode-azurecontainerapps/pull/292)
+* Expand image source selection interface for creating Container Apps by @MicroFish91 in [#273](https://github.com/microsoft/vscode-azurecontainerapps/pull/273)
+
+### Changed
+
+* Update SUPPORT.md by @alexweininger in [#263](https://github.com/microsoft/vscode-azurecontainerapps/pull/263)
+
+### Fixed
+
+* Removed `Open Logs in Portal` from the command palette [#194](https://github.com/microsoft/vscode-azurecontainerapps/issues/194)
+* An error occurs after selecting "Sign in to Azure" by @alexweininger [#278](https://github.com/microsoft/vscode-azurecontainerapps/issues/278)
+* Default to single revision mode when creating a Container App by @MicroFish91 in [#300](https://github.com/microsoft/vscode-azurecontainerapps/pull/300)
+
+### Engineering
+
+* Reconfigure base create/deployment patterns and add new image sourcing patterns to enable `Code to Cloud` integrations by @MicroFish91 [#276](https://github.com/microsoft/vscode-azurecontainerapps/issues/276)
+
 ## 0.4.1 - 2023-02-22
 
 ### Fixed
