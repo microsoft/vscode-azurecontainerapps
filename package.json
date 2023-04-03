@@ -150,6 +150,16 @@
                 "command": "containerApps.addScaleRule",
                 "title": "%containerApps.addScaleRule%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.startStreamingLogs",
+                "title": "%containerApps.startStreamingLogs%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.stopStreamingLogs",
+                "title": "%containerApps.stopStreamingLogs%",
+                "category": "Azure Container Apps"
             }
         ],
         "menus": {
@@ -252,6 +262,15 @@
                     "command": "containerApps.addScaleRule",
                     "when": "view == azureResourceGroups && viewItem =~ /scaleRules/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.startStreamingLogs",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@1"
+                },{
+                    "command": "containerApps.stopStreamingLogs",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@2"
                 }
             ],
             "commandPalette": [
