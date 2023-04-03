@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { UIKind, env, workspace } from "vscode";
 import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
@@ -16,19 +17,23 @@ import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistry
 export class ImageSourceListStep extends AzureWizardPromptStep<IImageSourceBaseContext> {
     public async prompt(context: IImageSourceBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
-            localize('externalRegistry', 'Use existing image'),
+            localize('containerRegistry', 'Use image from registry'),
             localize('quickStartImage', 'Use quickstart image'),
             localize('buildFromProject', 'Build from project remotely using Azure Container Registry'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.ContainerRegistry, suppressPersistence: true },
-            { label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true },
+            { label: imageSourceLabels[0], data: ImageSource.ContainerRegistry, suppressPersistence: true }
         ];
 
         if (context.showQuickStartImage) {
             picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
+        }
+
+        const isVirtualWorkspace = workspace.workspaceFolders && workspace.workspaceFolders.every(f => f.uri.scheme !== 'file');
+        if (env.uiKind === UIKind.Desktop && !isVirtualWorkspace) {
+            picks.push({ label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true })
         }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;

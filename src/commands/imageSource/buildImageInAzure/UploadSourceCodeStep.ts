@@ -3,9 +3,9 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep, nonNullValue } from '@microsoft/vscode-azext-utils';
-import * as fse from 'fs-extra';
-import * as tar from 'tar';
+import { AzExtFsExtra, AzureWizardExecuteStep, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { fse } from '../../../node/fs-extra';
+import { tar } from '../../../node/tar';
 import { createContainerRegistryManagementClient } from '../../../utils/azureClients';
 import { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 
@@ -20,11 +20,12 @@ export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAz
         context.client = await createContainerRegistryManagementClient(context);
 
         const source: string = context.rootFolder.uri.fsPath;
-        let items = await fse.readdir(source);
+        let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => {
-            return !vcsIgnoreList.includes(i)
+            return !vcsIgnoreList.includes(i.fsPath)
         })
-        tar.c({ cwd: source }, items).pipe(fse.createWriteStream(context.tarFilePath));
+
+        tar.c({ cwd: source }, items.map(i => i.fsPath)).pipe(fse.createWriteStream(context.tarFilePath));
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);

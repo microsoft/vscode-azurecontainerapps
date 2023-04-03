@@ -14,7 +14,10 @@ import { ext } from './extensionVariables';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { TreeItemStateStore } from './tree/TreeItemState';
 
-export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<void> {
+export async function activate(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<void> {
+    // the entry point for vscode.dev is this activate, not main.js, so we need to instantiate perfStats here
+    // the perf stats don't matter for vscode because there is no main file to load-- we may need to see if we can track the download time
+    perfStats ||= { loadStartTime: Date.now(), loadEndTime: Date.now() };
     ext.context = context;
     ext.ignoreBundle = ignoreBundle;
     ext.outputChannel = createAzExtOutputChannel('Azure Container Apps', ext.prefix);
@@ -38,5 +41,5 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export function deactivateInternal(): void {
+export function deactivate(): void {
 }

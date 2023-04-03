@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { UIKind, env } from "vscode";
 import { SupportedRegistries, acrDomain, dockerHubDomain } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
@@ -20,11 +21,15 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerR
 
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {
         const placeHolder: string = localize('selectTag', 'Select a container registry');
-        const picks: IAzureQuickPickItem<SupportedRegistries | undefined>[] = [
-            { label: 'Azure Container Registry', data: acrDomain },
-            { label: 'Docker Hub Registry', data: dockerHubDomain },
-            { label: localize('otherPublicRegistry', 'Other public registry'), data: undefined }
-        ];
+        const picks: IAzureQuickPickItem<SupportedRegistries | undefined>[] = [];
+
+        picks.push({ label: 'Azure Container Registry', data: acrDomain });
+        if (env.uiKind === UIKind.Desktop) {
+            // this will fails in vscode.dev due to browser CORS access policies
+            picks.push({ label: 'Docker Hub Registry', data: dockerHubDomain });
+        }
+        // there is a chance that this will fail in vscode.dev due to CORS, but we should still allow the user to enter a custom registry
+        picks.push({ label: localize('otherPublicRegistry', 'Other public registry'), data: undefined });
 
         context.registryDomain = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }

@@ -8,7 +8,7 @@ import type { ContainerRegistryManagementClient, Registry } from '@azure/arm-con
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
-import { createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
+import { IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
 // Lazy-load @azure packages to improve startup performance.
