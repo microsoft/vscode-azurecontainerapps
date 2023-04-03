@@ -22,7 +22,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerR
         const placeHolder: string = localize('selectTag', 'Select a container registry');
         const picks: IAzureQuickPickItem<SupportedRegistries | undefined>[] = [
             { label: 'Azure Container Registry', data: acrDomain },
-            { label: 'Docker Hub', data: dockerHubDomain },
+            { label: 'Docker Hub Registry', data: dockerHubDomain },
             { label: localize('otherPublicRegistry', 'Other public registry'), data: undefined }
         ];
 
