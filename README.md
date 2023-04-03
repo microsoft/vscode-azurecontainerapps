@@ -11,6 +11,12 @@ Use the Azure Containers extension to quickly create and deploy containerized ap
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Support for [vscode.dev](https://vscode.dev/)
+
+The Azure Container Apps extension now supports running on [vscode.dev](https://vscode.dev/) and [github.dev](http://github.dev/).  The following functionalities are not supported in the web version of the extension:
+- Deploying to ACA through the Docker extension
+- Deploying via `Build from project remotely using Azure Container Registry`
+
 ## Create your first container app
 
 Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vscode) to create your first container app!
