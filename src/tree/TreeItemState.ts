@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import { createGenericItem } from '../utils/GenericItem';
+import { localize } from '../utils/localize';
 import { TreeElementBase } from './ContainerAppsBranchDataProvider';
 
 interface TreeItemState {
@@ -72,13 +73,22 @@ export class TreeItemStateStore implements vscode.Disposable {
         });
     }
 
-    async runWithTemporaryDescription<T = void>(id: string, description: string, callback: () => Promise<T>): Promise<T> {
+    async showDeleting(id: string, callback: () => Promise<void>): Promise<void> {
+        await this.runWithTemporaryDescription(id, localize('deleting', 'Deleting...'), callback, true);
+    }
+
+    /**
+     * @param dontRefreshOnRemove If true, the tree item won't be refreshed after the temporary description is removed.
+     * Useful when the tree item is being deleted. This prevents any time between the tree item description being cleared
+     * and the tree item being removed from the tree.
+     */
+    async runWithTemporaryDescription<T = void>(id: string, description: string, callback: () => Promise<T>, dontRefreshOnRemove?: boolean): Promise<T> {
         let result: T;
         this.update(id, { ...this.getState(id), temporaryDescription: description, spinner: true });
         try {
             result = await callback();
         } finally {
-            this.update(id, { ...this.getState(id), temporaryDescription: undefined, spinner: false });
+            this.update(id, { ...this.getState(id), temporaryDescription: undefined, spinner: false }, dontRefreshOnRemove);
         }
         return result;
     }
@@ -141,8 +151,13 @@ export class TreeItemStateStore implements vscode.Disposable {
         return this.store[id] ?? {};
     }
 
-    private update(id: string, state: Partial<TreeItemState>): void {
+    /**
+     * @param suppressRefresh If true, an onDidUpdateStateEvent will not be fired.
+     */
+    private update(id: string, state: Partial<TreeItemState>, suppressRefresh?: boolean): void {
         this.store[id] = { ...this.getState(id), ...state };
-        this.onDidUpdateStateEmitter.fire(id);
+        if (!suppressRefresh) {
+            this.onDidUpdateStateEmitter.fire(id);
+        }
     }
 }
