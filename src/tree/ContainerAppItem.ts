@@ -140,7 +140,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             await wizard.prompt();
         }
 
-        await ext.state.runWithTemporaryDescription(this.containerApp.id, localize('deleting', 'Deleting...'), async () => {
+        await ext.state.showDeleting(this.containerApp.id, async () => {
             await wizard.execute();
         });
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);
