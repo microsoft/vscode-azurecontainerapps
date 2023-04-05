@@ -25,7 +25,7 @@ interface TreeItemState {
 type ResourceGroupsItem = TreeElementBase & { id: string };
 
 export class TreeItemStateStore implements vscode.Disposable {
-    private readonly store: Record<string, Partial<TreeItemState> | undefined> = {};
+    private readonly store: Record<string, TreeItemState | undefined> = {};
     private readonly disposables: vscode.Disposable[] = [];
     private readonly onDidUpdateStateEmitter = new vscode.EventEmitter<string>();
     private readonly onDidUpdateStateEvent: vscode.Event<string> = this.onDidUpdateStateEmitter.event;
@@ -83,19 +83,26 @@ export class TreeItemStateStore implements vscode.Disposable {
         return result;
     }
 
-    private async runWithTemporaryChildren<T = void>(id: string, child: TreeElementBase, callback: () => Promise<T>): Promise<T> {
+    private async runWithTemporaryChild<T = void>(id: string, child: TreeElementBase, callback: () => Promise<T>): Promise<T> {
+        this.update(id, {
+            ...this.getState(id),
+            temporaryChildren: [child, ...(this.getState(id).temporaryChildren ?? [])],
+        });
+
         let result: T;
-        this.update(id, { ...this.getState(id), temporaryChildren: [child] });
         try {
             result = await callback();
         } finally {
-            this.update(id, { ...this.getState(id), temporaryChildren: undefined });
+            this.update(id, {
+                ...this.getState(id),
+                temporaryChildren: this.getState(id).temporaryChildren?.filter(element => element !== child),
+            });
         }
         return result;
     }
 
     async showCreatingChild<T = void>(id: string, label: string, callback: () => Promise<T>): Promise<T> {
-        return await this.runWithTemporaryChildren(id, createGenericItem({
+        return await this.runWithTemporaryChild(id, createGenericItem({
             iconPath: new vscode.ThemeIcon('loading~spin'),
             label,
             contextValue: 'creatingChild',
