@@ -4,10 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { Revision, Scale } from "@azure/arm-appcontainers";
-import { nonNullValue } from "@microsoft/vscode-azext-utils";
+import { createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem } from "vscode";
-import { createGenericItem } from "../../utils/GenericItem";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
@@ -47,7 +46,7 @@ export class ScaleItem implements ContainerAppsItem {
 
     async getChildren?(): Promise<TreeElementBase[]> {
         return [
-            createGenericItem({
+            createGenericElement({
                 label: localize('minMax', 'Min / max replicas'),
                 description: `${this.scale?.minReplicas ?? 0} / ${this.scale?.maxReplicas ?? 0}`,
                 contextValue: 'minMaxReplica',
