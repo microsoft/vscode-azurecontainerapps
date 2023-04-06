@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import { createGenericItem } from '../utils/GenericItem';
+import { localize } from '../utils/localize';
 import { TreeElementBase } from './ContainerAppsBranchDataProvider';
 
 interface TreeItemState {
@@ -25,7 +26,7 @@ interface TreeItemState {
 type ResourceGroupsItem = TreeElementBase & { id: string };
 
 export class TreeItemStateStore implements vscode.Disposable {
-    private readonly store: Record<string, Partial<TreeItemState> | undefined> = {};
+    private readonly store: Record<string, TreeItemState | undefined> = {};
     private readonly disposables: vscode.Disposable[] = [];
     private readonly onDidUpdateStateEmitter = new vscode.EventEmitter<string>();
     private readonly onDidUpdateStateEvent: vscode.Event<string> = this.onDidUpdateStateEmitter.event;
@@ -72,30 +73,46 @@ export class TreeItemStateStore implements vscode.Disposable {
         });
     }
 
-    async runWithTemporaryDescription<T = void>(id: string, description: string, callback: () => Promise<T>): Promise<T> {
+    async showDeleting(id: string, callback: () => Promise<void>): Promise<void> {
+        await this.runWithTemporaryDescription(id, localize('deleting', 'Deleting...'), callback, true);
+    }
+
+    /**
+     * @param dontRefreshOnRemove If true, the tree item won't be refreshed after the temporary description is removed.
+     * Useful when the tree item is being deleted. This prevents any time between the tree item description being cleared
+     * and the tree item being removed from the tree.
+     */
+    async runWithTemporaryDescription<T = void>(id: string, description: string, callback: () => Promise<T>, dontRefreshOnRemove?: boolean): Promise<T> {
         let result: T;
         this.update(id, { ...this.getState(id), temporaryDescription: description, spinner: true });
         try {
             result = await callback();
         } finally {
-            this.update(id, { ...this.getState(id), temporaryDescription: undefined, spinner: false });
+            this.update(id, { ...this.getState(id), temporaryDescription: undefined, spinner: false }, dontRefreshOnRemove);
         }
         return result;
     }
 
-    private async runWithTemporaryChildren<T = void>(id: string, child: TreeElementBase, callback: () => Promise<T>): Promise<T> {
+    private async runWithTemporaryChild<T = void>(id: string, child: TreeElementBase, callback: () => Promise<T>): Promise<T> {
+        this.update(id, {
+            ...this.getState(id),
+            temporaryChildren: [child, ...(this.getState(id).temporaryChildren ?? [])],
+        });
+
         let result: T;
-        this.update(id, { ...this.getState(id), temporaryChildren: [child] });
         try {
             result = await callback();
         } finally {
-            this.update(id, { ...this.getState(id), temporaryChildren: undefined });
+            this.update(id, {
+                ...this.getState(id),
+                temporaryChildren: this.getState(id).temporaryChildren?.filter(element => element !== child),
+            });
         }
         return result;
     }
 
     async showCreatingChild<T = void>(id: string, label: string, callback: () => Promise<T>): Promise<T> {
-        return await this.runWithTemporaryChildren(id, createGenericItem({
+        return await this.runWithTemporaryChild(id, createGenericItem({
             iconPath: new vscode.ThemeIcon('loading~spin'),
             label,
             contextValue: 'creatingChild',
@@ -134,8 +151,13 @@ export class TreeItemStateStore implements vscode.Disposable {
         return this.store[id] ?? {};
     }
 
-    private update(id: string, state: Partial<TreeItemState>): void {
+    /**
+     * @param suppressRefresh If true, an onDidUpdateStateEvent will not be fired.
+     */
+    private update(id: string, state: Partial<TreeItemState>, suppressRefresh?: boolean): void {
         this.store[id] = { ...this.getState(id), ...state };
-        this.onDidUpdateStateEmitter.fire(id);
+        if (!suppressRefresh) {
+            this.onDidUpdateStateEmitter.fire(id);
+        }
     }
 }
