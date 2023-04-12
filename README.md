@@ -13,6 +13,8 @@ Use the Azure Containers extension to quickly create and deploy containerized ap
 
 ## Support for [vscode.dev](https://vscode.dev/)
 
+![Create a quickstart container app with vscode.dev](resources/readme/vscode_dev_demo.gif)
+
 The Azure Container Apps extension now supports running on [vscode.dev](https://vscode.dev/) and [github.dev](http://github.dev/).  This means you can use the extension to manage your resources directly from the browser!
 
 The following functionalities are not supported in the web version of the extension:
