@@ -6,7 +6,7 @@
 import { Revision, Scale } from "@azure/arm-appcontainers";
 import { createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItem } from "vscode";
+import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
@@ -41,6 +41,7 @@ export class ScaleItem implements ContainerAppsItem {
             label: localize('scaling', 'Scaling'),
             contextValue: 'scale',
             iconPath: treeUtils.getIconPath('02887-icon-menu-Container-Scale'),
+            collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
 
