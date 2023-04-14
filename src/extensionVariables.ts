@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IAzExtOutputChannel, IExperimentationServiceAdapter } from "@microsoft/vscode-azext-utils";
+import { IAzExtOutputChannel, IExperimentationServiceAdapter, TreeElementStateManager } from "@microsoft/vscode-azext-utils";
 import { AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
 import { ExtensionContext } from "vscode";
 import { ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
-import { TreeItemStateStore } from "./tree/TreeItemState";
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -20,6 +19,6 @@ export namespace ext {
     export let experimentationService: IExperimentationServiceAdapter;
     export let rgApiV2: AzureResourcesExtensionApi;
 
-    export let state: TreeItemStateStore;
+    export let state: TreeElementStateManager;
     export let branchDataProvider: ContainerAppsBranchDataProvider;
 }

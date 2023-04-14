@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, Dapr } from "@azure/arm-appcontainers";
+import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { createGenericItem } from "../utils/GenericItem";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppModel } from "./ContainerAppItem";
@@ -36,7 +36,7 @@ export class DaprEnabledItem implements TreeElementBase {
         const children: TreeElementBase[] = [];
 
         if (this.dapr.appId) {
-            children.push(createGenericItem({
+            children.push(createGenericElement({
                 contextValue: 'daprAppId',
                 description: 'app id',
                 iconPath: new ThemeIcon('dash'),
@@ -45,7 +45,7 @@ export class DaprEnabledItem implements TreeElementBase {
         }
 
         if (this.dapr.appPort) {
-            children.push(createGenericItem({
+            children.push(createGenericElement({
                 contextValue: 'daprAppPort',
                 description: 'app port',
                 iconPath: new ThemeIcon('dash'),
@@ -54,7 +54,7 @@ export class DaprEnabledItem implements TreeElementBase {
         }
 
         if (this.dapr.appProtocol) {
-            children.push(createGenericItem({
+            children.push(createGenericElement({
                 description: 'app protocol',
                 label: String(this.dapr.appProtocol),
                 contextValue: 'daprAppProtocol',
@@ -67,7 +67,7 @@ export class DaprEnabledItem implements TreeElementBase {
 }
 
 export function createDaprDisabledItem(containerApp: ContainerApp): TreeElementBase {
-    return createGenericItem({
+    return createGenericElement({
         id: `${containerApp.id}/DaprDisabled`,
         label: localize('dapr', 'Dapr'),
         description: localize('disabled', 'Disabled'),

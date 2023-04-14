@@ -350,7 +350,7 @@
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^1.0.1",
-        "@microsoft/vscode-azext-utils": "^1.1.0",
+        "@microsoft/vscode-azext-utils": "^1.2.0",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",
