@@ -23,7 +23,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerR
         const placeHolder: string = localize('selectTag', 'Select a container registry');
         const picks: IAzureQuickPickItem<SupportedRegistries | undefined>[] = [];
 
-        picks.push({ label: 'Azure Container Registries', data: acrDomain });
+        picks.push({ label: 'Azure Container Registry', data: acrDomain });
         if (env.uiKind === UIKind.Desktop) {
             // this will fails in vscode.dev due to browser CORS access policies
             picks.push({ label: 'Docker Hub Registry', data: dockerHubDomain });
@@ -35,7 +35,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<IContainerR
     }
 
     public shouldPrompt(context: IContainerRegistryImageContext): boolean {
-        return !context.tag && !context.image;
+        return !context.image && !context.registryDomain;
     }
 
     public async getSubWizard(context: IContainerRegistryImageContext): Promise<IWizardOptions<IContainerRegistryImageContext> | undefined> {
