@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { acrDomain } from "../../../constants";
+import { acrDomain, quickStartImageName } from "../../../constants";
 import { parseImageName } from "../../../utils/imageNameUtils";
 import { localize } from "../../../utils/localize";
 import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
@@ -21,7 +21,7 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<IContainerRegi
             const { registryDomain, imageNameReference } = parseImageName(getLatestContainerAppImage(context.targetContainer));
 
             // Only bother carrying over the suggestion if the old image was from a third party registry
-            if (registryDomain !== acrDomain) {
+            if (registryDomain !== acrDomain && imageNameReference !== quickStartImageName) {
                 value = imageNameReference;
             }
         }
