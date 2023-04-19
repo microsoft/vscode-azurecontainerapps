@@ -26,5 +26,5 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         input = await context.ui.showQuickPick(quickPicks, { placeHolder });
     }
 
-    return input?.data || (await context.ui.showOpenDialog(options))[0].fsPath;
+    return input?.data || (await context.ui.showOpenDialog(options))[0].path;
 }

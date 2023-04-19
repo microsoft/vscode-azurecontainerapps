@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, Ingress } from "@azure/arm-appcontainers";
+import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { azResourceContextValue, IngressConstants } from "../constants";
-import { createGenericItem } from "../utils/GenericItem";
+import { IngressConstants, azResourceContextValue } from "../constants";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppModel } from "./ContainerAppItem";
@@ -46,7 +46,7 @@ export class IngressItem implements ContainerAppsItem {
         const targetPortItem: TreeElementBase & ContainerAppsItem = {
             containerApp: this.containerApp,
             subscription: this.subscription,
-            ...createGenericItem({
+            ...createGenericElement({
                 contextValue: 'targetPort',
                 description: String(this.ingress.targetPort),
                 iconPath: new ThemeIcon('dash'),
@@ -55,7 +55,7 @@ export class IngressItem implements ContainerAppsItem {
         };
 
         return [
-            createGenericItem({
+            createGenericElement({
                 contextValue: 'visibility',
                 description,
                 iconPath: new ThemeIcon('dash'),
@@ -86,7 +86,7 @@ export function createTargetPortItem(subscription: AzureSubscription, containerA
     return {
         subscription,
         containerApp,
-        ...createGenericItem({
+        ...createGenericElement({
             label: localize('targetPort', 'Target Port'),
             contextValue: 'targetPort',
             description: String(containerApp.configuration?.ingress?.targetPort),

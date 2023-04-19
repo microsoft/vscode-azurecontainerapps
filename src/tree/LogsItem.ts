@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp } from "@azure/arm-appcontainers";
+import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { createGenericItem } from "../utils/GenericItem";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { TreeElementBase } from "./ContainerAppsBranchDataProvider";
@@ -29,7 +29,7 @@ export class LogsItem implements TreeElementBase {
         const openInPortal = 'azureResourceGroups.openInPortal';
         const startStreamingLogs = 'containerApps.startStreamingLogs';
         return [
-            createGenericItem({
+            createGenericElement({
                 contextValue: 'openLogs',
                 commandId: openInPortal,
                 iconPath: new ThemeIcon('link-external'),
@@ -39,7 +39,7 @@ export class LogsItem implements TreeElementBase {
                     portalUrl: createPortalUrl(this.subscription, `${this.containerApp.id}/logs`),
                 }]
             }),
-            createGenericItem({
+            createGenericElement({
                 contextValue: 'startStreamingLogs',
                 commandId: startStreamingLogs,
                 iconPath: new ThemeIcon('play'),
