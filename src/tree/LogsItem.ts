@@ -6,8 +6,8 @@
 import { ContainerApp } from "@azure/arm-appcontainers";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { createPortalUrl } from "../utils/createPortalUrl";
 import { createGenericItem } from "../utils/GenericItem";
+import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
@@ -26,13 +26,13 @@ export class LogsItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        const iconPath = new ThemeIcon('link-external');
         const openInPortal = 'azureResourceGroups.openInPortal';
+        const startStreamingLogs = 'containerApps.startStreamingLogs';
         return [
             createGenericItem({
                 contextValue: 'openLogs',
                 commandId: openInPortal,
-                iconPath,
+                iconPath: new ThemeIcon('link-external'),
                 id: `${this.containerApp.id}/logs`,
                 label: localize('openLogs', 'Open Logs'),
                 commandArgs: [{
@@ -40,13 +40,14 @@ export class LogsItem implements TreeElementBase {
                 }]
             }),
             createGenericItem({
-                contextValue: 'openLogStream',
-                commandId: openInPortal,
-                iconPath,
+                contextValue: 'startStreamingLogs',
+                commandId: startStreamingLogs,
+                iconPath: new ThemeIcon('play'),
                 id: `${this.id}/logstream`,
-                label: localize('openLogStream', 'Open Log Stream'),
+                label: localize('openLogStream', 'Connect to Log Stream...'),
                 commandArgs: [{
-                    portalUrl: createPortalUrl(this.subscription, `${this.containerApp.id}/logstream`),
+                    subscription: this.subscription,
+                    containerApp: this.containerApp,
                 }]
             }),
         ];
