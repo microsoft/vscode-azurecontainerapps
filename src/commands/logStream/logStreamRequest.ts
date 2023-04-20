@@ -19,10 +19,10 @@ export interface ILogStream extends vscode.Disposable {
     isConnected: boolean;
     outputChannel: vscode.OutputChannel;
     data: {
+        containerApp?: string;
         revision?: string;
         replica?: string;
         container?: string;
-        containerApp?: string;
     }
 }
 
@@ -55,7 +55,7 @@ export async function logStreamRequest(context: IStreamLogsContext): Promise<ILo
         void context.ui.showWarningMessage(localize('logStreamAlreadyActive', 'The log-streaming service for "{0}" is already active.', context.replica?.name));
         return logStream;
     } else {
-        const outputChannel: vscode.OutputChannel = logStream ? logStream.outputChannel : vscode.window.createOutputChannel(localize('logStreamLabel', '{0} - Log Stream', context.replica?.name));
+        const outputChannel: vscode.OutputChannel = logStream ? logStream.outputChannel : vscode.window.createOutputChannel(localize('logStreamLabel', '{0} ({1})', context.replica?.name, context.container?.name));
         ext.context.subscriptions.push(outputChannel);
         outputChannel.show();
         outputChannel.appendLine(localize('connectingToLogStream', 'Connecting to log stream...'));
@@ -117,21 +117,13 @@ export async function logStreamRequest(context: IStreamLogsContext): Promise<ILo
 }
 
 export async function disconnectLogStreaming(context: IStreamLogsContext): Promise<void> {
-    const logStream: ILogStream | undefined = context.logStreamToStop;
-    if (!logStream) {
-        const allStreams = getActiveLogStreams(context);
-        for (const streams of allStreams.values()) {
-            if (streams && streams.isConnected) {
-                streams.dispose();
-            } else {
-                await vscode.window.showWarningMessage(localize('alreadyDisconnected', 'The log-streaming service is already disconnected.'));
-            }
-        }
-    } else {
-        if (logStream && logStream.isConnected) {
-            logStream.dispose();
+    const allStreams = context.logStreamToStop ? [context.logStreamToStop] : getActiveLogStreams(context);
+
+    for (const streams of allStreams.values()) {
+        if (streams && streams.isConnected) {
+            streams.dispose();
         } else {
-            await vscode.window.showWarningMessage(localize('alreadyDisconnected', 'The log-streaming service is already disconnected.'));
+            await context.ui.showWarningMessage(localize('alreadyDisconnected', 'The log-streaming service is already disconnected.'));
         }
     }
 }

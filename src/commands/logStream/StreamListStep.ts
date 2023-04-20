@@ -10,17 +10,19 @@ import { ILogStream, getActiveLogStreams } from "./logStreamRequest";
 
 export class StreamListStep extends AzureWizardPromptStep<IStreamLogsContext> {
     public async prompt(context: IStreamLogsContext): Promise<void> {
-        const placeHolder: string = localize('selectStream', 'Select a Stream');
+        const placeHolder: string = localize('selectStream', 'Select a stream');
         const picks: IAzureQuickPickItem<ILogStream | undefined>[] = await this.getPicks(context);
-        picks.push({ label: localize('stopAll', 'Stop all Streams'), data: undefined })
-        context.logStreamToStop = (await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true })).data;
+        if (picks.length > 1) {
+            picks.push({ label: localize('stopAll', 'Stop all Streams'), data: undefined });
+        }
+        context.logStreamToStop = (await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true, suppressPersistence: true })).data;
     }
 
     public shouldPrompt(context: IStreamLogsContext): boolean {
         return !context.logStreamToStop;
     }
 
-    public async getPicks(context: IStreamLogsContext): Promise<IAzureQuickPickItem<ILogStream>[]> {
+    private async getPicks(context: IStreamLogsContext): Promise<IAzureQuickPickItem<ILogStream>[]> {
         const logStreams = getActiveLogStreams(context);
         if (logStreams.size === 0) {
             throw new Error(localize('noActiveStreams', 'There are no active log streams.'));
