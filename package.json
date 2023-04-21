@@ -330,7 +330,7 @@
         "@microsoft/vscode-azext-dev": "^1.0.4",
         "@octokit/types": "^9.1.0",
         "@types/fs-extra": "^8.1.1",
-        "@types/git-url-parse": "^9.0.1",
+        "@types/git-url-parse": "^9.0.0",
         "@types/gulp": "^4.0.6",
         "@types/mocha": "^8.2.2",
         "@types/node": "^14.0.0",
@@ -368,7 +368,6 @@
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",
         "fs-extra": "^8.1.0",
-        "git-url-parse": "^13.1.0",
         "semver": "^7.3.5",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
