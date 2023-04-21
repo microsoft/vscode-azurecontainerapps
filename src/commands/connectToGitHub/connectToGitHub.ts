@@ -58,6 +58,6 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     await wizard.prompt();
     await wizard.execute();
 
-    throw new Error("Not done implementing");
+    throw new Error("'connectToGitHub' is not fully implemented yet.");
 }
 
