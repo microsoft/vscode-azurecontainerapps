@@ -7,6 +7,8 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 
 export interface IGitHubContext extends IActionContext {
     gitHubAccessToken?: string;
+
+    // Organization
     gitHubOrg?: string;
 
     // Repository
@@ -14,5 +16,6 @@ export interface IGitHubContext extends IActionContext {
     gitHubRepositoryOwner?: string;
     gitHubRepositoryUrl?: string;
 
+    // Branch
     gitHubBranch?: string;
 }
