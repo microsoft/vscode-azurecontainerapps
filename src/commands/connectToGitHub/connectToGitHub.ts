@@ -36,8 +36,8 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     const promptSteps: AzureWizardPromptStep<IConnectToGitHubContext>[] = [
         new GitHubOrgListStep(),
         new GitHubRepositoryListStep(),
-        // new GithubBranchListStep(),
-        // new DockerfileLocationStep(),
+        new GitHubOrgListStep(),
+        // new DockerfileLocationInputStep(),
         // new AcrListStep(),
         // new AcrRepositoriesListStep(),
         // new ServicePrincipalIdInputStep(),
