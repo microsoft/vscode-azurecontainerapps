@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { getGitHubAccessToken } from "../../gitHub/getGitHubAccessToken";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
@@ -24,7 +25,7 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
         ...await createActivityContext(),
         subscription,
         targetContainer: containerApp,
-        // githubAccessToken: await getGithubAccessToken()
+        gitHubAccessToken: await getGitHubAccessToken()
     };
 
     const title: string = localize('connectGitHubRepository', 'Connect GitHub Repository');
@@ -57,3 +58,7 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
 
     throw new Error("Not done implementing");
 }
+function getGithubAccessToken() {
+    throw new Error("Function not implemented.");
+}
+
