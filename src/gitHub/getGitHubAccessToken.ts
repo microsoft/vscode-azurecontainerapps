@@ -8,7 +8,7 @@ import { authentication } from "vscode";
 
 const gitHubAuthProviderId: string = 'github';
 
-// Provide same scopes as the GitHub extension so we we don't have to prompt for auth again
+// Provide same scopes as the GitHub extension so we don't have to prompt for auth again
 const gitHubScopes: string[] = ['repo', 'workflow', 'user:email', 'read:user'];
 
 export async function getGitHubAccessToken(): Promise<string> {
