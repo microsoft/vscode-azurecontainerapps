@@ -150,6 +150,11 @@
                 "command": "containerApps.addScaleRule",
                 "title": "%containerApps.addScaleRule%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.connectToGitHub",
+                "title": "%containerApps.connectToGitHub%",
+                "category": "Azure Container Apps"
             }
         ],
         "menus": {
@@ -192,6 +197,11 @@
                     "command": "containerApps.deleteContainerApp",
                     "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "3@2"
+                },
+                {
+                    "command": "containerApps.connectToGitHub",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "3@3"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
