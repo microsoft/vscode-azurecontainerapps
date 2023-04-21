@@ -5,6 +5,7 @@
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { GitHubOrgListStep } from "../../gitHub/GitHubOrgListStep";
+import { GitHubRepositoryListStep } from "../../gitHub/GitHubRepositoryListStep";
 import { getGitHubAccessToken } from "../../gitHub/getGitHubAccessToken";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -34,7 +35,7 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     // Todo: Add progress reports...
     const promptSteps: AzureWizardPromptStep<IConnectToGitHubContext>[] = [
         new GitHubOrgListStep(),
-        // new GithubRepositoryListStep(),
+        new GitHubRepositoryListStep(),
         // new GithubBranchListStep(),
         // new DockerfileLocationStep(),
         // new AcrListStep(),
