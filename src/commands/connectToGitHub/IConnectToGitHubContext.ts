@@ -9,7 +9,6 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { IGitHubContext } from '../../gitHub/IGitHubContext';
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
 
-// Can ignore setting base image attributes from `ImageSourceBaseContext` since the create and deploy commands do not need to be called for this flow
 export interface IConnectToGitHubContext extends ISubscriptionActionContext, IGitHubContext, ExecuteActivityContext {
     targetContainer: ContainerAppModel;
     subscription: AzureSubscription;

@@ -8,9 +8,9 @@ import { IGitHubContext } from "./IGitHubContext";
 import { createOctokitClient } from "./createOctokitClient";
 
 export type Branches = RestEndpointMethodTypes["repos"]["listBranches"]["response"]["data"];
-export type GetBranchesParams = RestEndpointMethodTypes["repos"]["listBranches"]["parameters"];
+export type GetBranchesParams = RestEndpointMethodTypes["repos"]["listBranches"]["parameters"] & { owner: string; repo: string }; // Make 'owner' and 'repo' required
 
-export async function getBranches(context: IGitHubContext, params?: GetBranchesParams): Promise<Branches> {
+export async function getBranches(context: IGitHubContext, reqParams: GetBranchesParams): Promise<Branches> {
     const client: Octokit = await createOctokitClient(context);
-    return (await client.repos.listBranches(params)).data;
+    return (await client.repos.listBranches(reqParams)).data;
 }

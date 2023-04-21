@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { GitHubBranchListStep } from "../../gitHub/GitHubBranchListStep";
 import { GitHubOrgListStep } from "../../gitHub/GitHubOrgListStep";
 import { GitHubRepositoryListStep } from "../../gitHub/GitHubRepositoryListStep";
 import { getGitHubAccessToken } from "../../gitHub/getGitHubAccessToken";
@@ -30,13 +31,12 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
         gitHubAccessToken: await getGitHubAccessToken()
     };
 
-    const title: string = localize('connectGitHubRepository', 'Connect GitHub Repository');
+    const title: string = localize('connectGitHubRepository', 'Connect a GitHub repository');
 
-    // Todo: Add progress reports...
     const promptSteps: AzureWizardPromptStep<IConnectToGitHubContext>[] = [
         new GitHubOrgListStep(),
         new GitHubRepositoryListStep(),
-        new GitHubOrgListStep(),
+        new GitHubBranchListStep()
         // new DockerfileLocationInputStep(),
         // new AcrListStep(),
         // new AcrRepositoriesListStep(),
@@ -56,7 +56,7 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     });
 
     await wizard.prompt();
-    await wizard.execute();
+    // await wizard.execute();
 
     throw new Error("'connectToGitHub' is not fully implemented yet.");
 }

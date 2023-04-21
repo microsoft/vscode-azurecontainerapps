@@ -54,7 +54,7 @@ export class GitHubRepositoryListStep extends AzureWizardPromptStep<IGitHubConte
             page
         };
         const orgRepoParams: GetOrgReposReqParams = {
-            // Doesn't matter if context.githubOrg is undefined; that just means we will end up calling 'getRepositoriesByUser' instead
+            // Doesn't matter if context.gitHubOrg is undefined; that just means we will end up calling 'getRepositoriesByUser' instead
             org: context.gitHubOrg ?? '',
             type: 'all',
             per_page: perPage,
