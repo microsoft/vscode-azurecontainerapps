@@ -7,9 +7,9 @@ import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { IGitHubContext } from "./IGitHubContext";
 import { createOctokitClient } from "./createOctokitClient";
 
-export type UserOrgs = RestEndpointMethodTypes["orgs"]["listForAuthenticatedUser"]["response"]["data"];
+export type Orgs = RestEndpointMethodTypes["orgs"]["listForAuthenticatedUser"]["response"]["data"];
 
-export async function getUserOrgs(context: IGitHubContext): Promise<UserOrgs> {
+export async function getOrgs(context: IGitHubContext): Promise<Orgs> {
     const client: Octokit = await createOctokitClient(context);
     return (await client.orgs.listForAuthenticatedUser()).data;
 }

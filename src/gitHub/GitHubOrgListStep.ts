@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-az
 import { localize } from "../utils/localize";
 import { IGitHubContext } from "./IGitHubContext";
 import { AuthenticatedUser, getAuthenticatedUser } from "./getAuthenticatedUser";
-import { UserOrgs, getUserOrgs } from "./getUserOrgs";
+import { Orgs, getOrgs } from "./getOrgs";
 
 export class GitHubOrgListStep extends AzureWizardPromptStep<IGitHubContext> {
     public async prompt(context: IGitHubContext): Promise<void> {
@@ -25,7 +25,7 @@ export class GitHubOrgListStep extends AzureWizardPromptStep<IGitHubContext> {
 
     private async getPicks(context: IGitHubContext): Promise<IAzureQuickPickItem<string | undefined>[]> {
         const user: AuthenticatedUser = await getAuthenticatedUser(context);
-        const orgs: UserOrgs = await getUserOrgs(context);
+        const orgs: Orgs = await getOrgs(context);
         return [
             { label: user.login, data: undefined, suppressPersistence: true },
             ...orgs.map((org) => {
