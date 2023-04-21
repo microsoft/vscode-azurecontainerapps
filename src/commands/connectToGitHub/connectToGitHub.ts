@@ -59,7 +59,4 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
 
     throw new Error("Not done implementing");
 }
-function getGithubAccessToken() {
-    throw new Error("Function not implemented.");
-}
 
