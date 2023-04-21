@@ -6,6 +6,7 @@
 import { registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { browseContainerAppNode } from './browseContainerApp';
 import { chooseRevisionMode } from './chooseRevisionMode';
+import { connectToGitHub } from './connectToGitHub/connectToGitHub';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -35,6 +36,9 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
+
+    // github
+    registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);
 
     // ingress
     registerCommandWithTreeNodeUnwrapping('containerApps.enableIngress', enableIngress);
