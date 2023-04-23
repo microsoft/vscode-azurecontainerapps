@@ -199,11 +199,6 @@
                     "group": "3@2"
                 },
                 {
-                    "command": "containerApps.connectToGitHub",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
-                    "group": "3@3"
-                },
-                {
                     "command": "containerApps.chooseRevisionMode",
                     "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revisions$/i",
                     "group": "2@4"
