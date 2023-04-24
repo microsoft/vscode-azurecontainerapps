@@ -13,15 +13,18 @@ import { IStreamLogsContext } from "./IStreamLogsContext";
 
 export class RevisionListStep extends AzureWizardPromptStep<IStreamLogsContext> {
     public async prompt(context: IStreamLogsContext): Promise<void> {
-        if (context.containerApp.revisionsMode === 'Multiple') {
-            const placeHolder: string = localize('selectRevision', 'Select a revision');
-            context.revision = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
-        } else {
-            (await this.getPicks(context)).forEach(revision => {
-                if (revision.data.active === true) {
-                    context.revision = revision.data;
-                }
-            });
+        const placeHolder: string = localize('selectRevision', 'Select a revision');
+        context.revision = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
+    }
+
+    public async configureBeforePrompt(context: IStreamLogsContext): Promise<void> {
+        const picks = await this.getPicks(context);
+        if (context.containerApp.revisionsMode === 'Multiple' && picks.length === 1) {
+            context.revision = picks[0].data;
+        } else if (context.containerApp.revisionsMode === 'Single') {
+            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
+            const revisionData = await client.containerAppsRevisions.getRevision(context.resourceGroupName, context.containerApp.name, nonNullProp(context.containerApp, 'latestRevisionName'));
+            context.revision = revisionData;
         }
     }
 

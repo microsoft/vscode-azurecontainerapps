@@ -35,6 +35,11 @@ export function getActiveLogStreams(context: IStreamLogsContext): Map<string, IL
             activeStreams.set(key, value);
         }
     }
+
+    if (activeStreams.size === 0) {
+        throw new Error(localize('noActiveStreams', 'There are no active log streams.'));
+    }
+
     return activeStreams;
 }
 
