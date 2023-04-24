@@ -12,19 +12,23 @@ import { localize } from "../../utils/localize";
 import { IStreamLogsContext } from "./IStreamLogsContext";
 
 export class RevisionListStep extends AzureWizardPromptStep<IStreamLogsContext> {
+    private revisions: Revision[] | undefined;
+
     public async prompt(context: IStreamLogsContext): Promise<void> {
         const placeHolder: string = localize('selectRevision', 'Select a revision');
-        context.revision = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
+        context.revision = (await context.ui.showQuickPick(await this.getPicks(context), { placeHolder })).data;
     }
 
     public async configureBeforePrompt(context: IStreamLogsContext): Promise<void> {
-        const picks = await this.getPicks(context);
-        if (context.containerApp.revisionsMode === 'Multiple' && picks.length === 1) {
-            context.revision = picks[0].data;
-        } else if (context.containerApp.revisionsMode === 'Single') {
+        if (context.containerApp.revisionsMode === 'Single') {
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
             const revisionData = await client.containerAppsRevisions.getRevision(context.resourceGroupName, context.containerApp.name, nonNullProp(context.containerApp, 'latestRevisionName'));
             context.revision = revisionData;
+        } else {
+            const picks = await this.getPicks(context);
+            if (picks.length === 1) {
+                context.revision = picks[0].data;
+            }
         }
     }
 
@@ -34,8 +38,11 @@ export class RevisionListStep extends AzureWizardPromptStep<IStreamLogsContext> 
 
     private async getPicks(context: IStreamLogsContext): Promise<IAzureQuickPickItem<Revision>[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
-        const revisions = (await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(context.resourceGroupName, context.containerApp.name)));
-        return revisions.map(r => {
+        if (!this.revisions) {
+            this.revisions = (await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(context.resourceGroupName, context.containerApp.name)));
+        }
+
+        return this.revisions.map(r => {
             const date = r.createdTime;
             return { label: nonNullProp(r, 'name'), description: dayjs(date).fromNow(), data: r };
         });
