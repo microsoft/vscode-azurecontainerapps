@@ -16,7 +16,7 @@ export class RevisionListStep extends AzureWizardPromptStep<IStreamLogsContext> 
 
     public async prompt(context: IStreamLogsContext): Promise<void> {
         const placeHolder: string = localize('selectRevision', 'Select a revision');
-        context.revision = (await context.ui.showQuickPick(await this.getPicks(context), { placeHolder })).data;
+        context.revision = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
     }
 
     public async configureBeforePrompt(context: IStreamLogsContext): Promise<void> {
