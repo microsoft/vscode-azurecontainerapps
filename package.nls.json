@@ -26,5 +26,7 @@
     "containerApps.openInPortal": "Open in Portal",
     "containerApps.openConsoleInPortal": "Open Console in Portal",
     "containerApps.editScalingRange": "Edit Scaling Range...",
-    "containerApps.addScaleRule": "Add Scale Rule..."
+    "containerApps.addScaleRule": "Add Scale Rule...",
+    "containerApps.startStreamingLogs": "Start Streaming Logs...",
+    "containerApps.stopStreamingLogs": "Stop Streaming Logs..."
 }

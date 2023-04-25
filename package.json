@@ -150,6 +150,16 @@
                 "command": "containerApps.addScaleRule",
                 "title": "%containerApps.addScaleRule%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.startStreamingLogs",
+                "title": "%containerApps.startStreamingLogs%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.stopStreamingLogs",
+                "title": "%containerApps.stopStreamingLogs%",
+                "category": "Azure Container Apps"
             }
         ],
         "menus": {
@@ -252,6 +262,15 @@
                     "command": "containerApps.addScaleRule",
                     "when": "view == azureResourceGroups && viewItem =~ /scaleRules/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.startStreamingLogs",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@1"
+                },{
+                    "command": "containerApps.stopStreamingLogs",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@2"
                 }
             ],
             "commandPalette": [
@@ -343,12 +362,13 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-appcontainers": "^1.1.0",
+        "@azure/arm-appcontainers": "^2.0.0-beta.1",
         "@azure/arm-containerregistry": "^10.0.0",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/storage-blob": "^12.4.1",
+        "@azure/core-rest-pipeline": "1.10.3",
         "@microsoft/vscode-azext-azureutils": "^1.0.1",
         "@microsoft/vscode-azext-utils": "^1.2.0",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
