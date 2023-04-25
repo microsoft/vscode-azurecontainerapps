@@ -13,7 +13,7 @@ export class StreamListStep extends AzureWizardPromptStep<IStreamLogsContext> {
         const placeHolder: string = localize('selectStream', 'Select a stream');
         const picks: IAzureQuickPickItem<ILogStream | undefined>[] = this.getPicks(context);
         if (picks.length > 1) {
-            picks.push({ label: localize('stopAll', 'Stop all Streams'), data: undefined });
+            picks.push({ label: localize('stopAll', 'Stop all streams'), data: undefined });
         }
         context.logStreamToStop = (await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true, suppressPersistence: true })).data;
     }
