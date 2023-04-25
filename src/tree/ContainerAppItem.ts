@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
@@ -154,7 +154,12 @@ export async function getContainerEnvelopeWithSecrets(context: IActionContext, s
 
     // verify all top-level properties
     for (const key of Object.keys(containerAppEnvelope)) {
-        containerAppEnvelope[key] = nonNullProp(containerAppEnvelope, <keyof ContainerApp>key);
+        // We know it's undefined but we want it to throw the error
+        if (containerAppEnvelope[key] === undefined) {
+            nonNullValue(containerAppEnvelope[key]);
+        }
+
+        containerAppEnvelope[key] = containerAppEnvelope[<keyof ContainerApp>key];
     }
 
     const concreteContainerAppEnvelope = <Required<ContainerApp>>containerAppEnvelope;
