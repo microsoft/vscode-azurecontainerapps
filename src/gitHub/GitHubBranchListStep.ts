@@ -17,7 +17,7 @@ export class GitHubBranchListStep extends AzureWizardPromptStep<IGitHubContext> 
         // We always want fresh picks before prompting in case the user has pressed the back button
         this.picks = [];
 
-        const placeHolder: string = localize('gitHubBranch', 'Select a GitHub branch');
+        const placeHolder: string = localize('gitHubBranch', 'Select a branch');
 
         let page: number = 0;
         while (!context.gitHubBranch) {
