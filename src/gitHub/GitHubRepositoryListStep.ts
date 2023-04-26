@@ -23,7 +23,7 @@ export class GitHubRepositoryListStep extends AzureWizardPromptStep<IGitHubConte
         // We always want fresh picks before prompting in case the user has pressed the back button
         this.picks = [];
 
-        const placeHolder: string = localize('gitHubRepository', 'Choose a GitHub repository');
+        const placeHolder: string = localize('gitHubRepository', 'Select a GitHub repository');
 
         let page: number = 0;
         let repositoryData: RepositoryData | undefined;

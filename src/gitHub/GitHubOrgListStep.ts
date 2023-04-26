@@ -11,7 +11,7 @@ import { Orgs, getOrgs } from "./getOrgs";
 
 export class GitHubOrgListStep extends AzureWizardPromptStep<IGitHubContext> {
     public async prompt(context: IGitHubContext): Promise<void> {
-        const placeHolder: string = localize('gitHubOrganization', 'Choose a GitHub organization');
+        const placeHolder: string = localize('gitHubOrganization', 'Select a GitHub organization');
         context.gitHubOrg = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
 
         if (context.gitHubOrg) {
@@ -27,9 +27,9 @@ export class GitHubOrgListStep extends AzureWizardPromptStep<IGitHubContext> {
         const user: AuthenticatedUser = await getAuthenticatedUser(context);
         const orgs: Orgs = await getOrgs(context);
         return [
-            { label: user.login, data: undefined, suppressPersistence: true },
+            { label: user.login, data: undefined },
             ...orgs.map((org) => {
-                return { label: org.login, data: org.login, suppressPersistence: true };
+                return { label: org.login, data: org.login };
             })
         ];
     }

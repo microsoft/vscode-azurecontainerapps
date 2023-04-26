@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Registry } from '@azure/arm-containerregistry';
-import { ExecuteActivityContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import type { ExecuteActivityContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { IGitHubContext } from '../../gitHub/IGitHubContext';
 import { ContainerAppModel } from "../../tree/ContainerAppItem";
