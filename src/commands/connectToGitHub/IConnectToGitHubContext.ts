@@ -5,9 +5,9 @@
 
 import type { Registry } from '@azure/arm-containerregistry';
 import type { ExecuteActivityContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { IGitHubContext } from '../../gitHub/IGitHubContext';
-import { ContainerAppModel } from "../../tree/ContainerAppItem";
+import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { IGitHubContext } from '../../gitHub/IGitHubContext';
+import type { ContainerAppModel } from "../../tree/ContainerAppItem";
 
 export interface IConnectToGitHubContext extends ISubscriptionActionContext, IGitHubContext, ExecuteActivityContext {
     targetContainer: ContainerAppModel;
