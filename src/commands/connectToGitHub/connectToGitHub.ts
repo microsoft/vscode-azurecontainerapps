@@ -12,7 +12,14 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
+import { AcrListStep } from "../imageSource/containerRegistry/acr/AcrListStep";
+import { AcrRepositoriesListStep } from "../imageSource/containerRegistry/acr/AcrRepositoriesListStep";
+import { DockerfileLocationInputStep } from "./DockerfileLocationInputStep";
+import { GitHubRepositoryConnectStep } from "./GitHubRepositoryConnectStep";
 import { IConnectToGitHubContext } from "./IConnectToGitHubContext";
+import { ServicePrincipalIdInputStep } from "./ServicePrincipalIdInputStep";
+import { ServicePrincipalSecretInputStep } from "./ServicePrincipalSecretInputStep";
+import { isGitHubConnected } from "./isGitHubConnected";
 
 export async function connectToGitHub(context: ITreeItemPickerContext & Partial<IConnectToGitHubContext>, node?: ContainerAppItem): Promise<void> {
     if (!node) {
@@ -31,21 +38,25 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
         gitHubAccessToken: await getGitHubAccessToken()
     };
 
-    const title: string = localize('connectGitHubRepository', 'Connect a GitHub repository');
+    if (await isGitHubConnected(wizardContext)) {
+        throw new Error(localize('gitHubAlreadyConnected', '"{0}" is already connected to a GitHub repository.', containerApp.name));
+    }
+
+    const title: string = localize('connectGitHubRepository', 'Connect a GitHub repository to "{0}"', containerApp.name);
 
     const promptSteps: AzureWizardPromptStep<IConnectToGitHubContext>[] = [
         new GitHubOrgListStep(),
         new GitHubRepositoryListStep(),
-        new GitHubBranchListStep()
-        // new DockerfileLocationInputStep(),
-        // new AcrListStep(),
-        // new AcrRepositoriesListStep(),
-        // new ServicePrincipalIdInputStep(),
-        // new ServicePrincipalSecretInputStep()
+        new GitHubBranchListStep(),
+        new DockerfileLocationInputStep(),
+        new AcrListStep(),
+        new AcrRepositoriesListStep(),
+        new ServicePrincipalIdInputStep(),
+        new ServicePrincipalSecretInputStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<IConnectToGitHubContext>[] = [
-        // new GithubActionCreateStep()
+        new GitHubRepositoryConnectStep()
     ];
 
     const wizard: AzureWizard<IConnectToGitHubContext> = new AzureWizard(wizardContext, {
@@ -56,8 +67,6 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     });
 
     await wizard.prompt();
-    // await wizard.execute();
-
-    throw new Error("'connectToGitHub' is not fully implemented yet.");
+    await wizard.execute();
 }
 

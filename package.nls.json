@@ -27,7 +27,7 @@
     "containerApps.openConsoleInPortal": "Open Console in Portal",
     "containerApps.editScalingRange": "Edit Scaling Range...",
     "containerApps.addScaleRule": "Add Scale Rule...",
-    "containerApps.connectToGitHub": "Connect to a GitHub Repository...",
+    "containerApps.connectToGitHub": "Connect to GitHub Repository...",
     "containerApps.startStreamingLogs": "Start Streaming Logs...",
     "containerApps.stopStreamingLogs": "Stop Streaming Logs..."
 }
