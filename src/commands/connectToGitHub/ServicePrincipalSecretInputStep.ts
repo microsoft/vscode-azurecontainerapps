@@ -10,8 +10,10 @@ import { IConnectToGitHubContext } from "./IConnectToGitHubContext";
 
 export class ServicePrincipalSecretInputStep extends AzureWizardPromptStep<IConnectToGitHubContext> {
     public async prompt(context: IConnectToGitHubContext): Promise<void> {
-        const prompt: string = localize('servicePrincipalSecretPrompt', 'Enter the service principal secret');
-        context.servicePrincipalSecret = (await context.ui.showInputBox({ prompt, validateInput: this.validateInput })).trim();
+        context.servicePrincipalSecret = (await context.ui.showInputBox({
+            prompt: localize('servicePrincipalSecretPrompt', 'Enter the service principal secret'),
+            validateInput: this.validateInput
+        })).trim();
         context.valuesToMask.push(context.servicePrincipalSecret);
     }
 
