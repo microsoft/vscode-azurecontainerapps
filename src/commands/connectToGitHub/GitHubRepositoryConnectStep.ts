@@ -5,12 +5,12 @@
 
 import type { ContainerAppsAPIClient, SourceControl } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { listCredentialsFromRegistry } from "../imageSource/containerRegistry/acr/listCredentialsFromRegistry";
-import { IConnectToGitHubContext } from "./IConnectToGitHubContext";
+import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
 
 export class GitHubRepositoryConnectStep extends AzureWizardExecuteStep<IConnectToGitHubContext> {
     public priority: number = 300;

@@ -6,8 +6,8 @@
 import type { ContainerAppsAPIClient, SourceControl } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ContainerAppModel } from "../../tree/ContainerAppItem";
+import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { ContainerAppModel } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 
 export async function getContainerAppSourceControl(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerAppModel): Promise<SourceControl | undefined> {

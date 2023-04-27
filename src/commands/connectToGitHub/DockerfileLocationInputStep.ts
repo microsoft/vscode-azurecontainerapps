@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 import { validateUtils } from "../../utils/validateUtils";
-import { IConnectToGitHubContext } from "./IConnectToGitHubContext";
+import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
 
 export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectToGitHubContext> {
     public async prompt(context: IConnectToGitHubContext): Promise<void> {
