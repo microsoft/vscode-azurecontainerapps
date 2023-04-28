@@ -12,7 +12,7 @@ export namespace validateUtils {
      * Validates that the given input string is the appropriate length as determined by the optional lower and upper limit parameters
      */
     export function isValidLength(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
-        // Estimated using the following: VS Code typically defaults to UTF-8; so a character can be encoded to be up to ~4 bytes long
+        // Estimated using UTF-8 encoding, where a character can be up to ~4 bytes long
         const maxSafeLength: number = thirtyTwoBitMaxSafeInteger / 32;
 
         lowerLimitIncl ??= 1;
