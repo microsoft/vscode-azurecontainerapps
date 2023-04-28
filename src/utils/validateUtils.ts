@@ -30,13 +30,13 @@ export namespace validateUtils {
      */
     export function getInvalidLengthMessage (lowerLimitIncl?: number, upperLimitIncl?: number): string {
         if (!lowerLimitIncl && !upperLimitIncl) {
-            return localize('invalidInputLength', "The value's length is invalid.");
+            return localize('invalidInputLength', "The value entered has an invalid character length.");
         } else if (lowerLimitIncl && !upperLimitIncl) {
-            return localize('inputLengthTooShort', 'The value must be {0} or greater.', lowerLimitIncl);
+            return localize('inputLengthTooShort', 'The value entered must be {0} characters or greater.', lowerLimitIncl);
         } else if (!lowerLimitIncl && upperLimitIncl) {
-            return localize('inputLengthTooLong', 'The value must be {0} or less.', upperLimitIncl);
+            return localize('inputLengthTooLong', 'The value entered must be {0} characters or less.', upperLimitIncl);
         } else {
-            return localize('invalidBetweenInputLength', 'The value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
+            return localize('invalidBetweenInputLength', 'The value entered must be between {0} and {1} characters.', lowerLimitIncl, upperLimitIncl);
         }
     }
 }
