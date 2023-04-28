@@ -29,7 +29,7 @@ export namespace validateUtils {
      */
     export const getInvalidLengthMessage = (lowerLimitIncl?: number, upperLimitIncl?: number): string => {
         if (!lowerLimitIncl && !upperLimitIncl) {
-            // Could also be triggered by having a 'maxSafeLength' overflow in the upper limit,
+            // Could technically also correspond to being triggered by a 'maxSafeCharacterLength' overflow in the upper limit (see 'isValidLength'),
             // but extremely unlikely that a user would ever reach that limit naturally unless intentionally trying to break the extension
             return localize('invalidInputLength', 'A value is required to proceed.');
         } else if (lowerLimitIncl && !upperLimitIncl) {
