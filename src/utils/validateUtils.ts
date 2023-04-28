@@ -31,13 +31,13 @@ export namespace validateUtils {
         if (!lowerLimitIncl && !upperLimitIncl) {
             // Could technically also correspond to being triggered by a 'maxSafeCharacterLength' overflow in the upper limit (see 'isValidLength'),
             // but extremely unlikely that a user would ever reach that limit naturally unless intentionally trying to break the extension
-            return localize('invalidInputLength', 'A value is required to proceed.');
+            return localize('invalidInputLength', 'A valid input value is required to proceed.');
         } else if (lowerLimitIncl && !upperLimitIncl) {
-            return localize('inputLengthTooShort', 'The value must be {0} characters or greater.', lowerLimitIncl);
+            return localize('inputLengthTooShort', 'The input value must be {0} characters or greater.', lowerLimitIncl);
         } else if (!lowerLimitIncl && upperLimitIncl) {
-            return localize('inputLengthTooLong', 'The value must be {0} characters or less.', upperLimitIncl);
+            return localize('inputLengthTooLong', 'The input value must be {0} characters or less.', upperLimitIncl);
         } else {
-            return localize('invalidBetweenInputLength', 'The value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
+            return localize('invalidBetweenInputLength', 'The input value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
         }
     }
 }
