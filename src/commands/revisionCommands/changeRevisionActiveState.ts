@@ -18,6 +18,14 @@ export async function executeRevisionOperation(context: IActionContext, node: Co
     await ext.state.runWithTemporaryDescription(item.id, revisionOperationDescriptions[operation], async () => {
         const appClient: ContainerAppsAPIClient = await createContainerAppsClient(context, item.subscription);
         const revisionName: string = item instanceof RevisionItem ? nonNullProp(item.revision, 'name') : nonNullProp(item.containerApp, 'latestRevisionName');
+
+        if (operation === 'restartRevision') {
+            const revisionData = await appClient.containerAppsRevisions.getRevision(item.containerApp.resourceGroup, item.containerApp.name, revisionName);
+            if (!revisionData.active) {
+                await appClient.containerAppsRevisions['activateRevision'](item.containerApp.resourceGroup, item.containerApp.name, revisionName);
+            }
+        }
+
         await appClient.containerAppsRevisions[operation](item.containerApp.resourceGroup, item.containerApp.name, revisionName);
         ext.state.notifyChildrenChanged(item.containerApp.id);
     });
