@@ -14,12 +14,12 @@ import { ReplicaListStep } from "./ReplicaListStep";
 import { RevisionListStep } from "./RevisionListStep";
 import { logStreamRequest } from "./logStreamRequest";
 
-export async function startStreamingLogs(context: IActionContext, node?: ContainerAppItem): Promise<void> {
-    if (!node) {
-        node = await pickContainerApp(context);
+export async function startStreamingLogs(context: IActionContext, item?: Pick<ContainerAppItem, 'containerApp' | 'subscription'>): Promise<void> {
+    if (!item) {
+        item = await pickContainerApp(context);
     }
 
-    const { subscription, containerApp } = node;
+    const { subscription, containerApp } = item;
 
     const wizardContext: IStreamLogsContext = {
         ...context,
