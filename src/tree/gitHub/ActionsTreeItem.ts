@@ -67,10 +67,10 @@ export class ActionsTreeItem implements ContainerAppsItem {
         } else {
             return [
                 createGenericElement({
-                    contextValue: 'connectToGithub',
-                    id: `${this.containerApp.id}/connectToGithub`,
-                    label: localize('connectToGithub', 'Connect to a GitHub Repository...'),
-                    commandId: 'containerApps.connectToGithub',
+                    contextValue: 'connectToGitHub',
+                    id: `${this.containerApp.id}/connectToGitHub`,
+                    label: localize('connectToGitHub', 'Connect to a GitHub Repository...'),
+                    commandId: 'containerApps.connectToGitHub',
                     commandArgs: [ { containerApp: this.containerApp, subscription: this.subscription } ]
                 })
             ];
