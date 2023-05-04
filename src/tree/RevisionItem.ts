@@ -44,7 +44,7 @@ export class RevisionItem implements RevisionsItemModel {
             label: this.revision.name,
             iconPath: this.iconPath,
             description,
-            contextValue: createContextValue([`${this.revision.active ? 'active' : 'inactive'};revision`]),
+            contextValue: createContextValue([`${this.revision.active ? 'active' : 'inactive'}`, 'revision']),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
