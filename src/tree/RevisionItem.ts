@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownRevisionProvisioningState, Revision } from "@azure/arm-appcontainers";
-import { TreeItemIconPath, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../utils/localize";
@@ -44,7 +44,7 @@ export class RevisionItem implements RevisionsItemModel {
             label: this.revision.name,
             iconPath: this.iconPath,
             description,
-            contextValue: `${this.revision.active ? 'active' : 'inactive'};revision`,
+            contextValue: createContextValue([`${this.revision.active ? 'active' : 'inactive'};revision`]),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
