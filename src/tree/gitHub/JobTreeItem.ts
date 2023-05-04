@@ -13,9 +13,9 @@ import { StepTreeItem } from "./StepTreeItem";
 export class JobTreeItem implements TreeElementBase {
     static contextValue: string = 'azureContainerJob';
 
-    constructor(readonly job: Job) { }
+    constructor(readonly parentResourceId: string, readonly job: Job) { }
 
-    id: string = String(this.job.id);
+    id: string = `${this.parentResourceId}/jobs/${this.job.id}`;
 
     label: string = this.job.name || this.id;
 
@@ -36,6 +36,6 @@ export class JobTreeItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        return this.job.steps?.map((step) => new StepTreeItem(this.job.id, step)) ?? [];
+        return this.job.steps?.map((step) => new StepTreeItem(this.id, step)) ?? [];
     }
 }

@@ -12,9 +12,9 @@ import { getActionBasedIconPath, getJobBasedDescription } from '../../utils/acti
 export class StepTreeItem implements TreeElementBase {
     static contextValue: string = 'azureContainerStep';
 
-    constructor(readonly parentResourceId: number, readonly step: JobStep) { }
+    constructor(readonly parentResourceId: string, readonly step: JobStep) { }
 
-    id: string = `${this.parentResourceId}/${this.step.number}`;
+    id: string = `${this.parentResourceId}/steps/${this.step.number}`;
 
     label: string = this.step.name;
 

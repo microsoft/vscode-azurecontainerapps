@@ -54,7 +54,7 @@ export class ActionsTreeItem implements ContainerAppsItem {
         });
 
         if (actionsListWorkflowRuns && actionsListWorkflowRuns.total_count > 0) {
-            return actionsListWorkflowRuns.workflow_runs.map((awr) => new ActionTreeItem(awr));
+            return actionsListWorkflowRuns.workflow_runs.map((awr) => new ActionTreeItem(this.id, awr));
         } else if (sourceControl) {
             // If we are able to detect a connection but fail to retrieve a list of actions, return 'noActionsDetected'
             return [

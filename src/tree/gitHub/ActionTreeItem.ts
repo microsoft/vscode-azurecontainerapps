@@ -16,9 +16,9 @@ export class ActionTreeItem implements TreeElementBase {
     static contextValueCompleted: string = 'azureContainerActionCompleted';
     static contextValueInProgress: string = 'azureContainerActionInProgress';
 
-    constructor(readonly actionWorkflowRuns: ActionWorkflowRuns) { }
+    constructor(readonly parentResourceId: string, readonly actionWorkflowRuns: ActionWorkflowRuns) { }
 
-    id: string = String(this.actionWorkflowRuns.id);
+    id: string = `${this.parentResourceId}/${this.actionWorkflowRuns.id}`;
 
     label: string = this.actionWorkflowRuns.head_commit?.message || this.actionWorkflowRuns.head_sha;
 
@@ -50,7 +50,7 @@ export class ActionTreeItem implements TreeElementBase {
         });
 
         if (jobsData && jobsData.total_count > 0) {
-            return jobsData.jobs.map((job: Job) => new JobTreeItem(job));
+            return jobsData.jobs.map((job: Job) => new JobTreeItem(this.id, job));
         } else {
             return [];
         }
