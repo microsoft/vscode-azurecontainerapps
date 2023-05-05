@@ -49,7 +49,6 @@ export class ActionsTreeItem implements ContainerAppsItem {
                 branch: sourceControl.branch ?? 'main',
                 page: -1,
             };
-
             return await getActions(context, actionWorkflowRunsParams);
         });
 
