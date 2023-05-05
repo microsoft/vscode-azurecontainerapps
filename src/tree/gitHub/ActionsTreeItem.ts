@@ -16,8 +16,8 @@ import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
 import { ActionTreeItem } from "./ActionTreeItem";
 
 export class ActionsTreeItem implements ContainerAppsItem {
-    static contextValueConnected: string = 'containerActionsConnected';
-    static contextValueUnconnected: string = 'containerActionsUnconnected';
+    static contextValueConnected: string = 'azureContainerActionsConnected';
+    static contextValueUnconnected: string = 'azureContainerActionsUnconnected';
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) { }
 
