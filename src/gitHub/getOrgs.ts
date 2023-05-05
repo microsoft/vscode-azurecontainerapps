@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
-import { IGitHubContext } from "./IGitHubContext";
+import type { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
+import type { IGitHubContext } from "./IGitHubContext";
 import { createOctokitClient } from "./createOctokitClient";
 
 export type Orgs = RestEndpointMethodTypes["orgs"]["listForAuthenticatedUser"]["response"]["data"];

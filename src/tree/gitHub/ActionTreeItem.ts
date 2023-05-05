@@ -4,10 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
-import { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import type { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as gitUrlParse from "git-url-parse";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { ActionWorkflowRuns } from "../../gitHub/getActions";
+import type { ActionWorkflowRuns } from "../../gitHub/getActions";
 import { GetJobsParams, Job, Jobs, getJobs } from "../../gitHub/getJobs";
 import { Status, ensureStatus, getActionBasedIconPath } from '../../utils/actionUtils';
 import { JobTreeItem } from "./JobTreeItem";

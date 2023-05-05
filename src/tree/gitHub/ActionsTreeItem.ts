@@ -3,16 +3,16 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { SourceControl } from "@azure/arm-appcontainers";
+import type { SourceControl } from "@azure/arm-appcontainers";
 import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createGenericElement } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as gitUrlParse from "git-url-parse";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { getContainerAppSourceControl } from "../../commands/connectToGitHub/getContainerAppSourceControl";
 import { ActionsListWorkflowRuns, GetActionsListWorkflowRunsParams, getActions } from "../../gitHub/getActions";
 import { localize } from "../../utils/localize";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
+import type { ContainerAppModel } from "../ContainerAppItem";
+import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
 import { ActionTreeItem } from "./ActionTreeItem";
 
 export class ActionsTreeItem implements ContainerAppsItem {

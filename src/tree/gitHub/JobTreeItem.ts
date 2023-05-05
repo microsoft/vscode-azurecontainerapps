@@ -3,9 +3,9 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import type { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { Job } from "../../gitHub/getJobs";
+import type { Job } from "../../gitHub/getJobs";
 import { getActionBasedIconPath, getJobBasedDescription } from '../../utils/actionUtils';
 import type { TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { StepTreeItem } from "./StepTreeItem";

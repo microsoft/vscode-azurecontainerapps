@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { TreeElementBase } from "@microsoft/vscode-azext-utils";
-import { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import type { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem } from "vscode";
-import { JobStep } from "../../gitHub/getJobs";
+import type { JobStep } from "../../gitHub/getJobs";
 import { getActionBasedIconPath, getJobBasedDescription } from '../../utils/actionUtils';
 
 export class StepTreeItem implements TreeElementBase {
