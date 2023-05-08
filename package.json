@@ -215,17 +215,17 @@
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revision[^a-z]/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|^inactive;revision[^a-z]/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revision[^a-z]/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|^active;revision[^a-z]/i",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revision[^a-z]/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|^active;revision[^a-z]/i",
                     "group": "2@3"
                 },
                 {
