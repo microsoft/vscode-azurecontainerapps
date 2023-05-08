@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
+import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as gitUrlParse from "git-url-parse";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import type { ActionWorkflowRuns } from "../../gitHub/getActions";
 import { GetJobsParams, Job, Jobs, getJobs } from "../../gitHub/getJobs";
-import { Status, ensureStatus, getActionBasedIconPath } from '../../utils/actionUtils';
+import { Status, getActionBasedIconPath } from '../../utils/actionUtils';
 import { JobTreeItem } from "./JobTreeItem";
 
 export class ActionTreeItem implements TreeElementBase {
@@ -33,7 +33,7 @@ export class ActionTreeItem implements TreeElementBase {
             label: this.label,
             description: this.actionWorkflowRuns.event,
             iconPath: getActionBasedIconPath(this.actionWorkflowRuns),
-            contextValue: ensureStatus(this.actionWorkflowRuns) === Status.Completed ? ActionTreeItem.contextValueCompleted : ActionTreeItem.contextValueInProgress,
+            contextValue: <Status>nonNullProp(this.actionWorkflowRuns, 'status') === Status.Completed ? ActionTreeItem.contextValueCompleted : ActionTreeItem.contextValueInProgress,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         };
     }
@@ -49,7 +49,7 @@ export class ActionTreeItem implements TreeElementBase {
             return await getJobs(context, getJobsParams);
         });
 
-        if (jobsData && jobsData.total_count > 0) {
+        if (jobsData?.total_count) {
             return jobsData.jobs.map((job: Job) => new JobTreeItem(this.id, job));
         } else {
             return [];
