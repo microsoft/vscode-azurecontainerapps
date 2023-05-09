@@ -13,6 +13,7 @@ import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployContainerApp } from './deployContainerApp/deployContainerApp';
 import { deployImageApi } from './deployContainerApp/deployImageApi';
+import { disconnectRepo } from './disconnectRepo/disconnectRepo';
 import { disableIngress } from './ingress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort';
 import { enableIngress } from './ingress/enableIngress';
@@ -41,6 +42,7 @@ export function registerCommands(): void {
 
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);
+    registerCommandWithTreeNodeUnwrapping('containerApps.disconnectRepo', disconnectRepo);
 
     // ingress
     registerCommandWithTreeNodeUnwrapping('containerApps.enableIngress', enableIngress);
