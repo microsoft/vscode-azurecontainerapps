@@ -21,6 +21,7 @@ import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressItem } from "./IngressItem";
 import { LogsItem } from "./LogsItem";
 import { RevisionsItem } from "./RevisionsItem";
+import { ActionsTreeItem } from "./gitHub/ActionsTreeItem";
 import { ScaleItem } from "./scaling/ScaleItem";
 
 export interface ContainerAppModel extends ContainerApp {
@@ -59,7 +60,6 @@ export class ContainerAppItem implements ContainerAppsItem {
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
     async getChildren(): Promise<TreeElementBase[]> {
-
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const children: TreeElementBase[] = [];
             children.push(this.containerApp.configuration?.dapr?.enabled ? new DaprEnabledItem(this.containerApp, this.containerApp.configuration.dapr) : createDaprDisabledItem(this.containerApp));
@@ -75,6 +75,7 @@ export class ContainerAppItem implements ContainerAppsItem {
 
             children.push(this.containerApp.configuration?.ingress ? new IngressItem(this.subscription, this.containerApp) : new IngressDisabledItem(this.subscription, this.containerApp));
             children.push(new LogsItem(this.subscription, this.containerApp));
+            children.push(new ActionsTreeItem(this.subscription, this.containerApp));
 
             return children;
         });

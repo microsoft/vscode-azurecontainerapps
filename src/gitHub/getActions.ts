@@ -7,9 +7,11 @@ import type { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import type { IGitHubContext } from "./IGitHubContext";
 import { createOctokitClient } from "./createOctokitClient";
 
-export type Orgs = RestEndpointMethodTypes["orgs"]["listForAuthenticatedUser"]["response"]["data"];
+export type ActionsListWorkflowRuns = RestEndpointMethodTypes["actions"]["listWorkflowRunsForRepo"]["response"]["data"];
+export type ActionWorkflowRuns = ActionsListWorkflowRuns["workflow_runs"][number];
+export type GetActionsListWorkflowRunsParams = RestEndpointMethodTypes["actions"]["listWorkflowRunsForRepo"]["parameters"];
 
-export async function getOrgs(context: IGitHubContext): Promise<Orgs> {
+export async function getActions(context: IGitHubContext, params?: GetActionsListWorkflowRunsParams): Promise<ActionsListWorkflowRuns> {
     const client: Octokit = await createOctokitClient(context);
-    return (await client.orgs.listForAuthenticatedUser()).data;
+    return (await client.actions.listWorkflowRunsForRepo(params)).data;
 }

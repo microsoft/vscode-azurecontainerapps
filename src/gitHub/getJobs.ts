@@ -7,9 +7,13 @@ import type { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import type { IGitHubContext } from "./IGitHubContext";
 import { createOctokitClient } from "./createOctokitClient";
 
-export type Orgs = RestEndpointMethodTypes["orgs"]["listForAuthenticatedUser"]["response"]["data"];
+export type Jobs = RestEndpointMethodTypes["actions"]["listJobsForWorkflowRun"]["response"]["data"];
+export type Job = Jobs["jobs"][number];
+export type JobStep = NonNullable<Job["steps"]>[number];
 
-export async function getOrgs(context: IGitHubContext): Promise<Orgs> {
+export type GetJobsParams = RestEndpointMethodTypes["actions"]["listJobsForWorkflowRun"]["parameters"];
+
+export async function getJobs(context: IGitHubContext, params: GetJobsParams): Promise<Jobs> {
     const client: Octokit = await createOctokitClient(context);
-    return (await client.orgs.listForAuthenticatedUser()).data;
+    return (await client.actions.listJobsForWorkflowRun(params)).data;
 }
