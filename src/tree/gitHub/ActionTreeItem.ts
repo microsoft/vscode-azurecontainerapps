@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import type { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import * as gitUrlParse from "git-url-parse";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import type { ActionWorkflowRuns } from "../../gitHub/getActions";
 import { GetJobsParams, Job, Jobs, getJobs } from "../../gitHub/getJobs";
+import { gitHubUrlParse } from "../../gitHub/gitHubUrlParse";
 import { Status, getActionBasedIconPath } from '../../utils/actionUtils';
 import { JobTreeItem } from "./JobTreeItem";
 
@@ -40,10 +40,10 @@ export class ActionTreeItem implements TreeElementBase {
 
     async getChildren(): Promise<TreeElementBase[]> {
         const jobsData: Jobs | undefined = await callWithTelemetryAndErrorHandling('getActionChildren', async (context: IActionContext) => {
-            const { owner, name: repo } = gitUrlParse(this.actionWorkflowRuns.repository.html_url);
+            const { ownerOrOrganization, repositoryName } = gitHubUrlParse(this.actionWorkflowRuns.repository.html_url);
             const getJobsParams: GetJobsParams = {
-                owner,
-                repo,
+                owner: nonNullValue(ownerOrOrganization),
+                repo: nonNullValue(repositoryName),
                 run_id: this.actionWorkflowRuns.id
             };
             return await getJobs(context, getJobsParams);

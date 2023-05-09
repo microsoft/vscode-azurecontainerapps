@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { SourceControl } from "@azure/arm-appcontainers";
-import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createGenericElement } from "@microsoft/vscode-azext-utils";
+import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import * as gitUrlParse from "git-url-parse";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { getContainerAppSourceControl } from "../../commands/connectToGitHub/getContainerAppSourceControl";
 import { ActionsListWorkflowRuns, GetActionsListWorkflowRunsParams, getActions } from "../../gitHub/getActions";
+import { gitHubUrlParse } from "../../gitHub/gitHubUrlParse";
 import { localize } from "../../utils/localize";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
@@ -42,10 +42,10 @@ export class ActionsTreeItem implements ContainerAppsItem {
                 return undefined;
             }
 
-            const { owner, name: repo } = gitUrlParse(sourceControl.repoUrl ?? '');
+            const { ownerOrOrganization, repositoryName } = gitHubUrlParse(sourceControl.repoUrl);
             const actionWorkflowRunsParams: GetActionsListWorkflowRunsParams = {
-                owner,
-                repo,
+                owner: nonNullValue(ownerOrOrganization),
+                repo: nonNullValue(repositoryName),
                 branch: sourceControl.branch ?? 'main',
                 page: -1,
             };
