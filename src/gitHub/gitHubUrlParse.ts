@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 interface ParsedGitHubUrl {
-    gitHubUrlReference?: string;
+    urlReference?: string;
     ownerOrOrganization?: string;
     repositoryName?: string;
 }
@@ -16,7 +16,7 @@ export function gitHubUrlParse(url?: string): ParsedGitHubUrl {
 
     const match: RegExpMatchArray | null = url.match(/github\.com\/(?<ownerOrOrganization>[^/]+)\/(?<repositoryName>[^/]+)/i);
     return {
-        gitHubUrlReference: url,
+        urlReference: url,
         ownerOrOrganization: match?.groups?.ownerOrOrganization,
         repositoryName: match?.groups?.repositoryName
     };
