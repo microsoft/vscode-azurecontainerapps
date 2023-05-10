@@ -4,25 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../utils/localize";
-import { validateUtils } from "../../utils/validateUtils";
+import { localize } from "../../../utils/localize";
+import { validateUtils } from "../../../utils/validateUtils";
 import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
 
-export class ServicePrincipalSecretInputStep extends AzureWizardPromptStep<IConnectToGitHubContext> {
+export class ServicePrincipalIdInputStep extends AzureWizardPromptStep<IConnectToGitHubContext> {
     public async prompt(context: IConnectToGitHubContext): Promise<void> {
-        context.servicePrincipalSecret = (await context.ui.showInputBox({
-            prompt: localize('servicePrincipalSecretPrompt', 'Enter the service principal secret'),
+        context.servicePrincipalId = (await context.ui.showInputBox({
+            prompt: localize('servicePrincipalIdPrompt', 'Enter the service principal ID'),
             validateInput: this.validateInput
         })).trim();
-        context.valuesToMask.push(context.servicePrincipalSecret);
+        context.valuesToMask.push(context.servicePrincipalId);
     }
 
     public shouldPrompt(context: IConnectToGitHubContext): boolean {
-        return !context.servicePrincipalSecret;
+        return !context.servicePrincipalId;
     }
 
-    private validateInput(secret: string): string | undefined {
-        secret = secret ? secret.trim() : '';
-        return !validateUtils.isValidLength(secret) ? validateUtils.getInvalidLengthMessage() : undefined;
+    private validateInput(id: string): string | undefined {
+        id = id ? id.trim() : '';
+        return !validateUtils.isValidLength(id) ? validateUtils.getInvalidLengthMessage() : undefined;
     }
 }

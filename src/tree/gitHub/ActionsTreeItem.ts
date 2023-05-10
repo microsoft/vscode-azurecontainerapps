@@ -7,7 +7,7 @@ import type { SourceControl } from "@azure/arm-appcontainers";
 import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { getContainerAppSourceControl } from "../../commands/connectToGitHub/getContainerAppSourceControl";
+import { getContainerAppSourceControl } from "../../commands/gitHub/connectToGitHub/getContainerAppSourceControl";
 import { ActionsListWorkflowRuns, GetActionsListWorkflowRunsParams, getActions } from "../../gitHub/getActions";
 import { gitHubUrlParse } from "../../gitHub/gitHubUrlParse";
 import { localize } from "../../utils/localize";

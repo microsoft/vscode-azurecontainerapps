@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { GitHubBranchListStep } from "../../gitHub/GitHubBranchListStep";
-import { GitHubOrgListStep } from "../../gitHub/GitHubOrgListStep";
-import { GitHubRepositoryListStep } from "../../gitHub/GitHubRepositoryListStep";
-import { getGitHubAccessToken } from "../../gitHub/getGitHubAccessToken";
-import type { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { createActivityContext } from "../../utils/activityUtils";
-import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
-import { AcrListStep } from "../imageSource/containerRegistry/acr/AcrListStep";
-import { AcrRepositoriesListStep } from "../imageSource/containerRegistry/acr/AcrRepositoriesListStep";
+import { GitHubBranchListStep } from "../../../gitHub/GitHubBranchListStep";
+import { GitHubOrgListStep } from "../../../gitHub/GitHubOrgListStep";
+import { GitHubRepositoryListStep } from "../../../gitHub/GitHubRepositoryListStep";
+import { getGitHubAccessToken } from "../../../gitHub/getGitHubAccessToken";
+import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { createActivityContext } from "../../../utils/activityUtils";
+import { localize } from "../../../utils/localize";
+import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { AcrListStep } from "../../imageSource/containerRegistry/acr/AcrListStep";
+import { AcrRepositoriesListStep } from "../../imageSource/containerRegistry/acr/AcrRepositoriesListStep";
 import { DockerfileLocationInputStep } from "./DockerfileLocationInputStep";
 import { GitHubRepositoryConnectStep } from "./GitHubRepositoryConnectStep";
 import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
