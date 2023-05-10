@@ -157,6 +157,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.disconnectRepo",
+                "title": "%containerApps.disconnectRepo%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.startStreamingLogs",
                 "title": "%containerApps.startStreamingLogs%",
                 "category": "Azure Container Apps"
@@ -277,6 +282,11 @@
                     "command": "containerApps.stopStreamingLogs",
                     "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "4@2"
+                },
+                {
+                    "command": "containerApps.disconnectRepo",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureContainerActionsConnected/i",
+                    "group": "1@1"
                 }
             ],
             "commandPalette": [
