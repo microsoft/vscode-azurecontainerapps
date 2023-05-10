@@ -6,14 +6,14 @@
 import { registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { browseContainerAppNode } from './browseContainerApp';
 import { chooseRevisionMode } from './chooseRevisionMode';
-import { connectToGitHub } from './connectToGitHub/connectToGitHub';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployContainerApp } from './deployContainerApp/deployContainerApp';
 import { deployImageApi } from './deployContainerApp/deployImageApi';
-import { disconnectRepo } from './disconnectRepo/disconnectRepo';
+import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
+import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { disableIngress } from './ingress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort';
 import { enableIngress } from './ingress/enableIngress';

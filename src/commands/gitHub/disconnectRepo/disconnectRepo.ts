@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { getGitHubAccessToken } from "../../gitHub/getGitHubAccessToken";
-import { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
-import { ActionsTreeItem } from "../../tree/gitHub/ActionsTreeItem";
-import { createActivityContext } from "../../utils/activityUtils";
-import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { getGitHubAccessToken } from "../../../gitHub/getGitHubAccessToken";
+import { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
+import { ActionsTreeItem } from "../../../tree/gitHub/ActionsTreeItem";
+import { createActivityContext } from "../../../utils/activityUtils";
+import { localize } from "../../../utils/localize";
+import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { isGitHubConnected } from "../connectToGitHub/isGitHubConnected";
 import { GitHubRepositoryDisconnectStep } from "./GitHubRepositoryDisconnectStep";
 import { IDisconnectRepoContext } from "./IDisconnectRepoContext";

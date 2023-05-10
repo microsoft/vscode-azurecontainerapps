@@ -5,8 +5,8 @@
 
 import { ExecuteActivityContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { IGitHubContext } from "../../gitHub/IGitHubContext";
-import { ContainerAppModel } from "../../tree/ContainerAppItem";
+import { IGitHubContext } from "../../../gitHub/IGitHubContext";
+import { ContainerAppModel } from "../../../tree/ContainerAppItem";
 
 export interface IDisconnectRepoContext extends ISubscriptionActionContext, IGitHubContext, ExecuteActivityContext {
     targetContainer: ContainerAppModel;

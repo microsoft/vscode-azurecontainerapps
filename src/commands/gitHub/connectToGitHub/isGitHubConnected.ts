@@ -5,7 +5,7 @@
 
 import type { IActionContext } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import type { ContainerAppModel } from "../../tree/ContainerAppItem";
+import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { getContainerAppSourceControl } from "./getContainerAppSourceControl";
 
 export async function isGitHubConnected(context: IActionContext & { subscription: AzureSubscription, targetContainer: ContainerAppModel }): Promise<boolean> {
