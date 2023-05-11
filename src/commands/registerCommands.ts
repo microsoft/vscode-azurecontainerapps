@@ -14,6 +14,7 @@ import { deployContainerApp } from './deployContainerApp/deployContainerApp';
 import { deployImageApi } from './deployContainerApp/deployImageApi';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
+import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { disableIngress } from './ingress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort';
 import { enableIngress } from './ingress/enableIngress';
@@ -43,6 +44,7 @@ export function registerCommands(): void {
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);
     registerCommandWithTreeNodeUnwrapping('containerApps.disconnectRepo', disconnectRepo);
+    registerCommandWithTreeNodeUnwrapping('containerApps.openGitHubRepo', openGitHubRepo);
 
     // ingress
     registerCommandWithTreeNodeUnwrapping('containerApps.enableIngress', enableIngress);

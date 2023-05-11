@@ -162,6 +162,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.openGitHubRepo",
+                "title": "%containerApps.openGitHubRepo%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.startStreamingLogs",
                 "title": "%containerApps.startStreamingLogs%",
                 "category": "Azure Container Apps"
@@ -284,9 +289,14 @@
                     "group": "4@2"
                 },
                 {
-                    "command": "containerApps.disconnectRepo",
+                    "command": "containerApps.openGitHubRepo",
                     "when": "view == azureResourceGroups && viewItem =~ /azureContainerActionsConnected/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.disconnectRepo",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureContainerActionsConnected/i",
+                    "group": "1@2"
                 }
             ],
             "commandPalette": [

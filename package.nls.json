@@ -28,7 +28,8 @@
     "containerApps.editScalingRange": "Edit Scaling Range...",
     "containerApps.addScaleRule": "Add Scale Rule...",
     "containerApps.connectToGitHub": "Connect to GitHub Repository...",
-    "containerApps.disconnectRepo": "Disconnect from Repo...",
+    "containerApps.disconnectRepo": "Disconnect from Repo",
+    "containerApps.openGitHubRepo": "Open Repo in GitHub",
     "containerApps.startStreamingLogs": "Start Streaming Logs...",
     "containerApps.stopStreamingLogs": "Stop Streaming Logs..."
 }
