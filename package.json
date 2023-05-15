@@ -170,87 +170,87 @@
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /containerAppsEnvironment/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /containerAppsEnvironment/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.createContainerApp",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerEnvironment/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerEnvironment/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deleteManagedEnvironment",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerEnvironment/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerEnvironment/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.deploy",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerApp[^s]/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.deleteContainerApp",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerApp[^s]/i",
                     "group": "3@2"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revisions$/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|revisions$/i",
                     "group": "2@4"
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revision[^a-z]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|revision[^a-z]/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revision[^a-z]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|revision[^a-z]/i",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionmode:single|revision[^a-z]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|revision[^a-z]/i",
                     "group": "2@3"
                 },
                 {
                     "command": "containerApps.disableIngress",
-                    "when": "view == azureResourceGroups && viewItem =~ /ingress.+enabled/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /ingress.+enabled/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.enableIngress",
-                    "when": "view == azureResourceGroups && viewItem =~ /ingress.+disabled/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /ingress.+disabled/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.toggleVisibility",
-                    "when": "view == azureResourceGroups && viewItem =~ /ingress.+enabled/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /ingress.+enabled/i",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.editTargetPort",
-                    "when": "view == azureResourceGroups && viewItem =~ /ingress.+enabled|targetPort/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /ingress.+enabled|targetPort/i",
                     "group": "1@3"
                 },
                 {
                     "command": "containerApps.openConsoleInPortal",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerApp[^s]/i",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.browse",
-                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerApp[^s]/i",
                     "group": "1@3"
                 },
                 {
                     "command": "containerApps.editScalingRange",
-                    "when": "view == azureResourceGroups && viewItem =~ /scale(?![a-z])/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /scale(?![a-z])/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.addScaleRule",
-                    "when": "view == azureResourceGroups && viewItem =~ /scaleRules/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /scaleRules/i",
                     "group": "1@1"
                 }
             ],
