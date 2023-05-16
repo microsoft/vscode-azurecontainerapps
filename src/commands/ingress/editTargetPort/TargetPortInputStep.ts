@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { IngressContext } from "../IngressContext";
+import type { IngressContext } from "../IngressContext";
 import { getDefaultPort } from "./getDefaultPort";
 
 export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {

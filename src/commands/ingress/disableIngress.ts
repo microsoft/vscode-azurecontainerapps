@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
+import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import { localize } from '../../utils/localize';
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { IngressContext } from "./IngressContext";
+import type { IngressContext } from "./IngressContext";
 import { updateIngressSettings } from "./updateIngressSettings";
 
 export async function disableIngress(context: IngressContext, node?: ContainerAppsItem): Promise<void> {

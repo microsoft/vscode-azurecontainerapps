@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { IngressContext } from "../IngressContext";
+import type { IngressContext } from "../IngressContext";
 
 export function getDefaultPort(context: IngressContext, fallbackPort: number = 80): number {
     return context.containerApp?.configuration?.ingress?.targetPort || fallbackPort;
