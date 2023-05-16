@@ -8,7 +8,7 @@ import { webProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { ImageSourceBaseContext } from "../imageSource/ImageSourceBastContext";
+import { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { ContainerAppOverwriteConfirmStep } from "./ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "./ContainerAppUpdateStep";

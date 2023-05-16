@@ -6,7 +6,7 @@
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { ImageSourceBaseContext } from "../ImageSourceBastContext";
+import { ImageSourceBaseContext } from "../ImageSourceBaseContext";
 import { AcrListStep } from "../containerRegistry/acr/AcrListStep";
 import { BuildImageStep } from "./BuildImageStep";
 import { DockerFileItemStep } from "./DockerFileItemStep";

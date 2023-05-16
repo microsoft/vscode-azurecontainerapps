@@ -9,7 +9,7 @@ import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
-import { ImageSourceBaseContext } from "./ImageSourceBastContext";
+import { ImageSourceBaseContext } from "./ImageSourceBaseContext";
 import { BuildFromProjectListStep } from "./buildImageInAzure/BuildFromProjectListStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";

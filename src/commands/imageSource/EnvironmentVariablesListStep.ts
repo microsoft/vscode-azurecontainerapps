@@ -8,7 +8,7 @@ import { parse } from "dotenv";
 import { ImageSource } from "../../constants";
 import { localize } from "../../utils/localize";
 import { selectWorkspaceFile } from "../../utils/workspaceUtils";
-import { ImageSourceBaseContext } from "./ImageSourceBastContext";
+import { ImageSourceBaseContext } from "./ImageSourceBaseContext";
 
 const skipForNowLabel: string = localize('skipForNow', '$(clock) Skip for now');
 

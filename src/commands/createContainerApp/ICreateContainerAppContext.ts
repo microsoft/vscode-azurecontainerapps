@@ -5,7 +5,7 @@
 
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import { IContainerAppContext } from '../IContainerAppContext';
-import { ImageSourceBaseContext } from '../imageSource/ImageSourceBastContext';
+import { ImageSourceBaseContext } from '../imageSource/ImageSourceBaseContext';
 
 export interface ICreateContainerAppContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IContainerAppContext {
     managedEnvironmentId: string;
