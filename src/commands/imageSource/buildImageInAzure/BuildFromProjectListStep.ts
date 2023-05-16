@@ -6,7 +6,7 @@
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { IImageSourceBaseContext } from "../IImageSourceBaseContext";
+import { ImageSourceBaseContext } from "../ImageSourceBaseContext";
 import { AcrListStep } from "../containerRegistry/acr/AcrListStep";
 import { BuildImageStep } from "./BuildImageStep";
 import { DockerFileItemStep } from "./DockerFileItemStep";
@@ -23,8 +23,8 @@ const buildFromProjectLabels: string[] = [
     //localize('docker', 'Build from project locally using Docker')
 ];
 
-export class BuildFromProjectListStep extends AzureWizardPromptStep<IImageSourceBaseContext> {
-    public async prompt(context: IImageSourceBaseContext): Promise<void> {
+export class BuildFromProjectListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
+    public async prompt(context: ImageSourceBaseContext): Promise<void> {
         const placeHolder: string = localize('buildType', 'Select how you want to build your project');
         const picks: IAzureQuickPickItem<ImageSource.LocalDockerBuild | ImageSource.RemoteAcrBuild>[] = [
             { label: buildFromProjectLabels[0], data: ImageSource.RemoteAcrBuild, suppressPersistence: true },
@@ -34,19 +34,19 @@ export class BuildFromProjectListStep extends AzureWizardPromptStep<IImageSource
         context.buildType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public async configureBeforePrompt(context: IImageSourceBaseContext): Promise<void> {
+    public async configureBeforePrompt(context: ImageSourceBaseContext): Promise<void> {
         if (buildFromProjectLabels.length === 1) {
             context.buildType = ImageSource.RemoteAcrBuild;
         }
     }
 
-    public shouldPrompt(context: IImageSourceBaseContext): boolean {
+    public shouldPrompt(context: ImageSourceBaseContext): boolean {
         return !context.buildType;
     }
 
-    public async getSubWizard(context: IBuildImageInAzureContext): Promise<IWizardOptions<IImageSourceBaseContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<IImageSourceBaseContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<IImageSourceBaseContext>[] = [];
+    public async getSubWizard(context: IBuildImageInAzureContext): Promise<IWizardOptions<ImageSourceBaseContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<ImageSourceBaseContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<ImageSourceBaseContext>[] = [];
 
         switch (context.buildType) {
             case ImageSource.RemoteAcrBuild:

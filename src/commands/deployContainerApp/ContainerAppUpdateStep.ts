@@ -17,7 +17,7 @@ export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployContai
     public priority: number = 260;
 
     public async execute(context: IDeployContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
+        const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         containerAppEnvelope.configuration.secrets = context.secrets;

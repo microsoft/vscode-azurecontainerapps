@@ -14,7 +14,7 @@ export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDep
     public hideStepCount: boolean = true;
 
     public async prompt(context: IDeployContainerAppContext): Promise<void> {
-        const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
+        const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const warning: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ?
             localize('confirmDeploySingle', 'Are you sure you want to deploy to "{0}"? This will overwrite the active revision and unsupported features in VS Code will be lost.', containerApp.name) :
             localize('confirmDeployMultiple', 'Are you sure you want to deploy to "{0}"? Unsupported features in VS Code will be lost in the new revision.', containerApp.name);
@@ -24,12 +24,12 @@ export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDep
     }
 
     public shouldPrompt(context: IDeployContainerAppContext): boolean {
-        return !!context.targetContainer && this.hasUnsupportedFeatures(context);
+        return !!context.containerApp && this.hasUnsupportedFeatures(context);
     }
 
     // Check for any portal features that VS Code doesn't currently support
     private hasUnsupportedFeatures(context: IDeployContainerAppContext): boolean {
-        const containerApp: ContainerAppModel = nonNullProp(context, 'targetContainer');
+        const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         if (containerApp.template?.volumes) {
             return true;
         } else if (containerApp.template?.containers) {

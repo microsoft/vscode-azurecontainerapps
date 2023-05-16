@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { quickStartImageName } from "../../constants";
-import { IContainerAppContext } from "./IContainerAppContext";
+import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
-export function setQuickStartImage(context: Partial<IContainerAppContext>): void {
+export function setQuickStartImage(context: Partial<ICreateContainerAppContext>): void {
     context.image = quickStartImageName;
     context.enableIngress = true;
     context.enableExternal = true;

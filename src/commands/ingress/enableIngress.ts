@@ -11,7 +11,7 @@ import { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import { localize } from '../../utils/localize';
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { EnableIngressStep } from '../createContainerApp/EnableIngressStep';
-import { IContainerAppContext } from '../createContainerApp/IContainerAppContext';
+import { ICreateContainerAppContext } from '../createContainerApp/ICreateContainerAppContext';
 import { updateIngressSettings } from "./updateIngressSettings";
 
 export async function enableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
@@ -28,13 +28,13 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
 
 async function promptForIngressConfiguration(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerAppModel): Promise<Ingress> {
     const title: string = localize('enableIngress', 'Enable Ingress');
-    const wizardContext: IContainerAppContext = {
+    const wizardContext: ICreateContainerAppContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         subscription,
         managedEnvironmentId: nonNullProp(containerApp, 'managedEnvironmentId'),
     };
-    const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ICreateContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps: [new EnableIngressStep()]
     });

@@ -20,8 +20,8 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         // Try to suggest a repository only when deploying to a Container App
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
-        if (context.targetContainer) {
-            const { registryDomain, repositoryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.targetContainer));
+        if (context.containerApp) {
+            const { registryDomain, repositoryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
 
             // If the image is not the default quickstart image, then we can try to suggest a repository based on the latest Container App image
             if (registryDomain === acrDomain && imageNameReference !== quickStartImageName) {

@@ -42,8 +42,8 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IContaine
     private getSuggestedNamespace(context: IContainerRegistryImageContext): string {
         // Try to suggest a namespace only when the user is deploying to a Container App
         let suggestedNamespace: string | undefined;
-        if (context.targetContainer) {
-            const { registryDomain, namespace, imageNameReference } = parseImageName(getLatestContainerAppImage(context.targetContainer));
+        if (context.containerApp) {
+            const { registryDomain, namespace, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
 
             // If the image is not the default quickstart image, then we can try to suggest a namespace based on the latest Container App image
             if (registryDomain === dockerHubDomain && imageNameReference !== quickStartImageName) {
