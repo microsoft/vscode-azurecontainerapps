@@ -5,9 +5,9 @@
 
 import { AzureWizardPromptStep, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
+import { TargetPortInputStep } from "../ingress/editTargetPort/TargetPortInputStep";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { IngressVisibilityStep } from "./IngressVisibilityStep";
-import { TargetPortStep } from "./TargetPortStep";
 
 export class EnableIngressStep extends AzureWizardPromptStep<ICreateContainerAppContext> {
     public async prompt(context: ICreateContainerAppContext): Promise<void> {
@@ -23,7 +23,8 @@ export class EnableIngressStep extends AzureWizardPromptStep<ICreateContainerApp
     public async getSubWizard(context: ICreateContainerAppContext): Promise<IWizardOptions<ICreateContainerAppContext> | undefined> {
         if (context.enableIngress) {
             return {
-                promptSteps: [new IngressVisibilityStep(), new TargetPortStep()]
+                // @ts-ignore
+                promptSteps: [new IngressVisibilityStep(), new TargetPortInputStep()]
             }
         }
 

@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import { localize } from '../../utils/localize';
 import { pickContainerApp } from "../../utils/pickContainerApp";
+import { IngressContext } from "./IngressContext";
 import { updateIngressSettings } from "./updateIngressSettings";
 
-export async function disableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
+export async function disableIngress(context: IngressContext, node?: ContainerAppsItem): Promise<void> {
     const { subscription, containerApp } = node ??= await pickContainerApp(context);
 
     await updateIngressSettings(context, {
