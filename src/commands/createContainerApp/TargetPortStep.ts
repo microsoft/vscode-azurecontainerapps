@@ -5,10 +5,10 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
-import { IContainerAppContext } from "./IContainerAppContext";
+import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
-export class TargetPortStep extends AzureWizardPromptStep<IContainerAppContext> {
-    public async prompt(context: IContainerAppContext): Promise<void> {
+export class TargetPortStep extends AzureWizardPromptStep<ICreateContainerAppContext> {
+    public async prompt(context: ICreateContainerAppContext): Promise<void> {
         context.targetPort = Number(await context.ui.showInputBox({
             prompt: localize('targetPort', 'This is the port your container is listening on that will receive traffic. Set this value to the port number that your container uses.'),
             value: String(context.defaultPort ?? 80),
@@ -16,7 +16,7 @@ export class TargetPortStep extends AzureWizardPromptStep<IContainerAppContext> 
         }));
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
+    public shouldPrompt(context: ICreateContainerAppContext): boolean {
         return !context.targetPort;
     }
 

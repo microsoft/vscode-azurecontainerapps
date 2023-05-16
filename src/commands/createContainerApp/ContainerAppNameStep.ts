@@ -8,12 +8,12 @@ import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
-import { IContainerAppContext } from './IContainerAppContext';
+import { ICreateContainerAppContext } from './ICreateContainerAppContext';
 
-export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppContext> {
+export class ContainerAppNameStep extends AzureWizardPromptStep<ICreateContainerAppContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: IContainerAppContext): Promise<void> {
+    public async prompt(context: ICreateContainerAppContext): Promise<void> {
         const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new container app.');
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt,
@@ -23,11 +23,11 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<IContainerAppCon
         context.valuesToMask.push(context.newContainerAppName);
     }
 
-    public shouldPrompt(context: IContainerAppContext): boolean {
+    public shouldPrompt(context: ICreateContainerAppContext): boolean {
         return !context.newContainerAppName;
     }
 
-    private async validateInput(context: IContainerAppContext, name: string | undefined): Promise<string | undefined> {
+    private async validateInput(context: ICreateContainerAppContext, name: string | undefined): Promise<string | undefined> {
         name = name ? name.trim() : '';
         // to prevent showing an error when the character types the first letter
 

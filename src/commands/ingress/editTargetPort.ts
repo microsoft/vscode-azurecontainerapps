@@ -8,7 +8,7 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { IngressItem } from "../../tree/IngressItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";
+import { ICreateContainerAppContext } from "../createContainerApp/ICreateContainerAppContext";
 import { TargetPortStep } from "../createContainerApp/TargetPortStep";
 import { updateIngressSettings } from "./updateIngressSettings";
 
@@ -16,9 +16,9 @@ export async function editTargetPort(context: IActionContext, node?: IngressItem
     const { subscription, containerApp }: ContainerAppItem | IngressItem = node ?? await pickContainerApp(context);
 
     const title: string = localize('updateTargetPort', 'Update Target Port');
-    const promptSteps: AzureWizardPromptStep<IContainerAppContext>[] = [new TargetPortStep()];
+    const promptSteps: AzureWizardPromptStep<ICreateContainerAppContext>[] = [new TargetPortStep()];
 
-    const wizardContext: IContainerAppContext = {
+    const wizardContext: ICreateContainerAppContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         subscription,
@@ -26,7 +26,7 @@ export async function editTargetPort(context: IActionContext, node?: IngressItem
         defaultPort: containerApp.configuration?.ingress?.targetPort
     };
 
-    const wizard: AzureWizard<IContainerAppContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ICreateContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps: []

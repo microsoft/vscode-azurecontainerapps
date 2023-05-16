@@ -17,8 +17,8 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<IContainerRegi
 
         // Try to suggest an image name only when the user is deploying to a Container App
         let value: string | undefined;
-        if (context.targetContainer) {
-            const { registryDomain, imageNameReference } = parseImageName(getLatestContainerAppImage(context.targetContainer));
+        if (context.containerApp) {
+            const { registryDomain, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
 
             // Only bother carrying over the suggestion if the old image was from a third party registry
             if (registryDomain !== acrDomain && imageNameReference !== quickStartImageName) {

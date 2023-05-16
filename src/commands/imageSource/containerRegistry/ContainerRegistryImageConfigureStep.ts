@@ -20,9 +20,9 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
         let secrets: Secret[] | undefined;
         let registries: RegistryCredentials[] | undefined;
 
-        if (context.targetContainer) {
+        if (context.containerApp) {
             // Grab existing app secrets and registry credentials
-            const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, context.targetContainer);
+            const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, context.containerApp);
             secrets = containerAppEnvelope.configuration.secrets;
             registries = containerAppEnvelope.configuration.registries;
         }

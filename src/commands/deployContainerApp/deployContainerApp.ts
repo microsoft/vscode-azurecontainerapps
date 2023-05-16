@@ -8,12 +8,12 @@ import { webProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { IImageSourceBaseContext } from "../imageSource/IImageSourceBaseContext";
+import { ImageSourceBaseContext } from "../imageSource/ImageSourceBastContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { ContainerAppOverwriteConfirmStep } from "./ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "./ContainerAppUpdateStep";
 
-export type IDeployContainerAppContext = IImageSourceBaseContext;
+export type IDeployContainerAppContext = ImageSourceBaseContext;
 
 export async function deployContainerApp(context: ITreeItemPickerContext & Partial<IDeployContainerAppContext>, node?: ContainerAppItem): Promise<void> {
     if (!node) {
@@ -27,7 +27,7 @@ export async function deployContainerApp(context: ITreeItemPickerContext & Parti
         ...context,
         ...createSubscriptionContext(subscription),
         subscription,
-        targetContainer: containerApp
+        containerApp
     };
 
     const promptSteps: AzureWizardPromptStep<IDeployContainerAppContext>[] = [

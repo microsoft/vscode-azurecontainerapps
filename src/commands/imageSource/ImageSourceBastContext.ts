@@ -4,15 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { EnvironmentVar, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
-import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ImageSource, ImageSourceValues } from "../../constants";
-import { ContainerAppModel } from "../../tree/ContainerAppItem";
+import { IContainerAppContext } from "../IContainerAppContext";
 
-export interface IImageSourceBaseContext extends ISubscriptionActionContext {
-    subscription: AzureSubscription;
-    targetContainer?: ContainerAppModel;
-
+export interface ImageSourceBaseContext extends IContainerAppContext {
+    // ImageSourceListStep
     imageSource?: ImageSourceValues;
     buildType?: ImageSource.LocalDockerBuild | ImageSource.RemoteAcrBuild;
     showQuickStartImage?: boolean;

@@ -5,9 +5,9 @@
 
 import type { Registry } from '@azure/arm-containerregistry';
 import { SupportedRegistries } from '../../../constants';
-import { IImageSourceBaseContext } from '../IImageSourceBaseContext';
+import { ImageSourceBaseContext } from '../ImageSourceBastContext';
 
-export interface IContainerRegistryImageContext extends IImageSourceBaseContext {
+export interface IContainerRegistryImageContext extends ImageSourceBaseContext {
     registryDomain?: SupportedRegistries;
     registry?: Registry;
     dockerHubNamespace?: string;

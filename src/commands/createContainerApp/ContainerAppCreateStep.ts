@@ -13,12 +13,12 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
-import { IContainerAppContext } from "./IContainerAppContext";
+import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<IContainerAppContext> {
+export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
     public priority: number = 250;
 
-    public async execute(context: IContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
         const ingress: Ingress | undefined = context.enableIngress ? {

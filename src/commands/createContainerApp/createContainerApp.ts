@@ -9,38 +9,37 @@ import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { EnableIngressStep } from "./EnableIngressStep";
-import { IContainerAppContext, IContainerAppWithActivityContext } from "./IContainerAppContext";
+import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
-export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<IContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
+export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<ICreateContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
     node ??= await containerAppEnvironmentExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         title: localize('createContainerApp', 'Create Container App'),
     });
 
-    const wizardContext: IContainerAppWithActivityContext = {
+    const wizardContext: ICreateContainerAppContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
         subscription: node.subscription,
         managedEnvironmentId: node.managedEnvironment.id,
-        ...(await createActivityContext())
+        // ...(await createActivityContext())
     };
 
     const title: string = localize('createContainerApp', 'Create Container App');
 
-    const promptSteps: AzureWizardPromptStep<IContainerAppWithActivityContext>[] = [
+    const promptSteps: AzureWizardPromptStep<ICreateContainerAppContext>[] = [
         new ContainerAppNameStep(),
         new ImageSourceListStep(),
         new EnableIngressStep(),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<IContainerAppWithActivityContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<ICreateContainerAppContext>[] = [
         new VerifyProvidersStep([webProvider]),
         new ContainerAppCreateStep(),
     ];
@@ -48,7 +47,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     wizardContext.newResourceGroupName = node.resource.resourceGroup;
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
-    const wizard: AzureWizard<IContainerAppWithActivityContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ICreateContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps,
@@ -65,7 +64,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         node.managedEnvironment.id,
         localize('creatingContainerApp', 'Creating Container App "{0}"...', newContainerAppName),
         async () => {
-            wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
+            // wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
             await wizard.execute();
         });
 

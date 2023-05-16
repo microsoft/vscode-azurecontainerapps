@@ -4,11 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { ContainerAppModel } from "../../tree/ContainerAppItem";
-import { IImageSourceBaseContext } from '../imageSource/IImageSourceBaseContext';
+import { IContainerAppContext } from '../IContainerAppContext';
+import { ImageSourceBaseContext } from '../imageSource/ImageSourceBastContext';
 
-export interface IContainerAppContext extends IResourceGroupWizardContext, IImageSourceBaseContext {
+export interface ICreateContainerAppContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IContainerAppContext {
     managedEnvironmentId: string;
     newContainerAppName?: string;
 
@@ -17,9 +16,4 @@ export interface IContainerAppContext extends IResourceGroupWizardContext, IImag
 
     defaultPort?: number;
     targetPort?: number;
-
-    // created when the wizard is done executing
-    containerApp?: ContainerAppModel;
 }
-
-export type IContainerAppWithActivityContext = IContainerAppContext & ExecuteActivityContext;

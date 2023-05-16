@@ -9,13 +9,13 @@ import { ImageSource, ImageSourceValues } from "../../constants";
 import { localize } from "../../utils/localize";
 import { setQuickStartImage } from "../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
-import { IImageSourceBaseContext } from "./IImageSourceBaseContext";
+import { ImageSourceBaseContext } from "./ImageSourceBastContext";
 import { BuildFromProjectListStep } from "./buildImageInAzure/BuildFromProjectListStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
 
-export class ImageSourceListStep extends AzureWizardPromptStep<IImageSourceBaseContext> {
-    public async prompt(context: IImageSourceBaseContext): Promise<void> {
+export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
+    public async prompt(context: ImageSourceBaseContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('containerRegistry', 'Use image from registry'),
             localize('quickStartImage', 'Use quickstart image'),
@@ -39,13 +39,13 @@ export class ImageSourceListStep extends AzureWizardPromptStep<IImageSourceBaseC
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IImageSourceBaseContext): boolean {
+    public shouldPrompt(context: ImageSourceBaseContext): boolean {
         return !context.imageSource;
     }
 
-    public async getSubWizard(context: IImageSourceBaseContext): Promise<IWizardOptions<IImageSourceBaseContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<IImageSourceBaseContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<IImageSourceBaseContext>[] = [];
+    public async getSubWizard(context: ImageSourceBaseContext): Promise<IWizardOptions<ImageSourceBaseContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<ImageSourceBaseContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<ImageSourceBaseContext>[] = [];
 
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
