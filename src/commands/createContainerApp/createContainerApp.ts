@@ -13,7 +13,7 @@ import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
-import { IngressListStep } from "../ingress/IngressListStep";
+import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
@@ -37,7 +37,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     const promptSteps: AzureWizardPromptStep<ICreateContainerAppContext>[] = [
         new ContainerAppNameStep(),
         new ImageSourceListStep(),
-        new IngressListStep(),
+        new IngressPromptStep(),
     ];
 
     const executeSteps: AzureWizardExecuteStep<ICreateContainerAppContext>[] = [

@@ -9,7 +9,7 @@ import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { IngressContext } from "../IngressContext";
-import { IngressListStep } from '../IngressListStep';
+import { IngressPromptStep } from '../IngressPromptStep';
 
 export async function enableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
     const { subscription, containerApp } = node ??= await pickContainerApp(context);
@@ -26,7 +26,7 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
     const title: string = localize('enableIngress', 'Enable ingress for container app "{0}"', containerApp.name);
 
     const promptSteps: AzureWizardPromptStep<IngressContext>[] = [
-        new IngressListStep()
+        new IngressPromptStep()
     ];
 
     const wizard: AzureWizard<IngressContext> = new AzureWizard(wizardContext, {

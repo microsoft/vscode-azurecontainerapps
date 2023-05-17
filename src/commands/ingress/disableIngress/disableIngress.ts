@@ -9,7 +9,7 @@ import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { IngressContext } from '../IngressContext';
-import { IngressListStep } from '../IngressListStep';
+import { IngressPromptStep } from '../IngressPromptStep';
 import { isIngressEnabled } from '../isIngressEnabled';
 
 export async function disableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
@@ -31,7 +31,7 @@ export async function disableIngress(context: IActionContext, node?: ContainerAp
     const title: string = localize('disable', 'Disable ingress for container app "{0}"', containerApp.name);
 
     const promptSteps: AzureWizardPromptStep<IngressContext>[] = [
-        new IngressListStep()
+        new IngressPromptStep()
     ];
 
     const wizard: AzureWizard<IngressContext> = new AzureWizard(wizardContext, {
