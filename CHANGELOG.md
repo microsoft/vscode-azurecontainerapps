@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.5.1 - 2023-05-17
+
+### Added
+* Add support for the upcoming Focus View feature
+
 ## 0.5.0 - 2023-04-14
 
 ### Added
