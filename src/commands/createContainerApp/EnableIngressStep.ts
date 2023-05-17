@@ -23,6 +23,7 @@ export class EnableIngressStep extends AzureWizardPromptStep<ICreateContainerApp
     public async getSubWizard(context: ICreateContainerAppContext): Promise<IWizardOptions<ICreateContainerAppContext> | undefined> {
         if (context.enableIngress) {
             return {
+                // Context types will be temporarily incompatible until all the ingress commands are decoupled from the create command
                 // @ts-ignore
                 promptSteps: [new IngressVisibilityStep(), new TargetPortInputStep()]
             }
