@@ -16,7 +16,7 @@ import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { disableIngress } from './ingress/disableIngress';
-import { editTargetPort } from './ingress/editTargetPort';
+import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress';
 import { toggleIngressVisibility } from './ingress/toggleIngressVisibility';
 import { startStreamingLogs } from './logStream/startStreamingLogs';
