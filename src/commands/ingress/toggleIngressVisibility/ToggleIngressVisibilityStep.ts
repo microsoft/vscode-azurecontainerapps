@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { IngressConstants } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { IngressContext } from "../IngressContext";
+import type { IngressContext } from "../IngressContext";
 import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
 
 export class ToggleIngressVisibilityStep extends IngressUpdateBaseStep<IngressContext> {
