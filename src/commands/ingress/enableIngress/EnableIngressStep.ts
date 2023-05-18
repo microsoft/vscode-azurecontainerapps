@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Ingress } from "@azure/arm-appcontainers";
+import type { Ingress } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { localize } from "../../../utils/localize";
-import { IngressContext } from "../IngressContext";
+import type { IngressContext } from "../IngressContext";
 import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
 
 export class EnableIngressStep extends IngressUpdateBaseStep<IngressContext> {

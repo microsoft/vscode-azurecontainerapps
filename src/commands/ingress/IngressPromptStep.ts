@@ -5,7 +5,7 @@
 
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
-import { IngressContext } from "./IngressContext";
+import type { IngressContext } from "./IngressContext";
 import { DisableIngressStep } from "./disableIngress/DisableIngressStep";
 import { TargetPortInputStep } from "./editTargetPort/TargetPortInputStep";
 import { EnableIngressStep } from "./enableIngress/EnableIngressStep";

@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardPromptStep, createSubscriptionContext, IActionContext } from '@microsoft/vscode-azext-utils';
-import { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
+import type { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
 import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickContainerApp";
-import { IngressContext } from "../IngressContext";
+import type { IngressContext } from "../IngressContext";
 import { IngressPromptStep } from '../IngressPromptStep';
 
 export async function enableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {

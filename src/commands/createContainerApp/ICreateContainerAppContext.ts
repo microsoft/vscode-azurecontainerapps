@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
-import { IContainerAppContext } from '../IContainerAppContext';
-import { ImageSourceBaseContext } from '../imageSource/ImageSourceBaseContext';
-import { IngressContext } from '../ingress/IngressContext';
+import type { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import type { ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
+import type { IContainerAppContext } from '../IContainerAppContext';
+import type { ImageSourceBaseContext } from '../imageSource/ImageSourceBaseContext';
+import type { IngressContext } from '../ingress/IngressContext';
 
 export interface ICreateContainerAppContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressContext, IContainerAppContext, ExecuteActivityContext {
     managedEnvironmentId: string;

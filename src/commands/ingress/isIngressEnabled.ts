@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IngressContext } from "./IngressContext";
+import type { IngressContext } from "./IngressContext";
 
 export function isIngressEnabled(context: IngressContext): boolean {
     return !!context.containerApp?.configuration?.ingress;

@@ -8,7 +8,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionCont
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
+import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
@@ -16,7 +16,7 @@ import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
-import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
+import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<ICreateContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
