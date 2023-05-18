@@ -15,6 +15,7 @@ export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectT
             prompt: localize('dockerfileLocationPrompt', "Enter the relative location of the Dockerfile in the repository."),
             validateInput: this.validateInput
         })).trim();
+
     }
 
     public shouldPrompt(context: IConnectToGitHubContext): boolean {
