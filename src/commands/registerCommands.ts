@@ -18,7 +18,7 @@ import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress/enableIngress';
-import { toggleIngressVisibility } from './ingress/toggleIngressVisibility';
+import { toggleIngressVisibility } from './ingress/toggleIngressVisibility/toggleIngressVisibility';
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
