@@ -12,7 +12,7 @@ import type { IngressContext } from "../IngressContext";
 import { IngressPromptStep } from '../IngressPromptStep';
 
 export async function enableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
-    const { subscription, containerApp } = node ??= await pickContainerApp(context);
+    const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
     const wizardContext: IngressContext = {
         ...context,

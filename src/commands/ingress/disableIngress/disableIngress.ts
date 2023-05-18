@@ -13,7 +13,7 @@ import { IngressPromptStep } from '../IngressPromptStep';
 import { isIngressEnabled } from '../isIngressEnabled';
 
 export async function disableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
-    const { subscription, containerApp } = node ??= await pickContainerApp(context);
+    const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
     const wizardContext: IngressContext = {
         ...context,
