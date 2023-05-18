@@ -33,6 +33,7 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
         showLoadingPrompt: true
     });
 
+    // Title normally gets set during prompt phase... since no prompt steps are provided we must set the 'activityTitle' manually
     wizardContext.activityTitle = title;
     await wizard.execute();
 }
