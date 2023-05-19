@@ -13,13 +13,14 @@ type ContentPickData = {
     contentName: string;
 }
 
+// 'Dockerfile' we supply is case sensitive and must match this exactly to successfully complete the action
 const dockerfile: string = 'Dockerfile';
 
 export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectToGitHubContext> {
     private cachedPicks: Map<string, IAzureQuickPickItem<ContentPickData>[]>;
 
     public async prompt(context: IConnectToGitHubContext): Promise<void> {
-        // We always want fresh picks before prompting in case the user has pressed the back button
+        // Reset cache when prompting in case the user has made changes via the back button
         this.cachedPicks = new Map();
 
         const placeHolder: string = localize('dockerfileLocationPrompt', "Select a 'Dockerfile' in the repository.");
@@ -48,6 +49,7 @@ export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectT
     }
 
     private async getPicks(context: IConnectToGitHubContext, path: string): Promise<IAzureQuickPickItem<ContentPickData>[]> {
+        // Prefer cached picks when possible to reduce the number of remote calls required
         let remotePicks: IAzureQuickPickItem<ContentPickData>[] = [];
         if (!this.cachedPicks.has(path)) {
             remotePicks = await this.getRemotePicks(context, path);
@@ -69,7 +71,9 @@ export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectT
             contents = [contents];
         }
 
+        // Only show directories or Dockerfiles, anything else is unnecessary and clutters the UI
         const filteredContents = contents.filter((content) => content.type === 'dir' || content.name === dockerfile);
+
         const picks: IAzureQuickPickItem<ContentPickData>[] = filteredContents.map((content) => {
             const endsWith: string = content.type === 'dir' ? '/' : '';
             const label: string = content.name + endsWith;
