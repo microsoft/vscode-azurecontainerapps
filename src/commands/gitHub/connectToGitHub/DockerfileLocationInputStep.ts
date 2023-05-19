@@ -76,9 +76,8 @@ export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectT
 
         const picks: IAzureQuickPickItem<ContentPickData>[] = filteredContents.map((content) => {
             const endsWith: string = content.type === 'dir' ? '/' : '';
-            const label: string = content.name + endsWith;
             return {
-                label,
+                label: content.name + endsWith,
                 suppressPersistence: true,
                 data: { traverse: 'Down', contentName: content.name } };
         });
@@ -86,7 +85,7 @@ export class DockerfileLocationInputStep extends AzureWizardPromptStep<IConnectT
         const operationPicks: IAzureQuickPickItem<ContentPickData>[] = [
             {
                 label: '.',
-                description: (path || '/') + '/',
+                description: path + '/',
                 suppressPersistence: true,
                 data: { traverse: undefined, contentName: '' }
             },
