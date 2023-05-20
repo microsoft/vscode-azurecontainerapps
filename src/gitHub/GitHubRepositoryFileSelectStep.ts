@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IAzureQuickPickItem, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { IGitHubContext } from "./IGitHubContext";
+import type { IGitHubContext } from "./IGitHubContext";
 import { GetRepoContentReqParams, RepoContent, getRepositoryContent } from "./getRepositoryContent";
 
 type ContentPickData = {
@@ -12,6 +12,7 @@ type ContentPickData = {
     contentName: string;
 }
 
+//Todo: Add breakdown comment..
 export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHubContext> {
     private cachedPicks: Map<string, IAzureQuickPickItem<ContentPickData>[]>;
 
