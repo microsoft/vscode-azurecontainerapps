@@ -6,6 +6,7 @@
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { GitHubBranchListStep } from "../../../gitHub/GitHubBranchListStep";
 import { GitHubOrgListStep } from "../../../gitHub/GitHubOrgListStep";
+import { GitHubRepositoryFileSelectStep } from "../../../gitHub/GitHubRepositoryFileSelectStep";
 import { GitHubRepositoryListStep } from "../../../gitHub/GitHubRepositoryListStep";
 import { getGitHubAccessToken } from "../../../gitHub/getGitHubAccessToken";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
@@ -14,7 +15,6 @@ import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { AcrListStep } from "../../imageSource/containerRegistry/acr/AcrListStep";
 import { AcrRepositoriesListStep } from "../../imageSource/containerRegistry/acr/AcrRepositoriesListStep";
-import { DockerfileLocationInputStep } from "./DockerfileLocationInputStep";
 import { GitHubRepositoryConnectStep } from "./GitHubRepositoryConnectStep";
 import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
 import { ServicePrincipalIdInputStep } from "./ServicePrincipalIdInputStep";
@@ -48,7 +48,11 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
         new GitHubOrgListStep(),
         new GitHubRepositoryListStep(),
         new GitHubBranchListStep(),
-        new DockerfileLocationInputStep(),
+        new GitHubRepositoryFileSelectStep(
+            'Dockerfile',  // fileName
+            'dockerfilePath', // contextKey
+            localize('dockerfileLocationPrompt', "Select a 'Dockerfile' in the repository.")  // prompt
+        ),
         new AcrListStep(),
         new AcrRepositoriesListStep(),
         new ServicePrincipalIdInputStep(),
