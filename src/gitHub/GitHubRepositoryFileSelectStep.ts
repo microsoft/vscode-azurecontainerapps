@@ -61,7 +61,7 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
             this.cachedPicks.set(path, remotePicks);
         }
 
-        return this.cachedPicks.get(path) ?? remotePicks;
+        return this.cachedPicks.get(path) as IAzureQuickPickItem<ContentPickData>[];
     }
 
     private async getRemotePicks(context: IGitHubContext, path: string): Promise<IAzureQuickPickItem<ContentPickData>[]> {
@@ -76,7 +76,7 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
             contents = [contents];
         }
 
-        // Only show directories or Dockerfiles, anything else is unnecessary and clutters the UI
+        // Only show directories or matching file names, anything else is unnecessary
         const filteredContents = contents.filter((content) => content.type === 'dir' || this.fileName.test(content.name));
 
         const picks: IAzureQuickPickItem<ContentPickData>[] = filteredContents.map((content) => {
