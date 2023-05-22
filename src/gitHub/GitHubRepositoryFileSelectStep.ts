@@ -62,10 +62,8 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
 
     private async getPicks(context: IGitHubContext, path: string): Promise<IAzureQuickPickItem<ContentPickData>[]> {
         // Prefer cached picks whenever possible to reduce the number of remote calls required
-        let remotePicks: IAzureQuickPickItem<ContentPickData>[];
         if (!this.cachedPicks.has(path)) {
-            remotePicks = await this.getRemotePicks(context, path);
-            this.cachedPicks.set(path, remotePicks);
+            this.cachedPicks.set(path, await this.getRemotePicks(context, path));
         }
 
         return this.cachedPicks.get(path) as IAzureQuickPickItem<ContentPickData>[];
