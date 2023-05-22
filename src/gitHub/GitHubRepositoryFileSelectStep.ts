@@ -12,7 +12,13 @@ type ContentPickData = {
     contentName: string;
 }
 
-//Todo: Add breakdown comment..
+/**
+ * A wizard step that allows the user to traverse through a remote GitHub repository,
+ * select a file, and store its relative path in context.
+ * @param fileName A RegExp or string that matches the file name to select
+ * @param contextKey The name of the key in the context object used to store the selected file path
+ * @param prompt The prompt to display to the user while selecting a file
+ */
 export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHubContext> {
     private cachedPicks: Map<string, IAzureQuickPickItem<ContentPickData>[]>;
 
@@ -28,7 +34,7 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
     }
 
     public async prompt(context: IGitHubContext): Promise<void> {
-        // Reset cache when prompting in case the user has made changes via the back button
+        // Reset cache when prompting in case the user has made breaking changes via the back button
         this.cachedPicks = new Map();
 
         let path: string = '';
@@ -55,8 +61,8 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
     }
 
     private async getPicks(context: IGitHubContext, path: string): Promise<IAzureQuickPickItem<ContentPickData>[]> {
-        // Prefer cached picks when possible to reduce the number of remote calls required
-        let remotePicks: IAzureQuickPickItem<ContentPickData>[] = [];
+        // Prefer cached picks whenever possible to reduce the number of remote calls required
+        let remotePicks: IAzureQuickPickItem<ContentPickData>[];
         if (!this.cachedPicks.has(path)) {
             remotePicks = await this.getRemotePicks(context, path);
             this.cachedPicks.set(path, remotePicks);
@@ -77,7 +83,7 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
             contents = [contents];
         }
 
-        // Only show directories or matching file names, anything else is unnecessary
+        // Only show directories or matching file names, anything else clutters the UI
         const filteredContents = contents.filter((content) => content.type === 'dir' || this.fileName.test(content.name));
 
         const picks: IAzureQuickPickItem<ContentPickData>[] = filteredContents.map((content) => {
@@ -89,7 +95,7 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
         });
 
         const operationPicks: IAzureQuickPickItem<ContentPickData>[] = [
-            // '.' is useful as a pick for showing the full path
+            // '.' is useful for showing the full path
             {
                 label: '.',
                 description: path + '/',
