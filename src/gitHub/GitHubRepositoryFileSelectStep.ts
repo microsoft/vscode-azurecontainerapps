@@ -73,7 +73,7 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
 
     private async getRemotePicks(context: IGitHubContext, path: string): Promise<IAzureQuickPickItem<ContentPickData>[]> {
         const repoContentParams: GetRepoContentReqParams = {
-            owner: context.gitHubOrg ?? context.gitHubRepositoryOwner ?? '',
+            owner: context.gitHubOrg ?? nonNullProp(context, 'gitHubRepositoryOwner'),
             repo: nonNullProp(context, 'gitHubRepository'),
             path
         };
