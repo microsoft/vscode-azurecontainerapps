@@ -28,8 +28,8 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
             allowInsecure: false,
             traffic: [
                 {
-                    "weight": 100,
-                    "latestRevision": true
+                    weight: 100,
+                    latestRevision: true
                 }
             ],
         } : undefined;
