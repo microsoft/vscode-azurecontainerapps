@@ -3,11 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownRevisionProvisioningState, Revision } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } from "@azure/arm-appcontainers";
 import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../utils/localize";
+import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppModel } from "./ContainerAppItem";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { ScaleItem } from "./scaling/ScaleItem";
@@ -18,9 +19,11 @@ export interface RevisionsItemModel extends ContainerAppsItem {
 
 export class RevisionItem implements RevisionsItemModel {
     id: string;
+    revisionsMode: KnownActiveRevisionsMode;
 
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel, public readonly revision: Revision) {
         this.id = nonNullProp(this.revision, 'id');
+        this.revisionsMode = containerApp.revisionsMode;
     }
 
     viewProperties: ViewPropertiesModel = {
@@ -33,11 +36,14 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     getTreeItem(): TreeItem {
-        const description = !this.revision.active ?
-            localize('inactive', 'Inactive') :
-            this.revision.name === this.containerApp.latestRevisionName ?
-                localize('latest', 'Latest') :
-                undefined;
+        const description = this.revisionsMode === KnownActiveRevisionsMode.Multiple ?
+            !this.revision.active ?
+                localize('inactive', 'Inactive') :
+                this.revision.name === this.containerApp.latestRevisionName ?
+                    localize('latest', 'Latest') :
+                    undefined :
+            // no description for single revision mode
+            undefined;
 
         return {
             id: this.id,
@@ -50,6 +56,9 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     private get iconPath(): TreeItemIconPath {
+        if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
+            return treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active');
+        }
         let id: string;
         let colorId: string;
 

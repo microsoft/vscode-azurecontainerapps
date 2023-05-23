@@ -11,7 +11,7 @@ import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppModel } from "./ContainerAppItem";
-import { ContainerAppsItem } from "./ContainerAppsBranchDataProvider";
+import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { RevisionItem } from "./RevisionItem";
 
 export class RevisionsItem implements ContainerAppsItem {
@@ -21,11 +21,12 @@ export class RevisionsItem implements ContainerAppsItem {
         this.id = `${containerApp.id}/Revisions`;
     }
 
-    async getChildren(): Promise<ContainerAppsItem[]> {
+    async getChildren(): Promise<TreeElementBase[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const client = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
             const revisions = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.containerApp.resourceGroup, this.containerApp.name));
             return revisions.map(revision => new RevisionItem(this.subscription, this.containerApp, revision));
+
         });
 
         return result?.reverse() ?? [];
@@ -33,11 +34,10 @@ export class RevisionsItem implements ContainerAppsItem {
 
     getTreeItem(): TreeItem {
         return {
-            label: localize('revisions', 'Revisions'),
+            label: localize('revisions', 'Revision Management'),
             iconPath: treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active'),
             contextValue: 'revisions',
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-            description: this.containerApp.revisionsMode,
         }
     }
 }

@@ -4,7 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { bearerTokenAuthenticationPolicy } from '@azure/core-rest-pipeline';
+import { createGenericClient, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
@@ -16,13 +17,11 @@ import { createContainerAppsAPIClient, createContainerAppsClient } from "../util
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
+import { ConfigurationItem } from "./ConfigurationItem";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
-import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
-import { IngressDisabledItem, IngressItem } from "./IngressItem";
 import { LogsItem } from "./LogsItem";
+import { RevisionItem } from "./RevisionItem";
 import { RevisionsItem } from "./RevisionsItem";
-import { ActionsTreeItem } from "./gitHub/ActionsTreeItem";
-import { ScaleItem } from "./scaling/ScaleItem";
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -60,23 +59,22 @@ export class ContainerAppItem implements ContainerAppsItem {
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
     async getChildren(): Promise<TreeElementBase[]> {
+        // this should have configuration and revisions
+
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const children: TreeElementBase[] = [];
-            children.push(this.containerApp.configuration?.dapr?.enabled ? new DaprEnabledItem(this.containerApp, this.containerApp.configuration.dapr) : createDaprDisabledItem(this.containerApp));
-
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
-            const revisionData = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
+
 
             if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
                 children.push(new RevisionsItem(this.subscription, this.containerApp));
             } else {
-                children.push(new ScaleItem(this.subscription, this.containerApp, revisionData));
+                const revisionData = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
+                children.push(new RevisionItem(this.subscription, this.containerApp, revisionData));
             }
 
-            children.push(this.containerApp.configuration?.ingress ? new IngressItem(this.subscription, this.containerApp) : new IngressDisabledItem(this.subscription, this.containerApp));
+            children.push(new ConfigurationItem(this.subscription, this.containerApp));
             children.push(new LogsItem(this.subscription, this.containerApp));
-            children.push(new ActionsTreeItem(this.subscription, this.containerApp));
-
             return children;
         });
 
@@ -103,7 +101,14 @@ export class ContainerAppItem implements ContainerAppsItem {
     }
 
     static async Get(context: IActionContext, subscription: AzureSubscription, resourceGroupName: string, containerAppName: string): Promise<ContainerAppModel> {
+        const credential = createSubscriptionContext(subscription).credentials;
         const client: ContainerAppsAPIClient = await createContainerAppsClient(context, subscription);
+        const gClient = await createGenericClient(context, createSubscriptionContext(subscription));
+        gClient.pipeline.addPolicy(bearerTokenAuthenticationPolicy({
+            credential,
+            scopes: []
+        }));
+
         return ContainerAppItem.CreateContainerAppModel(await client.containerApps.get(resourceGroupName, containerAppName));
     }
 
