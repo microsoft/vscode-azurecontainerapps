@@ -15,7 +15,7 @@ import { IngressDisabledItem, IngressItem } from "./IngressItem";
 export class ConfigurationItem implements ContainerAppsItem {
     id: string;
 
-    // portal calls is "Settings"
+    // this is called "Settings" in the Portal
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
         this.id = `${containerApp.id}/Configurations`;
     }

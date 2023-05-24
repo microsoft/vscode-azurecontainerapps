@@ -26,6 +26,18 @@ export class RevisionItem implements RevisionsItemModel {
         this.revisionsMode = containerApp.revisionsMode;
     }
 
+    get description(): string | undefined {
+        if (this.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+            if (!this.revision.active) {
+                return localize('inactive', 'Inactive');
+            } else if (this.revision.name === this.containerApp.latestRevisionName) {
+                return localize('latest', 'Latest');
+            }
+        }
+
+        return undefined;
+    }
+
     viewProperties: ViewPropertiesModel = {
         data: this.revision,
         label: nonNullProp(this.revision, 'name'),
@@ -36,20 +48,11 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     getTreeItem(): TreeItem {
-        const description = this.revisionsMode === KnownActiveRevisionsMode.Multiple ?
-            !this.revision.active ?
-                localize('inactive', 'Inactive') :
-                this.revision.name === this.containerApp.latestRevisionName ?
-                    localize('latest', 'Latest') :
-                    undefined :
-            // no description for single revision mode
-            undefined;
-
         return {
             id: this.id,
             label: this.revision.name,
             iconPath: this.iconPath,
-            description,
+            description: this.description,
             contextValue: createContextValue([`${this.revision.active ? 'active' : 'inactive'}`, 'revision']),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
@@ -59,6 +62,7 @@ export class RevisionItem implements RevisionsItemModel {
         if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
             return treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active');
         }
+
         let id: string;
         let colorId: string;
 
