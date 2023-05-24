@@ -30,16 +30,6 @@ export class LogsItem implements TreeElementBase {
         const startStreamingLogs = 'containerApps.startStreamingLogs';
         return [
             createGenericElement({
-                contextValue: 'openLogs',
-                commandId: openInPortal,
-                iconPath: new ThemeIcon('link-external'),
-                id: `${this.containerApp.id}/logs`,
-                label: localize('openLogs', 'Open Logs'),
-                commandArgs: [{
-                    portalUrl: createPortalUrl(this.subscription, `${this.containerApp.id}/logs`),
-                }]
-            }),
-            createGenericElement({
                 contextValue: 'startStreamingLogs',
                 commandId: startStreamingLogs,
                 iconPath: new ThemeIcon('play'),
@@ -50,6 +40,17 @@ export class LogsItem implements TreeElementBase {
                     containerApp: this.containerApp,
                 }]
             }),
+            createGenericElement({
+                contextValue: 'openLogs',
+                commandId: openInPortal,
+                iconPath: new ThemeIcon('link-external'),
+                id: `${this.containerApp.id}/logs`,
+                label: localize('openLogs', 'Open Logs'),
+                commandArgs: [{
+                    portalUrl: createPortalUrl(this.subscription, `${this.containerApp.id}/logs`),
+                }]
+            }),
+
         ];
     }
 }
