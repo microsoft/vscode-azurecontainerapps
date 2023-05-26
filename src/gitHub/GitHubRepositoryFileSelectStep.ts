@@ -39,10 +39,13 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
 
         let path: string = '';
         while (true) {
-            const contentPickData = (await context.ui.showQuickPick(this.getPicks(context, path), { placeHolder: this.promptPlaceHolder })).data;
+            const contentPickData = (await context.ui.showQuickPick(this.getPicks(context, path), {
+                suppressPersistence: true,
+                placeHolder: this.promptPlaceHolder
+            })).data;
 
             if (contentPickData.traverse === 'Up') {
-                path = path.split('/').slice(0, -1).join('/');
+                path = path.substring(0, path.lastIndexOf('/'));
             } else if (contentPickData.traverse === 'Down') {
                 path += '/' + contentPickData.contentName;
             }
@@ -88,7 +91,6 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
             const endsWith: string = content.type === 'dir' ? '/' : '';
             return {
                 label: content.name + endsWith,
-                suppressPersistence: true,
                 data: { traverse: 'Down', contentName: content.name } };
         });
 
@@ -97,13 +99,11 @@ export class GitHubRepositoryFileSelectStep extends AzureWizardPromptStep<IGitHu
             {
                 label: '.',
                 description: path + '/',
-                suppressPersistence: true,
                 data: { traverse: undefined, contentName: '' }
             },
             {
                 label: '..',
-                description: path.split('/').slice(0, -1).join('/') + '/',
-                suppressPersistence: true,
+                description: path.substring(0, path.lastIndexOf('/') + 1),
                 data: { traverse: 'Up', contentName: '' }
             }
         ];
