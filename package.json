@@ -165,6 +165,21 @@
                 "command": "containerApps.stopStreamingLogs",
                 "title": "%containerApps.stopStreamingLogs%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.createServiceConnector",
+                "title": "%containerApps.createServiceConnector%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deleteServiceConnector",
+                "title": "%containerApps.deleteServiceConnector%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.validateServiceConnector",
+                "title": "%containerApps.validateServiceConnector%",
+                "category": "Azure Container Apps"
             }
         ],
         "menus": {
@@ -277,6 +292,21 @@
                     "command": "containerApps.stopStreamingLogs",
                     "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
                     "group": "4@2"
+                },
+                {
+                    "command": "containerApps.createServiceConnector",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@3"
+                },
+                {
+                    "command": "containerApps.deleteServiceConnector",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@4"
+                },
+                {
+                    "command": "containerApps.validateServiceConnector",
+                    "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
+                    "group": "4@4"
                 }
             ],
             "commandPalette": [
@@ -374,9 +404,10 @@
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
-        "@azure/storage-blob": "^12.4.1",
         "@azure/core-rest-pipeline": "1.10.3",
+        "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^1.0.1",
+        "@microsoft/vscode-azext-serviceconnector": "file:../vscode-azuretools/serviceconnector/microsoft-vscode-azext-serviceconnector-0.0.1.tgz",
         "@microsoft/vscode-azext-utils": "^1.2.0",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "@octokit/rest": "^18.5.2",

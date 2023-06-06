@@ -25,6 +25,9 @@ import { deactivateRevision } from './revisionCommands/deactivateRevision';
 import { restartRevision } from './revisionCommands/restartRevision';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
+import { createServiceConnector } from './serviceConnector/createServiceConnector';
+import { deleteServiceConnector } from './serviceConnector/deleteServiceConnector';
+import { validateServiceConnector } from './serviceConnector/validateServiceConnector';
 
 export function registerCommands(): void {
     // managed environments
@@ -61,6 +64,11 @@ export function registerCommands(): void {
     //log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
+
+    // service connector
+    registerCommandWithTreeNodeUnwrapping('containerApps.createServiceConnector', createServiceConnector);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deleteServiceConnector', deleteServiceConnector);
+    registerCommandWithTreeNodeUnwrapping('containerApps.validateServiceConnector', validateServiceConnector);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
