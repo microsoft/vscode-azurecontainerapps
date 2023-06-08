@@ -8,7 +8,14 @@ import "isomorphic-fetch"; // Requires importing this library or a fetch polyfil
 import { AuthenticationGetSessionOptions, AuthenticationSession, authentication } from "vscode";
 import { localize } from "./localize";
 
+// Graph client is saved for the duration of the extension to prevent multiple login re-prompts
+let client: Client | undefined;
+
 export async function createGraphClient(): Promise<Client> {
+    if (client) {
+        return client;
+    }
+
     const scopes: string[] = ['https://graph.microsoft.com/.default'];
     const sessionOptions: AuthenticationGetSessionOptions = {
         clearSessionPreference: true,
@@ -30,5 +37,6 @@ export async function createGraphClient(): Promise<Client> {
         authProvider
     };
 
-    return Client.initWithMiddleware(clientOptions);
+    client = Client.initWithMiddleware(clientOptions);
+    return client;
 }
