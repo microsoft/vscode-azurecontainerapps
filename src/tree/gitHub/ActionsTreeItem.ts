@@ -49,6 +49,8 @@ export class ActionsTreeItem implements ContainerAppsItem {
                 branch: sourceControl.branch ?? 'main',
                 page: -1,
             };
+
+            context.errorHandling.suppressDisplay = true;
             return await getActions(context, actionWorkflowRunsParams);
         });
 
