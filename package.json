@@ -306,7 +306,7 @@
                 {
                     "command": "containerApps.validateServiceConnector",
                     "when": "view == azureResourceGroups && viewItem =~ /containerApp[^s]/i",
-                    "group": "4@4"
+                    "group": "4@5"
                 }
             ],
             "commandPalette": [
