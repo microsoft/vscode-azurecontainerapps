@@ -11,6 +11,7 @@ import { ContainerAppModel } from "./ContainerAppItem";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressItem } from "./IngressItem";
+import { ActionsTreeItem } from "./gitHub/ActionsTreeItem";
 
 export class ConfigurationItem implements ContainerAppsItem {
     id: string;
@@ -25,6 +26,7 @@ export class ConfigurationItem implements ContainerAppsItem {
             const children: TreeElementBase[] = [];
             children.push(this.containerApp.configuration?.ingress ? new IngressItem(this.subscription, this.containerApp) : new IngressDisabledItem(this.subscription, this.containerApp));
             children.push(this.containerApp.configuration?.dapr?.enabled ? new DaprEnabledItem(this.containerApp, this.containerApp.configuration.dapr) : createDaprDisabledItem(this.containerApp));
+            children.push(new ActionsTreeItem(this.subscription, this.containerApp));
             // We should add secrets/registries here when we support it
             return children;
         });
