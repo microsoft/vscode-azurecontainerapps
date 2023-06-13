@@ -362,7 +362,6 @@
     },
     "devDependencies": {
         "@microsoft/eslint-config-azuretools": "^0.1.0",
-        "@microsoft/microsoft-graph-types": "^2.33.0",
         "@microsoft/vscode-azext-dev": "^1.0.4",
         "@octokit/types": "^9.1.0",
         "@types/fs-extra": "^8.1.1",
@@ -396,7 +395,6 @@
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/core-rest-pipeline": "1.10.3",
         "@azure/storage-blob": "^12.4.1",
-        "@microsoft/microsoft-graph-client": "^3.0.5",
         "@microsoft/vscode-azext-azureutils": "^1.0.1",
         "@microsoft/vscode-azext-utils": "^1.2.0",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
@@ -405,7 +403,6 @@
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",
         "fs-extra": "^8.1.0",
-        "isomorphic-fetch": "^3.0.0",
         "semver": "^7.3.5",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
