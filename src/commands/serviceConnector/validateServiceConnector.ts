@@ -9,7 +9,7 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { ContainerPickStep } from "./ContainerPickStep";
+import { ContainerListStep } from "./ContainerListStep";
 import { IServiceConnectorContext } from "./IServiceConnectorContext";
 
 export async function validateServiceConnector(context: ICreateLinkerContext, item?: ContainerAppItem): Promise<void> {
@@ -24,7 +24,7 @@ export async function validateServiceConnector(context: ICreateLinkerContext, it
     }
 
     const promptSteps: AzureWizardPromptStep<IServiceConnectorContext>[] = [
-        new ContainerPickStep(),
+        new ContainerListStep(),
     ];
 
     await validateLinker(activityContext, { id: containerApp.id, subscription }, promptSteps);

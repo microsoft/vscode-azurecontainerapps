@@ -4,8 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ICreateLinkerContext } from "@microsoft/vscode-azext-serviceconnector";
-import { ContainerAppModel } from "../../tree/ContainerAppItem";
+import { IContainerAppContext } from "../createContainerApp/IContainerAppContext";
 
-export interface IServiceConnectorContext extends ICreateLinkerContext {
-    containerApp: ContainerAppModel;
+export interface IServiceConnectorContext extends ICreateLinkerContext, IContainerAppContext {
 }

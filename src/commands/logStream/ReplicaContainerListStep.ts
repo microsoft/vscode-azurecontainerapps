@@ -8,7 +8,7 @@ import { AzureWizardPromptStep, IAzureQuickPickItem, nonNullProp, nonNullValue }
 import { localize } from "../../utils/localize";
 import { IStreamLogsContext } from "./IStreamLogsContext";
 
-export class ContainerListStep extends AzureWizardPromptStep<IStreamLogsContext> {
+export class ReplicaContainerListStep extends AzureWizardPromptStep<IStreamLogsContext> {
     public async prompt(context: IStreamLogsContext): Promise<void> {
         const placeHolder: string = localize('selectContainer', 'Select a container');
         context.container = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;

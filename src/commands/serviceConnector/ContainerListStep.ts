@@ -7,9 +7,9 @@ import { AzureWizardPromptStep, IAzureQuickPickItem, nonNullValue } from "@micro
 import { localize } from "../../utils/localize";
 import { IServiceConnectorContext } from "./IServiceConnectorContext";
 
-export class ContainerPickStep extends AzureWizardPromptStep<IServiceConnectorContext> {
+export class ContainerListStep extends AzureWizardPromptStep<IServiceConnectorContext> {
     public async prompt(context: IServiceConnectorContext): Promise<void> {
-        const placeHolder: string = localize('selectStream', 'Select a container');
+        const placeHolder: string = localize('selectContainer', 'Select a container');
         context.scope = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
     }
 
@@ -18,14 +18,14 @@ export class ContainerPickStep extends AzureWizardPromptStep<IServiceConnectorCo
     }
 
     public async configureBeforePrompt(context: IServiceConnectorContext): Promise<void> {
-        const picks = await this.getPicks(context);
+        const picks = this.getPicks(context);
         if (picks.length === 1) {
             context.scope = picks[0].data;
         }
     }
 
-    private async getPicks(context: IServiceConnectorContext): Promise<IAzureQuickPickItem<string>[]> {
-        const containers = nonNullValue(context.containerApp.template?.containers);
+    private getPicks(context: IServiceConnectorContext): IAzureQuickPickItem<string>[] {
+        const containers = nonNullValue(context.containerApp?.template?.containers);
         return containers.map(c => {
             return {
                 label: nonNullValue(c.name),

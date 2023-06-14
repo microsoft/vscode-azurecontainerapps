@@ -8,8 +8,8 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { ContainerListStep } from "./ContainerListStep";
 import { IStreamLogsContext } from "./IStreamLogsContext";
+import { ReplicaContainerListStep } from "./ReplicaContainerListStep";
 import { ReplicaListStep } from "./ReplicaListStep";
 import { RevisionListStep } from "./RevisionListStep";
 import { logStreamRequest } from "./logStreamRequest";
@@ -35,7 +35,7 @@ export async function startStreamingLogs(context: IActionContext, item?: Pick<Co
     const promptSteps: AzureWizardPromptStep<IStreamLogsContext>[] = [
         new RevisionListStep(),
         new ReplicaListStep(),
-        new ContainerListStep(),
+        new ReplicaContainerListStep(),
     ];
 
     const wizard: AzureWizard<IStreamLogsContext> = new AzureWizard(wizardContext, {
