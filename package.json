@@ -220,22 +220,22 @@
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view == azureResourceGroups && (viewItem =~ /revisionItem(.*)revisionMode:single/i || viewItem =~ /revisionsItem/i)",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && (viewItem =~ /revisionItem(.*)revisionMode:single/i || viewItem =~ /revisionsItem/i)",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:inactive/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:inactive/i",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:active/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:active/i",
                     "group": "2@3"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view == azureResourceGroups && viewItem =~ /revisionItem(.*)revisionState:active/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
                     "group": "2@4"
                 },
                 {
