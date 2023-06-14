@@ -13,8 +13,8 @@
       <stop offset="1" stop-color="#a67af4" />
     </linearGradient>
     <linearGradient id="aef1cbb1-dedf-46f1-96c6-5b5ce0b6eb3c" x1="-35" y1="819.436" x2="-35" y2="825.838" gradientTransform="matrix(1, 0, 0, -1, 44, 838.016)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#32bedd" />
-      <stop offset="0.746" stop-color="#50e6ff" />
+      <stop offset="0" stop-color="#126e8d" />
+      <stop offset="0.746" stop-color="#32BEDD" />
     </linearGradient>
   </defs>
   <g id="a2629457-ce9e-4d73-ae91-6d52e8069297">
