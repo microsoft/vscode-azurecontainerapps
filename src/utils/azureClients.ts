@@ -28,9 +28,6 @@ export async function createContainerRegistryManagementClient(context: AzExtClie
 
 export function createContainerRegistryClient(context: AzExtClientContext, registry: Registry): ContainerRegistryClient {
     const clientContext = parseClientContext(context);
-    // @azure/container-registry doesn't support ADAL tokens at all.  If it sees `signRequest` is defined
-    // it errors, but we don't actually need `signRequest` because this is a T2 package
-
     return new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
 }
