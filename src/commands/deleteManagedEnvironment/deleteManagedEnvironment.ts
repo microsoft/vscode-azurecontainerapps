@@ -17,9 +17,11 @@ import { DeleteManagedEnvironmentStep } from "./DeleteManagedEnvironmentStep";
 import { IDeleteManagedEnvironmentWizardContext } from "./IDeleteManagedEnvironmentWizardContext";
 
 export async function deleteManagedEnvironment(context: IActionContext & { suppressPrompt?: boolean }, node?: ManagedEnvironmentItem): Promise<void> {
-    const { subscription, managedEnvironment } = node ?? await containerAppEnvironmentExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+    const managedEnvironmentItem: ManagedEnvironmentItem = node ?? await containerAppEnvironmentExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         title: localize('deleteContainerAppsEnvironment', 'Delete Container Apps Environment'),
     });
+
+    const { subscription, managedEnvironment } = managedEnvironmentItem;
 
     const containerApps = await ContainerAppItem.List(context, subscription, managedEnvironment.id);
     const resourceGroupName = getResourceGroupFromId(managedEnvironment.id);
@@ -45,7 +47,14 @@ export async function deleteManagedEnvironment(context: IActionContext & { suppr
     }
 
     await ext.state.showDeleting(managedEnvironment.id, async () => {
+        await discardAllContainerAppRevisionDrafts(managedEnvironmentItem);
         await wizard.execute();
     });
     ext.branchDataProvider.refresh();
+}
+
+async function discardAllContainerAppRevisionDrafts(node: ManagedEnvironmentItem): Promise<void> {
+    for (const containerAppItem of await node.getChildren()) {
+        await ext.revisionDraftFileSystem.discardRevisionDraft(containerAppItem);
+    }
 }
