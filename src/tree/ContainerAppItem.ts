@@ -65,7 +65,7 @@ export class ContainerAppItem implements ContainerAppsItem {
 
             if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
                 // Draft Item
-                const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getBaseRevisionNameUsingItem(this);
+                const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getBaseRevisionName(this);
                 if (draftBaseRevisionName) {
                     children.push(new RevisionDraftItem(this.subscription, this.containerApp, draftBaseRevisionName));
                 }
@@ -145,7 +145,7 @@ export class ContainerAppItem implements ContainerAppsItem {
         }
 
         await ext.state.showDeleting(this.containerApp.id, async () => {
-            await ext.revisionDraftFileSystem.discardRevisionDraftUsingItem(this);
+            await ext.revisionDraftFileSystem.discardRevisionDraft(this);
             await wizard.execute();
         });
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);

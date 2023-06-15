@@ -29,7 +29,7 @@ export class RevisionsItem implements ContainerAppsItem {
 
     get contextValue(): string {
         const values: string[] = [RevisionsItem.contextValue];
-        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
+        values.push(ext.revisionDraftFileSystem.hasRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
         return createContextValue(values);
     }
 
@@ -40,7 +40,7 @@ export class RevisionsItem implements ContainerAppsItem {
             return revisions.map(revision => new RevisionItem(this.subscription, this.containerApp, revision));
         }))?.reverse() ?? [];
 
-        const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getBaseRevisionNameUsingItem(this);
+        const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getBaseRevisionName(this);
         return draftBaseRevisionName ? [new RevisionDraftItem(this.subscription, this.containerApp, draftBaseRevisionName), ...result] : result;
     }
 

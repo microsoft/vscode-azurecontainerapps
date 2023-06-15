@@ -47,7 +47,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Create / Update..
-    async createOrEditRevisionDraftFromItem(item: RevisionItem | RevisionDraftItem): Promise<void> {
+    async createOrEditRevisionDraft(item: RevisionItem | RevisionDraftItem): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
 
         if (!this.doesUriExist(uri)) {
@@ -77,7 +77,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Read..
-    getParsedRevisionDraftUsingItem<T extends ContainerAppsItem>(item: T): Template {
+    getParsedRevisionDraft<T extends ContainerAppsItem>(item: T): Template {
         const uri: URI = this.buildUriFromItem(item);
         if (!this.doesUriExist(uri)) {
             throw new Error(localize('noRevisionDraft', 'Unable to locate a draft for the current revision.'));
@@ -91,12 +91,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return contents ? Buffer.from(contents) : Buffer.from('');
     }
 
-    doesContainerAppsItemHaveRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
+    hasRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
         const uri: Uri = this.buildUriFromItem(item);
         return this.doesUriExist(uri);
     }
 
-    getBaseRevisionNameUsingItem<T extends ContainerAppsItem>(item: T): string | undefined {
+    getBaseRevisionName<T extends ContainerAppsItem>(item: T): string | undefined {
         const uri: Uri = this.buildUriFromItem(item);
         return this.localStorage.get<File>(uri.path)?.baseRevisionName;
     }
@@ -117,7 +117,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Delete..
-    async discardRevisionDraftUsingItem<T extends ContainerAppsItem>(item: T): Promise<void> {
+    async discardRevisionDraft<T extends ContainerAppsItem>(item: T): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.doesUriExist(uri)) {
             return;

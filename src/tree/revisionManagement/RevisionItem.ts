@@ -34,7 +34,7 @@ export class RevisionItem implements RevisionsItemModel {
         const values: string[] = [RevisionItem.contextValue];
 
         values.push(this.revision.active ? 'revisionState:active' : 'revisionState:inactive');
-        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
+        values.push(ext.revisionDraftFileSystem.hasRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? 'revisionMode:single' : 'revisionMode:multiple');
 
         return createContextValue(values);

@@ -11,10 +11,10 @@ import { pickRevision } from "../../utils/pickItem/pickRevision";
 
 export async function editRevisionDraft(context: IActionContext, node?: RevisionDraftItem): Promise<void> {
     const revisionItem = node ?? await pickRevision(context);
-    if (!ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(revisionItem)) {
+    if (!ext.revisionDraftFileSystem.hasRevisionDraft(revisionItem)) {
         // Todo: Prompt the user to create a draft if one doesn't exist
         throw new Error(localize('noRevisionDraftExists', 'No revision draft exists for container app "{0}".', revisionItem.containerApp.name));
     }
 
-    await ext.revisionDraftFileSystem.createOrEditRevisionDraftFromItem(revisionItem);
+    await ext.revisionDraftFileSystem.createOrEditRevisionDraft(revisionItem);
 }

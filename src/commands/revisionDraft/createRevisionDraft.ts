@@ -21,7 +21,7 @@ import { IContainerAppContext } from "../IContainerAppContext";
 export async function createRevisionDraft(context: IActionContext, node?: RevisionItem | RevisionsItem): Promise<void> {
     const containerAppsItem = node ?? await pickContainerApp(context);
 
-    if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(containerAppsItem)) {
+    if (ext.revisionDraftFileSystem.hasRevisionDraft(containerAppsItem)) {
         throw new Error(localize('revisionDraftExists', 'A revision draft already exists for container app "{0}".', containerAppsItem.containerApp.name));
     }
 
@@ -57,7 +57,7 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
     await ext.state.showCreatingChild(
         parentId,
         localize('creatingDraft', 'Creating draft...'),
-        async () => await ext.revisionDraftFileSystem.createOrEditRevisionDraftFromItem(revisionItem)
+        async () => await ext.revisionDraftFileSystem.createOrEditRevisionDraft(revisionItem)
     );
 }
 
