@@ -7,7 +7,7 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../utils/localize";
-import { pickRevision } from "../../utils/pickItem/pickRevision";
+import { pickRevision } from "../../utils/pickRevision";
 
 export async function editRevisionDraft(context: IActionContext, node?: RevisionDraftItem): Promise<void> {
     const revisionItem = node ?? await pickRevision(context);

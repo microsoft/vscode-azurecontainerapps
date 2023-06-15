@@ -6,11 +6,11 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickWizardContext, ResourceGroupsItem, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
-import { ext } from "../../extensionVariables";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
-import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
-import { localize } from "../localize";
+import { ext } from "../extensionVariables";
+import { ContainerAppItem } from "../tree/ContainerAppItem";
+import { RevisionItem } from "../tree/revisionManagement/RevisionItem";
+import { RevisionsItem } from "../tree/revisionManagement/RevisionsItem";
+import { localize } from "./localize";
 import { PickItemOptions, pickContainerApp } from "./pickContainerApp";
 
 interface RevisionPickItemOptions extends PickItemOptions {

@@ -10,7 +10,7 @@ import { ext } from "../../extensionVariables";
 import type { ContainerAppModel } from "../../tree/ContainerAppItem";
 import type { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickContainerApp";
 import { updateContainerApp } from "../deployContainerApp/updateContainerApp";
 
 export async function chooseRevisionMode(context: IActionContext, node?: RevisionsItem): Promise<void> {

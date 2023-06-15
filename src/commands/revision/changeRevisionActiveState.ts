@@ -9,7 +9,7 @@ import { ext } from "../../extensionVariables";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickContainerApp";
 
 export async function executeRevisionOperation(context: IActionContext, node: RevisionItem | undefined, operation: RevisionOperation): Promise<void> {
     const item = node ?? await pickContainerApp(context);

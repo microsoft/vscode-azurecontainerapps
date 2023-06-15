@@ -7,7 +7,7 @@ import { AzureWizard, AzureWizardPromptStep, IActionContext, createSubscriptionC
 import type { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickContainerApp";
 import { IStreamLogsContext } from "./IStreamLogsContext";
 import { RevisionListStep } from "./RevisionListStep";
 import { StreamListStep } from "./StreamListStep";

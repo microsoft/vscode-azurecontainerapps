@@ -14,8 +14,8 @@ import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
-import { pickRevision } from "../../utils/pickItem/pickRevision";
+import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickRevision } from "../../utils/pickRevision";
 import { IContainerAppContext } from "../IContainerAppContext";
 
 export async function createRevisionDraft(context: IActionContext, node?: RevisionItem | RevisionsItem): Promise<void> {

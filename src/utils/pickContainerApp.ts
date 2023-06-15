@@ -6,10 +6,10 @@
 import { AzureResourceQuickPickWizardContext, AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickAzureResourceStep, QuickPickAzureSubscriptionStep, QuickPickGroupStep, ResourceGroupsItem, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
 import { AzExtResourceType } from "@microsoft/vscode-azureresources-api";
 import * as vscode from 'vscode';
-import { ext } from "../../extensionVariables";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { localize } from "../localize";
+import { ext } from "../extensionVariables";
+import { ContainerAppItem } from "../tree/ContainerAppItem";
+import { ManagedEnvironmentItem } from "../tree/ManagedEnvironmentItem";
+import { localize } from "./localize";
 
 export interface PickItemOptions {
     title?: string;
