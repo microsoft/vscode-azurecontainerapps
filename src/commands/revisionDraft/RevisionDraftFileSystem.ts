@@ -10,21 +10,21 @@ import { localize } from "../../utils/localize";
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
 
 class File implements FileStat {
-	type: FileType = FileType.File;
+    type: FileType = FileType.File;
     size: number;
-	ctime: number;
-	mtime: number;
+    ctime: number;
+    mtime: number;
 
     baseRevisionName: string;
-	contents: Uint8Array;
+    contents: Uint8Array;
 
-	constructor(contents: Uint8Array, baseRevisionName: string) {
+    constructor(contents: Uint8Array, baseRevisionName: string) {
         this.baseRevisionName = baseRevisionName;
         this.contents = contents;
         this.size = contents.byteLength;
         this.ctime = Date.now();
         this.mtime = Date.now();
-	}
+    }
 }
 
 /**
@@ -74,7 +74,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
         await this.localStorage.update(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
-	}
+    }
 
     // Read..
     parseRevisionDraft<T extends ContainerAppsItem>(item: T): Template {
@@ -89,7 +89,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     readFile(uri: Uri): Uint8Array {
         const contents = this.localStorage.get<File>(uri.path)?.contents;
         return contents ? Buffer.from(contents) : Buffer.from('');
-	}
+    }
 
     doesContainerAppsItemHaveRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
         const uri: Uri = this.buildUriFromItem(item);
@@ -114,7 +114,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         } else {
             return { type: FileType.File, ctime: 0, mtime: 0, size: 0 };
         }
-	}
+    }
 
     // Delete..
     async discardRevisionDraft<T extends ContainerAppsItem>(item: T): Promise<void> {
@@ -158,15 +158,15 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return new Disposable((): void => { /** Do nothing */ });
     }
 
-	readDirectory(): [string, FileType][] {
-		throw new Error(notSupported);
-	}
+    readDirectory(): [string, FileType][] {
+        throw new Error(notSupported);
+    }
 
     createDirectory(): void {
         throw new Error(notSupported);
-	}
+    }
 
-	rename(): void {
+    rename(): void {
         throw new Error(notSupported);
-	}
+    }
 }
