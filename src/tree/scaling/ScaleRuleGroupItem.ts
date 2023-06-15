@@ -9,7 +9,7 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../../utils/localize";
 import { ContainerAppModel } from "../ContainerAppItem";
-import { RevisionsItemModel } from "../RevisionItem";
+import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { createScaleRuleItem } from "./ScaleRuleItem";
 
 export interface ScaleRuleGroupItem extends RevisionsItemModel {

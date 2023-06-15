@@ -5,7 +5,6 @@
 
 import { registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { browseContainerAppNode } from './browseContainerApp';
-import { chooseRevisionMode } from './chooseRevisionMode';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -22,9 +21,10 @@ import { toggleIngressVisibility } from './ingress/toggleIngressVisibility/toggl
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
-import { activateRevision } from './revisionCommands/activateRevision';
-import { deactivateRevision } from './revisionCommands/deactivateRevision';
-import { restartRevision } from './revisionCommands/restartRevision';
+import { activateRevision } from './revision/activateRevision';
+import { chooseRevisionMode } from './revision/chooseRevisionMode';
+import { deactivateRevision } from './revision/deactivateRevision';
+import { restartRevision } from './revision/restartRevision';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 

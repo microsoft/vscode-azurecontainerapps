@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import type { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { ext } from "../extensionVariables";
-import { ContainerAppModel } from "../tree/ContainerAppItem";
-import { ContainerAppsItem } from "../tree/ContainerAppsBranchDataProvider";
-import { localize } from "../utils/localize";
-import { pickContainerApp } from "../utils/pickContainerApp";
-import { updateContainerApp } from "./deployContainerApp/updateContainerApp";
+import { ext } from "../../extensionVariables";
+import type { ContainerAppModel } from "../../tree/ContainerAppItem";
+import type { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
+import { localize } from "../../utils/localize";
+import { pickContainerApp } from "../../utils/pickContainerApp";
+import { updateContainerApp } from "../deployContainerApp/updateContainerApp";
 
-export async function chooseRevisionMode(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
+export async function chooseRevisionMode(context: IActionContext, node?: RevisionsItem): Promise<void> {
     const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
     const pickedRevisionMode = await pickRevisionsMode(context, containerApp);
