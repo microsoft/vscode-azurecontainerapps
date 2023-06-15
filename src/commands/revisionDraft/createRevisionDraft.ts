@@ -38,7 +38,7 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
         };
 
         /**
-         * Overwrite the typical 'pickRevisionItem' behavior with custom behavior.
+         * Overwrite the typical 'pickRevision' behavior with custom behavior.
          * Leverage the `selectRevisionName` option to obtain the RevisionItem without re-prompting the user
          */
         const revisionName = await promptForRevisionName(containerAppContext);
