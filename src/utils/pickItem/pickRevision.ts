@@ -31,41 +31,44 @@ export function getPickRevisionsStep(tdp: vscode.TreeDataProvider<unknown>): Azu
             contextValueFilter: { include: RevisionsItem.contextValueRegExp },
             skipIfOne: true,
         },
-        { placeHolder: localize('selectRevisionItem', 'Select a revision item')
-    });
+        {
+            placeHolder: localize('selectRevisionItem', 'Select a revision item')
+        });
 }
 
 /**
  * Without re-prompting, automatically selects a RevisionItem matching the known 'revisionName'
  */
 async function selectWithoutPrompt(startingNode: ContainerAppItem | RevisionsItem, revisionName: string): Promise<RevisionItem> {
+    let currentNode = startingNode;
+
     // If we are at the ContainerAppItem level in multiple revisions mode, we need to drill one level deeper before we can search for the RevisionItem
-    if (startingNode instanceof ContainerAppItem && startingNode.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-        for (const child of await startingNode.getChildren()) {
+    if (currentNode instanceof ContainerAppItem && currentNode.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+        for (const child of await currentNode.getChildren()) {
             if (child instanceof RevisionsItem) {
-                startingNode = child;
+                currentNode = child;
                 break;
             }
         }
 
-        if (!(startingNode instanceof RevisionsItem)) {
+        if (!(currentNode instanceof RevisionsItem)) {
             throw new Error(localize('noRevisionManagementFound', 'No revision management found.'));
         }
     }
 
     // Search for a matching RevisionItem
-    for (const child of await startingNode.getChildren()) {
+    for (const child of await currentNode.getChildren()) {
         if (child instanceof RevisionItem && child.revision.name === revisionName) {
-            startingNode = child;
+            currentNode = child;
             break;
         }
     }
 
-    if (!(startingNode instanceof RevisionItem)) {
+    if (!(currentNode instanceof RevisionItem)) {
         throw new Error(localize('noMatchingRevisionFound', 'No matching revision found.'));
     }
 
-    return startingNode;
+    return currentNode;
 }
 
 export async function revisionExperience(context: IActionContext, tdp: vscode.TreeDataProvider<ResourceGroupsItem>, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {

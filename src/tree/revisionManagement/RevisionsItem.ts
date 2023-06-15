@@ -50,6 +50,6 @@ export class RevisionsItem implements ContainerAppsItem {
             iconPath: treeUtils.getIconPath('02889-icon-menu-Container-Revision-Management'),
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 }
