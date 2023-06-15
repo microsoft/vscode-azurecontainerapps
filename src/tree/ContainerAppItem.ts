@@ -16,11 +16,11 @@ import { createContainerAppsAPIClient, createContainerAppsClient } from "../util
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ConfigurationItem } from "./ConfigurationItem";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsItem } from "./LogsItem";
-import { RevisionItem } from "./RevisionItem";
-import { RevisionsItem } from "./RevisionsItem";
+import { ConfigurationItem } from "./configurations/ConfigurationItem";
+import { RevisionItem } from "./revisionManagement/RevisionItem";
+import { RevisionsItem } from "./revisionManagement/RevisionsItem";
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;

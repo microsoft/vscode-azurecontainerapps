@@ -7,10 +7,10 @@ import { ContainerApp, Dapr } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { localize } from "../utils/localize";
-import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppModel } from "./ContainerAppItem";
-import { TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { localize } from "../../utils/localize";
+import { treeUtils } from "../../utils/treeUtils";
+import { ContainerAppModel } from "../ContainerAppItem";
+import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
 
 export class DaprEnabledItem implements TreeElementBase {
 

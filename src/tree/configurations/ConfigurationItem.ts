@@ -3,15 +3,17 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { localize } from "../utils/localize";
-import { ContainerAppModel } from "./ContainerAppItem";
-import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { localize } from "../../utils/localize";
+import { ContainerAppModel } from "../ContainerAppItem";
+import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { ActionsTreeItem } from "../gitHub/ActionsTreeItem";
 import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressItem } from "./IngressItem";
-import { ActionsTreeItem } from "./gitHub/ActionsTreeItem";
+
+const configuration: string = localize('configuration', 'Configuration');
 
 export class ConfigurationItem implements ContainerAppsItem {
     id: string;
@@ -19,6 +21,11 @@ export class ConfigurationItem implements ContainerAppsItem {
     // this is called "Settings" in the Portal
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
         this.id = `${containerApp.id}/Configurations`;
+    }
+
+    viewProperties: ViewPropertiesModel = {
+        data: nonNullProp(this.containerApp, 'configuration'),
+        label: `${this.containerApp.name} ${configuration}`,
     }
 
     async getChildren(): Promise<TreeElementBase[]> {

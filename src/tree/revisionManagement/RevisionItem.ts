@@ -5,43 +5,58 @@
 
 import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } from "@azure/arm-appcontainers";
 import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { localize } from "../utils/localize";
-import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppModel } from "./ContainerAppItem";
-import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
-import { ScaleItem } from "./scaling/ScaleItem";
+import { localize } from "../../utils/localize";
+import { treeUtils } from "../../utils/treeUtils";
+import type { ContainerAppModel } from "../ContainerAppItem";
+import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { ScaleItem } from "../scaling/ScaleItem";
 
 export interface RevisionsItemModel extends ContainerAppsItem {
     revision: Revision;
 }
 
 export class RevisionItem implements RevisionsItemModel {
+    static contextValue: string = 'revisionItem';
+    static contextValueRegExp: RegExp = new RegExp(RevisionItem.contextValue);
+
     id: string;
     revisionsMode: KnownActiveRevisionsMode;
 
-    constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel, public readonly revision: Revision) {
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
         this.id = nonNullProp(this.revision, 'id');
         this.revisionsMode = containerApp.revisionsMode;
     }
 
+    get contextValue(): string {
+        const values: string[] = [RevisionItem.contextValue];
+
+        values.push(this.revision.active ? 'revisionState:active' : 'revisionState:inactive');
+        // values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
+        values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? 'revisionMode:single' : 'revisionMode:multiple');
+
+        return createContextValue(values);
+    }
+
     get description(): string | undefined {
-        if (this.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-            if (!this.revision.active) {
-                return localize('inactive', 'Inactive');
-            } else if (this.revision.name === this.containerApp.latestRevisionName) {
-                return localize('latest', 'Latest');
-            }
+        if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
+            return undefined;
         }
 
-        return undefined;
+        if (!this.revision.active) {
+            return localize('inactive', 'Inactive');
+        } else if (this.revision.name === this.containerApp.latestRevisionName) {
+            return localize('latest', 'Latest');
+        } else {
+            return localize('active', 'Active');
+        }
     }
 
     viewProperties: ViewPropertiesModel = {
         data: this.revision,
         label: nonNullProp(this.revision, 'name'),
-    }
+    };
 
     async getChildren(): Promise<TreeElementBase[]> {
         return [new ScaleItem(this.subscription, this.containerApp, this.revision)];
@@ -50,12 +65,12 @@ export class RevisionItem implements RevisionsItemModel {
     getTreeItem(): TreeItem {
         return {
             id: this.id,
-            label: this.revision.name,
+            label: this.revisionsMode === KnownActiveRevisionsMode.Single ? 'Latest' : this.revision.name,
             iconPath: this.iconPath,
             description: this.description,
-            contextValue: createContextValue([`${this.revision.active ? 'active' : 'inactive'}`, 'revision']),
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     private get iconPath(): TreeItemIconPath {

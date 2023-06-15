@@ -220,23 +220,23 @@
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|revisions$/i",
-                    "group": "2@4"
-                },
-                {
-                    "command": "containerApps.activateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|^inactive;revision[^a-z]/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && (viewItem =~ /revisionItem(.*)revisionMode:single/i || viewItem =~ /revisionsItem/i)",
                     "group": "2@1"
                 },
                 {
-                    "command": "containerApps.deactivateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|^active;revision[^a-z]/i",
+                    "command": "containerApps.activateRevision",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:inactive/i",
                     "group": "2@2"
                 },
                 {
-                    "command": "containerApps.restartRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionmode:single|^active;revision[^a-z]/i",
+                    "command": "containerApps.deactivateRevision",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:active/i",
                     "group": "2@3"
+                },
+                {
+                    "command": "containerApps.restartRevision",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
+                    "group": "2@4"
                 },
                 {
                     "command": "containerApps.disableIngress",
