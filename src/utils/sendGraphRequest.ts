@@ -3,12 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AuthenticationProvider, Client, ClientOptions } from "@microsoft/microsoft-graph-client";
-import "isomorphic-fetch"; // Requires importing this library or a fetch polyfill to use the graph client
+import { PipelineResponse, createHttpHeaders } from "@azure/core-rest-pipeline";
+import { AzExtRequestPrepareOptions, sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
+import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { AuthenticationGetSessionOptions, AuthenticationSession, authentication } from "vscode";
 import { localize } from "./localize";
 
-export async function createGraphClient(): Promise<Client> {
+export type GraphRequestOptions = Omit<AzExtRequestPrepareOptions, 'headers'>;
+
+export async function sendGraphRequest(context: IActionContext, requestOptions: GraphRequestOptions): Promise<PipelineResponse> {
     const scopes: string[] = ['https://graph.microsoft.com/.default'];
     const sessionOptions: AuthenticationGetSessionOptions = {
         clearSessionPreference: false,
@@ -20,15 +23,12 @@ export async function createGraphClient(): Promise<Client> {
         throw new Error(localize('notSignedIn', 'You are not signed in to a valid Microsoft Graph account. Please sign in and try again.'));
     }
 
-    const authProvider: AuthenticationProvider = {
-        // AuthenticationProvider expects 'getAccessToken' to return a Promise
-        getAccessToken: (): Promise<string> => {
-            return Promise.resolve(session.accessToken);
-        }
-    };
-    const clientOptions: ClientOptions = {
-        authProvider
+    const options: AzExtRequestPrepareOptions = {
+        ...requestOptions,
+        headers: createHttpHeaders({
+            authorization: `Bearer ${session.accessToken}`
+        })
     };
 
-    return Client.initWithMiddleware(clientOptions);
+    return sendRequestWithTimeout(context, options, 10000, undefined);
 }
