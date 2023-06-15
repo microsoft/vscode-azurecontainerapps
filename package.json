@@ -177,19 +177,29 @@
                 "category": "Azure Container Apps"
             }
         ],
+        "submenus": [
+            {
+                "id": "containerApps.submenus.workspaceActions",
+                "label": "Azure Container Apps",
+                "icon": "resources/azure-containerapps.svg"
+            }
+        ],
         "menus": {
-            "azureWorkspaceDeploy": [
+            "containerApps.submenus.workspaceActions": [
                 {
                     "command": "containerApps.deploy",
-                    "when": "view == azureWorkspace",
-                    "group": "navigation@3"
+                    "group": "1_deploy@1"
+                },
+                {
+                    "command": "containerApps.createContainerApp",
+                    "group": "2_create@1"
                 }
             ],
             "view/title": [
                 {
-                    "submenu": "azureWorkspaceDeploy",
+                    "submenu": "containerApps.submenus.workspaceActions",
                     "when": "view == azureWorkspace",
-                    "group": "navigation@3"
+                    "group": "navigation@4"
                 }
             ],
             "view/item/context": [
@@ -306,13 +316,6 @@
                 }
             ]
         },
-        "submenus": [
-            {
-                "id": "azureWorkspaceDeploy",
-                "icon": "$(cloud-upload)",
-                "label": "Deploy..."
-            }
-        ],
         "configuration": [
             {
                 "title": "Azure Container Apps",
