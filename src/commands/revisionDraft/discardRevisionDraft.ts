@@ -17,7 +17,7 @@ export async function discardRevisionDraft(context: IActionContext, node?: Revis
 
     await ext.state.showDeleting(
         `${containerAppsItem.containerApp.id}/${RevisionDraftItem.idSuffix}`,
-        async () => await ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem)
+        async () => await ext.revisionDraftFileSystem.discardRevisionDraftUsingItem(containerAppsItem)
     );
     ext.state.notifyChildrenChanged(containerAppsItem.containerApp.id);
 }

@@ -47,7 +47,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Create / Update..
-    async createOrEditRevisionDraft(item: RevisionItem | RevisionDraftItem): Promise<void> {
+    async createOrEditRevisionDraftFromItem(item: RevisionItem | RevisionDraftItem): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
 
         if (!this.doesUriExist(uri)) {
@@ -77,7 +77,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Read..
-    parseRevisionDraft<T extends ContainerAppsItem>(item: T): Template {
+    getParsedRevisionDraftUsingItem<T extends ContainerAppsItem>(item: T): Template {
         const uri: URI = this.buildUriFromItem(item);
         if (!this.doesUriExist(uri)) {
             throw new Error(localize('noRevisionDraft', 'Unable to locate a draft for the current revision.'));
@@ -96,7 +96,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return this.doesUriExist(uri);
     }
 
-    getRevisionDraftBaseRevisionName<T extends ContainerAppsItem>(item: T): string | undefined {
+    getBaseRevisionNameUsingItem<T extends ContainerAppsItem>(item: T): string | undefined {
         const uri: Uri = this.buildUriFromItem(item);
         return this.localStorage.get<File>(uri.path)?.baseRevisionName;
     }
@@ -117,7 +117,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Delete..
-    async discardRevisionDraft<T extends ContainerAppsItem>(item: T): Promise<void> {
+    async discardRevisionDraftUsingItem<T extends ContainerAppsItem>(item: T): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.doesUriExist(uri)) {
             return;

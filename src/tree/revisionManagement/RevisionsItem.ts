@@ -40,7 +40,7 @@ export class RevisionsItem implements ContainerAppsItem {
             return revisions.map(revision => new RevisionItem(this.subscription, this.containerApp, revision));
         }))?.reverse() ?? [];
 
-        const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftBaseRevisionName(this);
+        const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getBaseRevisionNameUsingItem(this);
         return draftBaseRevisionName ? [new RevisionDraftItem(this.subscription, this.containerApp, draftBaseRevisionName), ...result] : result;
     }
 

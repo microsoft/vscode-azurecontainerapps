@@ -16,5 +16,5 @@ export async function editRevisionDraft(context: IActionContext, node?: Revision
         throw new Error(localize('noRevisionDraftExists', 'No revision draft exists for container app "{0}".', revisionItem.containerApp.name));
     }
 
-    await ext.revisionDraftFileSystem.createOrEditRevisionDraft(revisionItem);
+    await ext.revisionDraftFileSystem.createOrEditRevisionDraftFromItem(revisionItem);
 }

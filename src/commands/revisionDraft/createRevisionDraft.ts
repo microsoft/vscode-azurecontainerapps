@@ -57,7 +57,7 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
     await ext.state.showCreatingChild(
         parentId,
         localize('creatingDraft', 'Creating draft...'),
-        async () => await ext.revisionDraftFileSystem.createOrEditRevisionDraft(revisionItem)
+        async () => await ext.revisionDraftFileSystem.createOrEditRevisionDraftFromItem(revisionItem)
     );
 }
 
