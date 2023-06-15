@@ -10,7 +10,7 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
-import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
+import { containerAppEnvironmentExperience } from "../../utils/pickItem/pickContainerApp";
 import { DeleteAllContainerAppsStep } from "../deleteContainerApp/DeleteAllContainerAppsStep";
 import { DeleteEnvironmentConfirmationStep } from "./DeleteEnvironmentConfirmationStep";
 import { DeleteManagedEnvironmentStep } from "./DeleteManagedEnvironmentStep";

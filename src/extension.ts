@@ -10,6 +10,7 @@ import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExpe
 import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { registerCommands } from './commands/registerCommands';
+import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 
@@ -31,6 +32,9 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
         registerCommands();
         ext.experimentationService = await createExperimentationService(context);
+
+        ext.revisionDraftFileSystem = new RevisionDraftFileSystem(context.globalState);
+        context.subscriptions.push(vscode.workspace.registerFileSystemProvider(RevisionDraftFileSystem.scheme, ext.revisionDraftFileSystem));
 
         ext.state = new TreeElementStateManager();
         ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');

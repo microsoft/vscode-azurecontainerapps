@@ -7,6 +7,7 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } fr
 import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
@@ -33,7 +34,7 @@ export class RevisionItem implements RevisionsItemModel {
         const values: string[] = [RevisionItem.contextValue];
 
         values.push(this.revision.active ? 'revisionState:active' : 'revisionState:inactive');
-        // values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
+        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? 'revisionMode:single' : 'revisionMode:multiple');
 
         return createContextValue(values);

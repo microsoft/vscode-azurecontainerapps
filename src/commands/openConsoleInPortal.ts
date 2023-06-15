@@ -8,7 +8,7 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { commands } from "vscode";
 import { ContainerAppItem } from "../tree/ContainerAppItem";
 import { createPortalUrl } from "../utils/createPortalUrl";
-import { pickContainerApp } from "../utils/pickContainerApp";
+import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
 
 export async function openConsoleInPortal(context: IActionContext, node?: ContainerAppItem): Promise<void> {
     node ??= await pickContainerApp(context);

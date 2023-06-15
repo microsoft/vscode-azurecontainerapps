@@ -19,6 +19,7 @@ import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsItem } from "./LogsItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
+import { RevisionDraftItem } from "./revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
 
@@ -62,11 +63,19 @@ export class ContainerAppItem implements ContainerAppsItem {
             const children: TreeElementBase[] = [];
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
 
-            if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-                children.push(new RevisionsItem(this.subscription, this.containerApp));
-            } else {
+            if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+                // Draft Item
+                const draftBaseRevisionName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftBaseRevisionName(this);
+                if (draftBaseRevisionName) {
+                    children.push(new RevisionDraftItem(this.subscription, this.containerApp, draftBaseRevisionName));
+                }
+
+                // Revision Item
                 const revisionData = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
                 children.push(new RevisionItem(this.subscription, this.containerApp, revisionData));
+            } else {
+                // Revisions Item
+                children.push(new RevisionsItem(this.subscription, this.containerApp));
             }
 
             children.push(new ConfigurationItem(this.subscription, this.containerApp));
@@ -136,6 +145,7 @@ export class ContainerAppItem implements ContainerAppsItem {
         }
 
         await ext.state.showDeleting(this.containerApp.id, async () => {
+            await ext.revisionDraftFileSystem.discardRevisionDraft(this);
             await wizard.execute();
         });
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);

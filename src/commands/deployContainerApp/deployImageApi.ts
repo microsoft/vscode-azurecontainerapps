@@ -6,7 +6,7 @@
 import { callWithMaskHandling, createSubscriptionContext, ISubscriptionActionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
 import { acrDomain, ImageSource } from "../../constants";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
 import { deployContainerApp } from "./deployContainerApp";
 

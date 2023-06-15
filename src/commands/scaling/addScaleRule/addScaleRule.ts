@@ -12,7 +12,7 @@ import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppI
 import { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
 import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";

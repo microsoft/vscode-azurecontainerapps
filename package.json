@@ -112,6 +112,24 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.createRevisionDraft",
+                "title": "%containerApps.createRevisionDraft%",
+                "category": "Azure Container Apps",
+                "icon": "$(add)"
+            },
+            {
+                "command": "containerApps.editRevisionDraft",
+                "title": "%containerApps.editRevisionDraft%",
+                "category": "Azure Container Apps",
+                "icon": "$(pencil)"
+            },
+            {
+                "command": "containerApps.discardRevisionDraft",
+                "title": "%containerApps.discardRevisionDraft%",
+                "category": "Azure Container Apps",
+                "icon": "$(trash)"
+            },
+            {
                 "command": "containerApps.activateRevision",
                 "title": "%containerApps.activateRevision%",
                 "category": "Azure Container Apps"
@@ -193,6 +211,36 @@
                 }
             ],
             "view/item/context": [
+                {
+                    "command": "containerApps.createRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && (viewItem =~ /revisionDraft:false(.*)revisionItem(.*)revisionMode:single/i || viewItem =~ /revisionDraft:false(.*)revisionsItem/i)",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.createRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && (viewItem =~ /revisionDraft:false(.*)revisionItem(.*)revisionMode:single/i || viewItem =~ /revisionDraft:false(.*)revisionsItem/i)",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.editRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.editRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.discardRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "containerApps.discardRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "1@2"
+                },
                 {
                     "command": "containerApps.createManagedEnvironment",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /containerAppsEnvironment/i",

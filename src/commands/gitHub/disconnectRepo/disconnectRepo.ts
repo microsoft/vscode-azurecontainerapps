@@ -9,7 +9,7 @@ import { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider
 import { ActionsTreeItem } from "../../../tree/gitHub/ActionsTreeItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
-import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { isGitHubConnected } from "../connectToGitHub/isGitHubConnected";
 import { GitHubRepositoryDisconnectStep } from "./GitHubRepositoryDisconnectStep";
 import { IDisconnectRepoContext } from "./IDisconnectRepoContext";
