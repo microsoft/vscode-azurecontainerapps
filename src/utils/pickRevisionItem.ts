@@ -71,7 +71,7 @@ async function selectWithoutPrompt(startingNode: ContainerAppItem | RevisionsIte
     return currentNode;
 }
 
-export async function revisionExperience(context: IActionContext, tdp: vscode.TreeDataProvider<ResourceGroupsItem>, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
+export async function revisionItemExperience(context: IActionContext, tdp: vscode.TreeDataProvider<ResourceGroupsItem>, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
     startingNode ??= await pickContainerApp(context);
 
     if (options?.selectByRevisionName) {
@@ -91,6 +91,6 @@ export async function revisionExperience(context: IActionContext, tdp: vscode.Tr
     }, startingNode);
 }
 
-export async function pickRevision(context: IActionContext, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
-    return await revisionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, startingNode, options);
+export async function pickRevisionItem(context: IActionContext, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
+    return await revisionItemExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, startingNode, options);
 }

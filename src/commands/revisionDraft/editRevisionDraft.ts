@@ -7,10 +7,10 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../utils/localize";
-import { pickRevision } from "../../utils/pickRevision";
+import { pickRevisionItem } from "../../utils/pickRevisionItem";
 
 export async function editRevisionDraft(context: IActionContext, node?: RevisionDraftItem): Promise<void> {
-    const revisionItem = node ?? await pickRevision(context);
+    const revisionItem = node ?? await pickRevisionItem(context);
     if (!ext.revisionDraftFileSystem.hasRevisionDraft(revisionItem)) {
         // Todo: Prompt the user to create a draft if one doesn't exist
         throw new Error(localize('noRevisionDraftExists', 'No revision draft exists for container app "{0}".', revisionItem.containerApp.name));

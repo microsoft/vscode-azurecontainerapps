@@ -15,7 +15,7 @@ import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
-import { pickRevision } from "../../utils/pickRevision";
+import { pickRevisionItem } from "../../utils/pickRevisionItem";
 import { IContainerAppContext } from "../IContainerAppContext";
 
 export async function createRevisionDraft(context: IActionContext, node?: RevisionItem | RevisionsItem): Promise<void> {
@@ -38,11 +38,11 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
         };
 
         /**
-         * Overwrite the typical 'pickRevision' behavior with custom behavior.
-         * Leverage the `selectRevisionName` option to obtain the RevisionItem without re-prompting the user
+         * Overwrite the typical pick prompt behavior with custom behavior.
+         * Leverage the `selectByRevisionName` option to obtain the RevisionItem without re-prompting the user
          */
         const revisionName = await promptForRevisionName(containerAppContext);
-        revisionItem = await pickRevision(context, containerAppsItem, {
+        revisionItem = await pickRevisionItem(context, containerAppsItem, {
             selectByRevisionName: revisionName
         });
     }
