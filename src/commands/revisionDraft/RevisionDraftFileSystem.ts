@@ -28,7 +28,7 @@ class File implements FileStat {
 }
 
 /**
- * File system provider that allows for reading/writing/deploying container app revision drafts
+ * File system provider for managing container app revision drafts
  * Stores drafts in VS Code's global state (Memento) storage
  *
  * Enforces a policy of one revision draft per container app
