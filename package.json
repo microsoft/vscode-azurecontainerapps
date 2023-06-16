@@ -346,8 +346,8 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run webpack-prod",
-        "build": "tsc",
+        "vscode:prepublish": "npm run cleanReadme",
+        "build": "tsc && gulp webpack-prod",
         "cleanReadme": "gulp cleanReadme",
         "compile": "tsc -watch",
         "package": "vsce package --githubBranch main --no-dependencies",
@@ -355,8 +355,7 @@
         "lint-fix": "eslint --ext .ts . --fix",
         "pretest": "npm run webpack-prod",
         "test": "node ./out/test/runTest.js",
-        "webpack": "npm run build && gulp webpack-dev",
-        "webpack-prod": "npm run build && gulp webpack-prod",
+        "webpack": "tsc && gulp webpack-dev",
         "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
         "prepare": "husky install"
     },
