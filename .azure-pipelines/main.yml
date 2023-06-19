@@ -14,8 +14,8 @@ pr: none # Disable PR trigger
 
 # Scheduled nightly build
 schedules:
-  - cron: "30 9 * * *"
-    displayName: Nightly at 2:30 PT
+  - cron: "30 7 * * *"
+    displayName: Nightly at 12:30 PT
     always: true # Run even when there are no code changes
     branches:
       include:
