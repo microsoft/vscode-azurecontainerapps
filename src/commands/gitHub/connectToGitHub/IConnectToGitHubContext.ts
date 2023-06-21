@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Registry } from '@azure/arm-containerregistry';
-import type { ExecuteActivityContext, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { IGitHubContext } from '../../../gitHub/IGitHubContext';
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { IContainerAppContext } from '../../IContainerAppContext';
 
-export interface IConnectToGitHubContext extends ISubscriptionActionContext, IGitHubContext, ExecuteActivityContext {
-    targetContainer: ContainerAppModel;
-    subscription: AzureSubscription;
+export interface IConnectToGitHubContext extends IContainerAppContext, IGitHubContext, ExecuteActivityContext {
+    // Make containerApp _required_
+    containerApp: ContainerAppModel;
 
     // Dockerfile
     dockerfilePath?: string;

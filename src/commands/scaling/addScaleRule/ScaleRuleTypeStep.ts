@@ -7,28 +7,28 @@ import { AzureWizardPromptStep, IWizardOptions } from '@microsoft/vscode-azext-u
 import { QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../constants';
 import { localize } from '../../../utils/localize';
+import { IAddScaleRuleContext } from './IAddScaleRuleContext';
 import { HttpConcurrentRequestsStep } from './http/HttpConcurrentRequestsStep';
-import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
 import { QueueAuthSecretStep } from './queue/QueueAuthSecretStep';
 import { QueueAuthTriggerStep } from './queue/QueueAuthTriggerStep';
 import { QueueLengthStep } from './queue/QueueLengthStep';
 import { QueueNameStep } from './queue/QueueNameStep';
 
-export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
+    public async prompt(context: IAddScaleRuleContext): Promise<void> {
         const placeHolder: string = localize('chooseScaleType', 'Choose scale type');
         const qpItems: QuickPickItem[] = Object.values(ScaleRuleTypes).map(type => { return { label: type } });
         context.ruleType = (await context.ui.showQuickPick(qpItems, { placeHolder })).label;
     }
 
-    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+    public shouldPrompt(context: IAddScaleRuleContext): boolean {
         return context.ruleType === undefined;
     }
 
-    public async getSubWizard(context: IAddScaleRuleWizardContext): Promise<IWizardOptions<IAddScaleRuleWizardContext>> {
-        const promptSteps: AzureWizardPromptStep<IAddScaleRuleWizardContext>[] = [];
+    public async getSubWizard(context: IAddScaleRuleContext): Promise<IWizardOptions<IAddScaleRuleContext>> {
+        const promptSteps: AzureWizardPromptStep<IAddScaleRuleContext>[] = [];
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
                 promptSteps.push(new HttpConcurrentRequestsStep());

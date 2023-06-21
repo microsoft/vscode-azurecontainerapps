@@ -8,6 +8,6 @@ import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { getContainerAppSourceControl } from "./getContainerAppSourceControl";
 
-export async function isGitHubConnected(context: IActionContext & { subscription: AzureSubscription, targetContainer: ContainerAppModel }): Promise<boolean> {
-    return !!await getContainerAppSourceControl(context, context.subscription, context.targetContainer);
+export async function isGitHubConnected(context: IActionContext & { subscription: AzureSubscription, containerApp: ContainerAppModel }): Promise<boolean> {
+    return !!await getContainerAppSourceControl(context, context.subscription, context.containerApp);
 }

@@ -19,8 +19,8 @@ export class GitHubRepositoryConnectStep extends AzureWizardExecuteStep<IConnect
         const client: ContainerAppsAPIClient = await createContainerAppsClient(context, context.subscription);
         const { username, password } = await listCredentialsFromRegistry(context, nonNullProp(context, 'registry'));
 
-        const rgName: string = context.targetContainer.resourceGroup;
-        const caName: string = context.targetContainer.name;
+        const rgName: string = context.containerApp.resourceGroup;
+        const caName: string = context.containerApp.name;
 
         const scName: string = 'current';
         const scEnvelope: SourceControl = {
@@ -51,10 +51,10 @@ export class GitHubRepositoryConnectStep extends AzureWizardExecuteStep<IConnect
         progress.report({ message: connecting });
 
         await client.containerAppsSourceControls.beginCreateOrUpdateAndWait(rgName, caName, scName, scEnvelope, { requestOptions });
-        ext.state.notifyChildrenChanged(context.targetContainer.id);
+        ext.state.notifyChildrenChanged(context.containerApp.id);
 
         const gitHubRepository: string = `${context.gitHubOrg || context.gitHubRepositoryOwner}/${context.gitHubRepository}`;
-        const connected: string = localize('connectedRepository', 'Connected repository "{0}" to container app "{1}".', gitHubRepository, context.targetContainer.name);
+        const connected: string = localize('connectedRepository', 'Connected repository "{0}" to container app "{1}".', gitHubRepository, context.containerApp.name);
         ext.outputChannel.appendLog(connected);
     }
 

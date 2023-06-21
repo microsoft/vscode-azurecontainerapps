@@ -27,7 +27,7 @@ export async function disconnectRepo(context: ITreeItemPickerContext & Partial<I
         ...createSubscriptionContext(subscription),
         ...await createActivityContext(),
         subscription,
-        targetContainer: containerApp,
+        containerApp,
         gitHubAccessToken: await getGitHubAccessToken()
     };
 

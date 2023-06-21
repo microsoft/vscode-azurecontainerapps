@@ -8,10 +8,10 @@ import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-util
 import { QuickPickItem } from 'vscode';
 import { getContainerEnvelopeWithSecrets } from '../../../../tree/ContainerAppItem';
 import { localize } from '../../../../utils/localize';
-import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
+import { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
-export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
-    public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
+export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
+    public async prompt(context: IAddScaleRuleContext): Promise<void> {
         const placeHolder: string = localize('chooseSecretRef', 'Choose a secret reference');
         const containerAppWithSecrets = await getContainerEnvelopeWithSecrets(context, context.subscription, context.containerApp);
         const secrets: Secret[] | undefined = containerAppWithSecrets.configuration.secrets;
@@ -25,7 +25,7 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWiza
         context.secretRef = (await context.ui.showQuickPick(qpItems, { placeHolder })).label;
     }
 
-    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+    public shouldPrompt(context: IAddScaleRuleContext): boolean {
         return context.secretRef === undefined;
     }
 }

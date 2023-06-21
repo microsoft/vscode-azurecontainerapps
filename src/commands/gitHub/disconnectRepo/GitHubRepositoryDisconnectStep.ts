@@ -18,12 +18,14 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
 
     public async execute(context: IDisconnectRepoContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsClient(context, context.subscription);
-        const sourceControl: SourceControl | undefined = await getContainerAppSourceControl(context, context.subscription, context.targetContainer);
+        const sourceControl: SourceControl | undefined = await getContainerAppSourceControl(context, context.subscription, context.containerApp);
+
         const { ownerOrOrganization: owner, repositoryName: repo } = gitHubUrlParse(sourceControl?.repoUrl);
 
-        const rgName: string = context.targetContainer.resourceGroup;
-        const caName: string = context.targetContainer.name;
+        const rgName: string = context.containerApp.resourceGroup;
+        const caName: string = context.containerApp.name;
         const scName: string = 'current';
+
         const requestOptions = {
             customHeaders: {
                 'x-ms-github-auxiliary': nonNullProp(context, 'gitHubAccessToken')
@@ -34,9 +36,9 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
         progress.report({ message: disconnecting });
 
         await client.containerAppsSourceControls.beginDeleteAndWait(rgName, caName, scName, { requestOptions });
-        ext.state.notifyChildrenChanged(context.targetContainer.id);
+        ext.state.notifyChildrenChanged(context.containerApp.id);
 
-        const disconnected: string = localize('disconnectedRepository', 'Disconnected repository "{0}" from container app "{1}".', `${owner}/${repo}`, context.targetContainer.name);
+        const disconnected: string = localize('disconnectedRepository', 'Disconnected repository "{0}" from container app "{1}".', `${owner}/${repo}`, context.containerApp.name);
         ext.outputChannel.appendLog(disconnected);
     }
 

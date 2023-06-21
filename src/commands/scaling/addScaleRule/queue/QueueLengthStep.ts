@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../utils/localize';
-import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
+import { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 import { PositiveRealNumberBaseStep } from '../PositiveRealNumberBaseStep';
 
 export class QueueLengthStep extends PositiveRealNumberBaseStep {
-    public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
+    public async prompt(context: IAddScaleRuleContext): Promise<void> {
         context.queueLength = Number((await context.ui.showInputBox({
             prompt: localize('queueLengthPrompt', 'Enter a queue length.'),
             validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
         })).trim());
     }
 
-    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+    public shouldPrompt(context: IAddScaleRuleContext): boolean {
         return context.queueLength === undefined;
     }
 }

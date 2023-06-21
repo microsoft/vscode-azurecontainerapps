@@ -5,11 +5,11 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
+import { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
-export abstract class PositiveRealNumberBaseStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
-    public abstract prompt(context: IAddScaleRuleWizardContext): Promise<void>;
-    public abstract shouldPrompt(context: IAddScaleRuleWizardContext): boolean;
+export abstract class PositiveRealNumberBaseStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
+    public abstract prompt(context: IAddScaleRuleContext): Promise<void>;
+    public abstract shouldPrompt(context: IAddScaleRuleContext): boolean;
 
     public validateInput(input: string | undefined): string | undefined {
         input = input ? input.trim() : '';

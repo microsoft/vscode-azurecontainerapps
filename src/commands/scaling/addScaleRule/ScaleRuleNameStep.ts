@@ -6,12 +6,12 @@
 import { ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../utils/localize';
-import { IAddScaleRuleWizardContext } from './IAddScaleRuleWizardContext';
+import { IAddScaleRuleContext } from './IAddScaleRuleContext';
 
-export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
+export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
+    public async prompt(context: IAddScaleRuleContext): Promise<void> {
         context.ruleName = (await context.ui.showInputBox({
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
             validateInput: (name: string | undefined): string | undefined => {
@@ -20,7 +20,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleWizard
         })).trim();
     }
 
-    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+    public shouldPrompt(context: IAddScaleRuleContext): boolean {
         return context.ruleName === undefined;
     }
 }

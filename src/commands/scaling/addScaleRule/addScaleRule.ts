@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, IActionContext, IAzureQuickPickItem, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, IActionContext, IAzureQuickPickItem, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
@@ -14,7 +14,7 @@ import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
-import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
+import { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
 import { ScaleRuleTypeStep } from "./ScaleRuleTypeStep";
 
@@ -24,15 +24,16 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     const { subscription, containerApp, revision } = node ?? await getContainerAppAndRevision(context);
 
     const scale = nonNullValue(revision?.template?.scale);
-    const wizardContext: IAddScaleRuleWizardContext = {
+    const wizardContext: IAddScaleRuleContext = {
         ...context,
+        ...createSubscriptionContext(subscription),
         scale,
         subscription,
         containerApp,
         scaleRules: scale.rules ?? [],
     };
 
-    const wizard: AzureWizard<IAddScaleRuleWizardContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IAddScaleRuleContext> = new AzureWizard(wizardContext, {
         title: addScaleRuleTitle,
         promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeStep()],
         executeSteps: [new AddScaleRuleStep()],

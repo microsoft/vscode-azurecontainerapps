@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Scale, ScaleRule } from "@azure/arm-appcontainers";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { IContainerAppContext } from "../../IContainerAppContext";
 
-export interface IAddScaleRuleWizardContext extends IActionContext {
-    subscription: AzureSubscription;
+export interface IAddScaleRuleContext extends IContainerAppContext {
+    // Make containerApp _required_
     containerApp: ContainerAppModel;
+
     scale: Scale;
     scaleRules: ScaleRule[];
 
