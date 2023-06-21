@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ScaleRule } from '@azure/arm-appcontainers';
+import type { ContainerApp, ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../utils/localize';
-import { IAddScaleRuleContext } from '../IAddScaleRuleContext';
+import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
 export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     containerApp: ContainerApp | undefined;

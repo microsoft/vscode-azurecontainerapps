@@ -6,15 +6,15 @@
 import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, IActionContext, IAzureQuickPickItem, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
+import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
-import { IAddScaleRuleContext } from "./IAddScaleRuleContext";
+import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
 import { ScaleRuleTypeStep } from "./ScaleRuleTypeStep";
 

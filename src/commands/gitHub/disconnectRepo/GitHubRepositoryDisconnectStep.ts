@@ -5,13 +5,13 @@
 
 import type { ContainerAppsAPIClient, SourceControl } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { gitHubUrlParse } from "../../../gitHub/gitHubUrlParse";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { getContainerAppSourceControl } from "../connectToGitHub/getContainerAppSourceControl";
-import { IDisconnectRepoContext } from "./IDisconnectRepoContext";
+import type { IDisconnectRepoContext } from "./IDisconnectRepoContext";
 
 export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisconnectRepoContext> {
     public priority: number = 300;

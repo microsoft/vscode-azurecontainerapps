@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRule, Template } from "@azure/arm-appcontainers";
+import type { ScaleRule, Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { Progress, window } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../deployContainerApp/updateContainerApp";
-import { IAddScaleRuleContext } from "./IAddScaleRuleContext";
+import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
 export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleContext> {
     public priority: number = 100;

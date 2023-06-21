@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../utils/localize';
-import { IAddScaleRuleContext } from '../IAddScaleRuleContext';
+import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 import { PositiveRealNumberBaseStep } from '../PositiveRealNumberBaseStep';
 
 export class QueueLengthStep extends PositiveRealNumberBaseStep {

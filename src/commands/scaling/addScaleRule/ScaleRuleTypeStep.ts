@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import { QuickPickItem } from 'vscode';
+import type { QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../constants';
 import { localize } from '../../../utils/localize';
-import { IAddScaleRuleContext } from './IAddScaleRuleContext';
+import type { IAddScaleRuleContext } from './IAddScaleRuleContext';
 import { HttpConcurrentRequestsStep } from './http/HttpConcurrentRequestsStep';
 import { QueueAuthSecretStep } from './queue/QueueAuthSecretStep';
 import { QueueAuthTriggerStep } from './queue/QueueAuthTriggerStep';

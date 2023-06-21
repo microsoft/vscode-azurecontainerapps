@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Secret } from '@azure/arm-appcontainers';
+import type { Secret } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { QuickPickItem } from 'vscode';
+import type { QuickPickItem } from 'vscode';
 import { getContainerEnvelopeWithSecrets } from '../../../../tree/ContainerAppItem';
 import { localize } from '../../../../utils/localize';
-import { IAddScaleRuleContext } from '../IAddScaleRuleContext';
+import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
 export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public async prompt(context: IAddScaleRuleContext): Promise<void> {

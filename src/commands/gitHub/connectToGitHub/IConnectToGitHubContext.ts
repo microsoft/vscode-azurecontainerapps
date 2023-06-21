@@ -7,7 +7,7 @@ import type { Registry } from '@azure/arm-containerregistry';
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { IGitHubContext } from '../../../gitHub/IGitHubContext';
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { IContainerAppContext } from '../../IContainerAppContext';
+import type { IContainerAppContext } from '../../IContainerAppContext';
 
 export interface IConnectToGitHubContext extends IContainerAppContext, IGitHubContext, ExecuteActivityContext {
     // Make containerApp _required_
