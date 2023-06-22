@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Secret } from '@azure/arm-appcontainers';
+import type { Secret } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { QuickPickItem } from 'vscode';
+import type { QuickPickItem } from 'vscode';
 import { getContainerEnvelopeWithSecrets } from '../../../../tree/ContainerAppItem';
 import { localize } from '../../../../utils/localize';
-import { IAddScaleRuleWizardContext } from '../IAddScaleRuleWizardContext';
+import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
-export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWizardContext> {
-    public async prompt(context: IAddScaleRuleWizardContext): Promise<void> {
+export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
+    public async prompt(context: IAddScaleRuleContext): Promise<void> {
         const placeHolder: string = localize('chooseSecretRef', 'Choose a secret reference');
         const containerAppWithSecrets = await getContainerEnvelopeWithSecrets(context, context.subscription, context.containerApp);
         const secrets: Secret[] | undefined = containerAppWithSecrets.configuration.secrets;
@@ -25,7 +25,7 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleWiza
         context.secretRef = (await context.ui.showQuickPick(qpItems, { placeHolder })).label;
     }
 
-    public shouldPrompt(context: IAddScaleRuleWizardContext): boolean {
+    public shouldPrompt(context: IAddScaleRuleContext): boolean {
         return context.secretRef === undefined;
     }
 }

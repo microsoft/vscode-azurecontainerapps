@@ -21,7 +21,7 @@ import { ServicePrincipalIdInputStep } from "./ServicePrincipalIdInputStep";
 import { ServicePrincipalSecretInputStep } from "./ServicePrincipalSecretInputStep";
 import { isGitHubConnected } from "./isGitHubConnected";
 
-export async function connectToGitHub(context: ITreeItemPickerContext & Partial<IConnectToGitHubContext>, item?: Pick<ContainerAppItem, 'containerApp' | 'subscription' >): Promise<void> {
+export async function connectToGitHub(context: ITreeItemPickerContext & Partial<IConnectToGitHubContext>, item?: Pick<ContainerAppItem, 'containerApp' | 'subscription'>): Promise<void> {
     if (!item) {
         context.suppressCreatePick = true;
         item = await pickContainerApp(context);
@@ -34,7 +34,7 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
         ...createSubscriptionContext(subscription),
         ...await createActivityContext(),
         subscription,
-        targetContainer: containerApp,
+        containerApp,
         gitHubAccessToken: await getGitHubAccessToken()
     };
 

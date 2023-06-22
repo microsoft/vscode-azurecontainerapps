@@ -3,19 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRule, Template } from "@azure/arm-appcontainers";
+import type { ScaleRule, Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { Progress, window } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../deployContainerApp/updateContainerApp";
-import { IAddScaleRuleWizardContext } from "./IAddScaleRuleWizardContext";
+import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
-export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizardContext> {
+export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleContext> {
     public priority: number = 100;
 
-    public async execute(context: IAddScaleRuleWizardContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IAddScaleRuleContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const adding = localize('addingScaleRule', 'Adding {0} rule "{1}" to "{2}"...', context.ruleType, context.ruleName, context.containerApp.name);
         const added = localize('addedScaleRule', 'Successfully added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
 
@@ -33,11 +33,11 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         ext.outputChannel.appendLog(added);
     }
 
-    public shouldExecute(context: IAddScaleRuleWizardContext): boolean {
+    public shouldExecute(context: IAddScaleRuleContext): boolean {
         return context.ruleName !== undefined && context.ruleType !== undefined;
     }
 
-    private buildRule(context: IAddScaleRuleWizardContext): ScaleRule {
+    private buildRule(context: IAddScaleRuleContext): ScaleRule {
         const scaleRule: ScaleRule = { name: context.ruleName };
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
@@ -59,7 +59,7 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleWizard
         return scaleRule;
     }
 
-    private integrateRule(context: IAddScaleRuleWizardContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
+    private integrateRule(context: IAddScaleRuleContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
         switch (context.ruleType) {
             case ScaleRuleTypes.HTTP:
                 // Portal only allows one HTTP rule per revision

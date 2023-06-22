@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { Replica, ReplicaContainer, Revision } from "@azure/arm-appcontainers";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import type { ContainerAppModel } from "../../tree/ContainerAppItem";
-import { ILogStream } from "./logStreamRequest";
+import type { IContainerAppContext } from "../IContainerAppContext";
+import type { ILogStream } from "./logStreamRequest";
 
-export interface IStreamLogsContext extends IActionContext {
+export interface IStreamLogsContext extends IContainerAppContext {
+    // Make containerApp _required_
     containerApp: ContainerAppModel;
-    subscription: AzureSubscription;
+
     resourceGroupName: string;
 
     revision?: Revision;
