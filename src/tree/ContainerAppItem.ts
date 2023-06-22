@@ -31,7 +31,7 @@ export interface ContainerAppModel extends ContainerApp {
 }
 
 export class ContainerAppItem implements ContainerAppsItem {
-    public static contextValue: string = 'containerApp';
+    public static contextValue: string = 'containerAppItem';
     public static contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
 
     id: string;
@@ -82,7 +82,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             id: this.id,
             label: nonNullProp(this.containerApp, 'name'),
             iconPath: treeUtils.getIconPath('azure-containerapps'),
-            contextValue: `containerApp|revisionmode:${this.containerApp.revisionsMode}`,
+            contextValue: ContainerAppItem.contextValue,
             description: this.containerApp.provisioningState === 'Succeeded' ? undefined : this.containerApp.provisioningState,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }

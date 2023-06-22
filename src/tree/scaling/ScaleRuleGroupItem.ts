@@ -16,6 +16,8 @@ export interface ScaleRuleGroupItem extends RevisionsItemModel {
     scaleRules: ScaleRule[];
 }
 
+export const scaleRuleGroupItemContextValue: string = 'scaleRuleGroupItem';
+
 export function createScaleRuleGroupItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): ScaleRuleGroupItem {
     const scaleRules = nonNullValueAndProp(revision.template, 'scale').rules ?? [];
     const parentResource = revision.name === containerApp.latestRevisionName ? containerApp : revision;
@@ -35,7 +37,7 @@ export function createScaleRuleGroupItem(subscription: AzureSubscription, contai
             id,
             label: localize('scaleRules', 'Scale Rules'),
             iconPath: new ThemeIcon('symbol-constant'),
-            contextValue: 'scaleRules',
+            contextValue: scaleRuleGroupItemContextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }),
         getChildren: async () => {

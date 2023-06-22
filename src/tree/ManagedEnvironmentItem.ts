@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient, ManagedEnvironment, Resource } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { callWithTelemetryAndErrorHandling, createSubscriptionContext, IActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureResource, AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
@@ -16,8 +16,9 @@ import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataPro
 type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 
 export class ManagedEnvironmentItem implements TreeElementBase {
+    static contextValue: string = 'managedEnvironmentItem';
+    static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentItem.contextValue);
 
-    public static contextValue: string = 'containerEnvironment';
     id: string;
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
@@ -25,7 +26,6 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<ContainerAppsItem[]> {
-
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const containerApps = await ContainerAppItem.List(context, this.subscription, this.id);
             return containerApps.map(ca => new ContainerAppItem(this.subscription, ca));

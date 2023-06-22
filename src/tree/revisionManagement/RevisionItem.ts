@@ -17,6 +17,11 @@ export interface RevisionsItemModel extends ContainerAppsItem {
     revision: Revision;
 }
 
+const revisionStateActiveContextValue: string = 'revisionState:active';
+const revisionStateInactiveContextValue: string = 'revisionState:inactive';
+const revisionModeSingleContextValue: string = 'revisionMode:single';
+const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
+
 export class RevisionItem implements RevisionsItemModel {
     static contextValue: string = 'revisionItem';
     static contextValueRegExp: RegExp = new RegExp(RevisionItem.contextValue);
@@ -32,9 +37,9 @@ export class RevisionItem implements RevisionsItemModel {
     get contextValue(): string {
         const values: string[] = [RevisionItem.contextValue];
 
-        values.push(this.revision.active ? 'revisionState:active' : 'revisionState:inactive');
+        values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
         // values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
-        values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? 'revisionMode:single' : 'revisionMode:multiple');
+        values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
 
         return createContextValue(values);
     }
