@@ -16,6 +16,9 @@ import { IngressDisabledItem, IngressEnabledItem } from "./IngressItem";
 const configuration: string = localize('configuration', 'Configuration');
 
 export class ConfigurationItem implements ContainerAppsItem {
+    static readonly contextValue: string = 'configurationItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ConfigurationItem.contextValue);
+
     id: string;
 
     // this is called "Settings" in the Portal
@@ -45,7 +48,7 @@ export class ConfigurationItem implements ContainerAppsItem {
         return {
             label: localize('configurations', 'Configurations'),
             iconPath: new ThemeIcon('gear'),
-            contextValue: 'configurations',
+            contextValue: ConfigurationItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         }
     }

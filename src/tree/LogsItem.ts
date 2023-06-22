@@ -11,14 +11,21 @@ import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
-export class LogsItem implements TreeElementBase {
+export const logStreamItemContextValue: string = 'logStreamItem';
+export const logsItemContextValue: string = 'logsItem';
+
+export class LogsGroupItem implements TreeElementBase {
+    static readonly contextValue: string = 'logsGroupItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(LogsGroupItem.contextValue);
+
     constructor(private readonly subscription: AzureSubscription, private readonly containerApp: ContainerApp) { }
+
     id: string = `${this.containerApp.id}/Logs`;
 
     getTreeItem(): TreeItem {
         return {
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-            contextValue: 'logs',
+            contextValue: LogsGroupItem.contextValue,
             iconPath: new ThemeIcon('book'),
             id: this.id,
             label: localize('logs', 'Logs'),
@@ -30,7 +37,7 @@ export class LogsItem implements TreeElementBase {
         const startStreamingLogs = 'containerApps.startStreamingLogs';
         return [
             createGenericElement({
-                contextValue: 'startStreamingLogs',
+                contextValue: logStreamItemContextValue,
                 commandId: startStreamingLogs,
                 iconPath: new ThemeIcon('play'),
                 id: `${this.id}/logstream`,
@@ -41,7 +48,7 @@ export class LogsItem implements TreeElementBase {
                 }]
             }),
             createGenericElement({
-                contextValue: 'openLogs',
+                contextValue: logsItemContextValue,
                 commandId: openInPortal,
                 iconPath: new ThemeIcon('link-external'),
                 id: `${this.containerApp.id}/logs`,

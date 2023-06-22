@@ -17,7 +17,7 @@ import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
-import { LogsItem } from "./LogsItem";
+import { LogsGroupItem } from "./LogsItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
@@ -70,7 +70,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             }
 
             children.push(new ConfigurationItem(this.subscription, this.containerApp));
-            children.push(new LogsItem(this.subscription, this.containerApp));
+            children.push(new LogsGroupItem(this.subscription, this.containerApp));
             return children;
         });
 
