@@ -15,8 +15,8 @@ import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataPr
 
 const label: string = localize('ingress', 'Ingress');
 
-export const targetPortItemContextValue: string = 'targetPortItem';
-export const visibilityItemContextValue: string = 'visibilityItem';
+const targetPortItemContextValue: string = 'targetPortItem';
+const visibilityItemContextValue: string = 'visibilityItem';
 
 export class IngressEnabledItem implements ContainerAppsItem {
     static readonly contextValue: string = 'ingressEnabledItem';

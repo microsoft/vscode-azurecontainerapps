@@ -13,7 +13,7 @@ import { ContainerAppModel } from "../ContainerAppItem";
 import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
-export const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
+const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
 
 export class ScaleItem implements ContainerAppsItem {
     static readonly contextValue: string = 'scaleItem';

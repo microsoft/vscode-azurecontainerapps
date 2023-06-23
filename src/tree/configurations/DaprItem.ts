@@ -12,10 +12,10 @@ import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
 import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
 
-export const daprDisabledItemContextValue: string = 'daprDisabledItem';
-export const daprAppIdItemContextValue: string = 'daprAppIdItem';
-export const daprAppPortItemContextValue: string = 'daprAppPortItem';
-export const daprAppProtocolItemContextValue: string = 'daprAppProtocolItem';
+const daprDisabledItemContextValue: string = 'daprDisabledItem';
+const daprAppIdItemContextValue: string = 'daprAppIdItem';
+const daprAppPortItemContextValue: string = 'daprAppPortItem';
+const daprAppProtocolItemContextValue: string = 'daprAppProtocolItem';
 
 export class DaprEnabledItem implements TreeElementBase {
     static readonly contextValue: string = 'daprEnabledItem';

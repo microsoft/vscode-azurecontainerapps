@@ -15,7 +15,7 @@ export interface ScaleRuleItem extends ContainerAppsItem {
     scaleRule: ScaleRule;
 }
 
-export const scaleRuleItemContextValue: string = 'scaleRuleItem';
+const scaleRuleItemContextValue: string = 'scaleRuleItem';
 
 export function createScaleRuleItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, scaleRule: ScaleRule): ScaleRuleItem {
     const parentResource = revision.name === containerApp.latestRevisionName ? containerApp : revision;

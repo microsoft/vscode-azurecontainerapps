@@ -11,8 +11,8 @@ import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
-export const logStreamItemContextValue: string = 'logStreamItem';
-export const logsItemContextValue: string = 'logsItem';
+const logStreamItemContextValue: string = 'logStreamItem';
+const logsItemContextValue: string = 'logsItem';
 
 export class LogsGroupItem implements TreeElementBase {
     static readonly contextValue: string = 'logsGroupItem';
