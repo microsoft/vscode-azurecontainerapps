@@ -16,8 +16,8 @@ import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 export const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
 
 export class ScaleItem implements ContainerAppsItem {
-    static contextValue: string = 'scaleItem';
-    static contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
+    static readonly contextValue: string = 'scaleItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
 
     constructor(
         public readonly subscription: AzureSubscription,

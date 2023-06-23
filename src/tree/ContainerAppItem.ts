@@ -31,8 +31,8 @@ export interface ContainerAppModel extends ContainerApp {
 }
 
 export class ContainerAppItem implements ContainerAppsItem {
-    public static contextValue: string = 'containerAppItem';
-    public static contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
+    static readonly contextValue: string = 'containerAppItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
 
     id: string;
 

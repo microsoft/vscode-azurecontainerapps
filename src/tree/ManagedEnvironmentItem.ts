@@ -16,8 +16,8 @@ import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataPro
 type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 
 export class ManagedEnvironmentItem implements TreeElementBase {
-    static contextValue: string = 'managedEnvironmentItem';
-    static contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentItem.contextValue);
+    static readonly contextValue: string = 'managedEnvironmentItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentItem.contextValue);
 
     id: string;
 

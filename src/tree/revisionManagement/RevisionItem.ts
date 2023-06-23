@@ -23,8 +23,8 @@ const revisionModeSingleContextValue: string = 'revisionMode:single';
 const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
 export class RevisionItem implements RevisionsItemModel {
-    static contextValue: string = 'revisionItem';
-    static contextValueRegExp: RegExp = new RegExp(RevisionItem.contextValue);
+    static readonly contextValue: string = 'revisionItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(RevisionItem.contextValue);
 
     id: string;
     revisionsMode: KnownActiveRevisionsMode;
