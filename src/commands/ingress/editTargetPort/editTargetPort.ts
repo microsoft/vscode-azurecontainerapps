@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
-import { IngressItem } from "../../../tree/configurations/IngressItem";
+import { IngressEnabledItem } from "../../../tree/configurations/IngressItem";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -13,8 +13,8 @@ import type { IngressContext } from "../IngressContext";
 import { TargetPortInputStep } from "./TargetPortInputStep";
 import { TargetPortUpdateStep } from "./TargetPortUpdateStep";
 
-export async function editTargetPort(context: IActionContext, node?: IngressItem): Promise<void> {
-    const { subscription, containerApp }: ContainerAppItem | IngressItem = node ?? await pickContainerApp(context);
+export async function editTargetPort(context: IActionContext, node?: IngressEnabledItem): Promise<void> {
+    const { subscription, containerApp }: ContainerAppItem | IngressEnabledItem = node ?? await pickContainerApp(context);
 
     const wizardContext: IngressContext = {
         ...context,

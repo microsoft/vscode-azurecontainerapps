@@ -17,7 +17,7 @@ import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
-import { LogsItem } from "./LogsItem";
+import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
@@ -31,8 +31,8 @@ export interface ContainerAppModel extends ContainerApp {
 }
 
 export class ContainerAppItem implements ContainerAppsItem {
-    public static contextValue: string = 'containerApp';
-    public static contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
+    static readonly contextValue: string = 'containerAppItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
 
     id: string;
 
@@ -70,7 +70,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             }
 
             children.push(new ConfigurationItem(this.subscription, this.containerApp));
-            children.push(new LogsItem(this.subscription, this.containerApp));
+            children.push(new LogsGroupItem(this.subscription, this.containerApp));
             return children;
         });
 
@@ -82,7 +82,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             id: this.id,
             label: nonNullProp(this.containerApp, 'name'),
             iconPath: treeUtils.getIconPath('azure-containerapps'),
-            contextValue: `containerApp|revisionmode:${this.containerApp.revisionsMode}`,
+            contextValue: ContainerAppItem.contextValue,
             description: this.containerApp.provisioningState === 'Succeeded' ? undefined : this.containerApp.provisioningState,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }

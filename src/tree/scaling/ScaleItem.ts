@@ -13,7 +13,12 @@ import { ContainerAppModel } from "../ContainerAppItem";
 import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
+const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
+
 export class ScaleItem implements ContainerAppsItem {
+    static readonly contextValue: string = 'scaleItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
+
     constructor(
         public readonly subscription: AzureSubscription,
         public readonly containerApp: ContainerAppModel,
@@ -39,7 +44,7 @@ export class ScaleItem implements ContainerAppsItem {
         return {
             id: this.id,
             label: localize('scaling', 'Scaling'),
-            contextValue: 'scale',
+            contextValue: ScaleItem.contextValue,
             iconPath: treeUtils.getIconPath('02887-icon-menu-Container-Scale'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
@@ -50,7 +55,7 @@ export class ScaleItem implements ContainerAppsItem {
             createGenericElement({
                 label: localize('minMax', 'Min / max replicas'),
                 description: `${this.scale?.minReplicas ?? 0} / ${this.scale?.maxReplicas ?? 0}`,
-                contextValue: 'minMaxReplica',
+                contextValue: minMaxReplicaItemContextValue,
                 iconPath: new ThemeIcon('dash'),
             }),
             createScaleRuleGroupItem(this.subscription, this.containerApp, this.revision),

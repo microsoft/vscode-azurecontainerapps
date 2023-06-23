@@ -15,8 +15,8 @@ import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
 import { RevisionItem } from "./RevisionItem";
 
 export class RevisionsItem implements ContainerAppsItem {
-    static contextValue: string = 'revisionsItem';
-    static contextValueRegExp: RegExp = new RegExp(RevisionsItem.contextValue);
+    static readonly contextValue: string = 'revisionsItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(RevisionsItem.contextValue);
 
     id: string;
 

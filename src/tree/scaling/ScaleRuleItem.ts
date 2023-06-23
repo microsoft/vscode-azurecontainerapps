@@ -15,6 +15,8 @@ export interface ScaleRuleItem extends ContainerAppsItem {
     scaleRule: ScaleRule;
 }
 
+const scaleRuleItemContextValue: string = 'scaleRuleItem';
+
 export function createScaleRuleItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, scaleRule: ScaleRule): ScaleRuleItem {
     const parentResource = revision.name === containerApp.latestRevisionName ? containerApp : revision;
 
@@ -33,7 +35,7 @@ export function createScaleRuleItem(subscription: AzureSubscription, containerAp
             id,
             label: nonNullProp(scaleRule, 'name'),
             iconPath: new ThemeIcon('dash'),
-            contextValue: 'scaleRule',
+            contextValue: scaleRuleItemContextValue,
             description: getDescription(scaleRule),
         }),
     };

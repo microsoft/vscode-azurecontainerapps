@@ -12,10 +12,18 @@ import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
 import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
 
+const daprDisabledItemContextValue: string = 'daprDisabledItem';
+const daprAppIdItemContextValue: string = 'daprAppIdItem';
+const daprAppPortItemContextValue: string = 'daprAppPortItem';
+const daprAppProtocolItemContextValue: string = 'daprAppProtocolItem';
+
 export class DaprEnabledItem implements TreeElementBase {
+    static readonly contextValue: string = 'daprEnabledItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(DaprEnabledItem.contextValue);
+
+    constructor(private readonly containerApp: ContainerAppModel, private readonly dapr: Dapr) { }
 
     id: string = `${this.containerApp.id}/DaprEnabled`;
-    constructor(private readonly containerApp: ContainerAppModel, private readonly dapr: Dapr) { }
 
     viewProperties: ViewPropertiesModel = {
         data: this.dapr,
@@ -26,6 +34,7 @@ export class DaprEnabledItem implements TreeElementBase {
         return {
             id: this.id,
             label: localize('dapr', 'Dapr'),
+            contextValue: DaprEnabledItem.contextValue,
             description: localize('enabled', 'Enabled'),
             iconPath: treeUtils.getIconPath('dapr_logo'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
@@ -37,7 +46,7 @@ export class DaprEnabledItem implements TreeElementBase {
 
         if (this.dapr.appId) {
             children.push(createGenericElement({
-                contextValue: 'daprAppId',
+                contextValue: daprAppIdItemContextValue,
                 description: 'app id',
                 iconPath: new ThemeIcon('dash'),
                 label: this.dapr.appId,
@@ -46,7 +55,7 @@ export class DaprEnabledItem implements TreeElementBase {
 
         if (this.dapr.appPort) {
             children.push(createGenericElement({
-                contextValue: 'daprAppPort',
+                contextValue: daprAppPortItemContextValue,
                 description: 'app port',
                 iconPath: new ThemeIcon('dash'),
                 label: String(this.dapr.appPort),
@@ -55,7 +64,7 @@ export class DaprEnabledItem implements TreeElementBase {
 
         if (this.dapr.appProtocol) {
             children.push(createGenericElement({
-                description: 'app protocol',
+                description: daprAppProtocolItemContextValue,
                 label: String(this.dapr.appProtocol),
                 contextValue: 'daprAppProtocol',
                 iconPath: new ThemeIcon('dash'),
@@ -71,7 +80,7 @@ export function createDaprDisabledItem(containerApp: ContainerApp): TreeElementB
         id: `${containerApp.id}/DaprDisabled`,
         label: localize('dapr', 'Dapr'),
         description: localize('disabled', 'Disabled'),
-        contextValue: 'dapr|disabled',
+        contextValue: daprDisabledItemContextValue,
         iconPath: new ThemeIcon('debug-disconnect'),
     });
 }

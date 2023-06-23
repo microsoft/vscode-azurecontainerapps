@@ -7,7 +7,7 @@ import { ContainerApp, Ingress } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { IngressConstants, azResourceContextValue } from "../../constants";
+import { IngressConstants } from "../../constants";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
@@ -15,9 +15,12 @@ import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataPr
 
 const label: string = localize('ingress', 'Ingress');
 
-export class IngressItem implements ContainerAppsItem {
-    static contextValue: string = 'ingress|enabled';
-    readonly contextValue: string = `${IngressItem.contextValue}|${azResourceContextValue}`;
+const targetPortItemContextValue: string = 'targetPortItem';
+const visibilityItemContextValue: string = 'visibilityItem';
+
+export class IngressEnabledItem implements ContainerAppsItem {
+    static readonly contextValue: string = 'ingressEnabledItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(IngressEnabledItem.contextValue);
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) { }
 
@@ -33,7 +36,7 @@ export class IngressItem implements ContainerAppsItem {
     getTreeItem(): TreeItem {
         return {
             label,
-            contextValue: IngressItem.contextValue,
+            contextValue: IngressEnabledItem.contextValue,
             iconPath: treeUtils.getIconPath('10061-icon-Virtual Networks-Networking'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         };
@@ -47,7 +50,7 @@ export class IngressItem implements ContainerAppsItem {
             containerApp: this.containerApp,
             subscription: this.subscription,
             ...createGenericElement({
-                contextValue: 'targetPort',
+                contextValue: targetPortItemContextValue,
                 description: String(this.ingress.targetPort),
                 iconPath: new ThemeIcon('dash'),
                 label: localize('targetPort', 'Target Port'),
@@ -56,7 +59,7 @@ export class IngressItem implements ContainerAppsItem {
 
         return [
             createGenericElement({
-                contextValue: 'visibility',
+                contextValue: visibilityItemContextValue,
                 description,
                 iconPath: new ThemeIcon('dash'),
                 label,
@@ -67,8 +70,8 @@ export class IngressItem implements ContainerAppsItem {
 }
 
 export class IngressDisabledItem implements TreeElementBase {
-    public static contextValue: string = 'ingress|disabled';
-    public readonly contextValue: string = IngressDisabledItem.contextValue;
+    static readonly contextValue: string = 'ingressDisabledItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(IngressDisabledItem.contextValue);
 
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerApp) { }
 
@@ -88,7 +91,7 @@ export function createTargetPortItem(subscription: AzureSubscription, containerA
         containerApp,
         ...createGenericElement({
             label: localize('targetPort', 'Target Port'),
-            contextValue: 'targetPort',
+            contextValue: targetPortItemContextValue,
             description: String(containerApp.configuration?.ingress?.targetPort),
             iconPath: new ThemeIcon('dash'),
         }),
