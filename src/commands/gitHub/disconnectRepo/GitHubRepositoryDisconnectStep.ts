@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ContainerAppsAPIClient, SourceControl } from "@azure/arm-appcontainers";
+import { gitHubUrlParse } from "@microsoft/vscode-azext-github";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import { gitHubUrlParse } from "../../../gitHub/gitHubUrlParse";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { getContainerAppSourceControl } from "../connectToGitHub/getContainerAppSourceControl";

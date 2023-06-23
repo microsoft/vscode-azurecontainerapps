@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { getGitHubAccessToken } from "@microsoft/vscode-azext-github";
 import { AzureWizard, AzureWizardExecuteStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { getGitHubAccessToken } from "../../../gitHub/getGitHubAccessToken";
 import { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
-import { ActionsTreeItem } from "../../../tree/gitHub/ActionsTreeItem";
+import { ActionsItem } from "../../../tree/configurations/ActionsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
@@ -14,7 +14,7 @@ import { isGitHubConnected } from "../connectToGitHub/isGitHubConnected";
 import { GitHubRepositoryDisconnectStep } from "./GitHubRepositoryDisconnectStep";
 import { IDisconnectRepoContext } from "./IDisconnectRepoContext";
 
-export async function disconnectRepo(context: ITreeItemPickerContext & Partial<IDisconnectRepoContext>, node?: ContainerAppsItem | ActionsTreeItem): Promise<void> {
+export async function disconnectRepo(context: ITreeItemPickerContext & Partial<IDisconnectRepoContext>, node?: ContainerAppsItem | ActionsItem): Promise<void> {
     if (!node) {
         context.suppressCreatePick = true;
         node = await pickContainerApp(context);

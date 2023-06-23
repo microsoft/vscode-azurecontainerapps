@@ -300,12 +300,12 @@
                 },
                 {
                     "command": "containerApps.openGitHubRepo",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /azureContainerActionsConnected/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true(.*)containerAppsActionsItem/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.disconnectRepo",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /azureContainerActionsConnected/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true(.*)containerAppsActionsItem/i",
                     "group": "1@2"
                 }
             ],
