@@ -405,7 +405,7 @@
         "dayjs": "^1.11.3",
         "dotenv": "^16.0.0",
         "fs-extra": "^8.1.0",
-        "semver": "^7.3.5",
+        "semver": "^7.5.2",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
     },
