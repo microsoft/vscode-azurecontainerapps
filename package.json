@@ -229,38 +229,48 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerApps.deploy",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "command": "containerApps.restartRevision",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "2@1"
                 },
                 {
-                    "command": "containerApps.deleteContainerApp",
+                    "command": "containerApps.chooseRevisionMode",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "2@2"
                 },
                 {
-                    "command": "containerApps.startStreamingLogs",
+                    "command": "containerApps.deploy",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "3@1"
                 },
                 {
-                    "command": "containerApps.stopStreamingLogs",
+                    "command": "containerApps.deleteContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "3@2"
                 },
                 {
+                    "command": "containerApps.startStreamingLogs",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "4@1"
+                },
+                {
+                    "command": "containerApps.stopStreamingLogs",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "4@2"
+                },
+                {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && (viewItem =~ /revisionItem(.*)revisionMode:single/i || viewItem =~ /revisionsItem/i)",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionsItem/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:inactive/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:inactive/i",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionMode:multiple(.*)revisionState:active/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
                     "group": "2@3"
                 },
                 {

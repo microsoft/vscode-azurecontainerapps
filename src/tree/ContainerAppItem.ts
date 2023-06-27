@@ -3,9 +3,9 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
@@ -16,11 +16,12 @@ import { createContainerAppsAPIClient, createContainerAppsClient } from "../util
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
-import { RevisionItem } from "./revisionManagement/RevisionItem";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
+import { ScaleItem } from "./scaling/ScaleItem";
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -57,16 +58,22 @@ export class ContainerAppItem implements ContainerAppsItem {
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
+    get contextValue(): string {
+        const values: string[] = [ContainerAppItem.contextValue];
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        return createContextValue(values);
+    }
+
     async getChildren(): Promise<TreeElementBase[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const children: TreeElementBase[] = [];
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
 
-            if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-                children.push(new RevisionsItem(this.subscription, this.containerApp));
+            if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+                const revision: Revision = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
+                children.push(new ScaleItem(this.subscription, this.containerApp, revision));
             } else {
-                const revisionData = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
-                children.push(new RevisionItem(this.subscription, this.containerApp, revisionData));
+                children.push(new RevisionsItem(this.subscription, this.containerApp));
             }
 
             children.push(new ConfigurationItem(this.subscription, this.containerApp));
@@ -82,7 +89,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             id: this.id,
             label: nonNullProp(this.containerApp, 'name'),
             iconPath: treeUtils.getIconPath('azure-containerapps'),
-            contextValue: ContainerAppItem.contextValue,
+            contextValue: this.contextValue,
             description: this.containerApp.provisioningState === 'Succeeded' ? undefined : this.containerApp.provisioningState,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
