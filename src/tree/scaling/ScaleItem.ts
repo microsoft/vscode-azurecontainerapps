@@ -45,7 +45,7 @@ export class ScaleItem implements ContainerAppsItem {
             id: this.id,
             label: localize('scaling', 'Scaling'),
             contextValue: ScaleItem.contextValue,
-            iconPath: treeUtils.getIconPath('02887-icon-menu-Container-Scale'),
+            iconPath: treeUtils.getIconPath('scaling'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }

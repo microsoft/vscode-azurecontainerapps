@@ -36,7 +36,7 @@ export class DaprEnabledItem implements TreeElementBase {
             label: localize('dapr', 'Dapr'),
             contextValue: DaprEnabledItem.contextValue,
             description: localize('enabled', 'Enabled'),
-            iconPath: treeUtils.getIconPath('dapr_logo'),
+            iconPath: treeUtils.getIconPath('dapr'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
