@@ -78,7 +78,7 @@ export class RevisionItem implements RevisionsItemModel {
 
     private get iconPath(): TreeItemIconPath {
         if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
-            return treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active');
+            return treeUtils.getIconPath('active-revision');
         }
 
         let id: string;

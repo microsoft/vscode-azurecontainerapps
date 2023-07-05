@@ -38,7 +38,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         return {
             label: this.managedEnvironment.name,
             id: this.id,
-            iconPath: treeUtils.getIconPath('managedEnvironment'),
+            iconPath: treeUtils.getIconPath('managed-environment'),
             contextValue: ManagedEnvironmentItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }

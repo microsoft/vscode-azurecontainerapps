@@ -43,7 +43,7 @@ export class RevisionsItem implements ContainerAppsItem {
     getTreeItem(): TreeItem {
         return {
             label: localize('revisions', 'Revision Management'),
-            iconPath: treeUtils.getIconPath('02889-icon-menu-Container-Revision-Management'),
+            iconPath: treeUtils.getIconPath('revision-management'),
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         };

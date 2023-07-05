@@ -37,7 +37,7 @@ export class IngressEnabledItem implements ContainerAppsItem {
         return {
             label,
             contextValue: IngressEnabledItem.contextValue,
-            iconPath: treeUtils.getIconPath('10061-icon-Virtual Networks-Networking'),
+            iconPath: treeUtils.getIconPath('virtual-network'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         };
     }
