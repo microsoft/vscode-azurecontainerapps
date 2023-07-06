@@ -51,7 +51,6 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
                 containers: [
                     {
                         image: context.image,
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         name: getContainerNameForImage(nonNullProp(context, 'image')),
                         env: context.environmentVariables
                     }
