@@ -35,7 +35,7 @@ export class RevisionItem implements RevisionsItemModel {
         this.revisionsMode = containerApp.revisionsMode;
     }
 
-    get contextValue(): string {
+    private get contextValue(): string {
         const values: string[] = [RevisionItem.contextValue];
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);

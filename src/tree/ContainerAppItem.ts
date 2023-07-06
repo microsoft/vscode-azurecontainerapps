@@ -40,7 +40,6 @@ export class ContainerAppItem implements ContainerAppsItem {
     private resourceGroup: string;
     private name: string;
 
-
     public get containerApp(): ContainerAppModel {
         return this._containerApp;
     }
@@ -58,7 +57,7 @@ export class ContainerAppItem implements ContainerAppsItem {
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
-    get contextValue(): string {
+    private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         return createContextValue(values);

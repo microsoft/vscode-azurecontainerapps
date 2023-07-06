@@ -24,7 +24,7 @@ export class RevisionsItem implements ContainerAppsItem {
         this.id = `${containerApp.id}/Revisions`;
     }
 
-    get contextValue(): string {
+    private get contextValue(): string {
         const values: string[] = [RevisionsItem.contextValue];
         // values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
         return createContextValue(values);
