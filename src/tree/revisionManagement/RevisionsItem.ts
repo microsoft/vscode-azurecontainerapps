@@ -24,7 +24,7 @@ export class RevisionsItem implements ContainerAppsItem {
         this.id = `${containerApp.id}/Revisions`;
     }
 
-    get contextValue(): string {
+    private get contextValue(): string {
         const values: string[] = [RevisionsItem.contextValue];
         // values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? 'revisionDraft:true' : 'revisionDraft:false');
         return createContextValue(values);
@@ -43,7 +43,7 @@ export class RevisionsItem implements ContainerAppsItem {
     getTreeItem(): TreeItem {
         return {
             label: localize('revisions', 'Revision Management'),
-            iconPath: treeUtils.getIconPath('02889-icon-menu-Container-Revision-Management'),
+            iconPath: treeUtils.getIconPath('revision-management'),
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         };
