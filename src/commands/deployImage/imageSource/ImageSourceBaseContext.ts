@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { EnvironmentVar, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
-import { ImageSource, ImageSourceValues } from "../../../constants";
-import { IContainerAppContext } from "../../IContainerAppContext";
+import type { ImageSource, ImageSourceValues } from "../../../constants";
+import type { IContainerAppContext } from "../../IContainerAppContext";
 
 export interface ImageSourceBaseContext extends IContainerAppContext {
     // ImageSourceListStep

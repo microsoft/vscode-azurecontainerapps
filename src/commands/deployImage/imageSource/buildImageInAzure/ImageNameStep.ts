@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { URI, Utils } from "vscode-uri";
 import { localize } from "../../../../utils/localize";
-import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 export class ImageNameStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {

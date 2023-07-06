@@ -7,7 +7,7 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain, quickStartImageName } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 
 export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {

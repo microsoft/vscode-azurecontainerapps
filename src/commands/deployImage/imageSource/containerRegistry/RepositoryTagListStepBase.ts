@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { QuickPickItem } from "vscode";
+import type { QuickPickItem } from "vscode";
 import { QuickPicksCache, loadMoreQp } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
-import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 
 export abstract class RepositoryTagListStepBase extends AzureWizardPromptStep<IContainerRegistryImageContext> {
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {

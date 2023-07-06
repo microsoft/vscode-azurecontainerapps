@@ -10,7 +10,7 @@ import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../.
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
 

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Registry } from '@azure/arm-containerregistry';
-import { SupportedRegistries } from '../../../../constants';
-import { ImageSourceBaseContext } from '../ImageSourceBaseContext';
+import type { SupportedRegistries } from '../../../../constants';
+import type { ImageSourceBaseContext } from '../ImageSourceBaseContext';
 
 export interface IContainerRegistryImageContext extends ImageSourceBaseContext {
     registryDomain?: SupportedRegistries;

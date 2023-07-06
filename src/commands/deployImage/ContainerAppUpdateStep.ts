@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../../utils/updateContainerApp";
 import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
-import { IDeployImageContext } from "./deployImage";
+import type { IDeployImageContext } from "./deployImage";
 import { getContainerNameForImage } from "./imageSource/containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployImageContext> {

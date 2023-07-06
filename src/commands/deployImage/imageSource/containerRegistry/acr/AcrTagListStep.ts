@@ -9,9 +9,9 @@ import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import * as dayjs from 'dayjs';
 // eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
-import { QuickPickItem } from "vscode";
+import type { QuickPickItem } from "vscode";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
 
 dayjs.extend(relativeTime);

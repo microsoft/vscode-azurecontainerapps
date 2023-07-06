@@ -8,7 +8,7 @@ import { acrDomain, ImageSource } from "../../constants";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { deployImage } from "./deployImage";
-import { IContainerRegistryImageContext } from "./imageSource/containerRegistry/IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "./imageSource/containerRegistry/IContainerRegistryImageContext";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)

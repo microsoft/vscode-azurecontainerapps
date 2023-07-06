@@ -6,7 +6,7 @@
 import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain, dockerHubRegistry } from "../../../../constants";
-import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 
 interface RegistryCredentialsAndSecrets {

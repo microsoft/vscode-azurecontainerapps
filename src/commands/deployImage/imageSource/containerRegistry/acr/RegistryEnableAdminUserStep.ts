@@ -11,7 +11,7 @@ import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vsc
 import { acrDomain } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 
 export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {

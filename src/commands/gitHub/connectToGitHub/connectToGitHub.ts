@@ -69,4 +69,3 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     await wizard.prompt();
     await wizard.execute();
 }
-

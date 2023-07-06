@@ -7,7 +7,7 @@ import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../../constants";
 import { getContainerEnvelopeWithSecrets } from "../../../../tree/ContainerAppItem";
-import { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 

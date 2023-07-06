@@ -8,7 +8,7 @@ import { AzureWizardExecuteStep, nonNullProp, nonNullValue, openReadOnlyContent 
 import { MessageItem, window } from "vscode";
 import { acrDomain } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
-import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
 export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {

@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
-import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 export class OSPickStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {

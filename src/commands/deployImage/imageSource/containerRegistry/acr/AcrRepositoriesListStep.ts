@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
-import { QuickPickItem } from "vscode";
+import type { QuickPickItem } from "vscode";
 import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 

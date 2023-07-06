@@ -7,7 +7,7 @@ import type { ContainerRegistryManagementClient, Registry, RegistryPassword } fr
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 
 export async function listCredentialsFromRegistry(context: IContainerRegistryImageContext, registry: Registry):
     Promise<{ username: string, password: RegistryPassword }> {

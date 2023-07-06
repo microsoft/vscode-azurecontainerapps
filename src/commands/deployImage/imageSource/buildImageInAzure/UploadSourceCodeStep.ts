@@ -7,7 +7,7 @@ import { AzExtFsExtra, AzureWizardExecuteStep, nonNullValue } from '@microsoft/v
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
-import { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
+import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 

@@ -8,7 +8,7 @@ import type { QuickPickItem } from "vscode";
 import { QuickPicksCache, currentlyDeployed, dockerHubDomain, loadMoreQp, quickStartImageName } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { getReposForNamespace } from "./DockerHubV2ApiCalls";

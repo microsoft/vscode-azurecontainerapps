@@ -6,9 +6,9 @@
 import type { DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
 import { AzExtFsExtra, AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import * as path from 'path';
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { localize } from "../../../../utils/localize";
-import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 export class RunStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
     public priority: number = 200;
