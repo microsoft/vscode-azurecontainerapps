@@ -27,8 +27,7 @@ export async function createContainerRegistryManagementClient(context: AzExtClie
 }
 
 export function createContainerRegistryClient(context: AzExtClientContext, registry: Registry): ContainerRegistryClient {
-    const clientContext = parseClientContext(context);
-    return new ContainerRegistryClient(`https://${registry.loginServer}`, clientContext.credentials,
+    return new ContainerRegistryClient(`https://${registry.loginServer}`, parseClientContext(context).credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
 }
 
