@@ -12,7 +12,7 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
+import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
@@ -51,6 +51,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
                 containers: [
                     {
                         image: context.image,
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         name: getContainerNameForImage(nonNullProp(context, 'image')),
                         env: context.environmentVariables
                     }
