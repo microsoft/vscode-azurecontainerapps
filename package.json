@@ -111,23 +111,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.createRevisionDraft",
-                "title": "%containerApps.createRevisionDraft%",
-                "category": "Azure Container Apps",
-                "icon": "$(add)"
-            },
-            {
-                "command": "containerApps.editRevisionDraft",
-                "title": "%containerApps.editRevisionDraft%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.deployRevisionDraft",
-                "title": "%containerApps.deployRevisionDraft%",
-                "category": "Azure Container Apps",
-                "icon": "$(cloud-upload)"
-            },
-            {
                 "command": "containerApps.discardRevisionDraft",
                 "title": "%containerApps.discardRevisionDraft%",
                 "category": "Azure Container Apps",
@@ -242,16 +225,6 @@
                     "group": "2@2"
                 },
                 {
-                    "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
-                    "group": "3@1"
-                },
-                {
                     "command": "containerApps.discardRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
                     "group": "inline@2"
@@ -285,41 +258,6 @@
                     "command": "containerApps.stopStreamingLogs",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "7@2"
-                },
-                {
-                    "command": "containerApps.createRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionsItem/i",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "containerApps.createRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionsItem/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.discardRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
-                    "group": "inline@2"
-                },
-                {
-                    "command": "containerApps.discardRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
-                    "group": "1@2"
-                },
-                {
-                    "command": "containerApps.editRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
-                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
