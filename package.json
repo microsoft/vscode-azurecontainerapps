@@ -236,7 +236,7 @@
                 },
                 {
                     "command": "containerApps.editContainerApp",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "4@1"
                 },
                 {
