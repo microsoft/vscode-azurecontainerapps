@@ -1,12 +1,12 @@
-import { Template } from "@azure/arm-appcontainers";
+import type { Template } from "@azure/arm-appcontainers";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
-import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
-import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
+import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
+import type { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
+import type { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../utils/localize";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');

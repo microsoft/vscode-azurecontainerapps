@@ -5,15 +5,15 @@
 
 import { KnownActiveRevisionsMode, Revision, Scale } from "@azure/arm-appcontainers";
 import { createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { ext } from "../../extensionVariables";
 import { isDeepEqual } from "../../utils/isDeepEqual";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
-import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import type { ContainerAppModel } from "../ContainerAppItem";
+import type { TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
 const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';

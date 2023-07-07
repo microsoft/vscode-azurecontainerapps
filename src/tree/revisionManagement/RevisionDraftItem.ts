@@ -5,14 +5,14 @@
 
 import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { TreeElementBase, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
-import { ContainerAppModel } from "../ContainerAppItem";
+import type { ContainerAppModel } from "../ContainerAppItem";
 import { ScaleItem } from "../scaling/ScaleItem";
-import { RevisionsItemModel } from "./RevisionItem";
+import type { RevisionsItemModel } from "./RevisionItem";
 
 export class RevisionDraftItem implements RevisionsItemModel {
     static idSuffix: string = 'revisionDraft';
