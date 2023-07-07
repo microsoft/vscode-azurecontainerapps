@@ -68,7 +68,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.editScalingRange', editScalingRange);
     registerCommandWithTreeNodeUnwrapping('containerApps.addScaleRule', addScaleRule);
 
-    // log streaming
+    //log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 

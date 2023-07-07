@@ -40,7 +40,7 @@ export class RevisionItem implements RevisionsItemModel {
         return createContextValue(values);
     }
 
-    get description(): string | undefined {
+    private get description(): string | undefined {
         if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
             return undefined;
         }

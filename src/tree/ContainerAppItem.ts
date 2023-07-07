@@ -58,14 +58,14 @@ export class ContainerAppItem implements ContainerAppsItem {
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
-    get contextValue(): string {
+    private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
         return createContextValue(values);
     }
 
-    get description(): string | undefined {
+    private get description(): string | undefined {
         if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
             return this.containerApp.provisioningState;
         }
@@ -75,15 +75,6 @@ export class ContainerAppItem implements ContainerAppsItem {
         }
 
         return undefined;
-    }
-
-    hasUnsavedChanges(): boolean {
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
-        if (!this.containerApp.template || !draftTemplate) {
-            return false;
-        }
-
-        return !isDeepEqual(this.containerApp.template, draftTemplate);
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
@@ -106,7 +97,7 @@ export class ContainerAppItem implements ContainerAppsItem {
         return result ?? [];
     }
 
-    async getTreeItem(): Promise<TreeItem> {
+    getTreeItem(): TreeItem {
         return {
             id: this.id,
             label: nonNullProp(this.containerApp, 'name'),
@@ -168,6 +159,15 @@ export class ContainerAppItem implements ContainerAppsItem {
             await wizard.execute();
         });
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);
+    }
+
+    private hasUnsavedChanges(): boolean {
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+        if (!this.containerApp.template || !draftTemplate) {
+            return false;
+        }
+
+        return !isDeepEqual(this.containerApp.template, draftTemplate);
     }
 }
 

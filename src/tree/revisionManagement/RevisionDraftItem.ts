@@ -27,14 +27,14 @@ export class RevisionDraftItem implements RevisionsItemModel {
         this.revisionsMode = containerApp.revisionsMode;
     }
 
-    get revisionName(): string {
+    private get revisionName(): string {
         return nonNullProp(this.revision, 'name');
     }
 
     /**
      * @example gets "rev-1" of "my-app--rev-1"
      */
-    get baseRevisionName(): string {
+    private get baseRevisionName(): string {
         return this.revisionName.substring(this.revisionName.lastIndexOf('--') + 2);
     }
 

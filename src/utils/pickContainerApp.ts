@@ -15,7 +15,7 @@ export interface PickItemOptions {
     title?: string;
 }
 
-export function getPickEnvironmentSteps(tdp: vscode.TreeDataProvider<unknown>): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+function getPickEnvironmentSteps(tdp: vscode.TreeDataProvider<unknown>): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     const types = [AzExtResourceType.ContainerAppsEnvironment];
     return [
         new QuickPickAzureSubscriptionStep(tdp),
@@ -26,22 +26,29 @@ export function getPickEnvironmentSteps(tdp: vscode.TreeDataProvider<unknown>): 
             resourceTypes: types,
             skipIfOne: false,
         }, {
-            placeHolder: localize('selectContainerAppsEnvironment', 'Select a container apps environment'),
+            placeHolder: localize('selectContainerAppsEnvironment', 'Select Container Apps Environment'),
         }),
     ];
 }
 
-export function getPickContainerAppSteps(tdp: vscode.TreeDataProvider<unknown>): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
-    return [
-        ...getPickEnvironmentSteps(tdp),
-        new ContextValueQuickPickStep(tdp, {
-            contextValueFilter: { include: ContainerAppItem.contextValueRegExp },
-            skipIfOne: true,
-        }, {
-            placeHolder: localize('selectContainerApp', 'Select a container app'),
-            noPicksMessage: localize('noContainerApps', 'Selected container apps environment has no apps'),
-        }),
-    ];
+export async function pickContainerApp(context: IActionContext, options?: PickItemOptions): Promise<ContainerAppItem> {
+    return await containerAppExperience<ContainerAppItem>(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, options);
+}
+
+export async function containerAppExperience<TPick>(context: IActionContext, tdp: vscode.TreeDataProvider<ResourceGroupsItem>, options?: PickItemOptions): Promise<TPick> {
+    return await runQuickPickWizard(context, {
+        promptSteps: [
+            ...getPickEnvironmentSteps(tdp),
+            new ContextValueQuickPickStep(tdp, {
+                contextValueFilter: { include: ContainerAppItem.contextValueRegExp },
+                skipIfOne: true,
+            }, {
+                placeHolder: localize('selectContainerApp', 'Select Container App'),
+                noPicksMessage: localize('noContainerApps', 'Selected Container Apps Environment has no Apps'),
+            }),
+        ],
+        title: options?.title,
+    });
 }
 
 export async function containerAppEnvironmentExperience(context: IActionContext, tdp: vscode.TreeDataProvider<ResourceGroupsItem>, options?: PickItemOptions): Promise<ManagedEnvironmentItem> {
@@ -49,15 +56,4 @@ export async function containerAppEnvironmentExperience(context: IActionContext,
         promptSteps: getPickEnvironmentSteps(tdp),
         title: options?.title,
     });
-}
-
-export async function containerAppExperience<TPick>(context: IActionContext, tdp: vscode.TreeDataProvider<ResourceGroupsItem>, options?: PickItemOptions): Promise<TPick> {
-    return await runQuickPickWizard(context, {
-        promptSteps: getPickContainerAppSteps(tdp),
-        title: options?.title,
-    });
-}
-
-export async function pickContainerApp(context: IActionContext, options?: PickItemOptions): Promise<ContainerAppItem> {
-    return await containerAppExperience<ContainerAppItem>(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, options);
 }

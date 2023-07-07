@@ -13,7 +13,6 @@ import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
 import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
-import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
@@ -26,9 +25,9 @@ export class ScaleItem implements RevisionsItemModel {
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
 
     constructor(
-        public readonly subscription: AzureSubscription,
-        public readonly containerApp: ContainerAppModel,
-        public readonly revision: Revision) { }
+        readonly subscription: AzureSubscription,
+        readonly containerApp: ContainerAppModel,
+        readonly revision: Revision) { }
 
     id: string = `${this.parentResource.id}/scale`;
 
@@ -45,20 +44,6 @@ export class ScaleItem implements RevisionsItemModel {
         return this.revision?.name === this.containerApp.latestRevisionName ? this.containerApp : this.revision;
     }
 
-    private hasUnsavedChanges(): boolean {
-        const scaleDraftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
-        if (!scaleDraftTemplate) {
-            return false;
-        }
-
-        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-            return !!this.containerApp.template?.scale && !isDeepEqual(this.containerApp.template.scale, scaleDraftTemplate);
-        } else {
-            // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-            return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !isDeepEqual(this.revision.template.scale, scaleDraftTemplate);
-        }
-    }
-
     getTreeItem(): TreeItem {
         return {
             id: this.id,
@@ -69,7 +54,7 @@ export class ScaleItem implements RevisionsItemModel {
         }
     }
 
-    async getChildren(): Promise<TreeElementBase[]> {
+    getChildren(): TreeElementBase[] {
         let scale: Scale | undefined;
 
         if (this.hasUnsavedChanges()) {
@@ -89,5 +74,21 @@ export class ScaleItem implements RevisionsItemModel {
             }),
             createScaleRuleGroupItem(this.subscription, this.containerApp, this.revision, scale?.rules ?? []),
         ];
+    }
+
+    private hasUnsavedChanges(): boolean {
+        const scaleDraftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+        if (!scaleDraftTemplate) {
+            return false;
+        }
+
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+            return !!this.containerApp.template?.scale && !isDeepEqual(this.containerApp.template.scale, scaleDraftTemplate);
+        } else {
+            // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+            // return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !isDeepEqual(this.revision.template.scale, scaleDraftTemplate);
+
+            return false;  // Placeholder
+        }
     }
 }
