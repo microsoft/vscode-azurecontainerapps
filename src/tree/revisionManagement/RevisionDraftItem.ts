@@ -27,7 +27,7 @@ export class RevisionDraftItem implements RevisionsItemModel {
         this.revisionsMode = containerApp.revisionsMode;
     }
 
-    private get revisionName(): string {
+    get revisionName(): string {
         return nonNullProp(this.revision, 'name');
     }
 

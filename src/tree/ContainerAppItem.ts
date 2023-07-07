@@ -65,7 +65,7 @@ export class ContainerAppItem implements ContainerAppsItem {
         return createContextValue(values);
     }
 
-    private get description(): string | undefined {
+    get description(): string | undefined {
         if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
             return this.containerApp.provisioningState;
         }
