@@ -9,8 +9,8 @@ import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
-import { deployContainerApp } from './deployContainerApp/deployContainerApp';
-import { deployImageApi } from './deployContainerApp/deployImageApi';
+import { deployImage } from './deployImage/deployImage';
+import { deployImageApi } from './deployImage/deployImageApi';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
@@ -36,7 +36,7 @@ export function registerCommands(): void {
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deploy', deployContainerApp);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);

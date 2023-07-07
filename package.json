@@ -66,8 +66,8 @@
                 "icon": "$(add)"
             },
             {
-                "command": "containerApps.deploy",
-                "title": "%containerApps.deploy%",
+                "command": "containerApps.deployImage",
+                "title": "%containerApps.deployImage%",
                 "category": "Azure Container Apps",
                 "icon": "$(cloud-upload)"
             },
@@ -177,31 +177,7 @@
                 "category": "Azure Container Apps"
             }
         ],
-        "submenus": [
-            {
-                "id": "containerApps.submenus.workspaceActions",
-                "label": "Azure Container Apps",
-                "icon": "resources/azure-containerapps.svg"
-            }
-        ],
         "menus": {
-            "containerApps.submenus.workspaceActions": [
-                {
-                    "command": "containerApps.deploy",
-                    "group": "1_deploy@1"
-                },
-                {
-                    "command": "containerApps.createContainerApp",
-                    "group": "2_create@1"
-                }
-            ],
-            "view/title": [
-                {
-                    "submenu": "containerApps.submenus.workspaceActions",
-                    "when": "view == azureWorkspace",
-                    "group": "navigation@4"
-                }
-            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
@@ -239,7 +215,7 @@
                     "group": "2@2"
                 },
                 {
-                    "command": "containerApps.deploy",
+                    "command": "containerApps.deployImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "3@1"
                 },

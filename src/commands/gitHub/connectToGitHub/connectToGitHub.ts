@@ -12,8 +12,8 @@ import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
-import { AcrListStep } from "../../imageSource/containerRegistry/acr/AcrListStep";
-import { AcrRepositoriesListStep } from "../../imageSource/containerRegistry/acr/AcrRepositoriesListStep";
+import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
+import { AcrRepositoriesListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrRepositoriesListStep";
 import { DockerfileLocationInputStep } from "./DockerfileLocationInputStep";
 import { GitHubRepositoryConnectStep } from "./GitHubRepositoryConnectStep";
 import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
@@ -69,4 +69,3 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
     await wizard.prompt();
     await wizard.execute();
 }
-

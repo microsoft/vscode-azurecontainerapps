@@ -9,7 +9,7 @@ import { Progress, window } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../deployContainerApp/updateContainerApp";
+import { updateContainerApp } from "../../../utils/updateContainerApp";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
 export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleContext> {

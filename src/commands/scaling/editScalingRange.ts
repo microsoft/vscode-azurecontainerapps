@@ -8,7 +8,7 @@ import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
-import { updateContainerApp } from "../deployContainerApp/updateContainerApp";
+import { updateContainerApp } from "../../utils/updateContainerApp";
 import { getContainerAppAndRevision } from "./addScaleRule/addScaleRule";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleItem): Promise<void> {

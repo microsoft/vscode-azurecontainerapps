@@ -9,7 +9,7 @@ import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { listCredentialsFromRegistry } from "../../imageSource/containerRegistry/acr/listCredentialsFromRegistry";
+import { listCredentialsFromRegistry } from "../../deployImage/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import type { IConnectToGitHubContext } from "./IConnectToGitHubContext";
 
 export class GitHubRepositoryConnectStep extends AzureWizardExecuteStep<IConnectToGitHubContext> {
