@@ -3,27 +3,32 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { Revision, Scale } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, Revision, Scale } from "@azure/arm-appcontainers";
 import { createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ext } from "../../extensionVariables";
+import { isDeepEqual } from "../../utils/isDeepEqual";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
-import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
+import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
 const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
 
-export class ScaleItem implements ContainerAppsItem {
+const scaling: string = localize('scaling', 'Scaling');
+
+export class ScaleItem implements RevisionsItemModel {
     static readonly contextValue: string = 'scaleItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
 
     constructor(
         public readonly subscription: AzureSubscription,
         public readonly containerApp: ContainerAppModel,
-        public readonly revision: Revision,
-    ) { }
+        public readonly revision: Revision) { }
 
     id: string = `${this.parentResource.id}/scale`;
 
@@ -40,25 +45,49 @@ export class ScaleItem implements ContainerAppsItem {
         return this.revision?.name === this.containerApp.latestRevisionName ? this.containerApp : this.revision;
     }
 
+    private hasUnsavedChanges(): boolean {
+        const scaleDraftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+        if (!scaleDraftTemplate) {
+            return false;
+        }
+
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+            return !!this.containerApp.template?.scale && !isDeepEqual(this.containerApp.template.scale, scaleDraftTemplate);
+        } else {
+            // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+            return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !isDeepEqual(this.revision.template.scale, scaleDraftTemplate);
+        }
+    }
+
     getTreeItem(): TreeItem {
         return {
             id: this.id,
-            label: localize('scaling', 'Scaling'),
+            label: this.hasUnsavedChanges() ? `${scaling}*` : scaling,
             contextValue: ScaleItem.contextValue,
             iconPath: treeUtils.getIconPath('scaling'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
 
-    async getChildren?(): Promise<TreeElementBase[]> {
+    async getChildren(): Promise<TreeElementBase[]> {
+        let scale: Scale | undefined;
+
+        if (this.hasUnsavedChanges()) {
+            scale = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+        } else if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+            scale = this.containerApp.template?.scale;
+        } else {
+            scale = this.revision.template?.scale;
+        }
+
         return [
             createGenericElement({
                 label: localize('minMax', 'Min / max replicas'),
-                description: `${this.scale?.minReplicas ?? 0} / ${this.scale?.maxReplicas ?? 0}`,
+                description: `${scale?.minReplicas ?? 0} / ${scale?.maxReplicas ?? 0}`,
                 contextValue: minMaxReplicaItemContextValue,
                 iconPath: new ThemeIcon('dash'),
             }),
-            createScaleRuleGroupItem(this.subscription, this.containerApp, this.revision),
-        ]
+            createScaleRuleGroupItem(this.subscription, this.containerApp, this.revision, scale?.rules ?? []),
+        ];
     }
 }

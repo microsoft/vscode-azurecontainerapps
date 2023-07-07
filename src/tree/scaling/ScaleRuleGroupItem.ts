@@ -4,7 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { Revision, ScaleRule } from "@azure/arm-appcontainers";
-import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../../utils/localize";
@@ -18,8 +17,7 @@ export interface ScaleRuleGroupItem extends RevisionsItemModel {
 
 const scaleRuleGroupItemContextValue: string = 'scaleRuleGroupItem';
 
-export function createScaleRuleGroupItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): ScaleRuleGroupItem {
-    const scaleRules = nonNullValueAndProp(revision.template, 'scale').rules ?? [];
+export function createScaleRuleGroupItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, scaleRules: ScaleRule[]): ScaleRuleGroupItem {
     const parentResource = revision.name === containerApp.latestRevisionName ? containerApp : revision;
     const id = `${parentResource.id}/scalerules`;
 

@@ -10,16 +10,17 @@ import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azurer
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
+import { isDeepEqual } from "../utils/isDeepEqual";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
 import { ScaleItem } from "./scaling/ScaleItem";
 
@@ -57,10 +58,32 @@ export class ContainerAppItem implements ContainerAppsItem {
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
-    private get contextValue(): string {
+    get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
         return createContextValue(values);
+    }
+
+    get description(): string | undefined {
+        if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
+            return this.containerApp.provisioningState;
+        }
+
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && this.hasUnsavedChanges()) {
+            return localize('unsavedChanges', 'Unsaved changes');
+        }
+
+        return undefined;
+    }
+
+    hasUnsavedChanges(): boolean {
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+        if (!this.containerApp.template || !draftTemplate) {
+            return false;
+        }
+
+        return !isDeepEqual(this.containerApp.template, draftTemplate);
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
@@ -83,13 +106,13 @@ export class ContainerAppItem implements ContainerAppsItem {
         return result ?? [];
     }
 
-    getTreeItem(): TreeItem {
+    async getTreeItem(): Promise<TreeItem> {
         return {
             id: this.id,
             label: nonNullProp(this.containerApp, 'name'),
             iconPath: treeUtils.getIconPath('azure-containerapps'),
             contextValue: this.contextValue,
-            description: this.containerApp.provisioningState === 'Succeeded' ? undefined : this.containerApp.provisioningState,
+            description: this.description,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }

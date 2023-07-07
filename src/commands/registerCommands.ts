@@ -11,6 +11,7 @@ import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployImage } from './deployImage/deployImage';
 import { deployImageApi } from './deployImage/deployImageApi';
+import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
@@ -25,6 +26,9 @@ import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
 import { restartRevision } from './revision/restartRevision';
+import { createRevisionDraft } from './revisionDraft/createRevisionDraft';
+import { discardRevisionDraft } from './revisionDraft/discardRevisionDraft';
+import { editRevisionDraft } from './revisionDraft/editRevisionDraft';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 
@@ -35,6 +39,7 @@ export function registerCommands(): void {
 
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
@@ -58,11 +63,17 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deactivateRevision', deactivateRevision);
     registerCommandWithTreeNodeUnwrapping('containerApps.restartRevision', restartRevision);
 
+    // revision draft
+    registerCommandWithTreeNodeUnwrapping('containerApps.createRevisionDraft', createRevisionDraft);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editRevisionDraft', editRevisionDraft);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', () => { throw new Error('Deploy revision draft not yet implemented.') });
+    registerCommandWithTreeNodeUnwrapping('containerApps.discardRevisionDraft', discardRevisionDraft);
+
     // scaling
     registerCommandWithTreeNodeUnwrapping('containerApps.editScalingRange', editScalingRange);
     registerCommandWithTreeNodeUnwrapping('containerApps.addScaleRule', addScaleRule);
 
-    //log streaming
+    // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 

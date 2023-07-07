@@ -7,6 +7,7 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } fr
 import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
@@ -16,9 +17,6 @@ import { ScaleItem } from "../scaling/ScaleItem";
 export interface RevisionsItemModel extends ContainerAppsItem {
     revision: Revision;
 }
-
-export const revisionModeSingleContextValue: string = 'revisionMode:single';
-export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
 const revisionStateActiveContextValue: string = 'revisionState:active';
 const revisionStateInactiveContextValue: string = 'revisionState:inactive';
@@ -35,8 +33,12 @@ export class RevisionItem implements RevisionsItemModel {
         this.revisionsMode = containerApp.revisionsMode;
     }
 
-    private get contextValue(): string {
+    get contextValue(): string {
         const values: string[] = [RevisionItem.contextValue];
+
+        // Enable more granular tree item filtering by revision name
+        values.push(nonNullProp(this.revision, 'name'));
+
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         return createContextValue(values);
@@ -78,7 +80,7 @@ export class RevisionItem implements RevisionsItemModel {
 
     private get iconPath(): TreeItemIconPath {
         if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
-            return treeUtils.getIconPath('active-revision');
+            return treeUtils.getIconPath('02885-icon-menu-Container-Revision-Active');
         }
 
         let id: string;
