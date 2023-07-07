@@ -8,7 +8,6 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
-import { delay } from "../../utils/delay";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 
@@ -21,14 +20,15 @@ export async function discardRevisionDraft(context: IActionContext, node?: Conta
     if (containerAppsItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
         ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
     } else {
-        await ext.state.showDeleting(
-            `${containerAppsItem.containerApp.id}/${RevisionDraftItem.idSuffix}`,
-            async () => {
-                // Add a short delay to display the deleting message
-                await delay(5);
-                ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
-            }
-        );
+        // Todo: Add this implementation back in with multiple revisions draft PR
+        // await ext.state.showDeleting(
+        //     `${containerAppsItem.containerApp.id}/${RevisionDraftItem.idSuffix}`,
+        //     async () => {
+        //         // Add a short delay to display the deleting message
+        //         await delay(5);
+        //         ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
+        //     }
+        // );
     }
 
     ext.state.notifyChildrenChanged(containerAppsItem.containerApp.id);
