@@ -18,7 +18,9 @@ export async function discardRevisionDraft(context: IActionContext, node?: Conta
         throw new Error(localize('noDraftExists', 'No draft changes exist for container app "{0}".', containerAppsItem.containerApp.name));
     }
 
-    if (containerAppsItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+    if (containerAppsItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+        ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
+    } else {
         await ext.state.showDeleting(
             `${containerAppsItem.containerApp.id}/${RevisionDraftItem.idSuffix}`,
             async () => {
@@ -27,8 +29,6 @@ export async function discardRevisionDraft(context: IActionContext, node?: Conta
                 ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
             }
         );
-    } else {
-        ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
     }
 
     ext.state.notifyChildrenChanged(containerAppsItem.containerApp.id);

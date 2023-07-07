@@ -13,7 +13,7 @@ import { pickContainerApp } from "../utils/pickContainerApp";
 export async function editContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<void> {
     node ??= await pickContainerApp(context);
 
-    if (node.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+    if (node.containerApp.revisionsMode !== KnownActiveRevisionsMode.Single) {
         throw new Error(localize('revisionModeError', 'The issued command can only be executed in single revision mode.'));
     }
 
