@@ -5,7 +5,7 @@
 
 import type { ContainerAppsAPIClient, SourceControl } from "@azure/arm-appcontainers";
 import { gitHubUrlParse } from "@microsoft/vscode-azext-github";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { createContainerAppsClient } from "../../../utils/azureClients";
@@ -20,7 +20,7 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
         const client: ContainerAppsAPIClient = await createContainerAppsClient(context, context.subscription);
         const sourceControl: SourceControl | undefined = await getContainerAppSourceControl(context, context.subscription, context.containerApp);
 
-        const { ownerOrOrganization: owner, repositoryName: repo } = gitHubUrlParse(sourceControl?.repoUrl);
+        const { ownerOrOrganization: owner, repositoryName: repo } = gitHubUrlParse(nonNullValue(sourceControl?.repoUrl));
 
         const rgName: string = context.containerApp.resourceGroup;
         const caName: string = context.containerApp.name;
