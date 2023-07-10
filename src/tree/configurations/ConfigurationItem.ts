@@ -6,10 +6,11 @@
 import { callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { ContainerAppModel } from "../ContainerAppItem";
 import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
-import { ActionsTreeItem } from "../gitHub/ActionsTreeItem";
+import { ActionsItem } from "./ActionsItem";
 import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressEnabledItem } from "./IngressItem";
 
@@ -36,7 +37,7 @@ export class ConfigurationItem implements ContainerAppsItem {
             const children: TreeElementBase[] = [];
             children.push(this.containerApp.configuration?.ingress ? new IngressEnabledItem(this.subscription, this.containerApp) : new IngressDisabledItem(this.subscription, this.containerApp));
             children.push(this.containerApp.configuration?.dapr?.enabled ? new DaprEnabledItem(this.containerApp, this.containerApp.configuration.dapr) : createDaprDisabledItem(this.containerApp));
-            children.push(new ActionsTreeItem(this.subscription, this.containerApp));
+            children.push(new ActionsItem(this.id, ext.prefix, this.subscription, this.containerApp));
             // We should add secrets/registries here when we support it
             return children;
         });
