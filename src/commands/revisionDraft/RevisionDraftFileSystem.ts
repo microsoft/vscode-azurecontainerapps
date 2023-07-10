@@ -33,7 +33,7 @@ export class RevisionDraftFile implements FileStat {
  * Enforces a policy of one revision draft per container app
  */
 export class RevisionDraftFileSystem implements FileSystemProvider {
-    static scheme: string = 'containerAppsRevisionDraft';
+    static readonly scheme: string = 'containerAppsRevisionDraft';
 
     private readonly emitter: EventEmitter<FileChangeEvent[]> = new EventEmitter<FileChangeEvent[]>();
     private readonly bufferedEvents: FileChangeEvent[] = [];

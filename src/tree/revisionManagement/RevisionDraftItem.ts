@@ -15,9 +15,9 @@ import { ScaleItem } from "../scaling/ScaleItem";
 import type { RevisionsItemModel } from "./RevisionItem";
 
 export class RevisionDraftItem implements RevisionsItemModel {
-    static idSuffix: string = 'revisionDraft';
-    static contextValue: string = 'revisionDraftItem';
-    static contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
+    static readonly idSuffix: string = 'revisionDraft';
+    static readonly contextValue: string = 'revisionDraftItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
 
     id: string;
     revisionsMode: KnownActiveRevisionsMode;
