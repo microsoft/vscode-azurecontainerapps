@@ -34,7 +34,7 @@ export class RevisionDraftItem implements RevisionsItemModel {
      * @example gets "rev-1" of "my-app--rev-1"
      */
     private get baseRevisionName(): string {
-        return this.revisionName.substring(this.revisionName.lastIndexOf('--') + 2);
+        return this.revisionName.split('--').pop() ?? '';
     }
 
     static hasDescendant(item: RevisionsItemModel): boolean {
