@@ -9,6 +9,9 @@ import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { ISecretContext } from "../ISecretContext";
+import { SecretCreateStep } from "./SecretCreateStep";
+import { SecretNameStep } from "./SecretNameStep";
+import { SecretValueStep } from "./SecretValueStep";
 
 export async function addSecret(context: IActionContext, node?: SecretsItem): Promise<void> {
     const { subscription, containerApp } = node ?? await pickContainerApp(context);
@@ -22,16 +25,16 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
     };
 
     const promptSteps: AzureWizardPromptStep<ISecretContext>[] = [
-        // Secret name
-        // Secret value
+        new SecretNameStep(),
+        new SecretValueStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<ISecretContext>[] = [
-        // Execute secret addition
+        new SecretCreateStep()
     ];
 
     const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
-        title: localize('createSecret', 'Create a secret for container app "{0}"', containerApp.name),
+        title: localize('addSecret', 'Add secret to container app "{0}"', containerApp.name),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true

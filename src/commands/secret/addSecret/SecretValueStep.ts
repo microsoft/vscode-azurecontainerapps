@@ -8,17 +8,17 @@ import { localize } from "../../../utils/localize";
 import { validateUtils } from "../../../utils/validateUtils";
 import { ISecretContext } from "../ISecretContext";
 
-export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
+export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
-        context.secretName = await context.ui.showInputBox({
-            prompt: localize('secretName', 'Enter a secret name.'),
+        context.secretValue = await context.ui.showInputBox({
+            prompt: localize('secretValue', 'Enter a secret value.'),
             validateInput: this.validateInput
         });
-        context.valuesToMask.push(context.secretName);
+        context.valuesToMask.push(context.secretValue);
     }
 
     public shouldPrompt(context: ISecretContext): boolean {
-        return !context.secretName;
+        return !context.secretValue;
     }
 
     private validateInput(val: string | undefined): string | undefined {

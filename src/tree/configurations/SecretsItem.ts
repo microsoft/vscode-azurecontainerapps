@@ -16,12 +16,13 @@ const secrets: string = localize('secrets', 'Secrets');
 const secretItemContextValue: string = 'secretItem';
 
 export class SecretsItem implements ContainerAppsItem {
+    static readonly idSuffix: string = 'secrets';
     static readonly contextValue: string = 'secretsItem';
     static readonly contextValueRegExp: RegExp = new RegExp(SecretsItem.contextValue);
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) { }
 
-    id: string = `${this.containerApp.id}/secrets`;
+    id: string = `${this.containerApp.id}/${SecretsItem.idSuffix}`;
 
     viewProperties: ViewPropertiesModel = {
         data: this.containerApp.configuration?.secrets ?? [],
@@ -45,6 +46,6 @@ export class SecretsItem implements ContainerAppsItem {
             iconPath: treeUtils.getIconPath('secrets'),
             contextValue: SecretsItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
-        }
+        };
     }
 }
