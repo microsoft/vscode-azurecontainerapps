@@ -161,7 +161,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.fireSoon({ type: FileChangeType.Deleted, uri });
     }
 
-    // Helpers..
+    // Helpers
     private buildUriFromItem<T extends ContainerAppsItem>(item: T): Uri {
         return URI.parse(`${RevisionDraftFileSystem.scheme}:/${item.containerApp.name}.json`);
     }
