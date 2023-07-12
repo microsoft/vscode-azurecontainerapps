@@ -40,7 +40,7 @@ export class RevisionItem implements RevisionsItemModel {
         return createContextValue(values);
     }
 
-    get description(): string | undefined {
+    private get description(): string | undefined {
         if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
             return undefined;
         }
@@ -59,8 +59,14 @@ export class RevisionItem implements RevisionsItemModel {
         label: nonNullProp(this.revision, 'name'),
     };
 
-    async getChildren(): Promise<TreeElementBase[]> {
-        return [new ScaleItem(this.subscription, this.containerApp, this.revision)];
+    static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
+        return [
+            new ScaleItem(subscription, containerApp, revision)
+        ];
+    }
+
+    getChildren(): TreeElementBase[] {
+        return RevisionItem.getTemplateChildren(this.subscription, this.containerApp, this.revision);
     }
 
     getTreeItem(): TreeItem {

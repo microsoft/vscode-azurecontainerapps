@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/
+
 import type { Template } from "@azure/arm-appcontainers";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
@@ -39,7 +44,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     private readonly bufferedEvents: FileChangeEvent[] = [];
     private fireSoonHandle?: NodeJS.Timer;
 
-    private draftStore: Record<string, RevisionDraftFile> = {};
+    private draftStore: Map<string, RevisionDraftFile> = new Map();
 
     get onDidChangeFile(): Event<FileChangeEvent[]> {
         return this.emitter.event;
@@ -69,7 +74,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.revision, 'name'));
         }
 
-        this.draftStore[uri.path] = file;
+        this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Created, uri });
     }
 
@@ -84,7 +89,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     readFile(uri: Uri): Uint8Array {
-        const contents = this.draftStore[uri.path].contents;
+        const contents = this.draftStore.get(uri.path)?.contents;
         return contents ? Buffer.from(contents) : Buffer.from('');
     }
 
@@ -95,11 +100,11 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
     getRevisionDraftFile<T extends ContainerAppsItem>(item: T): RevisionDraftFile | undefined {
         const uri: Uri = this.buildUriFromItem(item);
-        return this.draftStore[uri.path];
+        return this.draftStore.get(uri.path);
     }
 
     stat(uri: Uri): FileStat {
-        const file: RevisionDraftFile | undefined = this.draftStore[uri.path];
+        const file: RevisionDraftFile | undefined = this.draftStore.get(uri.path);
 
         if (file) {
             return {
@@ -125,7 +130,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     writeFile(uri: Uri, contents: Uint8Array): void {
-        const file: RevisionDraftFile | undefined = this.draftStore[uri.path];
+        const file: RevisionDraftFile | undefined = this.draftStore.get(uri.path);
         if (!file || file.contents === contents) {
             return;
         }
@@ -134,7 +139,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         file.size = contents.byteLength;
         file.mtime = Date.now();
 
-        this.draftStore[uri.path] = file;
+        this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
         // Any new changes to the draft file can cause the states of a container app's children to change (e.g. displaying "Unsaved changes")
@@ -152,7 +157,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     delete(uri: Uri): void {
-        delete this.draftStore[uri.path];
+        this.draftStore.delete(uri.path);
         this.fireSoon({ type: FileChangeType.Deleted, uri });
     }
 
@@ -162,7 +167,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     private doesUriExist(uri: Uri): boolean {
-        return !!this.draftStore[uri.path];
+        return !!this.draftStore.get(uri.path);
     }
 
     // Adapted from: https://github.com/microsoft/vscode-extension-samples/blob/master/fsprovider-sample/src/fileSystemProvider.ts

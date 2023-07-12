@@ -10,7 +10,7 @@ import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azurer
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
@@ -21,8 +21,11 @@ import { treeUtils } from "../utils/treeUtils";
 import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
+import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
-import { ScaleItem } from "./scaling/ScaleItem";
+
+const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
+const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -65,7 +68,7 @@ export class ContainerAppItem implements ContainerAppsItem {
         return createContextValue(values);
     }
 
-    get description(): string | undefined {
+    private get description(): string | undefined {
         if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
             return this.containerApp.provisioningState;
         }
@@ -84,7 +87,7 @@ export class ContainerAppItem implements ContainerAppsItem {
 
             if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
                 const revision: Revision = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
-                children.push(new ScaleItem(this.subscription, this.containerApp, revision));
+                children.push(...RevisionItem.getTemplateChildren(this.subscription, this.containerApp, revision));
             } else {
                 children.push(new RevisionsItem(this.subscription, this.containerApp));
             }

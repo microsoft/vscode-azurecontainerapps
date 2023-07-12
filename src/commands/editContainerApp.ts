@@ -14,7 +14,7 @@ export async function editContainerApp(context: IActionContext, node?: Container
     node ??= await pickContainerApp(context);
 
     if (node.containerApp.revisionsMode !== KnownActiveRevisionsMode.Single) {
-        throw new Error(localize('revisionModeError', 'The issued command can only be executed in single revision mode.'));
+        throw new Error(localize('revisionModeError', 'The issued command can only be executed when the container app is in single revision mode.'));
     }
 
     await ext.revisionDraftFileSystem.editRevisionDraft(node);

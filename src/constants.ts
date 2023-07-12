@@ -72,11 +72,8 @@ export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
 export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
 
-export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
-export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
-
-export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
-export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
-
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
+
+// export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
+// export const revisionDraftFalseContextValue: string = 'revisionDraft:false';

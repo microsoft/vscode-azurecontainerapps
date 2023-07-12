@@ -11,8 +11,7 @@ import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
-import { ScaleItem } from "../scaling/ScaleItem";
-import type { RevisionsItemModel } from "./RevisionItem";
+import { RevisionItem, type RevisionsItemModel } from "./RevisionItem";
 
 export class RevisionDraftItem implements RevisionsItemModel {
     static readonly idSuffix: string = 'revisionDraft';
@@ -27,7 +26,7 @@ export class RevisionDraftItem implements RevisionsItemModel {
         this.revisionsMode = containerApp.revisionsMode;
     }
 
-    get revisionName(): string {
+    private get revisionName(): string {
         return nonNullProp(this.revision, 'name');
     }
 
@@ -57,8 +56,6 @@ export class RevisionDraftItem implements RevisionsItemModel {
     }
 
     getChildren(): TreeElementBase[] {
-        return [
-            new ScaleItem(this.subscription, this.containerApp, this.revision)
-        ];
+        return RevisionItem.getTemplateChildren(this.subscription, this.containerApp, this.revision);
     }
 }
