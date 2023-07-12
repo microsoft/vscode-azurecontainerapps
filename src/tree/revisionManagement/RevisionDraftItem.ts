@@ -38,6 +38,10 @@ export class RevisionDraftItem implements RevisionsItemModel {
     }
 
     static hasDescendant(item: RevisionsItemModel): boolean {
+        if (item instanceof RevisionDraftItem) {
+            return false;
+        }
+
         const revisionDraftBaseName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(item)?.baseRevisionName;
         return item.revision.name === revisionDraftBaseName;
     }
