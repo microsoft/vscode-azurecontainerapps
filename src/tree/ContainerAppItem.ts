@@ -7,6 +7,7 @@ import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revisio
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import * as deepEqual from "deep-eql";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
@@ -15,7 +16,6 @@ import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
-import { isDeepEqual } from "../utils/isDeepEqual";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
@@ -170,7 +170,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             return false;
         }
 
-        return !isDeepEqual(this.containerApp.template, draftTemplate);
+        return !deepEqual(this.containerApp.template, draftTemplate);
     }
 }
 

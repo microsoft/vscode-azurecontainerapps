@@ -6,9 +6,9 @@
 import { KnownActiveRevisionsMode, Revision, Scale } from "@azure/arm-appcontainers";
 import { createGenericElement, nonNullValue } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import * as deepEqual from 'deep-eql';
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { ext } from "../../extensionVariables";
-import { isDeepEqual } from "../../utils/isDeepEqual";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
@@ -83,10 +83,10 @@ export class ScaleItem implements RevisionsItemModel {
         }
 
         if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-            return !!this.containerApp.template?.scale && !isDeepEqual(this.containerApp.template.scale, scaleDraftTemplate);
+            return !!this.containerApp.template?.scale && !deepEqual(this.containerApp.template.scale, scaleDraftTemplate);
         } else {
             // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-            // return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !isDeepEqual(this.revision.template.scale, scaleDraftTemplate);
+            // return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !deepEqual(this.revision.template.scale, scaleDraftTemplate);
 
             return false;  // Placeholder
         }
