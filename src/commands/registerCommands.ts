@@ -28,6 +28,8 @@ import { restartRevision } from './revision/restartRevision';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 import { addSecret } from './secret/addSecret/addSecret';
+import { deleteSecret } from './secret/deleteSecret/deleteSecret';
+import { toggleSecretVisibility } from './secret/toggleSecretVisibility';
 
 export function registerCommands(): void {
     // managed environments
@@ -55,6 +57,9 @@ export function registerCommands(): void {
 
     // secret
     registerCommandWithTreeNodeUnwrapping('containerApps.addSecret', addSecret);
+    registerCommandWithTreeNodeUnwrapping('containerApps.showSecret', toggleSecretVisibility);
+    registerCommandWithTreeNodeUnwrapping('containerApps.hideSecret', toggleSecretVisibility);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deleteSecret', deleteSecret);
 
     // revisions
     registerCommandWithTreeNodeUnwrapping('containerApps.chooseRevisionMode', chooseRevisionMode);

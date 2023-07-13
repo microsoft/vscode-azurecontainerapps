@@ -3,17 +3,18 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Secret } from "@azure/arm-appcontainers";
-import { createGenericElement, nonNullProp } from "@microsoft/vscode-azext-utils";
+import type { ContainerAppsAPIClient, Secret } from "@azure/arm-appcontainers";
+import { IActionContext, callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { localize } from "../../utils/localize";
-import { treeUtils } from "../../utils/treeUtils";
-import type { ContainerAppModel } from "../ContainerAppItem";
-import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { createContainerAppsClient } from "../../../utils/azureClients";
+import { localize } from "../../../utils/localize";
+import { treeUtils } from "../../../utils/treeUtils";
+import type { ContainerAppModel } from "../../ContainerAppItem";
+import type { ContainerAppsItem, TreeElementBase } from "../../ContainerAppsBranchDataProvider";
+import { SecretItem } from "./SecretItem";
 
 const secrets: string = localize('secrets', 'Secrets');
-const secretItemContextValue: string = 'secretItem';
 
 export class SecretsItem implements ContainerAppsItem {
     static readonly idSuffix: string = 'secrets';
@@ -30,14 +31,8 @@ export class SecretsItem implements ContainerAppsItem {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        const secrets: Secret[] = this.containerApp.configuration?.secrets ?? [];
-        return secrets.map((secret) => {
-            return createGenericElement({
-                contextValue: secretItemContextValue,
-                iconPath: new ThemeIcon('dash'),
-                label: nonNullProp(secret, 'name'),
-            });
-        });
+        const secrets: Secret[] = await this.getSecrets();
+        return secrets.map((secret) => new SecretItem(this.subscription, this.containerApp, secret));
     }
 
     getTreeItem(): TreeItem {
@@ -47,5 +42,12 @@ export class SecretsItem implements ContainerAppsItem {
             contextValue: SecretsItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         };
+    }
+
+    private async getSecrets(): Promise<Secret[]> {
+        return await callWithTelemetryAndErrorHandling<Secret[]>('getSecrets', async (context: IActionContext) => {
+            const client: ContainerAppsAPIClient = await createContainerAppsClient(context, this.subscription);
+            return (await client.containerApps.listSecrets(this.containerApp.resourceGroup, this.containerApp.name)).value;
+        }) ?? [];
     }
 }

@@ -4,16 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../extensionVariables";
+import { SecretItem } from "../../../tree/configurations/secrets/SecretItem";
 import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { ISecretContext } from "../ISecretContext";
-import { SecretCreateStep } from "./SecretCreateStep";
-import { SecretNameStep } from "./SecretNameStep";
-import { SecretValueStep } from "./SecretValueStep";
+import { SecretDeleteConfirmStep } from "./SecretDeleteConfirmStep";
+import { SecretDeleteStep } from "./SecretDeleteStep";
 
-export async function addSecret(context: IActionContext, node?: SecretsItem): Promise<void> {
+export async function deleteSecret(context: IActionContext, node: SecretItem): Promise<void> {
     const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
     const wizardContext: ISecretContext = {
@@ -21,25 +22,28 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
         ...createSubscriptionContext(subscription),
         ...(await createActivityContext()),
         subscription,
-        containerApp
+        containerApp,
+        secret: node.secret
     };
 
     const promptSteps: AzureWizardPromptStep<ISecretContext>[] = [
-        new SecretNameStep(),
-        new SecretValueStep()
+        new SecretDeleteConfirmStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<ISecretContext>[] = [
-        new SecretCreateStep()
+        new SecretDeleteStep()
     ];
 
     const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
-        title: localize('addSecret', 'Add secret to container app "{0}"', containerApp.name),
+        title: localize('deleteSecret', 'Delete secret from container app "{0}"', containerApp.name),
         promptSteps,
         executeSteps,
-        showLoadingPrompt: true
     });
 
     await wizard.prompt();
-    await wizard.execute();
+
+    const secretId: string = `${wizardContext.containerApp?.id}/${SecretsItem.idSuffix}/${wizardContext.secret?.name}`;
+    await ext.state.showDeleting(secretId, async () => {
+        await wizard.execute();
+    });
 }

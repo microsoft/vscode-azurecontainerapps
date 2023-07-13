@@ -7,7 +7,7 @@ import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-uti
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
-import { SecretsItem } from "../../../tree/configurations/SecretsItem";
+import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../../utils/updateContainerApp";
 import { ISecretContext } from "../ISecretContext";

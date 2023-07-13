@@ -13,7 +13,7 @@ import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataPr
 import { ActionsItem } from "./ActionsItem";
 import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressEnabledItem } from "./IngressItem";
-import { SecretsItem } from "./SecretsItem";
+import { SecretsItem } from "./secrets/SecretsItem";
 
 const configuration: string = localize('configuration', 'Configuration');
 

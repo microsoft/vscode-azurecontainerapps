@@ -180,6 +180,23 @@
                 "command": "containerApps.addSecret",
                 "title": "%containerApps.addSecret%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.showSecret",
+                "title": "%containerApps.showSecret%",
+                "category": "Azure Container Apps",
+                "icon": "$(eye)"
+            },
+            {
+                "command": "containerApps.hideSecret",
+                "title": "%containerApps.hideSecret%",
+                "category": "Azure Container Apps",
+                "icon": "$(eye-closed)"
+            },
+            {
+                "command": "containerApps.deleteSecret",
+                "title": "%containerApps.deleteSecret%",
+                "category": "Azure Container Apps"
             }
         ],
         "menus": {
@@ -293,6 +310,31 @@
                     "command": "containerApps.addSecret",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretsItem/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.showSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem(.*)visibleSecret:false/i",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.showSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem(.*)visibleSecret:false/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.hideSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem(.*)visibleSecret:true/i",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.hideSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem(.*)visibleSecret:true/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deleteSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem/i",
+                    "group": "1@2"
                 },
                 {
                     "command": "containerApps.openGitHubRepo",
