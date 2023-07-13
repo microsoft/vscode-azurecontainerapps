@@ -30,17 +30,13 @@ export class SecretItem implements ContainerAppsItem {
         return createContextValue(values);
     }
 
-    private get label(): string {
-        return this.visibleSecret ? `${this.secret.name}=${this.secret.value}` : `${this.secret.name}=Hidden value. Click to view.`;
-    }
-
     toggleSecretVisibility(): void {
         this.visibleSecret = !this.visibleSecret;
     }
 
     getTreeItem(): TreeItem {
         return {
-            label: this.label,
+            label: this.visibleSecret ? `${this.secret.name}=${this.secret.value}` : `${this.secret.name}=Hidden value. Click to view.`,
             iconPath: new ThemeIcon('key'),
             contextValue: this.contextValue
         };
