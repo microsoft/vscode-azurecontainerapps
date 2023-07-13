@@ -7,7 +7,6 @@ import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-uti
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
-import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../../utils/updateContainerApp";
 import { ISecretContext } from "../ISecretContext";
@@ -26,19 +25,15 @@ export class SecretCreateStep extends AzureWizardExecuteStep<ISecretContext> {
         });
 
         const addSecret: string = localize('addSecret', 'Add secret "{0}" to container app "{1}"', context.secretName, containerApp.name);
-        const addingSecret: string = localize('addingSecret', 'Adding secret...');
+        const creatingSecret: string = localize('creatingSecret', 'Creating secret...');
 
         context.activityTitle = addSecret;
-        progress.report({ message: addingSecret });
+        progress.report({ message: creatingSecret });
 
-        const parentId: string = `${containerApp.id}/${SecretsItem.idSuffix}`;
+        await updateContainerApp(context, context.subscription, containerAppEnvelope);
+
         const addedSecret: string = localize('addedSecret', 'Added secret "{0}" to container app "{1}"', context.secretName, containerApp.name);
-
-        await ext.state.runWithTemporaryDescription(parentId, addingSecret, async () => {
-            await updateContainerApp(context, context.subscription, containerAppEnvelope);
-            ext.outputChannel.appendLog(addedSecret);
-            ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
-        });
+        ext.outputChannel.appendLog(addedSecret);
     }
 
     public shouldExecute(context: ISecretContext): boolean {

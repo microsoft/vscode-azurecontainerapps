@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../extensionVariables";
 import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -41,5 +42,9 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
     });
 
     await wizard.prompt();
-    await wizard.execute();
+
+    const parentId: string = `${containerApp.id}/${SecretsItem.idSuffix}`;
+    await ext.state.showCreatingChild(parentId, localize('creatingSecret', 'Creating secret...'), async () => {
+        await wizard.execute();
+    });
 }
