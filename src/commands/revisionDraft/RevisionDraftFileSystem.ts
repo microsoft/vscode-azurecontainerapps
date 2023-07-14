@@ -53,7 +53,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     // Create
     createRevisionDraft(item: ContainerAppItem | RevisionItem | RevisionDraftItem): void {
         const uri: Uri = this.buildUriFromItem(item);
-        if (this.doesUriExist(uri)) {
+        if (this.draftStore.has(uri.path)) {
             return;
         }
 
@@ -81,7 +81,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     // Read
     parseRevisionDraft<T extends ContainerAppsItem>(item: T): Template | undefined {
         const uri: URI = this.buildUriFromItem(item);
-        if (!this.doesUriExist(uri)) {
+        if (!this.draftStore.has(uri.path)) {
             return undefined;
         }
 
@@ -95,7 +95,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
     doesContainerAppsItemHaveRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
         const uri: Uri = this.buildUriFromItem(item);
-        return this.doesUriExist(uri);
+        return this.draftStore.has(uri.path);
     }
 
     getRevisionDraftFile<T extends ContainerAppsItem>(item: T): RevisionDraftFile | undefined {
@@ -121,7 +121,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     // Update
     async editRevisionDraft(item: ContainerAppItem | RevisionItem | RevisionDraftItem): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
-        if (!this.doesUriExist(uri)) {
+        if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);
         }
 
@@ -149,7 +149,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     // Delete
     discardRevisionDraft<T extends ContainerAppsItem>(item: T): void {
         const uri: Uri = this.buildUriFromItem(item);
-        if (!this.doesUriExist(uri)) {
+        if (!this.draftStore.has(uri.path)) {
             return;
         }
 
@@ -161,13 +161,9 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.fireSoon({ type: FileChangeType.Deleted, uri });
     }
 
-    // Helpers
+    // Helper
     private buildUriFromItem<T extends ContainerAppsItem>(item: T): Uri {
         return URI.parse(`${RevisionDraftFileSystem.scheme}:/${item.containerApp.name}.json`);
-    }
-
-    private doesUriExist(uri: Uri): boolean {
-        return !!this.draftStore.get(uri.path);
     }
 
     // Adapted from: https://github.com/microsoft/vscode-extension-samples/blob/master/fsprovider-sample/src/fileSystemProvider.ts
