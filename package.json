@@ -66,6 +66,16 @@
                 "icon": "$(add)"
             },
             {
+                "command": "containerApps.deleteManagedEnvironment",
+                "title": "%containerApps.deleteManagedEnvironment%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.editContainerApp",
+                "title": "%containerApps.editContainerApp%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deployImage",
                 "title": "%containerApps.deployImage%",
                 "category": "Azure Container Apps",
@@ -74,11 +84,6 @@
             {
                 "command": "containerApps.deployImageApi",
                 "title": "%containerApps.deployImageApi%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.deleteManagedEnvironment",
-                "title": "%containerApps.deleteManagedEnvironment%",
                 "category": "Azure Container Apps"
             },
             {
@@ -105,6 +110,12 @@
                 "command": "containerApps.editTargetPort",
                 "title": "%containerApps.editTargetPort%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.discardRevisionDraft",
+                "title": "%containerApps.discardRevisionDraft%",
+                "category": "Azure Container Apps",
+                "icon": "$(discard)"
             },
             {
                 "command": "containerApps.chooseRevisionMode",
@@ -215,24 +226,39 @@
                     "group": "2@2"
                 },
                 {
-                    "command": "containerApps.deployImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "3@1"
+                    "command": "containerApps.discardRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "containerApps.discardRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "group": "3@2"
+                },
+                {
+                    "command": "containerApps.editContainerApp",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "group": "4@1"
                 },
                 {
                     "command": "containerApps.deleteContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "3@2"
+                    "group": "5@1"
+                },
+                {
+                    "command": "containerApps.deployImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "6@1"
                 },
                 {
                     "command": "containerApps.startStreamingLogs",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "4@1"
+                    "group": "7@1"
                 },
                 {
                     "command": "containerApps.stopStreamingLogs",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "4@2"
+                    "group": "7@2"
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
