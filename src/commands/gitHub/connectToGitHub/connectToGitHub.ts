@@ -3,11 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { GitHubBranchListStep, GitHubOrgListStep, GitHubRepositoryListStep } from "@microsoft/vscode-azext-github";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { GitHubBranchListStep } from "../../../gitHub/GitHubBranchListStep";
-import { GitHubOrgListStep } from "../../../gitHub/GitHubOrgListStep";
-import { GitHubRepositoryListStep } from "../../../gitHub/GitHubRepositoryListStep";
-import { getGitHubAccessToken } from "../../../gitHub/getGitHubAccessToken";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -35,7 +32,6 @@ export async function connectToGitHub(context: ITreeItemPickerContext & Partial<
         ...await createActivityContext(),
         subscription,
         containerApp,
-        gitHubAccessToken: await getGitHubAccessToken()
     };
 
     if (await isGitHubConnected(wizardContext)) {

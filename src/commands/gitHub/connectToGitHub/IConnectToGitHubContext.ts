@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Registry } from '@azure/arm-containerregistry';
+import type { GitHubContext } from '@microsoft/vscode-azext-github';
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import type { IGitHubContext } from '../../../gitHub/IGitHubContext';
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { IContainerAppContext } from '../../IContainerAppContext';
 
-export interface IConnectToGitHubContext extends IContainerAppContext, IGitHubContext, ExecuteActivityContext {
+export interface IConnectToGitHubContext extends IContainerAppContext, GitHubContext, ExecuteActivityContext {
     // Make containerApp _required_
     containerApp: ContainerAppModel;
 
