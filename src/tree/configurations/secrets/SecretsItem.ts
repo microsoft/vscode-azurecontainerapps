@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { Secret } from "@azure/arm-appcontainers";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { localize } from "../../../utils/localize";
@@ -30,7 +31,7 @@ export class SecretsItem implements ContainerAppsItem {
 
     async getChildren(): Promise<TreeElementBase[]> {
         const secrets: Secret[] = this.containerApp.configuration?.secrets ?? [];
-        return secrets.map((secret) => new SecretItem(this.subscription, this.containerApp, secret));
+        return secrets.map((secret) => new SecretItem(this.subscription, this.containerApp, nonNullProp(secret, 'name')));
     }
 
     getTreeItem(): TreeItem {
