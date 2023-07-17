@@ -27,8 +27,6 @@
     "containerApps.openConsoleInPortal": "Open Console in Portal",
     "containerApps.editScalingRange": "Edit Scaling Range...",
     "containerApps.addScaleRule": "Add Scale Rule...",
-    "containerApps.showSecret": "Show Secret",
-    "containerApps.hideSecret": "Hide Secret",
     "containerApps.connectToGitHub": "Connect to GitHub Repository...",
     "containerApps.disconnectRepo": "Disconnect from Repo",
     "containerApps.openGitHubRepo": "Open Repo in GitHub",
