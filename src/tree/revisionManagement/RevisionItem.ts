@@ -7,6 +7,7 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } fr
 import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
@@ -16,9 +17,6 @@ import { ScaleItem } from "../scaling/ScaleItem";
 export interface RevisionsItemModel extends ContainerAppsItem {
     revision: Revision;
 }
-
-export const revisionModeSingleContextValue: string = 'revisionMode:single';
-export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
 const revisionStateActiveContextValue: string = 'revisionState:active';
 const revisionStateInactiveContextValue: string = 'revisionState:inactive';
@@ -42,7 +40,7 @@ export class RevisionItem implements RevisionsItemModel {
         return createContextValue(values);
     }
 
-    get description(): string | undefined {
+    private get description(): string | undefined {
         if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
             return undefined;
         }
@@ -61,8 +59,14 @@ export class RevisionItem implements RevisionsItemModel {
         label: nonNullProp(this.revision, 'name'),
     };
 
-    async getChildren(): Promise<TreeElementBase[]> {
-        return [new ScaleItem(this.subscription, this.containerApp, this.revision)];
+    static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
+        return [
+            new ScaleItem(subscription, containerApp, revision)
+        ];
+    }
+
+    getChildren(): TreeElementBase[] {
+        return RevisionItem.getTemplateChildren(this.subscription, this.containerApp, this.revision);
     }
 
     getTreeItem(): TreeItem {

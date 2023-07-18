@@ -7,9 +7,11 @@ import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revisio
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import * as deepEqual from "deep-eql";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
@@ -19,9 +21,11 @@ import { treeUtils } from "../utils/treeUtils";
 import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "./revisionManagement/RevisionItem";
+import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
-import { ScaleItem } from "./scaling/ScaleItem";
+
+const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
+const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -60,7 +64,20 @@ export class ContainerAppItem implements ContainerAppsItem {
     private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
         return createContextValue(values);
+    }
+
+    private get description(): string | undefined {
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && this.hasUnsavedChanges()) {
+            return localize('unsavedChanges', 'Unsaved changes');
+        }
+
+        if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
+            return this.containerApp.provisioningState;
+        }
+
+        return undefined;
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
@@ -70,7 +87,7 @@ export class ContainerAppItem implements ContainerAppsItem {
 
             if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
                 const revision: Revision = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
-                children.push(new ScaleItem(this.subscription, this.containerApp, revision));
+                children.push(...RevisionItem.getTemplateChildren(this.subscription, this.containerApp, revision));
             } else {
                 children.push(new RevisionsItem(this.subscription, this.containerApp));
             }
@@ -89,7 +106,7 @@ export class ContainerAppItem implements ContainerAppsItem {
             label: nonNullProp(this.containerApp, 'name'),
             iconPath: treeUtils.getIconPath('azure-containerapps'),
             contextValue: this.contextValue,
-            description: this.containerApp.provisioningState === 'Succeeded' ? undefined : this.containerApp.provisioningState,
+            description: this.description,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
@@ -145,6 +162,15 @@ export class ContainerAppItem implements ContainerAppsItem {
             await wizard.execute();
         });
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);
+    }
+
+    private hasUnsavedChanges(): boolean {
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+        if (!this.containerApp.template || !draftTemplate) {
+            return false;
+        }
+
+        return !deepEqual(this.containerApp.template, draftTemplate);
     }
 }
 

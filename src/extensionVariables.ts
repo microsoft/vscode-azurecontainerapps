@@ -6,6 +6,7 @@
 import { IAzExtOutputChannel, IExperimentationServiceAdapter, TreeElementStateManager } from "@microsoft/vscode-azext-utils";
 import { AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
 import { ExtensionContext } from "vscode";
+import { RevisionDraftFileSystem } from "./commands/revisionDraft/RevisionDraftFileSystem";
 import { ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
 
 /**
@@ -17,6 +18,7 @@ export namespace ext {
     export let ignoreBundle: boolean | undefined;
     export const prefix: string = 'containerApps';
     export let experimentationService: IExperimentationServiceAdapter;
+    export let revisionDraftFileSystem: RevisionDraftFileSystem;
     export let rgApiV2: AzureResourcesExtensionApi;
 
     export let state: TreeElementStateManager;

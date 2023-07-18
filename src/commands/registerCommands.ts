@@ -11,6 +11,7 @@ import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployImage } from './deployImage/deployImage';
 import { deployImageApi } from './deployImage/deployImageApi';
+import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
@@ -25,6 +26,7 @@ import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
 import { restartRevision } from './revision/restartRevision';
+import { discardRevisionDraft } from './revisionDraft/discardRevisionDraft';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 
@@ -35,6 +37,7 @@ export function registerCommands(): void {
 
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
@@ -57,6 +60,9 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.activateRevision', activateRevision);
     registerCommandWithTreeNodeUnwrapping('containerApps.deactivateRevision', deactivateRevision);
     registerCommandWithTreeNodeUnwrapping('containerApps.restartRevision', restartRevision);
+
+    // revision draft
+    registerCommandWithTreeNodeUnwrapping('containerApps.discardRevisionDraft', discardRevisionDraft);
 
     // scaling
     registerCommandWithTreeNodeUnwrapping('containerApps.editScalingRange', editScalingRange);
