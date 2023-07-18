@@ -6,7 +6,7 @@
     "containerApps.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
     "containerApps.browse": "Browse",
     "containerApps.createContainerApp": "Create Container App...",
-    "containerApps.editContainerApp": "Edit Container App (Advanced)",
+    "containerApps.editContainerApp": "Edit Container App (Advanced)...",
     "containerApps.deployImage": "Update Container App Image...",
     "containerApps.deployImageApi": "Update Container App Image (API)...",
     "containerApps.deleteContainerApp": "Delete Container App...",

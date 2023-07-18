@@ -69,12 +69,12 @@ export class ContainerAppItem implements ContainerAppsItem {
     }
 
     private get description(): string | undefined {
-        if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
-            return this.containerApp.provisioningState;
-        }
-
         if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && this.hasUnsavedChanges()) {
             return localize('unsavedChanges', 'Unsaved changes');
+        }
+
+        if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
+            return this.containerApp.provisioningState;
         }
 
         return undefined;
