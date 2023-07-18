@@ -29,6 +29,7 @@ import { restartRevision } from './revision/restartRevision';
 import { discardRevisionDraft } from './revisionDraft/discardRevisionDraft';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
+import { addSecret } from './secret/addSecret/addSecret';
 
 export function registerCommands(): void {
     // managed environments
@@ -54,6 +55,9 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.disableIngress', disableIngress);
     registerCommandWithTreeNodeUnwrapping('containerApps.toggleVisibility', toggleIngressVisibility);
     registerCommandWithTreeNodeUnwrapping('containerApps.editTargetPort', editTargetPort);
+
+    // secret
+    registerCommandWithTreeNodeUnwrapping('containerApps.addSecret', addSecret);
 
     // revisions
     registerCommandWithTreeNodeUnwrapping('containerApps.chooseRevisionMode', chooseRevisionMode);
