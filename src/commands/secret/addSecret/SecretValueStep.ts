@@ -12,6 +12,7 @@ export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
         context.secretValue = await context.ui.showInputBox({
             prompt: localize('secretValue', 'Enter a secret value.'),
+            password: true,
             validateInput: this.validateInput
         });
         context.valuesToMask.push(context.secretValue);
