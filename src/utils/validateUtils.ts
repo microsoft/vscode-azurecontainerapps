@@ -62,9 +62,9 @@ export namespace validateUtils {
     }
 
     /**
-     * @param symbols Any custom symbols that are also allowed in the input string
+     * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
      */
-    export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string): string {
+    export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-'): string {
         return localize('invalidLowerAlphanumericWithSymbols', `A name must consist of lower case alphanumeric characters or one of the following symbols: "{0}", and must start and end with a lower case alphanumeric character.`, symbols);
     }
 }
