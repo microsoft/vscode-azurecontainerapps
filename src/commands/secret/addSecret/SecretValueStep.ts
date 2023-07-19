@@ -23,7 +23,7 @@ export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
     }
 
     private validateInput(val: string | undefined): string | undefined {
-        val = val ? val.trim() : '';
+        val ??= '';
 
         if (!validateUtils.isValidLength(val)) {
             return validateUtils.getInvalidLengthMessage();

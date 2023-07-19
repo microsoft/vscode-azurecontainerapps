@@ -11,11 +11,10 @@ import type { ISecretContext } from "../ISecretContext";
 
 export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
-        context.secretName = await context.ui.showInputBox({
+        context.secretName = (await context.ui.showInputBox({
             prompt: localize('secretName', 'Enter a secret name.'),
-            validateInput: this.validateInput,
-            asyncValidationTask: (val: string) => this.validateUniqueSecret(context, val)
-        });
+            validateInput: (val: string | undefined) => this.validateInput(context, val),
+        })).trim();
         context.valuesToMask.push(context.secretName);
     }
 
@@ -23,27 +22,21 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
         return !context.secretName;
     }
 
-    private validateInput(val: string | undefined): string | undefined {
-        val = val ? val.trim() : '';
+    private validateInput(context: ISecretContext, val: string | undefined): string | undefined {
+        const value: string = val ? val.trim() : '';
 
-        if (!validateUtils.isValidLength(val)) {
+        if (!validateUtils.isValidLength(value)) {
             return validateUtils.getInvalidLengthMessage();
         }
 
         const allowedSymbols: string = '-.';
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(val, allowedSymbols)) {
+        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value, allowedSymbols)) {
             return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(allowedSymbols);
         }
 
-        return undefined;
-    }
-
-    private async validateUniqueSecret(context: ISecretContext, val: string): Promise<string | undefined> {
-        val = val.trim();
-
         const secrets: Secret[] = context.containerApp?.configuration?.secrets ?? [];
-        if (secrets.some((secret) => secret.name?.trim().toLocaleLowerCase() === val.toLocaleLowerCase())) {
-            return localize('secretAlreadyExists', 'Secret with name "{0}" already exists.', val);
+        if (secrets.some((secret) => secret.name?.trim().toLocaleLowerCase() === value.toLocaleLowerCase())) {
+            return localize('secretAlreadyExists', 'Secret with name "{0}" already exists.', value);
         }
 
         return undefined;
