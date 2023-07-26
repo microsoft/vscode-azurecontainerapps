@@ -8,7 +8,7 @@ import { AzExtResourceType } from "@microsoft/vscode-azureresources-api";
 import * as vscode from 'vscode';
 import { ext } from "../extensionVariables";
 import { ContainerAppItem } from "../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../tree/ManagedEnvironmentItem";
+import type { ManagedEnvironmentItem } from "../tree/ManagedEnvironmentItem";
 import { localize } from "./localize";
 
 export interface PickItemOptions {

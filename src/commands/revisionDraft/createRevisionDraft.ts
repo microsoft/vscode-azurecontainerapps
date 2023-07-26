@@ -10,14 +10,14 @@ import * as dayjs from "dayjs";
 // eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { ext } from "../../extensionVariables";
-import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
+import type { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { delay } from "../../utils/delay";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickContainerApp";
 import { pickRevisionItem } from "../../utils/pickRevisionItem";
-import { IContainerAppContext } from "../IContainerAppContext";
+import type { IContainerAppContext } from "../IContainerAppContext";
 
 dayjs.extend(relativeTime);
 
