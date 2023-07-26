@@ -51,6 +51,7 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
         `${revisionItem.containerApp.id}/${RevisionsItem.idSuffix}`,
         localize('creatingDraft', 'Creating draft...'),
         async () => {
+            // Add a short delay to display the creating message
             await delay(5);
             ext.revisionDraftFileSystem.createRevisionDraft(revisionItem);
         }
