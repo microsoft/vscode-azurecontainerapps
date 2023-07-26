@@ -36,22 +36,22 @@ export class RevisionsItem implements ContainerAppsItem {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
+        let revisionDraftBase: Revision | undefined;
         const revisionDraftBaseName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(this)?.baseRevisionName;
-        let draftBaseRevision: Revision | undefined;
 
         const result = (await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const client = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
             const revisions = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.containerApp.resourceGroup, this.containerApp.name));
             return revisions.map(revision => {
                 if (revision.name === revisionDraftBaseName) {
-                    draftBaseRevision = revision;
+                    revisionDraftBase = revision;
                 }
                 return new RevisionItem(this.subscription, this.containerApp, revision)
             });
         }))?.reverse() ?? [];
 
-        return draftBaseRevision ? [
-            new RevisionDraftItem(this.subscription, this.containerApp, draftBaseRevision),
+        return revisionDraftBase ? [
+            new RevisionDraftItem(this.subscription, this.containerApp, revisionDraftBase),
             ...result.filter(item => item.revision.name !== revisionDraftBaseName)
         ] : result;
     }
