@@ -13,6 +13,7 @@ import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
@@ -86,9 +87,7 @@ export class ScaleItem implements RevisionsItemModel {
             return !!this.containerApp.template?.scale && !deepEqual(this.containerApp.template.scale, scaleDraftTemplate);
         } else {
             // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-            // return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !deepEqual(this.revision.template.scale, scaleDraftTemplate);
-
-            return false;  // Placeholder
+            return !!this.revision.template?.scale && RevisionDraftItem.hasDescendant(this) && !deepEqual(this.revision.template.scale, scaleDraftTemplate);
         }
     }
 }
