@@ -74,6 +74,3 @@ export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][l
 
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
-
-// export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
-// export const revisionDraftFalseContextValue: string = 'revisionDraft:false';

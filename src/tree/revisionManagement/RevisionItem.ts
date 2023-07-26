@@ -35,6 +35,10 @@ export class RevisionItem implements RevisionsItemModel {
 
     private get contextValue(): string {
         const values: string[] = [RevisionItem.contextValue];
+
+        // Enable more granular tree item filtering by revision name
+        values.push(nonNullProp(this.revision, 'name'));
+
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         return createContextValue(values);

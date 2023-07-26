@@ -26,7 +26,9 @@ import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
 import { restartRevision } from './revision/restartRevision';
+import { createRevisionDraft } from './revisionDraft/createRevisionDraft';
 import { discardRevisionDraft } from './revisionDraft/discardRevisionDraft';
+import { editRevisionDraft } from './revisionDraft/editRevisionDraft';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 import { addSecret } from './secret/addSecret/addSecret';
@@ -66,6 +68,8 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.restartRevision', restartRevision);
 
     // revision draft
+    registerCommandWithTreeNodeUnwrapping('containerApps.createRevisionDraft', createRevisionDraft);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editRevisionDraft', editRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.discardRevisionDraft', discardRevisionDraft);
 
     // scaling
