@@ -112,6 +112,17 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.createRevisionDraft",
+                "title": "%containerApps.createRevisionDraft%",
+                "category": "Azure Container Apps",
+                "icon": "$(add)"
+            },
+            {
+                "command": "containerApps.editRevisionDraft",
+                "title": "%containerApps.editRevisionDraft%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.discardRevisionDraft",
                 "title": "%containerApps.discardRevisionDraft%",
                 "category": "Azure Container Apps",
@@ -261,6 +272,16 @@
                     "group": "7@2"
                 },
                 {
+                    "command": "containerApps.createRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionsItem/i",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.createRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionsItem/i",
+                    "group": "1@1"
+                },
+                {
                     "command": "containerApps.chooseRevisionMode",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionsItem/i",
                     "group": "2@1"
@@ -279,6 +300,21 @@
                     "command": "containerApps.restartRevision",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
                     "group": "2@4"
+                },
+                {
+                    "command": "containerApps.discardRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "containerApps.discardRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "1@2"
+                },
+                {
+                    "command": "containerApps.editRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.editScalingRange",

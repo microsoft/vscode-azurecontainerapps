@@ -15,6 +15,8 @@
     "containerApps.toggleVisibility": "Switch Ingress Visibility...",
     "containerApps.editTargetPort": "Edit Target Port...",
     "containerApps.chooseRevisionMode": "Choose Revision Mode...",
+    "containerApps.createRevisionDraft": "Create Draft...",
+    "containerApps.editRevisionDraft": "Edit Draft (Advanced)...",
     "containerApps.discardRevisionDraft": "Discard Changes...",
     "containerApps.activateRevision": "Activate Revision",
     "containerApps.deactivateRevision": "Deactivate Revision",
