@@ -21,10 +21,12 @@ function getPickRevisionStep(tdp: vscode.TreeDataProvider<unknown>, revisionName
     let revisionFilter: RegExp | undefined;
     if (revisionName) {
         revisionFilter = revisionName instanceof RegExp ? revisionName : new RegExp(revisionName);
+    } else {
+        revisionFilter = RevisionItem.contextValueRegExp;
     }
 
     return new ContextValueQuickPickStep(tdp, {
-        contextValueFilter: { include: revisionFilter ?? RevisionItem.contextValueRegExp },
+        contextValueFilter: { include: revisionFilter },
         skipIfOne: true,
     });
 }
