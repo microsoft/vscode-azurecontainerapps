@@ -14,6 +14,7 @@
     "containerApps.enableIngress": "Enable Ingress for Container App...",
     "containerApps.toggleVisibility": "Switch Ingress Visibility...",
     "containerApps.editTargetPort": "Edit Target Port...",
+    "containerApps.addSecret": "Add Secret...",
     "containerApps.chooseRevisionMode": "Choose Revision Mode...",
     "containerApps.createRevisionDraft": "Create Draft...",
     "containerApps.editRevisionDraft": "Edit Draft (Advanced)...",
