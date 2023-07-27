@@ -112,6 +112,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.addSecret",
+                "title": "%containerApps.addSecret%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.createRevisionDraft",
                 "title": "%containerApps.createRevisionDraft%",
                 "category": "Azure Container Apps",
@@ -345,6 +350,11 @@
                     "command": "containerApps.editTargetPort",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && (viewItem =~ /ingressEnabledItem/i || viewItem =~ /targetPortItem/i)",
                     "group": "1@3"
+                },
+                {
+                    "command": "containerApps.addSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretsItem/i",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.openGitHubRepo",

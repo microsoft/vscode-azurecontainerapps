@@ -9,6 +9,7 @@ export namespace validateUtils {
     const thirtyTwoBitMaxSafeInteger: number = 2147483647;
     // Estimated using UTF-8 encoding, where a character can be up to ~4 bytes long
     const maxSafeCharacterLength: number = thirtyTwoBitMaxSafeInteger / 32;
+    const allowedSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
 
     /**
      * Validates that the given input string is the appropriate length as determined by the optional lower and upper limit parameters
@@ -39,5 +40,31 @@ export namespace validateUtils {
         } else {
             return localize('invalidBetweenInputLength', 'The input value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
         }
+    }
+
+    /**
+     * Validates that the given input string consists of lower case alphanumeric characters,
+     * starts and ends with an alphanumeric character, and does not contain any special symbols not explicitly specified
+     *
+     * @param value The original input string to validate
+     * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
+     *
+     * @example
+     * "abcd-1234" // returns true
+     * "-abcd-1234" // returns false
+     */
+    export function isLowerCaseAlphanumericWithSymbols(value: string, symbols: string = '-'): boolean {
+        // Search through the passed symbols and match any allowed symbols
+        // If we find a match, escape the symbol using '\\$&'
+        const symbolPattern: string = symbols.replace(new RegExp(allowedSymbols, 'g'), '\\$&');
+        const pattern: RegExp = new RegExp(`^[a-z0-9](?:[a-z0-9${symbolPattern}]*[a-z0-9])?$`);
+        return pattern.test(value);
+    }
+
+    /**
+     * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
+     */
+    export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-'): string {
+        return localize('invalidLowerAlphanumericWithSymbols', `A name must consist of lower case alphanumeric characters or one of the following symbols: "{0}", and must start and end with a lower case alphanumeric character.`, symbols);
     }
 }
