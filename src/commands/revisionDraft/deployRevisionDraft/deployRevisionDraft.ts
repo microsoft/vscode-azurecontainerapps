@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { delay } from "../../../utils/delay";
@@ -14,7 +14,7 @@ import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
 import { DeployRevisionDraftConfirmStep } from "./DeployRevisionDraftConfirmStep";
 import { DeployRevisionDraftStep } from "./DeployRevisionDraftStep";
-import { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
+import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
 
 export async function deployRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {
     const item = node ?? await pickContainerApp(context);

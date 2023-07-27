@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Template } from "@azure/arm-appcontainers";
-import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { IContainerAppContext } from "../../IContainerAppContext";
+import type { Template } from "@azure/arm-appcontainers";
+import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import type { IContainerAppContext } from "../../IContainerAppContext";
 
 export interface IDeployRevisionDraftContext extends IContainerAppContext, ExecuteActivityContext {
     baseRevisionName: string;

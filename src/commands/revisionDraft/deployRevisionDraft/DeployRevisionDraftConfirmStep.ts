@@ -7,10 +7,10 @@ import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azu
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
-import { ContainerAppModel } from "../../../tree/ContainerAppItem";
+import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
+import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
 
 export class DeployRevisionDraftConfirmStep extends AzureWizardPromptStep<IDeployRevisionDraftContext> {
     public async prompt(context: IDeployRevisionDraftContext): Promise<void> {
