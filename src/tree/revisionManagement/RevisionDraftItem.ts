@@ -86,8 +86,12 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
 
         const baseRevisionName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(this)?.baseRevisionName;
         const baseRevision: Revision | undefined = revisions?.find(revision => baseRevisionName && revision.name === baseRevisionName);
-
         const draftTemplate: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this);
-        return !!baseRevision?.template && !deepEqual(baseRevision.template, draftTemplate);
+
+        if (!baseRevision?.template || !draftTemplate) {
+            return false;
+        }
+
+        return !deepEqual(baseRevision.template, draftTemplate);
     }
 }

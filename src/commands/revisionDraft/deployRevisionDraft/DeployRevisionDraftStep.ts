@@ -19,7 +19,7 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevis
     public async execute(context: IDeployRevisionDraftContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
-        containerAppEnvelope.template = context.template;
+        containerAppEnvelope.template = nonNullProp(context, 'template');
 
         const creatingRevision: string = localize('creatingRevision', 'Creating revision...');
         progress.report({ message: creatingRevision });

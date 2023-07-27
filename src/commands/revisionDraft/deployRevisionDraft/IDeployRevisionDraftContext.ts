@@ -8,5 +8,5 @@ import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { IContainerAppContext } from "../../IContainerAppContext";
 
 export interface IDeployRevisionDraftContext extends IContainerAppContext, ExecuteActivityContext {
-    template: Template;
+    template: Template | undefined;
 }

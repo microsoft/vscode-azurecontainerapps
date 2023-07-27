@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import { ext } from "../../../extensionVariables";
 import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
@@ -22,10 +22,6 @@ import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext"
 export async function deployRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {
     const item = node ?? await pickContainerApp(context);
 
-    if (!ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(item)) {
-        throw new Error(localize('noDraftExists', 'No draft changes exist for container app "{0}".', item.containerApp.name));
-    }
-
     const { subscription, containerApp } = item;
 
     const wizardContext: IDeployRevisionDraftContext = {
@@ -34,7 +30,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         ...(await createActivityContext()),
         subscription,
         containerApp,
-        template: nonNullValue(ext.revisionDraftFileSystem.parseRevisionDraft(item)),
+        template: ext.revisionDraftFileSystem.parseRevisionDraft(item),
     };
 
     if (!await hasUnsavedChanges(wizardContext, item)) {
@@ -78,14 +74,14 @@ async function hasUnsavedChanges(context: IDeployRevisionDraftContext, item: Con
     const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
 
     if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Single) {
-        return !!containerApp.template && !deepEqual(containerApp.template, context.template);
+        return !!containerApp.template && !!context.template && !deepEqual(containerApp.template, context.template);
     } else {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const revisions: Revision[] = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(containerApp.resourceGroup, containerApp.name));
 
-        const baseRevisionName: string = nonNullValueAndProp(ext.revisionDraftFileSystem.getRevisionDraftFile(item), 'baseRevisionName');
-        const baseRevision: Revision | undefined = revisions.find(revision => revision.name === baseRevisionName);
+        const baseRevisionName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(item)?.baseRevisionName;
+        const baseRevision: Revision | undefined = revisions.find(revision => baseRevisionName && revision.name === baseRevisionName);
 
-        return !!baseRevision?.template && !deepEqual(baseRevision.template, context.template);
+        return !!baseRevision?.template && !!context.template && !deepEqual(baseRevision.template, context.template);
     }
 }
