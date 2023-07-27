@@ -3,12 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import * as deepEqual from "deep-eql";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activityUtils";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickContainerApp";
@@ -31,9 +34,12 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         ...(await createActivityContext()),
         subscription,
         containerApp,
-        baseRevisionName: nonNullValueAndProp(ext.revisionDraftFileSystem.getRevisionDraftFile(item), 'baseRevisionName'),
         template: nonNullValue(ext.revisionDraftFileSystem.parseRevisionDraft(item)),
     };
+
+    if (!await hasUnsavedChanges(wizardContext, item)) {
+        throw new Error(localize('noUnsavedChanges', 'No unsaved changes detected to deploy to container app "{0}".', containerApp.name));
+    }
 
     const promptSteps: AzureWizardPromptStep<IDeployRevisionDraftContext>[] = [
         new DeployRevisionDraftConfirmStep()
@@ -66,4 +72,20 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
     }
 
     ext.state.notifyChildrenChanged(item.containerApp.managedEnvironmentId);
+}
+
+async function hasUnsavedChanges(context: IDeployRevisionDraftContext, item: ContainerAppItem | RevisionDraftItem): Promise<boolean> {
+    const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
+
+    if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Single) {
+        return !!containerApp.template && !deepEqual(containerApp.template, context.template);
+    } else {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        const revisions: Revision[] = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(containerApp.resourceGroup, containerApp.name));
+
+        const baseRevisionName: string = nonNullValueAndProp(ext.revisionDraftFileSystem.getRevisionDraftFile(item), 'baseRevisionName');
+        const baseRevision: Revision | undefined = revisions.find(revision => revision.name === baseRevisionName);
+
+        return !!baseRevision?.template && !deepEqual(baseRevision.template, context.template);
+    }
 }
