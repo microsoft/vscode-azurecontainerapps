@@ -319,12 +319,12 @@
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
                     "group": "inline@1"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
                     "group": "1@1"
                 },
                 {
