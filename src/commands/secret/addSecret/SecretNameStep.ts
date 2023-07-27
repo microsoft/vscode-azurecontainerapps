@@ -11,15 +11,15 @@ import type { ISecretContext } from "../ISecretContext";
 
 export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
-        context.secretName = (await context.ui.showInputBox({
+        context.newSecretName = (await context.ui.showInputBox({
             prompt: localize('secretName', 'Enter a secret name.'),
             validateInput: (val: string | undefined) => this.validateInput(context, val),
         })).trim();
-        context.valuesToMask.push(context.secretName);
+        context.valuesToMask.push(context.newSecretName);
     }
 
     public shouldPrompt(context: ISecretContext): boolean {
-        return !context.secretName;
+        return !context.newSecretName;
     }
 
     private validateInput(context: ISecretContext, val: string | undefined): string | undefined {

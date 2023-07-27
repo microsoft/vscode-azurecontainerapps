@@ -20,11 +20,11 @@ export class SecretCreateStep extends AzureWizardExecuteStep<ISecretContext> {
 
         containerAppEnvelope.configuration.secrets ||= [];
         containerAppEnvelope.configuration.secrets.push({
-            name: context.secretName,
-            value: context.secretValue
+            name: context.newSecretName,
+            value: context.newSecretValue
         });
 
-        const addSecret: string = localize('addSecret', 'Add secret "{0}" to container app "{1}"', context.secretName, containerApp.name);
+        const addSecret: string = localize('addSecret', 'Add secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
         const creatingSecret: string = localize('creatingSecret', 'Creating secret...');
 
         context.activityTitle = addSecret;
@@ -32,11 +32,11 @@ export class SecretCreateStep extends AzureWizardExecuteStep<ISecretContext> {
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
 
-        const addedSecret: string = localize('addedSecret', 'Added secret "{0}" to container app "{1}"', context.secretName, containerApp.name);
+        const addedSecret: string = localize('addedSecret', 'Added secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
         ext.outputChannel.appendLog(addedSecret);
     }
 
     public shouldExecute(context: ISecretContext): boolean {
-        return !!context.secretName && !!context.secretValue;
+        return !!context.newSecretName && !!context.newSecretValue;
     }
 }

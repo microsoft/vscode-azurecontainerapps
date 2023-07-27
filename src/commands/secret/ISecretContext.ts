@@ -8,10 +8,8 @@ import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { IContainerAppContext } from "../IContainerAppContext";
 
 export interface ISecretContext extends IContainerAppContext, ExecuteActivityContext {
-    // New
-    secretName?: string;
-    secretValue?: string;
+    newSecretName?: string;
+    newSecretValue?: string;
 
-    // Existing
     secret?: Secret;
 }

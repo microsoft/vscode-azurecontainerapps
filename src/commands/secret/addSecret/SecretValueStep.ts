@@ -10,16 +10,16 @@ import type { ISecretContext } from "../ISecretContext";
 
 export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
-        context.secretValue = await context.ui.showInputBox({
+        context.newSecretValue = await context.ui.showInputBox({
             prompt: localize('secretValue', 'Enter a secret value.'),
             password: true,
             validateInput: this.validateInput
         });
-        context.valuesToMask.push(context.secretValue);
+        context.valuesToMask.push(context.newSecretValue);
     }
 
     public shouldPrompt(context: ISecretContext): boolean {
-        return !context.secretValue;
+        return !context.newSecretValue;
     }
 
     private validateInput(val: string | undefined): string | undefined {
