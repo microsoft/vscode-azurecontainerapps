@@ -11,7 +11,7 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
-import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
+import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
@@ -20,7 +20,7 @@ import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<ICreateContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
-    node ??= await containerAppEnvironmentExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+    node ??= await pickEnvironment(context, {
         title: localize('createContainerApp', 'Create Container App'),
     });
 

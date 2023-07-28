@@ -10,7 +10,7 @@ import type { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { delay } from "../../utils/delay";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 
 export async function discardRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {
     const containerAppsItem = node ?? await pickContainerApp(context);

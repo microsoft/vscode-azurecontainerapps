@@ -8,7 +8,7 @@ import { ITreeItemPickerContext, openUrl } from "@microsoft/vscode-azext-utils";
 import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import type { ActionsItem } from "../../tree/configurations/ActionsItem";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { getContainerAppSourceControl } from "./connectToGitHub/getContainerAppSourceControl";
 
 export async function openGitHubRepo(context: ITreeItemPickerContext, node?: ContainerAppsItem | ActionsItem): Promise<void> {
