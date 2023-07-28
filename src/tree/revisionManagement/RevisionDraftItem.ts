@@ -3,17 +3,26 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
-import { TreeElementBase, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, Template } from "@azure/arm-appcontainers";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import * as deepEqual from "deep-eql";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import { RevisionItem, type RevisionsItemModel } from "./RevisionItem";
 
-export class RevisionDraftItem implements RevisionsItemModel {
+// For tree items that depend on the container app's revision draft template
+export interface RevisionsDraftModel {
+    hasUnsavedChanges: () => boolean | Promise<boolean>;
+}
+
+export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {
     static readonly idSuffix: string = 'revisionDraft';
     static readonly contextValue: string = 'revisionDraftItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
@@ -37,6 +46,12 @@ export class RevisionDraftItem implements RevisionsItemModel {
         return this.revisionName.split('--').pop() ?? '';
     }
 
+    private async getContextValues(): Promise<string> {
+        const values: string[] = [RevisionDraftItem.contextValue];
+        values.push(await this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
+        return createContextValue(values);
+    }
+
     static hasDescendant(item: RevisionsItemModel): boolean {
         if (item instanceof RevisionDraftItem) {
             return false;
@@ -46,7 +61,7 @@ export class RevisionDraftItem implements RevisionsItemModel {
         return item.revision.name === revisionDraftBaseName;
     }
 
-    getTreeItem(): TreeItem {
+    async getTreeItem(): Promise<TreeItem> {
         return {
             id: this.id,
             label: localize('draft', 'Draft'),
@@ -54,12 +69,29 @@ export class RevisionDraftItem implements RevisionsItemModel {
             description: this.containerApp.latestRevisionName === this.revisionName ?
                 localize('basedOnLatestRevision', 'Based on "{0}" (Latest)', this.baseRevisionName) :
                 localize('basedOnRevision', 'Based on "{0}"', this.baseRevisionName),
-            contextValue: RevisionDraftItem.contextValue,
+            contextValue: await this.getContextValues(),
             collapsibleState: TreeItemCollapsibleState.Expanded
         };
     }
 
     getChildren(): TreeElementBase[] {
         return RevisionItem.getTemplateChildren(this.subscription, this.containerApp, this.revision);
+    }
+
+    async hasUnsavedChanges(): Promise<boolean> {
+        const revisions: Revision[] | undefined = await callWithTelemetryAndErrorHandling('revisionDraftItem.hasUnsavedChanges.getRevisions', async (context: IActionContext) => {
+            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
+            return uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.containerApp.resourceGroup, this.containerApp.name));
+        });
+
+        const baseRevisionName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(this)?.baseRevisionName;
+        const baseRevision: Revision | undefined = revisions?.find(revision => baseRevisionName && revision.name === baseRevisionName);
+        const draftTemplate: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+
+        if (!baseRevision?.template || !draftTemplate) {
+            return false;
+        }
+
+        return !deepEqual(baseRevision.template, draftTemplate);
     }
 }

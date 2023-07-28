@@ -18,6 +18,7 @@
     "containerApps.chooseRevisionMode": "Choose Revision Mode...",
     "containerApps.createRevisionDraft": "Create Draft...",
     "containerApps.editRevisionDraft": "Edit Draft (Advanced)...",
+    "containerApps.deployRevisionDraft": "Deploy Changes...",
     "containerApps.discardRevisionDraft": "Discard Changes...",
     "containerApps.activateRevision": "Activate Revision",
     "containerApps.deactivateRevision": "Deactivate Revision",

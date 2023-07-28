@@ -11,7 +11,7 @@ import * as deepEqual from "deep-eql";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../constants";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
@@ -21,11 +21,9 @@ import { treeUtils } from "../utils/treeUtils";
 import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
+import { RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
-
-const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
-const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
 
 export interface ContainerAppModel extends ContainerApp {
     id: string;
@@ -35,7 +33,7 @@ export interface ContainerAppModel extends ContainerApp {
     revisionsMode: KnownActiveRevisionsMode;
 }
 
-export class ContainerAppItem implements ContainerAppsItem {
+export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel {
     static readonly contextValue: string = 'containerAppItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
 
