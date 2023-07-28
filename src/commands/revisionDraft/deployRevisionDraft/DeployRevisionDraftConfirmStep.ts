@@ -10,7 +10,7 @@ import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext"
 export class DeployRevisionDraftConfirmStep extends AzureWizardPromptStep<IDeployRevisionDraftContext> {
     public async prompt(context: IDeployRevisionDraftContext): Promise<void> {
         await context.ui.showWarningMessage(
-            localize('deployRevisionWarning', 'This will deploy a new revision to container app "{0}".', context.containerApp?.name),
+            localize('deployRevisionWarning', 'This will deploy any unsaved changes to container app "{0}".', context.containerApp?.name),
             { modal: true },
             { title: localize('continue', 'Continue') }
         );
