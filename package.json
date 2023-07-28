@@ -128,6 +128,12 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployRevisionDraft",
+                "title": "%containerApps.deployRevisionDraft%",
+                "category": "Azure Container Apps",
+                "icon": "$(cloud-upload)"
+            },
+            {
                 "command": "containerApps.discardRevisionDraft",
                 "title": "%containerApps.discardRevisionDraft%",
                 "category": "Azure Container Apps",
@@ -242,6 +248,16 @@
                     "group": "2@2"
                 },
                 {
+                    "command": "containerApps.deployRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.deployRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "group": "3@1"
+                },
+                {
                     "command": "containerApps.discardRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
                     "group": "inline@2"
@@ -305,6 +321,16 @@
                     "command": "containerApps.restartRevision",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
                     "group": "2@4"
+                },
+                {
+                    "command": "containerApps.deployRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "containerApps.deployRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.discardRevisionDraft",

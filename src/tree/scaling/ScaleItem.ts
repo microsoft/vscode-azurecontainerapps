@@ -13,7 +13,7 @@ import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { TreeElementBase } from "../ContainerAppsBranchDataProvider";
-import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
+import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
 import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { createScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
@@ -21,7 +21,7 @@ const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
 
 const scaling: string = localize('scaling', 'Scaling');
 
-export class ScaleItem implements RevisionsItemModel {
+export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
     static readonly contextValue: string = 'scaleItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
 
@@ -77,7 +77,7 @@ export class ScaleItem implements RevisionsItemModel {
         ];
     }
 
-    private hasUnsavedChanges(): boolean {
+    hasUnsavedChanges(): boolean {
         const scaleDraftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
         if (!scaleDraftTemplate) {
             return false;
