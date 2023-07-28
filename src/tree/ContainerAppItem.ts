@@ -164,7 +164,7 @@ export class ContainerAppItem implements ContainerAppsItem {
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);
     }
 
-    private hasUnsavedChanges(): boolean {
+    hasUnsavedChanges(): boolean {
         const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
         if (!this.containerApp.template || !draftTemplate) {
             return false;
