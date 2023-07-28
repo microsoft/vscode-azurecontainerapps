@@ -10,7 +10,7 @@ import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 export class ChooseRevisionModeConfirmStep extends AzureWizardPromptStep<IChooseRevisionModeContext> {
     public async prompt(context: IChooseRevisionModeContext): Promise<void> {
         await context.ui.showWarningMessage(
-            localize('chooseRevisionWarning', 'Changing modes will discard any unsaved changes for "{0}".', context.containerApp?.name),
+            localize('chooseRevisionWarning', 'Changing revision modes will discard any unsaved changes for "{0}".', context.containerApp?.name),
             { modal: true },
             { title: localize('continue', 'Continue') }
         );
