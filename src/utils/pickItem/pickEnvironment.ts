@@ -5,13 +5,13 @@
 
 import { AzureResourceQuickPickWizardContext, AzureWizardPromptStep, IActionContext, QuickPickAzureResourceStep, QuickPickAzureSubscriptionStep, QuickPickGroupStep, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
 import { AzExtResourceType, ResourceGroupsTreeDataProvider } from "@microsoft/vscode-azureresources-api";
-import * as vscode from "vscode";
 import { ext } from "../../extensionVariables";
 import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../localize";
 import type { PickItemOptions } from "./PickItemOptions";
 
-export function getPickEnvironmentSteps(tdp: vscode.TreeDataProvider<unknown>): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+export function getPickEnvironmentSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+    const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
     const types = [AzExtResourceType.ContainerAppsEnvironment];
     return [
         new QuickPickAzureSubscriptionStep(tdp),
@@ -28,10 +28,8 @@ export function getPickEnvironmentSteps(tdp: vscode.TreeDataProvider<unknown>): 
 }
 
 export async function pickEnvironment(context: IActionContext, options?: PickItemOptions): Promise<ManagedEnvironmentItem> {
-    const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
-
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
-        ...getPickEnvironmentSteps(tdp)
+        ...getPickEnvironmentSteps()
     ];
 
     return await runQuickPickWizard(context, {

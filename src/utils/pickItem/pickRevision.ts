@@ -4,8 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
-import type { ResourceGroupsTreeDataProvider } from "@microsoft/vscode-azureresources-api";
-import * as vscode from 'vscode';
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
@@ -14,7 +12,7 @@ import { localize } from "../localize";
 import type { RevisionPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 
-function getPickRevisionStep(tdp: vscode.TreeDataProvider<unknown>, revisionName?: string | RegExp): AzureWizardPromptStep<QuickPickWizardContext> {
+function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptStep<QuickPickWizardContext> {
     let revisionFilter: RegExp | undefined;
     if (revisionName) {
         revisionFilter = revisionName instanceof RegExp ? revisionName : new RegExp(revisionName);
@@ -22,14 +20,14 @@ function getPickRevisionStep(tdp: vscode.TreeDataProvider<unknown>, revisionName
         revisionFilter = RevisionItem.contextValueRegExp;
     }
 
-    return new ContextValueQuickPickStep(tdp, {
+    return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: revisionFilter },
         skipIfOne: true,
     });
 }
 
-function getPickRevisionsStep(tdp: vscode.TreeDataProvider<unknown>): AzureWizardPromptStep<QuickPickWizardContext> {
-    return new ContextValueQuickPickStep(tdp, {
+function getPickRevisionsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
+    return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: RevisionsItem.contextValueRegExp },
         skipIfOne: true,
     }, {
@@ -40,14 +38,13 @@ function getPickRevisionsStep(tdp: vscode.TreeDataProvider<unknown>): AzureWizar
 export async function pickRevision(context: IActionContext, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
     startingNode ??= await pickContainerApp(context);
 
-    const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
 
     if (startingNode instanceof ContainerAppItem) {
-        promptSteps.push(getPickRevisionsStep(tdp));
+        promptSteps.push(getPickRevisionsStep());
     }
 
-    promptSteps.push(getPickRevisionStep(tdp, options?.selectByRevisionName));
+    promptSteps.push(getPickRevisionStep(options?.selectByRevisionName));
 
     return await runQuickPickWizard(context, {
         promptSteps,

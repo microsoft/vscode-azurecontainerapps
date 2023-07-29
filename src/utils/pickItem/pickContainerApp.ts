@@ -4,18 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureResourceQuickPickWizardContext, AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
-import type { ResourceGroupsTreeDataProvider } from "@microsoft/vscode-azureresources-api";
-import * as vscode from 'vscode';
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
 import type { PickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
-export function getPickContainerAppSteps(tdp: vscode.TreeDataProvider<unknown>): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+export function getPickContainerAppSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     return [
-        ...getPickEnvironmentSteps(tdp),
-        new ContextValueQuickPickStep(tdp, {
+        ...getPickEnvironmentSteps(),
+        new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
             contextValueFilter: { include: ContainerAppItem.contextValueRegExp },
             skipIfOne: true,
         }, {
@@ -26,10 +24,8 @@ export function getPickContainerAppSteps(tdp: vscode.TreeDataProvider<unknown>):
 }
 
 export async function pickContainerApp(context: IActionContext, options?: PickItemOptions): Promise<ContainerAppItem> {
-    const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
-
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
-        ...getPickContainerAppSteps(tdp)
+        ...getPickContainerAppSteps()
     ];
 
     return await runQuickPickWizard(context, {
