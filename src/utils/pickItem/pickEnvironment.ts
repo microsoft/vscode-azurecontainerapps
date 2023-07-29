@@ -13,6 +13,7 @@ import type { PickItemOptions } from "./PickItemOptions";
 export function getPickEnvironmentSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
     const types = [AzExtResourceType.ContainerAppsEnvironment];
+
     return [
         new QuickPickAzureSubscriptionStep(tdp),
         new QuickPickGroupStep(tdp, {
