@@ -9,7 +9,7 @@ import { ext } from "../../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../../utils/updateContainerApp";
-import { ISecretContext } from "../ISecretContext";
+import type { ISecretContext } from "../ISecretContext";
 
 export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
     public priority: number = 200;
