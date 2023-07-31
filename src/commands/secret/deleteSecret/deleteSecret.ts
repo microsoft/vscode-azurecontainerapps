@@ -9,7 +9,7 @@ import { SecretItem } from "../../../tree/configurations/secrets/SecretItem";
 import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
-import { pickSecret } from "../../../utils/pickSecret";
+import { pickSecret } from "../../../utils/pickItem/pickSecret";
 import { ISecretContext } from "../ISecretContext";
 import { SecretDeleteConfirmStep } from "./SecretDeleteConfirmStep";
 import { SecretDeleteStep } from "./SecretDeleteStep";
