@@ -28,9 +28,9 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
         context.activityTitle = deleteSecret;
         progress.report({ message: deletingSecret });
 
-        const deletedSecret: string = localize('deletedSecret', 'Deleted secret "{0}" to container app "{1}"', secretName, containerApp.name);
-
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
+
+        const deletedSecret: string = localize('deletedSecret', 'Deleted secret "{0}" for container app "{1}"', secretName, containerApp.name);
         ext.outputChannel.appendLog(deletedSecret);
         ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
     }
