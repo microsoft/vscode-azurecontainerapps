@@ -22,7 +22,6 @@ function getPickSecretsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
 function getPickSecretStep(): AzureWizardPromptStep<QuickPickWizardContext> {
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: SecretItem.contextValueRegExp },
-        skipIfOne: true,
     }, {
         placeHolder: localize('selectSecretStep', 'Select a secret'),
         noPicksMessage: localize('noSecrets', 'Selected container app has no secrets'),
