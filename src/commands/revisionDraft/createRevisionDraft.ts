@@ -15,8 +15,8 @@ import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { delay } from "../../utils/delay";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
-import { pickRevisionItem } from "../../utils/pickRevisionItem";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { pickRevision } from "../../utils/pickItem/pickRevision";
 import type { IContainerAppContext } from "../IContainerAppContext";
 
 dayjs.extend(relativeTime);
@@ -43,7 +43,7 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
      * Leverage the `selectRevisionName` option to obtain the RevisionItem without re-prompting the user
      */
     const revisionName: string | undefined = await promptForRevisionName(containerAppContext);
-    const revisionItem: RevisionItem = await pickRevisionItem(context, containerAppsItem, {
+    const revisionItem: RevisionItem = await pickRevision(context, containerAppsItem, {
         selectByRevisionName: revisionName
     });
 

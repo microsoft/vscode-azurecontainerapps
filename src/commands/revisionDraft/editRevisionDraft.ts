@@ -8,7 +8,7 @@ import type { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import type { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 
 export async function editRevisionDraft(context: IActionContext, node?: RevisionDraftItem): Promise<void> {
     const containerAppsItem = node ?? await pickContainerApp(context);

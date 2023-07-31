@@ -14,7 +14,7 @@ import { createActivityContext } from "../../../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
-import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { DeployRevisionDraftConfirmStep } from "./DeployRevisionDraftConfirmStep";
 import { DeployRevisionDraftStep } from "./DeployRevisionDraftStep";
 import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";

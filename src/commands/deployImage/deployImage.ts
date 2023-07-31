@@ -7,7 +7,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPi
 import { webProvider } from "../../constants";
 import type { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { ContainerAppOverwriteConfirmStep } from "./ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "./ContainerAppUpdateStep";
 import type { ImageSourceBaseContext } from "./imageSource/ImageSourceBaseContext";
