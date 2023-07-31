@@ -10,14 +10,14 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
-import { containerAppEnvironmentExperience } from "../../utils/pickContainerApp";
+import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { DeleteAllContainerAppsStep } from "../deleteContainerApp/DeleteAllContainerAppsStep";
 import { DeleteEnvironmentConfirmationStep } from "./DeleteEnvironmentConfirmationStep";
 import { DeleteManagedEnvironmentStep } from "./DeleteManagedEnvironmentStep";
 import { IDeleteManagedEnvironmentWizardContext } from "./IDeleteManagedEnvironmentWizardContext";
 
 export async function deleteManagedEnvironment(context: IActionContext & { suppressPrompt?: boolean }, node?: ManagedEnvironmentItem): Promise<void> {
-    const { subscription, managedEnvironment } = node ?? await containerAppEnvironmentExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+    const { subscription, managedEnvironment } = node ?? await pickEnvironment(context, {
         title: localize('deleteContainerAppsEnvironment', 'Delete Container Apps Environment'),
     });
 

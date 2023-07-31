@@ -10,7 +10,7 @@ import type { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickContainerApp";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 
 export async function executeRevisionOperation(context: IActionContext, node: ContainerAppItem | RevisionItem | undefined, operation: RevisionOperation): Promise<void> {
     const item = node ?? await pickContainerApp(context);

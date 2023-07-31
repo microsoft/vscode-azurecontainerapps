@@ -7,7 +7,7 @@ import { ITreeItemPickerContext, createSubscriptionContext, openUrl } from "@mic
 import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createPortalUrl } from "../../../utils/createPortalUrl";
 import { localize } from "../../../utils/localize";
-import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { IContainerAppContext } from "../../IContainerAppContext";
 import { isGitHubConnected } from "./isGitHubConnected";
 

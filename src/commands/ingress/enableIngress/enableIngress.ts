@@ -7,7 +7,7 @@ import { AzureWizard, AzureWizardPromptStep, createSubscriptionContext, IActionC
 import type { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
 import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
-import { pickContainerApp } from "../../../utils/pickContainerApp";
+import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import type { IngressContext } from "../IngressContext";
 import { IngressPromptStep } from '../IngressPromptStep';
 
