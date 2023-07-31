@@ -53,7 +53,7 @@ export async function chooseRevisionMode(context: IActionContext, item?: Contain
 
     await wizard.prompt();
 
-    // only update it if it's actually different
+    // Only update it if it's actually different
     if (wizardContext.containerApp?.revisionsMode !== wizardContext.newRevisionMode) {
         await wizard.execute();
 
