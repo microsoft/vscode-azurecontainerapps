@@ -23,7 +23,7 @@ import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
 import { activateRevision } from './revision/activateRevision';
-import { chooseRevisionMode } from './revision/chooseRevisionMode';
+import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
 import { restartRevision } from './revision/restartRevision';
 import { createRevisionDraft } from './revisionDraft/createRevisionDraft';
