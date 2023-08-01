@@ -117,6 +117,16 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.editSecretName",
+                "title": "%containerApps.editSecretName%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.editSecretValue",
+                "title": "%containerApps.editSecretValue%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteSecret",
                 "title": "%containerApps.deleteSecret%",
                 "category": "Azure Container Apps"
@@ -388,9 +398,19 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "containerApps.deleteSecret",
+                    "command": "containerApps.editSecretName",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.editSecretValue",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem/i",
+                    "group": "1@2"
+                },
+                {
+                    "command": "containerApps.deleteSecret",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem/i",
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.openGitHubRepo",
