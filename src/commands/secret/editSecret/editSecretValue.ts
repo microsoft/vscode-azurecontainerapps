@@ -42,7 +42,9 @@ export async function editSecretValue(context: IActionContext, node?: SecretItem
     });
 
     await wizard.prompt();
-    await wizard.execute();
 
-    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+    await ext.state.runWithTemporaryDescription(item.id, localize('updating', 'Updating...'), async () => {
+        await wizard.execute();
+        ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+    });
 }
