@@ -21,6 +21,7 @@ import { treeUtils } from "../utils/treeUtils";
 import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
+import { ContainersItem } from "./containers/ContainersItem";
 import { RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
@@ -92,6 +93,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 
             children.push(new ConfigurationItem(this.subscription, this.containerApp));
             children.push(new LogsGroupItem(this.subscription, this.containerApp));
+            children.push(new ContainersItem(this.subscription, this.containerApp));
             return children;
         });
 
