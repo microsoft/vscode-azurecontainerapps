@@ -34,6 +34,8 @@ import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
+import { editSecretName } from './secret/editSecret/editSecretName';
+import { editSecretValue } from './secret/editSecret/editSecretValue';
 
 export function registerCommands(): void {
     // managed environments
@@ -62,6 +64,8 @@ export function registerCommands(): void {
 
     // secret
     registerCommandWithTreeNodeUnwrapping('containerApps.addSecret', addSecret);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editSecretName', editSecretName);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editSecretValue', editSecretValue);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteSecret', deleteSecret);
 
     // revisions
