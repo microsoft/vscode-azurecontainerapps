@@ -8,7 +8,7 @@ import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, Quick
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
-import { ScaleRuleGroupItem, scaleRuleGroupItemContextValue } from "../../tree/scaling/ScaleRuleGroupItem";
+import { ScaleRuleGroupItem } from "../../tree/scaling/ScaleRuleGroupItem";
 import { PickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 import { getPickRevisionStep, getPickRevisionsStep } from "./pickRevision";
@@ -35,7 +35,7 @@ function getPickScaleSteps(revisionsMode: KnownActiveRevisionsMode): AzureWizard
 
 function getPickScaleRuleGroupStep(): AzureWizardPromptStep<QuickPickWizardContext> {
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-        contextValueFilter: { include: scaleRuleGroupItemContextValue },
+        contextValueFilter: { include: ScaleRuleGroupItem.contextValue },
         skipIfOne: true,
     });
 }

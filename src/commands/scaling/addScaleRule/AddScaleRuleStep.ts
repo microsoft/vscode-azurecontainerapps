@@ -9,6 +9,7 @@ import { Progress } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
+import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
@@ -21,7 +22,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
     }
 
     public async execute(context: IAddScaleRuleContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const adding = localize('addingScaleRule', 'Add {0} rule "{1}" to "{2}" (draft)', context.ruleType, context.ruleName, context.containerApp.name);
+        const adding = localize('addingScaleRule', 'Draft change: Add {0} rule "{1}" to "{2}"', context.ruleType, context.ruleName, context.containerApp.name);
         context.activityTitle = adding;
         progress.report({ message: localize('addingRule', 'Adding scale rule...') });
 
@@ -32,7 +33,10 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         this.integrateRule(context, this.revisionDraftTemplate.scale.rules, scaleRule);
         this.updateRevisionDraftWithTemplate();
 
-        const added = localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft).', context.ruleType, context.ruleName, context.containerApp.name);
+        // Artificial delay to make the activity log look like it's performing an action
+        await delay(1000);
+
+        const added = localize('addedScaleRule', 'Draft change: Added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
         ext.outputChannel.appendLog(added);
     }
 
