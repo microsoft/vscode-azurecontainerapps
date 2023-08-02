@@ -4,23 +4,29 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../../utils/localize";
+import { ValidNumberTypeOptions, validateUtils } from "../../../utils/validateUtils";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
-export abstract class PositiveRealNumberBaseStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
+export abstract class PositiveWholeNumberBaseStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public abstract prompt(context: IAddScaleRuleContext): Promise<void>;
     public abstract shouldPrompt(context: IAddScaleRuleContext): boolean;
 
-    public validateInput(input: string | undefined): string | undefined {
-        input = input ? input.trim() : '';
+    protected validateInput(value: string | undefined): string | undefined {
+        value = value ? value.trim() : '';
 
-        const thirtyTwoBitMaxSafeInteger = 2147483647;
-        if (!/^[1-9]+[0-9]*$/.test(input)) {
-            return localize('invalidPositiveRealNumber', 'The number entered must be a whole number greater than or equal to 1.');
+        if (!validateUtils.hasValidCharLength(value)) {
+            return validateUtils.getInvalidCharLengthMessage();
         }
-        if (Number(input) > thirtyTwoBitMaxSafeInteger) {
-            return localize('numberTooLarge', 'The number entered is too large.');
+
+        const validNumberTypeOptions: ValidNumberTypeOptions = { allowZero: false, signType: 'positive', allowFloat: false };
+        if (!validateUtils.isValidNumberType(value, validNumberTypeOptions)) {
+            return validateUtils.getInvalidNumberTypeMessage(validNumberTypeOptions);
         }
+
+        if (!validateUtils.hasValidNumberValue(value)) {
+            return validateUtils.getInvalidNumberValueMessage();
+        }
+
         return undefined;
     }
 }

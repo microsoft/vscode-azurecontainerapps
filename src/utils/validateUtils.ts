@@ -5,18 +5,21 @@
 
 import { localize } from "./localize";
 
+export interface ValidNumberTypeOptions {
+    signType?: 'positive' | 'negative';
+    allowFloat?: boolean;
+    allowZero?: boolean;
+}
+
 export namespace validateUtils {
-    const thirtyTwoBitMaxSafeInteger: number = 2147483647;
-    // Estimated using UTF-8 encoding, where a character can be up to ~4 bytes long
-    const maxSafeCharacterLength: number = thirtyTwoBitMaxSafeInteger / 32;
     const allowedSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
 
     /**
      * Validates that the given input string is the appropriate length as determined by the optional lower and upper limit parameters
      */
-    export function isValidLength(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
-        lowerLimitIncl ??= 1;
-        upperLimitIncl = (!upperLimitIncl || upperLimitIncl > maxSafeCharacterLength) ? maxSafeCharacterLength : upperLimitIncl;
+    export function hasValidCharLength(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
+        lowerLimitIncl ??= (!lowerLimitIncl || lowerLimitIncl < 1) ? 1 : lowerLimitIncl;
+        upperLimitIncl = (!upperLimitIncl || upperLimitIncl > Number.MAX_SAFE_INTEGER) ? Number.MAX_SAFE_INTEGER : upperLimitIncl;
 
         if (lowerLimitIncl > upperLimitIncl || value.length < lowerLimitIncl || value.length > upperLimitIncl) {
             return false;
@@ -28,17 +31,71 @@ export namespace validateUtils {
     /**
      * Provides a message that can be used to inform the user of invalid input lengths as determined by the optional lower and upper limit parameters
      */
-    export const getInvalidLengthMessage = (lowerLimitIncl?: number, upperLimitIncl?: number): string => {
+    export const getInvalidCharLengthMessage = (lowerLimitIncl?: number, upperLimitIncl?: number): string => {
         if (!lowerLimitIncl && !upperLimitIncl) {
-            // Could technically also correspond to a 'maxSafeCharacterLength' overflow (see 'isValidLength'),
-            // but extremely unlikely that a user would ever reach that limit naturally unless intentionally trying to break the extension
-            return localize('invalidInputLength', 'A valid input value is required to proceed.');
+            return localize('invalidInputLength', 'A value is required to proceed.');
         } else if (lowerLimitIncl && !upperLimitIncl) {
-            return localize('inputLengthTooShort', 'The input value must be {0} characters or greater.', lowerLimitIncl);
+            return localize('inputLengthTooShort', 'The value must be {0} characters or greater.', lowerLimitIncl);
         } else if (!lowerLimitIncl && upperLimitIncl) {
-            return localize('inputLengthTooLong', 'The input value must be {0} characters or less.', upperLimitIncl);
+            return localize('inputLengthTooLong', 'The value must be {0} characters or less.', upperLimitIncl);
         } else {
-            return localize('invalidBetweenInputLength', 'The input value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
+            return localize('invalidBetweenInputLength', 'The value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
+        }
+    }
+
+    export function isValidNumberType(value: string, options: ValidNumberTypeOptions): boolean {
+        let pattern: string = '';
+
+        if (options.signType === 'negative') {
+            pattern += '^-';
+        } else {
+            pattern += '^-?';
+        }
+
+        if (options.allowZero) {
+            pattern += '(\\d|0)+';
+        } else {
+            pattern += '\\d+';
+        }
+
+        if (options.allowFloat) {
+            pattern += '(\\.(0-9)+)?';
+        }
+
+        const regex: RegExp = new RegExp(pattern);
+        return regex.test(value);
+    }
+
+    export function getInvalidNumberTypeMessage(options?: ValidNumberTypeOptions): string {
+        const signType: string = options?.signType ? options.signType + ' ' : '';
+        const decimalType: string = options?.allowFloat ? 'real ' : 'whole ';
+        const zeroType: string = options?.allowZero ? ' or zero' : '';
+        return localize('invalidNumberTypeMessage', `The value must be a ${signType}${decimalType}number${zeroType}.`);
+    }
+
+    export function hasValidNumberValue(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
+        const coerceToNumber: boolean = !isNaN(parseFloat(value));
+        if (!coerceToNumber) {
+            return false;
+        }
+
+        lowerLimitIncl = (!lowerLimitIncl || lowerLimitIncl < -2147483648) ? -2147483648 : lowerLimitIncl;
+        upperLimitIncl = (!upperLimitIncl || upperLimitIncl > 2147483647) ? 2147483647 : upperLimitIncl;
+
+        if (lowerLimitIncl > upperLimitIncl || value.length < lowerLimitIncl || value.length > upperLimitIncl) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    export function getInvalidNumberValueMessage(lowerLimitIncl?: number, upperLimitIncl?: number): string {
+        if (lowerLimitIncl && !upperLimitIncl) {
+            return localize('numberValueTooSmall', `The value must be greater than or equal to {0}.`, lowerLimitIncl);
+        } else if (!lowerLimitIncl && upperLimitIncl) {
+            return localize('numberValueTooLarge', `The value must less than or equal to {0}.`, upperLimitIncl);
+        } else {
+            return localize('invalidNumberValue', `The value must be between {0} and {1}.`, lowerLimitIncl, upperLimitIncl);
         }
     }
 
@@ -65,6 +122,6 @@ export namespace validateUtils {
      * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
      */
     export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-'): string {
-        return localize('invalidLowerAlphanumericWithSymbols', `A name must consist of lower case alphanumeric characters or one of the following symbols: "{0}", and must start and end with a lower case alphanumeric character.`, symbols);
+        return localize('invalidLowerAlphanumericWithSymbols', `A value must consist of lower case alphanumeric characters or one of the following symbols: "{0}", and must start and end with a lower case alphanumeric character.`, symbols);
     }
 }

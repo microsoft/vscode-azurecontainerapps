@@ -15,7 +15,7 @@ export interface ScaleRuleGroupItem extends RevisionsItemModel {
     scaleRules: ScaleRule[];
 }
 
-const scaleRuleGroupItemContextValue: string = 'scaleRuleGroupItem';
+export const scaleRuleGroupItemContextValue: string = 'scaleRuleGroupItem';
 
 export function createScaleRuleGroupItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, scaleRules: ScaleRule[]): ScaleRuleGroupItem {
     const parentResource = revision.name === containerApp.latestRevisionName ? containerApp : revision;

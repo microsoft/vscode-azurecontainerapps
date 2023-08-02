@@ -14,7 +14,7 @@ import { QueueAuthTriggerStep } from './queue/QueueAuthTriggerStep';
 import { QueueLengthStep } from './queue/QueueLengthStep';
 import { QueueNameStep } from './queue/QueueNameStep';
 
-export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
+export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public hideStepCount: boolean = true;
 
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
@@ -24,7 +24,7 @@ export class ScaleRuleTypeStep extends AzureWizardPromptStep<IAddScaleRuleContex
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return context.ruleType === undefined;
+        return !context.ruleType;
     }
 
     public async getSubWizard(context: IAddScaleRuleContext): Promise<IWizardOptions<IAddScaleRuleContext>> {

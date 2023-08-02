@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -12,7 +13,7 @@ import { localize } from "../localize";
 import type { RevisionPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 
-function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptStep<QuickPickWizardContext> {
+export function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptStep<QuickPickWizardContext> {
     let revisionFilter: RegExp | undefined;
     if (revisionName) {
         revisionFilter = revisionName instanceof RegExp ? revisionName : new RegExp(revisionName);
@@ -26,7 +27,7 @@ function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptS
     });
 }
 
-function getPickRevisionsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
+export function getPickRevisionsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: RevisionsItem.contextValueRegExp },
         skipIfOne: true,
@@ -37,6 +38,10 @@ function getPickRevisionsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
 
 export async function pickRevision(context: IActionContext, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
     startingNode ??= await pickContainerApp(context);
+
+    if (startingNode.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+        throw new Error(localize('singleRevisionModeError', 'No revision items exist for picking in single revision mode.'));
+    }
 
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
 

@@ -3,15 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerApp, ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../utils/localize';
+import { validateUtils } from '../../../../utils/validateUtils';
 import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
 export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
-    containerApp: ContainerApp | undefined;
-    scaleRules: ScaleRule[] | undefined;
-
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
         context.queueName = (await context.ui.showInputBox({
             prompt: localize('queueNamePrompt', 'Enter a name for the queue.'),
@@ -20,14 +17,16 @@ export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return context.queueName === undefined;
+        return !context.queueName;
     }
 
     private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
-        if (!name.length) {
-            return localize('fieldRequired', 'The field is required.');
+
+        if (!validateUtils.hasValidCharLength(name)) {
+            return validateUtils.getInvalidCharLengthMessage();
         }
+
         return undefined;
     }
 }

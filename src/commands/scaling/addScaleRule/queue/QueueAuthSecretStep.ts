@@ -26,7 +26,7 @@ export class QueueAuthSecretStep extends AzureWizardPromptStep<IAddScaleRuleCont
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return context.secretRef === undefined;
+        return !context.secretRef;
     }
 }
 

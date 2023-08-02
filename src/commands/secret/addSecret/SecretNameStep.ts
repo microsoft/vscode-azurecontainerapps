@@ -25,8 +25,8 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
     private validateInput(context: ISecretContext, val: string | undefined): string | undefined {
         const value: string = val ? val.trim() : '';
 
-        if (!validateUtils.isValidLength(value)) {
-            return validateUtils.getInvalidLengthMessage();
+        if (!validateUtils.hasValidCharLength(value)) {
+            return validateUtils.getInvalidCharLengthMessage();
         }
 
         const allowedSymbols: string = '-.';

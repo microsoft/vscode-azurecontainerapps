@@ -3,38 +3,41 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ScaleRule, Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress, window } from "vscode";
+import type { ScaleRule } from "@azure/arm-appcontainers";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { Progress } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
+import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
-export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleContext> {
+export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 100;
 
-    public async execute(context: IAddScaleRuleContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const adding = localize('addingScaleRule', 'Adding {0} rule "{1}" to "{2}"...', context.ruleType, context.ruleName, context.containerApp.name);
-        const added = localize('addedScaleRule', 'Successfully added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
+    constructor(baseItem: RevisionsItemModel) {
+        super(baseItem);
+    }
 
-        const template: Template = context.containerApp.template || {};
-        template.scale = context.scale || {};
-        template.scale.rules = context.scaleRules || [];
+    public async execute(context: IAddScaleRuleContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        const adding = localize('addingScaleRule', 'Add {0} rule "{1}" to "{2}" (draft)', context.ruleType, context.ruleName, context.containerApp.name);
+        context.activityTitle = adding;
+        progress.report({ message: localize('addingRule', 'Adding scale rule...') });
+
+        this.revisionDraftTemplate.scale ||= {};
+        this.revisionDraftTemplate.scale.rules ||= [];
 
         const scaleRule: ScaleRule = this.buildRule(context);
-        this.integrateRule(context, template.scale.rules, scaleRule);
+        this.integrateRule(context, this.revisionDraftTemplate.scale.rules, scaleRule);
+        this.updateRevisionDraftWithTemplate();
 
-        ext.outputChannel.appendLog(adding);
-        await updateContainerApp(context, context.subscription, context.containerApp, { template });
-        context.scaleRule = scaleRule;
-        void window.showInformationMessage(added);
+        const added = localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft).', context.ruleType, context.ruleName, context.containerApp.name);
         ext.outputChannel.appendLog(added);
     }
 
     public shouldExecute(context: IAddScaleRuleContext): boolean {
-        return context.ruleName !== undefined && context.ruleType !== undefined;
+        return !!context.ruleName && !!context.ruleType;
     }
 
     private buildRule(context: IAddScaleRuleContext): ScaleRule {
