@@ -72,7 +72,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
                 // Portal only allows one HTTP rule per revision
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
-                    scaleRules.splice(idx, 0);
+                    scaleRules.splice(idx, 1);
                 }
                 break;
             case ScaleRuleTypes.Queue:

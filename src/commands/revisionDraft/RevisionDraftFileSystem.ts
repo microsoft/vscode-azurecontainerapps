@@ -50,7 +50,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Create
-    createRevisionDraft<T extends ContainerAppItem | RevisionsItemModel>(item: T): void {
+    createRevisionDraft(item: ContainerAppItem | RevisionsItemModel): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (this.draftStore.has(uri.path)) {
             return;
@@ -70,7 +70,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Read
-    parseRevisionDraft<T extends ContainerAppsItem>(item: T): Template | undefined {
+    parseRevisionDraft(item: ContainerAppsItem): Template | undefined {
         const uri: URI = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             return undefined;
@@ -84,12 +84,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return contents ? Buffer.from(contents) : Buffer.from('');
     }
 
-    doesContainerAppsItemHaveRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
+    doesContainerAppsItemHaveRevisionDraft(item: ContainerAppsItem): boolean {
         const uri: Uri = this.buildUriFromItem(item);
         return this.draftStore.has(uri.path);
     }
 
-    getRevisionDraftFile<T extends ContainerAppsItem>(item: T): RevisionDraftFile | undefined {
+    getRevisionDraftFile(item: ContainerAppsItem): RevisionDraftFile | undefined {
         const uri: Uri = this.buildUriFromItem(item);
         return this.draftStore.get(uri.path);
     }
@@ -110,7 +110,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Update
-    async editRevisionDraft<T extends ContainerAppItem | RevisionsItemModel>(item: T): Promise<void> {
+    async editRevisionDraft(item: ContainerAppItem | RevisionsItemModel): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);
@@ -137,7 +137,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         ext.state.notifyChildrenChanged(file.containerAppId);
     }
 
-    updateRevisionDraftWithTemplate<T extends RevisionsItemModel>(item: T, template: Template): void {
+    updateRevisionDraftWithTemplate(item: RevisionsItemModel, template: Template): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);
@@ -161,7 +161,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Delete
-    discardRevisionDraft<T extends ContainerAppsItem>(item: T): void {
+    discardRevisionDraft(item: ContainerAppsItem): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             return;
@@ -176,7 +176,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     // Helper
-    private buildUriFromItem<T extends ContainerAppsItem>(item: T): Uri {
+    private buildUriFromItem(item: ContainerAppsItem): Uri {
         return URI.parse(`${RevisionDraftFileSystem.scheme}:/${item.containerApp.name}.json`);
     }
 

@@ -53,7 +53,7 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
         };
     }
 
-    get parentResource(): ContainerAppModel | Revision {
+    private get parentResource(): ContainerAppModel | Revision {
         return this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? this.containerApp : this.revision;
     }
 
@@ -68,9 +68,10 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
     }
 
     getChildren(): TreeElementBase[] {
+        const replicasLabel: string = localize('minMax', 'Min / max replicas');
         return [
             createGenericElement({
-                label: localize('minMax', 'Min / max replicas'),
+                label: this.replicasHaveUnsavedChanges() ? `${replicasLabel}*` : replicasLabel,
                 description: `${this.scale?.minReplicas ?? 0} / ${this.scale?.maxReplicas ?? 0}`,
                 contextValue: minMaxReplicaItemContextValue,
                 iconPath: new ThemeIcon('dash'),
@@ -93,5 +94,20 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
         }
 
         return !deepEqual(currentTemplate, draftTemplate);
+    }
+
+    private replicasHaveUnsavedChanges(): boolean {
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
+            return false;
+        }
+
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+        const currentTemplate = this.parentResource.template?.scale;
+
+        if (!draftTemplate || !currentTemplate) {
+            return false;
+        }
+
+        return draftTemplate.minReplicas !== currentTemplate.minReplicas || draftTemplate.maxReplicas !== draftTemplate.maxReplicas;
     }
 }

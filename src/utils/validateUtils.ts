@@ -44,23 +44,27 @@ export namespace validateUtils {
     }
 
     export function isValidNumberType(value: string, options: ValidNumberTypeOptions): boolean {
-        let pattern: string = '';
+        let pattern: string = '^';
 
         if (options.signType === 'negative') {
-            pattern += '^-';
+            pattern += '-';
+        } else if (options.signType === 'positive') {
+            // Add nothing
         } else {
-            pattern += '^-?';
+            pattern += '-?';
         }
 
         if (options.allowZero) {
-            pattern += '(\\d|0)+';
-        } else {
             pattern += '\\d+';
+        } else {
+            pattern += '[1-9]\\d*';
         }
 
         if (options.allowFloat) {
-            pattern += '(\\.(0-9)+)?';
+            pattern += '(\\.\\d+)?';
         }
+
+        pattern += '$';
 
         const regex: RegExp = new RegExp(pattern);
         return regex.test(value);

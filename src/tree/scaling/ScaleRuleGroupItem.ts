@@ -73,8 +73,12 @@ export class ScaleRuleGroupItem implements RevisionsItemModel, RevisionsDraftMod
             return false;
         }
 
-        const draftTemplate: ScaleRule[] = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules ?? [];
-        const currentTemplate: ScaleRule[] = this.parentResource.template?.scale?.rules ?? [];
+        const draftTemplate: ScaleRule[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules;
+        const currentTemplate: ScaleRule[] | undefined = this.parentResource.template?.scale?.rules;
+
+        if (!draftTemplate || !currentTemplate) {
+            return false;
+        }
 
         return !deepEqual(currentTemplate, draftTemplate);
     }
