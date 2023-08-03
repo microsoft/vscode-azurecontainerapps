@@ -18,7 +18,7 @@ export abstract class PositiveWholeNumberBaseStep extends AzureWizardPromptStep<
             return validateUtils.getInvalidCharLengthMessage();
         }
 
-        const validNumberTypeOptions: ValidNumberTypeOptions = { allowZero: false, signType: 'positive', allowFloat: false };
+        const validNumberTypeOptions: ValidNumberTypeOptions = { allowFloat: false, allowZero: false, signType: 'positive' };
         if (!validateUtils.isValidNumberType(value, validNumberTypeOptions)) {
             return validateUtils.getInvalidNumberTypeMessage(validNumberTypeOptions);
         }

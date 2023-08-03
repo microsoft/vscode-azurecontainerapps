@@ -18,9 +18,13 @@ export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleCo
     public hideStepCount: boolean = true;
 
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
-        const placeHolder: string = localize('chooseScaleType', 'Choose scale type');
-        const qpItems: QuickPickItem[] = Object.values(ScaleRuleTypes).map(type => { return { label: type } });
-        context.ruleType = (await context.ui.showQuickPick(qpItems, { placeHolder })).label;
+        const qpItems: QuickPickItem[] = Object.values(ScaleRuleTypes).map(type => {
+            return { label: type };
+        });
+
+        context.ruleType = (await context.ui.showQuickPick(qpItems, {
+            placeHolder: localize('chooseScaleType', 'Choose scale type')
+        })).label;
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {

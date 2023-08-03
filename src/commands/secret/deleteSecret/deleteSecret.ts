@@ -46,6 +46,12 @@ export async function deleteSecret(context: IActionContext, node?: SecretItem): 
 
     const secretId: string = `${wizardContext.containerApp?.id}/${SecretsItem.idSuffix}/${wizardContext.existingSecretName}`;
     await ext.state.showDeleting(secretId, async () => {
-        await wizard.execute();
+        try {
+            await wizard.execute();
+        } catch {
+            // Swallow any errors so the 'deleting...' message doesn't hang
+        }
     });
+
+    ext.state.notifyChildrenChanged(containerApp.id);
 }

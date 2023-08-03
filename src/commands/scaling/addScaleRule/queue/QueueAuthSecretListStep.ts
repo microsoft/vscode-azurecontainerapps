@@ -19,7 +19,7 @@ export class QueueAuthSecretListStep extends AzureWizardPromptStep<IAddScaleRule
         const secrets: Secret[] = containerAppWithSecrets.configuration.secrets ?? [];
 
         const picks: IAzureQuickPickItem<string | undefined>[] = [
-            { label: localize('createSecret', '$(Add) Create a secret'), data: undefined },
+            { label: localize('createSecret', '$(plus) Create a secret'), data: undefined },
             ...secrets.map((secret) => {
                 const secretName: string = nonNullProp(secret, "name");
                 return { label: secretName, data: secretName };

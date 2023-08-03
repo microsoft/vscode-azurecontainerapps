@@ -40,7 +40,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
     }
 
     public shouldExecute(context: IAddScaleRuleContext): boolean {
-        return !!context.ruleName && !!context.ruleType && !!context.existingSecretName;
+        return !!context.ruleName && !!context.ruleType;
     }
 
     private buildRule(context: IAddScaleRuleContext): ScaleRule {

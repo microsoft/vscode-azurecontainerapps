@@ -26,5 +26,4 @@ export interface IAddScaleRuleContext extends IContainerAppContext, ISecretConte
     queueName?: string;
     queueLength?: number;
     triggerParameter?: string;
-
 }
