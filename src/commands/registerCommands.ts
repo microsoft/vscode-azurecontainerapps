@@ -23,7 +23,7 @@ import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
 import { activateRevision } from './revision/activateRevision';
-import { chooseRevisionMode } from './revision/chooseRevisionMode';
+import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
 import { restartRevision } from './revision/restartRevision';
 import { createRevisionDraft } from './revisionDraft/createRevisionDraft';
@@ -33,6 +33,9 @@ import { editRevisionDraft } from './revisionDraft/editRevisionDraft';
 import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
 import { addSecret } from './secret/addSecret/addSecret';
+import { deleteSecret } from './secret/deleteSecret/deleteSecret';
+import { editSecretName } from './secret/editSecret/editSecretName';
+import { editSecretValue } from './secret/editSecret/editSecretValue';
 
 export function registerCommands(): void {
     // managed environments
@@ -61,6 +64,9 @@ export function registerCommands(): void {
 
     // secret
     registerCommandWithTreeNodeUnwrapping('containerApps.addSecret', addSecret);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editSecretName', editSecretName);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editSecretValue', editSecretValue);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deleteSecret', deleteSecret);
 
     // revisions
     registerCommandWithTreeNodeUnwrapping('containerApps.chooseRevisionMode', chooseRevisionMode);
