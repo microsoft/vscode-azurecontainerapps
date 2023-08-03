@@ -9,7 +9,7 @@ import { ScaleRuleTypes } from '../../../constants';
 import { localize } from '../../../utils/localize';
 import type { IAddScaleRuleContext } from './IAddScaleRuleContext';
 import { HttpConcurrentRequestsStep } from './http/HttpConcurrentRequestsStep';
-import { QueueAuthSecretStep } from './queue/QueueAuthSecretStep';
+import { QueueAuthSecretListStep } from './queue/QueueAuthSecretListStep';
 import { QueueAuthTriggerStep } from './queue/QueueAuthTriggerStep';
 import { QueueLengthStep } from './queue/QueueLengthStep';
 import { QueueNameStep } from './queue/QueueNameStep';
@@ -37,7 +37,7 @@ export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleCo
                 promptSteps.push(
                     new QueueNameStep(),
                     new QueueLengthStep(),
-                    new QueueAuthSecretStep(),
+                    new QueueAuthSecretListStep(),
                     new QueueAuthTriggerStep()
                 );
                 break;

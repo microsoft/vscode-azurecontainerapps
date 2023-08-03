@@ -40,7 +40,7 @@ export async function pickRevision(context: IActionContext, startingNode?: Conta
     startingNode ??= await pickContainerApp(context);
 
     if (startingNode.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-        throw new Error(localize('singleRevisionModeError', 'No revision items exist for picking in single revision mode.'));
+        throw new Error(localize('singleRevisionModeError', 'Revision items do not exist in single revision mode.'));
     }
 
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];

@@ -6,6 +6,6 @@ Reason:  Even though the `containerApp` template is essentially equivalent to th
 
 ## Data Sources for Tree Items
 
-Until the addition of revision drafts, the view has always reflected only one source of truth - the latest deployed changes.  With the addition of revision drafts, the view now prioritizes showing the latest draft `Unsaved changes` when they are present.  Model properties `containerApp` and `revision` should always be kept consistent with the latest deployed changes so that `hasUnsavedChanges` has the real data to easily compare against.
+Until the addition of revision drafts, the view has always reflected only one source of truth - the latest deployed changes.  With the addition of revision drafts, the view now prioritizes showing the latest draft `Unsaved changes` when they are present.  Model properties `containerApp` and `revision` should always be kept consistent with the latest deployed changes so that methods like `hasUnsavedChanges` have the real data for convenient comparison.
 
-Other tree item properties may be directly tied to the view and are free to float between reflecting the revision draft vs. the real deployment data depending on the hierarchy of what exists at the time.
+Other tree item properties may be directly tied to the view and can be designed to float between reflecting the revision draft vs. the real deployment data depending on the design requirements.

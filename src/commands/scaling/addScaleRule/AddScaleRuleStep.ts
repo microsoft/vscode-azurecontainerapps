@@ -15,15 +15,14 @@ import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUp
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
 export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDraftUpdateBaseStep<T> {
-    public priority: number = 100;
+    public priority: number = 200;
 
     constructor(baseItem: RevisionsItemModel) {
         super(baseItem);
     }
 
     public async execute(context: IAddScaleRuleContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const adding = localize('addingScaleRule', 'Draft change: Add {0} rule "{1}" to "{2}"', context.ruleType, context.ruleName, context.containerApp.name);
-        context.activityTitle = adding;
+        context.activityTitle = localize('addingScaleRule', 'Add {0} rule "{1}" to "{2}" (draft)', context.ruleType, context.ruleName, context.containerApp.name);
         progress.report({ message: localize('addingRule', 'Adding scale rule...') });
 
         this.revisionDraftTemplate.scale ||= {};
@@ -36,12 +35,12 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         // Artificial delay to make the activity log look like it's performing an action
         await delay(1000);
 
-        const added = localize('addedScaleRule', 'Draft change: Added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
+        const added = localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft).', context.ruleType, context.ruleName, context.containerApp.name);
         ext.outputChannel.appendLog(added);
     }
 
     public shouldExecute(context: IAddScaleRuleContext): boolean {
-        return !!context.ruleName && !!context.ruleType;
+        return !!context.ruleName && !!context.ruleType && !!context.existingSecretName;
     }
 
     private buildRule(context: IAddScaleRuleContext): ScaleRule {
@@ -58,7 +57,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
                 scaleRule.azureQueue = {
                     queueName: context.queueName,
                     queueLength: context.queueLength,
-                    auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
+                    auth: [{ secretRef: context.existingSecretName, triggerParameter: context.triggerParameter }]
                 }
                 break;
             default:

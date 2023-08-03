@@ -12,7 +12,7 @@ import { IContainerAppContext } from "../IContainerAppContext";
 
 export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
     /**
-     * This is what will eventually be used to update the revision draft template
+     * This property holds the template revisions that will be used to update when calling `updateRevisionDraftWithTemplate`
      */
     protected revisionDraftTemplate: Template;
 
@@ -24,6 +24,9 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     abstract execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void>;
     abstract shouldExecute(context: T): boolean;
 
+    /**
+     * Call this method to upload `revisionDraftTemplate` changes to the container app revision draft
+     */
     protected updateRevisionDraftWithTemplate(): void {
         ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate);
     }

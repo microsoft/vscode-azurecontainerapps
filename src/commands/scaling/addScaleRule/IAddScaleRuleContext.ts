@@ -7,8 +7,9 @@ import type { ScaleRule } from "@azure/arm-appcontainers";
 import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { IContainerAppContext } from "../../IContainerAppContext";
+import { ISecretContext } from "../../secret/ISecretContext";
 
-export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActivityContext {
+export interface IAddScaleRuleContext extends IContainerAppContext, ISecretContext, ExecuteActivityContext {
     // Make containerApp _required_
     containerApp: ContainerAppModel;
 
@@ -21,9 +22,9 @@ export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActiv
     // HTTP Rule Properties
     concurrentRequests?: string;
 
-    // Queue Rule Properties
+    // Queue Rule Properties (also leverages `ISecretContext` params)
     queueName?: string;
     queueLength?: number;
-    secretRef?: string;
     triggerParameter?: string;
+
 }

@@ -19,7 +19,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     const item: ScaleRuleGroupItem = node ?? await pickScaleRuleGroup(context);
     const { subscription, containerApp, revision } = item;
 
-    // Branching path reasoning: <insert link to README>
+    // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
     let scale: Scale | undefined;
     if (containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
         scale = nonNullValueAndProp(containerApp.template, 'scale');
@@ -37,7 +37,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     };
 
     const wizard: AzureWizard<IAddScaleRuleContext> = new AzureWizard(wizardContext, {
-        title: localize('addScaleRuleTitle', 'Add scale rule to container app "{0}" (unsaved change)', containerApp.name),
+        title: localize('addScaleRuleTitle', 'Add scale rule to container app "{0}" (draft)', containerApp.name),
         promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeListStep()],
         executeSteps: [new AddScaleRuleStep(item)],
         showLoadingPrompt: true
