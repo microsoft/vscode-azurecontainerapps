@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Template } from "@azure/arm-appcontainers";
+import type { Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
-import { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
-import { IContainerAppContext } from "../IContainerAppContext";
+import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import type { IContainerAppContext } from "../IContainerAppContext";
 
 export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
     /**

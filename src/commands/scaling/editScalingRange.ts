@@ -6,7 +6,7 @@
 import { IActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
-import { ScaleItem } from "../../tree/scaling/ScaleItem";
+import type { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
 import { pickScale } from "../../utils/pickItem/pickScale";
 import { updateContainerApp } from "../../utils/updateContainerApp";

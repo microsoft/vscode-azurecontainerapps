@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, Scale } from "@azure/arm-appcontainers";
 import { AzureWizard, IActionContext, createSubscriptionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
+import type { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScaleRuleGroup } from "../../../utils/pickItem/pickScale";

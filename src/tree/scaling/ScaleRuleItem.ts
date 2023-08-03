@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, Revision, ScaleRule } from "@azure/arm-appcontainers";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
 import { ThemeIcon, TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
-import { ContainerAppModel } from "../ContainerAppItem";
+import type { ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
-import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
 
 const scaleRuleLabel: string = localize('scaleRule', 'Scale Rule');
 

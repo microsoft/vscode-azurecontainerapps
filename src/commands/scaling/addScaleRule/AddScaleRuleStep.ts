@@ -5,10 +5,10 @@
 
 import { KnownActiveRevisionsMode, type ScaleRule } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
+import type { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
