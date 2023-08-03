@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ScaleRule } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ScaleRule } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { ScaleRuleTypes } from "../../../constants";
@@ -22,7 +22,17 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
     }
 
     public async execute(context: IAddScaleRuleContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        context.activityTitle = localize('addingScaleRule', 'Add {0} rule "{1}" to "{2}" (draft)', context.ruleType, context.ruleName, context.containerApp.name);
+        let adding: string | undefined;
+        let added: string | undefined;
+        if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+            adding = localize('addingScaleRuleSingle', 'Add {0} rule "{1}" to container app "{2}" (draft)', context.ruleType, context.ruleName, context.containerApp.name);
+            added = localize('addedScaleRuleSingle', 'Added {0} rule "{1}" to container app "{2}" (draft).', context.ruleType, context.ruleName, context.containerApp.name);
+        } else {
+            adding = localize('addingScaleRuleMultiple', 'Add {0} rule "{1}" to revision "{2}" (draft)', context.ruleType, context.ruleName, this.baseItem.revision.name);
+            added = localize('addedScaleRuleMultiple', 'Added {0} rule "{1}" to revision "{2}" (draft)', context.ruleType, context.ruleName, this.baseItem.revision.name);
+        }
+
+        context.activityTitle = adding;
         progress.report({ message: localize('addingRule', 'Adding scale rule...') });
 
         this.revisionDraftTemplate.scale ||= {};
@@ -35,7 +45,6 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         // Artificial delay to make the activity log look like it's performing an action
         await delay(1000);
 
-        const added = localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft).', context.ruleType, context.ruleName, context.containerApp.name);
         ext.outputChannel.appendLog(added);
     }
 

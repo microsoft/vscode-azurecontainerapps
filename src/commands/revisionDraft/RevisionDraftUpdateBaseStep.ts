@@ -12,7 +12,7 @@ import { IContainerAppContext } from "../IContainerAppContext";
 
 export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
     /**
-     * This property holds the template revisions that will be used to update when calling `updateRevisionDraftWithTemplate`
+     * This property holds the active template revisions used for updating the revision draft
      */
     protected revisionDraftTemplate: Template;
 

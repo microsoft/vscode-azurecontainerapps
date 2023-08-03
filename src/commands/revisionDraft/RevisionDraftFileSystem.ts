@@ -145,7 +145,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
 
         const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
-        const file: RevisionDraftFile | undefined = nonNullValue(this.draftStore.get(uri.path));
+        const file: RevisionDraftFile = nonNullValue(this.draftStore.get(uri.path));
         if (file.contents === newContent) {
             return;
         }
