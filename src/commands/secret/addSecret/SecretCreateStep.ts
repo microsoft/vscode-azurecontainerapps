@@ -14,6 +14,10 @@ import type { ISecretContext } from "../ISecretContext";
 export class SecretCreateStep extends AzureWizardExecuteStep<ISecretContext> {
     public priority: number = 200;
 
+    constructor(readonly suppressActivityTitle?: boolean) {
+        super();
+    }
+
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
@@ -24,16 +28,18 @@ export class SecretCreateStep extends AzureWizardExecuteStep<ISecretContext> {
             value: context.newSecretValue
         });
 
-        const addSecret: string = localize('addSecret', 'Add secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
-        const creatingSecret: string = localize('creatingSecret', 'Creating secret...');
+        if (!this.suppressActivityTitle) {
+            context.activityTitle = localize('addSecret', 'Add secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
+        }
 
-        context.activityTitle = addSecret;
-        progress.report({ message: creatingSecret });
+        progress.report({ message: localize('creatingSecret', 'Creating secret...') });
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
 
         const addedSecret: string = localize('addedSecret', 'Added secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
         ext.outputChannel.appendLog(addedSecret);
+
+        context.existingSecretName = context.newSecretName;
     }
 
     public shouldExecute(context: ISecretContext): boolean {

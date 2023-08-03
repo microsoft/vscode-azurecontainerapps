@@ -11,12 +11,12 @@ export class QueueLengthStep extends PositiveRealNumberBaseStep {
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
         context.queueLength = Number((await context.ui.showInputBox({
             prompt: localize('queueLengthPrompt', 'Enter a queue length.'),
-            validateInput: (value: string | undefined): string | undefined => this.validateInput(value)
+            validateInput: this.validateInput
         })).trim());
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return context.queueLength === undefined;
+        return !context.queueLength;
     }
 }
 
