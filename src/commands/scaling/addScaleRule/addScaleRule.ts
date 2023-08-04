@@ -5,7 +5,6 @@
 
 import { KnownActiveRevisionsMode, Scale } from "@azure/arm-appcontainers";
 import { AzureWizard, IActionContext, createSubscriptionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { ext } from "../../../extensionVariables";
 import type { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -45,6 +44,4 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
 
     await wizard.prompt();
     await wizard.execute();
-
-    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
 }
