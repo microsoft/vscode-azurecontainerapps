@@ -9,9 +9,9 @@ import { ext } from "../../extensionVariables";
 import type { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { ScaleRuleGroupItem } from "../../tree/scaling/ScaleRuleGroupItem";
-import type { PickItemOptions } from "./PickItemOptions";
+import type { RevisionDraftPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
-import { getPickRevisionStep, getPickRevisionsStep } from "./pickRevision";
+import { getPickRevisionDraftStep, getPickRevisionStep, getPickRevisionsStep } from "./pickRevision";
 
 function getPickScaleStep(): AzureWizardPromptStep<QuickPickWizardContext> {
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
@@ -23,10 +23,16 @@ function getPickScaleStep(): AzureWizardPromptStep<QuickPickWizardContext> {
 /**
  * Assumes starting from the ContainerAppItem
  */
-function getPickScaleSteps(revisionsMode: KnownActiveRevisionsMode): AzureWizardPromptStep<QuickPickWizardContext>[] {
+function getPickScaleSteps(containerAppItem: ContainerAppItem, options?: RevisionDraftPickItemOptions): AzureWizardPromptStep<QuickPickWizardContext>[] {
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
-    if (revisionsMode === KnownActiveRevisionsMode.Multiple) {
-        promptSteps.push(getPickRevisionsStep(), getPickRevisionStep());
+    if (containerAppItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+        promptSteps.push(getPickRevisionsStep());
+
+        if (options?.autoSelectDraft && ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(containerAppItem)) {
+            promptSteps.push(getPickRevisionDraftStep());
+        } else {
+            promptSteps.push(getPickRevisionStep());
+        }
     }
 
     promptSteps.push(getPickScaleStep());
@@ -40,19 +46,19 @@ function getPickScaleRuleGroupStep(): AzureWizardPromptStep<QuickPickWizardConte
     });
 }
 
-export async function pickScale(context: IActionContext, options?: PickItemOptions): Promise<ScaleItem> {
+export async function pickScale(context: IActionContext, options?: RevisionDraftPickItemOptions): Promise<ScaleItem> {
     const containerAppItem: ContainerAppItem = await pickContainerApp(context);
     return await runQuickPickWizard(context, {
-        promptSteps: getPickScaleSteps(containerAppItem.containerApp.revisionsMode),
+        promptSteps: getPickScaleSteps(containerAppItem, { autoSelectDraft: options?.autoSelectDraft }),
         title: options?.title,
     }, containerAppItem);
 }
 
-export async function pickScaleRuleGroup(context: IActionContext, options?: PickItemOptions): Promise<ScaleRuleGroupItem> {
+export async function pickScaleRuleGroup(context: IActionContext, options?: RevisionDraftPickItemOptions): Promise<ScaleRuleGroupItem> {
     const containerAppItem: ContainerAppItem = await pickContainerApp(context);
 
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
-        ...getPickScaleSteps(containerAppItem.containerApp.revisionsMode),
+        ...getPickScaleSteps(containerAppItem, { autoSelectDraft: options?.autoSelectDraft }),
         getPickScaleRuleGroupStep()
     ];
 

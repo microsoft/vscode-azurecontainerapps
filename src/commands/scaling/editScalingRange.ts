@@ -12,7 +12,7 @@ import { pickScale } from "../../utils/pickItem/pickScale";
 import { updateContainerApp } from "../../utils/updateContainerApp";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleItem): Promise<void> {
-    const { containerApp, revision, subscription } = node ?? await pickScale(context);
+    const { containerApp, revision, subscription } = node ?? await pickScale(context, { autoSelectDraft: true });
 
     const scale = nonNullValue(revision?.template?.scale);
     const prompt: string = localize('editScalingRange', 'Set the range of application replicas that get created in response to a scale rule. Set any range within the minimum of 0 and the maximum of 10 replicas');

@@ -15,7 +15,7 @@ import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
 import { ScaleRuleTypeListStep } from "./ScaleRuleTypeListStep";
 
 export async function addScaleRule(context: IActionContext, node?: ScaleRuleGroupItem): Promise<void> {
-    const item: ScaleRuleGroupItem = node ?? await pickScaleRuleGroup(context);
+    const item: ScaleRuleGroupItem = node ?? await pickScaleRuleGroup(context, { autoSelectDraft: true });
     const { subscription, containerApp, revision } = item;
 
     // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
