@@ -66,7 +66,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
                 scaleRule.azureQueue = {
                     queueName: context.queueName,
                     queueLength: context.queueLength,
-                    auth: [{ secretRef: context.existingSecretName, triggerParameter: context.triggerParameter }]
+                    auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
                 }
                 break;
             default:
