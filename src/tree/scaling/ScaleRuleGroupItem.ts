@@ -76,7 +76,7 @@ export class ScaleRuleGroupItem implements RevisionsItemModel, RevisionsDraftMod
         const draftTemplate: ScaleRule[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules;
         const currentTemplate: ScaleRule[] | undefined = this.parentResource.template?.scale?.rules;
 
-        if (!draftTemplate || !currentTemplate) {
+        if (!draftTemplate) {
             return false;
         }
 

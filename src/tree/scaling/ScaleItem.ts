@@ -89,14 +89,14 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
         const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
         const currentTemplate = this.parentResource.template?.scale;
 
-        if (!draftTemplate || !currentTemplate) {
+        if (!draftTemplate) {
             return false;
         }
 
         return !deepEqual(currentTemplate, draftTemplate);
     }
 
-    private replicasHaveUnsavedChanges(): boolean {
+    replicasHaveUnsavedChanges(): boolean {
         if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
             return false;
         }
@@ -104,10 +104,10 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
         const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
         const currentTemplate = this.parentResource.template?.scale;
 
-        if (!draftTemplate || !currentTemplate) {
+        if (!draftTemplate) {
             return false;
         }
 
-        return draftTemplate.minReplicas !== currentTemplate.minReplicas || draftTemplate.maxReplicas !== draftTemplate.maxReplicas;
+        return draftTemplate.minReplicas !== currentTemplate?.minReplicas || draftTemplate.maxReplicas !== currentTemplate?.maxReplicas;
     }
 }

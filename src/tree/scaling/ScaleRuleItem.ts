@@ -25,7 +25,7 @@ export class ScaleRuleItem implements RevisionsItemModel, RevisionsDraftModel {
 
         // Used as the basis for the view; can reflect either the original or the draft changes
         readonly scaleRule: ScaleRule,
-        readonly hasDraft: boolean) { }
+        readonly isDraft: boolean) { }
 
     id: string = `${this.parentResource.id}/scalerules/${this.scaleRule.name}`;
 
@@ -66,7 +66,7 @@ export class ScaleRuleItem implements RevisionsItemModel, RevisionsDraftModel {
             return false;
         }
 
-        if (!this.hasDraft) {
+        if (!this.isDraft) {
             return false;
         }
 
