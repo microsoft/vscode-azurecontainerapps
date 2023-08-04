@@ -33,7 +33,8 @@ export function getPickRevisionStep(revisionName?: string | RegExp): AzureWizard
         contextValueFilter: { include: revisionFilter },
         skipIfOne: true,
     }, {
-        placeHolder: localize('selectRevisionItem', 'Select a revision')
+        placeHolder: localize('selectRevisionItem', 'Select a revision'),
+        noPicksMessage: localize('noRevisions', 'Selected container app has no revisions'),
     });
 }
 
