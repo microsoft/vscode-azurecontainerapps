@@ -21,12 +21,21 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevis
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
         containerAppEnvelope.template = nonNullProp(context, 'template');
 
-        const creatingRevision: string = localize('creatingRevision', 'Creating revision...');
-        progress.report({ message: creatingRevision });
+        let updating: string | undefined;
+        let description: string | undefined;
+        if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Single) {
+            updating = localize('creatingRevision', 'Updating container app...');
+            description = localize('updating', 'Updating...');
+        } else {
+            updating = localize('creatingRevision', 'Creating revision...');
+            description = updating;
+        }
+
+        progress.report({ message: updating });
 
         const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : `${containerApp.id}/${RevisionDraftItem.idSuffix}`;
 
-        await ext.state.runWithTemporaryDescription(id, creatingRevision, async () => {
+        await ext.state.runWithTemporaryDescription(id, description, async () => {
             await updateContainerApp(context, context.subscription, containerAppEnvelope);
             const updatedContainerApp = await ContainerAppItem.Get(context, context.subscription, containerApp.resourceGroup, containerApp.name);
 

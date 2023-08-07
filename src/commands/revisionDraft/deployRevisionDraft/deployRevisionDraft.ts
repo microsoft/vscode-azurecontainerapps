@@ -3,25 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
-import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import * as deepEqual from "deep-eql";
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
+import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activityUtils";
-import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
+import { pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
 import { DeployRevisionDraftConfirmStep } from "./DeployRevisionDraftConfirmStep";
 import { DeployRevisionDraftStep } from "./DeployRevisionDraftStep";
 import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
 
 export async function deployRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {
-    const item = node ?? await pickContainerApp(context);
+    if (!node) {
+        const containerAppItem: ContainerAppItem = node ?? await pickContainerApp(context);
+        node = containerAppItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerAppItem : await pickRevisionDraft(context, containerAppItem);
+    }
 
+    const item: ContainerAppItem | RevisionDraftItem = nonNullValue(node);
     const { subscription, containerApp } = item;
 
     const wizardContext: IDeployRevisionDraftContext = {
@@ -33,7 +35,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         template: ext.revisionDraftFileSystem.parseRevisionDraft(item),
     };
 
-    if (!await hasUnsavedChanges(wizardContext, item)) {
+    if (!await item.hasUnsavedChanges()) {
         throw new Error(localize('noUnsavedChanges', 'No unsaved changes detected to deploy to container app "{0}".', containerApp.name));
     }
 
@@ -68,20 +70,4 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
     }
 
     ext.state.notifyChildrenChanged(item.containerApp.managedEnvironmentId);
-}
-
-async function hasUnsavedChanges(context: IDeployRevisionDraftContext, item: ContainerAppItem | RevisionDraftItem): Promise<boolean> {
-    const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
-
-    if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Single) {
-        return !!containerApp.template && !!context.template && !deepEqual(containerApp.template, context.template);
-    } else {
-        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-        const revisions: Revision[] = await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(containerApp.resourceGroup, containerApp.name));
-
-        const baseRevisionName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(item)?.baseRevisionName;
-        const baseRevision: Revision | undefined = revisions.find(revision => baseRevisionName && revision.name === baseRevisionName);
-
-        return !!baseRevision?.template && !!context.template && !deepEqual(baseRevision.template, context.template);
-    }
 }
