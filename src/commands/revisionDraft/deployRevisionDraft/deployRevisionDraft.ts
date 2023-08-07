@@ -19,7 +19,7 @@ import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext"
 
 export async function deployRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {
     if (!node) {
-        const containerAppItem: ContainerAppItem = node ?? await pickContainerApp(context);
+        const containerAppItem: ContainerAppItem = await pickContainerApp(context);
         node = containerAppItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerAppItem : await pickRevisionDraft(context, containerAppItem);
     }
 
