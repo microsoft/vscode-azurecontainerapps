@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, parseError } from "@microsoft/vscode-azext-utils";
-import { Progress, window } from "vscode";
+import { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -19,13 +19,12 @@ export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteCo
         const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
         for (const containerAppName of containerAppNames) {
-            const deleting: string = localize('deletingContainerApp', 'Deleting Container App "{0}"...', containerAppName);
-            const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted Container App "{0}".', containerAppName);
-
             try {
-                ext.outputChannel.appendLog(deleting);
-                progress.report({ message: deleting });
+                progress.report({ message: localize('deletingContainerApp', 'Deleting container app "{0}"...', containerAppName) });
                 await webClient.containerApps.beginDeleteAndWait(context.resourceGroupName, containerAppName);
+
+                const deleted: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', containerAppName);
+                ext.outputChannel.appendLog(deleted);
             } catch (error) {
                 const pError = parseError(error);
                 // a 204 indicates a success, but sdk is catching it as an exception
@@ -34,10 +33,6 @@ export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteCo
                     throw error;
                 }
             }
-            if (!context.suppressNotification) {
-                void window.showInformationMessage(deleteSucceeded);
-            }
-            ext.outputChannel.appendLog(deleteSucceeded);
         }
     }
 

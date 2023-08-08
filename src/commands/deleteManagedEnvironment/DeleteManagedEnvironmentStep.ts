@@ -5,22 +5,22 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, parseError } from "@microsoft/vscode-azext-utils";
-import { Progress, window } from "vscode";
+import { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { IDeleteManagedEnvironmentWizardContext } from "./IDeleteManagedEnvironmentWizardContext";
+import { IDeleteManagedEnvironmentContext } from "./IDeleteManagedEnvironmentContext";
 
-export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDeleteManagedEnvironmentWizardContext> {
+export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDeleteManagedEnvironmentContext> {
     public priority: number = 110;
 
-    public async execute(context: IDeleteManagedEnvironmentWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const deleting: string = localize('deletingManagedEnv', 'Deleting Container Apps environment "{0}"... this may take several minutes.', context.managedEnvironmentName);
+    public async execute(context: IDeleteManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
+        const deleting: string = localize('deletingManagedEnv', 'Deleting environment... this may take several minutes...');
+        progress.report({ message: deleting });
+
         try {
-            ext.outputChannel.appendLog(deleting);
-            progress.report({ message: deleting });
             await client.managedEnvironments.beginDeleteAndWait(context.resourceGroupName, context.managedEnvironmentName);
         } catch (error) {
             const pError = parseError(error);
@@ -31,14 +31,11 @@ export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDelete
             }
         }
 
-        const deleteSucceeded: string = localize('deleteManagedEnvSucceeded', 'Successfully deleted Container Apps environment "{0}".', context.managedEnvironmentName);
-        if (!context.suppressNotification) {
-            void window.showInformationMessage(deleteSucceeded);
-        }
-        ext.outputChannel.appendLog(deleteSucceeded);
+        const deleted: string = localize('deletedManagedEnv', 'Deleted container apps environment "{0}".', context.managedEnvironmentName);
+        ext.outputChannel.appendLog(deleted);
     }
 
-    public shouldExecute(context: IDeleteManagedEnvironmentWizardContext): boolean {
-        return !!context.managedEnvironmentName && !!context.resourceGroupName && !!context.subscription;
+    public shouldExecute(context: IDeleteManagedEnvironmentContext): boolean {
+        return !!context.managedEnvironmentName && !!context.resourceGroupName;
     }
 }
