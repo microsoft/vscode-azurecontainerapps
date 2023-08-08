@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, NoResourceFoundError, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -10,7 +11,7 @@ import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftIt
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../localize";
-import type { RevisionPickItemOptions } from "./PickItemOptions";
+import type { PickItemOptions, RevisionPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 
 export function getPickRevisionDraftStep(): AzureWizardPromptStep<QuickPickWizardContext> {
@@ -60,23 +61,19 @@ export async function pickRevision(context: IActionContext, startingNode?: Conta
     }, startingNode);
 }
 
-export async function pickRevisionDraft(context: IActionContext, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionDraftItem> {
-    startingNode ??= await pickContainerApp(context);
+export async function pickRevisionDraft(context: IActionContext, containerAppItem?: ContainerAppItem, options?: PickItemOptions): Promise<RevisionDraftItem> {
+    containerAppItem ??= await pickContainerApp(context);
 
-    const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
-
-    if (startingNode instanceof ContainerAppItem) {
-        promptSteps.push(getPickRevisionsStep());
+    if (containerAppItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+        throw new NoResourceFoundError(Object.assign(context, { noItemFoundErrorMessage: localize('singleRevisionModeError', 'Revision draft items do not exist in single revision mode.') }));
     }
 
-    if (!ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(startingNode)) {
+    if (!ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(containerAppItem)) {
         throw new NoResourceFoundError(Object.assign(context, { noItemFoundErrorMessage: localize('noRevisionDraft', 'Selected container app has no active revision draft.') }));
     }
 
-    promptSteps.push(getPickRevisionDraftStep());
-
     return await runQuickPickWizard(context, {
-        promptSteps,
+        promptSteps: [getPickRevisionsStep(), getPickRevisionDraftStep()],
         title: options?.title,
-    }, startingNode);
+    }, containerAppItem);
 }
