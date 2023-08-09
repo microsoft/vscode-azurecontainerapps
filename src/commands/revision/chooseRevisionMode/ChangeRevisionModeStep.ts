@@ -16,7 +16,7 @@ export class ChangeRevisionModeStep extends AzureWizardExecuteStep<IChooseRevisi
 
     public async execute(context: IChooseRevisionModeContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
-        context.activityTitle = localize('changeRevisionTitle', 'Change container app "{0}" to {1} revision mode.', containerApp.name, context.newRevisionMode?.toLowerCase());
+        context.activityTitle = localize('changeRevisionTitle', 'Change container app "{0}" to {1} revision mode', containerApp.name, context.newRevisionMode?.toLowerCase());
 
         const changing: string = localize('changingRevision', 'Changing revision mode...');
         progress.report({ message: changing });
