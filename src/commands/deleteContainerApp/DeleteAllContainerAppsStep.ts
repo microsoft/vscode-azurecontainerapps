@@ -20,10 +20,12 @@ export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteCo
 
         for (const containerAppName of containerAppNames) {
             try {
-                progress.report({ message: localize('deletingContainerApp', 'Deleting container app "{0}"...', containerAppName) });
+                const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', containerAppName);
+                const deleted: string = localize('deletedContainerApp', 'Deleted container app "{0}".', containerAppName);
+
+                progress.report({ message: deleting });
                 await webClient.containerApps.beginDeleteAndWait(context.resourceGroupName, containerAppName);
 
-                const deleted: string = localize('deletedContainerApp', 'Successfully deleted container app "{0}".', containerAppName);
                 ext.outputChannel.appendLog(deleted);
             } catch (error) {
                 const pError = parseError(error);
