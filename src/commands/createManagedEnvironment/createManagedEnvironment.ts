@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext, nonNullProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -28,7 +28,13 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 
     promptSteps.push(new ManagedEnvironmentNameStep());
-    executeSteps.push(new VerifyProvidersStep(['Microsoft.App', 'Microsoft.OperationalInsights']), new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new ManagedEnvironmentCreateStep());
+    executeSteps.push(
+        new VerifyProvidersStep(['Microsoft.App', 'Microsoft.OperationalInsights']),
+        new ResourceGroupCreateStep(),
+        new LogAnalyticsCreateStep(),
+        new ManagedEnvironmentCreateStep()
+    );
+
     LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.App', 'managedEnvironments');
     LocationListStep.addStep(wizardContext, promptSteps);
 

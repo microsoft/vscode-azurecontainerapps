@@ -10,6 +10,6 @@ import type { ImageSourceBaseContext } from '../deployImage/imageSource/ImageSou
 import type { IngressContext } from '../ingress/IngressContext';
 
 export interface ICreateContainerAppContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressContext, IContainerAppContext, ExecuteActivityContext {
-    managedEnvironmentId: string;
+    managedEnvironmentId?: string;
     newContainerAppName?: string;
 }
