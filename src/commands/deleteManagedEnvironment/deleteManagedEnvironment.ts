@@ -7,14 +7,14 @@ import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
+import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { DeleteAllContainerAppsStep } from "../deleteContainerApp/DeleteAllContainerAppsStep";
 import { DeleteEnvironmentConfirmationStep } from "./DeleteEnvironmentConfirmationStep";
 import { DeleteManagedEnvironmentStep } from "./DeleteManagedEnvironmentStep";
-import { IDeleteManagedEnvironmentContext } from "./IDeleteManagedEnvironmentContext";
+import type { IDeleteManagedEnvironmentContext } from "./IDeleteManagedEnvironmentContext";
 
 export async function deleteManagedEnvironment(context: IActionContext, node?: ManagedEnvironmentItem): Promise<void> {
     const { subscription, managedEnvironment } = node ?? await pickEnvironment(context, {

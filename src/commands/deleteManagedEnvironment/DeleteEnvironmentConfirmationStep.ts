@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, DialogResponses, nonNullValue, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../utils/localize';
 import { settingUtils } from '../../utils/settingUtils';
-import { IDeleteManagedEnvironmentContext } from './IDeleteManagedEnvironmentContext';
+import type { IDeleteManagedEnvironmentContext } from './IDeleteManagedEnvironmentContext';
 
 export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDeleteManagedEnvironmentContext> {
     private managedEnvironmentName: string | undefined;
