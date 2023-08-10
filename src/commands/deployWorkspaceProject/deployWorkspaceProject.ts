@@ -20,8 +20,15 @@ type IDeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContai
 export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
     const subscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
 
-    // Other questions: (1) Do we want to save container app as project properties for future deploy from workspace?
-    // (2) Do we want to distinguish basic vs advanced scenario?  What should the difference be?
+    // Todo
+    // function to take workspace and default names
+    // ManagedEnvironmentListStep (Later)
+    // ContainerAppListStep (Later)
+    // Create ACR (now) (MEGAN)
+    // Dockerfile default path logic (now)
+    // Check to make sure location providers work the way we expect
+    // Add dockerfile port detection logic and auto default function
+    //
 
     const wizardContext: IDeployWorkspaceProjectContext = {
         ...context,
