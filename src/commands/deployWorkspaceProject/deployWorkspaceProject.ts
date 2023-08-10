@@ -15,21 +15,22 @@ import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/Manage
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
 import { IBuildImageInAzureContext } from "../deployImage/imageSource/buildImageInAzure/IBuildImageInAzureContext";
 
-type IDeployFromWorkspaceContext = IManagedEnvironmentContext & ICreateContainerAppContext & IBuildImageInAzureContext;
+type IDeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContainerAppContext & IBuildImageInAzureContext;
 
-export async function deployFromWorkspace(context: IActionContext): Promise<void> {
+export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
     const subscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
 
     // Other questions: (1) Do we want to save container app as project properties for future deploy from workspace?
     // (2) Do we want to distinguish basic vs advanced scenario?  What should the difference be?
 
-    const wizardContext: IDeployFromWorkspaceContext = {
+    const wizardContext: IDeployWorkspaceProjectContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         ...await createActivityContext(),
         subscription,
         // could add a function that you call that returns defaulted values for the wizardContext
         newResourceGroupName: 'mwf1-rg',
+        // make this naming behavior consistent across the steps...
         newManagedEnvironmentName: 'mwf1-env',
         newContainerAppName: 'mwf1-ca',
         imageSource: ImageSource.RemoteAcrBuild,
@@ -40,10 +41,11 @@ export async function deployFromWorkspace(context: IActionContext): Promise<void
         // enableIngress: true
         // enableExternal: true
         // targetPort
+        // location or prompt??
     };
 
-    const promptSteps: AzureWizardPromptStep<IDeployFromWorkspaceContext>[] = [];
-    const executeSteps: AzureWizardExecuteStep<IDeployFromWorkspaceContext>[] = [];
+    const promptSteps: AzureWizardPromptStep<IDeployWorkspaceProjectContext>[] = [];
+    const executeSteps: AzureWizardExecuteStep<IDeployWorkspaceProjectContext>[] = [];
 
     // Managed Environment
     // Most of these steps can probably be encapsulated into the list step...
@@ -78,7 +80,7 @@ export async function deployFromWorkspace(context: IActionContext): Promise<void
     // Verify how we need to handle running `addProviderForFiltering` and `VerifyProvidersStep` across all scenarios...
     // Add way to create registry in AcrListStep
 
-    const wizard: AzureWizard<IDeployFromWorkspaceContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IDeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
         title: 'placeholder',
         promptSteps,
         executeSteps,
