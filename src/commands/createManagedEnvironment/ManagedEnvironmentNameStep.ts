@@ -3,16 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { AzureWizardPromptStep, ISubscriptionActionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { IManagedEnvironmentContext } from './IManagedEnvironmentContext';
 
 export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
     public async prompt(context: IManagedEnvironmentContext): Promise<void> {
-        const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new Container Apps environment.');
+        const prompt: string = localize('containerAppNamePrompt', 'Enter a container apps environment name.');
         context.newManagedEnvironmentName = (await context.ui.showInputBox({
             prompt,
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(value)
+            validateInput: this.validateInput,
+            asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();
 
         context.valuesToMask.push(context.newManagedEnvironmentName);
@@ -33,5 +36,23 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
         }
 
         return undefined;
+    }
+
+    private async validateNameAvailable(context: IManagedEnvironmentContext, name: string): Promise<string | undefined> {
+        const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
+        if (!await ManagedEnvironmentNameStep.isNameAvailable(context, resourceGroupName, name)) {
+            return localize('managedEnvironmentExists', 'The container apps environment "{0}" already exists in resource group "{1}".', name, resourceGroupName);
+        }
+        return undefined;
+    }
+
+    public static async isNameAvailable(context: ISubscriptionActionContext, resourceGroupName: string, environmentName: string): Promise<boolean> {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        try {
+            await client.managedEnvironments.get(resourceGroupName, environmentName);
+            return false;
+        } catch (_) {
+            return true;
+        }
     }
 }

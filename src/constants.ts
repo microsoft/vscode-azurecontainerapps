@@ -11,6 +11,7 @@ export const managedEnvironmentsId = 'managedEnvironments';
 export const containerAppsId = 'containerApps';
 export const appProvider: string = 'Microsoft.App';
 export const webProvider: string = 'Microsoft.Web';
+export const operationalInsightsProvider: string = 'Microsoft.OperationalInsights';
 
 export const containerAppsWebProvider: string = `${webProvider}/${containerAppsId}`;
 export const managedEnvironmentsAppProvider: string = `${appProvider}/${managedEnvironmentsId}`;
@@ -70,8 +71,7 @@ export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', dat
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
-export const ROOT_DOCKERFILE_GLOB_PATTERN = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
-export const ALL_DOCKERFILE_GLOB_PATTERN = `**/${ROOT_DOCKERFILE_GLOB_PATTERN}`;
+export const DOCKERFILE_GLOB_PATTERN = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
 
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';

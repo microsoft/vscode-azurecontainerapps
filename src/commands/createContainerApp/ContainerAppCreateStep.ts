@@ -16,7 +16,7 @@ import { getContainerNameForImage } from "../deployImage/imageSource/containerRe
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
-    public priority: number = 250;
+    public priority: number = 350;
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
@@ -40,7 +40,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
-            managedEnvironmentId: context.managedEnvironmentId,
+            managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
             configuration: {
                 ingress,
                 secrets: context.secrets,

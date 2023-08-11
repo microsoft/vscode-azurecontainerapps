@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { ICreateContainerAppContext } from './ICreateContainerAppContext';
@@ -14,22 +14,22 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ICreateContainer
     public hideStepCount: boolean = true;
 
     public async prompt(context: ICreateContainerAppContext): Promise<void> {
-        const prompt: string = localize('containerAppNamePrompt', 'Enter a name for the new container app.');
+        const prompt: string = localize('containerAppNamePrompt', 'Enter a container app name.');
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt,
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(context, value)
+            validateInput: this.validateInput,
+            asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();
 
         context.valuesToMask.push(context.newContainerAppName);
     }
 
     public shouldPrompt(context: ICreateContainerAppContext): boolean {
-        return !context.newContainerAppName;
+        return !context.containerApp && !context.newContainerAppName;
     }
 
-    private async validateInput(context: ICreateContainerAppContext, name: string | undefined): Promise<string | undefined> {
+    private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
-        // to prevent showing an error when the character types the first letter
 
         const { minLength, maxLength } = { minLength: 1, maxLength: 32 };
         if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
@@ -38,16 +38,24 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ICreateContainer
             return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
         }
 
-        // do the API call last
-        try {
-            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-            const managedEnvironmentRg = getResourceGroupFromId(nonNullProp(context, 'managedEnvironmentId'));
-            await client.containerApps.get(managedEnvironmentRg, name);
-            return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}". Please enter a unique name.', name, managedEnvironmentRg);
-        } catch (err) {
-            // do nothing
-        }
-
         return undefined;
+    }
+
+    private async validateNameAvailable(context: ICreateContainerAppContext, name: string): Promise<string | undefined> {
+        const resourceGroupName: string = getResourceGroupFromId(nonNullProp(context, 'managedEnvironmentId'));
+        if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name)) {
+            return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
+        }
+        return undefined;
+    }
+
+    public static async isNameAvailable(context: ISubscriptionActionContext, resourceGroupName: string, containerAppName: string): Promise<boolean> {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        try {
+            await client.containerApps.get(resourceGroupName, containerAppName);
+            return false;
+        } catch (_) {
+            return true;
+        }
     }
 }

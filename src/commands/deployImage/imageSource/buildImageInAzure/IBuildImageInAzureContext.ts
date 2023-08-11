@@ -6,12 +6,13 @@
 import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
 import * as vscode from 'vscode';
 import { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
+import { AcrBuildSupportedOS } from './OSPickStep';
 
 export interface IBuildImageInAzureContext extends IContainerRegistryImageContext {
     rootFolder: vscode.WorkspaceFolder;
     dockerfilePath: string;
     imageName: string;
-    os: 'Windows' | 'Linux';
+    os: AcrBuildSupportedOS;
 
     uploadedSourceLocation: string;
     tarFilePath: string;
