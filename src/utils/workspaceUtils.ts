@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { basename } from 'path';
-import { OpenDialogOptions, Uri, workspace } from "vscode";
+import { IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
+import * as path from "path";
+import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
 import { localize } from "./localize";
 
 export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: OpenDialogOptions, globPattern?: string): Promise<string> {
@@ -16,7 +16,7 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
         quickPicks = files.map((uri: Uri) => {
             return {
-                label: basename(uri.path),
+                label: path.basename(uri.path),
                 description: uri.path,
                 data: uri.path
             };
@@ -27,4 +27,18 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
     }
 
     return input?.data || (await context.ui.showOpenDialog(options))[0].path;
+}
+
+export async function getRootWorkspaceFolder(placeHolder?: string): Promise<WorkspaceFolder | undefined> {
+    if (!workspace.workspaceFolders?.length) {
+        return undefined;
+    } else if (workspace.workspaceFolders?.length === 1) {
+        return workspace.workspaceFolders[0];
+    } else {
+        const folder = await window.showWorkspaceFolderPick({ placeHolder: placeHolder ?? localize('selectRootWorkspace', 'Select a folder for your workspace') });
+        if (!folder) {
+            throw new UserCancelledError('selectRootWorkspace');
+        }
+        return folder;
+    }
 }

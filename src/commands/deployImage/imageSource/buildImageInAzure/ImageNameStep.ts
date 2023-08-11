@@ -10,7 +10,7 @@ import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 export class ImageNameStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {
-        const suggestedImageName = await getSuggestedName(context, context.dockerFilePath);
+        const suggestedImageName = await getSuggestedName(context, context.dockerfilePath);
 
         context.imageName = await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),

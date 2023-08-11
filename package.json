@@ -87,6 +87,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployWorkspaceProject",
+                "title": "%containerApps.deployWorkspaceProject%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteContainerApp",
                 "title": "%containerApps.deleteContainerApp%",
                 "category": "Azure Container Apps"
