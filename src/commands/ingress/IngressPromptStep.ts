@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { tryGetFirstDockerfileExposePort } from "../../utils/dockerfileUtils";
 import { localize } from "../../utils/localize";
 import type { IngressContext } from "./IngressContext";
 import { DisableIngressStep } from "./disableIngress/DisableIngressStep";
@@ -15,6 +16,10 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     public async prompt(context: IngressContext): Promise<void> {
         context.enableIngress = (await context.ui.showQuickPick([{ label: localize('enable', 'Enable'), data: true }, { label: localize('disable', 'Disable'), data: false }],
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
+    }
+
+    public async configureBeforePrompt(): Promise<void> {
+        await tryGetFirstDockerfileExposePort();
     }
 
     public shouldPrompt(context: IngressContext): boolean {

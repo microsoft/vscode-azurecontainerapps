@@ -14,5 +14,6 @@ export interface ICreateContainerAppContext extends IResourceGroupWizardContext,
     managedEnvironmentId?: string;
     newContainerAppName?: string;
 
+    // Could be populated if a managed environment creation step was executed in the same wizard
     managedEnvironment?: ManagedEnvironment;
 }

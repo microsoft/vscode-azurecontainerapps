@@ -71,7 +71,7 @@ export async function getDefaultResourceNames(context: ISubscriptionActionContex
     }
 
     if (!foundAvailableNames) {
-        // Eventually update this message to tell them to try running in `Advanced` if all names are already taken
+        // Eventually update this message to tell user to run `Advanced` if all names are already taken
         throw new Error(localize('defaultNameError', 'All default resource names are already taken, please remove any unused resources and try again.'));
     }
 

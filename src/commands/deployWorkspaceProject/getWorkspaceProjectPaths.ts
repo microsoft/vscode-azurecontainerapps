@@ -23,7 +23,7 @@ export async function getWorkspaceProjectPaths(): Promise<{ rootFolder: Workspac
     if (!dockerfileUris.length) {
         throw new Error(localize('noDockerfileError', 'Unable to locate a Dockerfile in your project\'s root.'));
     } else if (dockerfileUris.length > 1) {
-        throw new Error(localize('multipleDockerfileError', 'Unable to determine the correct Dockerfile to use in your project\'s root.'));
+        throw new Error(localize('multipleDockerfileError', 'Multiple Dockerfiles found. Unable to determine the correct Dockerfile to use in your project\'s root.'));
     }
 
     return {
