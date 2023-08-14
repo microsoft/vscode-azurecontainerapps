@@ -12,6 +12,7 @@ import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { ContainersItem } from "../containers/ContainersItem";
 import { ScaleItem } from "../scaling/ScaleItem";
 
 export interface RevisionsItemModel extends ContainerAppsItem {
@@ -65,7 +66,8 @@ export class RevisionItem implements RevisionsItemModel {
 
     static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
         return [
-            new ScaleItem(subscription, containerApp, revision)
+            new ScaleItem(subscription, containerApp, revision),
+            new ContainersItem(subscription, containerApp, revision),
         ];
     }
 

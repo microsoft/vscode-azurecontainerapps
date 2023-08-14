@@ -3,36 +3,64 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Container } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
+import { TreeElementBase, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { TreeItemCollapsibleState } from "vscode";
+import * as deepEqual from "deep-eql";
+import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ext } from "../../extensionVariables";
 import { treeUtils } from "../../utils/treeUtils";
 import { ContainerAppModel } from "../ContainerAppItem";
-import { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
-import { createImagesItem } from "./ImagesItem";
+import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
+import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { ImagesItem } from "./ImagesItem";
 
-export interface ContainerItem extends ContainerAppsItem {
-    container: Container;
-}
+export class ContainerItem implements RevisionsItemModel, RevisionsDraftModel {
+    id: string;
+    label: string;
+    static readonly contextValue: string = 'containerItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ContainerItem.contextValue);
 
-export function createContainerItem(container: Container, subscription: AzureSubscription, containerApp: ContainerAppModel): ContainerItem {
-    const id = `containerItem${container.name}`;
-    return {
-        id: id,
-        subscription,
-        containerApp,
-        container,
-        getTreeItem: () => ({
-            id,
-            label: container.name,
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision, readonly container: Container) {
+        this.id = `containerItem-${this.container.name}-${this.revision.name}`;
+
+        if (this.hasUnsavedChanges()) {
+            this.label = `${this.container.name}*`;
+        } else {
+            this.label = nonNullValue(this.container.name);
+        }
+    }
+
+    private get parentResource(): ContainerAppModel | Revision {
+        return this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? this.containerApp : this.revision;
+    }
+
+    getTreeItem(): TreeItem {
+        return {
+            id: this.id,
+            label: this.container.name,
             iconPath: treeUtils.getIconPath('scaling'), // just a placeholder until we find the containers icon
             contextValue: 'containerItem',
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }),
-        getChildren: async () => {
-            {
-                return [createImagesItem(container, subscription, containerApp, id)];
-            }
-        },
+        }
+    }
+
+    getChildren(): TreeElementBase[] {
+        return [new ImagesItem(this.subscription, this.containerApp, this.revision, this.hasUnsavedChanges(), this.id, this.container)];
+    }
+
+    hasUnsavedChanges(): boolean {
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
+            return false;
+        }
+
+        const draftTemplate: Container[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.containers;
+        const currentTemplate: Container[] | undefined = this.parentResource.template?.containers; //not sure about this
+
+        if (!draftTemplate) {
+            return false;
+        }
+
+        return !deepEqual(currentTemplate, draftTemplate);
     }
 }
