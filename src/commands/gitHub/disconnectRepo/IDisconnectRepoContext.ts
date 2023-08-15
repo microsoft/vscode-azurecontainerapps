@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { SourceControl } from "@azure/arm-appcontainers";
+import type { SourceControl } from "@azure/arm-appcontainers";
 import type { GitHubContext } from "@microsoft/vscode-azext-github";
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
