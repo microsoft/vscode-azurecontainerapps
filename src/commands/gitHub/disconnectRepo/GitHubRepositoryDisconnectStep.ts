@@ -3,14 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerAppsAPIClient, SourceControl } from "@azure/arm-appcontainers";
+import type { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { gitHubUrlParse } from "@microsoft/vscode-azext-github";
-import { AzureWizardExecuteStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { getContainerAppSourceControl } from "../connectToGitHub/getContainerAppSourceControl";
 import type { IDisconnectRepoContext } from "./IDisconnectRepoContext";
 
 export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisconnectRepoContext> {
@@ -18,9 +17,8 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
 
     public async execute(context: IDisconnectRepoContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsClient(context, context.subscription);
-        const sourceControl: SourceControl | undefined = await getContainerAppSourceControl(context, context.subscription, context.containerApp);
 
-        const { ownerOrOrganization: owner, repositoryName: repo } = gitHubUrlParse(nonNullValue(sourceControl?.repoUrl));
+        const { ownerOrOrganization: owner, repositoryName: repo } = gitHubUrlParse(nonNullValueAndProp(context.sourceControl, 'repoUrl'));
 
         const rgName: string = context.containerApp.resourceGroup;
         const caName: string = context.containerApp.name;
@@ -42,7 +40,7 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
         ext.outputChannel.appendLog(disconnected);
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: IDisconnectRepoContext): boolean {
+        return !!context.sourceControl;
     }
 }
