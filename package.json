@@ -48,7 +48,7 @@
                 {
                     "command": "containerApps.createManagedEnvironment",
                     "title": "%containerApps.createManagedEnvironment%",
-                    "type": "microsoft.app/managedenvironments",
+                    "type": "ContainerAppsEnvironment",
                     "detail": "%containerApps.createManagedEnvironmentDetail%"
                 }
             ]
