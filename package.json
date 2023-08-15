@@ -223,6 +223,11 @@
                 "command": "containerApps.stopStreamingLogs",
                 "title": "%containerApps.stopStreamingLogs%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.createAcr",
+                "title": "%containerApps.createAcr%",
+                "category": "Azure Container Apps"
             }
         ],
         "menus": {
