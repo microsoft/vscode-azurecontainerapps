@@ -19,13 +19,12 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
     }
 
-    // If a Dockerfile is being used for deployment, try to skip some prompting
+    // If a Dockerfile is being used for deployment, we may be able to use its values to preconfigure the ingress settings
     public async configureBeforePrompt(context: IngressContext): Promise<void> {
         if (!context.dockerfilePath) {
             return;
         }
 
-        // If a dockerfile path is supplied for deployment, try to detect and store any of its expose ports
         context.dockerfileExposePorts = await getDockerfileExposePort(context.dockerfilePath);
 
         if (context.alwaysPromptIngress) {
@@ -38,8 +37,6 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
         } else if (context.dockerfileExposePorts) {
             context.enableIngress = true;
             context.enableExternal = true;
-
-            // If we are defaulting the port, it's easiest to just use the first port we come across in the Dockerfile
             context.targetPort = getDefaultPort(context);
         }
     }
