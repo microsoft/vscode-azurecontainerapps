@@ -14,6 +14,7 @@ import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActionContext) {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths();
+    // Add a fallback?
     const resourceBaseName: string = nonNullValue(rootFolder.uri.path.split('/').at(-1));
 
     return {
@@ -21,7 +22,8 @@ export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActi
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
         rootFolder,
-        dockerfilePath
+        dockerfilePath,
+        skipIngressPrompt: true
     };
 }
 
