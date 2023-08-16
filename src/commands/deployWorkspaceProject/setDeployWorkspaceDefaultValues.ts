@@ -10,9 +10,11 @@ import { localize } from "../../utils/localize";
 import { ContainerAppNameStep } from "../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { AcrBuildSupportedOS } from "../deployImage/imageSource/buildImageInAzure/OSPickStep";
+import { DeploymentMode, IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
+import { getMostUsedManagedEnvironmentData } from "./getMostUsedManagedEnvironmentMetadata";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
-export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActionContext) {
+export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActionContext): Promise<Partial<IDeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths();
     // Add a fallback?
     const resourceBaseName: string = nonNullValue(rootFolder.uri.path.split('/').at(-1));
@@ -23,7 +25,7 @@ export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActi
         os: AcrBuildSupportedOS.Linux,
         rootFolder,
         dockerfilePath,
-        skipIngressPrompt: true
+        deploymentMode: DeploymentMode.Basic
     };
 }
 
@@ -36,6 +38,11 @@ interface DefaultResourceNames {
 }
 
 export async function getDefaultResourceNames(context: ISubscriptionActionContext, resourceBaseName: string): Promise<DefaultResourceNames> {
+    const { managedEnvironmentName, resourceGroupName } = await getMostUsedManagedEnvironmentData(context) ?? { managedEnvironmentName: undefined, resourceGroupName: undefined };
+
+    console.log(managedEnvironmentName);
+    console.log(resourceGroupName)
+
     let newResourceGroupName: string = `${resourceBaseName}-rg`;
     let newManagedEnvironmentName: string = `${resourceBaseName}-env`;
     let newContainerAppName: string = `${resourceBaseName}-ca`;

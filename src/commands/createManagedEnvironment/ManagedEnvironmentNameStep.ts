@@ -19,6 +19,12 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
         })).trim();
 
         context.valuesToMask.push(context.newManagedEnvironmentName);
+
+        // Migrated this logic from the `createManagedEnvironment` command so that it could be encapsulated in a re-useable for incorporation in a list step
+        // Todo: We may want to look into whether or not to keep this logic as a default behavior moving forward
+        if (!context.resourceGroup && !context.newResourceGroupName) {
+            context.newResourceGroupName = context.newManagedEnvironmentName;
+        }
     }
 
     public shouldPrompt(context: IManagedEnvironmentContext): boolean {
@@ -39,6 +45,11 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
     }
 
     private async validateNameAvailable(context: IManagedEnvironmentContext, name: string): Promise<string | undefined> {
+        if (!context.resourceGroup) {
+            // If a new resource group will house the managed environment, we can skip the name check
+            return undefined;
+        }
+
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         if (!await ManagedEnvironmentNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('managedEnvironmentExists', 'The container apps environment "{0}" already exists in resource group "{1}".', name, resourceGroupName);
@@ -51,7 +62,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
         try {
             await client.managedEnvironments.get(resourceGroupName, environmentName);
             return false;
-        } catch (_) {
+        } catch (_e) {
             return true;
         }
     }

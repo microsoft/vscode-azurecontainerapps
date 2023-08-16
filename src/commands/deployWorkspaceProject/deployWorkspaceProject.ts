@@ -3,24 +3,19 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ISubscriptionContext, createSubscriptionContext, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
+import { appProvider, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
-import { ICreateContainerAppContext } from "../createContainerApp/ICreateContainerAppContext";
-import { IManagedEnvironmentContext } from "../createManagedEnvironment/IManagedEnvironmentContext";
-import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
-import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
+import { ManagedEnvironmentListStep } from "../createManagedEnvironment/ManagedEnvironmentListStep";
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
-import { IBuildImageInAzureContext } from "../deployImage/imageSource/buildImageInAzure/IBuildImageInAzureContext";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
+import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
 import { setDeployWorkspaceDefaultValues } from "./setDeployWorkspaceDefaultValues";
-
-export type IDeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContainerAppContext & Partial<IBuildImageInAzureContext>;
 
 export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
@@ -31,6 +26,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         ...subscriptionContext,
         ...await createActivityContext(),
         ...await setDeployWorkspaceDefaultValues({ ...context, ...subscriptionContext }),
+        activityChildren: [],
         subscription,
     };
 
@@ -40,19 +36,12 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     const providers: string[] = [];
 
     // Managed Environment
-    executeSteps.push(
-        new ResourceGroupCreateStep(),
-        new LogAnalyticsCreateStep(),
-        new ManagedEnvironmentCreateStep()
-    );
+    promptSteps.push(new ManagedEnvironmentListStep());
 
     providers.push(
         appProvider,
         operationalInsightsProvider
     );
-
-    LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
-    LocationListStep.addStep(wizardContext, promptSteps);
 
     // Container App
     promptSteps.push(
@@ -63,13 +52,14 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     executeSteps.push(new ContainerAppCreateStep());
     providers.push(webProvider);
 
+    // Azure Container Registry
     // Do we need to add a location provider for filtering for ACR?
 
     // Verify Providers
     executeSteps.push(new VerifyProvidersStep(providers));
 
     const wizard: AzureWizard<IDeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
-        title: localize('deployWorkspaceProjectTitle', 'Deploying local workspace project to a container app'),
+        title: localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true

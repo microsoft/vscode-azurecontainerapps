@@ -78,3 +78,6 @@ export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
+
+export const activitySuccessContext: string = 'activity:success';
+export const activityFailContext: string = 'activity:fail';
