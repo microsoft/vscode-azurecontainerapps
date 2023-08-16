@@ -11,6 +11,7 @@ import { ImageSource } from "../../constants";
 import { localize } from "../../utils/localize";
 import { ContainerAppNameStep } from "../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../createManagedEnvironment/ManagedEnvironmentNameStep";
+import { EnvironmentVariablesListStep } from "../deployImage/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../deployImage/imageSource/buildImageInAzure/OSPickStep";
 import { IDeployWorkspaceProjectContext } from "./deployWorkspaceProject";
 import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
@@ -18,7 +19,6 @@ import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActionContext): Promise<Partial<IDeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths();
-    // Add a fallback?
     const resourceBaseName: string = nonNullValue(rootFolder.uri.path.split('/').at(-1));
 
     return {
@@ -27,13 +27,16 @@ export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActi
         os: AcrBuildSupportedOS.Linux,
         rootFolder,
         dockerfilePath,
+        environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : []
     };
 }
 
 interface DefaultResourceNames {
-    managedEnvironment?: ManagedEnvironment;
+    // Found existing resources
     resourceGroup?: ResourceGroup;
+    managedEnvironment?: ManagedEnvironment;
 
+    // Need to create new resources
     newResourceGroupName?: string;
     newManagedEnvironmentName?: string;
 
@@ -61,15 +64,11 @@ export async function getDefaultResourceNames(context: ISubscriptionActionContex
             continue;
         }
 
-        if (!await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
+        if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroup?.name || resourceName, resourceName)) {
             continue;
         }
 
         // add acr check
-        // placeholder
-        if (!await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
-            continue;
-        }
 
         foundAvailableNames = true;
         break;

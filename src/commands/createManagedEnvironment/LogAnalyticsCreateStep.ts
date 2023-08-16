@@ -5,15 +5,14 @@
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, GenericTreeItem, createContextValue } from "@microsoft/vscode-azext-utils";
+import { randomUUID } from "crypto";
 import { Progress, ThemeColor, ThemeIcon } from "vscode";
-import { activityFailContext, activitySuccessContext } from "../../constants";
+import { activitySuccessContext } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValue } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
-
-const createLogAnalyticsWorkspaceActivityContext: string = 'createLogAnalyticsWorkspace';
 
 export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
     public priority: number = 200;
@@ -26,23 +25,8 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
         const creating: string = localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...');
         progress.report({ message: creating });
 
-        const activityLabel: string = localize('createWorkspace', 'Create log analytics workspace "{0}"', workspaceName);
-
-        try {
-            context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
-                nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
-        } catch (e) {
-            if (context.activityChildren) {
-                context.activityChildren.push(
-                    new GenericTreeItem(undefined, {
-                        contextValue: createContextValue([createLogAnalyticsWorkspaceActivityContext, workspaceName, activityFailContext]),
-                        label: activityLabel,
-                        iconPath: new ThemeIcon('error', new ThemeColor('testing.iconFailed'))
-                    })
-                );
-            }
-            throw e;
-        }
+        context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
+            nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
 
         const created: string = localize('createdLogAnalyticsWorkspace', 'Created log analytics workspace "{0}".', workspaceName);
         ext.outputChannel.appendLog(created);
@@ -50,8 +34,8 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
         if (context.activityChildren) {
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createContextValue([createLogAnalyticsWorkspaceActivityContext, workspaceName, activitySuccessContext]),
-                    label: activityLabel,
+                    contextValue: createContextValue(['logAnalyticsCreateStep', workspaceName, activitySuccessContext, randomUUID()]),
+                    label: localize('createWorkspace', 'Create log analytics workspace "{0}"', workspaceName),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
             );

@@ -4,8 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, GenericTreeItem, IActionContext, ISubscriptionContext, createContextValue, createSubscriptionContext, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, GenericTreeItem, IActionContext, ISubscriptionContext, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { randomUUID } from "crypto";
 import { ThemeColor, ThemeIcon } from "vscode";
 import { activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
@@ -47,7 +48,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createContextValue(['useResourceGroupActivity', resourceGroupName, activitySuccessContext]),
+                contextValue: createContextValue(['useExistingResourceGroup', resourceGroupName, activitySuccessContext, randomUUID()]),
                 label: localize('usedResourceGroup', 'Use resource group "{0}"', resourceGroupName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
@@ -62,11 +63,13 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createContextValue(['useManagedEnvironmentActivity', managedEnvironmentName, activitySuccessContext]),
+                contextValue: createContextValue(['useExistingManagedEnvironment', managedEnvironmentName, activitySuccessContext, randomUUID()]),
                 label: localize('usedManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
         );
+
+        await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
     } else {
         executeSteps.push(
             new LogAnalyticsCreateStep(),
@@ -77,10 +80,12 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
             appProvider,
             operationalInsightsProvider
         );
+
+        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
+        LocationListStep.addStep(wizardContext, promptSteps);
     }
 
-    LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
-    LocationListStep.addStep(wizardContext, promptSteps);
+
 
     // Container App
     promptSteps.push(
@@ -97,6 +102,12 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     // Verify Providers
     executeSteps.push(new VerifyProvidersStep(providers));
 
+    // No Ingress - add output log note
+    // No Env Variables
+    // execute output step, do we want to add any more logs to a deploy???
+
+    // Revisit execute step priorities
+
     const wizard: AzureWizard<IDeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
         title: localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
@@ -105,6 +116,9 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     });
 
     await wizard.prompt();
+
+    wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName'));
+
     await wizard.execute();
 
     ext.branchDataProvider.refresh();

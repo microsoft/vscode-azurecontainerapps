@@ -6,15 +6,14 @@
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, createContextValue, GenericTreeItem } from "@microsoft/vscode-azext-utils";
+import { randomUUID } from "crypto";
 import { Progress, ThemeColor, ThemeIcon } from "vscode";
-import { activityFailContext, activitySuccessContext, managedEnvironmentsAppProvider } from "../../constants";
+import { activitySuccessContext, managedEnvironmentsAppProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
-
-export const createManagedEnvironmentActivityContext: string = 'createManagedEnvironmentActivity';
 
 export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
     public priority: number = 250;
@@ -34,33 +33,21 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
             nonNullProp(logAnalyticsWorkspace, 'name'));
 
-        const activityLabel: string = localize('createManagedEnvironment', 'Create container apps environment "{0}"', managedEnvironmentName);
-
-        try {
-            context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(resourceGroupName, managedEnvironmentName,
-                {
-                    location: (await LocationListStep.getLocation(context)).name,
-                    appLogsConfiguration: {
-                        "destination": "log-analytics",
-                        "logAnalyticsConfiguration": {
-                            "customerId": logAnalyticsWorkspace.customerId,
-                            "sharedKey": sharedKeys.primarySharedKey
-                        }
+        context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(resourceGroupName, managedEnvironmentName,
+            {
+                location: (await LocationListStep.getLocation(context)).name,
+                appLogsConfiguration: {
+                    "destination": "log-analytics",
+                    "logAnalyticsConfiguration": {
+                        "customerId": logAnalyticsWorkspace.customerId,
+                        "sharedKey": sharedKeys.primarySharedKey
                     }
                 }
-            );
-        } catch (e) {
-            if (context.activityChildren) {
-                context.activityChildren.push(
-                    new GenericTreeItem(undefined, {
-                        contextValue: createContextValue([createManagedEnvironmentActivityContext, managedEnvironmentName, activityFailContext]),
-                        label: activityLabel,
-                        iconPath: new ThemeIcon('error', new ThemeColor('testing.iconFailed'))
-                    })
-                );
             }
-            throw e;
-        }
+        );
+
+        const created: string = localize('createdManagedEnvironment', 'Created new container apps environment "{0}".', context.newManagedEnvironmentName);
+        ext.outputChannel.appendLog(created);
 
         context.activityResult = {
             id: nonNullProp(context.managedEnvironment, 'id'),
@@ -68,14 +55,11 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
             type: managedEnvironmentsAppProvider
         }
 
-        const created: string = localize('createdManagedEnvironment', 'Created new container apps environment "{0}".', context.newManagedEnvironmentName);
-        ext.outputChannel.appendLog(created);
-
         if (context.activityChildren) {
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createContextValue([createManagedEnvironmentActivityContext, managedEnvironmentName, activitySuccessContext]),
-                    label: activityLabel,
+                    contextValue: createContextValue(['managedEnvironmentCreateStep', managedEnvironmentName, activitySuccessContext, randomUUID()]),
+                    label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', managedEnvironmentName),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
             );

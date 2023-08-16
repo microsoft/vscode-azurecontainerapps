@@ -4,11 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
+import { ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
 import { AcrBuildSupportedOS } from './OSPickStep';
 
-export interface IBuildImageInAzureContext extends IContainerRegistryImageContext {
+export interface IBuildImageInAzureContext extends IContainerRegistryImageContext, ExecuteActivityContext {
     rootFolder: vscode.WorkspaceFolder;
     dockerfilePath: string;
     imageName: string;

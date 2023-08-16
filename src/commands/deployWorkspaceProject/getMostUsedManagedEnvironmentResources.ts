@@ -23,14 +23,13 @@ export async function getMostUsedManagedEnvironmentResources(context: ISubscript
         return undefined;
     }
 
-    const managedEnvironmentName: string = mostUsedManagedEnvironmentId.substring(mostUsedManagedEnvironmentId.lastIndexOf('/') + 1);
     const resourceGroupName: string = getResourceGroupFromId(mostUsedManagedEnvironmentId);
-
-    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
 
+    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+
     return {
-        managedEnvironment: nonNullValue(managedEnvironments.find(env => env.name === managedEnvironmentName)),
+        managedEnvironment: nonNullValue(managedEnvironments.find(env => env.id === mostUsedManagedEnvironmentId)),
         resourceGroup: nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName))
     };
 }
