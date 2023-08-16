@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
@@ -20,6 +20,8 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+
+        const resourceGroupName: string = context.newResourceGroupName || nonNullValueAndProp(context.resourceGroup, 'name');
 
         const ingress: Ingress | undefined = context.enableIngress ? {
             targetPort: context.targetPort,
@@ -38,7 +40,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
         progress.report({ message: creating });
         ext.outputChannel.appendLog(creating);
 
-        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
+        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, nonNullProp(context, 'newContainerAppName'), {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
             managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
             configuration: {

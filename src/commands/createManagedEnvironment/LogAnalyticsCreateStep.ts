@@ -44,7 +44,6 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
             throw e;
         }
 
-
         const created: string = localize('createdLogAnalyticsWorkspace', 'Created log analytics workspace "{0}".', workspaceName);
         ext.outputChannel.appendLog(created);
 

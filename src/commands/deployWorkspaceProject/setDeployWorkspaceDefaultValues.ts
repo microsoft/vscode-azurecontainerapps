@@ -3,6 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { ManagedEnvironment } from "@azure/arm-appcontainers";
+import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../constants";
@@ -10,8 +12,8 @@ import { localize } from "../../utils/localize";
 import { ContainerAppNameStep } from "../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { AcrBuildSupportedOS } from "../deployImage/imageSource/buildImageInAzure/OSPickStep";
-import { DeploymentMode, IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { getMostUsedManagedEnvironmentData } from "./getMostUsedManagedEnvironmentMetadata";
+import { IDeployWorkspaceProjectContext } from "./deployWorkspaceProject";
+import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActionContext): Promise<Partial<IDeployWorkspaceProjectContext>> {
@@ -25,58 +27,52 @@ export async function setDeployWorkspaceDefaultValues(context: ISubscriptionActi
         os: AcrBuildSupportedOS.Linux,
         rootFolder,
         dockerfilePath,
-        deploymentMode: DeploymentMode.Basic
     };
 }
 
 interface DefaultResourceNames {
-    newResourceGroupName: string;
-    newManagedEnvironmentName: string;
+    managedEnvironment?: ManagedEnvironment;
+    resourceGroup?: ResourceGroup;
+
+    newResourceGroupName?: string;
+    newManagedEnvironmentName?: string;
+
     newContainerAppName: string;
     newAzureContainerRegistry: string;
     imageName: string;
 }
 
 export async function getDefaultResourceNames(context: ISubscriptionActionContext, resourceBaseName: string): Promise<DefaultResourceNames> {
-    const { managedEnvironmentName, resourceGroupName } = await getMostUsedManagedEnvironmentData(context) ?? { managedEnvironmentName: undefined, resourceGroupName: undefined };
-
-    console.log(managedEnvironmentName);
-    console.log(resourceGroupName)
-
-    let newResourceGroupName: string = `${resourceBaseName}-rg`;
-    let newManagedEnvironmentName: string = `${resourceBaseName}-env`;
-    let newContainerAppName: string = `${resourceBaseName}-ca`;
-    let newAzureContainerRegistry: string = `${resourceBaseName}-acr`;
-    let imageName: string = `${resourceBaseName}:latest`;
+    const { managedEnvironment, resourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
 
     // Try new names until we find original ones
     let foundAvailableNames: boolean = false;
+    let resourceName: string = resourceBaseName;
     for (let i = 0; i <= 10; i++) {
         if (i) {
-            newResourceGroupName = `${resourceBaseName}-rg-${i}`;
-            newManagedEnvironmentName = `${resourceBaseName}-env-${i}`;
-            newContainerAppName = `${resourceBaseName}-ca-${i}`;
-            newAzureContainerRegistry = `${resourceBaseName}-acr-${i}`;
+            resourceName = `${resourceBaseName}${i}`;
         }
 
-        if (!await ResourceGroupListStep.isNameAvailable(context, newResourceGroupName)) {
+        if (!resourceGroup && !await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
             continue;
         }
 
-        if (!await ManagedEnvironmentNameStep.isNameAvailable(context, newResourceGroupName, newManagedEnvironmentName)) {
+        if (!managedEnvironment && !await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
             continue;
         }
 
-        if (!await ContainerAppNameStep.isNameAvailable(context, newResourceGroupName, newContainerAppName)) {
+        if (!await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
             continue;
         }
 
         // add acr check
-        // break;
+        // placeholder
+        if (!await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
+            continue;
+        }
 
-        // Put both of these before the break in the last if check
-        imageName = `${resourceBaseName}-${i}:latest`;
         foundAvailableNames = true;
+        break;
     }
 
     if (!foundAvailableNames) {
@@ -85,10 +81,12 @@ export async function getDefaultResourceNames(context: ISubscriptionActionContex
     }
 
     return {
-        imageName,
-        newResourceGroupName,
-        newManagedEnvironmentName,
-        newContainerAppName,
-        newAzureContainerRegistry
+        imageName: `${resourceName}:latest`,
+        newResourceGroupName: !resourceGroup ? resourceName : undefined,
+        newManagedEnvironmentName: !managedEnvironment ? resourceName : undefined,
+        newContainerAppName: resourceName,
+        newAzureContainerRegistry: resourceName,
+        managedEnvironment,
+        resourceGroup
     };
 }

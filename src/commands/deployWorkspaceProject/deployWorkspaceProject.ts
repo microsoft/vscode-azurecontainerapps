@@ -3,19 +3,25 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ISubscriptionContext, createSubscriptionContext, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, GenericTreeItem, IActionContext, ISubscriptionContext, createContextValue, createSubscriptionContext, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { appProvider, operationalInsightsProvider, webProvider } from "../../constants";
+import { ThemeColor, ThemeIcon } from "vscode";
+import { activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
-import { ManagedEnvironmentListStep } from "../createManagedEnvironment/ManagedEnvironmentListStep";
+import { ICreateContainerAppContext } from "../createContainerApp/ICreateContainerAppContext";
+import { IManagedEnvironmentContext } from "../createManagedEnvironment/IManagedEnvironmentContext";
+import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
+import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
+import { IBuildImageInAzureContext } from "../deployImage/imageSource/buildImageInAzure/IBuildImageInAzureContext";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
-import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
 import { setDeployWorkspaceDefaultValues } from "./setDeployWorkspaceDefaultValues";
+
+export type IDeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContainerAppContext & Partial<IBuildImageInAzureContext> & ExecuteActivityContext;
 
 export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
@@ -35,13 +41,46 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const providers: string[] = [];
 
-    // Managed Environment
-    promptSteps.push(new ManagedEnvironmentListStep());
+    // Resource Group
+    if (wizardContext.resourceGroup) {
+        const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
-    providers.push(
-        appProvider,
-        operationalInsightsProvider
-    );
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createContextValue(['useResourceGroupActivity', resourceGroupName, activitySuccessContext]),
+                label: localize('usedResourceGroup', 'Use resource group "{0}"', resourceGroupName),
+                iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+            })
+        );
+    } else {
+        executeSteps.push(new ResourceGroupCreateStep());
+    }
+
+    // Managed Environment
+    if (wizardContext.managedEnvironment) {
+        const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
+
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createContextValue(['useManagedEnvironmentActivity', managedEnvironmentName, activitySuccessContext]),
+                label: localize('usedManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
+                iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+            })
+        );
+    } else {
+        executeSteps.push(
+            new LogAnalyticsCreateStep(),
+            new ManagedEnvironmentCreateStep()
+        );
+
+        providers.push(
+            appProvider,
+            operationalInsightsProvider
+        );
+    }
+
+    LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
+    LocationListStep.addStep(wizardContext, promptSteps);
 
     // Container App
     promptSteps.push(

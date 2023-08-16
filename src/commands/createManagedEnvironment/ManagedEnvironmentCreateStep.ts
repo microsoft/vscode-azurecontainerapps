@@ -14,7 +14,7 @@ import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
-const createManagedEnvironmentActivityContext: string = 'createManagedEnvironmentActivity';
+export const createManagedEnvironmentActivityContext: string = 'createManagedEnvironmentActivity';
 
 export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
     public priority: number = 250;
@@ -29,14 +29,12 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         const creating: string = localize('creatingManagedEnvironment', 'Creating environment...');
         progress.report({ message: creating });
 
-        const create: string = localize('createManagedEnvironment', 'Create container apps environment "{0}"', managedEnvironmentName);
-        if (!context.deploymentMode) {
-            context.activityTitle = create;
-        }
 
         const sharedKeys = await opClient.sharedKeysOperations.getSharedKeys(
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
             nonNullProp(logAnalyticsWorkspace, 'name'));
+
+        const activityLabel: string = localize('createManagedEnvironment', 'Create container apps environment "{0}"', managedEnvironmentName);
 
         try {
             context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(resourceGroupName, managedEnvironmentName,
@@ -56,7 +54,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
                 context.activityChildren.push(
                     new GenericTreeItem(undefined, {
                         contextValue: createContextValue([createManagedEnvironmentActivityContext, managedEnvironmentName, activityFailContext]),
-                        label: create,
+                        label: activityLabel,
                         iconPath: new ThemeIcon('error', new ThemeColor('testing.iconFailed'))
                     })
                 );
@@ -77,7 +75,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createContextValue([createManagedEnvironmentActivityContext, managedEnvironmentName, activitySuccessContext]),
-                    label: create,
+                    label: activityLabel,
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
             );

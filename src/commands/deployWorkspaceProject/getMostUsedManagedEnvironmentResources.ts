@@ -3,17 +3,18 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
+import { ResourceGroup } from "@azure/arm-resources";
+import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { ISubscriptionActionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 
-interface MostUsedManagedEnvironmentData {
-    managedEnvironmentName: string;
-    resourceGroupName: string;
+interface MostUsedManagedEnvironmentResources {
+    managedEnvironment: ManagedEnvironment;
+    resourceGroup: ResourceGroup;
 }
 
-export async function getMostUsedManagedEnvironmentData(context: ISubscriptionActionContext): Promise<MostUsedManagedEnvironmentData | undefined> {
+export async function getMostUsedManagedEnvironmentResources(context: ISubscriptionActionContext): Promise<MostUsedManagedEnvironmentResources | undefined> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
     const containerApps: ContainerApp[] = (await uiUtils.listAllIterator(client.containerApps.listBySubscription()));
@@ -22,9 +23,15 @@ export async function getMostUsedManagedEnvironmentData(context: ISubscriptionAc
         return undefined;
     }
 
+    const managedEnvironmentName: string = mostUsedManagedEnvironmentId.substring(mostUsedManagedEnvironmentId.lastIndexOf('/') + 1);
+    const resourceGroupName: string = getResourceGroupFromId(mostUsedManagedEnvironmentId);
+
+    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+
     return {
-        managedEnvironmentName: mostUsedManagedEnvironmentId.substring(mostUsedManagedEnvironmentId.lastIndexOf('/') + 1),
-        resourceGroupName: getResourceGroupFromId(mostUsedManagedEnvironmentId)
+        managedEnvironment: nonNullValue(managedEnvironments.find(env => env.name === managedEnvironmentName)),
+        resourceGroup: nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName))
     };
 }
 
