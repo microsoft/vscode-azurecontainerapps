@@ -38,7 +38,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
                         label: localize('skipEnvVarsLabel', 'Skip environment variable configuration (no .env files found)'),
                         iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                     })
-                )
+                );
             }
 
             // Todo: We should try to add a direct command to update just the environment variables before release. Running the entire update image command is a lot of work for such a small change
