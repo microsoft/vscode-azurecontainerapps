@@ -48,6 +48,7 @@ interface DefaultResourceNames {
 export async function getDefaultResourceNames(context: ISubscriptionActionContext, resourceBaseName: string): Promise<DefaultResourceNames> {
     const { managedEnvironment, resourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
 
+    // Replace this logic, takes too long to check each resource like this multiple times, maybe try one iteration and then just use uuids if names are taken?
     // Try new names until we find original ones
     let foundAvailableNames: boolean = false;
     let resourceName: string = resourceBaseName;

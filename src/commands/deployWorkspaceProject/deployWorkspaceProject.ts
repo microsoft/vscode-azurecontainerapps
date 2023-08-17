@@ -85,8 +85,6 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         LocationListStep.addStep(wizardContext, promptSteps);
     }
 
-
-
     // Container App
     promptSteps.push(
         new ImageSourceListStep(),

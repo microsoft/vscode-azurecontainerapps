@@ -12,7 +12,7 @@ import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 
 export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<IContainerRegistryImageContext> {
-    public priority: number = 240;
+    public priority: number = 350;
 
     // Configures base image attributes
     public async execute(context: IContainerRegistryImageContext): Promise<void> {

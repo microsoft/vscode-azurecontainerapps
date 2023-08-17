@@ -21,13 +21,13 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
     public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const opClient = await createOperationalInsightsManagementClient(context);
+
         const resourceGroupName = nonNullValueAndProp(context.resourceGroup, 'name');
         const managedEnvironmentName = nonNullProp(context, 'newManagedEnvironmentName');
         const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 
         const creating: string = localize('creatingManagedEnvironment', 'Creating environment...');
         progress.report({ message: creating });
-
 
         const sharedKeys = await opClient.sharedKeysOperations.getSharedKeys(
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
@@ -49,12 +49,6 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         const created: string = localize('createdManagedEnvironment', 'Created new container apps environment "{0}".', context.newManagedEnvironmentName);
         ext.outputChannel.appendLog(created);
 
-        context.activityResult = {
-            id: nonNullProp(context.managedEnvironment, 'id'),
-            name: managedEnvironmentName,
-            type: managedEnvironmentsAppProvider
-        }
-
         if (context.activityChildren) {
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
@@ -63,6 +57,12 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
             );
+        } else {
+            context.activityResult = {
+                id: nonNullProp(context.managedEnvironment, 'id'),
+                name: managedEnvironmentName,
+                type: managedEnvironmentsAppProvider
+            };
         }
     }
 
