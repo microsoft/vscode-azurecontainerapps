@@ -16,7 +16,7 @@ import { getContainerNameForImage } from "../deployImage/imageSource/containerRe
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
-    public priority: number = 350;
+    public priority: number = 750;
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
@@ -61,7 +61,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
         }));
 
         if (context.activityChildren) {
-            context.activityChildren.push(
+context.activityChildren.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createContextValue(['containerAppCreateStep', containerAppName, activitySuccessContext, randomUUID()]),
                     label: localize('createContainerApp', 'Create container app "{0}"', containerAppName),

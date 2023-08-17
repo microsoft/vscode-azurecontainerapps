@@ -14,7 +14,7 @@ import type { IDeployImageContext } from "./deployImage";
 import { getContainerNameForImage } from "./imageSource/containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployImageContext> {
-    public priority: number = 550;
+    public priority: number = 480;
 
     public async execute(context: IDeployImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');

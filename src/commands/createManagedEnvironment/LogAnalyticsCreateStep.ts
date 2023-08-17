@@ -15,7 +15,7 @@ import { nonNullProp, nonNullValue } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
 export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
-    public priority: number = 200;
+    public priority: number = 220;
 
     public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);

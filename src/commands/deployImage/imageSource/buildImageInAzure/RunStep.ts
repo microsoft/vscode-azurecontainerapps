@@ -14,7 +14,7 @@ import { localize } from "../../../../utils/localize";
 import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
 export class RunStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
-    public priority: number = 200;
+    public priority: number = 440;
 
     public async execute(context: IBuildImageInAzureContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         try {
