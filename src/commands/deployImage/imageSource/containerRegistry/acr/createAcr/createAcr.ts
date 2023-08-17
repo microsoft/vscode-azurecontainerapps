@@ -21,7 +21,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
         ...context,
         ...createSubscriptionContext(subscription),
         ...(await createActivityContext())
-    }
+    };
 
     const title: string = localize('createAcr', "Create container registry");
 
@@ -35,7 +35,6 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
         new RegistryCreateStep(),
     ];
 
-    LocationListStep.addProviderForFiltering(wizardContext, 'Microsoft.App', 'managedEnvironments'); //need to see which provider to use
     LocationListStep.addStep(wizardContext, promptSteps);
 
 
