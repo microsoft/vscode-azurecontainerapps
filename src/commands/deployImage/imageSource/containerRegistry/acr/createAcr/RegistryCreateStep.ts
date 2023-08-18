@@ -17,7 +17,7 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<ICreateAcrContext
 
         context.registry = await client.registries.beginCreateAndWait(
             nonNullProp(context, 'newResourceGroupName'),
-            nonNullProp(context, 'registryName'),
+            nonNullProp(context, 'newRegistryName'),
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 sku: { name: nonNullProp(context, 'sku') },
@@ -26,7 +26,7 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<ICreateAcrContext
         );
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: ICreateAcrContext): boolean {
+        return !!context.newRegistryName && !!context.sku;
     }
 }

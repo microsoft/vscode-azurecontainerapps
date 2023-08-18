@@ -11,25 +11,24 @@ import { ICreateAcrContext } from "./ICreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<ICreateAcrContext> {
     public async prompt(context: ICreateAcrContext): Promise<void> {
-        context.registryName = await context.ui.showInputBox({
+        context.newRegistryName = await context.ui.showInputBox({
             prompt: localize('registryName', 'Enter a name for the new registry'),
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(context, value)
+            asyncValidationTask: async (value: string | undefined): Promise<string | undefined> => await this.validateInput(context, value)
         });
     }
 
     public shouldPrompt(context: ICreateAcrContext): boolean {
-        return !context.registryName;
+        return !context.newRegistryName;
     }
 
     private async validateInput(context: ICreateAcrContext, name: string | undefined): Promise<string | undefined> {
         name = name ? name.trim() : '';
 
-        const min = 5;
-        const max = 50;
-        if (name.length < min || name.length > max) {
-            return localize('validationLengthError', 'The name must be between {0} and {1} characters.', min, max);
+        const { minLength, maxLength } = { minLength: 5, maxLength: 50 };
+        if (name.length < minLength || name.length > maxLength) {
+            return localize('validationLengthError', 'The name must be between {0} and {1} characters.', minLength, maxLength);
         } else if (!/^[a-z][a-zA-Z0-9]*$/.test(name)) {
-            return localize('validateInputError', `Connection names can only consist of alphanumeric characters.`); //make it between 5 and 50 character
+            return localize('validateInputError', `Connection names can only consist of alphanumeric characters.`);
         } else {
             const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
             const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });

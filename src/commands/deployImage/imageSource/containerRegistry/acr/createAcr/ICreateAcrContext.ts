@@ -8,8 +8,7 @@ import { IResourceGroupWizardContext } from "@microsoft/vscode-azext-azureutils"
 import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 
 export interface ICreateAcrContext extends IResourceGroupWizardContext, ExecuteActivityContext {
-    registryName?: string;
+    newRegistryName?: string;
     sku?: KnownSkuName;
     registry?: Registry;
-    newResourceGroupName?: string;
 }

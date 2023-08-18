@@ -47,8 +47,8 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
 
     await wizard.prompt();
 
-    wizardContext.newResourceGroupName = nonNullValue(wizardContext.registryName);
-    wizardContext.activityTitle = localize('createAcr', 'Create Azure Container Registry "{0}"', wizardContext.registryName);
+    wizardContext.newResourceGroupName = nonNullValue(wizardContext.newRegistryName);
+    wizardContext.activityTitle = localize('createAcr', 'Create Azure Container Registry "{0}"', wizardContext.newRegistryName);
 
     await wizard.execute();
 }

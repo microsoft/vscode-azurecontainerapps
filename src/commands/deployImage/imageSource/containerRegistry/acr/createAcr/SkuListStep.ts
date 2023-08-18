@@ -5,11 +5,12 @@
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { localize } from "../../../../../../utils/localize";
 import { ICreateAcrContext } from "./ICreateAcrContext";
 
 export class SkuListStep extends AzureWizardPromptStep<ICreateAcrContext> {
     public async prompt(context: ICreateAcrContext): Promise<void> {
-        const placeHolder: string = "Select a SKU";
+        const placeHolder: string = localize("sku", "Select a SKU");
         const picks: IAzureQuickPickItem<KnownSkuName>[] = [
             { label: "Basic", data: KnownSkuName.Basic },
             { label: "Standard", data: KnownSkuName.Standard },
