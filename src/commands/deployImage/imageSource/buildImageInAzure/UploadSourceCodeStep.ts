@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, createContextValue, nonNullValue } from '@microsoft/vscode-azext-utils';
-import { randomUUID } from 'crypto';
+import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, nonNullValue } from '@microsoft/vscode-azext-utils';
 import { Progress, ThemeColor, ThemeIcon } from 'vscode';
 import { activitySuccessContext } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
+import { createActivityChildContext } from '../../../../utils/createContextWithRandomUUID';
 import { localize } from '../../../../utils/localize';
 import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 
@@ -45,13 +45,13 @@ export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAz
 
         context.uploadedSourceLocation = relativePath;
 
-        const uploaded: string = localize('uploadedSourceCode', 'Uploaded source code to registry "{0}"', context.registryName);
+        const uploaded: string = localize('uploadedSourceCode', 'Uploaded source code to registry "{0}" for remote build.', context.registryName);
         ext.outputChannel.appendLog(uploaded);
 
         if (context.activityChildren) {
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createContextValue(['uploadSourceCodeStep', context.registryName, activitySuccessContext, randomUUID()]),
+                    contextValue: createActivityChildContext(context.activityChildren.length, ['uploadSourceCodeStep', context.registryName, activitySuccessContext]),
                     label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registryName),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })

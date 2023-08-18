@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericTreeItem, createContextValue } from "@microsoft/vscode-azext-utils";
-import { randomUUID } from "crypto";
+import { AzureWizardExecuteStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { Progress, ThemeColor, ThemeIcon } from "vscode";
 import { activitySuccessContext } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
+import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValue } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
@@ -34,7 +34,7 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
         if (context.activityChildren) {
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createContextValue(['logAnalyticsCreateStep', workspaceName, activitySuccessContext, randomUUID()]),
+                    contextValue: createActivityChildContext(context.activityChildren.length, ['logAnalyticsCreateStep', workspaceName, activitySuccessContext]),
                     label: localize('createWorkspace', 'Create log analytics workspace "{0}"', workspaceName),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })

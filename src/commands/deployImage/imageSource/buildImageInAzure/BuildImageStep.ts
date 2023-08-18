@@ -7,6 +7,7 @@ import { sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, nonNullProp, nonNullValue, openReadOnlyContent } from "@microsoft/vscode-azext-utils";
 import { MessageItem, window } from "vscode";
 import { acrDomain } from "../../../../constants";
+import { ext } from "../../../../extensionVariables";
 import { localize } from "../../../../utils/localize";
 import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
@@ -24,6 +25,7 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
         if (outputImages) {
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
+            ext.outputChannel.appendLog(localize('useImage', 'Using image "{0}".', context.image));
         } else {
             const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
             const contentTask = sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined)

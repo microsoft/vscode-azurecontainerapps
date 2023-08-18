@@ -5,12 +5,12 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, createContextValue, GenericTreeItem } from "@microsoft/vscode-azext-utils";
-import { randomUUID } from "crypto";
+import { AzureWizardExecuteStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { Progress, ThemeColor, ThemeIcon } from "vscode";
 import { activitySuccessContext, managedEnvironmentsAppProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
+import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
@@ -52,7 +52,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         if (context.activityChildren) {
             context.activityChildren.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createContextValue(['managedEnvironmentCreateStep', managedEnvironmentName, activitySuccessContext, randomUUID()]),
+                    contextValue: createActivityChildContext(context.activityChildren.length, ['managedEnvironmentCreateStep', managedEnvironmentName, activitySuccessContext]),
                     label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', managedEnvironmentName),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })

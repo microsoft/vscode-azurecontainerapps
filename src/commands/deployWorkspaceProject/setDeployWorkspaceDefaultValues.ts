@@ -45,48 +45,40 @@ interface DefaultResourceNames {
     imageName: string;
 }
 
-export async function getDefaultResourceNames(context: ISubscriptionActionContext, resourceBaseName: string): Promise<DefaultResourceNames> {
+export async function getDefaultResourceNames(context: ISubscriptionActionContext, resourceNameBase: string): Promise<DefaultResourceNames> {
     const { managedEnvironment, resourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
 
-    // Replace this logic, takes too long to check each resource like this multiple times, maybe try one iteration and then just use uuids if names are taken?
-    // Try new names until we find original ones
-    let foundAvailableNames: boolean = false;
-    let resourceName: string = resourceBaseName;
-    for (let i = 0; i <= 10; i++) {
-        if (i) {
-            resourceName = `${resourceBaseName}${i}`;
-        }
+    resourceNameBase = resourceNameBase.toLowerCase();
 
-        if (!resourceGroup && !await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
-            continue;
-        }
-
-        if (!managedEnvironment && !await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
-            continue;
-        }
-
-        if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroup?.name || resourceName, resourceName)) {
-            continue;
-        }
-
-        // add acr check
-
-        foundAvailableNames = true;
-        break;
-    }
-
-    if (!foundAvailableNames) {
-        // Eventually update this message to tell user to run `Advanced` if all names are already taken
-        throw new Error(localize('defaultNameError', 'All default resource names are already taken, please remove any unused resources and try again.'));
+    if (!await isNameAvailableForAllResources(context, resourceNameBase, resourceGroup, managedEnvironment)) {
+        throw new Error(localize('resourceNamesTaken', 'Resource names matching the current workspace are already taken.'));
     }
 
     return {
-        imageName: `${resourceName}:latest`,
-        newResourceGroupName: !resourceGroup ? resourceName : undefined,
-        newManagedEnvironmentName: !managedEnvironment ? resourceName : undefined,
-        newContainerAppName: resourceName,
-        newAzureContainerRegistry: resourceName,
+        imageName: `${resourceNameBase}:latest`,
+        newResourceGroupName: !resourceGroup ? resourceNameBase : undefined,
+        newManagedEnvironmentName: !managedEnvironment ? resourceNameBase : undefined,
+        newContainerAppName: resourceNameBase,
+        newAzureContainerRegistry: resourceNameBase,
         managedEnvironment,
         resourceGroup
     };
+}
+
+async function isNameAvailableForAllResources(context: ISubscriptionActionContext, resourceName: string, resourceGroup?: ResourceGroup, managedEnvironment?: ManagedEnvironment): Promise<boolean> {
+    if (!resourceGroup && !await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
+        return false;
+    }
+
+    if (!managedEnvironment && !await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
+        return false;
+    }
+
+    if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroup?.name || resourceName, resourceName)) {
+        return false;
+    }
+
+    // Add acr check
+
+    return true;
 }

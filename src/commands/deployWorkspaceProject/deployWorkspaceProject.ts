@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, GenericTreeItem, IActionContext, ISubscriptionContext, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { randomUUID } from "crypto";
 import { ThemeColor, ThemeIcon } from "vscode";
 import { activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
+import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
 import { localize } from "../../utils/localize";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
 import { ICreateContainerAppContext } from "../createContainerApp/ICreateContainerAppContext";
@@ -42,17 +42,22 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const providers: string[] = [];
 
+    ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Begin deploying workspace project to a container app--------'));
+
     // Resource Group
     if (wizardContext.resourceGroup) {
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createContextValue(['useExistingResourceGroup', resourceGroupName, activitySuccessContext, randomUUID()]),
-                label: localize('usedResourceGroup', 'Use resource group "{0}"', resourceGroupName),
+                contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingResourceGroup', resourceGroupName, activitySuccessContext]),
+                label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
         );
+
+        ext.outputChannel.appendLog(localize('locatedFrequentlyUsedResources', 'Located most frequently used container app environment.'));
+        ext.outputChannel.appendLog(localize('useResourceGroup', 'Using container app environment resource group "{0}".', wizardContext.resourceGroup.name));
     } else {
         executeSteps.push(new ResourceGroupCreateStep());
     }
@@ -63,13 +68,16 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createContextValue(['useExistingManagedEnvironment', managedEnvironmentName, activitySuccessContext, randomUUID()]),
-                label: localize('usedManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
+                contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingManagedEnvironment', managedEnvironmentName, activitySuccessContext]),
+                label: localize('useManagedEnvironment', 'Use container app environment "{0}".', managedEnvironmentName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
         );
 
         await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
+
+        ext.outputChannel.appendLog(localize('useManagedEnvironment', 'Using container app environment "{0}".', wizardContext.managedEnvironment.name));
+        ext.outputChannel.appendLog(localize('useLocation', 'Using container app environment location "{0}".', wizardContext.managedEnvironment.location));
     } else {
         executeSteps.push(
             new LogAnalyticsCreateStep(),
@@ -118,6 +126,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName'));
 
     await wizard.execute();
+
+    ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to a container app--------'));
 
     ext.branchDataProvider.refresh();
 }

@@ -5,12 +5,13 @@
 
 import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericTreeItem, createContextValue, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { randomUUID } from "crypto";
+import { AzureWizardExecuteStep, GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Progress, ThemeColor, ThemeIcon } from "vscode";
 import { activitySuccessContext, containerAppsWebProvider } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
+import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
@@ -61,14 +62,16 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
         }));
 
         if (context.activityChildren) {
-context.activityChildren.push(
+            context.activityChildren.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createContextValue(['containerAppCreateStep', containerAppName, activitySuccessContext, randomUUID()]),
+                    contextValue: createActivityChildContext(context.activityChildren.length, ['containerAppCreateStep', containerAppName, activitySuccessContext]),
                     label: localize('createContainerApp', 'Create container app "{0}"', containerAppName),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
             );
         }
+
+        ext.outputChannel.appendLog(localize('createdContainerApp', 'Created container app "{0}".', context.containerApp.name));
     }
 
     public shouldExecute(): boolean {

@@ -5,7 +5,7 @@
 
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { IContainerAppContext } from "../IContainerAppContext";
-import type { PortRange } from "./getDockerfileExposePort";
+import type { PortRange } from "./tryConfigureIngressUsingDockerfile";
 
 export interface IngressContext extends IContainerAppContext, ExecuteActivityContext {
     enableIngress?: boolean;
