@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { createContainerAppsAPIClient } from '../../../utils/azureClients';
 import { localize } from '../../../utils/localize';
 import type { IAddScaleRuleContext } from './IAddScaleRuleContext';
 
@@ -13,7 +15,8 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContex
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
         context.ruleName = (await context.ui.showInputBox({
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
-            validateInput: (name: string | undefined) => this.validateInput(context, name)
+            validateInput: this.validateInput,
+            asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();
     }
 
@@ -21,14 +24,30 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContex
         return !context.ruleName;
     }
 
-    private validateInput(context: IAddScaleRuleContext, name: string | undefined): string | undefined {
+    private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
         if (!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character.`);
         }
 
-        const scaleRuleExists: boolean = !!context.scaleRules?.some((rule) => {
+        return undefined;
+    }
+
+    private async validateNameAvailable(context: IAddScaleRuleContext, name: string): Promise<string | undefined> {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        const resourceGroupName: string = context.containerApp.resourceGroup;
+
+        let scaleRules: ScaleRule[] | undefined;
+        if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+            const containerApp: ContainerApp = await client.containerApps.get(resourceGroupName, context.parentResourceName);
+            scaleRules = containerApp.template?.scale?.rules ?? [];
+        } else {
+            const revision: Revision = await client.containerAppsRevisions.getRevision(resourceGroupName, context.containerApp.name, context.parentResourceName);
+            scaleRules = revision.template?.scale?.rules ?? [];
+        }
+
+        const scaleRuleExists: boolean = !!scaleRules?.some((rule) => {
             return rule.name?.length && rule.name === name;
         });
 

@@ -8,6 +8,7 @@ import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-a
 import * as deepEqual from "deep-eql";
 import { ThemeIcon, TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
 import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
@@ -47,7 +48,7 @@ export class ScaleRuleItem implements RevisionsItemModel, RevisionsDraftModel {
     }
 
     private get parentResource(): ContainerAppModel | Revision {
-        return this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? this.containerApp : this.revision;
+        return getParentResource(this.containerApp, this.revision);
     }
 
     getTreeItem(): TreeItem {

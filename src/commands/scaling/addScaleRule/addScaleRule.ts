@@ -3,12 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, Scale } from "@azure/arm-appcontainers";
-import { AzureWizard, IActionContext, createSubscriptionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { Revision } from "@azure/arm-appcontainers";
+import { AzureWizard, IActionContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScaleRuleGroup } from "../../../utils/pickItem/pickScale";
+import { getParentResource } from "../../../utils/revisionDraftUtils";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
@@ -18,13 +20,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     const item: ScaleRuleGroupItem = node ?? await pickScaleRuleGroup(context, { autoSelectDraft: true });
     const { subscription, containerApp, revision } = item;
 
-    // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
-    let scale: Scale | undefined;
-    if (containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-        scale = nonNullValueAndProp(containerApp.template, 'scale');
-    } else {
-        scale = nonNullValueAndProp(revision.template, 'scale');
-    }
+    const parentResource: ContainerAppModel | Revision = getParentResource(containerApp, revision);
 
     const wizardContext: IAddScaleRuleContext = {
         ...context,
@@ -32,7 +28,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
         ...await createActivityContext(),
         containerApp,
         subscription,
-        scaleRules: scale.rules ?? [],
+        parentResourceName: nonNullProp(parentResource, 'name')
     };
 
     const wizard: AzureWizard<IAddScaleRuleContext> = new AzureWizard(wizardContext, {
@@ -43,5 +39,8 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     });
 
     await wizard.prompt();
+
+    wizardContext.activityTitle = localize('addScaleRuleTitle', 'Add {0} rule "{1}" to "{2}" (draft)', wizardContext.ruleType, wizardContext.ruleName, parentResource.name);
+
     await wizard.execute();
 }

@@ -10,6 +10,7 @@ import * as deepEqual from 'deep-eql';
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { TreeElementBase } from "../ContainerAppsBranchDataProvider";
@@ -54,7 +55,7 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
     }
 
     private get parentResource(): ContainerAppModel | Revision {
-        return this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? this.containerApp : this.revision;
+        return getParentResource(this.containerApp, this.revision);
     }
 
     getTreeItem(): TreeItem {
