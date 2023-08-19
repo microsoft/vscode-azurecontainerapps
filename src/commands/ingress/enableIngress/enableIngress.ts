@@ -36,5 +36,8 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
     });
 
     await wizard.prompt();
+
+    wizardContext.activityTitle = localize('enableIngress', 'Enable ingress on port {0} for container app "{1}"', wizardContext.targetPort, containerApp.name);
+
     await wizard.execute();
 }

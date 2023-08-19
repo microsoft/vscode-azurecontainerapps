@@ -5,7 +5,7 @@
 
 import { ContainerApp } from '@azure/arm-appcontainers';
 import { IActionContext, openUrl } from '@microsoft/vscode-azext-utils';
-import { ContainerAppItem, isIngressEnabled } from '../tree/ContainerAppItem';
+import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from '../tree/ContainerAppItem';
 import { localize } from '../utils/localize';
 import { pickContainerApp } from '../utils/pickItem/pickContainerApp';
 
@@ -14,7 +14,7 @@ export async function browseContainerAppNode(context: IActionContext, node?: Con
     await browseContainerApp(node.containerApp);
 }
 
-export async function browseContainerApp(containerApp: ContainerApp): Promise<void> {
+export async function browseContainerApp(containerApp: ContainerApp | ContainerAppModel): Promise<void> {
     if (isIngressEnabled(containerApp)) {
         return await openUrl(`https://${containerApp.configuration.ingress.fqdn}`);
     }

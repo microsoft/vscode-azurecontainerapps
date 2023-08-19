@@ -11,9 +11,8 @@ import type { ImageSourceBaseContext } from '../deployImage/imageSource/ImageSou
 import type { IngressContext } from '../ingress/IngressContext';
 
 export interface ICreateContainerAppContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressContext, IContainerAppContext, ExecuteActivityContext {
-    managedEnvironmentId?: string;
     newContainerAppName?: string;
 
-    // Could be populated if a managed environment creation step was executed in the same wizard
+    managedEnvironmentId?: string;
     managedEnvironment?: ManagedEnvironment;
 }

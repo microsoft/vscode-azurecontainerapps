@@ -32,7 +32,8 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
         context.targetPort = getDefaultPort(context);
     }
 
-    if (context.activityChildren) {
+    // If a container app already exists, activity children will be added automatically in later execute steps
+    if (context.activityChildren && !context.containerApp) {
         context.activityChildren.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(context.activityChildren.length, ['ingressPromptStep', activitySuccessContext]),
@@ -45,8 +46,8 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
     }
 
     ext.outputChannel.appendLog(context.enableIngress ?
-        localize('ingressEnabledLabel', 'Enabled ingress on port {0} (found Dockerfile configuration).', context.targetPort) :
-        localize('ingressDisabledLabel', 'Disabled ingress (found Dockerfile configuration).')
+        localize('ingressEnabledLabel', 'Detected ingress on port {0} using Dockerfile configuration.', context.targetPort) :
+        localize('ingressDisabledLabel', 'Detected no ingress using Dockerfile configuration.')
     );
 }
 

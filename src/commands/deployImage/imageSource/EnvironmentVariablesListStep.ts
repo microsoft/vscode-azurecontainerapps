@@ -27,6 +27,8 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
             const envData = await this.selectEnvironmentSettings(context);
             context.environmentVariables = Object.keys(envData).map(name => { return { name, value: envData[name] } });
         }
+
+        // Add output log and possibly activity child here...
     }
 
     public async configureBeforePrompt(context: ImageSourceBaseContext): Promise<void> {

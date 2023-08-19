@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { ThemeColor, ThemeIcon, type Progress } from "vscode";
+import { activitySuccessContext } from "../../../constants";
+import { createActivityChildContext } from "../../../utils/createContextWithRandomUUID";
 import { localize } from "../../../utils/localize";
 import type { IngressContext } from "../IngressContext";
 import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
@@ -17,9 +19,19 @@ export class DisableIngressStep extends IngressUpdateBaseStep<IngressContext> {
         const containerApp = nonNullProp(context, 'containerApp');
 
         const working: string = localize('disablingIngress', 'Disabling ingress...');
-        const workCompleted: string = localize('disableCompleted', 'Disabled ingress for container app "{0}"', containerApp.name)
+        const workCompleted: string = localize('disableCompleted', 'Disabled ingress for container app "{0}"', containerApp.name);
 
         await this.updateIngressSettings(context, progress, { ingress: null, working, workCompleted });
+
+        if (context.activityChildren) {
+            context.activityChildren.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(context.activityChildren.length, ['disableIngressStep', activitySuccessContext]),
+                    label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
+                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                })
+            );
+        }
     }
 
     public shouldExecute(context: IngressContext): boolean {
