@@ -5,7 +5,7 @@
 
 import { Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, IActionContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { ContainerAppModel } from "../../../tree/ContainerAppItem";
+import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
