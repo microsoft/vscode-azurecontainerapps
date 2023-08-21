@@ -77,48 +77,36 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
 }
 
 export async function getMatchingContainerAppsResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
-    return await tryGetMatchingContainerAppResources(context, resourceName) ?? await tryGetMatchingManagedEnvironmentResources(context, resourceName) ?? {};
-}
-
-async function tryGetMatchingContainerAppResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'> | undefined> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
     const containerApps: ContainerApp[] = await uiUtils.listAllIterator(client.containerApps.listBySubscription());
+
     const ca: ContainerApp | undefined = containerApps.find(ca => ca.name === resourceName);
-
-    if (!ca) {
-        return undefined;
-    }
-
-    const containerApp: ContainerAppModel = ContainerAppItem.CreateContainerAppModel(ca);
-
-    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-    const resourceGroup = resourceGroups.find(rg => rg.name === containerApp?.resourceGroup);
+    const containerApp: ContainerAppModel | undefined = ca ? ContainerAppItem.CreateContainerAppModel(ca) : undefined;
 
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    const managedEnvironment = managedEnvironments.find(env => env.id === containerApp?.managedEnvironmentId);
+    const managedEnvironment = managedEnvironments.find(env => {
+        if (containerApp) {
+            return env.id === containerApp?.managedEnvironmentId;
+        } else {
+            return env.name === resourceName;
+        }
+    });
+
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+    const resourceGroup = resourceGroups.find(rg => {
+        if (containerApp) {
+            return rg.name === containerApp.resourceGroup;
+        } else if (managedEnvironment) {
+            return rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id'));
+        } else {
+            return false;
+        }
+    });
 
     return {
         resourceGroup,
         managedEnvironment,
         containerApp
-    };
-}
-
-async function tryGetMatchingManagedEnvironmentResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment'> | undefined> {
-    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    const managedEnvironment = managedEnvironments.find(env => env.name === resourceName);
-
-    if (!managedEnvironment) {
-        return undefined;
-    }
-
-    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-    const resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
-
-    return {
-        resourceGroup,
-        managedEnvironment
     };
 }
 

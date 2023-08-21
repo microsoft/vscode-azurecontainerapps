@@ -8,7 +8,6 @@ import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem } from "@microsof
 import * as path from 'path';
 import { ThemeColor, ThemeIcon, type Progress } from "vscode";
 import { activitySuccessContext } from "../../../../constants";
-import { ext } from "../../../../extensionVariables";
 import { createActivityChildContext } from "../../../../utils/createContextWithRandomUUID";
 import { localize } from "../../../../utils/localize";
 import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
@@ -33,9 +32,6 @@ export class RunStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
             progress.report({ message: building });
 
             context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
-
-            const built: string = localize('builtImage', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName);
-            ext.outputChannel.appendLog(built);
 
             if (context.activityChildren) {
                 context.activityChildren.push(

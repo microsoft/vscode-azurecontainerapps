@@ -19,6 +19,8 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
         context.registryDomain = acrDomain;
 
         const run = await buildImageInAzure(context);
+        ext.outputChannel.appendLog(localize('builtImage', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName));
+
         const outputImages = run?.outputImages;
         context.telemetry.properties.outputImages = outputImages?.length?.toString();
 
