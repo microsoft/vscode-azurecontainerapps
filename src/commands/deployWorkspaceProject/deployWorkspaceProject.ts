@@ -59,6 +59,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
             })
         );
 
+        await LocationListStep.setLocation(wizardContext, wizardContext.resourceGroup.location);
+
         ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', wizardContext.resourceGroup.name));
     } else {
         executeSteps.push(new ResourceGroupCreateStep());
@@ -71,7 +73,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingManagedEnvironment', managedEnvironmentName, activitySuccessContext]),
-                label: localize('useManagedEnvironment', 'Use container app environment "{0}".', managedEnvironmentName),
+                label: localize('useManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
         );
@@ -107,7 +109,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingContainerApp', containerAppName, activitySuccessContext]),
-                label: localize('useContainerApp', 'Use container app "{0}".', containerAppName),
+                label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
         );
@@ -136,14 +138,13 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     await wizard.prompt();
 
-    ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Deploying workspace project to container app--------', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
     wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName'));
 
+    ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Deploying workspace project to container app--------', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
     await wizard.execute();
-
     ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
-    displayNotification(wizardContext);
 
+    displayNotification(wizardContext);
     ext.branchDataProvider.refresh();
 }
 

@@ -6,8 +6,8 @@
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { Registry } from "@azure/arm-containerregistry";
 import { ResourceGroup } from "@azure/arm-resources";
-import { ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -18,37 +18,52 @@ import { AcrListStep } from "../deployImage/imageSource/containerRegistry/acr/Ac
 import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
 
 interface DefaultContainerAppsResources {
-    // Found existing
-    resourceGroup?: ResourceGroup;
-    managedEnvironment?: ManagedEnvironment;
-    containerApp?: ContainerAppModel;
-
-    // Create new
     newResourceGroupName?: string;
     newManagedEnvironmentName?: string;
     newContainerAppName?: string;
+
+    resourceGroup?: ResourceGroup;
+    managedEnvironment?: ManagedEnvironment;
+    containerApp?: ContainerAppModel;
 }
 
 export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, resourceNameBase: string): Promise<DefaultContainerAppsResources> {
     resourceNameBase = resourceNameBase.toLowerCase();
 
+    // For testing creation of resources
+    // const resourceGroup = undefined;
+    // const managedEnvironment = undefined;
+    // const containerApp = undefined;
+
     // Strategy 1: See if we can reuse resources we already created before
     let { resourceGroup, managedEnvironment, containerApp } = await getMatchingContainerAppsResources(context, resourceNameBase);
+    if (resourceGroup || managedEnvironment || containerApp) {
+        ext.outputChannel.appendLog(localize('locatedPreviousResources', 'Located existing resources matching the name of the current workspace "{0}".', resourceNameBase));
+
+        return {
+            newResourceGroupName: !resourceGroup ? resourceNameBase : undefined,
+            newManagedEnvironmentName: !managedEnvironment ? resourceNameBase : undefined,
+            newContainerAppName: !containerApp ? resourceNameBase : undefined,
+            resourceGroup,
+            managedEnvironment,
+            containerApp
+        };
+    }
 
     // Strategy 2: If not, try finding the most used managed environment resources (Azure CLI strategy)
-    if (!resourceGroup || !managedEnvironment || !containerApp) {
-        const { managedEnvironment: mostUsedManagedEnvironment, resourceGroup: mostUsedEnvironmentResourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
-        if (!await isNameAvailableForContainerAppsResources(context, resourceNameBase, mostUsedEnvironmentResourceGroup, mostUsedManagedEnvironment)) {
-            throw new Error(localize('resourceNameError', 'Some resource names matching the current workspace "{0}" are already taken.', resourceNameBase));
-        }
+    const { managedEnvironment: mostUsedManagedEnvironment, resourceGroup: mostUsedEnvironmentResourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
+    if (!await isNameAvailableForContainerAppsResources(context, resourceNameBase, mostUsedEnvironmentResourceGroup, mostUsedManagedEnvironment)) {
+        throw new Error(localize('resourceNameError', 'Some resource names matching the current workspace "{0}" are already taken.', resourceNameBase));
+    }
 
-        resourceGroup = mostUsedEnvironmentResourceGroup;
-        managedEnvironment = mostUsedManagedEnvironment;
-        containerApp = undefined;
+    resourceGroup = mostUsedEnvironmentResourceGroup;
+    managedEnvironment = mostUsedManagedEnvironment;
+    containerApp = undefined;
 
+    if (managedEnvironment) {
         ext.outputChannel.appendLog(localize('locatedFrequentlyUsedResources', 'Located most frequently used container app environment resources.'));
     } else {
-        ext.outputChannel.appendLog(localize('locatedPreviousResources', 'Located container app resources matching the name of the current workspace "{0}".', resourceNameBase));
+        ext.outputChannel.appendLog(localize('noResourcesLocated', 'Unable to locate existing container app environment resources.'));
     }
 
     return {
@@ -58,6 +73,52 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
         resourceGroup,
         managedEnvironment,
         containerApp,
+    };
+}
+
+export async function getMatchingContainerAppsResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
+    return await tryGetMatchingContainerAppResources(context, resourceName) ?? await tryGetMatchingManagedEnvironmentResources(context, resourceName) ?? {};
+}
+
+async function tryGetMatchingContainerAppResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'> | undefined> {
+    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+    const containerApps: ContainerApp[] = await uiUtils.listAllIterator(client.containerApps.listBySubscription());
+    const ca: ContainerApp | undefined = containerApps.find(ca => ca.name === resourceName);
+
+    if (!ca) {
+        return undefined;
+    }
+
+    const containerApp: ContainerAppModel = ContainerAppItem.CreateContainerAppModel(ca);
+
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+    const resourceGroup = resourceGroups.find(rg => rg.name === containerApp?.resourceGroup);
+
+    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    const managedEnvironment = managedEnvironments.find(env => env.id === containerApp?.managedEnvironmentId);
+
+    return {
+        resourceGroup,
+        managedEnvironment,
+        containerApp
+    };
+}
+
+async function tryGetMatchingManagedEnvironmentResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment'> | undefined> {
+    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    const managedEnvironment = managedEnvironments.find(env => env.name === resourceName);
+
+    if (!managedEnvironment) {
+        return undefined;
+    }
+
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+    const resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
+
+    return {
+        resourceGroup,
+        managedEnvironment
     };
 }
 
@@ -78,32 +139,6 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
     return {
         registry,
         newRegistryName: undefined
-    };
-}
-
-async function getMatchingContainerAppsResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
-    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-
-    const containerApps: ContainerApp[] = await uiUtils.listAllIterator(client.containerApps.listBySubscription());
-    const ca: ContainerApp | undefined = containerApps.find(ca => ca.name === resourceName);
-
-    let resourceGroup: ResourceGroup | undefined;
-    let managedEnvironment: ManagedEnvironment | undefined;
-    let containerApp: ContainerAppModel | undefined;
-    if (ca) {
-        containerApp = ContainerAppItem.CreateContainerAppModel(ca);
-
-        const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-        resourceGroup = resourceGroups.find(rg => rg.name === containerApp?.resourceGroup);
-
-        const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-        managedEnvironment = managedEnvironments.find(env => env.id === containerApp?.managedEnvironmentId);
-    }
-
-    return {
-        resourceGroup,
-        managedEnvironment,
-        containerApp
     };
 }
 
