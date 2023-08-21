@@ -22,18 +22,18 @@ export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleCo
             return { label: type };
         });
 
-        context.ruleType = (await context.ui.showQuickPick(qpItems, {
+        context.newRuleType = (await context.ui.showQuickPick(qpItems, {
             placeHolder: localize('chooseScaleType', 'Choose scale type')
         })).label;
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return !context.ruleType;
+        return !context.newRuleType;
     }
 
     public async getSubWizard(context: IAddScaleRuleContext): Promise<IWizardOptions<IAddScaleRuleContext>> {
         const promptSteps: AzureWizardPromptStep<IAddScaleRuleContext>[] = [];
-        switch (context.ruleType) {
+        switch (context.newRuleType) {
             case ScaleRuleTypes.HTTP:
                 promptSteps.push(new HttpConcurrentRequestsStep());
                 break;

@@ -14,17 +14,17 @@ export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActiv
     parentResourceName: string;
 
     // Base Rule Properties
-    ruleName?: string;
-    ruleType?: string;
+    newRuleName?: string;
+    newRuleType?: string;
 
     // HTTP Rule Properties
-    concurrentRequests?: string;
+    newHttpConcurrentRequests?: string;
 
     // Queue Rule Properties
-    queueName?: string;
-    queueLength?: number;
-    secretRef?: string;
-    triggerParameter?: string;
+    newQueueName?: string;
+    newQueueLength?: number;
+    newQueueSecretRef?: string;
+    newQueueTriggerParameter?: string;
 
     scaleRule?: ScaleRule;
 }

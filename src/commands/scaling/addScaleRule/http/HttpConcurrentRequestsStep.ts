@@ -9,14 +9,14 @@ import { PositiveRealNumberBaseStep } from '../PositiveRealNumberBaseStep';
 
 export class HttpConcurrentRequestsStep extends PositiveRealNumberBaseStep {
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
-        context.concurrentRequests = (await context.ui.showInputBox({
+        context.newHttpConcurrentRequests = (await context.ui.showInputBox({
             prompt: localize('concurrentRequestsPrompt', 'Enter the number of concurrent requests.'),
             validateInput: this.validateInput
         })).trim();
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return !context.concurrentRequests;
+        return !context.newHttpConcurrentRequests;
     }
 }
 

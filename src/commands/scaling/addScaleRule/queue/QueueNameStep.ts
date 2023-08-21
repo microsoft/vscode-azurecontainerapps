@@ -9,14 +9,14 @@ import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
 export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
-        context.queueName = (await context.ui.showInputBox({
+        context.newQueueName = (await context.ui.showInputBox({
             prompt: localize('queueNamePrompt', 'Enter a name for the queue.'),
             validateInput: this.validateInput
         })).trim();
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return !context.queueName;
+        return !context.newQueueName;
     }
 
     private validateInput(name: string | undefined): string | undefined {

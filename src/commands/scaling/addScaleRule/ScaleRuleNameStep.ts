@@ -13,7 +13,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContex
     public hideStepCount: boolean = true;
 
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
-        context.ruleName = (await context.ui.showInputBox({
+        context.newRuleName = (await context.ui.showInputBox({
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
             validateInput: this.validateInput,
             asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
@@ -21,7 +21,7 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContex
     }
 
     public shouldPrompt(context: IAddScaleRuleContext): boolean {
-        return !context.ruleName;
+        return !context.newRuleName;
     }
 
     private validateInput(name: string | undefined): string | undefined {
