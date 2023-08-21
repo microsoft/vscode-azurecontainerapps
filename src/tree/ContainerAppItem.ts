@@ -112,7 +112,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     static isContainerAppItem(item: unknown): item is ContainerAppItem {
         return typeof item === 'object' &&
             typeof (item as ContainerAppItem).contextValue === 'string' &&
-            /containerAppItem/i.test((item as ContainerAppItem).contextValue);
+            ContainerAppItem.contextValueRegExp.test((item as ContainerAppItem).contextValue);
     }
 
     static async List(context: IActionContext, subscription: AzureSubscription, managedEnvironmentId: string): Promise<ContainerAppModel[]> {
