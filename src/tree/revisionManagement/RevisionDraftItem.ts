@@ -52,8 +52,14 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
         return createContextValue(values);
     }
 
+    static isRevisionDraftItem(item: unknown): item is RevisionDraftItem {
+        return typeof item === 'object' &&
+            (item as RevisionDraftItem).id === 'string' &&
+            (item as RevisionDraftItem).id.split('/').at(-1) === RevisionDraftItem.idSuffix;
+    }
+
     static hasDescendant(item: RevisionsItemModel): boolean {
-        if (item instanceof RevisionDraftItem) {
+        if (RevisionDraftItem.isRevisionDraftItem(item)) {
             return false;
         }
 

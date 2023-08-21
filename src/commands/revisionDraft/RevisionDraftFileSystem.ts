@@ -57,7 +57,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
         // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
         let file: RevisionDraftFile | undefined;
-        if (item instanceof ContainerAppItem || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+        if (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {

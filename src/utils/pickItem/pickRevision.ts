@@ -54,7 +54,7 @@ export async function pickRevision(context: IActionContext, startingNode?: Conta
 
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
 
-    if (startingNode instanceof ContainerAppItem) {
+    if (ContainerAppItem.isContainerAppItem(startingNode)) {
         promptSteps.push(getPickRevisionsStep());
     }
 

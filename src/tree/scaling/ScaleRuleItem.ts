@@ -32,7 +32,7 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
     }
 
     id: string = `${this.parentResource.id}/scalerules/${this.scaleRule.name}`;
-    label: string | undefined;
+    label: string;
 
     viewProperties: ViewPropertiesModel = {
         data: this.scaleRule,
@@ -56,7 +56,7 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.label = this.scaleRule.name;
+        this.label = this.scaleRule.name ?? '';
     }
 
     protected setDraftProperties(): void {
