@@ -19,7 +19,7 @@ import { RevisionItem, type RevisionsItemModel } from "./RevisionItem";
 
 // For tree items that depend on the container app's revision draft template
 export interface RevisionsDraftModel {
-    hasUnsavedChanges: () => boolean | Promise<boolean>;
+    hasUnsavedChanges(): boolean | Promise<boolean>;
 }
 
 export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {

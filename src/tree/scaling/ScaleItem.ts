@@ -14,33 +14,23 @@ import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { TreeElementBase } from "../ContainerAppsBranchDataProvider";
-import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
-import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { ScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
 const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
 
 const scaling: string = localize('scaling', 'Scaling');
 
-export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
+export class ScaleItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'scaleItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
 
     // Used as the basis for the view; can reflect either the original or the draft changes
-    private readonly scale: Scale;
+    private scale: Scale;
 
-    constructor(
-        readonly subscription: AzureSubscription,
-        readonly containerApp: ContainerAppModel,
-        readonly revision: Revision
-    ) {
-        if (this.hasUnsavedChanges()) {
-            this.label = `${scaling}*`;
-            this.scale = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'scale');
-        } else {
-            this.label = scaling;
-            this.scale = nonNullValueAndProp(this.parentResource.template, 'scale');
-        }
+    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
+        super(subscription, containerApp, revision);
     }
 
     id: string = `${this.parentResource.id}/scale`;
@@ -56,6 +46,16 @@ export class ScaleItem implements RevisionsItemModel, RevisionsDraftModel {
 
     private get parentResource(): ContainerAppModel | Revision {
         return getParentResource(this.containerApp, this.revision);
+    }
+
+    protected setProperties(): void {
+        this.label = scaling;
+        this.scale = nonNullValueAndProp(this.parentResource.template, 'scale');
+    }
+
+    protected setDraftProperties(): void {
+        this.label = `${scaling}*`;
+        this.scale = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'scale');
     }
 
     getTreeItem(): TreeItem {

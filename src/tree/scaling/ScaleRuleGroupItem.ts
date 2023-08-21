@@ -12,31 +12,21 @@ import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
-import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
-import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { ScaleRuleItem } from "./ScaleRuleItem";
 
 const scaleRulesLabel: string = localize('scaleRules', 'Scale Rules');
 
-export class ScaleRuleGroupItem implements RevisionsItemModel, RevisionsDraftModel {
+export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'scaleRuleGroupItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleRuleGroupItem.contextValue);
 
     // Used as the basis for the view; can reflect either the original or the draft changes
-    private readonly scaleRules: ScaleRule[];
+    private scaleRules: ScaleRule[];
 
-    constructor(
-        readonly subscription: AzureSubscription,
-        readonly containerApp: ContainerAppModel,
-        readonly revision: Revision
-    ) {
-        if (this.hasUnsavedChanges()) {
-            this.scaleRules = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules ?? [];
-            this.label = `${scaleRulesLabel}*`;
-        } else {
-            this.scaleRules = this.parentResource.template?.scale?.rules ?? [];
-            this.label = scaleRulesLabel;
-        }
+    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
+        super(subscription, containerApp, revision);
     }
 
     id: string = `${this.parentResource.id}/scalerules`;
@@ -52,6 +42,16 @@ export class ScaleRuleGroupItem implements RevisionsItemModel, RevisionsDraftMod
 
     private get parentResource(): ContainerAppModel | Revision {
         return getParentResource(this.containerApp, this.revision);
+    }
+
+    protected setProperties(): void {
+        this.label = scaleRulesLabel;
+        this.scaleRules = this.parentResource.template?.scale?.rules ?? [];
+    }
+
+    protected setDraftProperties(): void {
+        this.label = `${scaleRulesLabel}*`;
+        this.scaleRules = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules ?? [];
     }
 
     getTreeItem(): TreeItem {

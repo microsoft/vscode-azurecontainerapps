@@ -10,25 +10,29 @@ import { ThemeIcon, TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
-import { RevisionDraftItem, RevisionsDraftModel } from "../revisionManagement/RevisionDraftItem";
-import type { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 
 const scaleRuleLabel: string = localize('scaleRule', 'Scale Rule');
 
-export class ScaleRuleItem implements RevisionsItemModel, RevisionsDraftModel {
+export class ScaleRuleItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'scaleRuleItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleRuleItem.contextValue);
 
     constructor(
-        readonly subscription: AzureSubscription,
-        readonly containerApp: ContainerAppModel,
-        readonly revision: Revision,
+        subscription: AzureSubscription,
+        containerApp: ContainerAppModel,
+        revision: Revision,
 
         // Used as the basis for the view; can reflect either the original or the draft changes
         readonly scaleRule: ScaleRule,
-        readonly isDraft: boolean) { }
+        readonly isDraft: boolean
+    ) {
+        super(subscription, containerApp, revision);
+    }
 
     id: string = `${this.parentResource.id}/scalerules/${this.scaleRule.name}`;
+    label: string | undefined;
 
     viewProperties: ViewPropertiesModel = {
         data: this.scaleRule,
@@ -51,10 +55,18 @@ export class ScaleRuleItem implements RevisionsItemModel, RevisionsDraftModel {
         return getParentResource(this.containerApp, this.revision);
     }
 
+    protected setProperties(): void {
+        this.label = this.scaleRule.name;
+    }
+
+    protected setDraftProperties(): void {
+        this.label = `${this.scaleRule.name}*`;
+    }
+
     getTreeItem(): TreeItem {
         return {
             id: this.id,
-            label: this.hasUnsavedChanges() ? `${this.scaleRule.name}*` : this.scaleRule.name,
+            label: this.label,
             contextValue: ScaleRuleItem.contextValue,
             iconPath: new ThemeIcon('dash'),
             description: this.description
