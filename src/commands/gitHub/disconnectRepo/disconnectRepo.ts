@@ -4,17 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getGitHubAccessToken } from "@microsoft/vscode-azext-github";
-import { AzureWizard, AzureWizardExecuteStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ITreeItemPickerContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
 import { ActionsItem } from "../../../tree/configurations/ActionsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import { isGitHubConnected } from "../connectToGitHub/isGitHubConnected";
+import { getContainerAppSourceControl } from "../connectToGitHub/getContainerAppSourceControl";
+import { DisconnectRepositoryConfirmStep } from "./DisconnectRepositoryConfirmStep";
 import { GitHubRepositoryDisconnectStep } from "./GitHubRepositoryDisconnectStep";
 import { IDisconnectRepoContext } from "./IDisconnectRepoContext";
 
-export async function disconnectRepo(context: ITreeItemPickerContext & Partial<IDisconnectRepoContext>, node?: ContainerAppsItem | ActionsItem): Promise<void> {
+export async function disconnectRepo(context: ITreeItemPickerContext, node?: ContainerAppsItem | ActionsItem): Promise<void> {
     if (!node) {
         context.suppressCreatePick = true;
         node = await pickContainerApp(context);
@@ -28,27 +29,30 @@ export async function disconnectRepo(context: ITreeItemPickerContext & Partial<I
         ...await createActivityContext(),
         subscription,
         containerApp,
-        gitHubAccessToken: await getGitHubAccessToken()
+        gitHubAccessToken: await getGitHubAccessToken(),
+        sourceControl: await getContainerAppSourceControl(context, subscription, containerApp)
     };
 
-    if (!await isGitHubConnected(wizardContext)) {
+    if (!wizardContext.sourceControl) {
         throw new Error(localize('repositoryNotConnected', '"{0}" is not connected to a GitHub repository.', containerApp.name));
     }
 
-    const title: string = localize('disconnectRepository', 'Disconnect "{0}" from a GitHub repository', containerApp.name);
+    const promptSteps: AzureWizardPromptStep<IDisconnectRepoContext>[] = [
+        new DisconnectRepositoryConfirmStep()
+    ];
 
     const executeSteps: AzureWizardExecuteStep<IDisconnectRepoContext>[] = [
         new GitHubRepositoryDisconnectStep()
     ];
 
     const wizard: AzureWizard<IDisconnectRepoContext> = new AzureWizard(wizardContext, {
-        title,
+        title: localize('disconnectRepository', 'Disconnect "{0}" from a GitHub repository', containerApp.name),
+        promptSteps,
         executeSteps,
         showLoadingPrompt: true
     });
 
-    // Title normally gets set during prompt phase... since no prompt steps are provided we must set the 'activityTitle' manually
-    wizardContext.activityTitle = title;
+    await wizard.prompt();
     await wizard.execute();
 }
 
