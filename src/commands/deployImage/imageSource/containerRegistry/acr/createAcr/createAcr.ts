@@ -9,7 +9,7 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../../../../extensionVariables";
 import { createActivityContext } from "../../../../../../utils/activityUtils";
 import { localize } from "../../../../../../utils/localize";
-import { ICreateAcrContext } from "./ICreateAcrContext";
+import { CreateAcrContext } from "./CreateAcrContext";
 import { RegistryCreateStep } from "./RegistryCreateStep";
 import { RegistryNameStep } from "./RegistryNameStep";
 import { SkuListStep } from "./SkuListStep";
@@ -17,20 +17,20 @@ import { SkuListStep } from "./SkuListStep";
 export async function createAcr(context: IActionContext, node?: { subscription: AzureSubscription }): Promise<void> {
     const subscription = node?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
 
-    const wizardContext: ICreateAcrContext = {
+    const wizardContext: CreateAcrContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         ...(await createActivityContext())
     };
 
-    const title: string = localize('createAcr', "Create container registry");
+    const title: string = localize('createAcr', "Create Azure Container Registry");
 
-    const promptSteps: AzureWizardPromptStep<ICreateAcrContext>[] = [
+    const promptSteps: AzureWizardPromptStep<CreateAcrContext>[] = [
         new RegistryNameStep(),
         new SkuListStep(),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<ICreateAcrContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<CreateAcrContext>[] = [
         new ResourceGroupCreateStep(),
         new RegistryCreateStep(),
     ];
@@ -38,7 +38,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     LocationListStep.addStep(wizardContext, promptSteps);
 
 
-    const wizard: AzureWizard<ICreateAcrContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<CreateAcrContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps,

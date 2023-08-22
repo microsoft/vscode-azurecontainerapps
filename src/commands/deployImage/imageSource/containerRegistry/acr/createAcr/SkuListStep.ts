@@ -6,24 +6,24 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../../../utils/localize";
-import { ICreateAcrContext } from "./ICreateAcrContext";
+import { CreateAcrContext } from "./CreateAcrContext";
 
-export class SkuListStep extends AzureWizardPromptStep<ICreateAcrContext> {
-    public async prompt(context: ICreateAcrContext): Promise<void> {
+export class SkuListStep extends AzureWizardPromptStep<CreateAcrContext> {
+    public async prompt(context: CreateAcrContext): Promise<void> {
         const placeHolder: string = localize("sku", "Select a SKU");
         const picks: IAzureQuickPickItem<KnownSkuName>[] = [
-            { label: "Basic", data: KnownSkuName.Basic },
-            { label: "Standard", data: KnownSkuName.Standard },
-            { label: "Premium", data: KnownSkuName.Premium },
+            { label: KnownSkuName.Basic, data: KnownSkuName.Basic },
+            { label: KnownSkuName.Standard, data: KnownSkuName.Standard },
+            { label: KnownSkuName.Premium, data: KnownSkuName.Premium },
         ];
 
-        context.sku = (await context.ui.showQuickPick(picks, {
+        context.newRegistrySku = (await context.ui.showQuickPick(picks, {
             placeHolder,
             suppressPersistence: true
         })).data;
     }
 
-    public shouldPrompt(context: ICreateAcrContext): boolean {
-        return !context.sku;
+    public shouldPrompt(context: CreateAcrContext): boolean {
+        return !context.newRegistrySku;
     }
 }

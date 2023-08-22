@@ -7,10 +7,10 @@ import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/ar
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { ICreateAcrContext } from "./ICreateAcrContext";
+import { CreateAcrContext } from "./CreateAcrContext";
 
-export class RegistryNameStep extends AzureWizardPromptStep<ICreateAcrContext> {
-    public async prompt(context: ICreateAcrContext): Promise<void> {
+export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
+    public async prompt(context: CreateAcrContext): Promise<void> {
         context.newRegistryName = await context.ui.showInputBox({
             prompt: localize('registryName', 'Enter a name for the new registry'),
             validateInput: this.validateInput,
@@ -18,7 +18,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<ICreateAcrContext> {
         });
     }
 
-    public shouldPrompt(context: ICreateAcrContext): boolean {
+    public shouldPrompt(context: CreateAcrContext): boolean {
         return !context.newRegistryName;
     }
 
@@ -35,7 +35,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<ICreateAcrContext> {
         return undefined;
     }
 
-    private async validateNameAvalability(context: ICreateAcrContext, name: string) {
+    private async validateNameAvalability(context: CreateAcrContext, name: string) {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
         const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
         if (nameResponse.nameAvailable === false) {

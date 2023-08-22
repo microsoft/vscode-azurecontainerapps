@@ -7,12 +7,12 @@ import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry"
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
-import { ICreateAcrContext } from "./ICreateAcrContext";
+import { CreateAcrContext } from "./CreateAcrContext";
 
-export class RegistryCreateStep extends AzureWizardExecuteStep<ICreateAcrContext> {
+export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext> {
     public priority: number = 150;
 
-    public async execute(context: ICreateAcrContext): Promise<void> {
+    public async execute(context: CreateAcrContext): Promise<void> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
 
         context.registry = await client.registries.beginCreateAndWait(
@@ -20,13 +20,13 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<ICreateAcrContext
             nonNullProp(context, 'newRegistryName'),
             {
                 location: (await LocationListStep.getLocation(context)).name,
-                sku: { name: nonNullProp(context, 'sku') },
+                sku: { name: nonNullProp(context, 'newRegistrySku') },
                 adminUserEnabled: true
             }
         );
     }
 
-    public shouldExecute(context: ICreateAcrContext): boolean {
-        return !!context.newRegistryName && !!context.sku;
+    public shouldExecute(context: CreateAcrContext): boolean {
+        return !!context.newRegistryName && !!context.newRegistrySku;
     }
 }
