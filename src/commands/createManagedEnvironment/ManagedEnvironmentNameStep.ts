@@ -19,12 +19,6 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
         })).trim();
 
         context.valuesToMask.push(context.newManagedEnvironmentName);
-
-        // Migrated this logic from the `createManagedEnvironment` command so that it could be encapsulated in a re-useable for incorporation in a list step
-        // Todo: We may want to look into whether or not to keep this logic as a default behavior moving forward
-        if (!context.resourceGroup && !context.newResourceGroupName) {
-            context.newResourceGroupName = context.newManagedEnvironmentName;
-        }
     }
 
     public shouldPrompt(context: IManagedEnvironmentContext): boolean {

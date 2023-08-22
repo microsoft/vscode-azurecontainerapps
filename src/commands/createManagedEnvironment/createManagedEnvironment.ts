@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -47,6 +47,9 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     });
 
     await wizard.prompt();
+    const newManagedEnvName = nonNullProp(wizardContext, 'newManagedEnvironmentName');
+    wizardContext.newResourceGroupName = newManagedEnvName;
+    wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create Container Apps environment "{0}"', newManagedEnvName);
     await wizard.execute();
 
     ext.branchDataProvider.refresh();
