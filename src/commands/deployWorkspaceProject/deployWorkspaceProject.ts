@@ -6,7 +6,7 @@
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ThemeColor, ThemeIcon, window } from "vscode";
+import { ProgressLocation, ThemeColor, ThemeIcon, window } from "vscode";
 import { activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -33,11 +33,21 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
+    // Show loading indicator while we configure default values
+    let defaultContextValues: Partial<IDeployWorkspaceProjectContext> | undefined;
+    await window.withProgress({
+        location: ProgressLocation.Notification,
+        cancellable: false,
+        title: localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
+    }, async () => {
+        defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext });
+    });
+
     const wizardContext: IDeployWorkspaceProjectContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(),
-        ...await getDefaultContextValues({ ...context, ...subscriptionContext }),
+        ...defaultContextValues,
         activityChildren: [],
         subscription,
     };

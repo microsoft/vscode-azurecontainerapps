@@ -230,7 +230,31 @@
                 "category": "Azure Container Apps"
             }
         ],
+        "submenus": [
+            {
+                "id": "containerApps.submenus.workspaceActions",
+                "label": "Azure Container Apps",
+                "icon": "resources/azure-containerapps.svg"
+            }
+        ],
         "menus": {
+            "containerApps.submenus.workspaceActions": [
+                {
+                    "command": "containerApps.deployWorkspaceProject",
+                    "group": "1_deploy@1"
+                },
+                {
+                    "command": "containerApps.createContainerApp",
+                    "group": "2_create@1"
+                }
+            ],
+            "view/title": [
+                {
+                    "submenu": "containerApps.submenus.workspaceActions",
+                    "when": "view == azureWorkspace",
+                    "group": "navigation@4"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",

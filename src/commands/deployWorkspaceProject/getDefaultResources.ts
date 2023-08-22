@@ -35,7 +35,7 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
     // const managedEnvironment = undefined;
     // const containerApp = undefined;
 
-    // Strategy 1: See if we can reuse resources we already created before
+    // Strategy 1: See if we can reuse resources we've already created before
     let { resourceGroup, managedEnvironment, containerApp } = await getMatchingContainerAppsResources(context, resourceNameBase);
     if (resourceGroup || managedEnvironment || containerApp) {
         ext.outputChannel.appendLog(localize('locatedPreviousResources', 'Located existing resources matching the name of the current workspace "{0}".', resourceNameBase));
@@ -111,10 +111,7 @@ export async function getMatchingContainerAppsResources(context: ISubscriptionAc
 }
 
 interface DefaultAzureContainerRegistry {
-    // Found existing
     registry?: Registry;
-
-    // Create new
     newRegistryName?: string;
 }
 
