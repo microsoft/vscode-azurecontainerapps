@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
-import { nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
@@ -142,20 +142,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
 
         const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
-        const file: RevisionDraftFile = nonNullValue(this.draftStore.get(uri.path));
-        if (file.contents === newContent) {
-            return;
-        }
-
-        file.contents = newContent;
-        file.size = newContent.byteLength;
-        file.mtime = Date.now();
-
-        this.draftStore.set(uri.path, file);
-        this.fireSoon({ type: FileChangeType.Changed, uri });
-
-        // Any new changes to the draft file can cause the states of a container app's children to change (e.g. displaying "Unsaved changes")
-        ext.state.notifyChildrenChanged(file.containerAppId);
+        this.writeFile(uri, newContent);
     }
 
     discardRevisionDraft(item: ContainerAppsItem): void {
