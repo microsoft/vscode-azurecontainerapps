@@ -19,7 +19,7 @@ export abstract class RevisionDraftDescendantBase implements RevisionsDraftModel
     }
 
     private initRevisionDraftDescendant(): void {
-        this.hasUnsavedChanges() ? this.setDraftProperties?.() : this.setProperties?.();
+        this.hasUnsavedChanges() ? this.setDraftProperties() : this.setProperties();
     }
 
     abstract getTreeItem(): TreeItem | Promise<TreeItem>;
