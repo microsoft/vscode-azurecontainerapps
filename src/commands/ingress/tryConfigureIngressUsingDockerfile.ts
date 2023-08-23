@@ -7,7 +7,7 @@ import { AzExtFsExtra, GenericTreeItem } from '@microsoft/vscode-azext-utils';
 import { ThemeColor, ThemeIcon } from 'vscode';
 import { activitySuccessContext } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { createActivityChildContext } from '../../utils/createContextWithRandomUUID';
+import { createActivityChildContext } from '../../utils/createActivityChildContext';
 import { localize } from '../../utils/localize';
 import { IngressContext } from './IngressContext';
 import { getDefaultPort } from './editTargetPort/getDefaultPort';

@@ -8,7 +8,7 @@ import { ThemeColor, ThemeIcon, type Progress } from "vscode";
 import { activitySuccessContext } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
+import { createActivityChildContext } from "../../utils/createActivityChildContext";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../../utils/updateContainerApp";
 import type { IDeployImageContext } from "./deployImage";

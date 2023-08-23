@@ -8,7 +8,7 @@ import { parse } from "dotenv";
 import { ThemeColor, ThemeIcon, Uri, workspace } from "vscode";
 import { ImageSource, activitySuccessContext } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { createActivityChildContext } from "../../../utils/createContextWithRandomUUID";
+import { createActivityChildContext } from "../../../utils/createActivityChildContext";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
@@ -67,7 +67,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
                     contextValue: createActivityChildContext(context.activityChildren.length, ['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
-                            setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : ''
+                        (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
                     ),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
@@ -75,7 +75,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
 
             logMessage = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
-                    setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ' +
+                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ') +
                 'If you would like to update your environment variables later, try re-running with the "Update Container App Image..." command.'
             );
         } else {

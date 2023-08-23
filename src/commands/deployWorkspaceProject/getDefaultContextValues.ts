@@ -7,7 +7,7 @@ import { ISubscriptionActionContext, nonNullValue } from "@microsoft/vscode-azex
 import { ImageSource } from "../../constants";
 import { EnvironmentVariablesListStep } from "../deployImage/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../deployImage/imageSource/buildImageInAzure/OSPickStep";
-import { IDeployWorkspaceProjectContext } from "./deployWorkspaceProject";
+import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
 import { getDefaultAzureContainerRegistry, getDefaultContainerAppsResources } from "./getDefaultResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 

@@ -10,7 +10,7 @@ import { Progress, ThemeColor, ThemeIcon } from "vscode";
 import { activitySuccessContext, managedEnvironmentsAppProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
-import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
+import { createActivityChildContext } from "../../utils/createActivityChildContext";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";

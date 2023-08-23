@@ -70,6 +70,9 @@ export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
+export const vscodeFolder: string = '.vscode';
+export const containerAppSettingsFile: string = 'containerApp.settings.json';
+
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
 export const DOCKERFILE_GLOB_PATTERN = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
 

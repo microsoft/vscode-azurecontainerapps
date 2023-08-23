@@ -83,7 +83,7 @@ Reserved for other commands TBD: Scaling, secrets, revision, logstream, GitHub, 
 #### Steps
 
 DeployRevisionDraftStep: 1450
-DeployWorkspaceConfigurationSaveStep 1480
+DeployWorkspaceProjectSaveSettingsStep 1480
 
 ## II. Delete Steps
 

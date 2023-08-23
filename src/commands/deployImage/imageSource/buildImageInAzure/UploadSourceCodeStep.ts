@@ -10,7 +10,7 @@ import { ext } from '../../../../extensionVariables';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
-import { createActivityChildContext } from '../../../../utils/createContextWithRandomUUID';
+import { createActivityChildContext } from '../../../../utils/createActivityChildContext';
 import { localize } from '../../../../utils/localize';
 import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 

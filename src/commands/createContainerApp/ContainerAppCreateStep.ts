@@ -11,7 +11,7 @@ import { activitySuccessContext, containerAppsWebProvider } from "../../constant
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
-import { createActivityChildContext } from "../../utils/createContextWithRandomUUID";
+import { createActivityChildContext } from "../../utils/createActivityChildContext";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";

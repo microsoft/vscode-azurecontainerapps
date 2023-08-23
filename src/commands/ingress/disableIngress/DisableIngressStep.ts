@@ -6,7 +6,7 @@
 import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, type Progress } from "vscode";
 import { activitySuccessContext } from "../../../constants";
-import { createActivityChildContext } from "../../../utils/createContextWithRandomUUID";
+import { createActivityChildContext } from "../../../utils/createActivityChildContext";
 import { localize } from "../../../utils/localize";
 import type { IngressContext } from "../IngressContext";
 import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
