@@ -4,17 +4,15 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
-import { Registry } from "@azure/arm-containerregistry";
 import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { ext } from "../../extensionVariables";
-import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
-import { createContainerAppsAPIClient } from "../../utils/azureClients";
-import { localize } from "../../utils/localize";
-import { ContainerAppNameStep } from "../createContainerApp/ContainerAppNameStep";
-import { ManagedEnvironmentNameStep } from "../createManagedEnvironment/ManagedEnvironmentNameStep";
-import { AcrListStep } from "../deployImage/imageSource/containerRegistry/acr/AcrListStep";
+import { ext } from "../../../extensionVariables";
+import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
+import { localize } from "../../../utils/localize";
+import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
+import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
 
 interface DefaultContainerAppsResources {
@@ -110,23 +108,6 @@ export async function getMatchingContainerAppsResources(context: ISubscriptionAc
         resourceGroup,
         managedEnvironment,
         containerApp
-    };
-}
-
-interface DefaultAzureContainerRegistry {
-    registry?: Registry;
-    newRegistryName?: string;
-}
-
-export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, resourceNameBase: string): Promise<DefaultAzureContainerRegistry> {
-    const registries: Registry[] = await AcrListStep.getRegistries(context);
-    const registry: Registry | undefined = registries.find(r => r.name === resourceNameBase);
-
-    // If no registry, create new (add later)
-
-    return {
-        registry,
-        newRegistryName: undefined
     };
 }
 

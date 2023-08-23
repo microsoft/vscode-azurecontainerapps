@@ -24,7 +24,7 @@ import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfi
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
 import { ShouldSaveSettingsPromptStep } from "./ShouldSaveSettingsPromptStep";
-import { getDefaultContextValues } from "./getDefaultContextValues";
+import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
 export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
     ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));

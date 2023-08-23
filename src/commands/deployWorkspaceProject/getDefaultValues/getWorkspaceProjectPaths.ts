@@ -5,9 +5,9 @@
 
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { Uri, WorkspaceFolder, commands, workspace } from "vscode";
-import { DOCKERFILE_GLOB_PATTERN } from "../../constants";
-import { localize } from "../../utils/localize";
-import { getRootWorkspaceFolder } from "../../utils/workspaceUtils";
+import { DOCKERFILE_GLOB_PATTERN } from "../../../constants";
+import { localize } from "../../../utils/localize";
+import { getRootWorkspaceFolder } from "../../../utils/workspaceUtils";
 
 export async function getWorkspaceProjectPaths(): Promise<{ rootFolder: WorkspaceFolder, dockerfilePath: string }> {
     const prompt: string = localize('selectRootWorkspace', 'Select a project with a Dockerfile');

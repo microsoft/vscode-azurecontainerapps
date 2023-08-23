@@ -4,11 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ISubscriptionActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { ImageSource } from "../../constants";
-import { EnvironmentVariablesListStep } from "../deployImage/imageSource/EnvironmentVariablesListStep";
-import { AcrBuildSupportedOS } from "../deployImage/imageSource/buildImageInAzure/OSPickStep";
-import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { getDefaultAzureContainerRegistry, getDefaultContainerAppsResources } from "./getDefaultResources";
+import { ImageSource } from "../../../constants";
+import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
+import { AcrBuildSupportedOS } from "../../deployImage/imageSource/buildImageInAzure/OSPickStep";
+import { IDeployWorkspaceProjectContext } from "../IDeployWorkspaceProjectContext";
+import { getDefaultAzureContainerRegistry } from "./getDefaultAzureContainerRegistry";
+import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<IDeployWorkspaceProjectContext>> {

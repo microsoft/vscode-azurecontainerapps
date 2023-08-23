@@ -7,7 +7,7 @@ import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure
 import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { createContainerAppsAPIClient } from "../../utils/azureClients";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 
 interface MostUsedManagedEnvironmentResources {
     managedEnvironment: ManagedEnvironment;
