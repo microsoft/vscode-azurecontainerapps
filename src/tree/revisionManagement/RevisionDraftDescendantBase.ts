@@ -9,11 +9,12 @@ import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import type { TreeItem } from "vscode";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { RevisionsDraftModel } from "./RevisionDraftItem";
+import { RevisionsItemModel } from "./RevisionItem";
 
 /**
  * Can be implemented by any tree item that has the potential to show up as a RevisionDraftItem's descendant
  */
-export abstract class RevisionDraftDescendantBase implements RevisionsDraftModel {
+export abstract class RevisionDraftDescendantBase implements RevisionsItemModel, RevisionsDraftModel {
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
         this.initRevisionDraftDescendant();
     }

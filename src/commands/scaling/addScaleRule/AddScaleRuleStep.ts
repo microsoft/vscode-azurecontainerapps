@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type ScaleRule } from "@azure/arm-appcontainers";
+import { type ScaleRule } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import type { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
+import { getParentResource } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
@@ -27,7 +28,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
         this.updateRevisionDraftWithTemplate();
 
-        const resourceName = context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? context.containerApp.name : this.baseItem.revision.name;
+        const resourceName = getParentResource(context.containerApp, this.baseItem.revision).name;
         ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft)', context.newRuleType, context.newRuleName, resourceName));
     }
 
