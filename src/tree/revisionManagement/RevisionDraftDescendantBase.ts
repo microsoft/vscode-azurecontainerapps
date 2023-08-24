@@ -4,29 +4,36 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { Revision } from "@azure/arm-appcontainers";
-import type { TreeElementBase } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import type { TreeItem } from "vscode";
+import { ProviderResult, TreeItem } from "vscode";
 import type { ContainerAppModel } from "../ContainerAppItem";
+import { TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import type { RevisionsDraftModel } from "./RevisionDraftItem";
+import { RevisionsItemModel } from "./RevisionItem";
 
 /**
  * Can be implemented by any tree item that has the potential to show up as a RevisionDraftItem's descendant
  */
-export abstract class RevisionDraftDescendantBase implements RevisionsDraftModel {
-    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
-        this.initRevisionDraftDescendant();
-    }
+export abstract class RevisionDraftDescendantBase implements RevisionsDraftModel, RevisionsItemModel {
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) { }
+
+    abstract getChildren?(): ProviderResult<TreeElementBase[]>;
+    abstract getTreeItem(): TreeItem | Thenable<TreeItem>;
 
     private initRevisionDraftDescendant(): void {
         this.hasUnsavedChanges() ? this.setDraftProperties() : this.setProperties();
     }
 
-    abstract getTreeItem(): TreeItem | Promise<TreeItem>;
-    getChildren?(): TreeElementBase[] | Promise<TreeElementBase[]>;
+    public static create<T extends RevisionDraftDescendantBase>(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, descendantType: Descendant<T>, ...args: unknown[]) {
+        const item = new descendantType(subscription, containerApp, revision, ...args);
+        item.initRevisionDraftDescendant();
+        return item;
+    }
 
     abstract hasUnsavedChanges(): boolean;
 
     protected abstract setProperties(): void;
     protected abstract setDraftProperties(): void;
 }
+
+type Descendant<T> = new (subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, ...args: unknown[]) => T
