@@ -6,75 +6,90 @@
 import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress, ThemeColor, ThemeIcon } from "vscode";
-import { activitySuccessContext, containerAppsWebProvider } from "../../constants";
-import { ext } from "../../extensionVariables";
+import { Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from "../../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
-import { createActivityChildContext } from "../../utils/createActivityChildContext";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
     public priority: number = 750;
+    private success: ExecuteActivityOutput = {};
+    private fail: ExecuteActivityOutput = {};
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        this.initSuccessOutput(context);
+        this.initFailOutput(context);
 
-        const resourceGroupName: string = context.newResourceGroupName || nonNullValueAndProp(context.resourceGroup, 'name');
-        const containerAppName: string = nonNullProp(context, 'newContainerAppName');
+        await tryCatchActivityWrapper(
+            async () => {
+                const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
-        const ingress: Ingress | undefined = context.enableIngress ? {
-            targetPort: context.targetPort,
-            external: context.enableExternal,
-            transport: 'auto',
-            allowInsecure: false,
-            traffic: [
-                {
-                    weight: 100,
-                    latestRevision: true
-                }
-            ],
-        } : undefined;
+                const resourceGroupName: string = context.newResourceGroupName || nonNullValueAndProp(context.resourceGroup, 'name');
+                const containerAppName: string = nonNullProp(context, 'newContainerAppName');
 
-        const creating: string = localize('creatingContainerApp', 'Creating container app...');
-        progress.report({ message: creating });
+                const ingress: Ingress | undefined = context.enableIngress ? {
+                    targetPort: context.targetPort,
+                    external: context.enableExternal,
+                    transport: 'auto',
+                    allowInsecure: false,
+                    traffic: [
+                        {
+                            weight: 100,
+                            latestRevision: true
+                        }
+                    ],
+                } : undefined;
 
-        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
-            location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
-            managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
-            configuration: {
-                ingress,
-                secrets: context.secrets,
-                registries: context.registries,
-                activeRevisionsMode: KnownActiveRevisionsMode.Single,
-            },
-            template: {
-                containers: [
-                    {
-                        image: context.image,
-                        name: getContainerNameForImage(nonNullProp(context, 'image')),
-                        env: context.environmentVariables
+                const creating: string = localize('creatingContainerApp', 'Creating container app...');
+                progress.report({ message: creating });
+
+                context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
+                    location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
+                    managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
+                    configuration: {
+                        ingress,
+                        secrets: context.secrets,
+                        registries: context.registries,
+                        activeRevisionsMode: KnownActiveRevisionsMode.Single,
+                    },
+                    template: {
+                        containers: [
+                            {
+                                image: context.image,
+                                name: getContainerNameForImage(nonNullProp(context, 'image')),
+                                env: context.environmentVariables
+                            }
+                        ]
                     }
-                ]
-            }
-        }));
-
-        if (context.activityChildren) {
-            context.activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['containerAppCreateStep', containerAppName, activitySuccessContext]),
-                    label: localize('createContainerApp', 'Create container app "{0}"', containerAppName),
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
-                })
-            );
-        }
-
-        ext.outputChannel.appendLog(localize('createdContainerApp', 'Created container app "{0}".', context.containerApp.name));
+                }));
+            },
+            context, this.success, this.fail
+        );
     }
 
     public shouldExecute(): boolean {
         return true;
+    }
+
+    private initSuccessOutput(context: ICreateContainerAppContext): void {
+        this.success.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['containerAppCreateStep', activitySuccessContext]),
+            label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+            iconPath: activitySuccessIcon
+        });
+        this.success.output = localize('createContainerAppSuccess', 'Created container app "{0}".', context.newContainerAppName);
+    }
+
+    private initFailOutput(context: ICreateContainerAppContext): void {
+        this.fail.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['containerAppCreateStep', activityFailContext]),
+            label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+            iconPath: activityFailIcon
+        });
+        this.fail.output = localize('createContainerAppFail', 'Failed to create container app "{0}".', context.newContainerAppName);
     }
 }

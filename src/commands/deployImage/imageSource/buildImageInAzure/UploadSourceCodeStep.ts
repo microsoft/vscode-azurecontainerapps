@@ -4,13 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, nonNullValue } from '@microsoft/vscode-azext-utils';
-import { Progress, ThemeColor, ThemeIcon } from 'vscode';
-import { activitySuccessContext } from '../../../../constants';
-import { ext } from '../../../../extensionVariables';
+import { Progress } from 'vscode';
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from '../../../../constants';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
+import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from '../../../../utils/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
-import { createActivityChildContext } from '../../../../utils/createActivityChildContext';
 import { localize } from '../../../../utils/localize';
 import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 
@@ -18,48 +17,63 @@ const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgign
 
 export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
     public priority: number = 430;
+    private success: ExecuteActivityOutput = {};
+    private fail: ExecuteActivityOutput = {};
 
     public async execute(context: IBuildImageInAzureContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        context.registryName = nonNullValue(context.registry?.name);
-        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
-        context.client = await createContainerRegistryManagementClient(context);
+        this.initSuccessOutput(context);
+        this.initFailOutput(context);
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
-        progress.report({ message: uploading });
+        await tryCatchActivityWrapper(
+            async () => {
+                context.registryName = nonNullValue(context.registry?.name);
+                context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
+                context.client = await createContainerRegistryManagementClient(context);
 
-        const source: string = context.rootFolder.uri.fsPath;
-        let items = await AzExtFsExtra.readDirectory(source);
-        items = items.filter(i => {
-            return !vcsIgnoreList.includes(i.name)
-        })
+                const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
+                progress.report({ message: uploading });
 
-        tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
+                const source: string = context.rootFolder.uri.fsPath;
+                let items = await AzExtFsExtra.readDirectory(source);
+                items = items.filter(i => {
+                    return !vcsIgnoreList.includes(i.name)
+                });
 
-        const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
-        const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
-        const relativePath: string = nonNullValue(sourceUploadLocation.relativePath);
+                tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
 
-        const storageBlob = await import('@azure/storage-blob');
-        const blobClient = new storageBlob.BlockBlobClient(uploadUrl);
-        await blobClient.uploadFile(context.tarFilePath);
+                const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
+                const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
+                const relativePath: string = nonNullValue(sourceUploadLocation.relativePath);
 
-        context.uploadedSourceLocation = relativePath;
+                const storageBlob = await import('@azure/storage-blob');
+                const blobClient = new storageBlob.BlockBlobClient(uploadUrl);
+                await blobClient.uploadFile(context.tarFilePath);
 
-        const uploaded: string = localize('uploadedSourceCode', 'Uploaded source code to registry "{0}" for remote build.', context.registryName);
-        ext.outputChannel.appendLog(uploaded);
-
-        if (context.activityChildren) {
-            context.activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['uploadSourceCodeStep', context.registryName, activitySuccessContext]),
-                    label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registryName),
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
-                })
-            );
-        }
+                context.uploadedSourceLocation = relativePath;
+            },
+            context, this.success, this.fail
+        );
     }
 
     public shouldExecute(context: IBuildImageInAzureContext): boolean {
-        return !context.uploadedSourceLocation
+        return !context.uploadedSourceLocation;
+    }
+
+    private initSuccessOutput(context: IBuildImageInAzureContext): void {
+        this.success.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
+            label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registryName),
+            iconPath: activitySuccessIcon
+        });
+        this.success.output = localize('uploadedSourceCodeSuccess', 'Uploaded source code to registry "{0}" for remote build.', context.registryName);
+    }
+
+    private initFailOutput(context: IBuildImageInAzureContext): void {
+        this.fail.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),
+            label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registryName),
+            iconPath: activityFailIcon
+        });
+        this.fail.output = localize('uploadedSourceCodeFail', 'Failed to upload source code to registry "{0}" for remote build.', context.registryName);
     }
 }

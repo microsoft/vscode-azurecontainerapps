@@ -5,44 +5,58 @@
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
-import { Progress, ThemeColor, ThemeIcon } from "vscode";
-import { activitySuccessContext } from "../../constants";
-import { ext } from "../../extensionVariables";
+import { Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../constants";
+import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from "../../utils/activityUtils";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
-import { createActivityChildContext } from "../../utils/createActivityChildContext";
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValue } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
 export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
     public priority: number = 220;
+    private success: ExecuteActivityOutput = {};
+    private fail: ExecuteActivityOutput = {};
 
     public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const opClient = await createOperationalInsightsManagementClient(context);
-        const resourceGroup = nonNullValue(context.resourceGroup);
-        const workspaceName = nonNullProp(context, 'newManagedEnvironmentName');
+        this.initSuccessOutput(context);
+        this.initFailOutput(context);
 
-        const creating: string = localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...');
-        progress.report({ message: creating });
+        await tryCatchActivityWrapper(
+            async () => {
+                const opClient = await createOperationalInsightsManagementClient(context);
+                const resourceGroup = nonNullValue(context.resourceGroup);
+                const workspaceName = nonNullProp(context, 'newManagedEnvironmentName');
 
-        context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
-            nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
+                const creating: string = localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...');
+                progress.report({ message: creating });
 
-        const created: string = localize('createdLogAnalyticsWorkspace', 'Created log analytics workspace "{0}".', workspaceName);
-        ext.outputChannel.appendLog(created);
-
-        if (context.activityChildren) {
-            context.activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['logAnalyticsCreateStep', workspaceName, activitySuccessContext]),
-                    label: localize('createWorkspace', 'Create log analytics workspace "{0}"', workspaceName),
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
-                })
-            );
-        }
+                context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
+                    nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
+            },
+            context, this.success, this.fail
+        );
     }
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
         return !context.logAnalyticsWorkspace;
+    }
+
+    private initSuccessOutput(context: IManagedEnvironmentContext): void {
+        this.success.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['logAnalyticsCreateStep', activitySuccessContext]),
+            label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
+            iconPath: activitySuccessIcon
+        });
+        this.success.output = localize('createLogAnalyticsWorkspaceSuccess', 'Created log analytics workspace "{0}".', context.newManagedEnvironmentName);
+    }
+
+    private initFailOutput(context: IManagedEnvironmentContext): void {
+        this.fail.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['logAnalyticsCreateStep', activityFailContext]),
+            label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
+            iconPath: activityFailIcon
+        });
+        this.fail.output = localize('createLogAnalyticsWorkspaceFail', 'Failed to create log analytics workspace "{0}".', context.newManagedEnvironmentName);
     }
 }

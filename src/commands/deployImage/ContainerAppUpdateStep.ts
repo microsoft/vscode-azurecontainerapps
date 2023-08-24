@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { ThemeColor, ThemeIcon, type Progress } from "vscode";
-import { activitySuccessContext } from "../../constants";
+import { type Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { createActivityChildContext } from "../../utils/createActivityChildContext";
+import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../../utils/updateContainerApp";
 import type { IDeployImageContext } from "./deployImage";
@@ -16,44 +16,62 @@ import { getContainerNameForImage } from "./imageSource/containerRegistry/getCon
 
 export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployImageContext> {
     public priority: number = 480;
+    private success: ExecuteActivityOutput = {};
+    private fail: ExecuteActivityOutput = {};
 
     public async execute(context: IDeployImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
-        const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
+        this.initSuccessOutput(context);
+        this.initFailOutput(context);
 
-        containerAppEnvelope.configuration.secrets = context.secrets;
-        containerAppEnvelope.configuration.registries = context.registries;
+        await tryCatchActivityWrapper(
+            async () => {
+                const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
+                const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
-        // We want to replace the old image
-        containerAppEnvelope.template ||= {};
-        containerAppEnvelope.template.containers = [];
+                containerAppEnvelope.configuration.secrets = context.secrets;
+                containerAppEnvelope.configuration.registries = context.registries;
 
-        containerAppEnvelope.template.containers.push({
-            env: context.environmentVariables,
-            image: context.image,
-            name: getContainerNameForImage(nonNullProp(context, 'image')),
-        });
+                // We want to replace the old image
+                containerAppEnvelope.template ||= {};
+                containerAppEnvelope.template.containers = [];
 
-        const updating = localize('updatingContainerApp', 'Updating container app...', containerApp.name);
-        progress.report({ message: updating });
+                containerAppEnvelope.template.containers.push({
+                    env: context.environmentVariables,
+                    image: context.image,
+                    name: getContainerNameForImage(nonNullProp(context, 'image')),
+                });
 
-        await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
-            await updateContainerApp(context, context.subscription, containerAppEnvelope);
-            ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
-        });
+                const updating = localize('updatingContainerApp', 'Updating container app...', containerApp.name);
+                progress.report({ message: updating });
 
-        if (context.activityChildren) {
-            context.activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['containerAppUpdateStep', activitySuccessContext]),
-                    label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
-                })
-            );
-        }
+                await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
+                    await updateContainerApp(context, context.subscription, containerAppEnvelope);
+                    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+                });
+            },
+            context, this.success, this.fail
+        );
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: IDeployImageContext): boolean {
+        return !!context.containerApp;
+    }
+
+    private initSuccessOutput(context: IDeployImageContext): void {
+        this.success.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['containerAppUpdateStep', activitySuccessContext]),
+            label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
+            iconPath: activitySuccessIcon
+        });
+        this.success.output = localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name);
+    }
+
+    private initFailOutput(context: IDeployImageContext): void {
+        this.fail.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['containerAppUpdateStep', activityFailContext]),
+            label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
+            iconPath: activityFailIcon
+        });
+        this.fail.output = localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name);
     }
 }

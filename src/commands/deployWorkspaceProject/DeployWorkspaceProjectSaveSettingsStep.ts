@@ -5,56 +5,63 @@
 
 import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { ThemeColor, ThemeIcon, type Progress } from "vscode";
-import { activityFailContext, activitySuccessContext, containerAppSettingsFile, vscodeFolder } from "../../constants";
-import { ext } from "../../extensionVariables";
-import { createActivityChildContext } from "../../utils/createActivityChildContext";
+import { type Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppSettingsFile, vscodeFolder } from "../../constants";
+import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
 import { IDeployWorkspaceProjectSettings } from "./IDeployWorkspaceProjectSettings";
 
+const relativeSettingsFilePath: string = `${vscodeFolder}/${containerAppSettingsFile}`;
+const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
+
 export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteStep<IDeployWorkspaceProjectContext> {
     public priority: number = 1480;
+    private success: ExecuteActivityOutput = {};
+    private fail: ExecuteActivityOutput = {};
 
     public async execute(context: IDeployWorkspaceProjectContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        progress.report({ message: localize('saving', 'Saving configuration...') });
+        this.initSuccessOutput();
+        this.initFailOutput();
 
-        const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', `${vscodeFolder}/${containerAppSettingsFile}`);
-        try {
-            const rootPath: string = nonNullValueAndProp(context.rootFolder?.uri, 'path');
-            const settingsPath: string = path.join(rootPath, vscodeFolder, containerAppSettingsFile);
+        await tryCatchActivityWrapper(
+            async () => {
+                progress.report({ message: localize('saving', 'Saving configuration...') });
 
-            const settings: IDeployWorkspaceProjectSettings = {
-                containerAppResourceGroupName: nonNullValueAndProp(context.resourceGroup, 'name'),
-                containerAppName: nonNullValueAndProp(context.containerApp, 'name'),
-                acrName: nonNullValueAndProp(context.registry, 'name')
-            }
+                const rootPath: string = nonNullValueAndProp(context.rootFolder?.uri, 'path');
+                const settingsPath: string = path.join(rootPath, vscodeFolder, containerAppSettingsFile);
 
-            await AzExtFsExtra.writeFile(settingsPath, JSON.stringify(settings, undefined, 4));
+                const settings: IDeployWorkspaceProjectSettings = {
+                    containerAppResourceGroupName: nonNullValueAndProp(context.resourceGroup, 'name'),
+                    containerAppName: nonNullValueAndProp(context.containerApp, 'name'),
+                    acrName: nonNullValueAndProp(context.registry, 'name')
+                }
 
-            context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['deployWorkspaceProjectSaveSettingsStep', activitySuccessContext]),
-                    label: saveSettingsLabel,
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
-                })
-            );
-
-            ext.outputChannel.appendLog(localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}"', `${vscodeFolder}/${containerAppSettingsFile}`));
-        } catch (_e) {
-            context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['deployWorkspaceProjectSaveSettingsStep', activityFailContext]),
-                    label: saveSettingsLabel,
-                    iconPath: new ThemeIcon('error', new ThemeColor('testing.iconFailed'))
-                })
-            );
-
-            ext.outputChannel.appendLog(localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}"', `${vscodeFolder}/${containerAppSettingsFile}`));
-        }
+                await AzExtFsExtra.writeFile(settingsPath, JSON.stringify(settings, undefined, 4));
+            },
+            context, this.success, this.fail, { shouldSwallowError: true /** Not worth failing the entire command over this */ }
+        )
     }
 
     public shouldExecute(context: IDeployWorkspaceProjectContext): boolean {
         return !!context.shouldSaveWorkspaceSettings;
+    }
+
+    private initSuccessOutput(): void {
+        this.success.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activitySuccessContext]),
+            label: saveSettingsLabel,
+            iconPath: activitySuccessIcon
+        });
+        this.success.output = localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}"', relativeSettingsFilePath);
+    }
+
+    private initFailOutput(): void {
+        this.fail.item = new GenericTreeItem(undefined, {
+            contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activityFailContext]),
+            label: saveSettingsLabel,
+            iconPath: activityFailIcon
+        });
+        this.fail.output = localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
     }
 }

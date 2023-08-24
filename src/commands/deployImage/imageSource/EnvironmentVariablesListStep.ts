@@ -8,7 +8,7 @@ import { parse } from "dotenv";
 import { ThemeColor, ThemeIcon, Uri, workspace } from "vscode";
 import { ImageSource, activitySuccessContext } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { createActivityChildContext } from "../../../utils/createActivityChildContext";
+import { createActivityChildContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
@@ -60,11 +60,10 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
 
     // Todo: We should try to add a direct command to update just the environment variables before release. Running the entire update image command is a lot of work for such a small change
     private outputLogs(context: ImageSourceBaseContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
-        let logMessage: string | undefined;
         if (setEnvironmentVariableOption !== SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
@@ -73,24 +72,23 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
                 })
             );
 
-            logMessage = localize('skippedEnvVarsMessage',
+            const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
                 (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ') +
                 'If you would like to update your environment variables later, try re-running with the "Update Container App Image..." command.'
             );
+            ext.outputChannel.appendLog(logMessage);
         } else {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(context.activityChildren.length, ['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('configureEnvVarsLabel', 'Configure environment variables for the container app'),
                     iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
                 })
             );
 
-            logMessage = localize('configuredEnvVarsMessage', 'Configured environment variables for the container app.');
+            ext.outputChannel.appendLog(localize('configuredEnvVarsMessage', 'Configured environment variables for the container app.'));
         }
-
-        ext.outputChannel.appendLog(logMessage);
     }
 
 }

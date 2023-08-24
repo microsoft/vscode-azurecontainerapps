@@ -7,7 +7,7 @@ import { AzExtFsExtra, GenericTreeItem } from '@microsoft/vscode-azext-utils';
 import { ThemeColor, ThemeIcon } from 'vscode';
 import { activitySuccessContext } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { createActivityChildContext } from '../../utils/createActivityChildContext';
+import { createActivityChildContext } from '../../utils/activityUtils';
 import { localize } from '../../utils/localize';
 import { IngressContext } from './IngressContext';
 import { getDefaultPort } from './editTargetPort/getDefaultPort';
@@ -36,7 +36,7 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
     if (context.activityChildren && !context.containerApp) {
         context.activityChildren.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(context.activityChildren.length, ['ingressPromptStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['ingressPromptStep', activitySuccessContext]),
                 label: context.enableIngress ?
                     localize('ingressEnableLabel', 'Enable ingress on port {0} (found Dockerfile configuration)', context.targetPort) :
                     localize('ingressDisableLabel', 'Disable ingress (found Dockerfile configuration)'),

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { QuickPickItem } from "vscode";
+import { QuickPickItem, ThemeColor, ThemeIcon } from "vscode";
 import { localize } from "./utils/localize";
 
 export const managedEnvironmentsId = 'managedEnvironments';
@@ -72,6 +72,9 @@ export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const vscodeFolder: string = '.vscode';
 export const containerAppSettingsFile: string = 'containerApp.settings.json';
+
+export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));
+export const activityFailIcon: ThemeIcon = new ThemeIcon('error', new ThemeColor('testing.iconFailed'));
 
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
 export const DOCKERFILE_GLOB_PATTERN = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';

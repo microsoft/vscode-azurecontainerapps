@@ -9,8 +9,7 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, ThemeColor, ThemeIcon, window } from "vscode";
 import { activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { createActivityContext } from "../../utils/activityUtils";
-import { createActivityChildContext } from "../../utils/createActivityChildContext";
+import { createActivityChildContext, createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
@@ -68,7 +67,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingResourceGroup', activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingResourceGroup', activitySuccessContext]),
                 label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
@@ -86,7 +85,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingManagedEnvironment', activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
                 label: localize('useManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
@@ -122,7 +121,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(wizardContext.activityChildren.length, ['useExistingContainerApp', containerAppName, activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingContainerApp', activitySuccessContext]),
                 label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
                 iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
             })
