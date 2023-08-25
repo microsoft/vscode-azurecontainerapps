@@ -55,6 +55,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     const promptSteps: AzureWizardPromptStep<IDeployWorkspaceProjectContext>[] = [
         new DeployWorkspaceProjectConfirmStep(),
         new ShouldSaveSettingsPromptStep()
+        // getDefaultResourceNamesStep
     ];
 
     const executeSteps: AzureWizardExecuteStep<IDeployWorkspaceProjectContext>[] = [

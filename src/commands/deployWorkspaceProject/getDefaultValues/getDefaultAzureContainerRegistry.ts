@@ -3,49 +3,37 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownSkuName, Registry } from "@azure/arm-containerregistry";
+import { Registry } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { WorkspaceFolder } from "vscode";
+import { fullRelativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
-import { RegistryNameStep } from "../../deployImage/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "../getContainerAppDeployWorkspaceSettings";
 
-interface DefaultAzureContainerRegistry {
-    registry?: Registry;
-    newRegistryName?: string;
-    newRegistrySku?: KnownSkuName;
-}
-
-export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder, resourceNameBase: string): Promise<DefaultAzureContainerRegistry> {
+export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder): Promise<{ registry?: Registry }> {
     const registries: Registry[] = await AcrListStep.getRegistries(context);
+    const noMatchingResource = { registry: undefined };
 
-    // Strategy 1: See if there is a local workspace configuration to leverage
+    // See if there is a local workspace configuration to leverage
     const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
-    const savedRegistry: Registry | undefined = registries.find(r => settings?.acrName && r.name === settings.acrName);
+    if (!settings) {
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no local workspace resource settings at "{0}".', fullRelativeSettingsFilePath));
+        return noMatchingResource;
+    } else if (!settings.acrName) {
+        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete Azure Container Registry settings at "{0}".', fullRelativeSettingsFilePath));
+        return noMatchingResource;
+    }
+
+    const savedRegistry: Registry | undefined = registries.find(r => r.name === settings.acrName);
     if (savedRegistry) {
-        ext.outputChannel.appendLog(localize('foundResourceMatch', 'Used saved workspace settings to find existing container registry "{0}".', settings?.acrName));
+        ext.outputChannel.appendLog(localize('foundResourceMatch', 'Used saved workspace settings and found an existing container registry.'));
         return {
-            registry: savedRegistry,
-            newRegistryName: undefined,
-            newRegistrySku: undefined
+            registry: savedRegistry
         };
+    } else {
+        ext.outputChannel.appendLog(localize('noResourceMatch', 'Used saved workspace settings to search for Azure Container Registry "{0}" but found no match.', settings.acrName));
+        return noMatchingResource;
     }
-
-    // Strategy 2: See if we can reuse existing resources that match the workspace name
-    const registry: Registry | undefined = registries.find(r => r.name === resourceNameBase);
-
-    // If still no registry we can use, then make sure the name is available
-    if (!registry && !await RegistryNameStep.isNameAvailable(context, resourceNameBase)) {
-        const resourceNameError: string = localize('resourceNameError', 'Azure Container Registry matching the current workspace name "{0}" is unavailable.', resourceNameBase);
-        ext.outputChannel.appendLog(resourceNameError)
-        throw new Error(resourceNameError);
-    }
-
-    return {
-        registry,
-        newRegistryName: !registry ? resourceNameBase : undefined,
-        newRegistrySku: KnownSkuName.Basic
-    };
 }
