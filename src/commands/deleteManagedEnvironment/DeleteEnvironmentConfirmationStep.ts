@@ -6,19 +6,19 @@
 import { AzureWizardPromptStep, DialogResponses, nonNullValue, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../utils/localize';
 import { settingUtils } from '../../utils/settingUtils';
-import { IDeleteManagedEnvironmentWizardContext } from './IDeleteManagedEnvironmentWizardContext';
+import type { IDeleteManagedEnvironmentContext } from './IDeleteManagedEnvironmentContext';
 
-export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDeleteManagedEnvironmentWizardContext> {
+export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDeleteManagedEnvironmentContext> {
     private managedEnvironmentName: string | undefined;
 
-    public async prompt(context: IDeleteManagedEnvironmentWizardContext): Promise<void> {
+    public async prompt(context: IDeleteManagedEnvironmentContext): Promise<void> {
         this.managedEnvironmentName = context.managedEnvironmentName;
 
         const numOfResources = context.containerAppNames.length;
         const hasNoResources: boolean = !numOfResources;
 
-        const deleteEnv: string = localize('confirmDeleteManagedEnv', 'Are you sure you want to delete Container Apps environment "{0}"?', context.managedEnvironmentName);
-        const deleteEnvAndApps: string = localize('confirmDeleteEnvAndApps', 'Are you sure you want to delete Container Apps environment "{0}"? Deleting this will delete {1} Container App(s) in this environment.',
+        const deleteEnv: string = localize('confirmDeleteManagedEnv', 'Are you sure you want to delete container apps environment "{0}"?', this.managedEnvironmentName);
+        const deleteEnvAndApps: string = localize('confirmDeleteEnvAndApps', 'Are you sure you want to delete container apps environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
             this.managedEnvironmentName, numOfResources);
 
         const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSetting('deleteConfirmation');
@@ -26,13 +26,14 @@ export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDe
             const message: string = hasNoResources ? deleteEnv : deleteEnvAndApps;
             await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse); // no need to check result - cancel will throw error
         } else {
-            const prompt: string = localize('enterToDelete', 'Enter "{0}" to delete this Container Apps environment. Deleting this will delete {1} Container App(s) in this environment.',
+            const prompt: string = localize('enterToDelete', 'Enter "{0}" to delete this container apps environment. Deleting this will delete {1} container app(s) in this environment.',
                 this.managedEnvironmentName, numOfResources);
 
             const result: string = await context.ui.showInputBox({
                 prompt,
                 validateInput: (val: string | undefined) => this.validateInput(val, prompt)
             });
+
             if (!this.isNameEqualToEnvironment(result)) { // Check again just in case `validateInput` didn't prevent the input box from closing
                 context.telemetry.properties.cancelStep = 'mismatchDelete';
                 throw new UserCancelledError();

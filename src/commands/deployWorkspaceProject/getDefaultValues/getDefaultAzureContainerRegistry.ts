@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { Registry } from "@azure/arm-containerregistry";
+import { KnownSkuName, Registry } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { WorkspaceFolder } from "vscode";
 import { ext } from "../../../extensionVariables";
@@ -14,6 +14,7 @@ import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings
 interface DefaultAzureContainerRegistry {
     registry?: Registry;
     newRegistryName?: string;
+    newRegistrySku?: KnownSkuName;
 }
 
 export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder, resourceNameBase: string): Promise<DefaultAzureContainerRegistry> {
@@ -26,7 +27,8 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
         ext.outputChannel.appendLog(localize('foundResourceMatch', 'Used saved workspace settings to find existing container registry "{0}".', settings?.acrName));
         return {
             registry: savedRegistry,
-            newRegistryName: undefined
+            newRegistryName: undefined,
+            newRegistrySku: undefined
         };
     }
 
@@ -37,6 +39,7 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
 
     return {
         registry,
-        newRegistryName: undefined
+        newRegistryName: !registry ? resourceNameBase : undefined,
+        newRegistrySku: KnownSkuName.Basic
     };
 }

@@ -48,7 +48,7 @@
                 {
                     "command": "containerApps.createManagedEnvironment",
                     "title": "%containerApps.createManagedEnvironment%",
-                    "type": "microsoft.app/managedenvironments",
+                    "type": "ContainerAppsEnvironment",
                     "detail": "%containerApps.createManagedEnvironmentDetail%"
                 }
             ]
@@ -227,6 +227,11 @@
             {
                 "command": "containerApps.stopStreamingLogs",
                 "title": "%containerApps.stopStreamingLogs%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.createAcr",
+                "title": "%containerApps.createAcr%",
                 "category": "Azure Container Apps"
             }
         ],
@@ -533,7 +538,7 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-appcontainers": "^2.0.0-beta.1",
+        "@azure/arm-appcontainers": "^2.0.0-beta.3",
         "@azure/arm-containerregistry": "^10.0.0",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.0.1",

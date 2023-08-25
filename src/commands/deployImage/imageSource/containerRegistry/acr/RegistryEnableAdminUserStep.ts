@@ -8,7 +8,6 @@
 import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { acrDomain } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
 import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
@@ -30,7 +29,6 @@ export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<IContaine
     }
 
     public shouldPrompt(context: IContainerRegistryImageContext): boolean {
-        // this is only a requirement for ACR
-        return context.registryDomain === acrDomain && !!context.registry && !context.registry.adminUserEnabled;
+        return !!context.registry && !context.registry.adminUserEnabled;
     }
 }

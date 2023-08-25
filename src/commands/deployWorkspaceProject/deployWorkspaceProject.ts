@@ -7,7 +7,7 @@ import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, ThemeColor, ThemeIcon, window } from "vscode";
-import { activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
+import { activitySuccessContext, activitySuccessIcon, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityChildContext, createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
@@ -18,6 +18,8 @@ import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/Manage
 import { ContainerAppOverwriteConfirmStep } from "../deployImage/ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "../deployImage/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
+import { RegistryEnableAdminUserStep } from "../deployImage/imageSource/containerRegistry/acr/RegistryEnableAdminUserStep";
+import { RegistryCreateStep } from "../deployImage/imageSource/containerRegistry/acr/createAcr/RegistryCreateStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
@@ -69,7 +71,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingResourceGroup', activitySuccessContext]),
                 label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
-                iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                iconPath: activitySuccessIcon
             })
         );
 
@@ -87,7 +89,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
                 label: localize('useManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
-                iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                iconPath: activitySuccessIcon
             })
         );
 
@@ -111,7 +113,21 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
     }
 
     // Azure Container Registry
-    // Do we need to add a location provider for filtering for ACR?
+    if (wizardContext.registry) {
+        promptSteps.push(new RegistryEnableAdminUserStep());
+
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['useExistingAcr', activitySuccessContext]),
+                label: localize('useAcr', 'Use container registry "{0}"', wizardContext.registry.name),
+                iconPath: activitySuccessIcon
+            })
+        );
+
+        ext.outputChannel.appendLog(localize('usingAcr', 'Using container registry "{0}".', wizardContext.registry.name));
+    } else {
+        executeSteps.push(new RegistryCreateStep());
+    }
 
     // Container App
     if (wizardContext.containerApp) {

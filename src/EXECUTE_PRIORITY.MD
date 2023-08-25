@@ -20,7 +20,7 @@ Keep 0 - 190 clear for Azure Tools common execute steps (e.g. VerifyProvidersSte
 
 #### Steps
 
-Reserved
+- RegistryCreateStep: 350
 
 ### 3. Image Source
 
