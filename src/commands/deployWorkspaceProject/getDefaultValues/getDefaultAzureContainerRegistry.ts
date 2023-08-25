@@ -9,6 +9,7 @@ import { WorkspaceFolder } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
+import { RegistryNameStep } from "../../deployImage/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "../getContainerAppDeployWorkspaceSettings";
 
 interface DefaultAzureContainerRegistry {
@@ -35,7 +36,12 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
     // Strategy 2: See if we can reuse existing resources that match the workspace name
     const registry: Registry | undefined = registries.find(r => r.name === resourceNameBase);
 
-    // If no registry, create new (add later)
+    // If still no registry we can use, then make sure the name is available
+    if (!registry && !await RegistryNameStep.isNameAvailable(context, resourceNameBase)) {
+        const resourceNameError: string = localize('resourceNameError', 'Azure Container Registry matching the current workspace name "{0}" is unavailable.', resourceNameBase);
+        ext.outputChannel.appendLog(resourceNameError)
+        throw new Error(resourceNameError);
+    }
 
     return {
         registry,

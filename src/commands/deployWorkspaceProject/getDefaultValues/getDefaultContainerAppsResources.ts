@@ -64,7 +64,9 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
     // Strategy 3: Try finding the most used managed environment resources (Azure CLI strategy)
     const { managedEnvironment: mostUsedManagedEnvironment, resourceGroup: mostUsedEnvironmentResourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
     if (!await isNameAvailableForContainerAppsResources(context, resourceNameBase, mostUsedEnvironmentResourceGroup, mostUsedManagedEnvironment)) {
-        throw new Error(localize('resourceNameError', 'Resource names matching the current workspace "{0}" are unavailable.', resourceNameBase));
+        const resourceNameError: string = localize('resourceNameError', 'Resource names matching the current workspace "{0}" are unavailable.', resourceNameBase);
+        ext.outputChannel.appendLog(resourceNameError);
+        throw new Error(resourceNameError);
     }
 
     resourceGroup = mostUsedEnvironmentResourceGroup;
