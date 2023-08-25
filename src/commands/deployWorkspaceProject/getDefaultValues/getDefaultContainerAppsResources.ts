@@ -34,7 +34,6 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
     // For testing creation of resources
     // const resourceGroup = undefined;
     // const managedEnvironment = undefined;
-    // const managedEnvironment = undefined;
     // const containerApp = undefined;
 
     // Strategy 1: See if there is a local workspace configuration to leverage
