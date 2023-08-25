@@ -8,12 +8,14 @@ import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { WorkspaceFolder } from "vscode";
+import { fullRelativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
+import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "../getContainerAppDeployWorkspaceSettings";
 import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
 
 interface DefaultContainerAppsResources {
@@ -26,7 +28,7 @@ interface DefaultContainerAppsResources {
     containerApp?: ContainerAppModel;
 }
 
-export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, _rootFolder: WorkspaceFolder, resourceNameBase: string): Promise<DefaultContainerAppsResources> {
+export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder, resourceNameBase: string): Promise<DefaultContainerAppsResources> {
     resourceNameBase = resourceNameBase.toLowerCase();
 
     // For testing creation of resources
@@ -35,10 +37,17 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
     // const managedEnvironment = undefined;
     // const containerApp = undefined;
 
-    // Strategy 1: See if there is a configuration in containerApps.settings.json to leverage
-    // const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
+    // Strategy 1: See if there is a local workspace configuration to leverage
+    const { resourceGroup: savedResourceGroup, managedEnvironment: savedManagedEnvironment, containerApp: savedContainerApp } = await getContainerAppWorkspaceSettingResources(context, rootFolder);
+    if (savedContainerApp) {
+        return {
+            resourceGroup: savedResourceGroup,
+            managedEnvironment: savedManagedEnvironment,
+            containerApp: savedContainerApp
+        };
+    }
 
-    // Strategy 2: See if we can reuse resources we've already created before
+    // Strategy 2: See if we can reuse existing resources that match the workspace name
     let { resourceGroup, managedEnvironment, containerApp } = await getMatchingContainerAppsResources(context, resourceNameBase);
     if (resourceGroup || managedEnvironment || containerApp) {
         ext.outputChannel.appendLog(localize('locatedPreviousResources', 'Located existing resources matching the name of the current workspace "{0}".', resourceNameBase));
@@ -53,7 +62,7 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
         };
     }
 
-    // Strategy 3: If not, try finding the most used managed environment resources (Azure CLI strategy)
+    // Strategy 3: Try finding the most used managed environment resources (Azure CLI strategy)
     const { managedEnvironment: mostUsedManagedEnvironment, resourceGroup: mostUsedEnvironmentResourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
     if (!await isNameAvailableForContainerAppsResources(context, resourceNameBase, mostUsedEnvironmentResourceGroup, mostUsedManagedEnvironment)) {
         throw new Error(localize('resourceNameError', 'Resource names matching the current workspace "{0}" are unavailable.', resourceNameBase));
@@ -77,6 +86,49 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
         managedEnvironment,
         containerApp,
     };
+}
+
+export async function getContainerAppWorkspaceSettingResources(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
+    const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
+    const noResourceMatch = {
+        resourceGroup: undefined,
+        managedEnvironment: undefined,
+        containerApp: undefined
+    };
+
+    if (!settings) {
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no local workspace resource settings at "{0}".', fullRelativeSettingsFilePath));
+        return noResourceMatch;
+    } else if (!settings.containerAppResourceGroupName || !settings.containerAppName) {
+        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete container app resource settings at "{0}".', fullRelativeSettingsFilePath));
+        return noResourceMatch;
+    }
+
+    const resourceGroupName: string = settings.containerAppResourceGroupName;
+    const containerAppName: string = settings.containerAppName;
+
+    try {
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context)
+        const containerApp: ContainerApp = await client.containerApps.get(resourceGroupName, containerAppName);
+        const containerAppModel: ContainerAppModel = ContainerAppItem.CreateContainerAppModel(containerApp);
+
+        const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+        const managedEnvironment = managedEnvironments.find(env => env.id === containerAppModel.managedEnvironmentId);
+
+        const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+        const resourceGroup = resourceGroups.find(rg => rg.name === containerAppModel.resourceGroup);
+
+        ext.outputChannel.appendLog(localize('foundResourceMatch', 'Used saved workspace settings and found existing container app resources.'));
+
+        return {
+            resourceGroup,
+            managedEnvironment,
+            containerApp: containerAppModel
+        };
+    } catch {
+        ext.outputChannel.appendLog(localize('noResourceMatch', 'Used saved workspace settings to search for container app "{0}" in resource group "{1}" but found no match.', settings.containerAppName, settings.containerAppResourceGroupName));
+        return noResourceMatch;
+    }
 }
 
 export async function getMatchingContainerAppsResources(context: ISubscriptionActionContext, resourceName: string): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {

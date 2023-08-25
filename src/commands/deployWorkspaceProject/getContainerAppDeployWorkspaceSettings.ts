@@ -10,11 +10,11 @@ import { containerAppSettingsFile, vscodeFolder } from "../../constants";
 
 export interface IDeployWorkspaceProjectSettings {
     // Container app names are unique to a resource group
-    containerAppResourceGroupName: string;
-    containerAppName: string;
+    containerAppResourceGroupName?: string;
+    containerAppName?: string;
 
     // Either unique globally or to a subscription
-    acrName: string;
+    acrName?: string;
 }
 
 export async function getContainerAppDeployWorkspaceSettings(rootWorkspaceFolder: WorkspaceFolder): Promise<IDeployWorkspaceProjectSettings | undefined> {

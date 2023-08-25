@@ -17,11 +17,12 @@ export class ShouldSaveSettingsPromptStep extends AzureWizardPromptStep<IDeployW
             return;
         }
 
+        const saveOrOverwrite: string = settings ? localize('overwrite', 'Overwrite') : localize('save', 'Save');
         const saveItem = { title: localize('save', 'Save...') };
         const dontSaveItem = { title: localize('save', 'Don\'t Save...') };
 
         const userResponse = await context.ui.showWarningMessage(
-            localize('saveWorkspaceSettings', 'New deployment settings detected. \nWould you like to save or overwrite your local project settings on successful deployment?'),
+            localize('saveWorkspaceSettings', `New deployment settings detected. \nWould you like to ${saveOrOverwrite} your deployment configuration in local project settings?`),
             { modal: true },
             saveItem,
             dontSaveItem
