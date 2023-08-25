@@ -40,5 +40,6 @@
     "containerApps.disconnectRepo": "Disconnect from Repo",
     "containerApps.openGitHubRepo": "Open Repo in GitHub",
     "containerApps.startStreamingLogs": "Start Streaming Logs...",
-    "containerApps.stopStreamingLogs": "Stop Streaming Logs..."
+    "containerApps.stopStreamingLogs": "Stop Streaming Logs...",
+    "containerApps.createAcr": "Create Azure Container Registry..."
 }

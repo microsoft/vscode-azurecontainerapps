@@ -11,6 +11,7 @@ import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployImage } from './deployImage/deployImage';
 import { deployImageApi } from './deployImage/deployImageApi';
+import { createAcr } from './deployImage/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -91,4 +92,7 @@ export function registerCommands(): void {
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
     registerReportIssueCommand('containerApps.reportIssue');
+
+    // registries
+    registerCommandWithTreeNodeUnwrapping('containerApps.createAcr', createAcr);
 }
