@@ -5,6 +5,7 @@
 
 import { Registry } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { WorkspaceFolder } from "vscode";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
 
 interface DefaultAzureContainerRegistry {
@@ -12,7 +13,7 @@ interface DefaultAzureContainerRegistry {
     newRegistryName?: string;
 }
 
-export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, resourceNameBase: string): Promise<DefaultAzureContainerRegistry> {
+export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, _rootFolder: WorkspaceFolder, resourceNameBase: string): Promise<DefaultAzureContainerRegistry> {
     const registries: Registry[] = await AcrListStep.getRegistries(context);
     const registry: Registry | undefined = registries.find(r => r.name === resourceNameBase);
 

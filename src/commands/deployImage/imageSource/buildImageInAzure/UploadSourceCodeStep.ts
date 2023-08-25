@@ -62,18 +62,18 @@ export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAz
     private initSuccessOutput(context: IBuildImageInAzureContext): void {
         this.success.item = new GenericTreeItem(undefined, {
             contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
-            label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registryName),
+            label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registry?.name),
             iconPath: activitySuccessIcon
         });
-        this.success.output = localize('uploadedSourceCodeSuccess', 'Uploaded source code to registry "{0}" for remote build.', context.registryName);
+        this.success.output = localize('uploadedSourceCodeSuccess', 'Uploaded source code to registry "{0}" for remote build.', context.registry?.name);
     }
 
     private initFailOutput(context: IBuildImageInAzureContext): void {
         this.fail.item = new GenericTreeItem(undefined, {
             contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),
-            label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registryName),
+            label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registry?.name),
             iconPath: activityFailIcon
         });
-        this.fail.output = localize('uploadedSourceCodeFail', 'Failed to upload source code to registry "{0}" for remote build.', context.registryName);
+        this.fail.output = localize('uploadedSourceCodeFail', 'Failed to upload source code to registry "{0}" for remote build.', context.registry?.name);
     }
 }

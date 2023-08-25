@@ -3,18 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, AzureWizardPromptStep, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import * as path from "path";
+import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings } from "./IDeployWorkspaceProjectSettings";
+import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "./getContainerAppDeployWorkspaceSettings";
 
 export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
     public async prompt(context: IDeployWorkspaceProjectContext): Promise<void> {
-        const rootPath: string = nonNullValueAndProp(context.rootFolder?.uri, 'path');
-        const settingsPath: string = path.join(rootPath, '.vscode', 'settings.json');
-
-        const settings: IDeployWorkspaceProjectSettings | undefined = await AzExtFsExtra.pathExists(settingsPath) ? JSON.parse(await AzExtFsExtra.readFile(settingsPath)) as IDeployWorkspaceProjectSettings : undefined;
+        const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(nonNullProp(context, 'rootFolder'));
 
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {

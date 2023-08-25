@@ -72,6 +72,8 @@ export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const vscodeFolder: string = '.vscode';
 export const containerAppSettingsFile: string = 'containerApp.settings.json';
+export const fullRelativeSettingsFilePath: string = `${vscodeFolder}/${containerAppSettingsFile}`;
+
 
 export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));
 export const activityFailIcon: ThemeIcon = new ThemeIcon('error', new ThemeColor('testing.iconFailed'));

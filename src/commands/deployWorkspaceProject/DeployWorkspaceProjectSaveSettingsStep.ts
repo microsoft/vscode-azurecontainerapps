@@ -6,14 +6,13 @@
 import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppSettingsFile, vscodeFolder } from "../../constants";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppSettingsFile, fullRelativeSettingsFilePath, vscodeFolder } from "../../constants";
 import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings } from "./IDeployWorkspaceProjectSettings";
+import { IDeployWorkspaceProjectSettings } from "./getContainerAppDeployWorkspaceSettings";
 
-const relativeSettingsFilePath: string = `${vscodeFolder}/${containerAppSettingsFile}`;
-const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
+const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', fullRelativeSettingsFilePath);
 
 export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteStep<IDeployWorkspaceProjectContext> {
     public priority: number = 1480;
@@ -53,7 +52,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
             label: saveSettingsLabel,
             iconPath: activitySuccessIcon
         });
-        this.success.output = localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}"', relativeSettingsFilePath);
+        this.success.output = localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}"', fullRelativeSettingsFilePath);
     }
 
     private initFailOutput(): void {
@@ -62,6 +61,6 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
             label: saveSettingsLabel,
             iconPath: activityFailIcon
         });
-        this.fail.output = localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
+        this.fail.output = localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}"', fullRelativeSettingsFilePath);
     }
 }

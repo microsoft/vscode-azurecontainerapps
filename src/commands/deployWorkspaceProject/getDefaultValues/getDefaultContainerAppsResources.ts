@@ -7,6 +7,7 @@ import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure
 import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { WorkspaceFolder } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
@@ -25,7 +26,7 @@ interface DefaultContainerAppsResources {
     containerApp?: ContainerAppModel;
 }
 
-export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, resourceNameBase: string): Promise<DefaultContainerAppsResources> {
+export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, _rootFolder: WorkspaceFolder, resourceNameBase: string): Promise<DefaultContainerAppsResources> {
     resourceNameBase = resourceNameBase.toLowerCase();
 
     // For testing creation of resources
@@ -35,6 +36,7 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
     // const containerApp = undefined;
 
     // Strategy 1: See if there is a configuration in containerApps.settings.json to leverage
+    // const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
 
     // Strategy 2: See if we can reuse resources we've already created before
     let { resourceGroup, managedEnvironment, containerApp } = await getMatchingContainerAppsResources(context, resourceNameBase);

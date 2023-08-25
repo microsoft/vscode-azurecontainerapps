@@ -17,8 +17,8 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const resourceBaseName: string = nonNullValue(rootFolder.uri.path.split('/').at(-1));
 
     return {
-        ...await getDefaultContainerAppsResources(context, resourceBaseName),
-        ...await getDefaultAzureContainerRegistry(context, resourceBaseName),
+        ...await getDefaultContainerAppsResources(context, rootFolder, resourceBaseName),
+        ...await getDefaultAzureContainerRegistry(context, rootFolder, resourceBaseName),
         dockerfilePath,
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
         imageName: `${resourceBaseName}:latest`,
