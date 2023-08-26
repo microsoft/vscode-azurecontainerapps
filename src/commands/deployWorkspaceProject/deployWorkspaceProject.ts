@@ -21,10 +21,11 @@ import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListS
 import { RegistryEnableAdminUserStep } from "../deployImage/imageSource/containerRegistry/acr/RegistryEnableAdminUserStep";
 import { RegistryCreateStep } from "../deployImage/imageSource/containerRegistry/acr/createAcr/RegistryCreateStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
+import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { ShouldSaveSettingsPromptStep } from "./ShouldSaveSettingsPromptStep";
+import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
 export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
@@ -54,8 +55,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const promptSteps: AzureWizardPromptStep<IDeployWorkspaceProjectContext>[] = [
         new DeployWorkspaceProjectConfirmStep(),
-        new ShouldSaveSettingsPromptStep()
-        // getDefaultResourceNamesStep
+        new ShouldSaveDeploySettingsPromptStep(),
+        new DefaultResourcesNameStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<IDeployWorkspaceProjectContext>[] = [

@@ -8,7 +8,7 @@ import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
 import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "./getContainerAppDeployWorkspaceSettings";
 
-export class ShouldSaveSettingsPromptStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
+export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
     public async prompt(context: IDeployWorkspaceProjectContext): Promise<void> {
         const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(nonNullProp(context, 'rootFolder'));
 
@@ -28,10 +28,10 @@ export class ShouldSaveSettingsPromptStep extends AzureWizardPromptStep<IDeployW
             dontSaveItem
         );
 
-        context.shouldSaveWorkspaceSettings = userResponse === saveItem;
+        context.shouldSaveDeploySettings = userResponse === saveItem;
     }
 
     public shouldPrompt(context: IDeployWorkspaceProjectContext): boolean {
-        return context.shouldSaveWorkspaceSettings === undefined;
+        return context.shouldSaveDeploySettings === undefined;
     }
 }

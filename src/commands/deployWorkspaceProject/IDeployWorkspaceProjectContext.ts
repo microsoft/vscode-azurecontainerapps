@@ -11,5 +11,5 @@ import { CreateAcrContext } from "../deployImage/imageSource/containerRegistry/a
 
 // Purposefully using intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by using the 'Partial' utility
 export type IDeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContainerAppContext & CreateAcrContext & Partial<IBuildImageInAzureContext> & ExecuteActivityContext & {
-    shouldSaveWorkspaceSettings?: boolean;
+    shouldSaveDeploySettings?: boolean;
 };

@@ -38,12 +38,12 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
 
                 await AzExtFsExtra.writeFile(settingsPath, JSON.stringify(settings, undefined, 4));
             },
-            context, this.success, this.fail, { shouldSwallowError: true /** Not worth failing the entire command over this */ }
-        )
+            context, this.success, this.fail, { shouldSwallowError: true /** On fail, don't show a fail on the entire command */ }
+        );
     }
 
     public shouldExecute(context: IDeployWorkspaceProjectContext): boolean {
-        return !!context.shouldSaveWorkspaceSettings;
+        return !!context.shouldSaveDeploySettings;
     }
 
     private initSuccessOutput(): void {

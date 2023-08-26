@@ -40,10 +40,11 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
 
     // Strategy 2: Try finding the most used managed environment resources (Azure CLI strategy)
     const { managedEnvironment: mostUsedManagedEnvironment, resourceGroup: mostUsedEnvironmentResourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
-
-    resourceGroup = mostUsedEnvironmentResourceGroup;
-    managedEnvironment = mostUsedManagedEnvironment;
-    containerApp = undefined;
+    if (mostUsedManagedEnvironment) {
+        resourceGroup = mostUsedEnvironmentResourceGroup;
+        managedEnvironment = mostUsedManagedEnvironment;
+        containerApp = undefined;
+    }
 
     if (managedEnvironment) {
         ext.outputChannel.appendLog(localize('locatedFrequentlyUsedResources', 'Located most frequently used container app environment resources.'));
