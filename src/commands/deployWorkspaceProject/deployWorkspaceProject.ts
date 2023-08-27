@@ -18,8 +18,6 @@ import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/Manage
 import { ContainerAppOverwriteConfirmStep } from "../deployImage/ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "../deployImage/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
-import { RegistryEnableAdminUserStep } from "../deployImage/imageSource/containerRegistry/acr/RegistryEnableAdminUserStep";
-import { RegistryCreateStep } from "../deployImage/imageSource/containerRegistry/acr/createAcr/RegistryCreateStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
@@ -55,7 +53,6 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const promptSteps: AzureWizardPromptStep<IDeployWorkspaceProjectContext>[] = [
         new DeployWorkspaceProjectConfirmStep(),
-        new ShouldSaveDeploySettingsPromptStep(),
         new DefaultResourcesNameStep()
     ];
 
@@ -116,8 +113,6 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     // Azure Container Registry
     if (wizardContext.registry) {
-        promptSteps.push(new RegistryEnableAdminUserStep());
-
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingAcr', activitySuccessContext]),
@@ -126,9 +121,9 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
             })
         );
 
-        ext.outputChannel.appendLog(localize('usingAcr', 'Using container registry "{0}".', wizardContext.registry.name));
+        ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', wizardContext.registry.name));
     } else {
-        executeSteps.push(new RegistryCreateStep());
+        // ImageSourceListStep can already handle this creation logic
     }
 
     // Container App
@@ -159,6 +154,9 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     // Verify Providers
     executeSteps.push(new VerifyProvidersStep(providers));
+
+    // Save deploy settings
+    promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
 
     const wizard: AzureWizard<IDeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
         title: localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),

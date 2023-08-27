@@ -57,7 +57,7 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDe
         let confirmMessage: string | undefined;
         if (resourcesToCreate.length) {
             confirmMessage = localize('resourceCreationConfirm',
-                'To deploy your new workspace project to a container app, the following resources will need to be created: "{0}".',
+                'To deploy your workspace project, the following resources will be created: "{0}".',
                 resourcesToCreate.join(', ')
             );
         } else {

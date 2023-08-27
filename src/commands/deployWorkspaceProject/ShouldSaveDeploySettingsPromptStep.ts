@@ -22,7 +22,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<ID
         const dontSaveItem = { title: localize('save', 'Don\'t Save...') };
 
         const userResponse = await context.ui.showWarningMessage(
-            localize('saveWorkspaceSettings', `New deployment settings detected. \nWould you like to ${saveOrOverwrite} your deployment configuration in local project settings?`),
+            localize('saveWorkspaceSettings', `Would you like to ${saveOrOverwrite.toLowerCase()} your deployment configuration in local project settings?`),
             { modal: true },
             saveItem,
             dontSaveItem

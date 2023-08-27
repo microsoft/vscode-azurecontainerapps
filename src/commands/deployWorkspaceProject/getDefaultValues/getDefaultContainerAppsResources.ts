@@ -7,13 +7,12 @@ import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure
 import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { WorkspaceFolder } from "vscode";
 import { fullRelativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "../getContainerAppDeployWorkspaceSettings";
+import { IDeployWorkspaceProjectSettings } from "../getContainerAppDeployWorkspaceSettings";
 import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
 
 interface DefaultContainerAppsResources {
@@ -22,14 +21,14 @@ interface DefaultContainerAppsResources {
     containerApp?: ContainerAppModel;
 }
 
-export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder): Promise<DefaultContainerAppsResources> {
+export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, settings: IDeployWorkspaceProjectSettings | undefined): Promise<DefaultContainerAppsResources> {
     // For testing creation of resources
     // const resourceGroup = undefined;
     // const managedEnvironment = undefined;
     // const containerApp = undefined;
 
     // Strategy 1: See if there is a local workspace configuration to leverage
-    let { resourceGroup, managedEnvironment, containerApp } = await getContainerAppWorkspaceSettingResources(context, rootFolder);
+    let { resourceGroup, managedEnvironment, containerApp } = await getContainerAppWorkspaceSettingResources(context, settings);
     if (containerApp) {
         return {
             resourceGroup,
@@ -59,8 +58,7 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
     };
 }
 
-async function getContainerAppWorkspaceSettingResources(context: ISubscriptionActionContext, rootFolder: WorkspaceFolder): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
-    const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
+async function getContainerAppWorkspaceSettingResources(context: ISubscriptionActionContext, settings: IDeployWorkspaceProjectSettings | undefined): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
     const noResourceMatch = {
         resourceGroup: undefined,
         managedEnvironment: undefined,
@@ -68,7 +66,7 @@ async function getContainerAppWorkspaceSettingResources(context: ISubscriptionAc
     };
 
     if (!settings) {
-        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no local workspace resource settings at "{0}".', fullRelativeSettingsFilePath));
+        // We already output a message to user about missing settings, no need to do so again
         return noResourceMatch;
     } else if (!settings.containerAppResourceGroupName || !settings.containerAppName) {
         ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete container app resource settings at "{0}".', fullRelativeSettingsFilePath));
