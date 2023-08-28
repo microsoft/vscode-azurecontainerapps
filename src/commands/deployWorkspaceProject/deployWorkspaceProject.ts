@@ -6,7 +6,7 @@
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ProgressLocation, ThemeColor, ThemeIcon, window } from "vscode";
+import { ProgressLocation, window } from "vscode";
 import { activitySuccessContext, activitySuccessIcon, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityChildContext, createActivityContext } from "../../utils/activityUtils";
@@ -136,7 +136,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingContainerApp', activitySuccessContext]),
                 label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
-                iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                iconPath: activitySuccessIcon
             })
         );
 

@@ -22,35 +22,11 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDe
             resourcesToCreate.push('container app environment');
         }
 
-        if (context.registry) {
-            if (settings?.acrName !== context.registry.name) {
-                // Edge-case
-                await context.ui.showWarningMessage(
-                    localize('detectedExistingRegistry',
-                        'Detected a registry with name matching the local workspace "{0}". \n\nContinuing means the latest image in this registry will be overwritten.',
-                        context.registry.name
-                    ),
-                    { modal: true },
-                    { title: localize('continue', 'Continue') }
-                );
-            }
-        } else {
+        if (!context.registry) {
             resourcesToCreate.push('container registry');
         }
 
-        if (context.containerApp) {
-            if (settings?.containerAppName !== context.containerApp.name) {
-                // Edge-case
-                await context.ui.showWarningMessage(
-                    localize('detectedExistingContainerApp',
-                        'Detected a container app with name matching the local workspace "{0}". \n\nContinuing means the latest deployment of this container app will be overwritten.',
-                        context.containerApp.name
-                    ),
-                    { modal: true },
-                    { title: localize('continue', 'Continue') }
-                );
-            }
-        } else {
+        if (!context.containerApp) {
             resourcesToCreate.push('container app');
         }
 

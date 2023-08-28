@@ -4,8 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzExtFsExtra, GenericTreeItem } from '@microsoft/vscode-azext-utils';
-import { ThemeColor, ThemeIcon } from 'vscode';
-import { activitySuccessContext } from '../../constants';
+import { activitySuccessContext, activitySuccessIcon } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { createActivityChildContext } from '../../utils/activityUtils';
 import { localize } from '../../utils/localize';
@@ -40,7 +39,7 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
                 label: context.enableIngress ?
                     localize('ingressEnableLabel', 'Enable ingress on port {0} (found Dockerfile configuration)', context.targetPort) :
                     localize('ingressDisableLabel', 'Disable ingress (found Dockerfile configuration)'),
-                iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                iconPath: activitySuccessIcon
             })
         );
     }

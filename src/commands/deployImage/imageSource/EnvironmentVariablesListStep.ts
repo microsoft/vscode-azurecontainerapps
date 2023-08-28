@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
-import { parse } from "dotenv";
-import { ThemeColor, ThemeIcon, Uri, workspace } from "vscode";
-import { ImageSource, activitySuccessContext } from "../../../constants";
+import { DotenvParseOutput, parse } from "dotenv";
+import { Uri, workspace } from "vscode";
+import { ImageSource, activitySuccessContext, activitySuccessIcon } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -19,19 +19,15 @@ enum SetEnvironmentVariableOption {
     ProvideFile = 'provideFile'
 }
 
-const skipForNowLabel: string = localize('skipForNow', '$(clock) Skip for now');
 const allEnvFilesGlobPattern: string = '**/*.{env,env.*}';
 
 export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
     public async prompt(context: ImageSourceBaseContext): Promise<void> {
-        const input = await context.ui.showQuickPick([{ label: localize('set', 'Set with environment variable file') }, { label: skipForNowLabel }],
-            { placeHolder: localize('setEnvVar', 'Set environment variables in container instance') });
-
-        if (input.label === skipForNowLabel) {
+        const envData: DotenvParseOutput | undefined = await this.selectEnvironmentSettings(context);
+        if (!envData) {
             context.environmentVariables = [];
             this.outputLogs(context, SetEnvironmentVariableOption.SkipForNow);
         } else {
-            const envData = await this.selectEnvironmentSettings(context);
             context.environmentVariables = Object.keys(envData).map(name => { return { name, value: envData[name] } });
             this.outputLogs(context, SetEnvironmentVariableOption.ProvideFile);
         }
@@ -47,8 +43,15 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
         return context.imageSource !== ImageSource.QuickStartImage && context.environmentVariables === undefined;
     }
 
-    private async selectEnvironmentSettings(context: ImageSourceBaseContext) {
-        const envFileFsPath: string = await selectWorkspaceFile(context, 'Select a .env file', { filters: { 'env file': ['env', 'env.*'] } }, allEnvFilesGlobPattern);
+    private async selectEnvironmentSettings(context: ImageSourceBaseContext): Promise<DotenvParseOutput | undefined> {
+        const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
+        const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvFilesGlobPattern);
+
+        if (!envFileFsPath) {
+            return undefined;
+        }
+
         const data = await AzExtFsExtra.readFile(envFileFsPath);
         return parse(data);
     }
@@ -68,7 +71,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
                     ),
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                    iconPath: activitySuccessIcon
                 })
             );
 
@@ -83,7 +86,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
                 new GenericTreeItem(undefined, {
                     contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('configureEnvVarsLabel', 'Configure environment variables for the container app'),
-                    iconPath: new ThemeIcon('pass', new ThemeColor('testing.iconPassed'))
+                    iconPath: activitySuccessIcon
                 })
             );
 
