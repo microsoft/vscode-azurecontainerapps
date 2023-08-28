@@ -8,6 +8,7 @@ import * as path from "path";
 import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
 import { localize } from "./localize";
 
+export const browseItem: IAzureQuickPickItem<undefined> = { label: `$(file-directory) ${localize('browse', 'Browse...')}`, description: '', data: undefined };
 
 /**
  * Opens a quick pick menu with files matching the file extension filters provided, otherwise shows files in the current workspace.
@@ -30,7 +31,7 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
             };
         }));
 
-        quickPicks.push({ label: `$(file-directory) ${localize('browse', 'Browse...')}`, description: '', data: undefined });
+        quickPicks.push(browseItem);
 
         if (options.allowSkip) {
             quickPicks.push({

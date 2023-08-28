@@ -20,14 +20,12 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
             asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();
 
-        const registryName: string = resourceBaseName.replace(/[^a-zA-Z0-9]+/g, '');
-
         // Set default names
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
-        !context.registry && (context.newRegistryName = registryName);
+        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-zA-Z0-9]+/g, ''));
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
-        context.imageName = `${registryName}:latest`;
+        context.imageName = `${resourceBaseName}:latest`;
     }
 
     public shouldPrompt(context: IDeployWorkspaceProjectContext): boolean {
@@ -40,7 +38,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
         // No symbols are allowed for ACR - we will strip out the symbols from the base name, but need to make this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-zA-Z0-9]+/g, '');
         if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
-            return localize('invalidLength', 'The alphanumeric portions of the name should total to at least 5 characters while not exceeding 20 characters.');
+            return localize('invalidLength', 'The alphanumeric portion of the name should total to at least 5 characters while not exceeding 20 characters.');
         }
 
         if (!validateUtils.isLowerCaseAlphanumericWithSymbols(name)) {

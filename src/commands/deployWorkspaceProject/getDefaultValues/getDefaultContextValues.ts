@@ -17,7 +17,7 @@ import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResou
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<IDeployWorkspaceProjectContext>> {
-    const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths();
+    const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
 
     const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
     if (!settings) {
