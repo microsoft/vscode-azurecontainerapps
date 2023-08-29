@@ -5,6 +5,7 @@
 
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { ProgressLocation, window } from "vscode";
 import { localize } from "../../utils/localize";
 import { validateUtils } from "../../utils/validateUtils";
 import { ContainerAppNameStep } from "../createContainerApp/ContainerAppNameStep";
@@ -35,7 +36,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
     private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
-        // No symbols are allowed for ACR - we will strip out the symbols from the base name, but need to make this version has an appropriate length
+        // No symbols are allowed for ACR - we will strip out the symbols from the base name, but need ensure this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-zA-Z0-9]+/g, '');
         if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
             return localize('invalidLength', 'The alphanumeric portion of the name should total to at least 5 characters while not exceeding 20 characters.');
@@ -51,12 +52,18 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
     private async validateNameAvailable(context: IDeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
         name = name.trim();
 
-        const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
-        const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
-        const registryAvailable: boolean = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
-        const containerAppAvailable: boolean = await ContainerAppNameStep.isNameAvailable(context, name, name);
+        return await window.withProgress({
+            location: ProgressLocation.Notification,
+            cancellable: false,
+            title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
+        }, async () => {
+            const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
+            const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
+            const registryAvailable: boolean = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
+            const containerAppAvailable: boolean = await ContainerAppNameStep.isNameAvailable(context, name, name);
 
-        return (resourceGroupAvailable && managedEnvironmentAvailable && registryAvailable && containerAppAvailable) ?
-            undefined : localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
+            return (resourceGroupAvailable && managedEnvironmentAvailable && registryAvailable && containerAppAvailable) ?
+                undefined : localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
+        });
     }
 }

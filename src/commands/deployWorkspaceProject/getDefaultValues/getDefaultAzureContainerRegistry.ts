@@ -5,11 +5,11 @@
 
 import { Registry } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { fullRelativeSettingsFilePath } from "../../../constants";
+import { relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
-import { IDeployWorkspaceProjectSettings } from "../getContainerAppDeployWorkspaceSettings";
+import { IDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 
 interface DefaultRegistryResources {
     registry?: Registry;
@@ -20,16 +20,15 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
     const registries: Registry[] = await AcrListStep.getRegistries(context);
     const noMatchingResource = { registry: undefined };
 
-    // See if there is a local workspace configuration to leverage
     if (!settings) {
-        // We already output a message to user about missing settings, no need to do so again
+        // No need to output a no settings message again
         return noMatchingResource;
-    } else if (!settings.acrName) {
-        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete Azure Container Registry settings at "{0}".', fullRelativeSettingsFilePath));
+    } else if (!settings.containerRegistryName) {
+        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete Azure Container Registry settings at "{0}".', relativeSettingsFilePath));
         return noMatchingResource;
     }
 
-    const savedRegistry: Registry | undefined = registries.find(r => r.name === settings.acrName);
+    const savedRegistry: Registry | undefined = registries.find(r => r.name === settings.containerRegistryName);
     if (savedRegistry) {
         ext.outputChannel.appendLog(localize('foundResourceMatch', 'Used saved workspace settings and found an existing container registry.'));
         return {
@@ -37,7 +36,7 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
             imageName: `${settings.containerAppName || savedRegistry.name}:latest`
         };
     } else {
-        ext.outputChannel.appendLog(localize('noResourceMatch', 'Used saved workspace settings to search for Azure Container Registry "{0}" but found no match.', settings.acrName));
+        ext.outputChannel.appendLog(localize('noResourceMatch', 'Used saved workspace settings to search for Azure Container Registry "{0}" but found no match.', settings.containerRegistryName));
         return noMatchingResource;
     }
 }

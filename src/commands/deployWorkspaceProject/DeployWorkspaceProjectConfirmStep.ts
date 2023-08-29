@@ -6,11 +6,11 @@
 import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "./getContainerAppDeployWorkspaceSettings";
+import { IDeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
     public async prompt(context: IDeployWorkspaceProjectContext): Promise<void> {
-        const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(nonNullProp(context, 'rootFolder'));
+        const settings: IDeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
 
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
@@ -43,7 +43,7 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDe
                     context.containerApp?.name
                 );
             }
-            if (context.registry && settings?.acrName === context.registry.name) {
+            if (context.registry && settings?.containerRegistryName === context.registry.name) {
                 confirmMessage = confirmMessage ?
                     confirmMessage + localize('addRegistryConfirm', ' and the latest image of registry "{0}"', context.registry?.name) :
                     localize('registryConfirm', 'The latest image of registry "{0}"', context.registry?.name);

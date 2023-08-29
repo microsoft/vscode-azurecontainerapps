@@ -468,11 +468,6 @@
             {
                 "title": "Azure Container Apps",
                 "properties": {
-                    "containerApps.enableOutputTimestamps": {
-                        "type": "boolean",
-                        "description": "%containerApps.enableOutputTimestamps%",
-                        "default": true
-                    },
                     "containerApps.deleteConfirmation": {
                         "type": "string",
                         "enum": [
@@ -485,6 +480,23 @@
                             "%containerApps.deleteConfirmation.ClickButton%"
                         ],
                         "default": "EnterName"
+                    },
+                    "containerApps.deployWorkspaceProject.containerRegistryName": {
+                        "type": "string",
+                        "description": "%containerApps.deployWorkspaceProject.containerRegistryName%"
+                    },
+                    "containerApps.deployWorkspaceProject.containerAppName": {
+                        "type": "string",
+                        "description": "%containerApps.deployWorkspaceProject.containerAppName%"
+                    },
+                    "containerApps.deployWorkspaceProject.containerAppResourceGroupName": {
+                        "type": "string",
+                        "description": "%containerApps.deployWorkspaceProject.containerAppResourceGroupName%"
+                    },
+                    "containerApps.enableOutputTimestamps": {
+                        "type": "boolean",
+                        "description": "%containerApps.enableOutputTimestamps%",
+                        "default": true
                     }
                 }
             }

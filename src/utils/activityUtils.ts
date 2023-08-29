@@ -7,7 +7,7 @@ import { AzExtTreeItem, ExecuteActivityContext, IActionContext, createContextVal
 import type { AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-azext-utils/activity";
 import { randomUUID } from "crypto";
 import { ext } from "../extensionVariables";
-import { settingUtils } from "../utils/settingUtils";
+import { settingUtils } from "./settingUtils";
 
 export async function createActivityContext(): Promise<ExecuteActivityContext> {
     return {

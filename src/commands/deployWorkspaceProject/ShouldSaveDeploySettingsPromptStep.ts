@@ -6,13 +6,13 @@
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "./getContainerAppDeployWorkspaceSettings";
+import { IDeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
     public async prompt(context: IDeployWorkspaceProjectContext): Promise<void> {
-        const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(nonNullProp(context, 'rootFolder'));
+        const settings: IDeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
 
-        if (context.registry && settings?.acrName === context.registry.name && context.containerApp && settings?.containerAppName === context.containerApp.name) {
+        if (context.registry && settings?.containerRegistryName === context.registry.name && context.containerApp && settings?.containerAppName === context.containerApp.name) {
             // No new changes to save
             return;
         }

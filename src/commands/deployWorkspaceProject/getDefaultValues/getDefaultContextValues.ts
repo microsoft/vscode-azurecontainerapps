@@ -5,13 +5,13 @@
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource, fullRelativeSettingsFilePath } from "../../../constants";
+import { ImageSource, relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../deployImage/imageSource/buildImageInAzure/OSPickStep";
 import { IDeployWorkspaceProjectContext } from "../IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings, getContainerAppDeployWorkspaceSettings } from "../getContainerAppDeployWorkspaceSettings";
+import { IDeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAzureContainerRegistry } from "./getDefaultAzureContainerRegistry";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
@@ -19,9 +19,9 @@ import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<IDeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
 
-    const settings: IDeployWorkspaceProjectSettings | undefined = await getContainerAppDeployWorkspaceSettings(rootFolder);
+    const settings: IDeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(rootFolder);
     if (!settings) {
-        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no local workspace resource settings at "{0}".', fullRelativeSettingsFilePath));
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
     }
 
     return {
@@ -35,3 +35,5 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
         rootFolder,
     };
 }
+
+

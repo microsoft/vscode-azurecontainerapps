@@ -71,8 +71,8 @@ export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', dat
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const vscodeFolder: string = '.vscode';
-export const containerAppSettingsFile: string = 'containerApp.settings.json';
-export const fullRelativeSettingsFilePath: string = `${vscodeFolder}/${containerAppSettingsFile}`;
+export const settingsFile: string = 'settings.json';
+export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}`;
 
 
 export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));

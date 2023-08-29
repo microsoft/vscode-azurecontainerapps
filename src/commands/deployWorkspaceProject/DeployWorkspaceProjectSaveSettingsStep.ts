@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import * as path from "path";
+import { AzureWizardExecuteStep, GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppSettingsFile, fullRelativeSettingsFilePath, vscodeFolder } from "../../constants";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, relativeSettingsFilePath } from "../../constants";
 import { ExecuteActivityOutput, createActivityChildContext, tryCatchActivityWrapper } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings } from "./getContainerAppDeployWorkspaceSettings";
+import { IDeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
-const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', fullRelativeSettingsFilePath);
+const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
 
 export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteStep<IDeployWorkspaceProjectContext> {
     public priority: number = 1480;
@@ -27,16 +26,13 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
             async () => {
                 progress.report({ message: localize('saving', 'Saving configuration...') });
 
-                const rootPath: string = nonNullValueAndProp(context.rootFolder?.uri, 'path');
-                const settingsPath: string = path.join(rootPath, vscodeFolder, containerAppSettingsFile);
-
                 const settings: IDeployWorkspaceProjectSettings = {
                     containerAppResourceGroupName: nonNullValueAndProp(context.resourceGroup, 'name'),
                     containerAppName: nonNullValueAndProp(context.containerApp, 'name'),
-                    acrName: nonNullValueAndProp(context.registry, 'name')
+                    containerRegistryName: nonNullValueAndProp(context.registry, 'name')
                 }
 
-                await AzExtFsExtra.writeFile(settingsPath, JSON.stringify(settings, undefined, 4));
+                await setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settings);
             },
             context, this.success, this.fail, { shouldSwallowError: true /** On fail, don't show a fail on the entire command */ }
         );
@@ -52,7 +48,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
             label: saveSettingsLabel,
             iconPath: activitySuccessIcon
         });
-        this.success.output = localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}"', fullRelativeSettingsFilePath);
+        this.success.output = localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}".', relativeSettingsFilePath);
     }
 
     private initFailOutput(): void {
@@ -61,6 +57,6 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
             label: saveSettingsLabel,
             iconPath: activityFailIcon
         });
-        this.fail.output = localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}"', fullRelativeSettingsFilePath);
+        this.fail.output = localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}".', relativeSettingsFilePath);
     }
 }
