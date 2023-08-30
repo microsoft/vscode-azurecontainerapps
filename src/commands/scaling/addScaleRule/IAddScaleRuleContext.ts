@@ -11,6 +11,10 @@ import type { IContainerAppContext } from "../../IContainerAppContext";
 export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActivityContext {
     // Make containerApp _required_
     containerApp: ContainerAppModel;
+
+    /**
+     * The name of the parent resource (`ContainerAppModel | Revision`)
+     */
     parentResourceName: string;
 
     // Base Rule Properties

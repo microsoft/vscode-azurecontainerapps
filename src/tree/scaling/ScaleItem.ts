@@ -77,7 +77,7 @@ export class ScaleItem extends RevisionDraftDescendantBase {
                 contextValue: minMaxReplicaItemContextValue,
                 iconPath: new ThemeIcon('dash'),
             }),
-            new ScaleRuleGroupItem(this.subscription, this.containerApp, this.revision),
+            RevisionDraftDescendantBase.createTreeItem(ScaleRuleGroupItem, this.subscription, this.containerApp, this.revision)
         ];
     }
 

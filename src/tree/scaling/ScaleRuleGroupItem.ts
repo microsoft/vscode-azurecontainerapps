@@ -65,7 +65,7 @@ export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
     }
 
     getChildren(): TreeElementBase[] {
-        return this.scaleRules.map(scaleRule => new ScaleRuleItem(this.subscription, this.containerApp, this.revision, scaleRule, this.hasUnsavedChanges())) ?? [];
+        return this.scaleRules.map(scaleRule => RevisionDraftDescendantBase.createTreeItem(ScaleRuleItem, this.subscription, this.containerApp, this.revision, scaleRule, this.hasUnsavedChanges())) ?? [];
     }
 
     hasUnsavedChanges(): boolean {
