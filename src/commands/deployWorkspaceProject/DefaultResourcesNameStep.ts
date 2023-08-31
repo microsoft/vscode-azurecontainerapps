@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { validateUtils } from "../../utils/validateUtils";
 import { ContainerAppNameStep } from "../createContainerApp/ContainerAppNameStep";
@@ -15,10 +16,15 @@ import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext
 
 export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
     public async prompt(context: IDeployWorkspaceProjectContext): Promise<void> {
+        ext.outputChannel.appendLog(localize('resourceNameUnavailable',
+            'Warning: Some container app resources matching the workspace name "{0}" were invalid or unavailable.',
+            context.rootFolder?.name.replace(/[^a-zA-Z0-9]+/g, ''))
+        );
+
         const resourceBaseName: string = (await context.ui.showInputBox({
-            prompt: localize('resourceBaseNamePrompt', 'Enter a name for the container app resources.'),
+            prompt: localize('resourceBaseNamePrompt', 'Enter a name for new container app resources.'),
             validateInput: this.validateInput,
-            asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
+            asyncValidationTask: (name: string) => this.validateNameAvailability(context, name)
         })).trim();
 
         // Set default names
@@ -27,10 +33,36 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
         !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-zA-Z0-9]+/g, ''));
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
         context.imageName = `${resourceBaseName}:latest`;
+
+        ext.outputChannel.appendLog(localize('usingResourceName', 'User provided resource name "{0}" as the default for resource creation.', resourceBaseName))
+    }
+
+    public async configureBeforePrompt(context: IDeployWorkspaceProjectContext): Promise<void> {
+        const resourceBaseName: string = nonNullValueAndProp(context.rootFolder, 'name').replace(/[^a-zA-Z0-9]+/g, '');
+        if (this.validateInput(resourceBaseName) !== undefined) {
+            return;
+        }
+
+        if (!await areAllResourcesAvailable(context, resourceBaseName)) {
+            return;
+        }
+
+        if (!(context.resourceGroup && context.managedEnvironment && context.registry && context.containerApp)) {
+            ext.outputChannel.appendLog(localize('usingWorkspaceName', 'Using workspace name "{0}" as the default for resource creation.', resourceBaseName))
+        }
+
+        !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
+        !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
+        !context.registry && (context.newRegistryName = resourceBaseName);
+        !context.containerApp && (context.newContainerAppName = resourceBaseName);
+        context.imageName = `${context.containerApp?.name || resourceBaseName}:latest`;
     }
 
     public shouldPrompt(context: IDeployWorkspaceProjectContext): boolean {
-        return !context.resourceGroup || !context.managedEnvironment || !context.registry || !context.containerApp;
+        return (!context.resourceGroup && !context.newResourceGroupName) ||
+            (!context.managedEnvironment && !context.newManagedEnvironmentName) ||
+            (!context.registry && !context.newRegistryName) ||
+            (!context.containerApp && !context.newContainerAppName);
     }
 
     private validateInput(name: string | undefined): string | undefined {
@@ -49,13 +81,13 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
         return undefined;
     }
 
-    private async validateNameAvailable(context: IDeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
+    private async validateNameAvailability(context: IDeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
         name = name.trim();
 
         return await window.withProgress({
             location: ProgressLocation.Notification,
             cancellable: false,
-            title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
+            title: localize('verifyingAvailabilityTitle', 'Verifying resource name "{0}" availability...', name)
         }, async () => {
             const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
             const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
@@ -66,4 +98,26 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
                 undefined : localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
         });
     }
+}
+
+async function areAllResourcesAvailable(context: IDeployWorkspaceProjectContext, resourceName: string): Promise<boolean> {
+    const isAvailable: Record<string, boolean> = {};
+
+    if (context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
+        isAvailable['resourceGroup'] = true;
+    }
+
+    if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
+        isAvailable['managedEnvironment'] = true;
+    }
+
+    if (context.registry || await RegistryNameStep.isNameAvailable(context, resourceName)) {
+        isAvailable['containerRegistry'] = true;
+    }
+
+    if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
+        isAvailable['containerApp'] = true;
+    }
+
+    return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerRegistry'] && isAvailable['containerApp'];
 }

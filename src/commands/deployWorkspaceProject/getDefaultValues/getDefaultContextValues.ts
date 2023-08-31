@@ -22,6 +22,8 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const settings: IDeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(rootFolder);
     if (!settings) {
         ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
+    } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
+        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
     }
 
     return {

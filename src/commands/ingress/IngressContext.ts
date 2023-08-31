@@ -5,6 +5,7 @@
 
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { IContainerAppContext } from "../IContainerAppContext";
+import { IBuildImageInAzureContext } from "../deployImage/imageSource/buildImageInAzure/IBuildImageInAzureContext";
 import type { PortRange } from "./tryConfigureIngressUsingDockerfile";
 
 export interface IngressContext extends IContainerAppContext, ExecuteActivityContext {
@@ -14,7 +15,7 @@ export interface IngressContext extends IContainerAppContext, ExecuteActivityCon
     targetPort?: number;
 
     // For detecting an expose port using a workspace Dockerfile
-    dockerfilePath?: string;
+    dockerfilePath?: IBuildImageInAzureContext['dockerfilePath'];
     dockerfileExposePorts?: PortRange[];
     alwaysPromptIngress?: boolean;
 }

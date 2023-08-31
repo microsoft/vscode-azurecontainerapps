@@ -7,7 +7,6 @@ import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure
 import { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
@@ -65,11 +64,7 @@ async function getContainerAppWorkspaceSettingResources(context: ISubscriptionAc
         containerApp: undefined
     };
 
-    if (!settings) {
-        // No need to output a no settings message again
-        return noResourceMatch;
-    } else if (!settings.containerAppResourceGroupName || !settings.containerAppName) {
-        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
+    if (!settings || !settings.containerAppResourceGroupName || !settings.containerAppName) {
         return noResourceMatch;
     }
 

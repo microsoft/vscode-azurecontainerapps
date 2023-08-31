@@ -3,15 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { IDeployWorkspaceProjectContext } from "./IDeployWorkspaceProjectContext";
-import { IDeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDeployWorkspaceProjectContext> {
     public async prompt(context: IDeployWorkspaceProjectContext): Promise<void> {
-        const settings: IDeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
-
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
             resourcesToCreate.push('resource group');
@@ -31,27 +29,19 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDe
         }
 
         let confirmMessage: string | undefined;
+        let outputMessage: string | undefined;
         if (resourcesToCreate.length) {
             confirmMessage = localize('resourceCreationConfirm',
                 'To deploy your workspace project, the following resources will be created: "{0}".',
                 resourcesToCreate.join(', ')
             );
+            outputMessage = localize('resourceCreationConfirmed',
+                'User confirmed creation for the following resources: "{0}".',
+                resourcesToCreate.join(', ')
+            );
         } else {
-            if (context.containerApp && settings?.containerAppName === context.containerApp.name) {
-                confirmMessage = localize('containerAppConfirm',
-                    'The latest deployment of container app "{0}"',
-                    context.containerApp?.name
-                );
-            }
-            if (context.registry && settings?.containerRegistryName === context.registry.name) {
-                confirmMessage = confirmMessage ?
-                    confirmMessage + localize('addRegistryConfirm', ' and the latest image of registry "{0}"', context.registry?.name) :
-                    localize('registryConfirm', 'The latest image of registry "{0}"', context.registry?.name);
-            }
-
-            if (confirmMessage) {
-                confirmMessage += localize('concludeMessage', ' will be overwritten.');
-            }
+            confirmMessage = localize('overwriteConfirm', 'The latest deployment of container app "{0}" and the latest image of registry "{1}" will be overwritten.', context.containerApp?.name, context.registry?.name);
+            outputMessage = localize('overwriteConfirmed', 'User confirmed overwrite of container app "{0}" and the latest image of registry "{1}".', context.containerApp?.name, context.registry?.name);
         }
 
         await context.ui.showWarningMessage(
@@ -59,6 +49,8 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<IDe
             { modal: true },
             { title: localize('continue', 'Continue') }
         );
+
+        ext.outputChannel.appendLog(outputMessage);
     }
 
     public shouldPrompt(): boolean {

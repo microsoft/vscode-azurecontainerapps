@@ -5,7 +5,6 @@
 
 import { Registry } from "@azure/arm-containerregistry";
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
@@ -20,11 +19,7 @@ export async function getDefaultAzureContainerRegistry(context: ISubscriptionAct
     const registries: Registry[] = await AcrListStep.getRegistries(context);
     const noMatchingResource = { registry: undefined };
 
-    if (!settings) {
-        // No need to output a no settings message again
-        return noMatchingResource;
-    } else if (!settings.containerRegistryName) {
-        ext.outputChannel.appendLog(localize('noResources', 'Scanned and found incomplete Azure Container Registry settings at "{0}".', relativeSettingsFilePath));
+    if (!settings || !settings.containerRegistryName) {
         return noMatchingResource;
     }
 
