@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
+import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, Template } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
@@ -109,6 +109,12 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         }
     }
 
+    static isContainerAppItem(item: unknown): item is ContainerAppItem {
+        return typeof item === 'object' &&
+            typeof (item as ContainerAppItem).contextValue === 'string' &&
+            ContainerAppItem.contextValueRegExp.test((item as ContainerAppItem).contextValue);
+    }
+
     static async List(context: IActionContext, subscription: AzureSubscription, managedEnvironmentId: string): Promise<ContainerAppModel[]> {
         const subContext = createSubscriptionContext(subscription);
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);
@@ -163,8 +169,8 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     hasUnsavedChanges(): boolean {
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
-        if (!this.containerApp.template || !draftTemplate) {
+        const draftTemplate: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+        if (!draftTemplate) {
             return false;
         }
 

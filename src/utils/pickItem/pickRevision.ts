@@ -21,7 +21,7 @@ export function getPickRevisionDraftStep(): AzureWizardPromptStep<QuickPickWizar
     });
 }
 
-function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptStep<QuickPickWizardContext> {
+export function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptStep<QuickPickWizardContext> {
     let revisionFilter: RegExp | undefined;
     if (revisionName) {
         revisionFilter = revisionName instanceof RegExp ? revisionName : new RegExp(revisionName);
@@ -32,24 +32,29 @@ function getPickRevisionStep(revisionName?: string | RegExp): AzureWizardPromptS
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: revisionFilter },
         skipIfOne: true,
+    }, {
+        placeHolder: localize('selectRevisionItem', 'Select a revision'),
+        noPicksMessage: localize('noRevisions', 'Selected container app has no revisions'),
     });
 }
 
-function getPickRevisionsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
+export function getPickRevisionsStep(): AzureWizardPromptStep<QuickPickWizardContext> {
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: RevisionsItem.contextValueRegExp },
         skipIfOne: true,
-    }, {
-        placeHolder: localize('selectRevisionItem', 'Select a revision')
     });
 }
 
 export async function pickRevision(context: IActionContext, startingNode?: ContainerAppItem | RevisionsItem, options?: RevisionPickItemOptions): Promise<RevisionItem> {
     startingNode ??= await pickContainerApp(context);
 
+    if (startingNode.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+        throw new NoResourceFoundError(Object.assign(context, { noItemFoundErrorMessage: localize('singleRevisionModeError', 'Revision items do not exist in single revision mode.') }));
+    }
+
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
 
-    if (startingNode instanceof ContainerAppItem) {
+    if (ContainerAppItem.isContainerAppItem(startingNode)) {
         promptSteps.push(getPickRevisionsStep());
     }
 

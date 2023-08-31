@@ -3,43 +3,84 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { Revision, ScaleRule } from "@azure/arm-appcontainers";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { KnownActiveRevisionsMode, Revision, ScaleRule } from "@azure/arm-appcontainers";
+import type { TreeElementBase } from "@microsoft/vscode-azext-utils";
+import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import * as deepEqual from "deep-eql";
+import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
-import { createScaleRuleItem } from "./ScaleRuleItem";
+import { getParentResource } from "../../utils/revisionDraftUtils";
+import type { ContainerAppModel } from "../ContainerAppItem";
+import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
+import { ScaleRuleItem } from "./ScaleRuleItem";
 
-export interface ScaleRuleGroupItem extends RevisionsItemModel {
-    scaleRules: ScaleRule[];
-}
+const scaleRulesLabel: string = localize('scaleRules', 'Scale Rules');
 
-const scaleRuleGroupItemContextValue: string = 'scaleRuleGroupItem';
+export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
+    static readonly contextValue: string = 'scaleRuleGroupItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ScaleRuleGroupItem.contextValue);
 
-export function createScaleRuleGroupItem(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, scaleRules: ScaleRule[]): ScaleRuleGroupItem {
-    const parentResource = revision.name === containerApp.latestRevisionName ? containerApp : revision;
-    const id = `${parentResource.id}/scalerules`;
+    // Used as the basis for the view; can reflect either the original or the draft changes
+    private scaleRules: ScaleRule[];
 
-    return {
-        id,
-        subscription,
-        containerApp,
-        scaleRules,
-        viewProperties: {
-            data: scaleRules,
-            label: `${parentResource.name} Scale Rules`,
-        },
-        revision,
-        getTreeItem: () => ({
-            id,
-            label: localize('scaleRules', 'Scale Rules'),
+    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
+        super(subscription, containerApp, revision);
+    }
+
+    id: string = `${this.parentResource.id}/scalerules`;
+    label: string;
+
+    // Use getter here because some properties aren't available until after the constructor is run
+    get viewProperties(): ViewPropertiesModel {
+        return {
+            data: this.scaleRules,
+            label: `${this.parentResource.name} ${scaleRulesLabel}`,
+        };
+    }
+
+    private get parentResource(): ContainerAppModel | Revision {
+        return getParentResource(this.containerApp, this.revision);
+    }
+
+    protected setProperties(): void {
+        this.label = scaleRulesLabel;
+        this.scaleRules = this.parentResource.template?.scale?.rules ?? [];
+    }
+
+    protected setDraftProperties(): void {
+        this.label = `${scaleRulesLabel}*`;
+        this.scaleRules = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules ?? [];
+    }
+
+    getTreeItem(): TreeItem {
+        return {
+            id: this.id,
+            label: this.label,
+            contextValue: ScaleRuleGroupItem.contextValue,
             iconPath: new ThemeIcon('symbol-constant'),
-            contextValue: scaleRuleGroupItemContextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }),
-        getChildren: async () => {
-            return scaleRules.map(scaleRule => createScaleRuleItem(subscription, containerApp, revision, scaleRule));
-        },
-    };
+        }
+    }
+
+    getChildren(): TreeElementBase[] {
+        return this.scaleRules.map(scaleRule => RevisionDraftDescendantBase.createTreeItem(ScaleRuleItem, this.subscription, this.containerApp, this.revision, scaleRule, this.hasUnsavedChanges())) ?? [];
+    }
+
+    hasUnsavedChanges(): boolean {
+        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
+            return false;
+        }
+
+        const draftTemplate: ScaleRule[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules;
+        const currentTemplate: ScaleRule[] | undefined = this.parentResource.template?.scale?.rules;
+
+        if (!draftTemplate) {
+            return false;
+        }
+
+        return !deepEqual(currentTemplate, draftTemplate);
+    }
 }

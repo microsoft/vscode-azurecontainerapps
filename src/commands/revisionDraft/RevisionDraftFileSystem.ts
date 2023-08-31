@@ -3,15 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Template } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
-import type { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
-import type { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
+import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../utils/localize";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
@@ -50,23 +49,15 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return this.emitter.event;
     }
 
-    // Create
-    createRevisionDraft(item: ContainerAppItem | RevisionItem | RevisionDraftItem): void {
+    createRevisionDraft(item: ContainerAppItem | RevisionsItemModel): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (this.draftStore.has(uri.path)) {
             return;
         }
 
+        // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
         let file: RevisionDraftFile | undefined;
-        if (item instanceof ContainerAppItem) {
-            /**
-             * Sometimes there are micro-differences present between the latest revision template and the container app template.
-             * They end up being essentially equivalent, but not so equivalent as to always pass a deep copy test (which is how we detect unsaved changes).
-             *
-             * Since only container app template data is shown in single revision mode, and since revision data is not directly present on
-             * the container app tree item without further changes, it is easier to just use the container app template
-             * as the primary source of truth when in single revision mode.
-             */
+        if (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
@@ -78,8 +69,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.fireSoon({ type: FileChangeType.Created, uri });
     }
 
-    // Read
-    parseRevisionDraft<T extends ContainerAppsItem>(item: T): Template | undefined {
+    parseRevisionDraft(item: ContainerAppsItem): Template | undefined {
         const uri: URI = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             return undefined;
@@ -93,12 +83,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return contents ? Buffer.from(contents) : Buffer.from('');
     }
 
-    doesContainerAppsItemHaveRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
+    doesContainerAppsItemHaveRevisionDraft(item: ContainerAppsItem): boolean {
         const uri: Uri = this.buildUriFromItem(item);
         return this.draftStore.has(uri.path);
     }
 
-    getRevisionDraftFile<T extends ContainerAppsItem>(item: T): RevisionDraftFile | undefined {
+    getRevisionDraftFile(item: ContainerAppsItem): RevisionDraftFile | undefined {
         const uri: Uri = this.buildUriFromItem(item);
         return this.draftStore.get(uri.path);
     }
@@ -118,8 +108,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
     }
 
-    // Update
-    async editRevisionDraft(item: ContainerAppItem | RevisionItem | RevisionDraftItem): Promise<void> {
+    async editRevisionDraft(item: ContainerAppItem | RevisionsItemModel): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);
@@ -146,8 +135,17 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         ext.state.notifyChildrenChanged(file.containerAppId);
     }
 
-    // Delete
-    discardRevisionDraft<T extends ContainerAppsItem>(item: T): void {
+    updateRevisionDraftWithTemplate(item: RevisionsItemModel, template: Template): void {
+        const uri: Uri = this.buildUriFromItem(item);
+        if (!this.draftStore.has(uri.path)) {
+            this.createRevisionDraft(item);
+        }
+
+        const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
+        this.writeFile(uri, newContent);
+    }
+
+    discardRevisionDraft(item: ContainerAppsItem): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             return;
@@ -161,8 +159,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.fireSoon({ type: FileChangeType.Deleted, uri });
     }
 
-    // Helper
-    private buildUriFromItem<T extends ContainerAppsItem>(item: T): Uri {
+    private buildUriFromItem(item: ContainerAppsItem): Uri {
         return URI.parse(`${RevisionDraftFileSystem.scheme}:/${item.containerApp.name}.json`);
     }
 

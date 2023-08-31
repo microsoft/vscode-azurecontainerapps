@@ -19,7 +19,7 @@ import { RevisionItem, type RevisionsItemModel } from "./RevisionItem";
 
 // For tree items that depend on the container app's revision draft template
 export interface RevisionsDraftModel {
-    hasUnsavedChanges: () => boolean | Promise<boolean>;
+    hasUnsavedChanges(): boolean | Promise<boolean>;
 }
 
 export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {
@@ -52,8 +52,14 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
         return createContextValue(values);
     }
 
+    static isRevisionDraftItem(item: unknown): item is RevisionDraftItem {
+        return typeof item === 'object' &&
+            (item as RevisionDraftItem).id === 'string' &&
+            (item as RevisionDraftItem).id.split('/').at(-1) === RevisionDraftItem.idSuffix;
+    }
+
     static hasDescendant(item: RevisionsItemModel): boolean {
-        if (item instanceof RevisionDraftItem) {
+        if (RevisionDraftItem.isRevisionDraftItem(item)) {
             return false;
         }
 

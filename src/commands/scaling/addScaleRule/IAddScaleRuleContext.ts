@@ -3,29 +3,32 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Scale, ScaleRule } from "@azure/arm-appcontainers";
+import { ScaleRule } from "@azure/arm-appcontainers";
+import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { IContainerAppContext } from "../../IContainerAppContext";
 
-export interface IAddScaleRuleContext extends IContainerAppContext {
+export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActivityContext {
     // Make containerApp _required_
     containerApp: ContainerAppModel;
 
-    scale: Scale;
-    scaleRules: ScaleRule[];
+    /**
+     * The name of the parent resource (`ContainerAppModel | Revision`)
+     */
+    parentResourceName: string;
 
     // Base Rule Properties
-    ruleName?: string;
-    ruleType?: string;
+    newRuleName?: string;
+    newRuleType?: string;
 
     // HTTP Rule Properties
-    concurrentRequests?: string;
+    newHttpConcurrentRequests?: string;
 
     // Queue Rule Properties
-    queueName?: string;
-    queueLength?: number;
-    secretRef?: string;
-    triggerParameter?: string;
+    newQueueName?: string;
+    newQueueLength?: number;
+    newQueueSecretRef?: string;
+    newQueueTriggerParameter?: string;
 
     scaleRule?: ScaleRule;
 }

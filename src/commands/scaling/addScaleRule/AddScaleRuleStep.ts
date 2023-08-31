@@ -3,55 +3,54 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ScaleRule, Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress, window } from "vscode";
+import { type ScaleRule } from "@azure/arm-appcontainers";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ScaleRuleTypes } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import type { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
+import { getParentResource } from "../../../utils/revisionDraftUtils";
+import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
-export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleContext> {
-    public priority: number = 100;
+export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDraftUpdateBaseStep<T> {
+    public priority: number = 200;
 
-    public async execute(context: IAddScaleRuleContext, _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const adding = localize('addingScaleRule', 'Adding {0} rule "{1}" to "{2}"...', context.ruleType, context.ruleName, context.containerApp.name);
-        const added = localize('addedScaleRule', 'Successfully added {0} rule "{1}" to "{2}".', context.ruleType, context.ruleName, context.containerApp.name);
+    constructor(baseItem: RevisionsItemModel) {
+        super(baseItem);
+    }
 
-        const template: Template = context.containerApp.template || {};
-        template.scale = context.scale || {};
-        template.scale.rules = context.scaleRules || [];
+    public async execute(context: IAddScaleRuleContext): Promise<void> {
+        this.revisionDraftTemplate.scale ||= {};
+        this.revisionDraftTemplate.scale.rules ||= [];
 
-        const scaleRule: ScaleRule = this.buildRule(context);
-        this.integrateRule(context, template.scale.rules, scaleRule);
+        context.scaleRule = this.buildRule(context);
+        this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
+        this.updateRevisionDraftWithTemplate();
 
-        ext.outputChannel.appendLog(adding);
-        await updateContainerApp(context, context.subscription, context.containerApp, { template });
-        context.scaleRule = scaleRule;
-        void window.showInformationMessage(added);
-        ext.outputChannel.appendLog(added);
+        const resourceName = getParentResource(context.containerApp, this.baseItem.revision).name;
+        ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft)', context.newRuleType, context.newRuleName, resourceName));
     }
 
     public shouldExecute(context: IAddScaleRuleContext): boolean {
-        return context.ruleName !== undefined && context.ruleType !== undefined;
+        return !!context.newRuleName && !!context.newRuleType;
     }
 
     private buildRule(context: IAddScaleRuleContext): ScaleRule {
-        const scaleRule: ScaleRule = { name: context.ruleName };
-        switch (context.ruleType) {
+        const scaleRule: ScaleRule = { name: context.newRuleName };
+        switch (context.newRuleType) {
             case ScaleRuleTypes.HTTP:
                 scaleRule.http = {
                     metadata: {
-                        concurrentRequests: nonNullProp(context, 'concurrentRequests')
+                        concurrentRequests: nonNullProp(context, 'newHttpConcurrentRequests')
                     }
                 };
                 break;
             case ScaleRuleTypes.Queue:
                 scaleRule.azureQueue = {
-                    queueName: context.queueName,
-                    queueLength: context.queueLength,
-                    auth: [{ secretRef: context.secretRef, triggerParameter: context.triggerParameter }]
+                    queueName: context.newQueueName,
+                    queueLength: context.newQueueLength,
+                    auth: [{ secretRef: context.newQueueSecretRef, triggerParameter: context.newQueueTriggerParameter }]
                 }
                 break;
             default:
@@ -60,12 +59,12 @@ export class AddScaleRuleStep extends AzureWizardExecuteStep<IAddScaleRuleContex
     }
 
     private integrateRule(context: IAddScaleRuleContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
-        switch (context.ruleType) {
+        switch (context.newRuleType) {
             case ScaleRuleTypes.HTTP:
                 // Portal only allows one HTTP rule per revision
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
-                    scaleRules.splice(idx, 0);
+                    scaleRules.splice(idx, 1);
                 }
                 break;
             case ScaleRuleTypes.Queue:

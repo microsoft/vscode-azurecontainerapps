@@ -6,13 +6,13 @@
 import { IActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
-import { ScaleItem } from "../../tree/scaling/ScaleItem";
+import type { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
+import { pickScale } from "../../utils/pickItem/pickScale";
 import { updateContainerApp } from "../../utils/updateContainerApp";
-import { getContainerAppAndRevision } from "./addScaleRule/addScaleRule";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleItem): Promise<void> {
-    const { containerApp, revision, subscription } = node ?? await getContainerAppAndRevision(context);
+    const { containerApp, revision, subscription } = node ?? await pickScale(context, { autoSelectDraft: true });
 
     const scale = nonNullValue(revision?.template?.scale);
     const prompt: string = localize('editScalingRange', 'Set the range of application replicas that get created in response to a scale rule. Set any range within the minimum of 0 and the maximum of 10 replicas');
