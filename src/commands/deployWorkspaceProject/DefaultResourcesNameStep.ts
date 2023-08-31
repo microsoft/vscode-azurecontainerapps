@@ -43,12 +43,13 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
             return;
         }
 
+        // Verify that we can create all remaining resources with the given resource name
         if (!await areAllResourcesAvailable(context, resourceBaseName)) {
             return;
         }
 
         if (!(context.resourceGroup && context.managedEnvironment && context.registry && context.containerApp)) {
-            ext.outputChannel.appendLog(localize('usingWorkspaceName', 'Using workspace name "{0}" as the default for resource creation.', resourceBaseName))
+            ext.outputChannel.appendLog(localize('usingWorkspaceName', 'Using workspace name "{0}" as the default for remaining resource creation.', resourceBaseName))
         }
 
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
@@ -87,7 +88,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
         return await window.withProgress({
             location: ProgressLocation.Notification,
             cancellable: false,
-            title: localize('verifyingAvailabilityTitle', 'Verifying resource name "{0}" availability...', name)
+            title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
             const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
             const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);

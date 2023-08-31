@@ -24,10 +24,9 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext>
 
         await tryCatchActivityWrapper(
             async () => {
-                const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-
                 progress.report({ message: localize('creatingRegistry', 'Creating registry...') });
 
+                const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
                 context.registry = await client.registries.beginCreateAndWait(
                     nonNullValueAndProp(context.resourceGroup, 'name'),
                     nonNullProp(context, 'newRegistryName'),
