@@ -37,8 +37,19 @@ export namespace settingUtils {
     /**
      * Uses ext.prefix 'containerApps' unless otherwise specified
      */
-    export function getWorkspaceSetting<T>(key: string, fsPath?: string, prefix: string = ext.prefix): T | undefined {
+    export function getWorkspaceSetting<T>(
+        key: string,
+        fsPath?: string,
+        configurationTargetLimit?: ConfigurationTarget,
+        prefix: string = ext.prefix
+    ): T | undefined {
         const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, fsPath ? Uri.file(fsPath) : undefined);
+
+        const configurationLevel: ConfigurationTarget | undefined = getLowestConfigurationLevel(projectConfiguration, key);
+        if (configurationTargetLimit && configurationLevel && (configurationLevel < configurationTargetLimit)) {
+            return undefined;
+        }
+
         return projectConfiguration.get<T>(key);
     }
 
@@ -66,5 +77,20 @@ export namespace settingUtils {
 
     export function getDefaultRootWorkspaceSettingsPath(rootWorkspaceFolder: WorkspaceFolder): string {
         return path.join(rootWorkspaceFolder.uri.path, vscodeFolder, settingsFile);
+    }
+
+    function getLowestConfigurationLevel(projectConfiguration: WorkspaceConfiguration, key: string): ConfigurationTarget | undefined {
+        const configuration = projectConfiguration.inspect(key);
+
+        let lowestLevelConfiguration: ConfigurationTarget | undefined;
+        if (configuration?.workspaceFolderValue !== undefined) {
+            lowestLevelConfiguration = ConfigurationTarget.WorkspaceFolder;
+        } else if (configuration?.workspaceValue !== undefined) {
+            lowestLevelConfiguration = ConfigurationTarget.Workspace;
+        } else if (configuration?.globalValue !== undefined) {
+            lowestLevelConfiguration = ConfigurationTarget.Global;
+        }
+
+        return lowestLevelConfiguration;
     }
 }

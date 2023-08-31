@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WorkspaceFolder } from "vscode";
+import { ConfigurationTarget, WorkspaceFolder } from "vscode";
 import { settingUtils } from "../../utils/settingUtils";
 
 export interface IDeployWorkspaceProjectSettings {
@@ -21,9 +21,9 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 
     try {
-        const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath);
-        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
-        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
+        const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath, ConfigurationTarget.Workspace);
+        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath, ConfigurationTarget.Workspace);
+        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath, ConfigurationTarget.Workspace);
 
         if (containerAppName || containerAppResourceGroupName || containerRegistryName) {
             return {
