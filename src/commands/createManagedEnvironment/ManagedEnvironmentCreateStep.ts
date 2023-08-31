@@ -74,7 +74,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
             label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
             iconPath: activitySuccessIcon
         });
-        this.success.output = localize('createdManagedEnvironmentSuccess', 'Created new container apps environment "{0}".', context.newManagedEnvironmentName);
+        this.success.output = localize('createdManagedEnvironmentSuccess', 'Created container apps environment "{0}".', context.newManagedEnvironmentName);
     }
 
     private initFailOutput(context: IManagedEnvironmentContext): void {
@@ -83,6 +83,6 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
             label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
             iconPath: activityFailIcon
         });
-        this.fail.output = localize('createdManagedEnvironmentFail', 'Failed to create new container apps environment "{0}".', context.newManagedEnvironmentName);
+        this.fail.output = localize('createdManagedEnvironmentFail', 'Failed to create container apps environment "{0}".', context.newManagedEnvironmentName);
     }
 }
