@@ -33,12 +33,11 @@ When creating or updating resources, execute steps should occupy certain priorit
 - RunStep: 440
 - BuildImageStep: 450
 - ContainerRegistryImageConfigureStep: 470
-- ContainerAppUpdateStep: 480 (temporary, only gets called when a container app already exists)
 
 #### Container Registry Steps
 
 - ContainerRegistryImageConfigureStep: 470
-- ContainerAppUpdateStep: 480 (temporary, only gets called when a container app already exists)
+- ContainerAppUpdateStep: 480 (Todo - investigate decoupling this command from imageSource when revision draft update support is added)
 
 ### 4. Environment Variables
 
@@ -66,7 +65,7 @@ Reserved
 
 #### Steps
 
-ContainerAppCreateStep: 750
+- ContainerAppCreateStep: 750
 
 ### 7. Secrets
 
@@ -74,9 +73,9 @@ ContainerAppCreateStep: 750
 
 #### Steps
 
-SecretCreateStep: 820
-SecretDeleteStep: 850
-SecretUpdateStep: 850
+- SecretCreateStep: 820
+- SecretDeleteStep: 850
+- SecretUpdateStep: 850
 
 ### 8. Unallocated Space
 
@@ -84,7 +83,7 @@ SecretUpdateStep: 850
 
 #### Steps
 
-Reserved for future commands TBD.
+- Reserved for future commands TBD.
 
 ### 9. Scaling
 
@@ -92,7 +91,7 @@ Reserved for future commands TBD.
 
 #### Steps
 
-AddScaleRuleStep: 1120
+- AddScaleRuleStep: 1120
 
 ### 10. Unallocated Space
 
@@ -100,7 +99,7 @@ AddScaleRuleStep: 1120
 
 #### Steps
 
-Reserved for future commands TBD.
+- Reserved for future commands TBD.
 
 ### 11. Deploy
 
@@ -108,7 +107,7 @@ Reserved for future commands TBD.
 
 #### Steps
 
-DeployRevisionDraftStep: 1450
+- DeployRevisionDraftStep: 1450
 
 ## II. Delete Steps
 
