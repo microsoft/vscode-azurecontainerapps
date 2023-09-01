@@ -37,6 +37,9 @@ When creating or updating resources, execute steps should occupy certain priorit
 #### Container Registry Steps
 
 - ContainerRegistryImageConfigureStep: 470
+
+#### Common Steps
+
 - ContainerAppUpdateStep: 480 (Todo - investigate decoupling this command from imageSource when revision draft update support is added)
 
 ### 4. Environment Variables
