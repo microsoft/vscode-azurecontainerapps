@@ -12,7 +12,7 @@ import { updateContainerApp } from "../../../utils/updateContainerApp";
 import type { ISecretContext } from "../ISecretContext";
 
 export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
-    public priority: number = 850;
+    public priority: number = 200;
 
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
