@@ -66,7 +66,7 @@ export namespace validateUtils {
      * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
      */
     export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-', canSymbolsRepeat?: boolean): string {
-        const nonConsecutive: string = canSymbolsRepeat ? localize('nonConsecutive', 'non-consecutive ') : '';
+        const nonConsecutive: string = canSymbolsRepeat ? '' : localize('nonConsecutive', 'non-consecutive ');
         return localize('invalidLowerAlphanumericWithSymbols', `A name must consist of lower-case alphanumeric characters or the following {0}symbols: "{1}", and must start and end with a lower case alphanumeric character.`, nonConsecutive, symbols);
     }
 }
