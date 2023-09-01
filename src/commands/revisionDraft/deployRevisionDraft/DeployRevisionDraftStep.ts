@@ -14,7 +14,7 @@ import { updateContainerApp } from "../../../utils/updateContainerApp";
 import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
 
 export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevisionDraftContext> {
-    public priority: number = 260;
+    public priority: number = 1450;
 
     public async execute(context: IDeployRevisionDraftContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');

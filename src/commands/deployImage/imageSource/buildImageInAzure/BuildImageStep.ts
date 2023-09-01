@@ -12,7 +12,7 @@ import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
 export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
-    public priority: number = 225;
+    public priority: number = 450;
 
     public async execute(context: IBuildImageInAzureContext): Promise<void> {
         context.registryDomain = acrDomain;

@@ -11,7 +11,7 @@ import { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 const idPrecision = 6;
 
 export class TarFileStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
-    public priority: number = 150;
+    public priority: number = 420;
 
     public async execute(context: IBuildImageInAzureContext): Promise<void> {
         const id: number = Math.floor(Math.random() * Math.pow(10, idPrecision));
