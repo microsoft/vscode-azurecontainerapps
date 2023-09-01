@@ -29,8 +29,9 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
             return validateUtils.getInvalidLengthMessage();
         }
 
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value, '-' /** symbols */, true /** canSymbolsRepeat */)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage();
+        const symbols: string = '-';
+        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value, symbols, true /** canSymbolsRepeat */)) {
+            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols, true /** canSymbolsRepeat */);
         }
 
         const secrets: Secret[] = context.containerApp?.configuration?.secrets ?? [];
