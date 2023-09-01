@@ -48,6 +48,7 @@ export namespace validateUtils {
      *
      * @param value The original input string to validate
      * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
+     * @param canSymbolsRepeat A boolean specifying whether or not repeating or consecutive symbols are allowed
      *
      * @example
      * "abcd-1234" // returns true
@@ -64,6 +65,7 @@ export namespace validateUtils {
 
     /**
      * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
+     * @param canSymbolsRepeat A boolean specifying whether or not repeating or consecutive symbols are allowed
      */
     export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-', canSymbolsRepeat?: boolean): string {
         const nonConsecutive: string = canSymbolsRepeat ? '' : localize('nonConsecutive', 'non-consecutive ');
