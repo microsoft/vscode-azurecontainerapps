@@ -12,6 +12,7 @@ import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManag
 import { deployImage } from './deployImage/deployImage';
 import { deployImageApi } from './deployImage/deployImageApi';
 import { createAcr } from './deployImage/imageSource/containerRegistry/acr/createAcr/createAcr';
+import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
 import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -51,6 +52,9 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
+
+    // deploy
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
 
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);

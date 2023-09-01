@@ -66,6 +66,7 @@ export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-he
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
+export const browseItem: IAzureQuickPickItem<undefined> = { label: `$(file-directory) ${localize('browse', 'Browse...')}`, description: '', data: undefined };
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
