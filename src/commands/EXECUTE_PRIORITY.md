@@ -77,7 +77,6 @@ Reserved
 #### Steps
 
 - SecretCreateStep: 820
-- SecretDeleteStep: 850
 - SecretUpdateStep: 850
 
 ### 8. Unallocated Space
