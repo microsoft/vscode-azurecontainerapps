@@ -29,7 +29,7 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
             return validateUtils.getInvalidLengthMessage();
         }
 
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value)) {
+        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value, '-' /** symbols */, true /** canSymbolsRepeat */)) {
             return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage();
         }
 

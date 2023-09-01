@@ -53,12 +53,13 @@ export namespace validateUtils {
      * "abcd-1234" // returns true
      * "-abcd-1234" // returns false
      */
-    export function isLowerCaseAlphanumericWithSymbols(value: string, symbols: string = '-'): boolean {
+    export function isLowerCaseAlphanumericWithSymbols(value: string, symbols: string = '-', canSymbolsRepeat?: boolean): boolean {
         // Search through the passed symbols and match any allowed symbols
         // If we find a match, escape the symbol using '\\$&'
         const symbolPattern: string = symbols.replace(new RegExp(allowedSymbols, 'g'), '\\$&');
         const pattern: RegExp = new RegExp(`^[a-z0-9](?:[a-z0-9${symbolPattern}]*[a-z0-9])?$`);
-        return pattern.test(value);
+        const symbolsRepeatPattern: RegExp = new RegExp('[^a-z0-9]{2}', 'g');
+        return pattern.test(value) && (!!canSymbolsRepeat || !symbolsRepeatPattern.test(value));
     }
 
     /**
