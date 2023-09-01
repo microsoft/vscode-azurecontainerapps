@@ -113,4 +113,5 @@ Reserved
 
 ## II. Delete Steps
 
-When deleting, resources typically the priority ranges will change as the dependencies are inverted when compared to the create steps.
+TBD...
+Note: When deleting resources, typically the priority ranges will change as the dependencies are inverted when compared to the create steps.
