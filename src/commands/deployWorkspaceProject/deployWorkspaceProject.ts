@@ -9,6 +9,7 @@ import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activitySuccessContext, activitySuccessIcon, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
@@ -171,10 +172,11 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Deploying workspace project to container app--------', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
     await wizard.execute();
-    ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 
     displayNotification(wizardContext);
     ext.branchDataProvider.refresh();
+
+    ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 }
 
 function displayNotification(context: IDeployWorkspaceProjectContext): void {
@@ -184,11 +186,17 @@ function displayNotification(context: IDeployWorkspaceProjectContext): void {
     const message: string = localize('finishedDeploying', 'Finished deploying workspace project to container app "{0}".', context.containerApp?.name);
     const buttonMessages: string[] = context.targetPort ? [browse, viewOutput] : [viewOutput];
 
+    const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
     void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
         if (result === viewOutput) {
             ext.outputChannel.show();
         } else if (result === browse) {
-            await browseContainerApp(nonNullProp(context, 'containerApp'));
+            await browseContainerApp(containerApp);
         }
     });
+
+    // Provide browse link automatically to output channel
+    if (isIngressEnabled(containerApp)) {
+        ext.outputChannel.appendLog(localize('browseContainerApp', 'Deployed to: {0}', `https://${containerApp.configuration.ingress.fqdn}`));
+    }
 }
