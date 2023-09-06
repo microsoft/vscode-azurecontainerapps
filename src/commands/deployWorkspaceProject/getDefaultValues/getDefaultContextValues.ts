@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { DeployWorkspaceProjectContext } from "../IDeployWorkspaceProjectContext";
+import { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<DeployWorkspaceProjectContext>> {

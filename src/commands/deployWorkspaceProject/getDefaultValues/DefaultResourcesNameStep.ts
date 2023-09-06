@@ -12,7 +12,7 @@ import { validateUtils } from "../../../utils/validateUtils";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { RegistryNameStep } from "../../deployImage/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
-import { DeployWorkspaceProjectContext } from "../IDeployWorkspaceProjectContext";
+import { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 
 export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
@@ -43,7 +43,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         }
 
         // Verify that we can create all remaining resources with the given resource name
-        if (!await areAllResourcesAvailable(context, resourceBaseName)) {
+        if (!await this.areAllResourcesAvailable(context, resourceBaseName)) {
             return;
         }
 
@@ -97,6 +97,28 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
                 undefined : localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
         });
     }
+
+    protected async areAllResourcesAvailable(context: DeployWorkspaceProjectContext, resourceName: string): Promise<boolean> {
+        const isAvailable: Record<string, boolean> = {};
+
+        if (context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
+            isAvailable['resourceGroup'] = true;
+        }
+
+        if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
+            isAvailable['managedEnvironment'] = true;
+        }
+
+        if (context.registry || await RegistryNameStep.isNameAvailable(context, resourceName.replace(/[^a-z0-9]+/g, ''))) {
+            isAvailable['containerRegistry'] = true;
+        }
+
+        if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
+            isAvailable['containerApp'] = true;
+        }
+
+        return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerRegistry'] && isAvailable['containerApp'];
+    }
 }
 
 function cleanResourceName(resourceName: string): string {
@@ -115,26 +137,4 @@ function cleanResourceName(resourceName: string): string {
     }
 
     return cleanedResourceName;
-}
-
-async function areAllResourcesAvailable(context: DeployWorkspaceProjectContext, resourceName: string): Promise<boolean> {
-    const isAvailable: Record<string, boolean> = {};
-
-    if (context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
-        isAvailable['resourceGroup'] = true;
-    }
-
-    if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
-        isAvailable['managedEnvironment'] = true;
-    }
-
-    if (context.registry || await RegistryNameStep.isNameAvailable(context, resourceName.replace(/[^a-z0-9]+/g, ''))) {
-        isAvailable['containerRegistry'] = true;
-    }
-
-    if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
-        isAvailable['containerApp'] = true;
-    }
-
-    return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerRegistry'] && isAvailable['containerApp'];
 }
