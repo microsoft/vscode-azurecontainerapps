@@ -48,13 +48,13 @@ export namespace validateUtils {
      *
      * @param value The original input string to validate
      * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
-     * @param canSymbolsRepeat A boolean specifying whether or not repeating or consecutive symbols are allowed
+     * @param canSymbolsRepeat A boolean specifying whether or not repeating or consecutive symbols are allowed. Defaults to true.
      *
      * @example
      * "abcd-1234" // returns true
      * "-abcd-1234" // returns false
      */
-    export function isLowerCaseAlphanumericWithSymbols(value: string, symbols: string = '-', canSymbolsRepeat?: boolean): boolean {
+    export function isLowerCaseAlphanumericWithSymbols(value: string, symbols: string = '-', canSymbolsRepeat: boolean = true): boolean {
         // Search through the passed symbols and match any allowed symbols
         // If we find a match, escape the symbol using '\\$&'
         const symbolPattern: string = symbols.replace(new RegExp(allowedSymbols, 'g'), '\\$&');
@@ -65,9 +65,9 @@ export namespace validateUtils {
 
     /**
      * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
-     * @param canSymbolsRepeat A boolean specifying whether or not repeating or consecutive symbols are allowed
+     * @param canSymbolsRepeat A boolean specifying whether or not repeating or consecutive symbols are allowed. Defaults to true.
      */
-    export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-', canSymbolsRepeat?: boolean): string {
+    export function getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols: string = '-', canSymbolsRepeat: boolean = true): string {
         const nonConsecutive: string = canSymbolsRepeat ? '' : localize('nonConsecutive', 'non-consecutive ');
         return localize('invalidLowerAlphanumericWithSymbols', `A name must consist of lower-case alphanumeric characters or the following {0}symbols: "{1}", and must start and end with a lower case alphanumeric character.`, nonConsecutive, symbols);
     }
