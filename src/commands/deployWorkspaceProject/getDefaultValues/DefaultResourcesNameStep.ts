@@ -17,7 +17,7 @@ import { DeployWorkspaceProjectContext } from "../IDeployWorkspaceProjectContext
 export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
         ext.outputChannel.appendLog(localize('resourceNameUnavailable',
-            'Warning: Some container app resources matching the workspace name "{0}" were invalid or unavailable.',
+            'Info: Some container app resources matching the workspace name "{0}" were invalid or unavailable.',
             cleanResourceName(nonNullValueAndProp(context.rootFolder, 'name')))
         );
 
@@ -31,7 +31,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
-        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-zA-Z0-9]+/g, ''));
+        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-z0-9]+/g, ''));
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
         context.imageName = `${resourceBaseName}:latest`;
     }
@@ -47,13 +47,13 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             return;
         }
 
-        if (!(context.resourceGroup && context.managedEnvironment && context.registry && context.containerApp)) {
+        if (!context.resourceGroup || !context.managedEnvironment || !context.registry || !context.containerApp) {
             ext.outputChannel.appendLog(localize('usingWorkspaceName', 'Using workspace name "{0}" as the default for remaining resource creation.', resourceBaseName));
         }
 
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
-        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-zA-Z0-9]+/g, ''));
+        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-z0-9]+/g, ''));
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
         context.imageName = `${context.containerApp?.name || resourceBaseName}:latest`;
     }
@@ -66,24 +66,23 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     }
 
     private validateInput(name: string | undefined): string | undefined {
-        name = name ? name.trim() : '';
+        name ??= '';
 
-        // No symbols are allowed for ACR - we will strip out the symbols from the base name, but need ensure this version has an appropriate length
-        const nameWithoutSymbols: string = name.replace(/[^a-zA-Z0-9]+/g, '');
+        // No symbols are allowed for ACR - we will strip out any offending characters from the base name, but still need to ensure this version has an appropriate length
+        const nameWithoutSymbols: string = name.replace(/[^a-z0-9]+/g, '');
         if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
             return localize('invalidLength', 'The alphanumeric portion of the name should total to at least 5 characters while not exceeding 20 characters.');
         }
 
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(name)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage();
+        const symbols: string = '-';
+        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(name, symbols, false /** canSymbolsRepeat */)) {
+            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols);
         }
 
         return undefined;
     }
 
     private async validateNameAvailability(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
-        name = name.trim();
-
         return await window.withProgress({
             location: ProgressLocation.Notification,
             cancellable: false,
@@ -91,7 +90,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         }, async () => {
             const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
             const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
-            const registryAvailable: boolean = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
+            const registryAvailable: boolean = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-z0-9]+/g, ''));
             const containerAppAvailable: boolean = await ContainerAppNameStep.isNameAvailable(context, name, name);
 
             return (resourceGroupAvailable && managedEnvironmentAvailable && registryAvailable && containerAppAvailable) ?
@@ -102,7 +101,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
 function cleanResourceName(resourceName: string): string {
     // Only alphanumeric characters or hyphens
-    let cleanedResourceName: string = resourceName.replace(/[^a-zA-Z0-9-]+/g, '');
+    let cleanedResourceName: string = resourceName.toLowerCase().replace(/[^a-z0-9-]+/g, '');
 
     // Remove any consecutive hyphens
     cleanedResourceName = cleanedResourceName.replace(/-+/g, '-');
@@ -129,7 +128,7 @@ async function areAllResourcesAvailable(context: DeployWorkspaceProjectContext, 
         isAvailable['managedEnvironment'] = true;
     }
 
-    if (context.registry || await RegistryNameStep.isNameAvailable(context, resourceName.replace(/[^a-zA-Z0-9]+/g, ''))) {
+    if (context.registry || await RegistryNameStep.isNameAvailable(context, resourceName.replace(/[^a-z0-9]+/g, ''))) {
         isAvailable['containerRegistry'] = true;
     }
 
