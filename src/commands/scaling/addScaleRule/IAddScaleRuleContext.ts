@@ -7,8 +7,9 @@ import { ScaleRule } from "@azure/arm-appcontainers";
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { IContainerAppContext } from "../../IContainerAppContext";
+import { ISecretContext } from "../../secret/ISecretContext";
 
-export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActivityContext {
+export interface IAddScaleRuleContext extends IContainerAppContext, ISecretContext, ExecuteActivityContext {
     // Make containerApp _required_
     containerApp: ContainerAppModel;
 
@@ -27,7 +28,6 @@ export interface IAddScaleRuleContext extends IContainerAppContext, ExecuteActiv
     // Queue Rule Properties
     newQueueName?: string;
     newQueueLength?: number;
-    newQueueSecretRef?: string;
     newQueueTriggerParameter?: string;
 
     scaleRule?: ScaleRule;
