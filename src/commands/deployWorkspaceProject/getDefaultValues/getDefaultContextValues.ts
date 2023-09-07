@@ -28,5 +28,3 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
         rootFolder,
     };
 }
-
-

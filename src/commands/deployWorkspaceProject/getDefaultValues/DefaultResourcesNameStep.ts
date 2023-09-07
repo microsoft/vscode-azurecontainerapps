@@ -82,7 +82,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         return undefined;
     }
 
-    private async validateNameAvailability(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
+    protected async validateNameAvailability(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
         return await window.withProgress({
             location: ProgressLocation.Notification,
             cancellable: false,
