@@ -43,6 +43,6 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
 export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: IDeployWorkspaceProjectSettings): Promise<void> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
     for (const key of Object.keys(settings)) {
-        await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
+        await settingUtils.updateWorkspaceFolderSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
     }
 }

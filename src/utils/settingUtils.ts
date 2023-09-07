@@ -22,7 +22,15 @@ export namespace settingUtils {
      */
     export async function updateWorkspaceSetting<T = string>(section: string, value: T, fsPath: string, prefix: string = ext.prefix): Promise<void> {
         const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, Uri.file(fsPath));
-        await projectConfiguration.update(section, value);
+        await projectConfiguration.update(section, value, ConfigurationTarget.Workspace);
+    }
+
+    /**
+ * Uses ext.prefix 'containerApps' unless otherwise specified
+ */
+    export async function updateWorkspaceFolderSetting<T = string>(section: string, value: T, fsPath: string, prefix: string = ext.prefix): Promise<void> {
+        const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, Uri.file(fsPath));
+        await projectConfiguration.update(section, value, ConfigurationTarget.WorkspaceFolder);
     }
 
     /**
