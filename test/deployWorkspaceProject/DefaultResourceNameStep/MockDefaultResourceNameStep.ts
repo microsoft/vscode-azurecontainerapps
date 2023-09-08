@@ -8,9 +8,9 @@ import { DefaultResourcesNameStep } from "../../../extension.bundle";
 export interface MockDefaultResourceNameStepContext {
     rootFolder: { name: string };
 
-    resourceGroup?: object;
-    managedEnvironment?: object;
-    registry?: object;
+    resourceGroup?: { name: string };
+    managedEnvironment?: { name: string };
+    registry?: { name: string };
     containerApp?: { name: string };
 
     newResourceGroupName?: string;
@@ -22,7 +22,7 @@ export interface MockDefaultResourceNameStepContext {
 }
 
 export class MockDefaultResourceNameStep extends DefaultResourcesNameStep {
-    constructor(readonly areResourcesAvailable: boolean) {
+    constructor(readonly workspaceNameAvailable: boolean) {
         super();
     }
 
@@ -30,7 +30,7 @@ export class MockDefaultResourceNameStep extends DefaultResourcesNameStep {
         return Promise.resolve(undefined);
     }
 
-    protected areAllResourcesAvailable(): Promise<boolean> {
-        return Promise.resolve(this.areResourcesAvailable);
+    protected isWorkspaceNameAvailable(): Promise<boolean> {
+        return Promise.resolve(this.workspaceNameAvailable);
     }
 }

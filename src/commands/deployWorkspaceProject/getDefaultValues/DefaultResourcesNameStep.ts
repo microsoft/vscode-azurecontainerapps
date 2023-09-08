@@ -18,7 +18,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
         ext.outputChannel.appendLog(localize('resourceNameUnavailable',
             'Info: Some container app resources matching the workspace name "{0}" were invalid or unavailable.',
-            cleanResourceName(nonNullValueAndProp(context.rootFolder, 'name')))
+            cleanWorkspaceName(nonNullValueAndProp(context.rootFolder, 'name')))
         );
 
         const resourceBaseName: string = (await context.ui.showInputBox({
@@ -37,13 +37,12 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     }
 
     public async configureBeforePrompt(context: DeployWorkspaceProjectContext): Promise<void> {
-        const resourceBaseName: string = cleanResourceName(nonNullValueAndProp(context.rootFolder, 'name'));
+        const resourceBaseName: string = cleanWorkspaceName(nonNullValueAndProp(context.rootFolder, 'name'));
         if (this.validateInput(resourceBaseName) !== undefined) {
             return;
         }
 
-        // Verify that we can create all remaining resources with the given resource name
-        if (!await this.areAllResourcesAvailable(context, resourceBaseName)) {
+        if (!await this.isWorkspaceNameAvailable(context, resourceBaseName)) {
             return;
         }
 
@@ -98,22 +97,22 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         });
     }
 
-    protected async areAllResourcesAvailable(context: DeployWorkspaceProjectContext, resourceName: string): Promise<boolean> {
+    protected async isWorkspaceNameAvailable(context: DeployWorkspaceProjectContext, workspaceName: string): Promise<boolean> {
         const isAvailable: Record<string, boolean> = {};
 
-        if (context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, resourceName)) {
+        if (context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, workspaceName)) {
             isAvailable['resourceGroup'] = true;
         }
 
-        if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, resourceName, resourceName)) {
+        if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, workspaceName, workspaceName)) {
             isAvailable['managedEnvironment'] = true;
         }
 
-        if (context.registry || await RegistryNameStep.isNameAvailable(context, resourceName.replace(/[^a-z0-9]+/g, ''))) {
+        if (context.registry || await RegistryNameStep.isNameAvailable(context, workspaceName.replace(/[^a-z0-9]+/g, ''))) {
             isAvailable['containerRegistry'] = true;
         }
 
-        if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, resourceName, resourceName)) {
+        if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, workspaceName, workspaceName)) {
             isAvailable['containerApp'] = true;
         }
 
@@ -121,20 +120,20 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     }
 }
 
-function cleanResourceName(resourceName: string): string {
+export function cleanWorkspaceName(workspaceName: string): string {
     // Only alphanumeric characters or hyphens
-    let cleanedResourceName: string = resourceName.toLowerCase().replace(/[^a-z0-9-]+/g, '');
+    let cleanedWorkspaceName: string = workspaceName.toLowerCase().replace(/[^a-z0-9-]+/g, '');
 
     // Remove any consecutive hyphens
-    cleanedResourceName = cleanedResourceName.replace(/-+/g, '-');
+    cleanedWorkspaceName = cleanedWorkspaceName.replace(/-+/g, '-');
 
     // Remove any leading or ending hyphens
-    if (cleanedResourceName.startsWith('-')) {
-        cleanedResourceName = cleanedResourceName.slice(1);
+    if (cleanedWorkspaceName.startsWith('-')) {
+        cleanedWorkspaceName = cleanedWorkspaceName.slice(1);
     }
-    if (cleanedResourceName.endsWith('-')) {
-        cleanedResourceName = cleanedResourceName.slice(0, -1);
+    if (cleanedWorkspaceName.endsWith('-')) {
+        cleanedWorkspaceName = cleanedWorkspaceName.slice(0, -1);
     }
 
-    return cleanedResourceName;
+    return cleanedWorkspaceName;
 }

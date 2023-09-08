@@ -5,11 +5,44 @@
 
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
-import { DeployWorkspaceProjectContext } from '../../../extension.bundle';
+import { DeployWorkspaceProjectContext, cleanWorkspaceName } from '../../../extension.bundle';
 import { MockDefaultResourceNameStep, MockDefaultResourceNameStepContext } from './MockDefaultResourceNameStep';
 
 suite('DefaultResourceNameStep', async () => {
-    test('Create all resources with valid workspace name', async () => {
+    test('cleanWorkspaceName', async () => {
+        const workspaceNames: string[] = [
+            'my_workspace123',
+            'my--workspace-name---test',
+            '-my_workspace-name-',
+            'My_Workspace_Name-123_Test',
+            'workspace!',
+            'project123@#$%^',
+            'a_b_c-d_e-f',
+            'workspace@name&symbols',
+            'my.workspace',
+            '12345',
+        ];
+
+        const cleanedNames: string[] = [
+            'myworkspace123',
+            'my-workspace-name-test',
+            'myworkspace-name',
+            'myworkspacename-123test',
+            'workspace',
+            'project123',
+            'abc-de-f',
+            'workspacenamesymbols',
+            'myworkspace',
+            '12345',
+        ];
+
+        for (const [i, name] of Object.entries(workspaceNames)) {
+            assert.equal(cleanWorkspaceName(name), cleanedNames[i]);
+        }
+    });
+
+    // No resources exist yet, no naming conflicts
+    test('Create all resources with a valid workspace name', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs([], async () => {
                 const wizardContext: MockDefaultResourceNameStepContext = {
@@ -17,7 +50,7 @@ suite('DefaultResourceNameStep', async () => {
                     rootFolder: { name: 'workspace-name' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, true /** areResourcesAvailable */);
+                await runMockDefaultResourceNameStep(wizardContext, true /** workspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -38,7 +71,8 @@ suite('DefaultResourceNameStep', async () => {
         });
     });
 
-    test('Create all resources without valid workspace name', async () => {
+    // No resources exist yet, naming conflicts
+    test('Create all resources without a valid workspace name', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(['user-name'], async () => {
                 const wizardContext: MockDefaultResourceNameStepContext = {
@@ -46,7 +80,7 @@ suite('DefaultResourceNameStep', async () => {
                     rootFolder: { name: 'workspace-name' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, false /** areResourcesAvailable */);
+                await runMockDefaultResourceNameStep(wizardContext, false /** isWorkspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -68,34 +102,96 @@ suite('DefaultResourceNameStep', async () => {
     });
 
     // Managed environment resources exist, no naming conflicts
-    // No managed environment resources exist, naming conflicts
+    test('Create container app and registry with a valid workspace name', async () => {
+        await runWithTestActionContext('deployWorkspaceProject', async context => {
+            await context.ui.runWithInputs([], async () => {
+                const wizardContext: MockDefaultResourceNameStepContext = {
+                    ...context,
+                    rootFolder: { name: 'workspace-name' },
+                    resourceGroup: { name: 'acr-build-1' },
+                    managedEnvironment: { name: 'acr-build-1' }
+                };
 
+                await runMockDefaultResourceNameStep(wizardContext, true /** workspaceNameAvailable */);
+
+                assert.deepStrictEqual(
+                    {
+                        rootFolder: { name: 'workspace-name' },
+                        resourceGroup: { name: 'acr-build-1' },
+                        managedEnvironment: { name: 'acr-build-1' },
+                        registry: undefined,
+                        containerApp: undefined,
+                        newResourceGroupName: undefined,
+                        newManagedEnvironmentName: undefined,
+                        newRegistryName: 'workspacename',
+                        newContainerAppName: 'workspace-name',
+                        imageName: 'workspace-name:latest'
+                    } as MockDefaultResourceNameStepContext,
+                    getMockResultContext(wizardContext)
+                );
+            });
+        });
+    });
+
+    // No managed environment resources exist, naming conflicts
+    test('Create container app and registry without a valid workspace name', async () => {
+        await runWithTestActionContext('deployWorkspaceProject', async context => {
+            await context.ui.runWithInputs(['user-name'], async () => {
+                const wizardContext: MockDefaultResourceNameStepContext = {
+                    ...context,
+                    rootFolder: { name: 'workspace-name' },
+                    resourceGroup: { name: 'acr-build-1' },
+                    managedEnvironment: { name: 'acr-build-1' }
+                };
+
+                await runMockDefaultResourceNameStep(wizardContext, false /** workspaceNameAvailable */);
+
+                assert.deepStrictEqual(
+                    {
+                        rootFolder: { name: 'workspace-name' },
+                        resourceGroup: { name: 'acr-build-1' },
+                        managedEnvironment: { name: 'acr-build-1' },
+                        registry: undefined,
+                        containerApp: undefined,
+                        newResourceGroupName: undefined,
+                        newManagedEnvironmentName: undefined,
+                        newRegistryName: 'username',
+                        newContainerAppName: 'user-name',
+                        imageName: 'user-name:latest'
+                    } as MockDefaultResourceNameStepContext,
+                    getMockResultContext(wizardContext)
+                );
+            });
+        });
+    });
+
+    // All resources already exist
     test('Re-deploy to existing resources', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs([], async () => {
                 const wizardContext: MockDefaultResourceNameStepContext = {
                     ...context,
                     rootFolder: { name: 'workspace-name' },
-                    resourceGroup: {},
-                    managedEnvironment: {},
-                    registry: {},
-                    containerApp: { name: 'container-app-1' }
+                    resourceGroup: { name: 'acr-build-1' },
+                    managedEnvironment: { name: 'acr-build-1' },
+                    registry: { name: 'acrbuild1' },
+                    containerApp: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, true /** areResourcesAvailable */);
+                await runMockDefaultResourceNameStep(wizardContext, true /** workspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
                         rootFolder: { name: 'workspace-name' },
-                        resourceGroup: {},
-                        managedEnvironment: {},
-                        registry: {},
-                        containerApp: { name: 'container-app-1' },
+                        resourceGroup: { name: 'acr-build-1' },
+                        managedEnvironment: { name: 'acr-build-1' },
+                        registry: { name: 'acrbuild1' },
+                        containerApp: { name: 'acr-build-1' },
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
                         newRegistryName: undefined,
                         newContainerAppName: undefined,
-                        imageName: 'container-app-1:latest'
+                        imageName: 'acr-build-1:latest'
                     } as MockDefaultResourceNameStepContext,
                     getMockResultContext(wizardContext)
                 );
@@ -104,10 +200,8 @@ suite('DefaultResourceNameStep', async () => {
     });
 });
 
-// clean resources workspace name tests
-
-async function runMockDefaultResourceNameStep(context: MockDefaultResourceNameStepContext, areResourcesAvailable: boolean): Promise<void> {
-    const mockDefaultResourceNameStep = new MockDefaultResourceNameStep(areResourcesAvailable);
+async function runMockDefaultResourceNameStep(context: MockDefaultResourceNameStepContext, workspaceNameAvailable: boolean): Promise<void> {
+    const mockDefaultResourceNameStep = new MockDefaultResourceNameStep(workspaceNameAvailable);
     await mockDefaultResourceNameStep.configureBeforePrompt(context as DeployWorkspaceProjectContext);
 
     if (mockDefaultResourceNameStep.shouldPrompt(context as DeployWorkspaceProjectContext)) {
