@@ -52,7 +52,7 @@ suite('DefaultResourcesNameStep', async () => {
                     rootFolder: { name: 'workspace-name' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, true /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, true /** workspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -82,7 +82,7 @@ suite('DefaultResourcesNameStep', async () => {
                     rootFolder: { name: 'workspace-name' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, false /** isWorkspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, false /** isWorkspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -114,7 +114,7 @@ suite('DefaultResourcesNameStep', async () => {
                     managedEnvironment: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, true /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, true /** workspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -146,7 +146,7 @@ suite('DefaultResourcesNameStep', async () => {
                     managedEnvironment: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, false /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, false /** workspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -180,7 +180,7 @@ suite('DefaultResourcesNameStep', async () => {
                     containerApp: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourceNameStep(wizardContext, true /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, true /** workspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -202,12 +202,12 @@ suite('DefaultResourcesNameStep', async () => {
     });
 });
 
-async function runMockDefaultResourceNameStep(context: MockDefaultResourcesNameStepContext, workspaceNameAvailable: boolean): Promise<void> {
-    const mockDefaultResourceNameStep = new MockDefaultResourcesNameStep(workspaceNameAvailable);
-    await mockDefaultResourceNameStep.configureBeforePrompt(context as DeployWorkspaceProjectContext);
+async function runMockDefaultResourcesNameStep(context: MockDefaultResourcesNameStepContext, workspaceNameAvailable: boolean): Promise<void> {
+    const mockDefaultResourcesNameStep = new MockDefaultResourcesNameStep(workspaceNameAvailable);
+    await mockDefaultResourcesNameStep.configureBeforePrompt(context as DeployWorkspaceProjectContext);
 
-    if (mockDefaultResourceNameStep.shouldPrompt(context as DeployWorkspaceProjectContext)) {
-        await mockDefaultResourceNameStep.prompt(context as DeployWorkspaceProjectContext);
+    if (mockDefaultResourcesNameStep.shouldPrompt(context as DeployWorkspaceProjectContext)) {
+        await mockDefaultResourcesNameStep.prompt(context as DeployWorkspaceProjectContext);
     }
 }
 
