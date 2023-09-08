@@ -6,9 +6,9 @@
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import { DeployWorkspaceProjectContext, cleanWorkspaceName } from '../../../extension.bundle';
-import { MockDefaultResourceNameStep, MockDefaultResourceNameStepContext } from './MockDefaultResourceNameStep';
+import { MockDefaultResourcesNameStep, MockDefaultResourcesNameStepContext } from './MockDefaultResourcesNameStep';
 
-suite('DefaultResourceNameStep', async () => {
+suite('DefaultResourcesNameStep', async () => {
     test('cleanWorkspaceName', async () => {
         const workspaceNames: string[] = [
             'my_workspace123',
@@ -45,7 +45,7 @@ suite('DefaultResourceNameStep', async () => {
     test('Create all resources with a valid workspace name', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs([], async () => {
-                const wizardContext: MockDefaultResourceNameStepContext = {
+                const wizardContext: MockDefaultResourcesNameStepContext = {
                     ...context,
                     rootFolder: { name: 'workspace-name' }
                 };
@@ -64,7 +64,7 @@ suite('DefaultResourceNameStep', async () => {
                         newRegistryName: 'workspacename',
                         newContainerAppName: 'workspace-name',
                         imageName: 'workspace-name:latest'
-                    } as MockDefaultResourceNameStepContext,
+                    } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
             });
@@ -75,7 +75,7 @@ suite('DefaultResourceNameStep', async () => {
     test('Create all resources without a valid workspace name', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(['user-name'], async () => {
-                const wizardContext: MockDefaultResourceNameStepContext = {
+                const wizardContext: MockDefaultResourcesNameStepContext = {
                     ...context,
                     rootFolder: { name: 'workspace-name' }
                 };
@@ -94,7 +94,7 @@ suite('DefaultResourceNameStep', async () => {
                         newRegistryName: 'username',
                         newContainerAppName: 'user-name',
                         imageName: 'user-name:latest'
-                    } as MockDefaultResourceNameStepContext,
+                    } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
             });
@@ -105,7 +105,7 @@ suite('DefaultResourceNameStep', async () => {
     test('Create container app and registry with a valid workspace name', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs([], async () => {
-                const wizardContext: MockDefaultResourceNameStepContext = {
+                const wizardContext: MockDefaultResourcesNameStepContext = {
                     ...context,
                     rootFolder: { name: 'workspace-name' },
                     resourceGroup: { name: 'acr-build-1' },
@@ -126,7 +126,7 @@ suite('DefaultResourceNameStep', async () => {
                         newRegistryName: 'workspacename',
                         newContainerAppName: 'workspace-name',
                         imageName: 'workspace-name:latest'
-                    } as MockDefaultResourceNameStepContext,
+                    } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
             });
@@ -137,7 +137,7 @@ suite('DefaultResourceNameStep', async () => {
     test('Create container app and registry without a valid workspace name', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(['user-name'], async () => {
-                const wizardContext: MockDefaultResourceNameStepContext = {
+                const wizardContext: MockDefaultResourcesNameStepContext = {
                     ...context,
                     rootFolder: { name: 'workspace-name' },
                     resourceGroup: { name: 'acr-build-1' },
@@ -158,7 +158,7 @@ suite('DefaultResourceNameStep', async () => {
                         newRegistryName: 'username',
                         newContainerAppName: 'user-name',
                         imageName: 'user-name:latest'
-                    } as MockDefaultResourceNameStepContext,
+                    } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
             });
@@ -169,7 +169,7 @@ suite('DefaultResourceNameStep', async () => {
     test('Re-deploy to existing resources', async () => {
         await runWithTestActionContext('deployWorkspaceProject', async context => {
             await context.ui.runWithInputs([], async () => {
-                const wizardContext: MockDefaultResourceNameStepContext = {
+                const wizardContext: MockDefaultResourcesNameStepContext = {
                     ...context,
                     rootFolder: { name: 'workspace-name' },
                     resourceGroup: { name: 'acr-build-1' },
@@ -192,7 +192,7 @@ suite('DefaultResourceNameStep', async () => {
                         newRegistryName: undefined,
                         newContainerAppName: undefined,
                         imageName: 'acr-build-1:latest'
-                    } as MockDefaultResourceNameStepContext,
+                    } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
             });
@@ -200,8 +200,8 @@ suite('DefaultResourceNameStep', async () => {
     });
 });
 
-async function runMockDefaultResourceNameStep(context: MockDefaultResourceNameStepContext, workspaceNameAvailable: boolean): Promise<void> {
-    const mockDefaultResourceNameStep = new MockDefaultResourceNameStep(workspaceNameAvailable);
+async function runMockDefaultResourceNameStep(context: MockDefaultResourcesNameStepContext, workspaceNameAvailable: boolean): Promise<void> {
+    const mockDefaultResourceNameStep = new MockDefaultResourcesNameStep(workspaceNameAvailable);
     await mockDefaultResourceNameStep.configureBeforePrompt(context as DeployWorkspaceProjectContext);
 
     if (mockDefaultResourceNameStep.shouldPrompt(context as DeployWorkspaceProjectContext)) {
@@ -209,7 +209,7 @@ async function runMockDefaultResourceNameStep(context: MockDefaultResourceNameSt
     }
 }
 
-function getMockResultContext(context: MockDefaultResourceNameStepContext): MockDefaultResourceNameStepContext {
+function getMockResultContext(context: MockDefaultResourcesNameStepContext): MockDefaultResourcesNameStepContext {
     return {
         rootFolder: context.rootFolder,
         resourceGroup: context.resourceGroup,

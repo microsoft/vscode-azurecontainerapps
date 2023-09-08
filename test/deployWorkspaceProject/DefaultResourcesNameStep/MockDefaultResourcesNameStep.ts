@@ -5,7 +5,7 @@
 
 import { DefaultResourcesNameStep } from "../../../extension.bundle";
 
-export interface MockDefaultResourceNameStepContext {
+export interface MockDefaultResourcesNameStepContext {
     rootFolder: { name: string };
 
     resourceGroup?: { name: string };
@@ -21,7 +21,7 @@ export interface MockDefaultResourceNameStepContext {
     imageName?: string;
 }
 
-export class MockDefaultResourceNameStep extends DefaultResourcesNameStep {
+export class MockDefaultResourcesNameStep extends DefaultResourcesNameStep {
     constructor(readonly workspaceNameAvailable: boolean) {
         super();
     }
