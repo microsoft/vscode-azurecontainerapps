@@ -23,7 +23,7 @@ export class RunStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
                 isPushEnabled: true,
                 sourceLocation: context.uploadedSourceLocation,
                 platform: { os: context.os },
-                dockerFilePath: path.relative(rootUri.path, context.dockerFilePath)
+                dockerFilePath: path.relative(rootUri.path, context.dockerfilePath)
             };
 
             const building: string = localize('buildingImage', 'Building image "{0}" in registry "{1}"...', context.imageName, context.registryName);
