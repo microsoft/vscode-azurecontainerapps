@@ -3,8 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
+import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<DeployWorkspaceProjectContext>> {

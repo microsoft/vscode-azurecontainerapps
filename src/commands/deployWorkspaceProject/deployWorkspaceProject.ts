@@ -9,7 +9,7 @@ import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
-import { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
