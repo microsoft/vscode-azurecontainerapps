@@ -48,6 +48,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
         if (!await ManagedEnvironmentNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('managedEnvironmentExists', 'The container apps environment "{0}" already exists in resource group "{1}".', name, resourceGroupName);
         }
+
         return undefined;
     }
 
