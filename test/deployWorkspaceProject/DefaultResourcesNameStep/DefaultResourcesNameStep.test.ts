@@ -21,6 +21,7 @@ suite('DefaultResourcesNameStep', async () => {
             'workspace@name&symbols',
             'my.workspace',
             '12345',
+            ' my workspace name '
         ];
 
         const cleanedNames: string[] = [
@@ -34,6 +35,7 @@ suite('DefaultResourcesNameStep', async () => {
             'workspacenamesymbols',
             'myworkspace',
             '12345',
+            'myworkspacename'
         ];
 
         for (const [i, name] of Object.entries(workspaceNames)) {
