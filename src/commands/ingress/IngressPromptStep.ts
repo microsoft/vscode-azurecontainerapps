@@ -10,11 +10,16 @@ import { DisableIngressStep } from "./disableIngress/DisableIngressStep";
 import { TargetPortInputStep } from "./editTargetPort/TargetPortInputStep";
 import { EnableIngressStep } from "./enableIngress/EnableIngressStep";
 import { IngressVisibilityStep } from "./enableIngress/IngressVisibilityStep";
+import { tryConfigureIngressUsingDockerfile } from "./tryConfigureIngressUsingDockerfile";
 
 export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     public async prompt(context: IngressContext): Promise<void> {
         context.enableIngress = (await context.ui.showQuickPick([{ label: localize('enable', 'Enable'), data: true }, { label: localize('disable', 'Disable'), data: false }],
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
+    }
+
+    public async configureBeforePrompt(context: IngressContext): Promise<void> {
+        await tryConfigureIngressUsingDockerfile(context);
     }
 
     public shouldPrompt(context: IngressContext): boolean {

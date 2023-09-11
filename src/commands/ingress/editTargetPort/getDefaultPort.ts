@@ -6,5 +6,15 @@
 import type { IngressContext } from "../IngressContext";
 
 export function getDefaultPort(context: IngressContext, fallbackPort: number = 80): number {
-    return context.containerApp?.configuration?.ingress?.targetPort || fallbackPort;
+    const currentDeploymentPort: number | undefined = context.containerApp?.configuration?.ingress?.targetPort;
+
+    // If the new deployment's Dockerfile port range doesn't include the current deployed target port, suggest a new one in the appropriate EXPOSE range
+    let dockerfilePortSuggestion: number | undefined;
+    if (currentDeploymentPort && context.dockerfileExposePorts && !context.dockerfileExposePorts.some(p => p.includes(currentDeploymentPort))) {
+        dockerfilePortSuggestion = context.dockerfileExposePorts[0].start;
+    } else if (!currentDeploymentPort && context.dockerfileExposePorts) {
+        dockerfilePortSuggestion = context.dockerfileExposePorts[0].start;
+    }
+
+    return dockerfilePortSuggestion || currentDeploymentPort || fallbackPort;
 }

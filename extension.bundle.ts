@@ -18,6 +18,9 @@ export * from '@microsoft/vscode-azext-utils';
 // Export activate/deactivate for main.js
 export * from './src/commands/deployWorkspaceProject/DeployWorkspaceProjectContext';
 export * from './src/commands/deployWorkspaceProject/getDefaultValues/DefaultResourcesNameStep';
+export * from './src/commands/ingress/IngressContext';
+export * from './src/commands/ingress/editTargetPort/getDefaultPort';
+export * from './src/commands/ingress/tryConfigureIngressUsingDockerfile';
 export { activate, deactivate } from './src/extension';
 export * from './src/extensionVariables';
 export * from './src/utils/validateUtils';
