@@ -11,7 +11,7 @@ export function getDefaultPort(context: IngressContext, fallbackPort: number = 8
     // If the new deployment's Dockerfile port range doesn't include the current deployed target port, suggest a new one in the appropriate EXPOSE range
     let dockerfilePortSuggestion: number | undefined;
     if (currentDeploymentPort && context.dockerfileExposePorts && !context.dockerfileExposePorts.some(p => p.includes(currentDeploymentPort))) {
-        dockerfilePortSuggestion = context.dockerfileExposePorts[0].getStartPort();
+        dockerfilePortSuggestion = context.dockerfileExposePorts[0].start;
     }
 
     return dockerfilePortSuggestion || currentDeploymentPort || fallbackPort;

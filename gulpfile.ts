@@ -26,6 +26,13 @@ async function cleanReadme(): Promise<void> {
     await fse.writeFile(readmePath, data);
 }
 
+async function preTest(): Promise<void> {
+    const fromPath: string = path.join(__dirname, 'test', 'ingress', 'dockerfileSamples');
+    const toPath: string = path.join(__dirname, 'dist', 'test', 'ingress', 'dockerfileSamples');
+    fse.copySync(fromPath, toPath);
+}
+
 exports['webpack-dev'] = gulp.series(prepareForWebpack, () => gulp_webpack('development'));
 exports['webpack-prod'] = gulp.series(prepareForWebpack, () => gulp_webpack('production'));
 exports.cleanReadme = cleanReadme;
+exports.preTest = preTest;

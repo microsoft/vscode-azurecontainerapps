@@ -51,20 +51,32 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
 }
 
 export class PortRange {
-    private readonly start: number;
-    private readonly end: number;
+    private readonly _start: number;
+    private readonly _end: number;
 
     constructor(start: number, end?: number) {
-        this.start = start;
-        this.end = end ? end : start;
+        this._start = start;
+        this._end = end ? end : start;
+    }
+
+    get start(): number {
+        return this._start;
+    }
+
+    get end(): number {
+        return this._end;
     }
 
     includes(port: number): boolean {
         return port >= this.start && port <= this.end;
     }
 
-    getStartPort(): number {
-        return this.start;
+    getRange(): string {
+        if (this.start === this.end) {
+            return `${this.start}`;
+        } else {
+            return `${this.start}-${this.end}`;
+        }
     }
 }
 
@@ -79,7 +91,7 @@ export async function getDockerfileExposePort(dockerfilePath: string): Promise<P
     const portRanges: PortRange[] = [];
     for (const line of lines) {
         if (/^EXPOSE/i.test(line.trim())) {
-            // Identify all single port numbers that aren't for UDP
+            // Identify all single port numbers that aren't for udp
             const singlePorts: string[] = line.match(/(?<=\s)\d{2,5}(?!(\-)|(\/udp))\b/g) ?? [];
             for (const sp of singlePorts) {
                 portRanges.push(new PortRange(parseInt(sp)));
