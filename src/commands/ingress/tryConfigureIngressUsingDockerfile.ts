@@ -6,7 +6,7 @@
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../utils/localize';
-import { IngressContext } from './IngressContext';
+import type { IngressContext } from './IngressContext';
 import { getDefaultPort } from './editTargetPort/getDefaultPort';
 
 export async function tryConfigureIngressUsingDockerfile(context: IngressContext): Promise<void> {

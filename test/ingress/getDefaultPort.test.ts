@@ -5,7 +5,7 @@
 
 import * as assert from "assert";
 import { IngressContext, PortRange, getDefaultPort } from "../../extension.bundle";
-import { MockIngressContext } from "./MockIngressContext";
+import type { MockIngressContext } from "./MockIngressContext";
 
 suite('getDefaultPort', async () => {
     test('correctly suggests when provided detected expose ports and no existing container app port', async () => {
