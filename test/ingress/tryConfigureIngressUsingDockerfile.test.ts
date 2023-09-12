@@ -6,22 +6,32 @@
 import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
 import * as path from "path";
-import { IngressContext, PortRange, getDockerfileExposePort, tryConfigureIngressUsingDockerfile } from "../../extension.bundle";
+import { IngressContext, PortRange, getDockerfileExposePorts, tryConfigureIngressUsingDockerfile } from "../../extension.bundle";
 import type { MockIngressContext } from "./MockIngressContext";
+
+const expectedSamplePorts: PortRange[][] = [
+    [new PortRange(443), new PortRange(80)],
+    [new PortRange(80), new PortRange(443)],
+    [new PortRange(80), new PortRange(8080, 8090)],
+    [new PortRange(80), new PortRange(8080, 8090)],
+    [new PortRange(443)],
+    [new PortRange(80), new PortRange(443), new PortRange(8080, 8090)],
+    []
+];
 
 suite('tryConfigureIngressUsingDockerfile', async () => {
     test('self', async () => {
         const dockerfileSamplesPath: string = path.join(__dirname, 'dockerfileSamples');
         const dockerfileSamples = await AzExtFsExtra.readDirectory(dockerfileSamplesPath);
 
-        const expectedResult = [
-            { enableIngress: true, enableExternal: true },
-            { enableIngress: undefined, enableExternal: undefined }, // no dockerfilePath
-            { enableIngress: true, enableExternal: true },
-            { enableIngress: undefined, enableExternal: undefined }, // alwaysPromptIngress
-            { enableIngress: true, enableExternal: true },
-            { enableIngress: true, enableExternal: true },
-            { enableIngress: false, enableExternal: false },
+        const expectedResult: MockIngressContext[] = [
+            { enableIngress: true, enableExternal: true, dockerfileExposePorts: expectedSamplePorts[0], targetPort: 443 },
+            { enableIngress: undefined, enableExternal: undefined, dockerfileExposePorts: undefined, targetPort: undefined }, // no dockerfilePath
+            { enableIngress: true, enableExternal: true, dockerfileExposePorts: expectedSamplePorts[2], targetPort: 80 },
+            { enableIngress: undefined, enableExternal: undefined, dockerfileExposePorts: expectedSamplePorts[3], targetPort: undefined }, // alwaysPromptIngress
+            { enableIngress: true, enableExternal: true, dockerfileExposePorts: expectedSamplePorts[4], targetPort: 443 },
+            { enableIngress: true, enableExternal: true, dockerfileExposePorts: expectedSamplePorts[5], targetPort: 80 },
+            { enableIngress: false, enableExternal: false, dockerfileExposePorts: undefined, targetPort: undefined }, // no expose
         ];
 
         for (const [i, ds] of dockerfileSamples.entries()) {
@@ -32,7 +42,17 @@ suite('tryConfigureIngressUsingDockerfile', async () => {
 
             await tryConfigureIngressUsingDockerfile(context as IngressContext);
 
-            assert.deepStrictEqual({ enableIngress: context.enableIngress, enableExternal: context.enableExternal }, expectedResult[i])
+            assert.deepStrictEqual({
+                enableIngress: context.enableIngress,
+                enableExternal: context.enableExternal,
+                dockerfileExposePortsLength: context.dockerfileExposePorts?.length,
+                targetPort: context.targetPort
+            }, {
+                enableIngress: expectedResult[i].enableIngress,
+                enableExternal: expectedResult[i].enableExternal,
+                dockerfileExposePortsLength: expectedResult[i].dockerfileExposePorts?.length,
+                targetPort: expectedResult[i].targetPort
+            });
         }
     });
 
@@ -40,22 +60,12 @@ suite('tryConfigureIngressUsingDockerfile', async () => {
         const dockerfileSamplesPath: string = path.join(__dirname, 'dockerfileSamples');
         const dockerfileSamples = await AzExtFsExtra.readDirectory(dockerfileSamplesPath);
 
-        const expectedResult: PortRange[][] = [
-            [new PortRange(80), new PortRange(443)],
-            [new PortRange(80), new PortRange(443)],
-            [new PortRange(80), new PortRange(8080, 8090)],
-            [new PortRange(80), new PortRange(8080, 8090)],
-            [new PortRange(80)],
-            [new PortRange(80), new PortRange(443), new PortRange(8080, 8090)],
-            []
-        ];
-
         for (const [i, ds] of dockerfileSamples.entries()) {
-            const portRange: PortRange[] = await getDockerfileExposePort(ds.fsPath) ?? [];
+            const portRange: PortRange[] = await getDockerfileExposePorts(ds.fsPath) ?? [];
 
             for (const [j, pr] of portRange.entries()) {
-                assert.equal(pr.start, expectedResult[i][j].start);
-                assert.equal(pr.end, expectedResult[i][j].end);
+                assert.equal(pr.start, expectedSamplePorts[i][j].start);
+                assert.equal(pr.end, expectedSamplePorts[i][j].end);
             }
         }
     });

@@ -14,7 +14,7 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
         return;
     }
 
-    context.dockerfileExposePorts = await getDockerfileExposePort(context.dockerfilePath);
+    context.dockerfileExposePorts = await getDockerfileExposePorts(context.dockerfilePath);
 
     if (context.alwaysPromptIngress) {
         return;
@@ -70,7 +70,7 @@ export class PortRange {
     }
 }
 
-export async function getDockerfileExposePort(dockerfilePath: string): Promise<PortRange[] | undefined> {
+export async function getDockerfileExposePorts(dockerfilePath: string): Promise<PortRange[] | undefined> {
     if (!await AzExtFsExtra.pathExists(dockerfilePath)) {
         return undefined;
     }
@@ -80,19 +80,21 @@ export async function getDockerfileExposePort(dockerfilePath: string): Promise<P
 
     const portRanges: PortRange[] = [];
     for (const line of lines) {
-        if (/^EXPOSE/i.test(line.trim())) {
-            // Identify all single port numbers that aren't for udp
-            const singlePorts: string[] = line.match(/(?<=\s)\d{2,5}(?!(\-)|(\/udp))\b/g) ?? [];
-            for (const sp of singlePorts) {
-                portRanges.push(new PortRange(parseInt(sp)));
-            }
+        if (!/^EXPOSE/i.test(line.trim())) {
+            continue;
+        }
 
-            // Identify all port ranges
-            const portRange: string[] = line.match(/\d{2,5}\-\d{2,5}/g) ?? [];
-            for (const pr of portRange) {
-                const [start, end] = pr.split('-');
-                portRanges.push(new PortRange(parseInt(start), parseInt(end)));
-            }
+        // Identify all single port numbers that aren't for udp
+        const singlePorts: string[] = line.match(/(?<=\s)\d{2,5}(?!(\-)|(\/udp))\b/g) ?? [];
+        for (const sp of singlePorts) {
+            portRanges.push(new PortRange(parseInt(sp)));
+        }
+
+        // Identify all port ranges
+        const portRange: string[] = line.match(/\d{2,5}\-\d{2,5}/g) ?? [];
+        for (const pr of portRange) {
+            const [start, end] = pr.split('-');
+            portRanges.push(new PortRange(parseInt(start), parseInt(end)));
         }
     }
 

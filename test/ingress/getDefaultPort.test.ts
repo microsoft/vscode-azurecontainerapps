@@ -8,14 +8,14 @@ import { IngressContext, PortRange, getDefaultPort } from "../../extension.bundl
 import type { MockIngressContext } from "./MockIngressContext";
 
 suite('getDefaultPort', async () => {
-    test('correctly suggests a new port when Dockerfile expose ports are detected with no existing container app port', async () => {
+    test('Correctly suggests a new port when Dockerfile expose ports are detected with no existing container app port', async () => {
         const context: MockIngressContext = {
             dockerfileExposePorts: [new PortRange(443), new PortRange(8080, 8090)]
         };
         assert.equal(getDefaultPort(context as IngressContext), 443);
     });
 
-    test('correctly suggests deployed port when Dockerfile expose ports are detected that overlap with existing container app port', async () => {
+    test('Correctly suggests deployed port when Dockerfile expose ports are detected that overlap with existing container app port', async () => {
         const context: MockIngressContext = {
             containerApp: { configuration: { ingress: { targetPort: 8081 } } },
             dockerfileExposePorts: [new PortRange(80), new PortRange(443), new PortRange(8080, 8090)]
@@ -23,14 +23,14 @@ suite('getDefaultPort', async () => {
         assert.equal(getDefaultPort(context as IngressContext), 8081);
     });
 
-    test('correctly suggests existing deploy port when no expose ports are detected', async () => {
+    test('Correctly suggests existing deploy port when no expose ports are detected', async () => {
         const context: MockIngressContext = {
             containerApp: { configuration: { ingress: { targetPort: 3000 } } },
         };
         assert.equal(getDefaultPort(context as IngressContext), 3000);
     });
 
-    test('correctly suggests fallback port when no other ports are available', async () => {
+    test('Correctly suggests fallback port when no other ports are available', async () => {
         assert.equal(getDefaultPort({} as IngressContext), 80);
     });
 });
