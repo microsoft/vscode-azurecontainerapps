@@ -14,7 +14,7 @@ import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUp
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
 export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDraftUpdateBaseStep<T> {
-    public priority: number = 200;
+    public priority: number = 1120;
 
     constructor(baseItem: RevisionsItemModel) {
         super(baseItem);
