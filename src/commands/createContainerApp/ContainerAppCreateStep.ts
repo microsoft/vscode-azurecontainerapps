@@ -16,7 +16,7 @@ import { getContainerNameForImage } from "../deployImage/imageSource/containerRe
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
-    public priority: number = 250;
+    public priority: number = 750;
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
