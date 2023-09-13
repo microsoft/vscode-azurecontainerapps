@@ -85,12 +85,15 @@ export async function getDockerfileExposePorts(dockerfilePath: string): Promise<
         }
 
         // Identify all single port numbers that aren't for udp
+        // Example formats: `3000` or `3000/tcp` but not `3000/udp`
+        // Note: (?<=\s) prevents the last number in a range 3000-3010 from being selected
         const singlePorts: string[] = line.match(/(?<=\s)\d{2,5}(?!(\-)|(\/udp))\b/g) ?? [];
         for (const sp of singlePorts) {
             portRanges.push(new PortRange(parseInt(sp)));
         }
 
         // Identify all port ranges
+        // Example format: `3000-3010`
         const portRange: string[] = line.match(/\d{2,5}\-\d{2,5}/g) ?? [];
         for (const pr of portRange) {
             const [start, end] = pr.split('-');
