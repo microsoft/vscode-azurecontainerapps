@@ -21,7 +21,7 @@ export async function getWorkspaceProjectPaths(context: IActionContext): Promise
         throw new UserCancelledError();
     }
 
-    // Check if chosen workspace has a Dockerfile at its root
+    // Todo: Add logic allowing users to choose their workspace Dockerfile
     const dockerfileUris: Uri[] = await workspace.findFiles(DOCKERFILE_GLOB_PATTERN);
     if (!dockerfileUris.length) {
         throw new Error(localize('noDockerfileError', 'Unable to locate a Dockerfile in your project\'s root.'));
