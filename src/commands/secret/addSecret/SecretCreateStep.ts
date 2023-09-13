@@ -24,16 +24,15 @@ export class SecretCreateStep extends AzureWizardExecuteStep<ISecretContext> {
             value: context.newSecretValue
         });
 
-        const addSecret: string = localize('addSecret', 'Add secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
         const creatingSecret: string = localize('creatingSecret', 'Creating secret...');
-
-        context.activityTitle = addSecret;
         progress.report({ message: creatingSecret });
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
 
         const addedSecret: string = localize('addedSecret', 'Added secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
         ext.outputChannel.appendLog(addedSecret);
+
+        context.secretName = context.newSecretName;
     }
 
     public shouldExecute(context: ISecretContext): boolean {

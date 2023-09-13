@@ -43,6 +43,8 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
 
     await wizard.prompt();
 
+    wizardContext.activityTitle = localize('addSecret', 'Add secret "{0}" to container app "{1}"', wizardContext.newSecretName, containerApp.name);
+
     const parentId: string = `${containerApp.id}/${SecretsItem.idSuffix}`;
     await ext.state.showCreatingChild(parentId, localize('creatingSecret', 'Creating secret...'), async () => {
         await wizard.execute();
