@@ -52,7 +52,7 @@ suite('DefaultResourcesNameStep', async () => {
                     rootFolder: { name: 'workspace-name' }
                 };
 
-                await runMockDefaultResourcesNameStep(wizardContext, true /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, true /** isWorkspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -114,7 +114,7 @@ suite('DefaultResourcesNameStep', async () => {
                     managedEnvironment: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourcesNameStep(wizardContext, true /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, true /** isWorkspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -146,7 +146,7 @@ suite('DefaultResourcesNameStep', async () => {
                     managedEnvironment: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourcesNameStep(wizardContext, false /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, false /** isWorkspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -180,7 +180,7 @@ suite('DefaultResourcesNameStep', async () => {
                     containerApp: { name: 'acr-build-1' }
                 };
 
-                await runMockDefaultResourcesNameStep(wizardContext, true /** workspaceNameAvailable */);
+                await runMockDefaultResourcesNameStep(wizardContext, true /** isWorkspaceNameAvailable */);
 
                 assert.deepStrictEqual(
                     {
@@ -202,8 +202,8 @@ suite('DefaultResourcesNameStep', async () => {
     });
 });
 
-async function runMockDefaultResourcesNameStep(context: MockDefaultResourcesNameStepContext, workspaceNameAvailable: boolean): Promise<void> {
-    const mockDefaultResourcesNameStep = new MockDefaultResourcesNameStep(workspaceNameAvailable);
+async function runMockDefaultResourcesNameStep(context: MockDefaultResourcesNameStepContext, isWorkspaceNameAvailable: boolean): Promise<void> {
+    const mockDefaultResourcesNameStep = new MockDefaultResourcesNameStep(isWorkspaceNameAvailable);
     await mockDefaultResourcesNameStep.configureBeforePrompt(context as DeployWorkspaceProjectContext);
 
     if (mockDefaultResourcesNameStep.shouldPrompt(context as DeployWorkspaceProjectContext)) {
