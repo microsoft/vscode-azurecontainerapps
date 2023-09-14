@@ -90,12 +90,22 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<IDeployWorks
             cancellable: false,
             title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
-            const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
-            const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
-            const registryAvailable: boolean = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
-            const containerAppAvailable: boolean = await ContainerAppNameStep.isNameAvailable(context, name, name);
+            const registryAvailable: boolean = !!context.registry || await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
+            const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
 
-            return (resourceGroupAvailable && managedEnvironmentAvailable && registryAvailable && containerAppAvailable) ?
+            let managedEnvironmentAvailable: boolean | undefined;
+            let containerAppAvailable: boolean | undefined;
+            if (!context.resourceGroup) {
+                // Indicates a new resource group will be created, so managed environment and container app must also be unique
+                managedEnvironmentAvailable = true;
+                containerAppAvailable = true;
+            } else {
+                // Indicates an existing resource group, so need to double check name availability
+                managedEnvironmentAvailable = !!context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
+                containerAppAvailable = !!context.containerApp || await ContainerAppNameStep.isNameAvailable(context, name, name);
+            }
+
+            return (registryAvailable && resourceGroupAvailable && managedEnvironmentAvailable && containerAppAvailable) ?
                 undefined : localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
         });
     }

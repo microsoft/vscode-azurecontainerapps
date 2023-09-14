@@ -12,7 +12,6 @@ import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppI
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { IDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
-import { getMostUsedManagedEnvironmentResources } from "./getMostUsedManagedEnvironmentResources";
 
 interface DefaultContainerAppsResources {
     resourceGroup?: ResourceGroup;
@@ -21,43 +20,6 @@ interface DefaultContainerAppsResources {
 }
 
 export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, settings: IDeployWorkspaceProjectSettings | undefined): Promise<DefaultContainerAppsResources> {
-    // For testing creation of resources
-    // const resourceGroup = undefined;
-    // const managedEnvironment = undefined;
-    // const containerApp = undefined;
-
-    // Strategy 1: See if there is a local workspace configuration to leverage
-    let { resourceGroup, managedEnvironment, containerApp } = await getContainerAppWorkspaceSettingResources(context, settings);
-    if (containerApp) {
-        return {
-            resourceGroup,
-            managedEnvironment,
-            containerApp
-        };
-    }
-
-    // Strategy 2: Try finding the most used managed environment resources (Azure CLI strategy)
-    const { managedEnvironment: mostUsedManagedEnvironment, resourceGroup: mostUsedEnvironmentResourceGroup } = await getMostUsedManagedEnvironmentResources(context) ?? { managedEnvironment: undefined, resourceGroup: undefined };
-    if (mostUsedManagedEnvironment) {
-        resourceGroup = mostUsedEnvironmentResourceGroup;
-        managedEnvironment = mostUsedManagedEnvironment;
-        containerApp = undefined;
-    }
-
-    if (managedEnvironment) {
-        ext.outputChannel.appendLog(localize('locatedFrequentlyUsedResources', 'Located most frequently used container app environment resources.'));
-    } else {
-        ext.outputChannel.appendLog(localize('noResourcesLocated', 'Unable to locate existing container app environment resources.'));
-    }
-
-    return {
-        resourceGroup,
-        managedEnvironment,
-        containerApp,
-    };
-}
-
-async function getContainerAppWorkspaceSettingResources(context: ISubscriptionActionContext, settings: IDeployWorkspaceProjectSettings | undefined): Promise<Pick<DefaultContainerAppsResources, 'resourceGroup' | 'managedEnvironment' | 'containerApp'>> {
     const noResourceMatch = {
         resourceGroup: undefined,
         managedEnvironment: undefined,
