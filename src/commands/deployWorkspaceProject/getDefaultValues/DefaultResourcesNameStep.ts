@@ -70,7 +70,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         // No symbols are allowed for ACR - we will strip out any offending characters from the base name, but still need to ensure this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-z0-9]+/g, '');
         if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
-            return localize('invalidLength', 'The alphanumeric portion of the name should total to at least 5 characters while not exceeding 20 characters.');
+            return localize('invalidLength', 'The alphanumeric portion of the name must be least 5 characters but no more than 20 characters.');
         }
 
         const symbols: string = '-';
@@ -87,13 +87,34 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             cancellable: false,
             title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
-            const resourceGroupAvailable: boolean = await ResourceGroupListStep.isNameAvailable(context, name);
-            const managedEnvironmentAvailable: boolean = await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
-            const registryAvailable: boolean = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-z0-9]+/g, ''));
-            const containerAppAvailable: boolean = await ContainerAppNameStep.isNameAvailable(context, name, name);
+            const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
 
-            return (resourceGroupAvailable && managedEnvironmentAvailable && registryAvailable && containerAppAvailable) ?
-                undefined : localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
+            const registryAvailable: boolean = !!context.registry || await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
+            if (!registryAvailable) {
+                return resourceNameUnavailable;
+            }
+
+            const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
+            if (!resourceGroupAvailable) {
+                return resourceNameUnavailable;
+            }
+
+            if (context.resourceGroup) {
+                // Indicates an existing resource group, so need to double check name availability
+                const managedEnvironmentAvailable: boolean = !!context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
+                if (!managedEnvironmentAvailable) {
+                    return resourceNameUnavailable;
+                }
+
+                const containerAppAvailable: boolean = !!context.containerApp || await ContainerAppNameStep.isNameAvailable(context, name, name);
+                if (!containerAppAvailable) {
+                    return resourceNameUnavailable;
+                }
+            } else {
+                // Skip check - indicates a new resource group will be created, so managed environment and container app must also be unique
+            }
+
+            return undefined;
         });
     }
 
