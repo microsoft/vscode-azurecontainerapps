@@ -10,6 +10,7 @@ import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { localize } from "../../utils/localize";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
 export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
@@ -39,7 +40,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [
         // new DeployWorkspaceProjectConfirmStep(),
-        // new DefaultResourcesNameStep()
+        new DefaultResourcesNameStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectContext>[] = [
