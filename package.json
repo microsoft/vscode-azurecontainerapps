@@ -507,7 +507,8 @@
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --ext .ts .",
         "lint-fix": "eslint --ext .ts . --fix",
-        "test": "node ./out/test/runTest.js",
+        "pretest": "gulp preTest",
+        "test": "node ./dist/test/runTest.js",
         "webpack": "tsc && gulp webpack-dev",
         "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
         "prepare": "husky install"
