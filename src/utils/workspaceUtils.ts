@@ -40,10 +40,6 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
             });
         }
 
-<<<<<<< HEAD
-=======
-        quickPicks.push(browseItem);
->>>>>>> d28f31bf0ab1349f7b1e7838493ecd123d391283
         input = await context.ui.showQuickPick(quickPicks, { placeHolder });
     }
 
@@ -51,20 +47,6 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         return undefined;
     } else {
         return input?.data || (await context.ui.showOpenDialog(options))[0].path;
-    }
-}
-
-export async function getRootWorkspaceFolder(placeHolder?: string): Promise<WorkspaceFolder | undefined> {
-    if (!workspace.workspaceFolders?.length) {
-        return undefined;
-    } else if (workspace.workspaceFolders?.length === 1) {
-        return workspace.workspaceFolders[0];
-    } else {
-        const folder = await window.showWorkspaceFolderPick({ placeHolder: placeHolder ?? localize('selectRootWorkspace', 'Select a folder for your workspace') });
-        if (!folder) {
-            throw new UserCancelledError('selectRootWorkspace');
-        }
-        return folder;
     }
 }
 
