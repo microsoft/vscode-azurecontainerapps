@@ -7,12 +7,17 @@ import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-az
 import { localize } from "../../../../utils/localize";
 import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
+export enum AcrBuildSupportedOS {
+    Windows = 'Windows',
+    Linux = 'Linux'
+}
+
 export class OSPickStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {
         const placeHolder: string = localize('imageOSPrompt', 'Select image base OS');
-        const picks: IAzureQuickPickItem<'Windows' | 'Linux'>[] = [
-            { label: 'Linux', data: 'Linux', suppressPersistence: true },
-            { label: 'Windows', data: 'Windows', suppressPersistence: true },
+        const picks: IAzureQuickPickItem<AcrBuildSupportedOS>[] = [
+            { label: AcrBuildSupportedOS.Linux, data: AcrBuildSupportedOS.Linux, suppressPersistence: true },
+            { label: AcrBuildSupportedOS.Windows, data: AcrBuildSupportedOS.Windows, suppressPersistence: true },
         ];
 
         context.os = (await context.ui.showQuickPick(picks, { placeHolder })).data;

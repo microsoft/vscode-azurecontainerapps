@@ -5,18 +5,21 @@
 
 import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { Progress } from "vscode";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
+import { localize } from "../../../../../../utils/localize";
 import { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext> {
     public priority: number = 350;
 
-    public async execute(context: CreateAcrContext): Promise<void> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+    public async execute(context: CreateAcrContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('creatingRegistry', 'Creating registry...') });
 
+        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
         context.registry = await client.registries.beginCreateAndWait(
-            nonNullProp(context, 'newResourceGroupName'),
+            nonNullValueAndProp(context.resourceGroup, 'name'),
             nonNullProp(context, 'newRegistryName'),
             {
                 location: (await LocationListStep.getLocation(context)).name,
