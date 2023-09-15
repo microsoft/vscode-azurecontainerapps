@@ -30,6 +30,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         ...(await createActivityContext()),
         subscription: node.subscription,
         managedEnvironmentId: node.managedEnvironment.id,
+        alwaysPromptIngress: true
     };
 
     const title: string = localize('createContainerApp', 'Create Container App');

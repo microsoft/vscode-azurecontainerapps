@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
 import { CreateAcrContext } from "./CreateAcrContext";
@@ -36,12 +36,16 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     }
 
     private async validateNameAvalability(context: CreateAcrContext, name: string) {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
-        if (nameResponse.nameAvailable === false) {
+        if (await RegistryNameStep.isNameAvailable(context, name)) {
             return localize('validateInputError', `The registry name ${name} is already in use.`);
         }
 
         return undefined;
+    }
+
+    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<boolean> {
+        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+        const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
+        return !!nameResponse.nameAvailable;
     }
 }

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext, nonNullProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -20,7 +20,8 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const wizardContext: IManagedEnvironmentContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext())
+        ...(await createActivityContext()),
+        subscription
     };
 
     const title: string = localize('createManagedEnv', 'Create Container Apps environment');

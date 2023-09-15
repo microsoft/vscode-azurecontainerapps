@@ -87,6 +87,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployWorkspaceProject",
+                "title": "%containerApps.deployWorkspaceProject%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteContainerApp",
                 "title": "%containerApps.deleteContainerApp%",
                 "category": "Azure Container Apps"
@@ -230,7 +235,31 @@
                 "category": "Azure Container Apps"
             }
         ],
+        "submenus": [
+            {
+                "id": "containerApps.submenus.workspaceActions",
+                "label": "Azure Container Apps",
+                "icon": "resources/azure-containerapps.svg"
+            }
+        ],
         "menus": {
+            "containerApps.submenus.workspaceActions": [
+                {
+                    "command": "containerApps.deployWorkspaceProject",
+                    "group": "1_deploy@1"
+                },
+                {
+                    "command": "containerApps.createContainerApp",
+                    "group": "2_create@1"
+                }
+            ],
+            "view/title": [
+                {
+                    "submenu": "containerApps.submenus.workspaceActions",
+                    "when": "view == azureWorkspace",
+                    "group": "navigation@4"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
@@ -475,7 +504,8 @@
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --ext .ts .",
         "lint-fix": "eslint --ext .ts . --fix",
-        "test": "node ./out/test/runTest.js",
+        "pretest": "gulp preTest",
+        "test": "node ./dist/test/runTest.js",
         "webpack": "tsc && gulp webpack-dev",
         "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
         "prepare": "husky install"
@@ -518,7 +548,7 @@
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^2.0.0",
         "@microsoft/vscode-azext-github": "^1.0.0",
-        "@microsoft/vscode-azext-utils": "^2.0.0",
+        "@microsoft/vscode-azext-utils": "^2.0.5",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",

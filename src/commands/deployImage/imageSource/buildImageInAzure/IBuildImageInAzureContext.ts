@@ -9,7 +9,7 @@ import { IContainerRegistryImageContext } from '../containerRegistry/IContainerR
 
 export interface IBuildImageInAzureContext extends IContainerRegistryImageContext {
     rootFolder: vscode.WorkspaceFolder;
-    dockerFilePath: string;
+    dockerfilePath: string;
     imageName: string;
     os: 'Windows' | 'Linux';
 
