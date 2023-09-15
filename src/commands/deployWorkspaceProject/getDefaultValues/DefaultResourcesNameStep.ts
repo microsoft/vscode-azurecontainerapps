@@ -100,18 +100,21 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             }
 
             if (context.resourceGroup) {
-                // Indicates an existing resource group, so need to double check name availability
                 const managedEnvironmentAvailable: boolean = !!context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
                 if (!managedEnvironmentAvailable) {
                     return resourceNameUnavailable;
                 }
+            } else {
+                // Skip check - new resource group means unique managed environment
+            }
 
+            if (context.managedEnvironment) {
                 const containerAppAvailable: boolean = !!context.containerApp || await ContainerAppNameStep.isNameAvailable(context, name, name);
                 if (!containerAppAvailable) {
                     return resourceNameUnavailable;
                 }
             } else {
-                // Skip check - indicates a new resource group will be created, so managed environment and container app must also be unique
+                // Skip check - new managed environment means unique container app
             }
 
             return undefined;
