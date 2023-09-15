@@ -16,7 +16,7 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
 
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
-        const secretName: string = nonNullProp(context, 'existingSecretName');
+        const secretName: string = nonNullProp(context, 'secretName');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         containerAppEnvelope.configuration.secrets ||= [];
@@ -36,6 +36,6 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
     }
 
     public shouldExecute(context: ISecretContext): boolean {
-        return !!context.existingSecretName;
+        return !!context.secretName;
     }
 }

@@ -24,7 +24,7 @@ export async function editSecretName(context: IActionContext, node?: SecretItem)
         ...(await createActivityContext()),
         subscription,
         containerApp,
-        existingSecretName: item.secretName
+        secretName: item.secretName
     };
 
     const promptSteps: AzureWizardPromptStep<ISecretContext>[] = [
@@ -36,7 +36,7 @@ export async function editSecretName(context: IActionContext, node?: SecretItem)
     ];
 
     const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
-        title: localize('updateSecret', 'Update secret name for "{0}" in container app "{1}"', wizardContext.existingSecretName, containerApp.name),
+        title: localize('updateSecret', 'Update secret name for "{0}" in container app "{1}"', wizardContext.secretName, containerApp.name),
         promptSteps,
         executeSteps,
     });
