@@ -25,7 +25,7 @@ export async function deleteSecret(context: IActionContext, node?: SecretItem): 
         ...(await createActivityContext()),
         subscription,
         containerApp,
-        existingSecretName: item.secretName
+        secretName: item.secretName
     };
 
     const promptSteps: AzureWizardPromptStep<ISecretContext>[] = [
@@ -44,7 +44,7 @@ export async function deleteSecret(context: IActionContext, node?: SecretItem): 
 
     await wizard.prompt();
 
-    const secretId: string = `${wizardContext.containerApp?.id}/${SecretsItem.idSuffix}/${wizardContext.existingSecretName}`;
+    const secretId: string = `${wizardContext.containerApp?.id}/${SecretsItem.idSuffix}/${wizardContext.secretName}`;
     await ext.state.showDeleting(secretId, async () => {
         await wizard.execute();
     });
