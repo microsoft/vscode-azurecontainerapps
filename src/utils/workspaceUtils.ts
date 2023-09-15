@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
-import * as path from "path";
+import { basename } from "path";
 import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
 import { browseItem } from "../constants";
 import { localize } from "./localize";
@@ -24,7 +24,7 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
         quickPicks.push(...files.map((uri: Uri) => {
             return {
-                label: path.basename(uri.path),
+                label: basename(uri.path),
                 description: uri.path,
                 data: uri.path
             };
