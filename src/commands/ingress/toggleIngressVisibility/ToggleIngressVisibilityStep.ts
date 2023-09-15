@@ -11,7 +11,7 @@ import type { IngressContext } from "../IngressContext";
 import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
 
 export class ToggleIngressVisibilityStep extends IngressUpdateBaseStep<IngressContext> {
-    public priority: number = 300;
+    public priority: number = 650;
 
     public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp = nonNullProp(context, 'containerApp');
