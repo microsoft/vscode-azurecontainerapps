@@ -4,7 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
@@ -23,7 +22,7 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
         // ...await getDefaultAzureContainerRegistry(context, settings),
         // newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
-        environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
+        // environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
         // imageSource: ImageSource.RemoteAcrBuild,
         // os: AcrBuildSupportedOS.Linux,
         rootFolder,

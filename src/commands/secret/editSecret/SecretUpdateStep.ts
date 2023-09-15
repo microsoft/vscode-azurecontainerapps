@@ -12,7 +12,7 @@ import { updateContainerApp } from "../../../utils/updateContainerApp";
 import type { ISecretContext } from "../ISecretContext";
 
 export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
-    public priority: number = 200;
+    public priority: number = 850;
 
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
@@ -20,10 +20,10 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
 
         let updatedSecret: string | undefined;
         if (context.newSecretName) {
-            context.activityTitle = localize('updatingSecretName', 'Update secret name from "{0}" to "{1}" in container app "{2}"', context.existingSecretName, context.newSecretName, containerApp.name);
-            updatedSecret = localize('updatedSecretName', 'Updated secret name from "{0}" to "{1}" in container app "{2}".', context.existingSecretName, context.newSecretName, containerApp.name);
+            context.activityTitle = localize('updatingSecretName', 'Update secret name from "{0}" to "{1}" in container app "{2}"', context.secretName, context.newSecretName, containerApp.name);
+            updatedSecret = localize('updatedSecretName', 'Updated secret name from "{0}" to "{1}" in container app "{2}".', context.secretName, context.newSecretName, containerApp.name);
         } else if (context.newSecretValue) {
-            updatedSecret = localize('updatedSecretValue', 'Updated secret value for "{0}" in container app "{1}".', context.existingSecretName, containerApp.name);
+            updatedSecret = localize('updatedSecretValue', 'Updated secret value for "{0}" in container app "{1}".', context.secretName, containerApp.name);
         }
 
         progress.report({ message: localize('updatingSecret', 'Updating secret...') });
@@ -31,7 +31,7 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
         let didUpdateSecret: boolean = false;
         containerAppEnvelope.configuration.secrets ||= [];
         containerAppEnvelope.configuration.secrets.forEach((secret) => {
-            if (secret.name === context.existingSecretName) {
+            if (secret.name === context.secretName) {
                 secret.name = context.newSecretName ?? secret.name;
                 secret.value = context.newSecretValue ?? secret.value;
                 didUpdateSecret = true;
@@ -39,7 +39,7 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
         });
 
         if (!didUpdateSecret) {
-            throw new Error(localize('noMatchingSecret', 'No matching secret named "{0}" found for container app "{1}".', context.existingSecretName, containerApp.name));
+            throw new Error(localize('noMatchingSecret', 'No matching secret named "{0}" found for container app "{1}".', context.secretName, containerApp.name));
         }
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
@@ -48,6 +48,6 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
     }
 
     public shouldExecute(context: ISecretContext): boolean {
-        return !!context.existingSecretName && (!!context.newSecretName || !!context.newSecretValue);
+        return !!context.secretName && (!!context.newSecretName || !!context.newSecretValue);
     }
 }

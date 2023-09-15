@@ -12,7 +12,7 @@ import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
 export class UploadSourceCodeStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
-    public priority: number = 175;
+    public priority: number = 430;
 
     public async execute(context: IBuildImageInAzureContext): Promise<void> {
         context.registryName = nonNullValue(context.registry?.name);

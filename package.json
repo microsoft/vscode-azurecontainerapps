@@ -239,7 +239,10 @@
             {
                 "id": "containerApps.submenus.workspaceActions",
                 "label": "Azure Container Apps",
-                "icon": "resources/azure-containerapps.svg"
+                "icon": {
+                    "light": "resources/azure-containerapps.svg",
+                    "dark": "resources/azure-containerapps.svg"
+                }
             }
         ],
         "menus": {
