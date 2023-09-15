@@ -10,7 +10,7 @@ import { createContainerRegistryManagementClient } from "../../../../../../utils
 import { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext> {
-    public priority: number = 150;
+    public priority: number = 350;
 
     public async execute(context: CreateAcrContext): Promise<void> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
