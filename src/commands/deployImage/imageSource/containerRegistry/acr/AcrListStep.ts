@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import { ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupCreateStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
@@ -42,7 +42,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
                 new RegistryCreateStep()
             ];
 
-            await tryConfigureResourceGroupForRegistry(context, promptSteps, executeSteps);
+            await tryConfigureResourceGroupForRegistry(context, promptSteps);
             LocationListStep.addStep(context, promptSteps);
 
             return {
@@ -110,7 +110,6 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
 async function tryConfigureResourceGroupForRegistry(
     context: IContainerRegistryImageContext,
     promptSteps: AzureWizardPromptStep<IContainerRegistryImageContext>[],
-    executeSteps: AzureWizardExecuteStep<IContainerRegistryImageContext>[]
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
     const resourceCreationContext = context as Partial<ICreateContainerAppContext> & Partial<IManagedEnvironmentContext> & CreateAcrContext;
@@ -118,25 +117,12 @@ async function tryConfigureResourceGroupForRegistry(
         return;
     }
 
-    // Try to infer a re-usable resource group
-    let resourceGroupName: string | undefined;
-    if (resourceCreationContext.containerApp) {
-        resourceGroupName = resourceCreationContext.containerApp.resourceGroup;
-    } else {
-        resourceGroupName = resourceCreationContext.managedEnvironment?.name;
-    }
-
+    // Try to leverage an existing resource group (managed environment name is a fallback here because our create flow has the resource group name mirror the environment name)
+    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup || resourceCreationContext.managedEnvironment?.name;
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
+
     resourceCreationContext.resourceGroup = resourceGroups.find(rg => resourceGroupName && rg.name === resourceGroupName);
-
     if (!resourceCreationContext.resourceGroup) {
-        resourceCreationContext.newResourceGroupName = resourceCreationContext.newManagedEnvironmentName || resourceCreationContext.newRegistryName;
-    }
-
-    // Add steps to match the resources found
-    if (!resourceCreationContext.resourceGroup && !resourceCreationContext.newResourceGroupName) {
         promptSteps.push(new ResourceGroupListStep());
-    } else {
-        executeSteps.push(new ResourceGroupCreateStep());
     }
 }
