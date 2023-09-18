@@ -29,14 +29,14 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         if (name.length < minLength || name.length > maxLength) {
             return localize('validationLengthError', 'The name must be between {0} and {1} characters.', minLength, maxLength);
         } else if (!/^[a-z][a-zA-Z0-9]*$/.test(name)) {
-            return localize('validateInputError', `Connection names can only consist of alphanumeric characters.`);
+            return localize('validateInputError', `The name must consist of alphanumeric characters.`);
         }
 
         return undefined;
     }
 
     private async validateNameAvalability(context: CreateAcrContext, name: string) {
-        if (await RegistryNameStep.isNameAvailable(context, name)) {
+        if (!await RegistryNameStep.isNameAvailable(context, name)) {
             return localize('validateInputError', `The registry name ${name} is already in use.`);
         }
 

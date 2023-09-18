@@ -43,7 +43,12 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
             ];
 
             await tryConfigureResourceGroupForRegistry(context, promptSteps);
-            LocationListStep.addStep(context, promptSteps);
+
+            if (context.resourceGroup) {
+                await LocationListStep.setLocation(context, context.resourceGroup.location);
+            } else {
+                LocationListStep.addStep(context, promptSteps);
+            }
 
             return {
                 promptSteps,

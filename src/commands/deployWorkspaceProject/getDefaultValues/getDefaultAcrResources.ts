@@ -10,12 +10,12 @@ import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
 import { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 
-interface DefaultRegistryResources {
+interface DefaultAcrResources {
     registry?: Registry;
     imageName?: string;
 }
 
-export async function getDefaultAzureContainerRegistry(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings | undefined): Promise<DefaultRegistryResources> {
+export async function getDefaultAcrResources(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings | undefined): Promise<DefaultAcrResources> {
     const registries: Registry[] = await AcrListStep.getRegistries(context);
     const noMatchingResource = { registry: undefined };
 

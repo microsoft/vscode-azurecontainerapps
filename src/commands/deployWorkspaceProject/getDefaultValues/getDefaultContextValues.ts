@@ -12,7 +12,7 @@ import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/Envi
 import { AcrBuildSupportedOS } from "../../deployImage/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
-import { getDefaultAzureContainerRegistry } from "./getDefaultAzureContainerRegistry";
+import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
@@ -28,7 +28,7 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
 
     return {
         ...await getDefaultContainerAppsResources(context, settings),
-        ...await getDefaultAzureContainerRegistry(context, settings),
+        ...await getDefaultAcrResources(context, settings),
         newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
