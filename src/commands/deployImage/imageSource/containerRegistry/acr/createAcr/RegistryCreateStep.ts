@@ -6,10 +6,10 @@
 import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { CreateAcrContext } from "./CreateAcrContext";
+import type { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext> {
     public priority: number = 350;

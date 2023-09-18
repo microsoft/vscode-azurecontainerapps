@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { Registry } from "@azure/arm-containerregistry";
-import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import type { Registry } from "@azure/arm-containerregistry";
+import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
-import { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import type { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 
 interface DefaultAcrResources {
     registry?: Registry;

@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerApp, ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
-import { ResourceGroup } from "@azure/arm-resources";
+import type { ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import type { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 
 interface DefaultContainerAppsResources {
     resourceGroup?: ResourceGroup;

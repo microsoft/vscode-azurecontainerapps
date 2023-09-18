@@ -6,7 +6,7 @@
 import type { Registry } from '@azure/arm-containerregistry';
 import type { SupportedRegistries } from '../../../../constants';
 import type { ImageSourceBaseContext } from '../ImageSourceBaseContext';
-import { CreateAcrContext } from './acr/createAcr/CreateAcrContext';
+import type { CreateAcrContext } from './acr/createAcr/CreateAcrContext';
 
 export interface IContainerRegistryImageContext extends CreateAcrContext, ImageSourceBaseContext {
     registryDomain?: SupportedRegistries;

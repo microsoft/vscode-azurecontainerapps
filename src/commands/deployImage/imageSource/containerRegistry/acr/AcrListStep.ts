@@ -4,19 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
-import { ResourceGroup } from "@azure/arm-resources";
+import type { ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { ICreateContainerAppContext } from "../../../../createContainerApp/ICreateContainerAppContext";
-import { IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
+import type { ICreateContainerAppContext } from "../../../../createContainerApp/ICreateContainerAppContext";
+import type { IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
 import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
-import { CreateAcrContext } from "./createAcr/CreateAcrContext";
+import type { CreateAcrContext } from "./createAcr/CreateAcrContext";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";

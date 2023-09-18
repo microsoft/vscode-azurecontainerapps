@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { WorkspaceFolder } from "vscode";
+import type { WorkspaceFolder } from "vscode";
 import { settingUtils } from "../../utils/settingUtils";
 
 export interface DeployWorkspaceProjectSettings {

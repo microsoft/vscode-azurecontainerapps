@@ -7,7 +7,7 @@ import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/ar
 import { AzureWizardPromptStep, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { CreateAcrContext } from "./CreateAcrContext";
+import type { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     public async prompt(context: CreateAcrContext): Promise<void> {
