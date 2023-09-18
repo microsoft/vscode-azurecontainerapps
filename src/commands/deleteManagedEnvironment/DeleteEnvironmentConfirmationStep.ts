@@ -21,7 +21,7 @@ export class DeleteEnvironmentConfirmationStep extends AzureWizardPromptStep<IDe
         const deleteEnvAndApps: string = localize('confirmDeleteEnvAndApps', 'Are you sure you want to delete container apps environment "{0}"? Deleting this will delete {1} container app(s) in this environment.',
             this.managedEnvironmentName, numOfResources);
 
-        const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSetting('deleteConfirmation');
+        const deleteConfirmation: string | undefined = settingUtils.getWorkspaceSettingIteratively('deleteConfirmation');
         if (deleteConfirmation === 'ClickButton') {
             const message: string = hasNoResources ? deleteEnv : deleteEnvAndApps;
             await context.ui.showWarningMessage(message, { modal: true, stepName: 'confirmDelete' }, DialogResponses.deleteResponse); // no need to check result - cancel will throw error

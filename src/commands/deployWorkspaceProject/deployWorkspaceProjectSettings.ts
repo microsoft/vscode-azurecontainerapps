@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ConfigurationTarget, WorkspaceFolder } from "vscode";
+import { WorkspaceFolder } from "vscode";
 import { settingUtils } from "../../utils/settingUtils";
 
 export interface DeployWorkspaceProjectSettings {
@@ -11,7 +11,6 @@ export interface DeployWorkspaceProjectSettings {
     containerAppResourceGroupName?: string;
     containerAppName?: string;
 
-    // Either unique globally or to a subscription
     containerRegistryName?: string;
 }
 
@@ -21,9 +20,9 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 
     try {
-        const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath, ConfigurationTarget.Workspace);
-        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath, ConfigurationTarget.Workspace);
-        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath, ConfigurationTarget.Workspace);
+        const containerAppName: string | undefined = settingUtils.getWorkspaceSettingIteratively(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath);
+        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSettingIteratively(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
+        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSettingIteratively(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
 
         if (containerAppName || containerAppResourceGroupName || containerRegistryName) {
             return {
@@ -43,6 +42,6 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
 export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: DeployWorkspaceProjectSettings): Promise<void> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
     for (const key of Object.keys(settings)) {
-        await settingUtils.updateWorkspaceFolderSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
+        await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
     }
 }

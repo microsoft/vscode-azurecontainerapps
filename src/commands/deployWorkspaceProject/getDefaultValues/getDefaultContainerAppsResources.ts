@@ -20,14 +20,14 @@ interface DefaultContainerAppsResources {
 }
 
 export async function getDefaultContainerAppsResources(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings | undefined): Promise<DefaultContainerAppsResources> {
-    const noResourceMatch = {
+    const noMatchingResources = {
         resourceGroup: undefined,
         managedEnvironment: undefined,
         containerApp: undefined
     };
 
     if (!settings || !settings.containerAppResourceGroupName || !settings.containerAppName) {
-        return noResourceMatch;
+        return noMatchingResources;
     }
 
     const resourceGroupName: string = settings.containerAppResourceGroupName;
@@ -53,6 +53,6 @@ export async function getDefaultContainerAppsResources(context: ISubscriptionAct
         };
     } catch {
         ext.outputChannel.appendLog(localize('noResourceMatch', 'Used saved workspace settings to search for container app "{0}" in resource group "{1}" but found no match.', settings.containerAppName, settings.containerAppResourceGroupName));
-        return noResourceMatch;
+        return noMatchingResources;
     }
 }
