@@ -471,6 +471,21 @@
             {
                 "title": "Azure Container Apps",
                 "properties": {
+                    "containerApps.deployWorkspaceProject.containerRegistryName": {
+                        "scope": "machine-overridable",
+                        "type": "string",
+                        "description": "%containerApps.deployWorkspaceProject.containerRegistryName%"
+                    },
+                    "containerApps.deployWorkspaceProject.containerAppName": {
+                        "scope": "machine-overridable",
+                        "type": "string",
+                        "description": "%containerApps.deployWorkspaceProject.containerAppName%"
+                    },
+                    "containerApps.deployWorkspaceProject.containerAppResourceGroupName": {
+                        "scope": "machine-overridable",
+                        "type": "string",
+                        "description": "%containerApps.deployWorkspaceProject.containerAppResourceGroupName%"
+                    },
                     "containerApps.enableOutputTimestamps": {
                         "type": "boolean",
                         "description": "%containerApps.enableOutputTimestamps%",
