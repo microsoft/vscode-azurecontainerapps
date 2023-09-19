@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
@@ -33,7 +33,8 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
     }
 
     public async getPicks(context: IContainerRegistryImageContext): Promise<IAzureQuickPickItem<Registry>[]> {
-        const registries: Registry[] = await AcrListStep.getRegistries(context);
+        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+        const registries: Registry[] = await uiUtils.listAllIterator(client.registries.list());
 
         // Try to suggest a registry only when the user is deploying to a Container App
         let suggestedRegistry: string | undefined;
@@ -61,11 +62,6 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
                 { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${currentlyDeployed}`, suppressPersistence: true } :
                 { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists };
         });
-    }
-
-    public static async getRegistries(context: ISubscriptionActionContext): Promise<Registry[]> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        return await uiUtils.listAllIterator(client.registries.list());
     }
 }
 

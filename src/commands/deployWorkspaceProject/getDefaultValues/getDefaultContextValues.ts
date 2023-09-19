@@ -9,8 +9,6 @@ import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
-import { getDefaultAcrResources } from "./getDefaultAcrResources";
-import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<DeployWorkspaceProjectContext>> {
@@ -24,8 +22,8 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     }
 
     return {
-        ...await getDefaultContainerAppsResources(context, settings),
-        ...await getDefaultAcrResources(context, settings),
+        // ...await getDefaultContainerAppsResources(context, settings),
+        // ...await getDefaultAzureContainerRegistry(context, settings),
         // newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
         // environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],

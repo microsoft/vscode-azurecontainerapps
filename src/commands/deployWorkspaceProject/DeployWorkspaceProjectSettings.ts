@@ -39,9 +39,9 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
 /**
  * @throws Throws an error if the workspace configuration cannot be found in the default settings path
  */
-export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: DeployWorkspaceProjectSettings): Promise<void> {
-    const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
-    for (const key of Object.keys(settings)) {
-        await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
-    }
-}
+// export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: DeployWorkspaceProjectSettings): Promise<void> {
+//     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
+//     for (const key of Object.keys(settings)) {
+//         await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
+//     }
+// }
