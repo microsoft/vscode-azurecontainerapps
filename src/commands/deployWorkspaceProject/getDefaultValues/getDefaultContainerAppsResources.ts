@@ -11,7 +11,7 @@ import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import { DeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
+import type { DeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
 
 interface DefaultContainerAppsResources {
     resourceGroup?: ResourceGroup;

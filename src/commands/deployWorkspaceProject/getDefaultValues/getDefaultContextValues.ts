@@ -7,7 +7,6 @@ import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
-import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
@@ -29,7 +28,7 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
         ...await getDefaultAcrResources(context, settings),
         // newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
-        environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
+        // environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
         // imageSource: ImageSource.RemoteAcrBuild,
         // os: AcrBuildSupportedOS.Linux,
         rootFolder,
