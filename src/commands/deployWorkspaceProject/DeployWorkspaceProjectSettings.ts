@@ -19,18 +19,13 @@ const deployWorkspaceProjectPrefix: string = 'deployWorkspaceProject';
 export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettings> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 
-    try {
-        const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath);
-        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
-        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
+    const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath);
+    const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
+    const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
 
-        return {
-            containerAppName,
-            containerAppResourceGroupName,
-            containerRegistryName
-        };
-    } catch {
-        // Return no matching resources if we encounter any settings path read errors
-        return {};
-    }
+    return {
+        containerAppName,
+        containerAppResourceGroupName,
+        containerRegistryName
+    };
 }

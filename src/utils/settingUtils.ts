@@ -66,7 +66,7 @@ export namespace settingUtils {
         const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, fsPath ? Uri.file(fsPath) : undefined);
 
         const configurationLevel: ConfigurationTarget | undefined = getLowestConfigurationLevel(projectConfiguration, key);
-        if (targetLimit && configurationLevel && (configurationLevel < targetLimit)) {
+        if (!configurationLevel || (configurationLevel && (configurationLevel < targetLimit))) {
             return undefined;
         }
 
