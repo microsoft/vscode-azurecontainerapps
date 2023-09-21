@@ -16,8 +16,8 @@ import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<DeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
 
-    const settings: DeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(rootFolder);
-    if (!settings) {
+    const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
+    if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
         ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
     } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
         ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));

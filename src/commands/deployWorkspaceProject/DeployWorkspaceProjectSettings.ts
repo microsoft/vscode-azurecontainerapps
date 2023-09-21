@@ -16,7 +16,7 @@ export interface DeployWorkspaceProjectSettings {
 
 const deployWorkspaceProjectPrefix: string = 'deployWorkspaceProject';
 
-export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettings | undefined> {
+export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettings> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 
     try {
@@ -24,14 +24,13 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
         const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
         const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
 
-        if (containerAppName || containerAppResourceGroupName || containerRegistryName) {
-            return {
-                containerAppName,
-                containerAppResourceGroupName,
-                containerRegistryName
-            };
-        }
-    } catch { /** Do nothing */ }
-
-    return undefined;
+        return {
+            containerAppName,
+            containerAppResourceGroupName,
+            containerRegistryName
+        };
+    } catch {
+        // If we run into any read issues, just return empty resources rather than trying to handle a partial resources scenario
+        return {};
+    }
 }

@@ -16,7 +16,7 @@ interface DefaultAcrResources {
 }
 
 export async function getDefaultAcrResources(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings | undefined): Promise<DefaultAcrResources> {
-    const noMatchingResource = { registry: undefined };
+    const noMatchingResource = { registry: undefined, imageName: undefined };
 
     if (!settings || !settings.containerRegistryName) {
         return noMatchingResource;
