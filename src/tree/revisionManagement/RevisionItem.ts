@@ -9,7 +9,6 @@ import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-a
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { localize } from "../../utils/localize";
-import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { ScaleItem } from "../scaling/ScaleItem";
@@ -86,10 +85,6 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     private get iconPath(): TreeItemIconPath {
-        if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
-            return treeUtils.getIconPath('active-revision');
-        }
-
         let id: string;
         let colorId: string;
 
