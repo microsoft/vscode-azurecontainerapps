@@ -7,6 +7,11 @@ import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-az
 import { localize } from "../../../../utils/localize";
 import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
+export enum AcrBuildSupportedOS {
+    Windows = 'Windows',
+    Linux = 'Linux'
+}
+
 export class OSPickStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {
         const placeHolder: string = localize('imageOSPrompt', 'Select image base OS');

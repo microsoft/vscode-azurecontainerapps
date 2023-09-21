@@ -4,15 +4,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
-import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
+import type { ResourceGroup } from "@azure/arm-resources";
+import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { ImageSource, acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
+import type { ICreateContainerAppContext } from "../../../../createContainerApp/ICreateContainerAppContext";
+import type { IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
 import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
+import type { CreateAcrContext } from "./createAcr/CreateAcrContext";
+import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
+import { RegistryNameStep } from "./createAcr/RegistryNameStep";
+import { SkuListStep } from "./createAcr/SkuListStep";
 
 export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {
@@ -21,20 +28,43 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
     }
 
     public shouldPrompt(context: IContainerRegistryImageContext): boolean {
-        return !context.registry;
+        return !context.registry && !context.newRegistryName;
     }
 
     public async getSubWizard(context: IContainerRegistryImageContext): Promise<IWizardOptions<IContainerRegistryImageContext> | undefined> {
-        if (!context.registry?.adminUserEnabled) {
+        if (!context.registry) {
+            const promptSteps: AzureWizardPromptStep<IContainerRegistryImageContext>[] = [
+                new RegistryNameStep(),
+                new SkuListStep()
+            ];
+
+            const executeSteps: AzureWizardExecuteStep<IContainerRegistryImageContext>[] = [
+                new RegistryCreateStep()
+            ];
+
+            await tryConfigureResourceGroupForRegistry(context, promptSteps);
+
+            if (context.resourceGroup) {
+                await LocationListStep.setLocation(context, context.resourceGroup.location);
+            } else {
+                LocationListStep.addStep(context, promptSteps);
+            }
+
+            return {
+                promptSteps,
+                executeSteps
+            };
+        }
+
+        if (context.registry && !context.registry?.adminUserEnabled) {
             return { promptSteps: [new RegistryEnableAdminUserStep()] }
         }
 
         return undefined;
     }
 
-    public async getPicks(context: IContainerRegistryImageContext): Promise<IAzureQuickPickItem<Registry>[]> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const registries: Registry[] = await uiUtils.listAllIterator(client.registries.list());
+    public async getPicks(context: IContainerRegistryImageContext): Promise<IAzureQuickPickItem<Registry | undefined>[]> {
+        const registries: Registry[] = await AcrListStep.getRegistries(context);
 
         // Try to suggest a registry only when the user is deploying to a Container App
         let suggestedRegistry: string | undefined;
@@ -56,12 +86,48 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
             }
         }
 
-        // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
-        return registries.map((r) => {
-            return !!suggestedRegistry && r.loginServer === suggestedRegistry ?
-                { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${currentlyDeployed}`, suppressPersistence: true } :
-                { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists };
-        });
+        const picks: IAzureQuickPickItem<Registry | undefined>[] = [];
+
+        const suppressCreate: boolean = context.imageSource !== ImageSource.RemoteAcrBuild;
+        if (!suppressCreate) {
+            picks.push({
+                label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
+                description: '',
+                data: undefined
+            });
+        }
+
+        return picks.concat(
+            registries.map((r) => {
+                return !!suggestedRegistry && r.loginServer === suggestedRegistry ?
+                    { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${currentlyDeployed}`, suppressPersistence: true } :
+                    { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists || !suppressCreate };
+            })
+        );
+    }
+
+    public static async getRegistries(context: ISubscriptionActionContext): Promise<Registry[]> {
+        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+        return await uiUtils.listAllIterator(client.registries.list());
     }
 }
 
+async function tryConfigureResourceGroupForRegistry(
+    context: IContainerRegistryImageContext,
+    promptSteps: AzureWizardPromptStep<IContainerRegistryImageContext>[],
+): Promise<void> {
+    // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
+    const resourceCreationContext = context as Partial<ICreateContainerAppContext> & Partial<IManagedEnvironmentContext> & CreateAcrContext;
+    if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
+        return;
+    }
+
+    // Try to leverage an existing resource group (managed environment name is a fallback here because our create flow has the resource group name mirror the environment name)
+    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup || resourceCreationContext.managedEnvironment?.name;
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
+
+    resourceCreationContext.resourceGroup = resourceGroups.find(rg => resourceGroupName && rg.name === resourceGroupName);
+    if (!resourceCreationContext.resourceGroup) {
+        promptSteps.push(new ResourceGroupListStep());
+    }
+}

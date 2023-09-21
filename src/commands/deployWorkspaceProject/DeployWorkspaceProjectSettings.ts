@@ -16,7 +16,7 @@ export interface DeployWorkspaceProjectSettings {
 
 const deployWorkspaceProjectPrefix: string = 'deployWorkspaceProject';
 
-export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettings | undefined> {
+export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettings> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 
     try {
@@ -24,24 +24,13 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
         const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
         const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
 
-        if (containerAppName || containerAppResourceGroupName || containerRegistryName) {
-            return {
-                containerAppName,
-                containerAppResourceGroupName,
-                containerRegistryName
-            };
-        }
-    } catch { /** Do nothing */ }
-
-    return undefined;
+        return {
+            containerAppName,
+            containerAppResourceGroupName,
+            containerRegistryName
+        };
+    } catch {
+        // Return no matching resources if we encounter any settings path read errors
+        return {};
+    }
 }
-
-/**
- * @throws Throws an error if the workspace configuration cannot be found in the default settings path
- */
-// export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: DeployWorkspaceProjectSettings): Promise<void> {
-//     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
-//     for (const key of Object.keys(settings)) {
-//         await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
-//     }
-// }
