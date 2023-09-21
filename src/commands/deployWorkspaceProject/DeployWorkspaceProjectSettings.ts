@@ -30,7 +30,7 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
             containerRegistryName
         };
     } catch {
-        // If we run into any read issues, just return empty resources rather than trying to handle a partial resources scenario
+        // Return no matching resources if we encounter any settings path read errors
         return {};
     }
 }
