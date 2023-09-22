@@ -66,15 +66,7 @@ export namespace settingUtils {
         const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, fsPath ? Uri.file(fsPath) : undefined);
 
         const configurationLevel: ConfigurationTarget | undefined = getLowestConfigurationLevel(projectConfiguration, key);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        if (targetLimit && configurationLevel && (configurationLevel < targetLimit)) {
-=======
         if (!configurationLevel || (configurationLevel && (configurationLevel < targetLimit))) {
->>>>>>> Stashed changes
-=======
-        if (!configurationLevel || (configurationLevel && (configurationLevel < targetLimit))) {
->>>>>>> Stashed changes
             return undefined;
         }
 
