@@ -11,7 +11,7 @@ import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../deployImage/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";

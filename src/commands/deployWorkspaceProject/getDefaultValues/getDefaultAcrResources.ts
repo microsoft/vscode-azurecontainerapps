@@ -8,7 +8,7 @@ import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
-import { DeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 
 interface DefaultAcrResources {
     registry?: Registry;
