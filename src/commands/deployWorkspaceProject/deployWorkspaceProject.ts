@@ -63,7 +63,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const providers: string[] = [];
 
-    // Resource Group
+    // Resource group
     if (wizardContext.resourceGroup) {
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
@@ -81,7 +81,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         executeSteps.push(new ResourceGroupCreateStep());
     }
 
-    // Managed Environment
+    // Managed environment
     if (wizardContext.managedEnvironment) {
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
@@ -127,7 +127,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         // ImageSourceListStep handles this creation logic
     }
 
-    // Container App
+    // Container app
     if (wizardContext.containerApp) {
         promptSteps.unshift(new ContainerAppOverwriteConfirmStep());
         executeSteps.push(new ContainerAppUpdateStep());
@@ -153,7 +153,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     providers.push(webProvider);
 
-    // Verify Providers
+    // Verify providers
     executeSteps.push(new VerifyProvidersStep(providers));
 
     // Save deploy settings

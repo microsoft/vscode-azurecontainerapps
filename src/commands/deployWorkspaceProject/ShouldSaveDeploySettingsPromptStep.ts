@@ -10,9 +10,12 @@ import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } fro
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
-        const settings: DeployWorkspaceProjectSettings | undefined = await getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
+        const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
 
-        if (context.registry && settings?.containerRegistryName === context.registry.name && context.containerApp && settings?.containerAppName === context.containerApp.name) {
+        if (
+            context.registry && settings?.containerRegistryName === context.registry.name &&
+            context.containerApp && settings?.containerAppName === context.containerApp.name
+        ) {
             // No new changes to save
             return;
         }
