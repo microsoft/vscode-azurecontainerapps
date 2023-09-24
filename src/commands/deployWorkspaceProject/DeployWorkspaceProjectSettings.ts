@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type WorkspaceFolder } from "vscode";
+import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
 import { settingUtils } from "../../utils/settingUtils";
 
 export interface DeployWorkspaceProjectSettings {
@@ -36,6 +36,6 @@ export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
 export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: DeployWorkspaceProjectSettings): Promise<void> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
     for (const key of Object.keys(settings)) {
-        await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath);
+        await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath, ConfigurationTarget.WorkspaceFolder);
     }
 }
