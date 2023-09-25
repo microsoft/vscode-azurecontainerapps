@@ -5,7 +5,7 @@
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
@@ -21,7 +21,7 @@ import { ContainerAppUpdateStep } from "../deployImage/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
-import { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";

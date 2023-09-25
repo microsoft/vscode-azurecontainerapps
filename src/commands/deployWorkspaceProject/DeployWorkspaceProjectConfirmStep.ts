@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
 export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {

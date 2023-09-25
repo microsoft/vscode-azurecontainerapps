@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
-import { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
