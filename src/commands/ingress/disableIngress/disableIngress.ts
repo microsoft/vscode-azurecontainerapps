@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { ext } from '../../../extensionVariables';
 import type { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
 import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
@@ -42,4 +43,6 @@ export async function disableIngress(context: IActionContext, node?: ContainerAp
 
     await wizard.prompt();
     await wizard.execute();
+
+    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
 }
