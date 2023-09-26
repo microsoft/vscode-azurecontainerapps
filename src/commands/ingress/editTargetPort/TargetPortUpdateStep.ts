@@ -20,7 +20,6 @@ export class TargetPortUpdateStep extends IngressUpdateBaseStep<IngressContext> 
         const working: string = localize('updatingTargetPort', 'Updating target port...');
         const workCompleted: string = localize('updatedTargetPort', 'Updated target port to {0} for container app "{1}"', context.targetPort, containerApp.name);
 
-        context.activityTitle = localize('updateTargetPort', 'Update target port to {0} for container app "{1}"', context.targetPort, containerApp.name);
         await this.updateIngressSettings(context, progress, { ingress, working, workCompleted });
     }
 
