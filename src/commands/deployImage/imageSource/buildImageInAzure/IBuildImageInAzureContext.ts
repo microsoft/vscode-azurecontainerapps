@@ -5,7 +5,7 @@
 
 import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
 import * as vscode from 'vscode';
-import type { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
+import { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
 import { AcrBuildSupportedOS } from './OSPickStep';
 
 export interface IBuildImageInAzureContext extends IContainerRegistryImageContext {
