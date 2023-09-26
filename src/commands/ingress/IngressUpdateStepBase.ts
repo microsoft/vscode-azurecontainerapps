@@ -16,7 +16,7 @@ type IngressOptions = {
     workCompleted: string
 }
 
-export abstract class IngressUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
+export abstract class IngressUpdateStepBase<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
     protected async updateIngressSettings(context: T, progress: Progress<{ message?: string | undefined }>, options: IngressOptions): Promise<void> {
         const containerApp = nonNullProp(context, 'containerApp');
         const { ingress, working, workCompleted } = options;

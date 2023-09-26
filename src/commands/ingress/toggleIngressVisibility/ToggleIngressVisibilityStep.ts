@@ -8,9 +8,9 @@ import type { Progress } from "vscode";
 import { IngressConstants } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import type { IngressContext } from "../IngressContext";
-import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
+import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 
-export class ToggleIngressVisibilityStep extends IngressUpdateBaseStep<IngressContext> {
+export class ToggleIngressVisibilityStep extends IngressUpdateStepBase<IngressContext> {
     public priority: number = 650;
 
     public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
