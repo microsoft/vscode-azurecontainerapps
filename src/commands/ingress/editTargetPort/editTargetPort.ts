@@ -43,6 +43,7 @@ export async function editTargetPort(context: IActionContext, node?: IngressEnab
     });
 
     await wizard.prompt();
+    wizardContext.activityTitle = localize('updateTargetPort', 'Update target port to {0} for container app "{1}"', wizardContext.targetPort, containerApp.name);
     await wizard.execute();
 
     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
