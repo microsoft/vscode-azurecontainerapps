@@ -10,7 +10,7 @@ import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
-import { createActivityContext } from "../../utils/activityUtils";
+import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
@@ -48,7 +48,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         ...subscriptionContext,
         ...await createActivityContext(),
         ...defaultContextValues,
-        // activityChildren: [],
+        activityChildren: [],
         subscription,
     };
 

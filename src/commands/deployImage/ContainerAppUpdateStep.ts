@@ -3,19 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { type Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../../utils/updateContainerApp";
 import type { IDeployImageContext } from "./deployImage";
 import { getContainerNameForImage } from "./imageSource/containerRegistry/getContainerNameForImage";
 
-export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployImageContext> {
+export class ContainerAppUpdateStep extends ExecuteActivityOutputStepBase<IDeployImageContext> {
     public priority: number = 480;
 
-    public async execute(context: IDeployImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: IDeployImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -43,5 +46,27 @@ export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployImageC
 
     public shouldExecute(context: IDeployImageContext): boolean {
         return !!context.containerApp;
+    }
+
+    protected initSuccessOutput(context: IDeployImageContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppUpdateStep', activitySuccessContext]),
+                label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
+                iconPath: activitySuccessIcon
+            }),
+            output: localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name)
+        };
+    }
+
+    protected initFailOutput(context: IDeployImageContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppUpdateStep', activityFailContext]),
+                label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
+                iconPath: activityFailIcon
+            }),
+            output: localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name)
+        };
     }
 }

@@ -13,7 +13,7 @@ import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/Delet
 import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
-import { createActivityContext } from "../utils/activityUtils";
+import { createActivityContext } from "../utils/activity/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";

@@ -4,20 +4,23 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp, nonNullValue, openReadOnlyContent } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, nonNullProp, nonNullValue, openReadOnlyContent } from "@microsoft/vscode-azext-utils";
 import { MessageItem, window } from "vscode";
-import { acrDomain } from "../../../../constants";
+import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
-export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureContext> {
+export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureContext> {
     public priority: number = 450;
 
-    public async execute(context: IBuildImageInAzureContext): Promise<void> {
+    protected async executeCore(context: IBuildImageInAzureContext): Promise<void> {
         context.registryDomain = acrDomain;
 
         const run = await buildImageInAzure(context);
+
         const outputImages = run?.outputImages;
         context.telemetry.properties.outputImages = outputImages?.length?.toString();
 
@@ -45,5 +48,29 @@ export class BuildImageStep extends AzureWizardExecuteStep<IBuildImageInAzureCon
     public shouldExecute(context: IBuildImageInAzureContext): boolean {
         return !context.image;
     }
-}
 
+    protected initSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['buildImageStep', activitySuccessContext]),
+                label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                iconPath: activitySuccessIcon
+            }),
+            output: [
+                localize('buildImageSuccess', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName),
+                localize('useImage', 'Using image "{0}".', context.image)
+            ]
+        };
+    }
+
+    protected initFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
+                label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                iconPath: activityFailIcon
+            }),
+            output: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
+        };
+    }
+}
