@@ -13,7 +13,7 @@ import { ExecuteActivityOutput, ExecuteActivityOutputOptions } from "./ExecuteAc
 export async function createActivityContext(): Promise<ExecuteActivityContext> {
     return {
         registerActivity: async (activity) => (ext.rgApiV2 as AzureResourcesExtensionApiWithActivity).activity.registerActivity(activity),
-        suppressNotification: await settingUtils.getWorkspaceSetting('suppressActivityNotifications', undefined, undefined, 'azureResourceGroups'),
+        suppressNotification: await settingUtils.getSetting('suppressActivityNotifications', undefined, 'azureResourceGroups'),
     };
 }
 

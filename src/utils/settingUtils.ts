@@ -74,6 +74,17 @@ export namespace settingUtils {
     }
 
     /**
+     * Iteratively retrieves one of the user's settings - sequentially checking for a defined value starting from the `WorkspaceFolder` up to the `Global` configuration target.
+     * @param key The key of the setting to retrieve
+     * @param fsPath The optional path of the workspace configuration settings
+     * @param prefix The optional extension prefix. Uses ext.prefix `containerApps` unless otherwise specified
+     */
+    export function getSetting<T>(key: string, fsPath?: string, prefix: string = ext.prefix): T | undefined {
+        const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, fsPath ? Uri.file(fsPath) : undefined);
+        return projectConfiguration.get<T>(key);
+    }
+
+    /**
      * Searches through all open folders and gets the current workspace setting (as long as there are no conflicts)
      * Uses ext.prefix 'containerApps' unless otherwise specified
      */
