@@ -7,10 +7,10 @@ import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { localize } from "../../../utils/localize";
 import type { IngressContext } from "../IngressContext";
-import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
+import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 import { isIngressEnabled } from "../isIngressEnabled";
 
-export class DisableIngressStep extends IngressUpdateBaseStep<IngressContext> {
+export class DisableIngressStep extends IngressUpdateStepBase<IngressContext> {
     public priority: number = 650;
 
     public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
