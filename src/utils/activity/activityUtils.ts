@@ -45,8 +45,8 @@ export async function tryCatchActivityWrapper(
     function appendOutput(output: string | string[]): void {
         output = Array.isArray(output) ? output : [output];
 
-        for (const log of output) {
-            ext.outputChannel.appendLog(log);
+        for (const out of output) {
+            ext.outputChannel.appendLog(out);
         }
     }
 }

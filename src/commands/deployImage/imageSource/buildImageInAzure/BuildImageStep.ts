@@ -42,6 +42,9 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInA
             context.errorHandling.suppressDisplay = true;
             throw new Error(errorMessage);
         }
+
+        // Need to place this outside of 'initSuccessOutput' so we can use the image after it has had a chance to become defined
+        (this.success.output as string[])?.push(localize('useImage', 'Using image "{0}".', context.image));
     }
 
     public shouldExecute(context: IBuildImageInAzureContext): boolean {
@@ -57,7 +60,6 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInA
             }),
             output: [
                 localize('buildImageSuccess', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName),
-                localize('useImage', 'Using image "{0}".', context.image)
             ]
         };
     }

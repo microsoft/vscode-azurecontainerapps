@@ -5,39 +5,41 @@
 
 import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
-import { managedEnvironmentsAppProvider } from "../../constants";
-import { ext } from "../../extensionVariables";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, managedEnvironmentsAppProvider } from "../../constants";
+import { createActivityChildContext } from "../../utils/activity/activityUtils";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
-export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
+export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<IManagedEnvironmentContext> {
     public priority: number = 250;
 
-    public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const opClient = await createOperationalInsightsManagementClient(context);
-        const rgName = nonNullValueAndProp(context.resourceGroup, 'name');
+
+        const resourceGroupName = nonNullValueAndProp(context.resourceGroup, 'name');
+        const managedEnvironmentName = nonNullProp(context, 'newManagedEnvironmentName');
         const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 
-        const creatingKuEnv: string = localize('creatingManagedEnvironment', 'Creating new Container Apps environment "{0}"...', context.newManagedEnvironmentName);
-        progress.report({ message: creatingKuEnv });
-        ext.outputChannel.appendLog(creatingKuEnv);
+        const creating: string = localize('creatingManagedEnvironment', 'Creating environment...');
+        progress.report({ message: creating });
 
         const sharedKeys = await opClient.sharedKeysOperations.getSharedKeys(
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
             nonNullProp(logAnalyticsWorkspace, 'name'));
 
-        context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(rgName, nonNullProp(context, 'newManagedEnvironmentName'),
+        context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(resourceGroupName, managedEnvironmentName,
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 appLogsConfiguration: {
                     "destination": "log-analytics",
                     "logAnalyticsConfiguration": {
-                        "customerId": nonNullProp(context, 'logAnalyticsWorkspace').customerId,
+                        "customerId": logAnalyticsWorkspace.customerId,
                         "sharedKey": sharedKeys.primarySharedKey
                     }
                 }
@@ -46,15 +48,34 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
 
         context.activityResult = {
             id: nonNullProp(context.managedEnvironment, 'id'),
-            name: nonNullProp(context, 'newManagedEnvironmentName'),
+            name: managedEnvironmentName,
             type: managedEnvironmentsAppProvider
-        }
-
-        const createdKuEnv: string = localize('createKuEnv', 'Successfully created new Container Apps environment "{0}".', context.newManagedEnvironmentName);
-        ext.outputChannel.appendLog(createdKuEnv);
+        };
     }
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
         return !context.managedEnvironment;
+    }
+
+    protected initSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['managedEnvironmentCreateStep', activitySuccessContext]),
+                label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
+                iconPath: activitySuccessIcon
+            }),
+            output: localize('createdManagedEnvironmentSuccess', 'Created container apps environment "{0}".', context.newManagedEnvironmentName)
+        };
+    }
+
+    protected initFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['managedEnvironmentCreateStep', activityFailContext]),
+                label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
+                iconPath: activityFailIcon
+            }),
+            output: localize('createdManagedEnvironmentFail', 'Failed to create container apps environment "{0}".', context.newManagedEnvironmentName)
+        };
     }
 }
