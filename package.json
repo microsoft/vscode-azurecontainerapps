@@ -205,6 +205,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deleteScaleRule",
+                "title": "%containerApps.deleteScaleRule%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.connectToGitHub",
                 "title": "%containerApps.connectToGitHub%",
                 "category": "Azure Container Apps"
@@ -407,6 +412,11 @@
                 {
                     "command": "containerApps.addScaleRule",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /scaleRuleGroupItem/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deleteScaleRule",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /scaleRuleItem/i",
                     "group": "1@1"
                 },
                 {

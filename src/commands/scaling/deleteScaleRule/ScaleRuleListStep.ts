@@ -20,7 +20,7 @@ export class ScaleRuleListStep extends AzureWizardPromptStep<IDeleteScaleRuleCon
     private async getPicks(context: IDeleteScaleRuleContext): Promise<IAzureQuickPickItem<ScaleRule>[] | undefined> {
         const scaleRules = context.containerApp?.template?.scale?.rules;
         if (scaleRules === undefined) {
-            return undefined; // No resources found may change
+            throw new Error(localize('noScaleRules', 'No scale rules found'));
         }
         else {
             return scaleRules?.map(r => {

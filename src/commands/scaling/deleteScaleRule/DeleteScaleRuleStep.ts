@@ -12,7 +12,7 @@ import { IAddScaleRuleContext } from "../addScaleRule/IAddScaleRuleContext";
 import { IDeleteScaleRuleContext } from "./IDeleteScaleRuleContext";
 
 export class DeleteScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDraftUpdateBaseStep<T> {
-    public priority: number = 160;
+    public priority: number = 100;
 
     constructor(baseItem: RevisionsItemModel) {
         super(baseItem);
@@ -22,18 +22,17 @@ export class DeleteScaleRuleStep<T extends IAddScaleRuleContext> extends Revisio
         this.revisionDraftTemplate.scale ||= {};
         this.revisionDraftTemplate.scale.rules ||= [];
 
-        //remove the scale rule from the draft template
-        //this.revisionDraftTemplate.scale.rules
+        const index = this.revisionDraftTemplate.scale.rules.indexOf(nonNullProp(context, 'scaleRule'));
+        this.revisionDraftTemplate.scale.rules.splice(index, 1);
 
         this.updateRevisionDraftWithTemplate();
 
         const resourceName = getParentResource(nonNullProp(context, 'containerApp'), this.baseItem.revision).name;
-        ext.outputChannel.appendLog(localize('deletedScaleRule', 'Deleted rule "{1}" to "{2}" (draft)', context.scaleRule?.name, resourceName));
-
+        ext.outputChannel.appendLog(localize('deletedScaleRule', 'Deleted rule "{0}" to "{1}" (draft)', context.scaleRule?.name, resourceName));
     }
 
     public shouldExecute(context: IDeleteScaleRuleContext): boolean {
-        return !!context.scaleRule; //not sure about this
+        return !!context.scaleRule;
     }
 
 }
