@@ -78,7 +78,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
             const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
                 (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ') +
-                'If you would like to update your environment variables later, try re-running with the "Update Container App Image..." command.'
+                'If you would like to update your environment variables later, try re-running the container app update or deploy command.'
             );
             ext.outputChannel.appendLog(logMessage);
         } else {

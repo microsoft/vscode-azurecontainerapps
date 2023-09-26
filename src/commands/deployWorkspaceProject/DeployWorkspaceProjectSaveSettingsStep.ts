@@ -25,7 +25,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
             containerAppResourceGroupName: nonNullValueAndProp(context.resourceGroup, 'name'),
             containerAppName: nonNullValueAndProp(context.containerApp, 'name'),
             containerRegistryName: nonNullValueAndProp(context.registry, 'name')
-        }
+        };
 
         await setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settings);
     }

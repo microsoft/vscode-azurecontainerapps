@@ -20,7 +20,6 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInA
         context.registryDomain = acrDomain;
 
         const run = await buildImageInAzure(context);
-
         const outputImages = run?.outputImages;
         context.telemetry.properties.outputImages = outputImages?.length?.toString();
 
