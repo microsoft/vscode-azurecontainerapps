@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardPromptStep, createSubscriptionContext, IActionContext } from '@microsoft/vscode-azext-utils';
+import { ext } from '../../../extensionVariables';
 import type { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
 import { createActivityContext } from '../../../utils/activity/activityUtils';
 import { localize } from '../../../utils/localize';
@@ -36,5 +37,8 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
     });
 
     await wizard.prompt();
+    wizardContext.activityTitle = localize('enableIngress', 'Enable ingress on port {0} for container app "{1}"', wizardContext.targetPort, containerApp.name);
     await wizard.execute();
+
+    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
 }

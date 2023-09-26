@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
-import { appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
+import { activitySuccessContext, activitySuccessIcon, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
-import { createActivityContext } from "../../utils/activity/activityUtils";
+import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
@@ -63,17 +63,17 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     const providers: string[] = [];
 
-    // Resource group
+    // Resource Group
     if (wizardContext.resourceGroup) {
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
-        // wizardContext.activityChildren?.push(
-        //     new GenericTreeItem(undefined, {
-        //         contextValue: createActivityChildContext(['useExistingResourceGroup', activitySuccessContext]),
-        //         label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
-        //         iconPath: activitySuccessIcon
-        //     })
-        // );
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['useExistingResourceGroup', activitySuccessContext]),
+                label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
+                iconPath: activitySuccessIcon
+            })
+        );
 
         await LocationListStep.setLocation(wizardContext, wizardContext.resourceGroup.location);
         ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', resourceGroupName));
@@ -81,17 +81,17 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         executeSteps.push(new ResourceGroupCreateStep());
     }
 
-    // Managed environment
+    // Managed Environment
     if (wizardContext.managedEnvironment) {
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
-        // wizardContext.activityChildren?.push(
-        //     new GenericTreeItem(undefined, {
-        //         contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
-        //         label: localize('useManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
-        //         iconPath: activitySuccessIcon
-        //     })
-        // );
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
+                label: localize('useManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
+                iconPath: activitySuccessIcon
+            })
+        );
 
         await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
 
@@ -114,32 +114,35 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     // Azure Container Registry
     if (wizardContext.registry) {
-        // wizardContext.activityChildren?.push(
-        //     new GenericTreeItem(undefined, {
-        //         contextValue: createActivityChildContext(['useExistingAcr', activitySuccessContext]),
-        //         label: localize('useAcr', 'Use container registry "{0}"', wizardContext.registry.name),
-        //         iconPath: activitySuccessIcon
-        //     })
-        // );
+        const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
 
-        ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', wizardContext.registry.name));
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['useExistingAcr', activitySuccessContext]),
+                label: localize('useAcr', 'Use container registry "{0}"', registryName),
+                iconPath: activitySuccessIcon
+            })
+        );
+
+        ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', registryName));
     } else {
-        // ImageSourceListStep handles this creation logic
+        // ImageSourceListStep can already handle this creation logic
     }
 
-    // Container app
+    // Container App
     if (wizardContext.containerApp) {
+        const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
+
         promptSteps.unshift(new ContainerAppOverwriteConfirmStep());
         executeSteps.push(new ContainerAppUpdateStep());
 
-        const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
-        // wizardContext.activityChildren?.push(
-        //     new GenericTreeItem(undefined, {
-        //         contextValue: createActivityChildContext(['useExistingContainerApp', activitySuccessContext]),
-        //         label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
-        //         iconPath: activitySuccessIcon
-        //     })
-        // );
+        wizardContext.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['useExistingContainerApp', activitySuccessContext]),
+                label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
+                iconPath: activitySuccessIcon
+            })
+        );
 
         ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', containerAppName));
     } else {
@@ -153,7 +156,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
 
     providers.push(webProvider);
 
-    // Verify providers
+    // Verify Providers
     executeSteps.push(new VerifyProvidersStep(providers));
 
     // Save deploy settings

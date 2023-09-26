@@ -202,7 +202,7 @@ export async function getContainerEnvelopeWithSecrets(context: IActionContext, s
     return concreteContainerAppEnvelope;
 }
 
-export function isIngressEnabled(containerApp: ContainerApp): containerApp is IngressEnabledContainerApp {
+export function isIngressEnabled(containerApp: ContainerApp | ContainerAppModel): containerApp is IngressEnabledContainerApp {
     return !!containerApp.configuration?.ingress?.fqdn;
 }
 

@@ -18,11 +18,16 @@ export interface ExecuteActivityOutput {
     output?: string | string[];
 }
 
+export interface ExecuteActivityOutputOptions {
+    shouldSwallowError?: boolean;
+}
+
 /**
  * An execute activity base step (wrapper) that automatically handles displaying activity children and/or output log messages on success or fail
  */
 export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & ExecuteActivityContext> extends AzureWizardExecuteStep<T> {
     abstract priority: number;
+    protected options: ExecuteActivityOutputOptions = {};
 
     private success: ExecuteActivityOutput = {};
     private fail: ExecuteActivityOutput = {};
@@ -31,7 +36,7 @@ export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & E
         this.success = this.initSuccessOutput(context);
         this.fail = this.initFailOutput(context);
 
-        await tryCatchActivityWrapper(() => this.executeCore(context, progress), context, this.success, this.fail);
+        await tryCatchActivityWrapper(() => this.executeCore(context, progress), context, this.success, this.fail, this.options);
     }
 
     protected abstract executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void>;

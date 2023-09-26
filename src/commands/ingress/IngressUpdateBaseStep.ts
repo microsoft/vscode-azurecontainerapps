@@ -25,6 +25,5 @@ export abstract class IngressUpdateBaseStep<T extends IContainerAppContext> exte
         await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
 
         ext.outputChannel.appendLog(workCompleted);
-        ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
     }
 }

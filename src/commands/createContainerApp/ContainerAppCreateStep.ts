@@ -62,8 +62,8 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<ICreat
         }));
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: ICreateContainerAppContext): boolean {
+        return !context.containerApp;
     }
 
     protected initSuccessOutput(context: ICreateContainerAppContext): ExecuteActivityOutput {

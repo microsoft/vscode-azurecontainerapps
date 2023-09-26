@@ -1,6 +1,7 @@
 import type { Ingress } from "@azure/arm-appcontainers";
 import { AzureWizard, AzureWizardExecuteStep, IActionContext, createSubscriptionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { IngressConstants } from "../../../constants";
+import { ext } from "../../../extensionVariables";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import type { IngressEnabledItem } from "../../../tree/configurations/IngressItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
@@ -36,4 +37,6 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
     // Title normally gets set during prompt phase... since no prompt steps are provided we must set the 'activityTitle' manually
     wizardContext.activityTitle = title;
     await wizard.execute();
+
+    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
 }

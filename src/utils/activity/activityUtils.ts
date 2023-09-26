@@ -8,7 +8,7 @@ import type { AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-a
 import { randomUUID } from "crypto";
 import { ext } from "../../extensionVariables";
 import { settingUtils } from "../settingUtils";
-import { ExecuteActivityOutput } from "./ExecuteActivityOutputStepBase";
+import { ExecuteActivityOutput, ExecuteActivityOutputOptions } from "./ExecuteActivityOutputStepBase";
 
 export async function createActivityContext(): Promise<ExecuteActivityContext> {
     return {
@@ -27,7 +27,7 @@ export async function tryCatchActivityWrapper(
     context: IActionContext & ExecuteActivityContext,
     success: ExecuteActivityOutput,
     fail: ExecuteActivityOutput,
-    options: { shouldSwallowError?: boolean } = {}
+    options: ExecuteActivityOutputOptions = {}
 ): Promise<void> {
     try {
         await cb();

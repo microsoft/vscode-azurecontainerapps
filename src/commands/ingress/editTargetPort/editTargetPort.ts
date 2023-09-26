@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../extensionVariables";
 import { IngressEnabledItem } from "../../../tree/configurations/IngressItem";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
@@ -43,4 +44,6 @@ export async function editTargetPort(context: IActionContext, node?: IngressEnab
 
     await wizard.prompt();
     await wizard.execute();
+
+    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
 }

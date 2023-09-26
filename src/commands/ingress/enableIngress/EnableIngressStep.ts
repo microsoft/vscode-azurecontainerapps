@@ -4,16 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Ingress } from "@azure/arm-appcontainers";
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { type Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../constants";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
+import { updateContainerApp } from "../../../utils/updateContainerApp";
 import type { IngressContext } from "../IngressContext";
-import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
 
-export class EnableIngressStep extends IngressUpdateBaseStep<IngressContext> {
+export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressContext> {
     public priority: number = 650;
 
-    public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('enablingIngress', 'Enabling ingress...') });
+
         const containerApp = nonNullProp(context, 'containerApp');
         const ingress: Ingress = {
             targetPort: context.targetPort,
@@ -28,14 +33,33 @@ export class EnableIngressStep extends IngressUpdateBaseStep<IngressContext> {
             ],
         }
 
-        const working: string = localize('enablingIngress', 'Enabling ingress...');
-        const workCompleted: string = localize('enableCompleted', 'Enabled ingress on port {0} for container app "{1}"', context.targetPort, containerApp.name)
-
-        context.activityTitle = localize('enableIngress', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, containerApp.name);
-        await this.updateIngressSettings(context, progress, { ingress, working, workCompleted });
+        await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
     }
 
+
     public shouldExecute(context: IngressContext): boolean {
-        return context.enableIngress === true;
+        return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
+    }
+
+    protected initSuccessOutput(context: IngressContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['enableIngressStep', activitySuccessContext]),
+                label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
+                iconPath: activitySuccessIcon
+            }),
+            output: localize('enableCompleted', 'Enabled ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
+        };
+    }
+
+    protected initFailOutput(context: IngressContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['enableIngressStep', activityFailContext]),
+                label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
+                iconPath: activityFailIcon
+            }),
+            output: localize('enableIngressFailed', 'Failed to enable ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
+        };
     }
 }
