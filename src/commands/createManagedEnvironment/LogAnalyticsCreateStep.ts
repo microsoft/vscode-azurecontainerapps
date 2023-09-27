@@ -11,7 +11,7 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../util
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { nonNullProp, nonNullValue } from "../../utils/nonNull";
+import { nonNullProp } from "../../utils/nonNull";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
 export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManagedEnvironmentContext> {
@@ -19,7 +19,7 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
 
     protected async executeCore(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);
-        const resourceGroup = nonNullValue(context.resourceGroup);
+        const resourceGroup = nonNullProp(context, 'resourceGroup');
         const workspaceName = nonNullProp(context, 'newManagedEnvironmentName');
 
         const creating: string = localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...');
