@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import type { ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
@@ -122,8 +122,8 @@ async function tryConfigureResourceGroupForRegistry(
         return;
     }
 
-    // Try to leverage an existing resource group (managed environment name is a fallback here because our create flow has the resource group name mirror the environment name)
-    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup || resourceCreationContext.managedEnvironment?.name;
+    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup ||
+        (resourceCreationContext.managedEnvironment?.id ? getResourceGroupFromId(resourceCreationContext.managedEnvironment.id) : undefined);
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
 
     resourceCreationContext.resourceGroup = resourceGroups.find(rg => resourceGroupName && rg.name === resourceGroupName);
