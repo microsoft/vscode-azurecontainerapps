@@ -4,7 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
+import { window } from "vscode";
 import { ContainerAppModel } from "../tree/ContainerAppItem";
+import { localize } from "./localize";
+import { settingUtils } from "./settingUtils";
 
 /**
  * Use to always select the correct parent resource model
@@ -15,5 +18,21 @@ export function getParentResource(containerApp: ContainerAppModel, revision: Rev
 }
 
 export async function showRevisionDraftInformationPopup(): Promise<void> {
+    if (!await settingUtils.getGlobalSetting('showDraftCommandInformationPopup')) {
+        return;
+    }
 
+    const moreInfo: string = localize('moreInfo', 'More info');
+    const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
+
+    const message: string = localize('revisionDraftInfo', 'You just executed a draft command! Draft commands make local changes which can later be deployed by running `Deploy Changes...`.');
+
+    const buttonMessages: string[] = [moreInfo, dontShowAgain];
+    void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
+        if (result === moreInfo) {
+            //
+        } else if (result === dontShowAgain) {
+            await settingUtils.updateGlobalSetting('showDraftCommandInformationPopup', false);
+        }
+    });
 }

@@ -77,6 +77,9 @@ export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
 export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
 
+export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
+export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
+
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 

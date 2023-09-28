@@ -331,7 +331,7 @@
                 },
                 {
                     "command": "containerApps.updateImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "6@1"
                 },
                 {
@@ -375,6 +375,11 @@
                     "group": "2@4"
                 },
                 {
+                    "command": "containerApps.updateImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionItem/i",
+                    "group": "3@1"
+                },
+                {
                     "command": "containerApps.deployRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
                     "group": "inline@1"
@@ -395,9 +400,14 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerApps.editRevisionDraft",
+                    "command": "containerApps.updateImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.editRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "3@1"
                 },
                 {
                     "command": "containerApps.editScalingRange",
@@ -503,6 +513,11 @@
                             "%containerApps.deleteConfirmation.ClickButton%"
                         ],
                         "default": "EnterName"
+                    },
+                    "containerApps.showDraftCommandInformationPopup": {
+                        "type": "boolean",
+                        "description": "%containerApps.showDraftCommandInformationPopup%",
+                        "default": true
                     }
                 }
             }

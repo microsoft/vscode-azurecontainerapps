@@ -8,6 +8,7 @@ import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { TreeElementBase, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -16,9 +17,6 @@ import type { ContainerAppModel } from "../ContainerAppItem";
 import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
 import { RevisionDraftItem } from "./RevisionDraftItem";
 import { RevisionItem } from "./RevisionItem";
-
-const revisionDraftTrueContextValue: string = 'revisionDraft:true';
-const revisionDraftFalseContextValue: string = 'revisionDraft:false';
 
 export class RevisionsItem implements ContainerAppsItem {
     static readonly idSuffix: string = 'revisions';

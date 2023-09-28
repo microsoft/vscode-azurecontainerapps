@@ -7,13 +7,14 @@ import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
+import { showRevisionDraftInformationPopup } from "../../../utils/revisionDraftUtils";
 import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageStep } from "./UpdateImageStep";
@@ -39,6 +40,8 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
 
     const { subscription, containerApp } = item;
 
+    const parentResource = (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) ? item.containerApp : item.revision;
+
     const wizardContext: UpdateImageContext = {
         ...context,
         ...createSubscriptionContext(subscription),
@@ -58,7 +61,7 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     ];
 
     const wizard: AzureWizard<UpdateImageContext> = new AzureWizard(wizardContext, {
-        title: localize('updateImage', 'Update image in container app "{0}" (draft)', containerApp.name),
+        title: localize('updateImage', 'Update image in "{0}" (draft)', parentResource?.name),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true
@@ -67,5 +70,5 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     await wizard.prompt();
     await wizard.execute();
 
-    // information window pop-up, you just executed a draft command, click here to learn more info
+    void showRevisionDraftInformationPopup();
 }
