@@ -61,11 +61,13 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<ICreat
             }
         }));
 
-        context.activityResult = {
-            id: nonNullValueAndProp(context.containerApp, 'id'),
-            name: containerAppName,
-            type: containerAppsWebProvider
-        };
+        if (!context.activityChildren) {
+            context.activityResult = {
+                id: nonNullValueAndProp(context.containerApp, 'id'),
+                name: containerAppName,
+                type: containerAppsWebProvider
+            };
+        }
     }
 
     public shouldExecute(context: ICreateContainerAppContext): boolean {

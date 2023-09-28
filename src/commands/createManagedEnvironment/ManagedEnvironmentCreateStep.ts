@@ -46,11 +46,13 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
             }
         );
 
-        context.activityResult = {
-            id: nonNullProp(context.managedEnvironment, 'id'),
-            name: managedEnvironmentName,
-            type: managedEnvironmentsAppProvider
-        };
+        if (!context.activityChildren) {
+            context.activityResult = {
+                id: nonNullProp(context.managedEnvironment, 'id'),
+                name: managedEnvironmentName,
+                type: managedEnvironmentsAppProvider
+            };
+        }
     }
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
