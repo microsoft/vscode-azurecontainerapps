@@ -3,23 +3,23 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRule } from "@azure/arm-appcontainers";
+import type { ScaleRule } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, IAzureQuickPickItem, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { IDeleteScaleRuleContext } from "./IDeleteScaleRuleContext";
+import type { ScaleRuleContext } from "./ScaleRuleContext";
 
-export class ScaleRuleListStep extends AzureWizardPromptStep<IDeleteScaleRuleContext> {
-    public async prompt(context: IDeleteScaleRuleContext): Promise<void> {
-        context.scaleRule = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder: localize('scaleRule', 'Select a Scale Rule') })).data;
+export class ScaleRuleListStep extends AzureWizardPromptStep<ScaleRuleContext> {
+    public async prompt(context: ScaleRuleContext): Promise<void> {
+        context.scaleRule = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder: localize('scaleRule', 'Select a scale rule') })).data;
     }
 
-    public shouldPrompt(context: IDeleteScaleRuleContext): boolean {
+    public shouldPrompt(context: ScaleRuleContext): boolean {
         return !context.scaleRule;
     }
 
-    private async getPicks(context: IDeleteScaleRuleContext): Promise<IAzureQuickPickItem<ScaleRule>[] | undefined> {
+    private async getPicks(context: ScaleRuleContext): Promise<IAzureQuickPickItem<ScaleRule>[] | undefined> {
         const scaleRules = context.containerApp?.template?.scale?.rules;
-        if (scaleRules === undefined) {
+        if (!scaleRules?.length) {
             throw new Error(localize('noScaleRules', 'No scale rules found'));
         }
         else {

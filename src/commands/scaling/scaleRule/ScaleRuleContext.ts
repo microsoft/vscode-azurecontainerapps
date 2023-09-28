@@ -3,11 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ScaleRule } from "@azure/arm-appcontainers";
-import { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { IContainerAppContext } from "../../IContainerAppContext";
-import { ISecretContext } from "../../secret/ISecretContext";
+import type { ScaleRule } from "@azure/arm-appcontainers";
+import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import type { IContainerAppContext } from "../../IContainerAppContext";
 
-export interface IDeleteScaleRuleContext extends IContainerAppContext, ISecretContext, ExecuteActivityContext {
+export interface ScaleRuleContext extends IContainerAppContext, ExecuteActivityContext {
     scaleRule?: ScaleRule;
 }

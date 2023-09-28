@@ -5,12 +5,12 @@
 
 import { Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, IActionContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
-import type { ScaleRuleGroupItem } from "../../../tree/scaling/ScaleRuleGroupItem";
-import { createActivityContext } from "../../../utils/activityUtils";
-import { localize } from "../../../utils/localize";
-import { pickScaleRuleGroup } from "../../../utils/pickItem/pickScale";
-import { getParentResource } from "../../../utils/revisionDraftUtils";
+import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import type { ScaleRuleGroupItem } from "../../../../tree/scaling/ScaleRuleGroupItem";
+import { createActivityContext } from "../../../../utils/activityUtils";
+import { localize } from "../../../../utils/localize";
+import { pickScaleRuleGroup } from "../../../../utils/pickItem/pickScale";
+import { getParentResource } from "../../../../utils/revisionDraftUtils";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";

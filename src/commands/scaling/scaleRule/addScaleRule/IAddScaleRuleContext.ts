@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ScaleRule } from "@azure/arm-appcontainers";
-import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
-import type { IContainerAppContext } from "../../IContainerAppContext";
-import type { ISecretContext } from "../../secret/ISecretContext";
+import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import type { ISecretContext } from "../../../secret/ISecretContext";
+import type { ScaleRuleContext } from "../ScaleRuleContext";
 
-export interface IAddScaleRuleContext extends IContainerAppContext, ISecretContext, ExecuteActivityContext {
+export interface IAddScaleRuleContext extends ScaleRuleContext, ISecretContext {
     // Make containerApp _required_
     containerApp: ContainerAppModel;
 
