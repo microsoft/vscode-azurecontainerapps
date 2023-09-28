@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import type { ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
@@ -88,6 +88,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
 
         const picks: IAzureQuickPickItem<Registry | undefined>[] = [];
 
+        // The why of `suppressCreate` in a nutshell: https://github.com/microsoft/vscode-azurecontainerapps/issues/78#issuecomment-1090686282
         const suppressCreate: boolean = context.imageSource !== ImageSource.RemoteAcrBuild;
         if (!suppressCreate) {
             picks.push({
@@ -122,8 +123,9 @@ async function tryConfigureResourceGroupForRegistry(
         return;
     }
 
-    // Try to leverage an existing resource group (managed environment name is a fallback here because our create flow has the resource group name mirror the environment name)
-    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup || resourceCreationContext.managedEnvironment?.name;
+    // Try to check for an existing container app or managed environment resource group
+    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup ||
+        (resourceCreationContext.managedEnvironment?.id ? getResourceGroupFromId(resourceCreationContext.managedEnvironment.id) : undefined);
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
 
     resourceCreationContext.resourceGroup = resourceGroups.find(rg => resourceGroupName && rg.name === resourceGroupName);

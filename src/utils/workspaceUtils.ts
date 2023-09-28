@@ -9,12 +9,23 @@ import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vsco
 import { browseItem } from "../constants";
 import { localize } from "./localize";
 
+interface SelectWorkspaceFileOptions extends OpenDialogOptions {
+    /**
+     * Include a 'skipForNow` option in the prompting.  Selection of `skipForNow` should correspond to a value of `undefined`
+     */
+    allowSkip?: boolean;
+    /**
+     * If searching through the workspace file path returns only one matching result, automatically return its path without additional prompting
+     */
+    autoSelectIfOne?: boolean;
+}
+
 /**
  * Opens a quick pick menu with files matching the file extension filters provided, otherwise shows files in the current workspace.
  *
  * @returns Returns a string representing the workspace file path chosen.  A return of undefined is only possible when the `allowSkip` option is set to true.
  */
-export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: OpenDialogOptions & { allowSkip?: boolean }, globPattern?: string): Promise<string | undefined> {
+export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: SelectWorkspaceFileOptions, globPattern?: string): Promise<string | undefined> {
     let input: IAzureQuickPickItem<string | undefined> | undefined;
     const quickPicks: IAzureQuickPickItem<string | undefined>[] = [];
     const skipForNow: string = 'skipForNow';
@@ -22,6 +33,10 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
     if (workspace.workspaceFolders?.length === 1) {
         // if there's a fileExtension, then only populate the quickPick menu with that, otherwise show the current folders in the workspace
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
+        if (options.autoSelectIfOne && files.length === 1) {
+            return files[0].path;
+        }
+
         quickPicks.push(...files.map((uri: Uri) => {
             return {
                 label: basename(uri.path),
