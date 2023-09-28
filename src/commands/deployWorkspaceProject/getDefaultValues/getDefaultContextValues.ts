@@ -3,10 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { KnownSkuName } from "@azure/arm-containerregistry";
 import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { relativeSettingsFilePath } from "../../../constants";
+import { ImageSource, relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
+import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
+import { AcrBuildSupportedOS } from "../../deployImage/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
@@ -26,11 +29,11 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     return {
         ...await getDefaultContainerAppsResources(context, settings),
         ...await getDefaultAcrResources(context, settings),
-        // newRegistrySku: KnownSkuName.Basic,
+        newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
-        // environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
-        // imageSource: ImageSource.RemoteAcrBuild,
-        // os: AcrBuildSupportedOS.Linux,
+        environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
+        imageSource: ImageSource.RemoteAcrBuild,
+        os: AcrBuildSupportedOS.Linux,
         rootFolder,
     };
 }
