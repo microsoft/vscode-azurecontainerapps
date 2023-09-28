@@ -18,7 +18,10 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
     public priority: number = 1480;
 
     protected async executeCore(context: DeployWorkspaceProjectContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        // Even if this step fails, there's no need to show the whole activity as failed.
+        // Swallow the error and just show the activity failed item and output log message instead.
         this.options.shouldSwallowError = true;
+
         progress.report({ message: localize('saving', 'Saving configuration...') });
 
         const settings: DeployWorkspaceProjectSettings = {
