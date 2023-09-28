@@ -5,9 +5,9 @@
 
 import { AzureWizardPromptStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { QuickPickItem } from 'vscode';
-import { ScaleRuleTypes } from '../../../constants';
-import { localize } from '../../../utils/localize';
-import { SecretListStep } from '../../secret/SecretListStep';
+import { ScaleRuleTypes } from '../../../../constants';
+import { localize } from '../../../../utils/localize';
+import { SecretListStep } from '../../../secret/SecretListStep';
 import type { IAddScaleRuleContext } from './IAddScaleRuleContext';
 import { HttpConcurrentRequestsStep } from './http/HttpConcurrentRequestsStep';
 import { QueueAuthTriggerStep } from './queue/QueueAuthTriggerStep';

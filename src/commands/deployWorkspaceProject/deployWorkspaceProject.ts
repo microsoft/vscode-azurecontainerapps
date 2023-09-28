@@ -48,7 +48,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         ...subscriptionContext,
         ...await createActivityContext(),
         ...defaultContextValues,
-        activityChildren: [],
+        // activityChildren: [],
         subscription,
     };
 
