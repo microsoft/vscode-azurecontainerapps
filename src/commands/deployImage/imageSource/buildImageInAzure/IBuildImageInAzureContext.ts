@@ -5,8 +5,8 @@
 
 import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
 import * as vscode from 'vscode';
-import { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
-import { AcrBuildSupportedOS } from './OSPickStep';
+import type { IContainerRegistryImageContext } from '../containerRegistry/IContainerRegistryImageContext';
+import type { AcrBuildSupportedOS } from './OSPickStep';
 
 export interface IBuildImageInAzureContext extends IContainerRegistryImageContext {
     rootFolder: vscode.WorkspaceFolder;
@@ -20,5 +20,5 @@ export interface IBuildImageInAzureContext extends IContainerRegistryImageContex
     client: ContainerRegistryManagementClient;
     resourceGroupName: string;
     registryName: string;
-    run: AcrRun
+    run: AcrRun;
 }

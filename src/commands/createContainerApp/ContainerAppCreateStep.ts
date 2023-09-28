@@ -5,10 +5,9 @@
 
 import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
-import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -20,6 +19,9 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+
+        const resourceGroupName: string = context.newResourceGroupName || nonNullValueAndProp(context.resourceGroup, 'name');
+        const containerAppName: string = nonNullProp(context, 'newContainerAppName');
 
         const ingress: Ingress | undefined = context.enableIngress ? {
             targetPort: context.targetPort,
@@ -34,13 +36,12 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
             ],
         } : undefined;
 
-        const creating: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
+        const creating: string = localize('creatingContainerApp', 'Creating container app...');
         progress.report({ message: creating });
-        ext.outputChannel.appendLog(creating);
 
-        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
+        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
-            managedEnvironmentId: context.managedEnvironmentId,
+            managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
             configuration: {
                 ingress,
                 secrets: context.secrets,
