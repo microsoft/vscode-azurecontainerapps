@@ -76,8 +76,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.deployImage",
-                "title": "%containerApps.deployImage%",
+                "command": "containerApps.updateImage",
+                "title": "%containerApps.updateImage%",
                 "category": "Azure Container Apps",
                 "icon": "$(cloud-upload)"
             },
@@ -330,7 +330,7 @@
                     "group": "5@1"
                 },
                 {
-                    "command": "containerApps.deployImage",
+                    "command": "containerApps.updateImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "6@1"
                 },

@@ -9,7 +9,7 @@ import { ext } from "../../extensionVariables";
 import type { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { localize } from "../../utils/localize";
 import { pickScale } from "../../utils/pickItem/pickScale";
-import { updateContainerApp } from "../../utils/updateContainerApp";
+import { updateContainerApp } from "../../utils/updateContainerApp/updateContainerApp";
 
 export async function editScalingRange(context: IActionContext, node?: ScaleItem): Promise<void> {
     const { containerApp, revision, subscription } = node ?? await pickScale(context, { autoSelectDraft: true });

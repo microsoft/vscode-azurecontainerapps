@@ -8,7 +8,7 @@ import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
+import { updateContainerApp } from "../../../utils/updateContainerApp/updateContainerApp";
 import type { ISecretContext } from "../ISecretContext";
 
 export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {

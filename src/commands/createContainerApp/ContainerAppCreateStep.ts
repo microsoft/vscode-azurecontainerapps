@@ -12,11 +12,11 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
+import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
-    public priority: number = 750;
+    public priority: number = 620;
 
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);

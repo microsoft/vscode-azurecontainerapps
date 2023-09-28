@@ -8,7 +8,7 @@ import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
+import { updateContainerApp } from "../../../utils/updateContainerApp/updateContainerApp";
 import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export class ChangeRevisionModeStep extends AzureWizardExecuteStep<IChooseRevisionModeContext> {

@@ -7,7 +7,7 @@ import type { Registry } from "@azure/arm-containerregistry";
 import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
-import { AcrListStep } from "../../deployImage/imageSource/containerRegistry/acr/AcrListStep";
+import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { DeployWorkspaceProjectSettings } from "../DeployWorkspaceProjectSettings";
 
 interface DefaultAcrResources {

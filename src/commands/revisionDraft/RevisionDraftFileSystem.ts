@@ -135,7 +135,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         ext.state.notifyChildrenChanged(file.containerAppId);
     }
 
-    updateRevisionDraftWithTemplate(item: RevisionsItemModel, template: Template): void {
+    updateRevisionDraftWithTemplate(item: ContainerAppItem | RevisionsItemModel, template: Template): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);

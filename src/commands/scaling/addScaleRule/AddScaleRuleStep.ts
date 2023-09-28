@@ -28,7 +28,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
         this.updateRevisionDraftWithTemplate();
 
-        const resourceName = getParentResource(context.containerApp, this.baseItem.revision).name;
+        const resourceName = getParentResource(context.containerApp, (this.baseItem as RevisionsItemModel).revision).name;
         ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft)', context.newRuleType, context.newRuleName, resourceName));
     }
 

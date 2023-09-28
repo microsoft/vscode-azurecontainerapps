@@ -10,7 +10,7 @@ import type { IngressContext } from "../IngressContext";
 import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 
 export class TargetPortUpdateStep extends IngressUpdateStepBase<IngressContext> {
-    public priority: number = 650;
+    public priority: number = 750;
 
     public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp = nonNullProp(context, 'containerApp');

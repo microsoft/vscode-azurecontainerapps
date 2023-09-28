@@ -6,8 +6,9 @@
 import type { EnvironmentVar, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import type { ImageSource, ImageSourceValues } from "../../../constants";
 import type { IContainerAppContext } from "../../IContainerAppContext";
+import { CreateAcrContext } from "./containerRegistry/acr/createAcr/CreateAcrContext";
 
-export interface ImageSourceBaseContext extends IContainerAppContext {
+export interface ImageSourceBaseContext extends CreateAcrContext, IContainerAppContext {
     // ImageSourceListStep
     imageSource?: ImageSourceValues;
     buildType?: ImageSource.LocalDockerBuild | ImageSource.RemoteAcrBuild;
@@ -15,7 +16,8 @@ export interface ImageSourceBaseContext extends IContainerAppContext {
 
     // Base image attributes used as a precursor for either creating or updating a container app
     image?: string;
-    environmentVariables?: EnvironmentVar[];
     registries?: RegistryCredentials[];
     secrets?: Secret[];
+
+    environmentVariables?: EnvironmentVar[];
 }

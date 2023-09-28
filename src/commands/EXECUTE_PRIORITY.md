@@ -22,11 +22,12 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - RegistryCreateStep: 350
 
-### 3. Image Source
+### 3. Image
 
 <b>Priority Range</b>: 400 - 490
 
-#### Build Image in Azure Steps
+#### General Steps
+##### Build Image in Azure Steps
 
 - TarFileStep: 420
 - UploadSourceCodeStep: 430
@@ -34,15 +35,16 @@ When creating or updating resources, execute steps should occupy certain priorit
 - BuildImageStep: 450
 - ContainerRegistryImageConfigureStep: 470
 
-#### Container Registry Steps
+##### Container Registry Steps
 
 - ContainerRegistryImageConfigureStep: 470
 
-#### Common Steps
+#### `updateImage` Steps (Update)
 
-- ContainerAppUpdateStep: 480 (Todo - investigate decoupling this command from imageSource when revision draft update support is added)
+- UpdateRegistryAndSecretsStep: 480
+- UpdateImageStep: 490 (revision draft)
 
-### 4. Environment Variables
+### 4. Unallocated Space
 
 <b>Priority Range</b>: 500 - 590
 
@@ -50,27 +52,28 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 Reserved
 
-### 5. Ingress
+### 5. Container App
 
 <b>Priority Range</b>: 600 - 690
 
 #### Steps
 
-- EnableIngressStep: 650
-- DisableIngressStep: 650
+- ContainerAppCreateStep: 620
+- ContainerAppUpdateStep: 650
 
-- TargetPortUpdateStep: 650 (single command only)
-- ToggleIngressVisibilityStep: 650 (single command only)
-
-### 6. Container App
+### 6. Ingress
 
 <b>Priority Range</b>: 700 - 790
 
 #### Steps
 
-- ContainerAppCreateStep: 750
+- EnableIngressStep: 750 (update existing container app)
+- DisableIngressStep: 750 (update existing container app)
 
-### 7. Secrets
+- TargetPortUpdateStep: 750 (single command only)
+- ToggleIngressVisibilityStep: 750 (single command only)
+
+### 7. Secrets (Create/Update)
 
 <b>Priority Range</b>: 800 - 890
 
@@ -87,13 +90,13 @@ Reserved
 
 - Reserved for future commands TBD.
 
-### 9. Scaling
+### 9. Scaling (Update)
 
 <b>Priority Range</b>: 1100 - 1190
 
 #### Steps
 
-- AddScaleRuleStep: 1120
+- AddScaleRuleStep: 1120 (revision draft)
 
 ### 10. Unallocated Space
 

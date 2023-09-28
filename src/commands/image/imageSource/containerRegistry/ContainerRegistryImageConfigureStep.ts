@@ -38,6 +38,9 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
                 const thirdPartyRegistryCredentialsAndSecrets = getThirdPartyCredentialsAndSecrets(context, { registries, secrets });
                 context.secrets = thirdPartyRegistryCredentialsAndSecrets.secrets;
                 context.registries = thirdPartyRegistryCredentialsAndSecrets.registries;
+            } else {
+                context.secrets = secrets;
+                context.registries = registries;
             }
         }
 

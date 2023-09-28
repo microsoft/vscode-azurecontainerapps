@@ -13,3 +13,7 @@ import { ContainerAppModel } from "../tree/ContainerAppItem";
 export function getParentResource(containerApp: ContainerAppModel, revision: Revision): ContainerAppModel | Revision {
     return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp : revision;
 }
+
+export async function showRevisionDraftInformationPopup(): Promise<void> {
+
+}

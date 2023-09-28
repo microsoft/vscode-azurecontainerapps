@@ -5,18 +5,18 @@
 
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
+import { showContainerAppCreated } from "../../commands/createContainerApp/showContainerAppCreated";
+import { ImageSourceBaseContext } from "../../commands/image/imageSource/ImageSourceBaseContext";
+import { getContainerNameForImage } from "../../commands/image/imageSource/containerRegistry/getContainerNameForImage";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { localize } from "../../utils/localize";
-import { updateContainerApp } from "../../utils/updateContainerApp";
-import { showContainerAppCreated } from "../createContainerApp/showContainerAppCreated";
-import type { IDeployImageContext } from "./deployImage";
-import { getContainerNameForImage } from "./imageSource/containerRegistry/getContainerNameForImage";
+import { localize } from "../localize";
+import { updateContainerApp } from "./updateContainerApp";
 
-export class ContainerAppUpdateStep extends AzureWizardExecuteStep<IDeployImageContext> {
-    public priority: number = 480;
+export class ContainerAppUpdateStep<T extends ImageSourceBaseContext> extends AzureWizardExecuteStep<T> {
+    public priority: number = 650;
 
-    public async execute(context: IDeployImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
