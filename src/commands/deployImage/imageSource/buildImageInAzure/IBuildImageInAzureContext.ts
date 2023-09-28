@@ -12,7 +12,7 @@ export interface IBuildImageInAzureContext extends IContainerRegistryImageContex
     rootFolder: vscode.WorkspaceFolder;
     dockerfilePath: string;
     imageName: string;
-    os: typeof AcrBuildSupportedOS[keyof typeof AcrBuildSupportedOS];
+    os: AcrBuildSupportedOS;
 
     uploadedSourceLocation: string;
     tarFilePath: string;

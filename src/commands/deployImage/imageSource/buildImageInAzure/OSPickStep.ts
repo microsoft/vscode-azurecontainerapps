@@ -15,7 +15,7 @@ export enum AcrBuildSupportedOS {
 export class OSPickStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
     public async prompt(context: IBuildImageInAzureContext): Promise<void> {
         const placeHolder: string = localize('imageOSPrompt', 'Select image base OS');
-        const picks: IAzureQuickPickItem<typeof AcrBuildSupportedOS[keyof typeof AcrBuildSupportedOS]>[] = [
+        const picks: IAzureQuickPickItem<AcrBuildSupportedOS>[] = [
             { label: AcrBuildSupportedOS.Linux, data: AcrBuildSupportedOS.Linux, suppressPersistence: true },
             { label: AcrBuildSupportedOS.Windows, data: AcrBuildSupportedOS.Windows, suppressPersistence: true },
         ];

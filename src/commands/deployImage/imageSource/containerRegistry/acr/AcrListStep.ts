@@ -88,6 +88,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
 
         const picks: IAzureQuickPickItem<Registry | undefined>[] = [];
 
+        // The why of `suppressCreate` in a nutshell: https://github.com/microsoft/vscode-azurecontainerapps/issues/78#issuecomment-1090686282
         const suppressCreate: boolean = context.imageSource !== ImageSource.RemoteAcrBuild;
         if (!suppressCreate) {
             picks.push({
@@ -122,6 +123,7 @@ async function tryConfigureResourceGroupForRegistry(
         return;
     }
 
+    // Try to check for an existing container app or managed environment resource group
     const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup ||
         (resourceCreationContext.managedEnvironment?.id ? getResourceGroupFromId(resourceCreationContext.managedEnvironment.id) : undefined);
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
