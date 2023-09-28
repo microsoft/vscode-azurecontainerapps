@@ -32,8 +32,9 @@ import { createRevisionDraft } from './revisionDraft/createRevisionDraft';
 import { deployRevisionDraft } from './revisionDraft/deployRevisionDraft/deployRevisionDraft';
 import { discardRevisionDraft } from './revisionDraft/discardRevisionDraft';
 import { editRevisionDraft } from './revisionDraft/editRevisionDraft';
-import { addScaleRule } from './scaling/addScaleRule/addScaleRule';
 import { editScalingRange } from './scaling/editScalingRange';
+import { addScaleRule } from './scaling/scaleRule/addScaleRule/addScaleRule';
+import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScaleRule';
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretName } from './secret/editSecret/editSecretName';
@@ -88,6 +89,7 @@ export function registerCommands(): void {
     // scaling
     registerCommandWithTreeNodeUnwrapping('containerApps.editScalingRange', editScalingRange);
     registerCommandWithTreeNodeUnwrapping('containerApps.addScaleRule', addScaleRule);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deleteScaleRule', deleteScaleRule);
 
     //log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
