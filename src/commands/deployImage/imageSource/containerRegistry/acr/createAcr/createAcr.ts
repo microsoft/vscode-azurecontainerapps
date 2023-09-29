@@ -7,7 +7,7 @@ import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-aze
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../../../../extensionVariables";
-import { createActivityContext } from "../../../../../../utils/activityUtils";
+import { createActivityContext } from "../../../../../../utils/activity/activityUtils";
 import { localize } from "../../../../../../utils/localize";
 import { CreateAcrContext } from "./CreateAcrContext";
 import { RegistryCreateStep } from "./RegistryCreateStep";

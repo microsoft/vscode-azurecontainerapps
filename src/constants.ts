@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { QuickPickItem } from "vscode";
+import { QuickPickItem, ThemeColor, ThemeIcon } from "vscode";
 import { localize } from "./utils/localize";
 
 export const managedEnvironmentsId = 'managedEnvironments';
@@ -77,6 +77,12 @@ export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}
 
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
 export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+
+export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));
+export const activityFailIcon: ThemeIcon = new ThemeIcon('error', new ThemeColor('testing.iconFailed'));
+
+export const activitySuccessContext: string = 'activity:success';
+export const activityFailContext: string = 'activity:fail';
 
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';

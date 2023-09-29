@@ -7,7 +7,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionCont
 import { ext } from "../../../extensionVariables";
 import type { SecretItem } from "../../../tree/configurations/secrets/SecretItem";
 import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
-import { createActivityContext } from "../../../utils/activityUtils";
+import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickSecret } from "../../../utils/pickItem/pickSecret";
 import type { ISecretContext } from "../ISecretContext";
