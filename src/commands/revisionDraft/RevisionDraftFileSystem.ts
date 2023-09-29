@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
+import { ParsedAzureResourceId, parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
@@ -160,7 +161,11 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
     }
 
     private buildUriFromItem(item: ContainerAppsItem): Uri {
-        return URI.parse(`${RevisionDraftFileSystem.scheme}:/${item.containerApp.name}.json`);
+        // Container app names are not globally unique, so we need to produce a unique ID for lookup
+        // Note: Using '|' delimiters instead of '/' to prevent each path item showing up as a virtual directory when opened
+        const parsedResourceId: ParsedAzureResourceId = parseAzureResourceId(item.containerApp.id);
+        const shortenedContainerAppId: string = `${parsedResourceId.subscriptionId?.slice(0, 5)}...|resourceGroups|${parsedResourceId.resourceGroup}|containerApps|${parsedResourceId.resourceName}`;
+        return URI.parse(`${RevisionDraftFileSystem.scheme}:/${shortenedContainerAppId}.json`);
     }
 
     // Adapted from: https://github.com/microsoft/vscode-extension-samples/blob/master/fsprovider-sample/src/fileSystemProvider.ts
