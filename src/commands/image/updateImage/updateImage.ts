@@ -2,19 +2,19 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
-import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
-import { showRevisionDraftInformationPopup } from "../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, showRevisionDraftInformationPopup } from "../../../utils/revisionDraftUtils";
 import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageStep } from "./UpdateImageStep";
@@ -40,8 +40,6 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
 
     const { subscription, containerApp } = item;
 
-    const parentResource = (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) ? item.containerApp : item.revision;
-
     const wizardContext: UpdateImageContext = {
         ...context,
         ...createSubscriptionContext(subscription),
@@ -60,8 +58,10 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
         new UpdateImageStep(item)
     ];
 
+    const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
+
     const wizard: AzureWizard<UpdateImageContext> = new AzureWizard(wizardContext, {
-        title: localize('updateImage', 'Update image in "{0}" (draft)', parentResource?.name),
+        title: localize('updateImage', 'Update container image in "{0}" (draft)', parentResource.name),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true
