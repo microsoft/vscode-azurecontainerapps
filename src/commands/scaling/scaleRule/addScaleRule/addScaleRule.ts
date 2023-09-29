@@ -32,7 +32,7 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     };
 
     const wizard: AzureWizard<IAddScaleRuleContext> = new AzureWizard(wizardContext, {
-        title: localize('addScaleRuleTitle', 'Add scale rule to container app "{0}" (draft)', containerApp.name),
+        title: localize('addScaleRuleTitle', 'Add scale rule to "{0}" (draft)', parentResource.name),
         promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeListStep()],
         executeSteps: [new AddScaleRuleStep(item)],
         showLoadingPrompt: true
