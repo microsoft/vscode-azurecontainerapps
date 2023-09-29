@@ -75,17 +75,17 @@ export const vscodeFolder: string = '.vscode';
 export const settingsFile: string = 'settings.json';
 export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}`;
 
+// Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
+export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+
 export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));
 export const activityFailIcon: ThemeIcon = new ThemeIcon('error', new ThemeColor('testing.iconFailed'));
 
-// Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
-export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+export const activitySuccessContext: string = 'activity:success';
+export const activityFailContext: string = 'activity:fail';
 
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
-
-export const activitySuccessContext: string = 'activity:success';
-export const activityFailContext: string = 'activity:fail';
