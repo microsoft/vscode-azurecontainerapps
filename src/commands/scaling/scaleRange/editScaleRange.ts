@@ -33,7 +33,7 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
     };
 
     const wizard: AzureWizard<ScaleRangeContext> = new AzureWizard(wizardContext, {
-        title: localize('editScaleRangePre', 'Update replica scaling range for container app "{0}" (draft)', containerApp.name),
+        title: localize('editScaleRangePre', 'Update replica scaling range for "{0}" (draft)', parentResource.name),
         promptSteps: [new ScaleRangePromptStep()],
         executeSteps: [new ScaleRangeUpdateStep(item)],
         showLoadingPrompt: true
