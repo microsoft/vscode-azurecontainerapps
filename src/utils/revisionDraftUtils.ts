@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
 import { ContainerAppItem, ContainerAppModel } from "../tree/ContainerAppItem";
-import { RevisionsItemModel } from "../tree/revisionManagement/RevisionItem";
+import type { RevisionsItemModel } from "../tree/revisionManagement/RevisionItem";
 
 /**
  * Use to always select the correct parent resource model
