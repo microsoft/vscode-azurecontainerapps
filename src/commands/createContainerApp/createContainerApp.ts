@@ -20,20 +20,18 @@ import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
 export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<ICreateContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
-    node ??= await pickEnvironment(context, {
-        title: localize('createContainerApp', 'Create Container App'),
-    });
+    node ??= await pickEnvironment(context);
 
     const wizardContext: ICreateContainerAppContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         subscription: node.subscription,
         managedEnvironmentId: node.managedEnvironment.id,
         alwaysPromptIngress: true
     };
 
-    const title: string = localize('createContainerApp', 'Create Container App');
+    const title: string = localize('createContainerApp', 'Create container app');
 
     const promptSteps: AzureWizardPromptStep<ICreateContainerAppContext>[] = [
         new ContainerAppNameStep(),
@@ -46,6 +44,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         new ContainerAppCreateStep(),
     ];
 
+    // Update this logic...
     wizardContext.newResourceGroupName = node.resource.resourceGroup;
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
@@ -64,9 +63,9 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
 
     await ext.state.showCreatingChild(
         node.managedEnvironment.id,
-        localize('creatingContainerApp', 'Creating Container App "{0}"...', newContainerAppName),
+        localize('creatingContainerApp', 'Creating container app "{0}"...', newContainerAppName),
         async () => {
-            wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
+            wizardContext.activityTitle = localize('createNamedContainerApp', 'Create container app "{0}"', newContainerAppName);
             await wizard.execute();
         });
 

@@ -5,7 +5,7 @@
 
 import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
 import type { ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupCreateStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain, currentlyDeployed, noMatchingResource, noMatchingResourceQp, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
@@ -48,7 +48,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
                 new RegistryCreateStep()
             ];
 
-            await tryConfigureResourceGroupForRegistry(context, promptSteps, executeSteps);
+            await tryConfigureResourceGroupForRegistry(context, promptSteps);
 
             if (context.resourceGroup) {
                 await LocationListStep.setLocation(context, context.resourceGroup.location);
@@ -126,14 +126,10 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
 async function tryConfigureResourceGroupForRegistry(
     context: IContainerRegistryImageContext,
     promptSteps: AzureWizardPromptStep<IContainerRegistryImageContext>[],
-    executeSteps: AzureWizardExecuteStep<IContainerRegistryImageContext>[]
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
     const resourceCreationContext = context as Partial<ICreateContainerAppContext> & Partial<IManagedEnvironmentContext> & CreateAcrContext;
-    if (resourceCreationContext.resourceGroup) {
-        return;
-    } else if (resourceCreationContext.newResourceGroupName) {
-        executeSteps.push(new ResourceGroupCreateStep());
+    if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
         return;
     }
 
