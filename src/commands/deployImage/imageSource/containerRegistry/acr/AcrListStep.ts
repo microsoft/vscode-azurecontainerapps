@@ -7,7 +7,7 @@ import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-con
 import type { ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { ImageSource, acrDomain, currentlyDeployed, quickStartImageName } from "../../../../../constants";
+import { ImageSource, acrDomain, currentlyDeployed, noMatchingResource, noMatchingResourceQp, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
@@ -24,7 +24,14 @@ import { SkuListStep } from "./createAcr/SkuListStep";
 export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
-        context.registry = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
+
+        let result: Registry | typeof noMatchingResource | undefined = noMatchingResource;
+
+        while (result === noMatchingResource) {
+            result = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
+        }
+
+        context.registry = result;
     }
 
     public shouldPrompt(context: IContainerRegistryImageContext): boolean {
@@ -63,7 +70,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
         return undefined;
     }
 
-    public async getPicks(context: IContainerRegistryImageContext): Promise<IAzureQuickPickItem<Registry | undefined>[]> {
+    public async getPicks(context: IContainerRegistryImageContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResource | undefined>[]> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
 
         // Try to suggest a registry only when the user is deploying to a Container App
@@ -86,7 +93,7 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
             }
         }
 
-        const picks: IAzureQuickPickItem<Registry | undefined>[] = [];
+        const picks: IAzureQuickPickItem<Registry | typeof noMatchingResource | undefined>[] = [];
 
         // The why of `suppressCreate` in a nutshell: https://github.com/microsoft/vscode-azurecontainerapps/issues/78#issuecomment-1090686282
         const suppressCreate: boolean = context.imageSource !== ImageSource.RemoteAcrBuild;
@@ -96,6 +103,10 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
                 description: '',
                 data: undefined
             });
+        }
+
+        if (!picks.length && !registries.length) {
+            picks.push(noMatchingResourceQp);
         }
 
         return picks.concat(

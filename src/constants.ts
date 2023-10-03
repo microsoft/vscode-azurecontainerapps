@@ -69,6 +69,14 @@ export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
 export const browseItem: IAzureQuickPickItem<undefined> = { label: `$(file-directory) ${localize('browse', 'Browse...')}`, description: '', data: undefined };
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
+
+export const noMatchingResource = 'noMatchingResource';
+export const noMatchingResourceQp: IAzureQuickPickItem<'noMatchingResource'> = {
+    label: localize('noMatchingResource', 'No matching resources found.'),
+    description: '',
+    data: 'noMatchingResource'
+};
+
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
 export const vscodeFolder: string = '.vscode';
