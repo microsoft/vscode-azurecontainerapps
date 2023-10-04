@@ -5,9 +5,8 @@
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { QuickPickItem } from "vscode";
-import { QuickPicksCache, currentlyDeployed, dockerHubDomain, loadMoreQp, quickStartImageName } from "../../../../../constants";
+import { QuickPicksCache, currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
-import { localize } from "../../../../../utils/localize";
 import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
@@ -17,9 +16,8 @@ import type { DockerHubV2Repository } from "./DockerHubV2Types";
 export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesListStepBase {
     public async getPicks(context: IContainerRegistryImageContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
         const response = await getReposForNamespace(context, nonNullProp(context, 'dockerHubNamespace'), cachedPicks.next);
-
         if (response.count === 0) {
-            await context.ui.showWarningMessage(localize('noRepos', 'Unable to find any repositories associated to namespace "{0}"', context.dockerHubNamespace), { modal: true });
+            return [noMatchingResourcesQp];
         }
 
         // Try to suggest a repository only when the user is deploying to a Container App
@@ -43,12 +41,12 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         }
 
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
-        const quickPicks: QuickPickItem[] = response.results.map((r) => {
+        const picks: QuickPickItem[] = response.results.map((r) => {
             return !!suggestedRepository && r.name === suggestedRepository ?
                 { label: r.name, description: r.description ? `${r.description} ${currentlyDeployed}` : currentlyDeployed, suppressPersistence: true } :
                 { label: r.name, description: r.description, suppressPersistence: srExists }
         });
-        cachedPicks.cache.push(...quickPicks);
+        cachedPicks.cache.push(...picks);
 
         if (response.next) {
             cachedPicks.next = response.next;
