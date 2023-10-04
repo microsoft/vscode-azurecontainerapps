@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import type { ResourceGroup } from "@azure/arm-resources";
+import { LocationListStep, ResourceGroupListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -44,8 +45,11 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         new ContainerAppCreateStep(),
     ];
 
-    // Update this logic...
-    wizardContext.newResourceGroupName = node.resource.resourceGroup;
+    // Use the same resource group and location as the parent resource (managed environment)
+    const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
+    wizardContext.resourceGroup = resourceGroups.find(rg => rg.name === resourceGroupName);
+
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
     const wizard: AzureWizard<ICreateContainerAppContext> = new AzureWizard(wizardContext, {

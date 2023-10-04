@@ -20,7 +20,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
     public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
-        const resourceGroupName: string = context.newResourceGroupName || nonNullValueAndProp(context.resourceGroup, 'name');
+        const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const containerAppName: string = nonNullProp(context, 'newContainerAppName');
 
         const ingress: Ingress | undefined = context.enableIngress ? {
@@ -60,7 +60,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
         }));
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: ICreateContainerAppContext): boolean {
+        return !context.containerApp;
     }
 }
