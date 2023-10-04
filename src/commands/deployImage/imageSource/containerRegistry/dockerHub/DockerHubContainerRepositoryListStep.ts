@@ -5,7 +5,7 @@
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { QuickPickItem } from "vscode";
-import { QuickPicksCache, currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourceQp, quickStartImageName } from "../../../../../constants";
+import { QuickPicksCache, currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
@@ -17,7 +17,7 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
     public async getPicks(context: IContainerRegistryImageContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
         const response = await getReposForNamespace(context, nonNullProp(context, 'dockerHubNamespace'), cachedPicks.next);
         if (response.count === 0) {
-            return [noMatchingResourceQp];
+            return [noMatchingResourcesQp];
         }
 
         // Try to suggest a repository only when the user is deploying to a Container App

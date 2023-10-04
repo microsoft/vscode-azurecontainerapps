@@ -6,7 +6,7 @@
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import type { QuickPickItem } from "vscode";
-import { acrDomain, currentlyDeployed, noMatchingResourceQp, quickStartImageName } from "../../../../../constants";
+import { acrDomain, currentlyDeployed, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
@@ -40,7 +40,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
 
         const picks: QuickPickItem[] = [];
         if (!repositoryNames.length) {
-            picks.push(noMatchingResourceQp);
+            picks.push(noMatchingResourcesQp);
         }
 
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
