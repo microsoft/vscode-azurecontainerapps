@@ -29,8 +29,8 @@ export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & E
     abstract priority: number;
     protected options: ExecuteActivityOutputOptions = {};
 
-    protected success: ExecuteActivityOutput = {};
-    protected fail: ExecuteActivityOutput = {};
+    protected success: ExecuteActivityOutput;
+    protected fail: ExecuteActivityOutput;
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.success = this.initSuccessOutput(context);
