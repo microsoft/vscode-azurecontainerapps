@@ -25,10 +25,10 @@ export class AcrListStep extends AzureWizardPromptStep<IContainerRegistryImageCo
     public async prompt(context: IContainerRegistryImageContext): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
 
-        let result: Registry | typeof noMatchingResource | undefined = noMatchingResource;
-        while (result === noMatchingResource) {
+        let result: Registry | typeof noMatchingResource | undefined;
+        do {
             result = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder })).data;
-        }
+        } while (result === noMatchingResource)
 
         context.registry = result;
     }
