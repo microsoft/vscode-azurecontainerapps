@@ -5,12 +5,9 @@
 
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 
 export async function deleteContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<void> {
-    node ??= await pickContainerApp(context, {
-        title: localize('deleteContainerApp', 'Delete Container App'),
-    });
+    node ??= await pickContainerApp(context);
     await node.delete(context);
 }
