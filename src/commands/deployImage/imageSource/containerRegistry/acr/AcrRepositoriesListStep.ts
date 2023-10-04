@@ -38,18 +38,15 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
             }
         }
 
-        const picks: QuickPickItem[] = [];
         if (!repositoryNames.length) {
-            picks.push(noMatchingResourcesQp);
+            return [noMatchingResourcesQp];
         }
 
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
-        return picks.concat(
-            repositoryNames.map((rn) => {
-                return !!suggestedRepository && rn === suggestedRepository ?
-                    { label: rn, description: currentlyDeployed, suppressPersistence: true } :
-                    { label: rn, suppressPersistence: srExists };
-            })
-        );
+        return repositoryNames.map((rn) => {
+            return !!suggestedRepository && rn === suggestedRepository ?
+                { label: rn, description: currentlyDeployed, suppressPersistence: true } :
+                { label: rn, suppressPersistence: srExists };
+        });
     }
 }
