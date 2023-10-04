@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import type { ResourceGroup } from "@azure/arm-resources";
+import { LocationListStep, ResourceGroupListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -19,21 +20,19 @@ import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
-export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<ICreateContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
-    node ??= await pickEnvironment(context, {
-        title: localize('createContainerApp', 'Create Container App'),
-    });
+export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
+    node ??= await pickEnvironment(context);
 
     const wizardContext: ICreateContainerAppContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         subscription: node.subscription,
         managedEnvironmentId: node.managedEnvironment.id,
         alwaysPromptIngress: true
     };
 
-    const title: string = localize('createContainerApp', 'Create Container App');
+    const title: string = localize('createContainerApp', 'Create container app');
 
     const promptSteps: AzureWizardPromptStep<ICreateContainerAppContext>[] = [
         new ContainerAppNameStep(),
@@ -46,7 +45,11 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
         new ContainerAppCreateStep(),
     ];
 
-    wizardContext.newResourceGroupName = node.resource.resourceGroup;
+    // Use the same resource group and location as the parent resource (managed environment)
+    const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
+    wizardContext.resourceGroup = nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName));
+
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
     const wizard: AzureWizard<ICreateContainerAppContext> = new AzureWizard(wizardContext, {
@@ -64,9 +67,9 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
 
     await ext.state.showCreatingChild(
         node.managedEnvironment.id,
-        localize('creatingContainerApp', 'Creating Container App "{0}"...', newContainerAppName),
+        localize('creatingContainerApp', 'Creating container app "{0}"...', newContainerAppName),
         async () => {
-            wizardContext.activityTitle = localize('createNamedContainerApp', 'Create Container App "{0}"', newContainerAppName);
+            wizardContext.activityTitle = localize('createNamedContainerApp', 'Create container app "{0}"', newContainerAppName);
             await wizard.execute();
         });
 
