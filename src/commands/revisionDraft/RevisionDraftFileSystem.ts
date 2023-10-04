@@ -162,7 +162,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
     private buildUriFromItem(item: ContainerAppsItem): Uri {
         // Container app names are not globally unique, so we need to produce a unique ID for lookup
-        // Note: Using '|' delimiters instead of '/' to prevent each path item showing up as a virtual directory when opened
+        // Note: Using '|' delimiters instead of '/' to prevent each file as showing up within multiple virtual directories when opened
         const parsedResourceId: ParsedAzureResourceId = parseAzureResourceId(item.containerApp.id);
         const shortenedContainerAppId: string = `${parsedResourceId.subscriptionId?.slice(0, 5)}...|resourceGroups|${parsedResourceId.resourceGroup}|containerApps|${parsedResourceId.resourceName}`;
         return URI.parse(`${RevisionDraftFileSystem.scheme}:/${shortenedContainerAppId}.json`);
