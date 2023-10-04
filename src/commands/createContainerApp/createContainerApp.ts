@@ -5,7 +5,7 @@
 
 import type { ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -20,7 +20,7 @@ import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 import { showContainerAppCreated } from "./showContainerAppCreated";
 
-export async function createContainerApp(context: IActionContext & Partial<ICreateChildImplContext> & Partial<ICreateContainerAppContext>, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
+export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
     node ??= await pickEnvironment(context);
 
     const wizardContext: ICreateContainerAppContext = {
@@ -48,7 +48,7 @@ export async function createContainerApp(context: IActionContext & Partial<ICrea
     // Use the same resource group and location as the parent resource (managed environment)
     const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
-    wizardContext.resourceGroup = resourceGroups.find(rg => rg.name === resourceGroupName);
+    wizardContext.resourceGroup = nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName));
 
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
