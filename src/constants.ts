@@ -71,10 +71,10 @@ export const browseItem: IAzureQuickPickItem<undefined> = { label: `$(file-direc
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
 
 export const noMatchingResource = 'noMatchingResource';
-export const noMatchingResourceQp: IAzureQuickPickItem<'noMatchingResource'> = {
-    label: localize('noMatchingResource', 'No matching resources found.'),
+export const noMatchingResourceQp: IAzureQuickPickItem<typeof noMatchingResource> = {
+    label: localize('noMatchingResource', 'No matching resource found.'),
     description: '',
-    data: 'noMatchingResource'
+    data: noMatchingResource
 };
 
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
