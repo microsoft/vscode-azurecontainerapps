@@ -44,7 +44,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
                 label: saveSettingsLabel,
                 iconPath: activitySuccessIcon
             }),
-            output: localize('savedSettingsSuccess', 'Saved deployment settings to workspace: "{0}".', relativeSettingsFilePath)
+            output: localize('savedSettingsSuccess', 'Saved deployment settings to workspace "{0}".', relativeSettingsFilePath)
         };
     }
 
@@ -55,7 +55,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
                 label: saveSettingsLabel,
                 iconPath: activityFailIcon
             }),
-            output: localize('savedSettingsFail', 'Failed to save deployment settings to workspace: "{0}".', relativeSettingsFilePath)
+            output: localize('savedSettingsFail', 'Failed to save deployment settings to workspace "{0}".', relativeSettingsFilePath)
         };
     }
 }

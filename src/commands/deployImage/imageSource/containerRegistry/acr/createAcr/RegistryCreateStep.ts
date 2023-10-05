@@ -40,10 +40,10 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['registryCreateStep', activitySuccessContext]),
-                label: localize('createRegistryLabel', 'Create Azure Container Registry "{0}"', context.newRegistryName),
+                label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('createRegistrySuccess', 'Created Azure Container Registry "{0}".', context.newRegistryName)
+            output: localize('createRegistrySuccess', 'Created container registry "{0}".', context.newRegistryName)
         };
     }
 
@@ -51,10 +51,10 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['registryCreateStep', activityFailContext]),
-                label: localize('createRegistryLabel', 'Create Azure Container Registry "{0}"', context.newRegistryName),
+                label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
                 iconPath: activityFailIcon
             }),
-            output: localize('createRegistryFail', 'Failed to create Azure Container Registry "{0}".', context.newRegistryName)
+            output: localize('createRegistryFail', 'Failed to create container registry "{0}".', context.newRegistryName)
         };
     }
 }

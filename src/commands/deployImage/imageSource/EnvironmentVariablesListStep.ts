@@ -85,12 +85,12 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
-                    label: localize('saveEnvVarsLabel', 'Save environment variable configuration for the container app'),
+                    label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
                     iconPath: activitySuccessIcon
                 })
             );
 
-            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration for the container app.'));
+            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration.'));
         }
     }
 }
