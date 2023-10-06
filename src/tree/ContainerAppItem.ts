@@ -142,7 +142,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 
     async delete(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete Container App "{0}"', this.name);
+        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete container app "{0}"', this.name);
 
         const wizardContext: IDeleteContainerAppWizardContext = {
             activityTitle: deleteContainerApp,
@@ -150,7 +150,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             subscription: createSubscriptionContext(this.subscription),
             resourceGroupName: this.resourceGroup,
             ...context,
-            ...(await createActivityContext())
+            ...await createActivityContext()
         };
 
         const wizard: AzureWizard<IDeleteContainerAppWizardContext> = new AzureWizard(wizardContext, {

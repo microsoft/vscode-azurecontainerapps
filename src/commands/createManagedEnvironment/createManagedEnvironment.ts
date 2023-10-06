@@ -21,11 +21,11 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const wizardContext: IManagedEnvironmentContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         subscription
     };
 
-    const title: string = localize('createManagedEnv', 'Create Container Apps environment');
+    const title: string = localize('createManagedEnv', 'Create container apps environment');
     const promptSteps: AzureWizardPromptStep<IManagedEnvironmentContext>[] = [];
     const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 
@@ -44,7 +44,7 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     await wizard.prompt();
     const newManagedEnvName = nonNullProp(wizardContext, 'newManagedEnvironmentName');
     wizardContext.newResourceGroupName = newManagedEnvName;
-    wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create Container Apps environment "{0}"', newManagedEnvName);
+    wizardContext.activityTitle = localize('createNamedManagedEnv', 'Create container apps environment "{0}"', newManagedEnvName);
     await wizard.execute();
 
     ext.branchDataProvider.refresh();
