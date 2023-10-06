@@ -35,7 +35,7 @@
     "containerApps.deleteConfirmation.ClickButton": "Prompts with a warning dialog where you click a button to delete.",
     "containerApps.openInPortal": "Open in Portal",
     "containerApps.openConsoleInPortal": "Open Console in Portal",
-    "containerApps.editScalingRange": "Edit Scaling Range...",
+    "containerApps.editScaleRange": "Edit Scaling Range...",
     "containerApps.addScaleRule": "Add Scale Rule...",
     "containerApps.deleteScaleRule": "Delete Scale Rule...",
     "containerApps.connectToGitHub": "Connect to GitHub Repository...",

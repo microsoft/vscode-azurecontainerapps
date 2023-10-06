@@ -32,7 +32,7 @@ import { createRevisionDraft } from './revisionDraft/createRevisionDraft';
 import { deployRevisionDraft } from './revisionDraft/deployRevisionDraft/deployRevisionDraft';
 import { discardRevisionDraft } from './revisionDraft/discardRevisionDraft';
 import { editRevisionDraft } from './revisionDraft/editRevisionDraft';
-import { editScalingRange } from './scaling/editScalingRange';
+import { editScaleRange } from './scaling/scaleRange/editScaleRange';
 import { addScaleRule } from './scaling/scaleRule/addScaleRule/addScaleRule';
 import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScaleRule';
 import { addSecret } from './secret/addSecret/addSecret';
@@ -87,7 +87,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.discardRevisionDraft', discardRevisionDraft);
 
     // scaling
-    registerCommandWithTreeNodeUnwrapping('containerApps.editScalingRange', editScalingRange);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editScaleRange', editScaleRange);
     registerCommandWithTreeNodeUnwrapping('containerApps.addScaleRule', addScaleRule);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteScaleRule', deleteScaleRule);
 
