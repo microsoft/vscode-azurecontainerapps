@@ -36,5 +36,3 @@ export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionD
         return context.newMinRange !== undefined && context.newMaxRange !== undefined;
     }
 }
-
-
