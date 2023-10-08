@@ -5,14 +5,14 @@
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericTreeItem } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../constants";
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
-import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import type { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
 export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManagedEnvironmentContext> {
     public priority: number = 220;

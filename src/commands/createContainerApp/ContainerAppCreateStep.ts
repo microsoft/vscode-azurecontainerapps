@@ -5,19 +5,21 @@
 
 import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
-import { containerAppsWebProvider } from "../../constants";
+import { GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import type { Progress } from "vscode";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
-import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
+import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
+export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<ICreateContainerAppContext> {
     public priority: number = 750;
 
-    public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
@@ -62,5 +64,27 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
 
     public shouldExecute(context: ICreateContainerAppContext): boolean {
         return !context.containerApp;
+    }
+
+    protected createSuccessOutput(context: ICreateContainerAppContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppCreateStep', activitySuccessContext]),
+                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('createContainerAppSuccess', 'Created container app "{0}".', context.newContainerAppName)
+        };
+    }
+
+    protected createFailOutput(context: ICreateContainerAppContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppCreateStep', activityFailContext]),
+                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+                iconPath: activityFailIcon
+            }),
+            message: localize('createContainerAppFail', 'Failed to create container app "{0}".', context.newContainerAppName)
+        };
     }
 }

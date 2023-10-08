@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { DotenvParseOutput, parse } from "dotenv";
 import { Uri, workspace } from "vscode";
-import { ImageSource } from "../../../constants";
+import { ImageSource, activitySuccessContext, activitySuccessIcon } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
@@ -61,18 +62,18 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     }
 
     // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
-    private outputLogs(_context: ImageSourceBaseContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+    private outputLogs(context: ImageSourceBaseContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         if (setEnvironmentVariableOption !== SetEnvironmentVariableOption.ProvideFile) {
-            // context.activityChildren?.push(
-            //     new GenericTreeItem(undefined, {
-            //         contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
-            //         label: localize('skipEnvVarsLabel',
-            //             'Skip environment variable configuration' +
-            //             (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
-            //         ),
-            //         iconPath: activitySuccessIcon
-            //     })
-            // );
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
+                    label: localize('skipEnvVarsLabel',
+                        'Skip environment variable configuration' +
+                        (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
+                    ),
+                    iconPath: activitySuccessIcon
+                })
+            );
 
             const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
@@ -81,16 +82,15 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
             );
             ext.outputChannel.appendLog(logMessage);
         } else {
-            // context.activityChildren?.push(
-            //     new GenericTreeItem(undefined, {
-            //         contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
-            //         label: localize('saveEnvVarsLabel', 'Save environment variable configuration for the container app'),
-            //         iconPath: activitySuccessIcon
-            //     })
-            // );
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
+                    label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
+                    iconPath: activitySuccessIcon
+                })
+            );
 
-            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration for the container app.'));
+            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration.'));
         }
     }
-
 }

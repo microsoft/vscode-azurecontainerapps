@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, AzureWizardPromptStep, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import type { IngressContext } from "./IngressContext";
 import { DisableIngressStep } from "./disableIngress/DisableIngressStep";
@@ -66,17 +68,17 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
     }
 
     // If a container app already exists, activity children will be added automatically in later execute steps
-    // if (!context.containerApp) {
-    //     context.activityChildren?.push(
-    //         new GenericTreeItem(undefined, {
-    //             contextValue: createActivityChildContext(['ingressPromptStep', activitySuccessContext]),
-    //             label: context.enableIngress ?
-    //                 localize('ingressEnableLabel', 'Enable ingress on port {0} (found Dockerfile configuration)', context.targetPort) :
-    //                 localize('ingressDisableLabel', 'Disable ingress (found Dockerfile configuration)'),
-    //             iconPath: activitySuccessIcon
-    //         })
-    //     );
-    // }
+    if (!context.containerApp) {
+        context.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['ingressPromptStep', activitySuccessContext]),
+                label: context.enableIngress ?
+                    localize('ingressEnableLabel', 'Enable ingress on port {0} (from Dockerfile configuration)', context.targetPort) :
+                    localize('ingressDisableLabel', 'Disable ingress (from Dockerfile configuration)'),
+                iconPath: activitySuccessIcon
+            })
+        );
+    }
 
     ext.outputChannel.appendLog(context.enableIngress ?
         localize('ingressEnabledLabel', 'Detected ingress on port {0} using Dockerfile configuration.', context.targetPort) :
