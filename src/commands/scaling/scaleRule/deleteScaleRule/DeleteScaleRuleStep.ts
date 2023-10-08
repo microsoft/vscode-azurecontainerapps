@@ -2,11 +2,11 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
-import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../../extensionVariables";
 import type { RevisionsItemModel } from "../../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../../utils/localize";
-import { getParentResource } from "../../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem } from "../../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { ScaleRuleContext } from "../ScaleRuleContext";
 
@@ -26,7 +26,7 @@ export class DeleteScaleRuleStep<T extends ScaleRuleContext> extends RevisionDra
 
         this.updateRevisionDraftWithTemplate();
 
-        const resourceName = getParentResource(nonNullProp(context, 'containerApp'), this.baseItem.revision).name;
+        const resourceName = getParentResourceFromItem(this.baseItem).name;
         ext.outputChannel.appendLog(localize('deletedScaleRule', 'Deleted rule "{0}" to "{1}" (draft)', context.scaleRule?.name, resourceName));
     }
 

@@ -76,6 +76,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.updateImage",
+                "title": "%containerApps.updateImage%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deployImageApi",
                 "title": "%containerApps.deployImageApi%",
                 "category": "Azure Container Apps"
@@ -329,6 +334,11 @@
                     "group": "5@1"
                 },
                 {
+                    "command": "containerApps.updateImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "group": "6@1"
+                },
+                {
                     "command": "containerApps.startStreamingLogs",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "7@1"
@@ -369,6 +379,11 @@
                     "group": "2@4"
                 },
                 {
+                    "command": "containerApps.updateImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionItem/i",
+                    "group": "3@1"
+                },
+                {
                     "command": "containerApps.deployRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
                     "group": "inline@1"
@@ -389,9 +404,14 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerApps.editRevisionDraft",
+                    "command": "containerApps.updateImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.editRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "3@1"
                 },
                 {
                     "command": "containerApps.editScaleRange",

@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Template } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import type { IContainerAppContext } from "../IContainerAppContext";
 
@@ -16,7 +17,7 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
      */
     protected revisionDraftTemplate: Template;
 
-    constructor(readonly baseItem: RevisionsItemModel) {
+    constructor(readonly baseItem: ContainerAppItem | RevisionsItemModel) {
         super();
         this.revisionDraftTemplate = this.initRevisionDraftTemplate();
     }
@@ -34,7 +35,13 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     private initRevisionDraftTemplate(): Template {
         let template: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this.baseItem);
         if (!template) {
-            template = nonNullValueAndProp(this.baseItem.revision, 'template');
+            // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
+            // Make deep copies so we don't accidentally modify the cached values
+            if (ContainerAppItem.isContainerAppItem(this.baseItem) || this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+                template = JSON.parse(JSON.stringify(nonNullValueAndProp(this.baseItem.containerApp, 'template'))) as Template;
+            } else {
+                template = JSON.parse(JSON.stringify(nonNullValueAndProp(this.baseItem.revision, 'template'))) as Template;
+            }
         }
         return template;
     }

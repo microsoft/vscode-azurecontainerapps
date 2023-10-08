@@ -96,5 +96,8 @@ export const activityFailContext: string = 'activity:fail';
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
+export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
+export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
+
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';

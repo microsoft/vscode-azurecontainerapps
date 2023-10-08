@@ -14,7 +14,7 @@ import { updateContainerApp } from "../../../utils/updateContainerApp/updateCont
 import type { IngressContext } from "../IngressContext";
 
 export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressContext> {
-    public priority: number = 650;
+    public priority: number = 750;
 
     protected async executeCore(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('enablingIngress', 'Enabling ingress...') });
