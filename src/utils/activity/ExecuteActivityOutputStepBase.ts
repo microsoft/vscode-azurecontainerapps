@@ -5,7 +5,7 @@
 
 import { AzureWizardExecuteStep, type AzExtTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
-import { tryCatchActivityWrapper } from "../../utils/activity/activityUtils";
+import { ext } from "../../extensionVariables";
 
 export interface ExecuteActivityOutput {
     /**
@@ -15,7 +15,7 @@ export interface ExecuteActivityOutput {
     /**
      * The output log message(s) to display on success or fail
      */
-    output?: string | string[];
+    message?: string | string[];
 }
 
 export interface ExecuteActivityOutputOptions {
@@ -33,15 +33,37 @@ export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & E
     protected fail: ExecuteActivityOutput;
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.success = this.initSuccessOutput(context);
-        this.fail = this.initFailOutput(context);
+        this.success = this.createSuccessOutput(context);
+        this.fail = this.createFailOutput(context);
 
-        await tryCatchActivityWrapper(() => this.executeCore(context, progress), context, this.success, this.fail, this.options);
+        try {
+            await this.executeCore(context, progress);
+            this.displayOutput(context, this.success);
+        } catch (e) {
+            this.displayOutput(context, this.fail);
+
+            if (!this.options.shouldSwallowError) {
+                throw e;
+            }
+        }
+    }
+
+    private displayOutput(context: T, output: ExecuteActivityOutput): void {
+        output.item && context.activityChildren?.push(output.item);
+
+        if (!output.message) {
+            return;
+        }
+
+        output.message = Array.isArray(output.message) ? output.message : [output.message];
+        for (const message of output.message) {
+            ext.outputChannel.appendLog(message);
+        }
     }
 
     protected abstract executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void>;
     abstract shouldExecute(context: T): boolean;
 
-    protected abstract initSuccessOutput(context: T): ExecuteActivityOutput;
-    protected abstract initFailOutput(context: T): ExecuteActivityOutput;
+    protected abstract createSuccessOutput(context: T): ExecuteActivityOutput;
+    protected abstract createFailOutput(context: T): ExecuteActivityOutput;
 }

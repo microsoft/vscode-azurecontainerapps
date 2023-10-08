@@ -33,25 +33,25 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
         return !context.logAnalyticsWorkspace;
     }
 
-    protected initSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['logAnalyticsCreateStep', activitySuccessContext]),
                 label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('createLogAnalyticsWorkspaceSuccess', 'Created log analytics workspace "{0}".', context.newManagedEnvironmentName)
+            message: localize('createLogAnalyticsWorkspaceSuccess', 'Created log analytics workspace "{0}".', context.newManagedEnvironmentName)
         };
     }
 
-    protected initFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['logAnalyticsCreateStep', activityFailContext]),
                 label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
                 iconPath: activityFailIcon
             }),
-            output: localize('createLogAnalyticsWorkspaceFail', 'Failed to create log analytics workspace "{0}".', context.newManagedEnvironmentName)
+            message: localize('createLogAnalyticsWorkspaceFail', 'Failed to create log analytics workspace "{0}".', context.newManagedEnvironmentName)
         };
     }
 }
