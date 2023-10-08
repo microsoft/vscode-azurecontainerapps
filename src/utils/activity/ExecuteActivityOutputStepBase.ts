@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtTreeItem, AzureWizardExecuteStep, ExecuteActivityContext, IActionContext } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import { AzureWizardExecuteStep, type AzExtTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import type { Progress } from "vscode";
 import { tryCatchActivityWrapper } from "../../utils/activity/activityUtils";
 
 export interface ExecuteActivityOutput {
