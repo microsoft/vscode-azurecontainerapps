@@ -6,14 +6,14 @@
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../../constants";
-import { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../../utils/updateContainerApp/ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "../../../utils/updateContainerApp/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
-import { DeployImageApiContext } from "./deployImageApi";
+import type { DeployImageApiContext } from "./deployImageApi";
 
 export async function deployImage(context: IActionContext & Partial<IContainerRegistryImageContext>, node: ContainerAppItem): Promise<void> {
     const { subscription, containerApp } = node;
