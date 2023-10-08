@@ -7,8 +7,8 @@ import { ExecuteActivityContext, IActionContext, ISubscriptionActionContext, cal
 import { ImageSource, acrDomain } from "../../../constants";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
-import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
+import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
+import type { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
 import { deployImage } from "./deployImage";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
