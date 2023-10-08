@@ -41,6 +41,10 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
             }
         }
 
+        // Preserve existing secrets/registries even if new ones haven't been added
+        context.secrets ??= secrets;
+        context.registries ??= registries;
+
         context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
     }
 

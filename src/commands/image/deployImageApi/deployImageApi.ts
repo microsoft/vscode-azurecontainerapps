@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { callWithMaskHandling, createSubscriptionContext, ISubscriptionActionContext, ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
-import { acrDomain, ImageSource } from "../../constants";
-import { detectRegistryDomain, getRegistryFromAcrName } from "../../utils/imageNameUtils";
-import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { ExecuteActivityContext, IActionContext, ISubscriptionActionContext, callWithMaskHandling, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { ImageSource, acrDomain } from "../../../constants";
+import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
+import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
+import { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
+import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
 import { deployImage } from "./deployImage";
-import type { IContainerRegistryImageContext } from "./imageSource/containerRegistry/IContainerRegistryImageContext";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
 // This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
@@ -19,8 +20,9 @@ interface DeployImageToAcaOptionsContract {
     secret?: string;
 }
 
-export async function deployImageApi(context: ITreeItemPickerContext & Partial<IContainerRegistryImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
-    context.suppressCreatePick = true;
+export type DeployImageApiContext = ImageSourceBaseContext & ExecuteActivityContext;
+
+export async function deployImageApi(context: IActionContext & Partial<IContainerRegistryImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     const node = await pickContainerApp(context);
     const { subscription } = node;
 

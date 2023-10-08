@@ -10,7 +10,7 @@ import { activityFailContext, activityFailIcon, activitySuccessContext, activity
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
+import { updateContainerApp } from "../../../utils/updateContainerApp/updateContainerApp";
 import type { IngressContext } from "../IngressContext";
 
 export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressContext> {

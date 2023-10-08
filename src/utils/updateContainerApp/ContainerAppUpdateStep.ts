@@ -4,21 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { type Progress } from "vscode";
+import type { Progress } from "vscode";
+import type { ImageSourceBaseContext } from "../../commands/image/imageSource/ImageSourceBaseContext";
+import { getContainerNameForImage } from "../../commands/image/imageSource/containerRegistry/getContainerNameForImage";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
-import { localize } from "../../utils/localize";
-import { updateContainerApp } from "../../utils/updateContainerApp";
-import type { IDeployImageContext } from "./deployImage";
-import { getContainerNameForImage } from "./imageSource/containerRegistry/getContainerNameForImage";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../activity/activityUtils";
+import { localize } from "../localize";
+import { updateContainerApp } from "./updateContainerApp";
 
-export class ContainerAppUpdateStep extends ExecuteActivityOutputStepBase<IDeployImageContext> {
+export class ContainerAppUpdateStep<T extends ImageSourceBaseContext> extends ExecuteActivityOutputStepBase<T> {
     public priority: number = 480;
 
-    protected async executeCore(context: IDeployImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -44,11 +44,11 @@ export class ContainerAppUpdateStep extends ExecuteActivityOutputStepBase<IDeplo
         });
     }
 
-    public shouldExecute(context: IDeployImageContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !!context.containerApp;
     }
 
-    protected createSuccessOutput(context: IDeployImageContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppUpdateStep', activitySuccessContext]),
@@ -59,7 +59,7 @@ export class ContainerAppUpdateStep extends ExecuteActivityOutputStepBase<IDeplo
         };
     }
 
-    protected createFailOutput(context: IDeployImageContext): ExecuteActivityOutput {
+    protected createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppUpdateStep', activityFailContext]),
