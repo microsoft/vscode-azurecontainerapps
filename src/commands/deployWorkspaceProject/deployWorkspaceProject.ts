@@ -7,7 +7,7 @@ import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
-import { activitySuccessContext, activitySuccessIcon, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
+import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
@@ -70,8 +70,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingResourceGroup', activitySuccessContext]),
-                label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
-                iconPath: activitySuccessIcon
+                label: localize('useResourceGroup', 'Using resource group "{0}"', resourceGroupName),
+                iconPath: activityInfoIcon
             })
         );
 
@@ -88,8 +88,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
-                label: localize('useManagedEnvironment', 'Use container app environment "{0}"', managedEnvironmentName),
-                iconPath: activitySuccessIcon
+                label: localize('useManagedEnvironment', 'Using container app environment "{0}"', managedEnvironmentName),
+                iconPath: activityInfoIcon
             })
         );
 
@@ -119,8 +119,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingAcr', activitySuccessContext]),
-                label: localize('useAcr', 'Use container registry "{0}"', registryName),
-                iconPath: activitySuccessIcon
+                label: localize('useAcr', 'Using container registry "{0}"', registryName),
+                iconPath: activityInfoIcon
             })
         );
 
@@ -139,8 +139,8 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingContainerApp', activitySuccessContext]),
-                label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
-                iconPath: activitySuccessIcon
+                label: localize('useContainerApp', 'Using container app "{0}"', containerAppName),
+                iconPath: activityInfoIcon
             })
         );
 

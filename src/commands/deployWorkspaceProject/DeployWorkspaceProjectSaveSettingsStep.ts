@@ -12,7 +12,7 @@ import { localize } from "../../utils/localize";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
-const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
+const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
 
 export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutputStepBase<DeployWorkspaceProjectContext> {
     public priority: number = 1480;
