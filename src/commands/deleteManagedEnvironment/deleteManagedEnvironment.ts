@@ -8,7 +8,7 @@ import { AzureWizard, createSubscriptionContext, IActionContext } from "@microso
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { createActivityContext } from "../../utils/activityUtils";
+import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { DeleteAllContainerAppsStep } from "../deleteContainerApp/DeleteAllContainerAppsStep";

@@ -7,7 +7,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubsc
 import { ext } from "../../../extensionVariables";
 import { IngressEnabledItem } from "../../../tree/configurations/IngressItem";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
-import { createActivityContext } from "../../../utils/activityUtils";
+import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import type { IngressContext } from "../IngressContext";

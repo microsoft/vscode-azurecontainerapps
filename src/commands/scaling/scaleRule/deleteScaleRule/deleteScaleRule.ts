@@ -7,7 +7,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DeleteConfi
 import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import type { ScaleRuleGroupItem } from "../../../../tree/scaling/ScaleRuleGroupItem";
 import type { ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
-import { createActivityContext } from "../../../../utils/activityUtils";
+import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRuleGroup } from "../../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../../utils/revisionDraftUtils";

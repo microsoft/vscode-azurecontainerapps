@@ -8,7 +8,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionCont
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { appProvider, managedEnvironmentsId, operationalInsightsProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { createActivityContext } from "../../utils/activityUtils";
+import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";

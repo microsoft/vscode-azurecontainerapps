@@ -8,7 +8,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionCont
 import { ext } from "../../../extensionVariables";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
-import { createActivityContext } from "../../../utils/activityUtils";
+import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
