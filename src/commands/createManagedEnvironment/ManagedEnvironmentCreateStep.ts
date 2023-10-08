@@ -59,25 +59,25 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
         return !context.managedEnvironment;
     }
 
-    protected initSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['managedEnvironmentCreateStep', activitySuccessContext]),
                 label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('createdManagedEnvironmentSuccess', 'Created container apps environment "{0}".', context.newManagedEnvironmentName)
+            message: localize('createdManagedEnvironmentSuccess', 'Created container apps environment "{0}".', context.newManagedEnvironmentName)
         };
     }
 
-    protected initFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['managedEnvironmentCreateStep', activityFailContext]),
                 label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
                 iconPath: activityFailIcon
             }),
-            output: localize('createdManagedEnvironmentFail', 'Failed to create container apps environment "{0}".', context.newManagedEnvironmentName)
+            message: localize('createdManagedEnvironmentFail', 'Failed to create container apps environment "{0}".', context.newManagedEnvironmentName)
         };
     }
 }

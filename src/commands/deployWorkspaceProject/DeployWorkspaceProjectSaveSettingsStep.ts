@@ -9,7 +9,7 @@ import { activityFailContext, activityFailIcon, activitySuccessContext, activity
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
-import { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace: "{0}"', relativeSettingsFilePath);
@@ -37,25 +37,25 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         return !!context.shouldSaveDeploySettings;
     }
 
-    protected initSuccessOutput(): ExecuteActivityOutput {
+    protected createSuccessOutput(): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activitySuccessContext]),
                 label: saveSettingsLabel,
                 iconPath: activitySuccessIcon
             }),
-            output: localize('savedSettingsSuccess', 'Saved deployment settings to workspace "{0}".', relativeSettingsFilePath)
+            message: localize('savedSettingsSuccess', 'Saved deployment settings to workspace "{0}".', relativeSettingsFilePath)
         };
     }
 
-    protected initFailOutput(): ExecuteActivityOutput {
+    protected createFailOutput(): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activityFailContext]),
                 label: saveSettingsLabel,
                 iconPath: activityFailIcon
             }),
-            output: localize('savedSettingsFail', 'Failed to save deployment settings to workspace "{0}".', relativeSettingsFilePath)
+            message: localize('savedSettingsFail', 'Failed to save deployment settings to workspace "{0}".', relativeSettingsFilePath)
         };
     }
 }

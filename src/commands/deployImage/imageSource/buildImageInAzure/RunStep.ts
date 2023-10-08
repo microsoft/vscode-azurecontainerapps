@@ -45,19 +45,19 @@ export class RunStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureCon
         return !context.run;
     }
 
-    protected initSuccessOutput(): ExecuteActivityOutput {
+    protected createSuccessOutput(): ExecuteActivityOutput {
         // Skip here, success will be output by the build image step
         return {};
     }
 
-    protected initFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['runStep', activityFailContext]),
                 label: localize('runLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon
             }),
-            output: localize('runFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
+            message: localize('runFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }
 }

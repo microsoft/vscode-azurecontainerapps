@@ -195,8 +195,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.editScalingRange",
-                "title": "%containerApps.editScalingRange%",
+                "command": "containerApps.editScaleRange",
+                "title": "%containerApps.editScaleRange%",
                 "category": "Azure Container Apps"
             },
             {
@@ -405,7 +405,7 @@
                     "group": "2@1"
                 },
                 {
-                    "command": "containerApps.editScalingRange",
+                    "command": "containerApps.editScaleRange",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /scaleItem/i",
                     "group": "1@1"
                 },

@@ -48,25 +48,25 @@ export class ContainerAppUpdateStep extends ExecuteActivityOutputStepBase<IDeplo
         return !!context.containerApp;
     }
 
-    protected initSuccessOutput(context: IDeployImageContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IDeployImageContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppUpdateStep', activitySuccessContext]),
                 label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name)
+            message: localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name)
         };
     }
 
-    protected initFailOutput(context: IDeployImageContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IDeployImageContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppUpdateStep', activityFailContext]),
                 label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
                 iconPath: activityFailIcon
             }),
-            output: localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name)
+            message: localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name)
         };
     }
 }

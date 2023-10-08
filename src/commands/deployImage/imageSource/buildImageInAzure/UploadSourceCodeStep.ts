@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, GenericTreeItem, nonNullValue } from '@microsoft/vscode-azext-utils';
-import { Progress } from 'vscode';
+import type { Progress } from 'vscode';
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from '../../../../constants';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
@@ -50,25 +50,25 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<IBuildIm
         return !context.uploadedSourceLocation;
     }
 
-    protected initSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registry?.name),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('uploadedSourceCodeSuccess', 'Uploaded source code to registry "{0}" for remote build.', context.registry?.name)
+            message: localize('uploadedSourceCodeSuccess', 'Uploaded source code to registry "{0}" for remote build.', context.registry?.name)
         };
     }
 
-    protected initFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registry?.name),
                 iconPath: activityFailIcon
             }),
-            output: localize('uploadedSourceCodeFail', 'Failed to upload source code to registry "{0}" for remote build.', context.registry?.name)
+            message: localize('uploadedSourceCodeFail', 'Failed to upload source code to registry "{0}" for remote build.', context.registry?.name)
         };
     }
 }

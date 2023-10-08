@@ -93,6 +93,7 @@ Reserved
 
 #### Steps
 
+- ScaleRangeUpdateStep: 1110
 - AddScaleRuleStep: 1120
 
 ### 10. Unallocated Space

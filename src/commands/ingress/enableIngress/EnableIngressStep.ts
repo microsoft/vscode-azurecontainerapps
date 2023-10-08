@@ -41,25 +41,25 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressCont
         return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
     }
 
-    protected initSuccessOutput(context: IngressContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IngressContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['enableIngressStep', activitySuccessContext]),
                 label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('enableCompleted', 'Enabled ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
+            message: localize('enableCompleted', 'Enabled ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
         };
     }
 
-    protected initFailOutput(context: IngressContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IngressContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['enableIngressStep', activityFailContext]),
                 label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
                 iconPath: activityFailIcon
             }),
-            output: localize('enableIngressFailed', 'Failed to enable ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
+            message: localize('enableIngressFailed', 'Failed to enable ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
         };
     }
 }

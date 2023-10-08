@@ -44,34 +44,34 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInA
         }
 
         // Need to place this outside of 'initSuccessOutput' so we can use the image after it has had a chance to become defined
-        (this.success.output as string[])?.push(localize('useImage', 'Using image "{0}".', context.image));
+        (this.success.message as string[])?.push(localize('useImage', 'Using image "{0}".', context.image));
     }
 
     public shouldExecute(context: IBuildImageInAzureContext): boolean {
         return !context.image;
     }
 
-    protected initSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['buildImageStep', activitySuccessContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activitySuccessIcon
             }),
-            output: [
+            message: [
                 localize('buildImageSuccess', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName),
             ]
         };
     }
 
-    protected initFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon
             }),
-            output: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
+            message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }
 }

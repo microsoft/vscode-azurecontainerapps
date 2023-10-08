@@ -3,16 +3,16 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
+import type { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import type { Progress } from "vscode";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../../../constants";
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../../../utils/activity/activityUtils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { CreateAcrContext } from "./CreateAcrContext";
+import type { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrContext> {
     public priority: number = 350;
@@ -36,25 +36,25 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
         return !context.registry;
     }
 
-    protected initSuccessOutput(context: CreateAcrContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: CreateAcrContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['registryCreateStep', activitySuccessContext]),
                 label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
                 iconPath: activitySuccessIcon
             }),
-            output: localize('createRegistrySuccess', 'Created container registry "{0}".', context.newRegistryName)
+            message: localize('createRegistrySuccess', 'Created container registry "{0}".', context.newRegistryName)
         };
     }
 
-    protected initFailOutput(context: CreateAcrContext): ExecuteActivityOutput {
+    protected createFailOutput(context: CreateAcrContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['registryCreateStep', activityFailContext]),
                 label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
                 iconPath: activityFailIcon
             }),
-            output: localize('createRegistryFail', 'Failed to create container registry "{0}".', context.newRegistryName)
+            message: localize('createRegistryFail', 'Failed to create container registry "{0}".', context.newRegistryName)
         };
     }
 }

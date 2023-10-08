@@ -40,7 +40,7 @@ export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleI
     const executeSteps: AzureWizardExecuteStep<ScaleRuleContext>[] = [new DeleteScaleRuleStep(item)]
 
     const wizard: AzureWizard<ScaleRuleContext> = new AzureWizard(wizardContext, {
-        title: localize('deleteScaleRuleTitle', 'Delete scale rule from container app "{0}" (draft)', containerApp.name),
+        title: localize('deleteScaleRuleTitle', 'Delete scale rule from "{0}" (draft)', parentResource.name),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true
