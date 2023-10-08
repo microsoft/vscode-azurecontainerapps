@@ -23,6 +23,7 @@ export async function getAcrCredentialsAndSecrets(context: IContainerRegistryIma
     const registries: RegistryCredentials[] = containerAppSettings?.registries?.filter(r => r.server !== registry.loginServer) ?? [];
     registries?.push(
         {
+            identity: '',
             server: registry.loginServer,
             username: username,
             passwordSecretRef: passwordName
@@ -45,6 +46,7 @@ export function getThirdPartyCredentialsAndSecrets(context: IContainerRegistryIm
     const registries: RegistryCredentials[] = containerAppSettings?.registries?.filter(r => r.server !== loginServer) ?? [];
     registries?.push(
         {
+            identity: '',
             server: loginServer,
             username: context.username,
             passwordSecretRef
