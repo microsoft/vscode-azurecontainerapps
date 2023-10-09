@@ -5,7 +5,7 @@
 
 import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, Template } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
 import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
@@ -61,8 +61,13 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 
     private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];
+
+        // Enable more granular tree item filtering by container app name
+        values.push(nonNullValueAndProp(this.containerApp, 'name'));
+
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
+
         return createContextValue(values);
     }
 

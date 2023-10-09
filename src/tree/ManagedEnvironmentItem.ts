@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient, ManagedEnvironment, Resource } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { AzureResource, AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
@@ -25,6 +25,16 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         this.id = managedEnvironment.id;
     }
 
+    private get contextValue(): string {
+        const values: string[] = [];
+
+        // Enable more granular tree item filtering by environment name
+        values.push(nonNullValueAndProp(this.managedEnvironment, 'name'));
+
+        values.push(ManagedEnvironmentItem.contextValue);
+        return createContextValue(values);
+    }
+
     async getChildren(): Promise<ContainerAppsItem[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const containerApps = await ContainerAppItem.List(context, this.subscription, this.id);
@@ -39,7 +49,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
             label: this.managedEnvironment.name,
             id: this.id,
             iconPath: treeUtils.getIconPath('managed-environment'),
-            contextValue: ManagedEnvironmentItem.contextValue,
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }

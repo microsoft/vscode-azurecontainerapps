@@ -39,5 +39,6 @@ export async function pickSecret(context: IActionContext, options?: PickItemOpti
     return await runQuickPickWizard(context, {
         promptSteps,
         title: options?.title,
+        showLoadingPrompt: options?.showLoadingPrompt
     });
 }

@@ -63,6 +63,7 @@ export async function pickRevision(context: IActionContext, startingNode?: Conta
     return await runQuickPickWizard(context, {
         promptSteps,
         title: options?.title,
+        showLoadingPrompt: options?.showLoadingPrompt
     }, startingNode);
 }
 
@@ -80,5 +81,6 @@ export async function pickRevisionDraft(context: IActionContext, containerAppIte
     return await runQuickPickWizard(context, {
         promptSteps: [getPickRevisionsStep(), getPickRevisionDraftStep()],
         title: options?.title,
+        showLoadingPrompt: options?.showLoadingPrompt
     }, containerAppItem);
 }

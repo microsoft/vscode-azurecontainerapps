@@ -522,6 +522,11 @@
                             "%containerApps.deleteConfirmation.ClickButton%"
                         ],
                         "default": "EnterName"
+                    },
+                    "containerApps.showDraftCommandDeployPopup": {
+                        "type": "boolean",
+                        "description": "%containerApps.showDraftCommandDeployPopup%",
+                        "default": true
                     }
                 }
             }
