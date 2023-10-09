@@ -4,7 +4,7 @@
     "containerApps.revealResource": "Reveal Resource",
     "containerApps.description": "An Azure Container Apps extension for Visual Studio Code.",
     "containerApps.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
-    "containerApps.showDraftCommandDeployPopup": "Show a deploy popup message whenever a draft command is run.",
+    "containerApps.showDraftCommandDeployPopup": "Show a deploy pop-up message whenever a draft command is run.",
     "containerApps.browse": "Browse",
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",

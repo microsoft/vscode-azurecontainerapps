@@ -46,6 +46,7 @@ export async function showRevisionDraftInformationPopup(context: IActionContext,
 
     const message: string = localize('message', 'Would you like to deploy these changes? Click yes to continue, or click no to keep making changes.');
     const buttonMessages: string[] = [yes, no, dontShowAgain];
+
     void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
         if (result === yes) {
             const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
