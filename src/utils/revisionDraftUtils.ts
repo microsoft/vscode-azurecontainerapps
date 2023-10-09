@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import type { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { deployRevisionDraft } from "../commands/revisionDraft/deployRevisionDraft/deployRevisionDraft";
 import { ContainerAppItem, ContainerAppModel } from "../tree/ContainerAppItem";
