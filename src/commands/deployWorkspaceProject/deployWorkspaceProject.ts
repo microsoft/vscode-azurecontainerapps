@@ -88,14 +88,14 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
-                label: localize('useManagedEnvironment', 'Using container app environment "{0}"', managedEnvironmentName),
+                label: localize('useManagedEnvironment', 'Using container apps environment "{0}"', managedEnvironmentName),
                 iconPath: activityInfoIcon
             })
         );
 
         await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
 
-        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container app environment "{0}".', managedEnvironmentName));
+        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
         ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', wizardContext.managedEnvironment.location));
     } else {
         executeSteps.push(
