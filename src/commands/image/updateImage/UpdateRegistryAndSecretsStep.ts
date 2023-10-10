@@ -56,7 +56,11 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
 }
 
 function sortAlphabeticallyByKey<T extends Secret | RegistryCredentials>(a: T, b: T, key: keyof T): number {
-    const valOne = nonNullProp(a, key) as string;
-    const valTwo = nonNullProp(b, key) as string;
+    if (typeof a[key] !== 'string' || typeof b[key] !== 'string') {
+        return 0;
+    }
+
+    const valOne = a[key] as string;
+    const valTwo = b[key] as string;
     return valOne.localeCompare(valTwo);
 }
