@@ -15,7 +15,7 @@ import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
-import { getParentResourceFromItem, showRevisionDraftInformationPopup } from "../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, showRevisionDraftDeployPopup } from "../../../utils/revisionDraftUtils";
 import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageStep } from "./UpdateImageStep";
@@ -71,5 +71,5 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     await wizard.prompt();
     await wizard.execute();
 
-    void showRevisionDraftInformationPopup(context, containerApp);
+    void showRevisionDraftDeployPopup(context, containerApp);
 }

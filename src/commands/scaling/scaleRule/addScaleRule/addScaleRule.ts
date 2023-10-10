@@ -10,7 +10,7 @@ import type { ScaleRuleGroupItem } from "../../../../tree/scaling/ScaleRuleGroup
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRuleGroup } from "../../../../utils/pickItem/pickScale";
-import { getParentResource, showRevisionDraftInformationPopup } from "../../../../utils/revisionDraftUtils";
+import { getParentResource, showRevisionDraftDeployPopup } from "../../../../utils/revisionDraftUtils";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
@@ -42,5 +42,5 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     wizardContext.activityTitle = localize('addScaleRuleTitle', 'Add {0} rule "{1}" to "{2}" (draft)', wizardContext.newRuleType, wizardContext.newRuleName, parentResource.name);
     await wizard.execute();
 
-    void showRevisionDraftInformationPopup(context, containerApp);
+    void showRevisionDraftDeployPopup(context, containerApp);
 }

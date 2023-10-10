@@ -10,7 +10,7 @@ import type { ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRuleGroup } from "../../../../utils/pickItem/pickScale";
-import { getParentResource, showRevisionDraftInformationPopup } from "../../../../utils/revisionDraftUtils";
+import { getParentResource, showRevisionDraftDeployPopup } from "../../../../utils/revisionDraftUtils";
 import type { ScaleRuleContext } from "../ScaleRuleContext";
 import { ScaleRuleListStep } from "../ScaleRuleListStep";
 import { DeleteScaleRuleStep } from "./DeleteScaleRuleStep";
@@ -50,5 +50,5 @@ export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleI
     wizardContext.activityTitle = localize('deleteScaleRuleTitle', 'Delete rule "{0}" from "{1}" (draft)', wizardContext.scaleRule?.name, parentResource.name);
     await wizard.execute();
 
-    void showRevisionDraftInformationPopup(context, containerApp);
+    void showRevisionDraftDeployPopup(context, containerApp);
 }

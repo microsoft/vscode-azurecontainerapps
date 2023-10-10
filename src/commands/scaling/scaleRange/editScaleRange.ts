@@ -10,7 +10,7 @@ import type { ScaleItem } from "../../../tree/scaling/ScaleItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScale } from "../../../utils/pickItem/pickScale";
-import { getParentResource, showRevisionDraftInformationPopup } from "../../../utils/revisionDraftUtils";
+import { getParentResource, showRevisionDraftDeployPopup } from "../../../utils/revisionDraftUtils";
 import type { ScaleRangeContext } from "./ScaleRangeContext";
 import { ScaleRangePromptStep } from "./ScaleRangePromptStep";
 import { ScaleRangeUpdateStep } from "./ScaleRangeUpdateStep";
@@ -43,5 +43,5 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
     wizardContext.activityTitle = localize('editScaleRange', 'Update replica scaling range to "{0}-{1}" for "{2}" (draft)', wizardContext.newMinRange, wizardContext.newMaxRange, parentResource.name);
     await wizard.execute();
 
-    void showRevisionDraftInformationPopup(context, containerApp);
+    void showRevisionDraftDeployPopup(context, containerApp);
 }

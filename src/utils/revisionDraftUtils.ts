@@ -35,7 +35,10 @@ export function getParentResourceFromItem(item: ContainerAppItem | RevisionsItem
     }
 }
 
-export async function showRevisionDraftInformationPopup(context: IActionContext, containerApp: ContainerAppModel): Promise<void> {
+/**
+ * An informational deploy pop-up to show after executing a revision draft command
+ */
+export async function showRevisionDraftDeployPopup(context: IActionContext, containerApp: ContainerAppModel): Promise<void> {
     if (!await settingUtils.getGlobalSetting('showDraftCommandDeployPopup')) {
         return;
     }
@@ -44,7 +47,7 @@ export async function showRevisionDraftInformationPopup(context: IActionContext,
     const no: string = localize('no', 'No');
     const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
 
-    const message: string = localize('message', 'Would you like to deploy these changes? Click yes to continue, or click no to keep making changes.');
+    const message: string = localize('message', 'Would you like to deploy these changes? Click "Yes" to proceed, or "No" to continue making changes.');
     const buttonMessages: string[] = [yes, no, dontShowAgain];
 
     void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
