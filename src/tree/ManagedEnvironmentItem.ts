@@ -25,6 +25,10 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         this.id = managedEnvironment.id;
     }
 
+    private get contextValue(): string {
+        return ManagedEnvironmentItem.contextValue;
+    }
+
     async getChildren(): Promise<ContainerAppsItem[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const containerApps = await ContainerAppItem.List(context, this.subscription, this.id);
@@ -39,9 +43,15 @@ export class ManagedEnvironmentItem implements TreeElementBase {
             label: this.managedEnvironment.name,
             id: this.id,
             iconPath: treeUtils.getIconPath('managed-environment'),
-            contextValue: ManagedEnvironmentItem.contextValue,
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
+    }
+
+    static isManagedEnvironmentItem(item: unknown): item is ManagedEnvironmentItem {
+        return typeof item === 'object' &&
+            typeof (item as ManagedEnvironmentItem).contextValue === 'string' &&
+            ManagedEnvironmentItem.contextValueRegExp.test((item as ManagedEnvironmentItem).contextValue);
     }
 
     static async List(context: IActionContext, subscription: AzureSubscription): Promise<ManagedEnvironment[]> {

@@ -9,7 +9,8 @@ import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
+import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
+import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
@@ -27,7 +28,7 @@ import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPr
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
-export async function deployWorkspaceProject(context: IActionContext): Promise<void> {
+export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
     ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
@@ -40,7 +41,7 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         cancellable: false,
         title: localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
     }, async () => {
-        defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext });
+        defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
     });
 
     const wizardContext: DeployWorkspaceProjectContext = {
