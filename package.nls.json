@@ -11,7 +11,7 @@
     "containerApps.deployImage": "Update Container App Image...",
     "containerApps.deployImageApi": "Update Container App Image (API)...",
     "containerApps.deployWorkspaceProject": "Deploy Workspace Project...",
-    "containerApps.deployWorkspaceProjectToContainerApp": "Deploy Workspace Project (Container App)...",
+    "containerApps.deployWorkspaceProjectToContainerApp": "Deploy Workspace to Container App...",
     "containerApps.deleteContainerApp": "Delete Container App...",
     "containerApps.disableIngress": "Disable Ingress for Container App",
     "containerApps.enableIngress": "Enable Ingress for Container App...",
