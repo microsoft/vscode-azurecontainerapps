@@ -6,9 +6,9 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { MessageItem } from "vscode";
-import type { IContainerAppContext } from "../../commands/IContainerAppContext";
-import type { ContainerAppModel } from "../../tree/ContainerAppItem";
-import { localize } from "../localize";
+import type { ContainerAppModel } from "../tree/ContainerAppItem";
+import { localize } from "../utils/localize";
+import type { IContainerAppContext } from "./IContainerAppContext";
 
 export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;

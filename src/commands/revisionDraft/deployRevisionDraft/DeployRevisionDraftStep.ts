@@ -10,7 +10,7 @@ import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp/updateContainerApp";
+import { updateContainerApp } from "../../updateContainerApp";
 import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
 
 export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevisionDraftContext> {
