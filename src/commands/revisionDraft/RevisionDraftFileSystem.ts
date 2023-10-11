@@ -9,7 +9,7 @@ import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
 import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../utils/localize";
@@ -24,7 +24,7 @@ export class RevisionDraftFile implements FileStat {
 
     contents: Uint8Array;
 
-    constructor(contents: Uint8Array, readonly containerAppId: string, readonly baseRevisionName: string) {
+    constructor(contents: Uint8Array, readonly containerApp: ContainerAppModel, readonly baseRevisionName: string) {
         this.contents = contents;
         this.size = contents.byteLength;
         this.ctime = Date.now();
@@ -60,10 +60,10 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         let file: RevisionDraftFile | undefined;
         if (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
-            file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
+            file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4));
-            file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.revision, 'name'));
+            file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }
 
         this.draftStore.set(uri.path, file);
@@ -133,7 +133,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
         // Any new changes to the draft file can cause the states of a container app's children to change (e.g. displaying "Unsaved changes")
-        ext.state.notifyChildrenChanged(file.containerAppId);
+        ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
     updateRevisionDraftWithTemplate(item: ContainerAppItem | RevisionsItemModel, template: Template): void {
