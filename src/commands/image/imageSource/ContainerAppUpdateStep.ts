@@ -5,15 +5,15 @@
 
 import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
-import type { ImageSourceBaseContext } from "../../commands/image/imageSource/ImageSourceBaseContext";
-import { getContainerNameForImage } from "../../commands/image/imageSource/containerRegistry/getContainerNameForImage";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../constants";
-import { ext } from "../../extensionVariables";
-import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
-import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../activity/activityUtils";
-import { localize } from "../localize";
-import { updateContainerApp } from "./updateContainerApp";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../constants";
+import { ext } from "../../../extensionVariables";
+import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
+import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
+import { localize } from "../../../utils/localize";
+import { updateContainerApp } from "../../updateContainerApp";
+import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
+import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep<T extends ImageSourceBaseContext> extends ExecuteActivityOutputStepBase<T> {
     public priority: number = 480;

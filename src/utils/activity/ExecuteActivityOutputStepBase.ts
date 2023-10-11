@@ -29,22 +29,20 @@ export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & E
     abstract priority: number;
     protected options: ExecuteActivityOutputOptions = {};
 
-    protected success: ExecuteActivityOutput;
-    protected fail: ExecuteActivityOutput;
-
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.success = this.createSuccessOutput(context);
-        this.fail = this.createFailOutput(context);
-
+        let output: ExecuteActivityOutput;
         try {
             await this.executeCore(context, progress);
-            this.displayOutput(context, this.success);
+            output = this.createSuccessOutput(context);
         } catch (e) {
-            this.displayOutput(context, this.fail);
+            output = this.createFailOutput(context);
 
             if (!this.options.shouldSwallowError) {
                 throw e;
             }
+        } finally {
+            output ??= {};  // This line is really just to convince the TypeScript compiler that output will be defined
+            this.displayOutput(context, output);
         }
     }
 
