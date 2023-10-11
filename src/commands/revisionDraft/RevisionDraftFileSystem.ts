@@ -132,7 +132,6 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
-        // Any new changes to the draft file can cause the states of a container app's children to change (e.g. displaying "Unsaved changes")
         ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
