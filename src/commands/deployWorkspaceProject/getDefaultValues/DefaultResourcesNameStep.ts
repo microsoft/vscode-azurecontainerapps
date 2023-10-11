@@ -22,7 +22,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         );
 
         const resourceBaseName: string = (await context.ui.showInputBox({
-            prompt: localize('resourceBaseNamePrompt', 'Enter a name for new container app resources.'),
+            prompt: localize('resourceBaseNamePrompt', 'Enter a name for the new container app resource(s).'),
             validateInput: this.validateInput,
             asyncValidationTask: (name: string) => this.validateNameAvailability(context, name)
         })).trim();

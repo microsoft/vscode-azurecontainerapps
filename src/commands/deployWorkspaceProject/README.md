@@ -1,3 +1,0 @@
-## Deploy Workspace Project
-
-`deployWorkspaceProject` was originally designed to handle project creation/deployment starting from a set of partial resources because we had originally planned on a more complex set of starting scenarios.  An example of this would be if the starting context included a resource group and managed environment to use, but no container app and registry.  We later changed the defaulting logic to be simpler, which left the resource creation logic a little bit overdesigned for the current use-case.  The benefit of the current design is that it is more flexible and can be easily retrofitted for more advanced use-cases/starting points in the future if we ever decide to go back in that direction.
