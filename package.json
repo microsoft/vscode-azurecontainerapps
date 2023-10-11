@@ -345,19 +345,19 @@
                     "group": "4@1"
                 },
                 {
-                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "5@2"
-                },
-                {
                     "command": "containerApps.deleteContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "5@2"
+                    "group": "5@1"
                 },
                 {
                     "command": "containerApps.deployImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "6@1"
+                },
+                {
+                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "6@2"
                 },
                 {
                     "command": "containerApps.startStreamingLogs",
