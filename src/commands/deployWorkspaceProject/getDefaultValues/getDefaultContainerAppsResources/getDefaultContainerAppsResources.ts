@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ManagedEnvironment } from "@azure/arm-appcontainers";
+import type { ManagedEnvironment } from "@azure/arm-appcontainers";
 import type { ResourceGroup } from "@azure/arm-resources";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ContainerAppItem, ContainerAppModel } from "../../../../tree/ContainerAppItem";
