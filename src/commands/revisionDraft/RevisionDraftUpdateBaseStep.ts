@@ -3,11 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Template } from "@azure/arm-appcontainers";
+import { type Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
 import type { IContainerAppContext } from "../IContainerAppContext";
 
 export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
@@ -16,7 +18,7 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
      */
     protected revisionDraftTemplate: Template;
 
-    constructor(readonly baseItem: RevisionsItemModel) {
+    constructor(readonly baseItem: ContainerAppItem | RevisionsItemModel) {
         super();
         this.revisionDraftTemplate = this.initRevisionDraftTemplate();
     }
@@ -34,7 +36,8 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     private initRevisionDraftTemplate(): Template {
         let template: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this.baseItem);
         if (!template) {
-            template = nonNullValueAndProp(this.baseItem.revision, 'template');
+            // Make deep copies so we don't accidentally modify the cached values
+            template = JSON.parse(JSON.stringify(nonNullValueAndProp(getParentResourceFromItem(this.baseItem), 'template'))) as Template;
         }
         return template;
     }

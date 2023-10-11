@@ -9,7 +9,7 @@ import { ScaleRuleTypes } from "../../../../constants";
 import { ext } from "../../../../extensionVariables";
 import type { RevisionsItemModel } from "../../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../../utils/localize";
-import { getParentResource } from "../../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem } from "../../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
@@ -28,7 +28,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
         this.updateRevisionDraftWithTemplate();
 
-        const resourceName = getParentResource(context.containerApp, this.baseItem.revision).name;
+        const resourceName = getParentResourceFromItem(this.baseItem).name;
         ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft)', context.newRuleType, context.newRuleName, resourceName));
     }
 
