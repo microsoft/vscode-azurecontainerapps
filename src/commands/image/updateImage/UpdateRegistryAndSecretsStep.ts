@@ -10,7 +10,7 @@ import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp/updateContainerApp";
+import { updateContainerApp } from "../../updateContainerApp";
 import type { UpdateImageContext } from "./updateImage";
 
 export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {

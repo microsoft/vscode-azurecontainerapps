@@ -12,12 +12,12 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
-import { ContainerAppOverwriteConfirmStep } from "../../utils/updateContainerApp/ContainerAppOverwriteConfirmStep";
-import { ContainerAppUpdateStep } from "../../utils/updateContainerApp/ContainerAppUpdateStep";
+import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
+import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
@@ -88,14 +88,14 @@ export async function deployWorkspaceProject(context: IActionContext): Promise<v
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
-                label: localize('useManagedEnvironment', 'Using container app environment "{0}"', managedEnvironmentName),
+                label: localize('useManagedEnvironment', 'Using container apps environment "{0}"', managedEnvironmentName),
                 iconPath: activityInfoIcon
             })
         );
 
         await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
 
-        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container app environment "{0}".', managedEnvironmentName));
+        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
         ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', wizardContext.managedEnvironment.location));
     } else {
         executeSteps.push(

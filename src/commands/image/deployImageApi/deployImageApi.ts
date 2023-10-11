@@ -22,6 +22,11 @@ interface DeployImageToAcaOptionsContract {
 
 export type DeployImageApiContext = ImageSourceBaseContext & ExecuteActivityContext;
 
+/**
+ * A command shared with the `vscode-docker` extension.
+ * It uses our old `deployImage` command flow which immediately tries to deploy the image to a container app without creating a draft.
+ * This command cannot be used to bundle template changes.
+ */
 export async function deployImageApi(context: IActionContext & Partial<IContainerRegistryImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     const node = await pickContainerApp(context);
     const { subscription } = node;

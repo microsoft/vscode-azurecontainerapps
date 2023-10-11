@@ -7,8 +7,8 @@ import type { Ingress } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../extensionVariables";
-import { updateContainerApp } from "../../utils/updateContainerApp/updateContainerApp";
 import type { IContainerAppContext } from "../IContainerAppContext";
+import { updateContainerApp } from "../updateContainerApp";
 
 type IngressOptions = {
     ingress: Ingress | null,
