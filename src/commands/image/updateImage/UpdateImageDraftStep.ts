@@ -15,7 +15,7 @@ import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUp
 import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
 import type { UpdateImageContext } from "./updateImage";
 
-export class UpdateImageStep<T extends UpdateImageContext> extends RevisionDraftUpdateBaseStep<T> {
+export class UpdateImageDraftStep<T extends UpdateImageContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 490;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {

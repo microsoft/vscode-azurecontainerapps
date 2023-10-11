@@ -42,7 +42,7 @@ When creating or updating resources, execute steps should occupy certain priorit
 #### `updateImage` Steps
 
 - UpdateRegistryAndSecretsStep: 480
-- UpdateImageStep: 490 (revision draft)
+- UpdateImageDraftStep: 490 (revision draft)
 
 ### 4. Unallocated Space
 

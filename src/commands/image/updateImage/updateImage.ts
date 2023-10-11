@@ -18,11 +18,15 @@ import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRev
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
-import { UpdateImageStep } from "./UpdateImageStep";
+import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
 import { UpdateRegistryAndSecretsStep } from "./UpdateRegistryAndSecretsStep";
 
 export type UpdateImageContext = ImageSourceBaseContext & ExecuteActivityContext;
 
+/**
+ * An ACA exclusive command that updates the container app or revision's container image via revision draft.
+ * The draft must be deployed for the changes to take effect and can be used to bundle together template changes.
+ */
 export async function updateImage(context: IActionContext, node?: ContainerAppItem | RevisionItem): Promise<void> {
     let item: ContainerAppItem | RevisionItem | RevisionDraftItem | undefined = node;
     if (!item) {
@@ -56,7 +60,7 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     const executeSteps: AzureWizardExecuteStep<UpdateImageContext>[] = [
         new VerifyProvidersStep([webProvider]),
         new UpdateRegistryAndSecretsStep(),
-        new UpdateImageStep(item)
+        new UpdateImageDraftStep(item)
     ];
 
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
