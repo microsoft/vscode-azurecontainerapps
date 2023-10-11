@@ -4,29 +4,26 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource, relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppItem } from "../../../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
+import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import type { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../deployImage/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../deployImage/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, deployWorkspaceProjectPrefix, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
+import { throwIfTreeItemAndWorkspaceSettingsConflict } from "./throwIfTreeItemAndWorkspaceSettingsConflict";
 
 export async function getDefaultContextValues(context: ISubscriptionActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<Partial<DeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
-    if (ContainerAppItem.isContainerAppItem(item) && settings.containerAppName && item.containerApp.name !== settings.containerAppName) {
-        const mismatchMessage: string = localize('containerAppMismatch', `The "${deployWorkspaceProjectPrefix}.containerAppName" workspace setting and selected container app tree item have conflicting deployment targets.`);
-        ext.outputChannel.appendLog(localize('containerAppMismatchLog', 'Error: {0}', mismatchMessage));
-        throw new Error(mismatchMessage);
-    }
+    await throwIfTreeItemAndWorkspaceSettingsConflict(context, item, settings);
 
     if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
         ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));

@@ -12,7 +12,7 @@ import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
 import type { DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
 import type { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
-import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./getDefaultResourceHelpers";
+import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
 const noMatchingResources = {
     resourceGroup: undefined,

@@ -9,7 +9,7 @@ import { IAzureQuickPickItem, ISubscriptionActionContext, nonNullProp } from "@m
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
 import { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
-import { getResourcesFromManagedEnvironmentHelper } from "./getDefaultResourceHelpers";
+import { getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
 const noMatchingResources = {
     resourceGroup: undefined,
