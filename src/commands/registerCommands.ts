@@ -9,14 +9,13 @@ import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
-import { deployImage } from './deployImage/deployImage';
-import { deployImageApi } from './deployImage/deployImageApi';
-import { createAcr } from './deployImage/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
 import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
+import { deployImageApi } from './image/deployImageApi/deployImageApi';
+import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress/enableIngress';
@@ -49,12 +48,12 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployImage', deployImage);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
 
     // deploy
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
 
     // github
@@ -83,7 +82,6 @@ export function registerCommands(): void {
     // revision draft
     registerCommandWithTreeNodeUnwrapping('containerApps.createRevisionDraft', createRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.editRevisionDraft', editRevisionDraft);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.discardRevisionDraft', discardRevisionDraft);
 
     // scaling

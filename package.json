@@ -76,12 +76,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.deployImage",
-                "title": "%containerApps.deployImage%",
-                "category": "Azure Container Apps",
-                "icon": "$(cloud-upload)"
-            },
-            {
                 "command": "containerApps.deployImageApi",
                 "title": "%containerApps.deployImageApi%",
                 "category": "Azure Container Apps"
@@ -333,11 +327,6 @@
                     "command": "containerApps.deleteContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "5@1"
-                },
-                {
-                    "command": "containerApps.deployImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "6@1"
                 },
                 {
                     "command": "containerApps.startStreamingLogs",

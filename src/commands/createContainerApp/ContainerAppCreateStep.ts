@@ -13,7 +13,7 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../util
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
+import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
 
 export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<ICreateContainerAppContext> {

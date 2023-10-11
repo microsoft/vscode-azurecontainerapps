@@ -6,14 +6,14 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { MessageItem } from "vscode";
-import type { ContainerAppModel } from "../../tree/ContainerAppItem";
-import { localize } from "../../utils/localize";
-import type { IDeployImageContext } from "./deployImage";
+import type { ContainerAppModel } from "../tree/ContainerAppItem";
+import { localize } from "../utils/localize";
+import type { IContainerAppContext } from "./IContainerAppContext";
 
-export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDeployImageContext> {
+export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: IDeployImageContext): Promise<void> {
+    public async prompt(context: T): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const warning: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ?
             localize('confirmDeploySingle', 'Are you sure you want to deploy to "{0}"? This will overwrite the active revision and unsupported features in VS Code will be lost.', containerApp.name) :
@@ -23,12 +23,12 @@ export class ContainerAppOverwriteConfirmStep extends AzureWizardPromptStep<IDep
         await context.ui.showWarningMessage(warning, { modal: true, stepName: 'confirmDestructiveDeployment' }, ...items);
     }
 
-    public shouldPrompt(context: IDeployImageContext): boolean {
+    public shouldPrompt(context: T): boolean {
         return !!context.containerApp && this.hasUnsupportedFeatures(context);
     }
 
     // Check for any portal features that VS Code doesn't currently support
-    private hasUnsupportedFeatures(context: IDeployImageContext): boolean {
+    private hasUnsupportedFeatures(context: T): boolean {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         if (containerApp.template?.volumes) {
             return true;
