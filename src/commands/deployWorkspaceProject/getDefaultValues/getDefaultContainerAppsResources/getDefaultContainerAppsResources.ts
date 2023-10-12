@@ -23,16 +23,17 @@ export async function getDefaultContainerAppsResources(
     settings: DeployWorkspaceProjectSettings | undefined,
     item?: ContainerAppItem | ManagedEnvironmentItem
 ): Promise<DefaultContainerAppsResources> {
-    // Try to obtain container app resources using any saved workspace settings
+    // If a tree item is provided that can be used to deduce default context values, try to use those first
+    if (item) {
+        return await getContainerAppResourcesFromItem(context, item);
+    }
+
+    // Otherwise try to obtain container app resources using any saved workspace settings
     const { resourceGroup, managedEnvironment, containerApp } = await getContainerAppResourcesFromSettings(context, settings);
     if (resourceGroup && managedEnvironment && containerApp) {
         return { resourceGroup, managedEnvironment, containerApp };
     }
 
-    // If a tree item is provided that can be used to deduce default context values, use those, otherwise prompt for an environment
-    if (item) {
-        return await getContainerAppResourcesFromItem(context, item);
-    } else {
-        return await promptForEnvironmentResources(context);
-    }
+    // Otherwise prompt the user for managed environment resources to use
+    return await promptForEnvironmentResources(context);
 }

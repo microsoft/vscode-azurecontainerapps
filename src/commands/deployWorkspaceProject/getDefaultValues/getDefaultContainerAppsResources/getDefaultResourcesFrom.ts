@@ -44,15 +44,13 @@ export async function getContainerAppResourcesFromSettings(context: ISubscriptio
 }
 
 export async function getContainerAppResourcesFromItem(context: ISubscriptionActionContext, item: ContainerAppItem | ManagedEnvironmentItem): Promise<DefaultContainerAppsResources> {
-    if (!ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
-        const incompatibleMessage: string = localize('incompatibleTreeItem', 'An incompatible Azure Container Apps tree item was provided for project deployment.');
-        ext.outputChannel.appendLog(localize('incompatibleMessageLog', 'Error: {0}', incompatibleMessage));
-        throw new Error(incompatibleMessage);
-    }
-
     if (ContainerAppItem.isContainerAppItem(item)) {
         return await getResourcesFromContainerAppHelper(context, item.containerApp);
-    } else {
+    } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
         return await getResourcesFromManagedEnvironmentHelper(context, item.managedEnvironment);
+    } else {
+        const incompatibleMessage: string = localize('incompatibleTreeItem', 'An incompatible tree item was provided to Azure Container Apps for project deployment.');
+        ext.outputChannel.appendLog(localize('incompatibleMessageLog', 'Error: {0}', incompatibleMessage));
+        throw new Error(incompatibleMessage);
     }
 }
