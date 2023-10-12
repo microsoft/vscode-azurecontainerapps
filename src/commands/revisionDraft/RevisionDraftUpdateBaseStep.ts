@@ -3,14 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type Template } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { ProgressLocation, window, type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { localize } from "../../utils/localize";
+import { pickContainerAppWithoutPrompt } from "../../utils/pickItem/pickContainerApp";
+import { pickRevisionDraft } from "../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
+import { settingUtils } from "../../utils/settingUtils";
 import type { IContainerAppContext } from "../IContainerAppContext";
+import { deployRevisionDraft } from "./deployRevisionDraft/deployRevisionDraft";
 
 export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
     /**
@@ -29,8 +35,9 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     /**
      * Call this method to upload `revisionDraftTemplate` changes to the container app revision draft
      */
-    protected updateRevisionDraftWithTemplate(): void {
+    protected async updateRevisionDraftWithTemplate(context: T): Promise<void> {
         ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate);
+        await this.showRevisionDraftDeployPopup(context);
     }
 
     private initRevisionDraftTemplate(): Template {
@@ -40,5 +47,45 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
             template = JSON.parse(JSON.stringify(nonNullValueAndProp(getParentResourceFromItem(this.baseItem), 'template'))) as Template;
         }
         return template;
+    }
+
+    /**
+     * An informational deploy pop-up to show after executing a revision draft command
+     */
+    private async showRevisionDraftDeployPopup(context: T): Promise<void> {
+        if (!await settingUtils.getGlobalSetting('showDraftCommandDeployPopup')) {
+            return;
+        }
+
+        const yes: string = localize('yes', 'Yes');
+        const no: string = localize('no', 'No');
+        const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
+
+        const message: string = localize('message', 'Would you like to deploy these changes? Click "Yes" to proceed, or "No" to continue making changes.');
+        const buttonMessages: string[] = [yes, no, dontShowAgain];
+
+        void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
+            if (result === yes) {
+                const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
+                    location: ProgressLocation.Notification,
+                    cancellable: false,
+                    title: localize('preparingForDeployment', 'Preparing for deployment...')
+                }, async () => {
+                    const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, this.baseItem.containerApp, { showLoadingPrompt: false });
+
+                    if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+                        return containerAppItem;
+                    } else {
+                        return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
+                    }
+                });
+
+                await deployRevisionDraft(context, item);
+            } else if (result === dontShowAgain) {
+                await settingUtils.updateGlobalSetting('showDraftCommandDeployPopup', false);
+            } else {
+                // Do nothing
+            }
+        });
     }
 }

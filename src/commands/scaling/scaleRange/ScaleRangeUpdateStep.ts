@@ -18,12 +18,12 @@ export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionD
         super(baseItem);
     }
 
-    public async execute(context: ScaleRangeContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         this.revisionDraftTemplate.scale ||= {};
         this.revisionDraftTemplate.scale.minReplicas = context.newMinRange;
         this.revisionDraftTemplate.scale.maxReplicas = context.newMaxRange;
 
-        this.updateRevisionDraftWithTemplate();
+        await this.updateRevisionDraftWithTemplate(context);
 
         context.scaleMinRange = nonNullProp(context, 'newMinRange');
         context.scaleMaxRange = nonNullProp(context, 'newMaxRange');
@@ -32,7 +32,7 @@ export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionD
         ext.outputChannel.appendLog(localize('updatedScaleRange', 'Updated replica scaling range to {0}-{1} for "{2}".', context.newMinRange, context.newMaxRange, parentResourceName));
     }
 
-    public shouldExecute(context: ScaleRangeContext): boolean {
+    public shouldExecute(context: T): boolean {
         return context.newMinRange !== undefined && context.newMaxRange !== undefined;
     }
 }

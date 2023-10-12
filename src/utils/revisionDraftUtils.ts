@@ -4,16 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
-import type { IActionContext } from "@microsoft/vscode-azext-utils";
-import { ProgressLocation, window } from "vscode";
-import { deployRevisionDraft } from "../commands/revisionDraft/deployRevisionDraft/deployRevisionDraft";
 import { ContainerAppItem, ContainerAppModel } from "../tree/ContainerAppItem";
-import { RevisionDraftItem } from "../tree/revisionManagement/RevisionDraftItem";
 import type { RevisionsItemModel } from "../tree/revisionManagement/RevisionItem";
-import { localize } from "./localize";
-import { pickContainerAppWithoutPrompt } from "./pickItem/pickContainerApp";
-import { pickRevisionDraft } from "./pickItem/pickRevision";
-import { settingUtils } from "./settingUtils";
 
 /**
  * Use to always select the correct parent resource model
@@ -33,44 +25,4 @@ export function getParentResourceFromItem(item: ContainerAppItem | RevisionsItem
     } else {
         return item.revision;
     }
-}
-
-/**
- * An informational deploy pop-up to show after executing a revision draft command
- */
-export async function showRevisionDraftDeployPopup(context: IActionContext, containerApp: ContainerAppModel): Promise<void> {
-    if (!await settingUtils.getGlobalSetting('showDraftCommandDeployPopup')) {
-        return;
-    }
-
-    const yes: string = localize('yes', 'Yes');
-    const no: string = localize('no', 'No');
-    const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
-
-    const message: string = localize('message', 'Would you like to deploy these changes? Click "Yes" to proceed, or "No" to continue making changes.');
-    const buttonMessages: string[] = [yes, no, dontShowAgain];
-
-    void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
-        if (result === yes) {
-            const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
-                location: ProgressLocation.Notification,
-                cancellable: false,
-                title: localize('preparingForDeployment', 'Preparing for deployment...')
-            }, async () => {
-                const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, containerApp, { showLoadingPrompt: false });
-
-                if (containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-                    return containerAppItem;
-                } else {
-                    return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
-                }
-            });
-
-            await deployRevisionDraft(context, item);
-        } else if (result === dontShowAgain) {
-            await settingUtils.updateGlobalSetting('showDraftCommandDeployPopup', false);
-        } else {
-            // Do nothing
-        }
-    });
 }
