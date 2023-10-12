@@ -13,13 +13,13 @@ import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tre
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
+import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
-import { ContainerAppOverwriteConfirmStep } from "../deployImage/ContainerAppOverwriteConfirmStep";
-import { ContainerAppUpdateStep } from "../deployImage/ContainerAppUpdateStep";
-import { ImageSourceListStep } from "../deployImage/imageSource/ImageSourceListStep";
+import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
+import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";

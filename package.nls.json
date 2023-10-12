@@ -4,14 +4,21 @@
     "containerApps.revealResource": "Reveal Resource",
     "containerApps.description": "An Azure Container Apps extension for Visual Studio Code.",
     "containerApps.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
+    "containerApps.showDraftCommandDeployPopup": "Show an informational deploy pop-up message whenever a draft command is run.",
     "containerApps.browse": "Browse",
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.createContainerAppFromWorkspace": "Create Container App from Workspace...",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",
+<<<<<<< HEAD
     "containerApps.deployImage": "Update Container App Image...",
     "containerApps.deployImageApi": "Update Container App Image (API)...",
     "containerApps.deployWorkspaceProject": "Deploy Workspace Project...",
     "containerApps.deployWorkspaceProjectToContainerApp": "Deploy Workspace to Container App...",
+=======
+    "containerApps.updateImage": "Update Container Image...",
+    "containerApps.deployImageApi": "Deploy Image to Container App (API)...",
+    "containerApps.deployWorkspaceProject": "Deploy Project from Workspace...",
+>>>>>>> 8b6a8e78961895378a4931b7e95c79b032b7d3a1
     "containerApps.deleteContainerApp": "Delete Container App...",
     "containerApps.disableIngress": "Disable Ingress for Container App",
     "containerApps.enableIngress": "Enable Ingress for Container App...",

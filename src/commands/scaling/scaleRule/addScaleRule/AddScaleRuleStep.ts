@@ -9,7 +9,7 @@ import { ScaleRuleTypes } from "../../../../constants";
 import { ext } from "../../../../extensionVariables";
 import type { RevisionsItemModel } from "../../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../../utils/localize";
-import { getParentResource } from "../../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem } from "../../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../../revisionDraft/RevisionDraftUpdateBaseStep";
 import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
@@ -20,23 +20,23 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         super(baseItem);
     }
 
-    public async execute(context: IAddScaleRuleContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         this.revisionDraftTemplate.scale ||= {};
         this.revisionDraftTemplate.scale.rules ||= [];
 
         context.scaleRule = this.buildRule(context);
         this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
-        this.updateRevisionDraftWithTemplate();
+        await this.updateRevisionDraftWithTemplate(context);
 
-        const resourceName = getParentResource(context.containerApp, this.baseItem.revision).name;
+        const resourceName = getParentResourceFromItem(this.baseItem).name;
         ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft)', context.newRuleType, context.newRuleName, resourceName));
     }
 
-    public shouldExecute(context: IAddScaleRuleContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !!context.newRuleName && !!context.newRuleType;
     }
 
-    private buildRule(context: IAddScaleRuleContext): ScaleRule {
+    private buildRule(context: T): ScaleRule {
         const scaleRule: ScaleRule = { name: context.newRuleName };
         switch (context.newRuleType) {
             case ScaleRuleTypes.HTTP:
@@ -58,7 +58,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         return scaleRule;
     }
 
-    private integrateRule(context: IAddScaleRuleContext, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
+    private integrateRule(context: T, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
         switch (context.newRuleType) {
             case ScaleRuleTypes.HTTP:
                 // Portal only allows one HTTP rule per revision

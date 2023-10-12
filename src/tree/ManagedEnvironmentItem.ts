@@ -5,7 +5,7 @@
 
 import { ContainerAppsAPIClient, ManagedEnvironment, Resource } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { AzureResource, AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
@@ -26,7 +26,13 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     }
 
     private get contextValue(): string {
-        return ManagedEnvironmentItem.contextValue;
+        const values: string[] = [];
+
+        // Enable more granular tree item filtering by environment name
+        values.push(nonNullValueAndProp(this.managedEnvironment, 'name'));
+
+        values.push(ManagedEnvironmentItem.contextValue);
+        return createContextValue(values);
     }
 
     async getChildren(): Promise<ContainerAppsItem[]> {

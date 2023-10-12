@@ -81,10 +81,9 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.deployImage",
-                "title": "%containerApps.deployImage%",
-                "category": "Azure Container Apps",
-                "icon": "$(cloud-upload)"
+                "command": "containerApps.updateImage",
+                "title": "%containerApps.updateImage%",
+                "category": "Azure Container Apps"
             },
             {
                 "command": "containerApps.deployImageApi",
@@ -350,8 +349,8 @@
                     "group": "5@1"
                 },
                 {
-                    "command": "containerApps.deployImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "command": "containerApps.updateImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "6@1"
                 },
                 {
@@ -400,6 +399,11 @@
                     "group": "2@4"
                 },
                 {
+                    "command": "containerApps.updateImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionItem/i",
+                    "group": "3@1"
+                },
+                {
                     "command": "containerApps.deployRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
                     "group": "inline@1"
@@ -420,9 +424,14 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerApps.editRevisionDraft",
+                    "command": "containerApps.updateImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.editRevisionDraft",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
+                    "group": "3@1"
                 },
                 {
                     "command": "containerApps.editScaleRange",
@@ -541,6 +550,11 @@
                             "%containerApps.deleteConfirmation.ClickButton%"
                         ],
                         "default": "EnterName"
+                    },
+                    "containerApps.showDraftCommandDeployPopup": {
+                        "type": "boolean",
+                        "description": "%containerApps.showDraftCommandDeployPopup%",
+                        "default": true
                     }
                 }
             }

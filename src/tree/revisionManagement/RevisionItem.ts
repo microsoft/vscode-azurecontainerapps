@@ -7,7 +7,8 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } fr
 import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
@@ -39,8 +40,10 @@ export class RevisionItem implements RevisionsItemModel {
         // Enable more granular tree item filtering by revision name
         values.push(nonNullProp(this.revision, 'name'));
 
+        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+
         return createContextValue(values);
     }
 
