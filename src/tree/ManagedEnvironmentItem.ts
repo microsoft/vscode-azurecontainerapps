@@ -54,6 +54,12 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         }
     }
 
+    static isManagedEnvironmentItem(item: unknown): item is ManagedEnvironmentItem {
+        return typeof item === 'object' &&
+            typeof (item as ManagedEnvironmentItem).contextValue === 'string' &&
+            ManagedEnvironmentItem.contextValueRegExp.test((item as ManagedEnvironmentItem).contextValue);
+    }
+
     static async List(context: IActionContext, subscription: AzureSubscription): Promise<ManagedEnvironment[]> {
         const subContext = createSubscriptionContext(subscription);
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);

@@ -66,6 +66,11 @@
                 "icon": "$(add)"
             },
             {
+                "command": "containerApps.createContainerAppFromWorkspace",
+                "title": "%containerApps.createContainerAppFromWorkspace%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteManagedEnvironment",
                 "title": "%containerApps.deleteManagedEnvironment%",
                 "category": "Azure Container Apps"
@@ -88,6 +93,11 @@
             {
                 "command": "containerApps.deployWorkspaceProject",
                 "title": "%containerApps.deployWorkspaceProject%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deployWorkspaceProjectToContainerApp",
+                "title": "%containerApps.deployWorkspaceProjectToContainerApp%",
                 "category": "Azure Container Apps"
             },
             {
@@ -279,6 +289,11 @@
                     "group": "2@1"
                 },
                 {
+                    "command": "containerApps.createContainerAppFromWorkspace",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /managedEnvironmentItem/i",
+                    "group": "2@2"
+                },
+                {
                     "command": "containerApps.deleteManagedEnvironment",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /managedEnvironmentItem/i",
                     "group": "3@1"
@@ -337,6 +352,11 @@
                     "command": "containerApps.updateImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "6@1"
+                },
+                {
+                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "6@2"
                 },
                 {
                     "command": "containerApps.startStreamingLogs",
@@ -480,6 +500,14 @@
                 }
             ],
             "commandPalette": [
+                {
+                    "command": "containerApps.createContainerAppFromWorkspace",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
+                    "when": "never"
+                },
                 {
                     "command": "containerApps.deployImageApi",
                     "when": "never"

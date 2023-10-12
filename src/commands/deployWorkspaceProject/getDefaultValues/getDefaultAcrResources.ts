@@ -6,19 +6,26 @@
 import type { Registry } from "@azure/arm-containerregistry";
 import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
+import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import type { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { triggerSettingsOverride } from "./getDefaultContextValues";
 
 interface DefaultAcrResources {
     registry?: Registry;
     imageName?: string;
 }
 
-export async function getDefaultAcrResources(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings | undefined): Promise<DefaultAcrResources> {
+export async function getDefaultAcrResources(
+    context: ISubscriptionActionContext,
+    settings: DeployWorkspaceProjectSettings | undefined,
+    item: ContainerAppItem | ManagedEnvironmentItem | undefined
+): Promise<DefaultAcrResources> {
     const noMatchingResource = { registry: undefined, imageName: undefined };
 
-    if (!settings || !settings.containerRegistryName) {
+    if (!settings || !settings.containerRegistryName || triggerSettingsOverride(settings, item)) {
         return noMatchingResource;
     }
 

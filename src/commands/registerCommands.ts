@@ -48,6 +48,7 @@ export function registerCommands(): void {
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
+    registerCommandWithTreeNodeUnwrapping('containerApps.createContainerAppFromWorkspace', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
@@ -57,6 +58,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProjectToContainerApp', deployWorkspaceProject);
 
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);

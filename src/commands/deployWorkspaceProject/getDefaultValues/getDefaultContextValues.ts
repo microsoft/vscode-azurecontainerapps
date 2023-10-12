@@ -4,31 +4,38 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
+import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource, relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
-import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
+import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
-export async function getDefaultContextValues(context: ISubscriptionActionContext): Promise<Partial<DeployWorkspaceProjectContext>> {
+export async function getDefaultContextValues(context: ISubscriptionActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<Partial<DeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
-
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
-    if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
-        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
-    } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
-        ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
+
+    if (triggerSettingsOverride(settings, item)) {
+        await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
+    } else {
+        if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
+            ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
+        } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
+            ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
+        }
     }
 
     return {
-        ...await getDefaultContainerAppsResources(context, settings),
-        ...await getDefaultAcrResources(context, settings),
+        ...await getDefaultContainerAppsResources(context, settings, item),
+        ...await getDefaultAcrResources(context, settings, item),
         newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
@@ -36,4 +43,36 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
         os: AcrBuildSupportedOS.Linux,
         rootFolder,
     };
+}
+
+/**
+ * Determines if deploying from the given tree item will cause us to have to override the user's workspace deployment settings
+ */
+export function triggerSettingsOverride(settings: DeployWorkspaceProjectSettings, item: ContainerAppItem | ManagedEnvironmentItem | undefined): boolean {
+    if (!item || (!settings.containerAppName && !settings.containerAppResourceGroupName)) {
+        return false;
+    } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        return true;
+    }
+
+    // At this point it must be a `ContainerAppItem`
+    return item.containerApp.name !== settings.containerAppName || item.containerApp.resourceGroup !== settings.containerAppResourceGroupName;
+}
+
+async function displaySettingsOverrideWarning(context: ISubscriptionActionContext, item: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
+    let treeItemType: string;
+    if (ContainerAppItem.isContainerAppItem(item)) {
+        treeItemType = 'container app item ';
+    } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        treeItemType = 'container environment item ';
+    } else {
+        treeItemType = '';
+    }
+
+    const resourceName: string = parseAzureResourceId(item.id).resourceName;
+    await context.ui.showWarningMessage(
+        localize('overrideConfirmation', `Deployment will target {0}"{1}".\n\nAny workspace deployment settings will be skipped.  Would you like to proceed?`, treeItemType, resourceName),
+        { modal: true },
+        { title: localize('continue', 'Continue') }
+    );
 }

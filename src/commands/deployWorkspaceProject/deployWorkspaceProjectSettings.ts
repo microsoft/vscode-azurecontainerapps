@@ -14,7 +14,7 @@ export interface DeployWorkspaceProjectSettings {
     containerRegistryName?: string;
 }
 
-const deployWorkspaceProjectPrefix: string = 'deployWorkspaceProject';
+export const deployWorkspaceProjectPrefix: string = 'deployWorkspaceProject';
 
 export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettings> {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
