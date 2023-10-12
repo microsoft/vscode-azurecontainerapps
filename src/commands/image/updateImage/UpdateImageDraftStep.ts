@@ -22,7 +22,7 @@ export class UpdateImageDraftStep<T extends UpdateImageContext> extends Revision
         super(baseItem);
     }
 
-    public async execute(context: UpdateImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('updatingImage', 'Updating image (draft)...') });
 
         this.revisionDraftTemplate.containers = [];
@@ -33,13 +33,13 @@ export class UpdateImageDraftStep<T extends UpdateImageContext> extends Revision
             name: getContainerNameForImage(nonNullProp(context, 'image')) + `-${randomUtils.getRandomHexString(5)}`,
         });
 
-        this.updateRevisionDraftWithTemplate();
+        await this.updateRevisionDraftWithTemplate(context);
 
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         ext.outputChannel.appendLog(localize('updatedImage', 'Updated container app "{0}" with image "{1}" (draft).', parentResource.name, context.image));
     }
 
-    public shouldExecute(context: UpdateImageContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !!context.containerApp && !!context.image;
     }
 }

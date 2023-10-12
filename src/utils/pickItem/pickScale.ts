@@ -65,5 +65,6 @@ export async function pickScaleRuleGroup(context: IActionContext, options?: Revi
     return await runQuickPickWizard(context, {
         promptSteps,
         title: options?.title,
+        showLoadingPrompt: options?.showLoadingPrompt
     }, containerAppItem);
 }

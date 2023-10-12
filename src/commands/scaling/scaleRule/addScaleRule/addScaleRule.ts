@@ -39,8 +39,6 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
     });
 
     await wizard.prompt();
-
     wizardContext.activityTitle = localize('addScaleRuleTitle', 'Add {0} rule "{1}" to "{2}" (draft)', wizardContext.newRuleType, wizardContext.newRuleName, parentResource.name);
-
     await wizard.execute();
 }
