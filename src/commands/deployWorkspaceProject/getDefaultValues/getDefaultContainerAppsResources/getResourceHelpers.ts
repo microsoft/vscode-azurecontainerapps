@@ -11,9 +11,6 @@ import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import type { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 
-/**
- * @throws May throw an error if there are any issues with the associated network calls
- */
 export async function getResourcesFromContainerAppHelper(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
@@ -30,9 +27,6 @@ export async function getResourcesFromContainerAppHelper(context: ISubscriptionA
     };
 }
 
-/**
- * @throws May throw an error if there are any issues with the associated network calls
- */
 export async function getResourcesFromManagedEnvironmentHelper(context: ISubscriptionActionContext, managedEnvironment: ManagedEnvironment): Promise<DefaultContainerAppsResources> {
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
     const resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
