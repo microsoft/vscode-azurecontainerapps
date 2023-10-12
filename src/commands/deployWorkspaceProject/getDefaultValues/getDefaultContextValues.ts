@@ -23,19 +23,19 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
-    if (!item) {
+    if (triggerSettingsOverride(settings, item)) {
+        await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
+    } else {
         if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
             ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
         } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
             ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
         }
-    } else if (item && (settings.containerAppName || settings.containerAppResourceGroupName)) {
-        await displayTreeItemOverrideWarning(context, item);
     }
 
     return {
         ...await getDefaultContainerAppsResources(context, settings, item),
-        ...await getDefaultAcrResources(context, settings),
+        ...await getDefaultAcrResources(context, settings, item),
         newRegistrySku: KnownSkuName.Basic,
         dockerfilePath,
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
@@ -45,7 +45,21 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     };
 }
 
-async function displayTreeItemOverrideWarning(context: ISubscriptionActionContext, item: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
+/**
+ * Determines if deploying from the given tree item will cause us to have to override the user's workspace deployment settings
+ */
+export function triggerSettingsOverride(settings: DeployWorkspaceProjectSettings, item: ContainerAppItem | ManagedEnvironmentItem | undefined): boolean {
+    if (!item || (!settings.containerAppName && !settings.containerAppResourceGroupName)) {
+        return false;
+    } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        return true;
+    }
+
+    // At this point it must be a `ContainerAppItem`
+    return item.containerApp.name !== settings.containerAppName || item.containerApp.resourceGroup !== settings.containerAppResourceGroupName;
+}
+
+async function displaySettingsOverrideWarning(context: ISubscriptionActionContext, item: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
     let treeItemType: string;
     if (ContainerAppItem.isContainerAppItem(item)) {
         treeItemType = 'container app item ';
