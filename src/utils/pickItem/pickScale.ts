@@ -51,7 +51,7 @@ function getPickScaleRuleGroupStep(): AzureWizardPromptStep<QuickPickWizardConte
 function getPickScaleRuleStep(): AzureWizardPromptStep<QuickPickWizardContext> {
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: ScaleRuleItem.contextValue },
-        skipIfOne: true,
+        skipIfOne: false,
     }, {
         placeHolder: localize('selectScaleRuleItem', 'Select a scale rule'),
         noPicksMessage: localize('noScaleRules', 'Selected item has no scale rules'),
