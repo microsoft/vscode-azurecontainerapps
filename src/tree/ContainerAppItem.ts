@@ -47,7 +47,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     constructor(public readonly subscription: AzureSubscription, private _containerApp: ContainerAppModel) {
-        this.id = ContainerAppItem.createContainerAppItemId(this.containerApp.id);
+        this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
     }
@@ -118,11 +118,6 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         return typeof item === 'object' &&
             typeof (item as ContainerAppItem).contextValue === 'string' &&
             ContainerAppItem.contextValueRegExp.test((item as ContainerAppItem).contextValue);
-    }
-
-    static createContainerAppItemId(containerAppId: string): string {
-        // We need to differentiate the ACA extension container apps so that we don't accidentally target the ones found under 'hidden resources' when we reveal
-        return 'aca:/' + containerAppId;
     }
 
     static async List(context: IActionContext, subscription: AzureSubscription, managedEnvironmentId: string): Promise<ContainerAppModel[]> {
