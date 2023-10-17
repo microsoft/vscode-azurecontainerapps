@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { ParsedAzureResourceId, parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
+import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, commands, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
@@ -132,6 +132,8 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
+        // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
+        void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
         ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
