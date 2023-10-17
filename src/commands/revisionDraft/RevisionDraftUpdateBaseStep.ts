@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, IActionContext, callWithTelemetryAndErrorHandling, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window, type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -80,7 +80,9 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
                     }
                 });
 
-                await deployRevisionDraft(context, item);
+                // Pass the deploy command a fresh context
+                await callWithTelemetryAndErrorHandling('revisionDraftUpdateBaseStep.deploy',
+                    async (context: IActionContext) => await deployRevisionDraft(context, item));
             } else if (result === dontShowAgain) {
                 await settingUtils.updateGlobalSetting('showDraftCommandDeployPopup', false);
             } else {
