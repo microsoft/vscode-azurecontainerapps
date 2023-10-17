@@ -13,6 +13,7 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
         context.newSecretName = (await context.ui.showInputBox({
             prompt: localize('secretName', 'Enter a secret name.'),
+            placeHolder: context.secretName ?? localize('emptyPlaceholder', ''),
             validateInput: (val: string | undefined) => this.validateInput(context, val),
         })).trim();
         context.valuesToMask.push(context.newSecretName);
