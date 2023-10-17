@@ -9,6 +9,8 @@ import { ext } from "../../extensionVariables";
 import type { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { ScaleRuleGroupItem } from "../../tree/scaling/ScaleRuleGroupItem";
+import { ScaleRuleItem } from "../../tree/scaling/ScaleRuleItem";
+import { localize } from "../localize";
 import type { RevisionDraftPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 import { getPickRevisionDraftStep, getPickRevisionStep, getPickRevisionsStep } from "./pickRevision";
@@ -46,6 +48,16 @@ function getPickScaleRuleGroupStep(): AzureWizardPromptStep<QuickPickWizardConte
     });
 }
 
+function getPickScaleRuleStep(): AzureWizardPromptStep<QuickPickWizardContext> {
+    return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+        contextValueFilter: { include: ScaleRuleItem.contextValue },
+        skipIfOne: true,
+    }, {
+        placeHolder: localize('selectScaleRuleItem', 'Select a scale rule'),
+        noPicksMessage: localize('noScaleRules', 'Selected item has no scale rules'),
+    });
+}
+
 export async function pickScale(context: IActionContext, options?: RevisionDraftPickItemOptions): Promise<ScaleItem> {
     const containerAppItem: ContainerAppItem = await pickContainerApp(context);
     return await runQuickPickWizard(context, {
@@ -60,6 +72,22 @@ export async function pickScaleRuleGroup(context: IActionContext, options?: Revi
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
         ...getPickScaleSteps(containerAppItem, { autoSelectDraft: options?.autoSelectDraft }),
         getPickScaleRuleGroupStep()
+    ];
+
+    return await runQuickPickWizard(context, {
+        promptSteps,
+        title: options?.title,
+        showLoadingPrompt: options?.showLoadingPrompt
+    }, containerAppItem);
+}
+
+export async function pickScaleRule(context: IActionContext, options?: RevisionDraftPickItemOptions): Promise<ScaleRuleItem> {
+    const containerAppItem: ContainerAppItem = await pickContainerApp(context);
+
+    const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
+        ...getPickScaleSteps(containerAppItem, { autoSelectDraft: options?.autoSelectDraft }),
+        getPickScaleRuleGroupStep(),
+        getPickScaleRuleStep()
     ];
 
     return await runQuickPickWizard(context, {

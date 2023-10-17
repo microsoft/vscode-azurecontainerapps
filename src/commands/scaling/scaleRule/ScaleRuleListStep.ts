@@ -18,6 +18,7 @@ export class ScaleRuleListStep extends AzureWizardPromptStep<ScaleRuleContext> {
     }
 
     private async getPicks(context: ScaleRuleContext): Promise<IAzureQuickPickItem<ScaleRule>[] | undefined> {
+        // Todo: Expand support for multiple revisions
         const scaleRules = context.containerApp?.template?.scale?.rules;
         if (!scaleRules?.length) {
             throw new Error(localize('noScaleRules', 'No scale rules found'));

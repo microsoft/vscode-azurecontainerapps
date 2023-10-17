@@ -5,18 +5,16 @@
 import type { Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DeleteConfirmationStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
-import type { ScaleRuleGroupItem } from "../../../../tree/scaling/ScaleRuleGroupItem";
 import type { ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
-import { pickScaleRuleGroup } from "../../../../utils/pickItem/pickScale";
+import { pickScaleRule } from "../../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../../utils/revisionDraftUtils";
 import type { ScaleRuleContext } from "../ScaleRuleContext";
-import { ScaleRuleListStep } from "../ScaleRuleListStep";
 import { DeleteScaleRuleStep } from "./DeleteScaleRuleStep";
 
 export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleItem): Promise<void> {
-    const item: ScaleRuleGroupItem | ScaleRuleItem = node ?? await pickScaleRuleGroup(context, { autoSelectDraft: true });
+    const item: ScaleRuleItem = node ?? await pickScaleRule(context, { autoSelectDraft: true });
     const { subscription, containerApp, revision } = item;
 
     const parentResource: ContainerAppModel | Revision = getParentResource(containerApp, revision);
@@ -27,13 +25,12 @@ export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleI
         ...await createActivityContext(),
         containerApp,
         subscription,
-        scaleRule: node?.scaleRule
+        scaleRule: item.scaleRule
     }
 
     const confirmMessage = localize('confirmMessage', 'Are you sure you want to delete this scale rule?');
 
     const promptSteps: AzureWizardPromptStep<ScaleRuleContext>[] = [
-        new ScaleRuleListStep(),
         new DeleteConfirmationStep(confirmMessage)
     ];
 
