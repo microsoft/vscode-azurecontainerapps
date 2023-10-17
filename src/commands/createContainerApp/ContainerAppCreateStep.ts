@@ -60,6 +60,14 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<ICreat
                 ]
             }
         }));
+
+        if (!context.activityChildren) {
+            context.activityResult = {
+                id: ContainerAppItem.createContainerAppItemId(nonNullValueAndProp(context.containerApp, 'id')),
+                name: containerAppName,
+                type: containerAppsWebProvider
+            };
+        }
     }
 
     public shouldExecute(context: ICreateContainerAppContext): boolean {
