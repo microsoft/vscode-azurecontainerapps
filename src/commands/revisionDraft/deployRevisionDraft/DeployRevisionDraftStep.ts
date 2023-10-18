@@ -33,7 +33,7 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevis
 
         progress.report({ message: updating });
 
-        const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : `${containerApp.id}/${RevisionDraftItem.idSuffix}`;
+        const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
 
         await ext.state.runWithTemporaryDescription(id, description, async () => {
             await updateContainerApp(context, context.subscription, containerAppEnvelope);

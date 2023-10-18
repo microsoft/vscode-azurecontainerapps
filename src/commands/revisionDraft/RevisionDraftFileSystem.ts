@@ -12,6 +12,7 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
 import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
@@ -62,6 +63,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
+            // A trick to help the draft item appear properly when the parent isn't already expanded (covers the command palette entrypoints)
+            void ext.state.showCreatingChild(
+                RevisionsItem.getRevisionsItemId(item.containerApp.id),
+                localize('creatingDraft', 'Creating draft...'),
+                () => Promise.resolve());
+
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }

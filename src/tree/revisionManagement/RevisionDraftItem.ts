@@ -23,7 +23,7 @@ export interface RevisionsDraftModel {
 }
 
 export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {
-    static readonly idSuffix: string = 'revisionDraft';
+    static readonly idSuffix: string = '/revisionDraft';
     static readonly contextValue: string = 'revisionDraftItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
 
@@ -31,7 +31,7 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
     revisionsMode: KnownActiveRevisionsMode;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
-        this.id = `${this.containerApp.id}/${RevisionDraftItem.idSuffix}`;
+        this.id = RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
         this.revisionsMode = containerApp.revisionsMode;
     }
 
@@ -50,6 +50,10 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
         const values: string[] = [RevisionDraftItem.contextValue];
         values.push(await this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
         return createContextValue(values);
+    }
+
+    static getRevisionDraftItemId(containerAppId: string): string {
+        return `${containerAppId}/${RevisionDraftItem.idSuffix}`;
     }
 
     static isRevisionDraftItem(item: unknown): item is RevisionDraftItem {
