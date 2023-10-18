@@ -11,11 +11,11 @@ import { isIngressEnabled } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
 
-export async function showContainerAppCreated(containerApp: ContainerApp, isUpdate: boolean = false): Promise<void> {
-    return await callWithTelemetryAndErrorHandling('containerApps.showCaCreated', async (context: IActionContext) => {
+export async function showContainerAppNotification(containerApp: ContainerApp, isUpdate: boolean = false): Promise<void> {
+    return await callWithTelemetryAndErrorHandling('containerApps.showCaNotification', async (context: IActionContext) => {
         const createdCa: string = localize('createdCa', 'Successfully created new container app "{0}".', containerApp.name);
-        const createdRevision = localize('createdRevision', 'Created a new revision "{1}" for container app "{0}"', containerApp.name, containerApp.latestRevisionName);
-        const message = isUpdate ? createdRevision : createdCa;
+        const deployedCa: string = localize('deployedCa', 'Successfully deployed new update to container app "{0}"', containerApp.name);
+        const message = isUpdate ? deployedCa : createdCa;
         ext.outputChannel.appendLog(message);
 
         const browse: MessageItem = { title: localize('browse', 'Browse') };

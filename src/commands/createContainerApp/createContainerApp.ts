@@ -18,7 +18,7 @@ import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
-import { showContainerAppCreated } from "./showContainerAppCreated";
+import { showContainerAppNotification } from "./showContainerAppNotification";
 
 export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
     node ??= await pickEnvironment(context);
@@ -74,6 +74,6 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         });
 
     const createdContainerApp = nonNullProp(wizardContext, 'containerApp');
-    void showContainerAppCreated(createdContainerApp);
+    void showContainerAppNotification(createdContainerApp);
     return new ContainerAppItem(node.subscription, createdContainerApp);
 }

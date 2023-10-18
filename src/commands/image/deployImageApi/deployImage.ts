@@ -10,6 +10,7 @@ import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
+import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
@@ -45,4 +46,6 @@ export async function deployImage(context: IActionContext & Partial<IContainerRe
 
     await wizard.prompt();
     await wizard.execute();
+
+    void showContainerAppNotification(containerApp, true /** isUpdate */);
 }
