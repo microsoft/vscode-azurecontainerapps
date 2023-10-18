@@ -95,9 +95,7 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         );
 
         await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
-
         ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
-        ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', wizardContext.managedEnvironment.location));
     } else {
         executeSteps.push(
             new LogAnalyticsCreateStep(),
@@ -108,9 +106,6 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
             appProvider,
             operationalInsightsProvider
         );
-
-        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
-        LocationListStep.addStep(wizardContext, promptSteps);
     }
 
     // Azure Container Registry
@@ -146,6 +141,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         );
 
         ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', containerAppName));
+
+        await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
     } else {
         executeSteps.push(new ContainerAppCreateStep());
     }
@@ -159,6 +156,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     // Verify providers
     executeSteps.push(new VerifyProvidersStep(providers));
+
+    // Location
+    if (LocationListStep.hasLocation(wizardContext)) {
+        ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', (await LocationListStep.getLocation(wizardContext)).name));
+    } else {
+        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
+        LocationListStep.addStep(wizardContext, promptSteps);
+    }
 
     // Save deploy settings
     promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
