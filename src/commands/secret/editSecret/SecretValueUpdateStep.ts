@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
@@ -11,17 +11,12 @@ import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import type { ISecretContext } from "../ISecretContext";
 
-export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
+export class SecretValueUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
     public priority: number = 850;
 
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
-
-        let updatedSecret: string | undefined;
-        if (context.newSecretValue) {
-            updatedSecret = localize('updatedSecretValue', 'Updated secret value for "{0}" in container app "{1}".', context.secretName, containerApp.name);
-        }
 
         progress.report({ message: localize('updatingSecret', 'Updating secret...') });
 
@@ -40,7 +35,7 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
 
-        ext.outputChannel.appendLog(nonNullValue(updatedSecret));
+        ext.outputChannel.appendLog(localize('updatedSecretValue', 'Updated secret value for "{0}" in container app "{1}".', context.secretName, containerApp.name));
     }
 
     public shouldExecute(context: ISecretContext): boolean {
