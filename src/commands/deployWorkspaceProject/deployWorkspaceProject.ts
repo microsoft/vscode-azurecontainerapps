@@ -94,7 +94,10 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
             })
         );
 
-        await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
+        if (!LocationListStep.hasLocation(wizardContext)) {
+            await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
+        }
+
         ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
     } else {
         executeSteps.push(
@@ -142,7 +145,9 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', containerAppName));
 
-        await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
+        if (!LocationListStep.hasLocation(wizardContext)) {
+            await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
+        }
     } else {
         executeSteps.push(new ContainerAppCreateStep());
     }
