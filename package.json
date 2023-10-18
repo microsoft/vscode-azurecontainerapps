@@ -131,11 +131,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.editSecretName",
-                "title": "%containerApps.editSecretName%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.editSecretValue",
                 "title": "%containerApps.editSecretValue%",
                 "category": "Azure Container Apps"
@@ -471,11 +466,6 @@
                 {
                     "command": "containerApps.addSecret",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretsItem/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.editSecretName",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem/i",
                     "group": "1@1"
                 },
                 {

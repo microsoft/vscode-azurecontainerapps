@@ -19,10 +19,7 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         let updatedSecret: string | undefined;
-        if (context.newSecretName) {
-            context.activityTitle = localize('updatingSecretName', 'Update secret name from "{0}" to "{1}" in container app "{2}"', context.secretName, context.newSecretName, containerApp.name);
-            updatedSecret = localize('updatedSecretName', 'Updated secret name from "{0}" to "{1}" in container app "{2}".', context.secretName, context.newSecretName, containerApp.name);
-        } else if (context.newSecretValue) {
+        if (context.newSecretValue) {
             updatedSecret = localize('updatedSecretValue', 'Updated secret value for "{0}" in container app "{1}".', context.secretName, containerApp.name);
         }
 
@@ -32,7 +29,6 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
         containerAppEnvelope.configuration.secrets ||= [];
         containerAppEnvelope.configuration.secrets.forEach((secret) => {
             if (secret.name === context.secretName) {
-                secret.name = context.newSecretName ?? secret.name;
                 secret.value = context.newSecretValue ?? secret.value;
                 didUpdateSecret = true;
             }
@@ -48,6 +44,6 @@ export class SecretUpdateStep extends AzureWizardExecuteStep<ISecretContext> {
     }
 
     public shouldExecute(context: ISecretContext): boolean {
-        return !!context.secretName && (!!context.newSecretName || !!context.newSecretValue);
+        return !!context.secretName && !!context.newSecretValue;
     }
 }
