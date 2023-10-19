@@ -10,7 +10,7 @@ import type { ISecretContext } from "../ISecretContext";
 export class SecretDeleteConfirmStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
         await context.ui.showWarningMessage(
-            localize('secretDeleteWarning', 'Are you sure you want to delete secret "{0}"?', nonNullProp(context, 'secretName')),
+            localize('secretDeleteWarning', 'Are you sure you want to delete secret "{0}"? By deleting this secret if you restart revisions that use it, new revisions will fail.', nonNullProp(context, 'secretName')),
             { modal: true },
             { title: localize('delete', 'Delete') }
         );
