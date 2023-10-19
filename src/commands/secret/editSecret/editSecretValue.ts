@@ -11,7 +11,7 @@ import { localize } from "../../../utils/localize";
 import { pickSecret } from "../../../utils/pickItem/pickSecret";
 import type { ISecretContext } from "../ISecretContext";
 import { SecretValueStep } from "../addSecret/SecretValueStep";
-import { SecretUpdateStep } from "./SecretUpdateStep";
+import { SecretValueUpdateStep } from "./SecretValueUpdateStep";
 
 export async function editSecretValue(context: IActionContext, node?: SecretItem): Promise<void> {
     const item: SecretItem = node ?? await pickSecret(context);
@@ -32,7 +32,7 @@ export async function editSecretValue(context: IActionContext, node?: SecretItem
     ];
 
     const executeSteps: AzureWizardExecuteStep<ISecretContext>[] = [
-        new SecretUpdateStep()
+        new SecretValueUpdateStep()
     ];
 
     const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
