@@ -61,7 +61,7 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
         const no: string = localize('no', 'No');
         const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
 
-        const message: string = localize('message', 'Would you like to deploy these changes? Click "Yes" to proceed, or "No" to continue making changes.');
+        const message: string = localize('message', 'Deploy changes now?');
         const buttonMessages: string[] = [yes, no, dontShowAgain];
 
         void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
