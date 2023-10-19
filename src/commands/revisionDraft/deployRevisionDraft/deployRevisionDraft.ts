@@ -60,7 +60,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         ext.revisionDraftFileSystem.discardRevisionDraft(item);
     } else {
         await ext.state.showDeleting(
-            `${item.containerApp.id}/${RevisionDraftItem.idSuffix}`,
+            RevisionDraftItem.getRevisionDraftItemId(item.containerApp.id),
             async () => {
                 // Add a short delay to display the deleting message
                 await delay(5);

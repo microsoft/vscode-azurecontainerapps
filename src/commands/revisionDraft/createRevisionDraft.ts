@@ -13,7 +13,6 @@ import { ext } from "../../extensionVariables";
 import type { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
-import { delay } from "../../utils/delay";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { pickRevision } from "../../utils/pickItem/pickRevision";
@@ -47,15 +46,7 @@ export async function createRevisionDraft(context: IActionContext, node?: Revisi
         selectByRevisionName: revisionName
     });
 
-    await ext.state.showCreatingChild(
-        `${revisionItem.containerApp.id}/${RevisionsItem.idSuffix}`,
-        localize('creatingDraft', 'Creating draft...'),
-        async () => {
-            // Add a short delay to display the creating message
-            await delay(5);
-            ext.revisionDraftFileSystem.createRevisionDraft(revisionItem);
-        }
-    );
+    ext.revisionDraftFileSystem.createRevisionDraft(revisionItem);
 }
 
 async function promptForRevisionName(context: IContainerAppContext): Promise<string | undefined> {

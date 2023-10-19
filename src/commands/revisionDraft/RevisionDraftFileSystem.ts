@@ -6,12 +6,13 @@
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { ParsedAzureResourceId, parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
+import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, commands, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
 import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
@@ -62,6 +63,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
+            // A trick to help the draft item appear properly when the parent isn't already expanded (covers the command palette entrypoints)
+            void ext.state.showCreatingChild(
+                RevisionsItem.getRevisionsItemId(item.containerApp.id),
+                localize('creatingDraft', 'Creating draft...'),
+                () => Promise.resolve());
+
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }
@@ -132,6 +139,8 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
+        // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
+        void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
         ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
