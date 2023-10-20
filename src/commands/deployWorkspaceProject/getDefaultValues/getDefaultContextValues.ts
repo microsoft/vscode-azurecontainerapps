@@ -23,14 +23,20 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
+    context.telemetry.properties.workspaceSettingsState = 'complete';
+
+    if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
+        context.telemetry.properties.workspaceSettingsState = 'none';
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
+    } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
+        context.telemetry.properties.workspaceSettingsState = 'partial';
+        ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
+    }
+
     if (triggerSettingsOverride(settings, item)) {
+        context.telemetry.properties.triggeredSettingsOverride = 'true';
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
-    } else {
-        if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
-            ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
-        } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
-            ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
-        }
+        context.telemetry.properties.acceptedSettingsOverride = 'true';
     }
 
     return {

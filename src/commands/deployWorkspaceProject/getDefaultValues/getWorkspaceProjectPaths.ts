@@ -14,12 +14,16 @@ export async function getWorkspaceProjectPaths(context: IActionContext): Promise
     const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(prompt);
 
     if (!rootFolder) {
+        context.telemetry.properties.hasWorkspaceProjectOpen = 'false';
+
         await context.ui.showQuickPick([browseItem], { placeHolder: prompt });
         await commands.executeCommand('vscode.openFolder');
 
         // Silently throw an exception to exit the command while VS Code reloads the new workspace
         throw new UserCancelledError();
     }
+
+    context.telemetry.properties.hasWorkspaceProjectOpen = 'true';
 
     return {
         rootFolder: nonNullValue(rootFolder),

@@ -40,6 +40,8 @@ export async function promptForEnvironmentResources(context: ISubscriptionAction
         })
     ];
 
+    context.telemetry.properties.promptedForEnvironment = 'true';
+
     const placeHolder: string = localize('selectManagedEnvironment', 'Select a container apps environment');
     const managedEnvironment: ManagedEnvironment | undefined = (await context.ui.showQuickPick(picks, { placeHolder })).data;
 
