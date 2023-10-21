@@ -4,11 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { CustomTelemetryProps } from "../../telemetry/CustomTelemetryProps";
+import { DeployWorkspaceProjectNotificationTelemetryProps } from "../../telemetry/telemetry";
 import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
@@ -66,6 +68,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     // Resource group
     if (wizardContext.resourceGroup) {
+        wizardContext.telemetry.properties.existingResourceGroup = 'true';
+
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
         wizardContext.activityChildren?.push(
@@ -79,11 +83,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         await LocationListStep.setLocation(wizardContext, wizardContext.resourceGroup.location);
         ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', resourceGroupName));
     } else {
+        wizardContext.telemetry.properties.existingResourceGroup = 'false';
         executeSteps.push(new ResourceGroupCreateStep());
     }
 
     // Managed environment
     if (wizardContext.managedEnvironment) {
+        wizardContext.telemetry.properties.existingEnvironment = 'true';
+
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
         wizardContext.activityChildren?.push(
@@ -100,6 +107,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
     } else {
+        wizardContext.telemetry.properties.existingEnvironment = 'false';
+
         executeSteps.push(
             new LogAnalyticsCreateStep(),
             new ManagedEnvironmentCreateStep()
@@ -113,6 +122,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     // Azure Container Registry
     if (wizardContext.registry) {
+        wizardContext.telemetry.properties.existingRegistry = 'true';
+
         const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
 
         wizardContext.activityChildren?.push(
@@ -125,11 +136,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', registryName));
     } else {
+        wizardContext.telemetry.properties.existingRegistry = 'false';
         // ImageSourceListStep can already handle this creation logic
     }
 
     // Container app
     if (wizardContext.containerApp) {
+        wizardContext.telemetry.properties.existingContainerApp = 'true';
+
         const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
 
         promptSteps.unshift(new ContainerAppOverwriteConfirmStep());
@@ -149,6 +163,7 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
             await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
         }
     } else {
+        wizardContext.telemetry.properties.existingContainerApp = 'false';
         executeSteps.push(new ContainerAppCreateStep());
     }
 
@@ -164,8 +179,10 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     // Location
     if (LocationListStep.hasLocation(wizardContext)) {
+        wizardContext.telemetry.properties.existingLocation = 'true';
         ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', (await LocationListStep.getLocation(wizardContext)).name));
     } else {
+        wizardContext.telemetry.properties.existingLocation = 'false';
         LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
         LocationListStep.addStep(wizardContext, promptSteps);
     }
@@ -202,11 +219,19 @@ function displayNotification(context: DeployWorkspaceProjectContext): void {
 
     const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
     void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
-        if (result === viewOutput) {
-            ext.outputChannel.show();
-        } else if (result === browse) {
-            await browseContainerApp(containerApp);
-        }
+        await callWithTelemetryAndErrorHandling('deployWorkspaceProject.displayNotification',
+            async (telemetryContext: IActionContext & CustomTelemetryProps<DeployWorkspaceProjectNotificationTelemetryProps>) => {
+                if (result === viewOutput) {
+                    telemetryContext.telemetry.properties.userAction = 'viewOutput';
+                    ext.outputChannel.show();
+                } else if (result === browse) {
+                    telemetryContext.telemetry.properties.userAction = 'browse';
+                    await browseContainerApp(containerApp);
+                } else {
+                    telemetryContext.telemetry.properties.userAction = 'canceled';
+                }
+            }
+        );
     });
 
     // Provide browse link automatically to output channel

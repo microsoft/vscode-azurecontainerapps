@@ -14,7 +14,7 @@ import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings, hasAllDeployWorkspaceProjectSettings, hasAtLeastOneDeployWorkspaceProjectSetting, hasNoDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
@@ -23,16 +23,19 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
-    context.telemetry.properties.workspaceSettingsState = 'complete';
-
-    if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
-        context.telemetry.properties.workspaceSettingsState = 'none';
-        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
-    } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
+    // Settings logs
+    if (hasAllDeployWorkspaceProjectSettings(settings)) {
+        context.telemetry.properties.workspaceSettingsState = 'all';
+        // Don't worry about these output logs just yet, more comprehensive resource logs will come once we start trying to acquire the resources
+    } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
         context.telemetry.properties.workspaceSettingsState = 'partial';
         ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
+    } else if (hasNoDeployWorkspaceProjectSettings(settings)) {
+        context.telemetry.properties.workspaceSettingsState = 'none';
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
     }
 
+    // Settings override warning
     if (triggerSettingsOverride(settings, item)) {
         context.telemetry.properties.triggeredSettingsOverride = 'true';
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);

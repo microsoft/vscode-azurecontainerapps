@@ -39,6 +39,12 @@ export enum ScaleRuleTypes {
     Queue = "Azure queue"
 }
 
+export enum SetEnvironmentVariableOption {
+    NoDotEnv = 'noDotEnv',
+    SkipForNow = 'skipForNow',
+    ProvideFile = 'provideFile'
+}
+
 export enum ImageSource {
     /*
      * Uses the default hello-world image with preset configurations
@@ -84,7 +90,8 @@ export const settingsFile: string = 'settings.json';
 export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}`;
 
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
-export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+export const DOCKERFILE_GLOB_PATTERN = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+export const ENV_GLOB_PATTERN = '{*.env,env.*}';
 
 export const activityInfoIcon: ThemeIcon = new ThemeIcon('info', new ThemeColor('charts.blue'));
 export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));

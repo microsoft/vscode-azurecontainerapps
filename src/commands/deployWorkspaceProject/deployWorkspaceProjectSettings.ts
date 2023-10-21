@@ -39,3 +39,15 @@ export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
         await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath, ConfigurationTarget.WorkspaceFolder);
     }
 }
+
+export function hasAllDeployWorkspaceProjectSettings(settings: DeployWorkspaceProjectSettings): boolean {
+    return !!settings.containerAppName && !!settings.containerAppResourceGroupName && !!settings.containerRegistryName;
+}
+
+export function hasAtLeastOneDeployWorkspaceProjectSetting(settings: DeployWorkspaceProjectSettings): boolean {
+    return !!settings.containerAppName || !!settings.containerAppResourceGroupName || !!settings.containerRegistryName;
+}
+
+export function hasNoDeployWorkspaceProjectSettings(settings: DeployWorkspaceProjectSettings): boolean {
+    return !settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName;
+}

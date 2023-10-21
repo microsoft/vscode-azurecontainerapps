@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings, hasNoDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
@@ -20,7 +20,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             return;
         }
 
-        const saveOrOverwrite: string = settings ? localize('overwrite', 'overwrite') : localize('save', 'save');
+        const saveOrOverwrite: string = hasNoDeployWorkspaceProjectSettings(settings) ? localize('save', 'save') : localize('overwrite', 'overwrite');
         const saveItem = { title: localize('saveItem', 'Save...') };
         const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save...') };
 
@@ -32,6 +32,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
         );
 
         context.shouldSaveDeploySettings = userResponse === saveItem;
+        context.telemetry.properties.shouldSaveSettings = context.shouldSaveDeploySettings ? 'true' : 'false';
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {
