@@ -7,7 +7,7 @@ import type { SetEnvironmentVariableOption } from "../constants";
 
 export interface DeployWorkspaceProjectTelemetryProps {
     // getDefaultContextValues
-    dockerfileCount?: string;  // How many dockerfiles did the user choose from?
+    dockerfileCount?: string;  // selectWorkspaceFile
     hasWorkspaceProjectOpen?: 'true' | 'false';  // Did the user already have a workspace project open when executing the command?
     workspaceSettingsState?: 'none' | 'partial' | 'all';  // Did we detect workspace project settings?
     triggeredSettingsOverride?: 'true'; // Did the starting tree item provided conflict with existing project settings?
@@ -23,16 +23,20 @@ export interface DeployWorkspaceProjectTelemetryProps {
     confirmedResourceCreation?: 'true';
 
     // Environment variables
-    environmentVariableFileCount?: string; // How many environment variable files were detected?
-    setEnvironmentVariableOption?: SetEnvironmentVariableOption;
+    environmentVariableFileCount?: string;  // EnvironmentVariablesListStep => selectWorkspaceFile
+    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
 
     // Ingress
-    dockerfileExposePortRangeCount?: string;  // How many useable dockerfile expose port ranges were detected?
-    dockerfileExposePort?: string;  // What port did we end up defaulting to?
+    dockerfileExposePortRangeCount?: string;  // IngressPromptStep
+    dockerfileExposePort?: string;  // IngressPromptStep
+
+    // Update
+    hasUnsupportedFeatures?: 'true';  // ContainerAppUpdateStep
 
     // Save settings
-    shouldSaveSettings?: 'true' | 'false';  // The prompt the user confirmed
-    didSaveSettings?: 'true' | 'false';  // We swallow any errors in this step, so log the outcome explicitly just in case
+    noNewSettings?: 'true';  // ShouldSaveDeploySettingsPromptStep
+    shouldSaveSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
+    didSaveSettings?: 'true' | 'false';  // DeployWorkspaceProjectSaveSettingsStep - we swallow errors here, so log the outcome just in case
 }
 
 export interface DeployWorkspaceProjectNotificationTelemetryProps {

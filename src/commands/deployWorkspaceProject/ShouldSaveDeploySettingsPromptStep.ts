@@ -16,7 +16,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             context.registry && settings?.containerRegistryName === context.registry.name &&
             context.containerApp && settings?.containerAppName === context.containerApp.name
         ) {
-            // No new changes to save
+            context.telemetry.properties.noNewSettings = 'true';
             return;
         }
 

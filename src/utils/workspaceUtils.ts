@@ -33,18 +33,19 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
     if (workspace.workspaceFolders?.length === 1) {
         // if there's a fileExtension, then only populate the quickPick menu with that, otherwise show the current folders in the workspace
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
-        if (options.autoSelectIfOne && files.length === 1) {
-            return files[0].path;
-        }
 
-        // If dockerfile, log the count
-        if (new RegExp(DOCKERFILE_GLOB_PATTERN, 'i').test(globPattern ?? '')) {
+        // If dockerfile(s), log the count
+        if (globPattern === DOCKERFILE_GLOB_PATTERN || globPattern === `**/${DOCKERFILE_GLOB_PATTERN}`) {
             context.telemetry.properties.dockerfileCount = String(files.length);
         }
 
-        // If environment variable files, log the count
-        if (new RegExp(ENV_GLOB_PATTERN, 'i').test(globPattern ?? '')) {
+        // If environment variable file(s), log the count
+        if (globPattern === ENV_GLOB_PATTERN || globPattern === `**/${ENV_GLOB_PATTERN}`) {
             context.telemetry.properties.environmentVariableFileCount = String(files.length);
+        }
+
+        if (options.autoSelectIfOne && files.length === 1) {
+            return files[0].path;
         }
 
         quickPicks.push(...files.map((uri: Uri) => {
