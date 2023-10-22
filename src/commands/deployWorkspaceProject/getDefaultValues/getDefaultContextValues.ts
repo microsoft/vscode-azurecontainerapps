@@ -7,6 +7,7 @@ import { KnownSkuName } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../constants";
+import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
@@ -72,4 +73,6 @@ async function displaySettingsOverrideWarning(context: ISubscriptionActionContex
         { modal: true },
         { title: localize('continue', 'Continue') }
     );
+
+    ext.outputChannel.appendLog(localize('confirmedOverride', 'User confirmed deployment will target {0}"{1}" instead of existing workspace settings.', treeItemType, resourceName));
 }
