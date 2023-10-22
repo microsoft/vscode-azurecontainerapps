@@ -6,7 +6,6 @@
 import { IActionContext, UserCancelledError, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { WorkspaceFolder, commands } from "vscode";
 import { browseItem, dockerfileGlobPattern } from "../../../constants";
-import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
 import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";
 
@@ -23,8 +22,6 @@ export async function getWorkspaceProjectPaths(context: IActionContext): Promise
         // Silently throw an exception to exit the command while VS Code reloads the new workspace
         throw new UserCancelledError();
     }
-
-    await addAzdTelemetryToContext(context, rootFolder);
 
     return {
         rootFolder: nonNullValue(rootFolder),
