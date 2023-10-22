@@ -20,7 +20,7 @@ export interface DefaultContainerAppsResources {
 
 export async function getDefaultContainerAppsResources(
     context: ISubscriptionActionContext,
-    settings: DeployWorkspaceProjectSettings | undefined,
+    settings: DeployWorkspaceProjectSettings,
     item?: ContainerAppItem | ManagedEnvironmentItem
 ): Promise<DefaultContainerAppsResources> {
     // If a tree item is provided that can be used to deduce default context values, try to use those first

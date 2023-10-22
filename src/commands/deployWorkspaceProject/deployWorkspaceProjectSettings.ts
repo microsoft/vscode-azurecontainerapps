@@ -3,7 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import type { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
+import { relativeSettingsFilePath } from "../../constants";
+import { ext } from "../../extensionVariables";
+import { localize } from "../../utils/localize";
 import { settingUtils } from "../../utils/settingUtils";
 
 export interface DeployWorkspaceProjectSettings {
@@ -38,4 +42,36 @@ export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
     for (const key of Object.keys(settings)) {
         await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath, ConfigurationTarget.WorkspaceFolder);
     }
+}
+
+export function setDeployWorkspaceProjectSettingsTelemetry(context: IActionContext, settings: DeployWorkspaceProjectSettings): void {
+    if (hasAllDeployWorkspaceProjectSettings(settings)) {
+        context.telemetry.properties.workspaceSettingsState = 'all';
+    } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
+        context.telemetry.properties.workspaceSettingsState = 'partial';
+    } else {
+        context.telemetry.properties.workspaceSettingsState = 'none';
+    }
+}
+
+export function displayDeployWorkspaceProjectSettingsOutput(settings: DeployWorkspaceProjectSettings): void {
+    if (hasAllDeployWorkspaceProjectSettings(settings)) {
+        // Skip, more detailed logs will come when we confirm whether or not the resources were found
+    } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
+        ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete containe app resource settings at "{0}".', relativeSettingsFilePath));
+    } else {
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
+    }
+}
+
+export function hasAllDeployWorkspaceProjectSettings(settings: DeployWorkspaceProjectSettings): boolean {
+    return !!settings.containerAppName && !!settings.containerAppResourceGroupName && !!settings.containerRegistryName;
+}
+
+export function hasAtLeastOneDeployWorkspaceProjectSetting(settings: DeployWorkspaceProjectSettings): boolean {
+    return !!settings.containerAppName || !!settings.containerAppResourceGroupName || !!settings.containerRegistryName;
+}
+
+export function hasNoDeployWorkspaceProjectSettings(settings: DeployWorkspaceProjectSettings): boolean {
+    return !settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName;
 }

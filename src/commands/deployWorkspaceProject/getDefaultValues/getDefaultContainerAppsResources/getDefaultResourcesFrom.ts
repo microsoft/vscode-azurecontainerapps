@@ -20,8 +20,8 @@ const noMatchingResources = {
     containerApp: undefined
 };
 
-export async function getContainerAppResourcesFromSettings(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings | undefined): Promise<DefaultContainerAppsResources> {
-    if (!settings || !settings.containerAppResourceGroupName || !settings.containerAppName) {
+export async function getContainerAppResourcesFromSettings(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings): Promise<DefaultContainerAppsResources> {
+    if (!settings.containerAppResourceGroupName || !settings.containerAppName) {
         return noMatchingResources;
     }
 

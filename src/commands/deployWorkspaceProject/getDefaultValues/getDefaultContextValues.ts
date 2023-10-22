@@ -6,15 +6,14 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource, relativeSettingsFilePath } from "../../../constants";
-import { ext } from "../../../extensionVariables";
+import { ImageSource } from "../../../constants";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
@@ -24,13 +23,11 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
     if (triggerSettingsOverride(settings, item)) {
+        // Tree item / settings conflict
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
     } else {
-        if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
-            ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
-        } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
-            ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
-        }
+        // No settings conflict
+        displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 
     return {
