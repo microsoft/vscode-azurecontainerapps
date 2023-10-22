@@ -5,7 +5,7 @@
 
 import { IActionContext, UserCancelledError, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { WorkspaceFolder, commands } from "vscode";
-import { DOCKERFILE_GLOB_PATTERN, browseItem } from "../../../constants";
+import { browseItem, dockerfileGlobPattern } from "../../../constants";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
 import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";
@@ -28,6 +28,6 @@ export async function getWorkspaceProjectPaths(context: IActionContext): Promise
 
     return {
         rootFolder: nonNullValue(rootFolder),
-        dockerfilePath: nonNullValue(await selectWorkspaceFile(context, localize('dockerFilePick', 'Select a Dockerfile'), { filters: {}, autoSelectIfOne: true }, `**/${DOCKERFILE_GLOB_PATTERN}`))
+        dockerfilePath: nonNullValue(await selectWorkspaceFile(context, localize('dockerFilePick', 'Select a Dockerfile'), { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`))
     };
 }

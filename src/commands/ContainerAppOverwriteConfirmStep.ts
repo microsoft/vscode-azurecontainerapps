@@ -41,8 +41,8 @@ export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> ex
 
             for (const container of containerApp.template.containers) {
                 // NOTE: these are all arrays so if they are empty, this will still return true
-                // but these should be undefined if not being utilized
-                return !!container.probes?.length || !!container.volumeMounts || !!container.args;
+                // but the length on these should be 0 or undefined if not being utilized
+                return !!container.probes?.length || !!container.volumeMounts?.length || !!container.args?.length;
             }
         }
 

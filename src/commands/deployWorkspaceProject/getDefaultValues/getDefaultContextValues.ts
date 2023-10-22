@@ -25,12 +25,12 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
     if (triggerSettingsOverride(settings, item)) {
-        // Confirm that tree item will take priority over settings
+        // Tree item / settings conflict
         context.telemetry.properties.triggeredSettingsOverride = 'true';
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
         context.telemetry.properties.acceptedSettingsOverride = 'true';
     } else {
-        // No tree item conflict - means we can display settings output logs since we're actually going to try to apply them
+        // No settings conflict
         displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 

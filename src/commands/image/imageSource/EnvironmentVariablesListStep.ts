@@ -6,12 +6,14 @@
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { DotenvParseOutput, parse } from "dotenv";
 import { Uri, workspace } from "vscode";
-import { ENV_GLOB_PATTERN, ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon } from "../../../constants";
+import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
+
+const allEnvGlobPattern: string = `**/${envGlobPattern}`;
 
 export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
     public async prompt(context: ImageSourceBaseContext): Promise<void> {
@@ -40,7 +42,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     private async selectEnvironmentSettings(context: ImageSourceBaseContext): Promise<DotenvParseOutput | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
-            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, `**/${ENV_GLOB_PATTERN}`);
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvGlobPattern);
 
         if (!envFileFsPath) {
             return undefined;
@@ -51,7 +53,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     }
 
     public static async workspaceHasEnvFile(): Promise<boolean> {
-        const envFileUris: Uri[] = await workspace.findFiles(`**/${ENV_GLOB_PATTERN}`);
+        const envFileUris: Uri[] = await workspace.findFiles(allEnvGlobPattern);
         return !!envFileUris.length;
     }
 
