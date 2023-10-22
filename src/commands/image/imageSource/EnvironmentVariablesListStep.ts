@@ -6,18 +6,12 @@
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { DotenvParseOutput, parse } from "dotenv";
 import { Uri, workspace } from "vscode";
-import { ImageSource, activitySuccessContext, activitySuccessIcon, envGlobPattern } from "../../../constants";
+import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
-
-enum SetEnvironmentVariableOption {
-    NoDotEnv = 'noDotEnv',
-    SkipForNow = 'skipForNow',
-    ProvideFile = 'provideFile'
-}
 
 const allEnvGlobPattern: string = `**/${envGlobPattern}`;
 
