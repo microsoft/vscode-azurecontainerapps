@@ -6,13 +6,18 @@
 import type { SetEnvironmentVariableOption } from "../constants";
 
 export interface DeployWorkspaceProjectTelemetryProps {
+    // Azd
+    isAzdExtensionInstalled?: 'true';
+    isAzdWorkspaceProject?: 'true';
+
     // getDefaultContextValues
     dockerfileCount?: string;  // selectWorkspaceFile
-    hasWorkspaceProjectOpen?: 'true' | 'false';  // Did the user already have a workspace project open when executing the command?
-    workspaceSettingsState?: 'none' | 'partial' | 'all';  // Did we detect workspace project settings?
-    triggeredSettingsOverride?: 'true'; // Did the starting tree item provided conflict with existing project settings?
-    acceptedSettingsOverride?: 'true';  // Did the user proceed anyway?
-    promptedForEnvironment?: 'true';  // Were we able to leverage existing resources or did we have to prompt for an environment?
+    hasWorkspaceProjectOpen?: 'false';
+    workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
+    triggeredSettingsOverride?: 'true';
+    acceptedSettingsOverride?: 'true';
+    promptedForEnvironment?: 'true';
+    promptDefaultNameReason?: 'invalid' | 'unavailable';
 
     // Resources
     existingResourceGroup?: 'true' | 'false';
@@ -22,8 +27,10 @@ export interface DeployWorkspaceProjectTelemetryProps {
     existingLocation?: 'true' | 'false';
     confirmedResourceCreation?: 'true';
 
+    managedEnvironmentCount?: string;
+
     // Environment variables
-    environmentVariableFileCount?: string;  // EnvironmentVariablesListStep => selectWorkspaceFile
+    environmentVariableFileCount?: string;  // selectWorkspaceFile
     setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
 
     // Ingress

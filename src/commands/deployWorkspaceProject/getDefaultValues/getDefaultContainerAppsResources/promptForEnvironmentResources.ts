@@ -20,6 +20,7 @@ const noMatchingResources = {
 export async function promptForEnvironmentResources(context: ISubscriptionActionContext): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context)
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    context.telemetry.properties.managedEnvironmentCount = String(managedEnvironments.length);
 
     if (!managedEnvironments.length) {
         return noMatchingResources;

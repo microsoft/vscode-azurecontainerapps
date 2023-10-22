@@ -39,10 +39,12 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     public async configureBeforePrompt(context: DeployWorkspaceProjectContext): Promise<void> {
         const workspaceName: string = cleanWorkspaceName(nonNullValueAndProp(context.rootFolder, 'name'));
         if (this.validateInput(workspaceName) !== undefined) {
+            context.telemetry.properties.promptDefaultNameReason = 'invalid';
             return;
         }
 
         if (!await this.isWorkspaceNameAvailable(context, workspaceName)) {
+            context.telemetry.properties.promptDefaultNameReason = 'unavailable';
             return;
         }
 

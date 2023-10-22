@@ -16,6 +16,7 @@ export async function getResourcesFromContainerAppHelper(context: ISubscriptionA
 
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
     const managedEnvironment = managedEnvironments.find(env => env.id === containerApp.managedEnvironmentId);
+    context.telemetry.properties.managedEnvironmentCount = String(managedEnvironments.length);
 
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
     const resourceGroup = resourceGroups.find(rg => rg.name === containerApp.resourceGroup);

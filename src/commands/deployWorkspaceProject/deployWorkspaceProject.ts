@@ -9,8 +9,8 @@ import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { CustomTelemetryProps } from "../../telemetry/CustomTelemetryProps";
-import { DeployWorkspaceProjectNotificationTelemetryProps } from "../../telemetry/telemetry";
+import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/telemetryProps";
 import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
@@ -220,7 +220,7 @@ function displayNotification(context: DeployWorkspaceProjectContext): void {
     const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
     void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
         await callWithTelemetryAndErrorHandling('deployWorkspaceProject.displayNotification',
-            async (telemetryContext: IActionContext & CustomTelemetryProps<DeployWorkspaceProjectNotificationTelemetryProps>) => {
+            async (telemetryContext: IActionContext & SetTelemetryProps<NotificationTelemetryProps>) => {
                 if (result === viewOutput) {
                     telemetryContext.telemetry.properties.userAction = 'viewOutput';
                     ext.outputChannel.show();

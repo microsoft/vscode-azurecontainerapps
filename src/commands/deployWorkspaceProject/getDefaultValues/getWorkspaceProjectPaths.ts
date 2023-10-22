@@ -6,6 +6,7 @@
 import { IActionContext, UserCancelledError, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { WorkspaceFolder, commands } from "vscode";
 import { DOCKERFILE_GLOB_PATTERN, browseItem } from "../../../constants";
+import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
 import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";
 
@@ -23,7 +24,7 @@ export async function getWorkspaceProjectPaths(context: IActionContext): Promise
         throw new UserCancelledError();
     }
 
-    context.telemetry.properties.hasWorkspaceProjectOpen = 'true';
+    await addAzdTelemetryToContext(context, rootFolder);
 
     return {
         rootFolder: nonNullValue(rootFolder),

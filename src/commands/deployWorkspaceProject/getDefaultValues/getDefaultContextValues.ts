@@ -6,15 +6,14 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource, relativeSettingsFilePath } from "../../../constants";
-import { ext } from "../../../extensionVariables";
+import { ImageSource } from "../../../constants";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings, hasAllDeployWorkspaceProjectSettings, hasAtLeastOneDeployWorkspaceProjectSetting, hasNoDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettingsTelemetry } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
@@ -23,23 +22,16 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
-    // Settings logs
-    if (hasAllDeployWorkspaceProjectSettings(settings)) {
-        context.telemetry.properties.workspaceSettingsState = 'all';
-        // Don't worry about these output logs just yet, more comprehensive resource logs will come once we start trying to acquire the resources
-    } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
-        context.telemetry.properties.workspaceSettingsState = 'partial';
-        ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
-    } else if (hasNoDeployWorkspaceProjectSettings(settings)) {
-        context.telemetry.properties.workspaceSettingsState = 'none';
-        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
-    }
+    setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
-    // Settings override warning
     if (triggerSettingsOverride(settings, item)) {
+        // Confirm that tree item will take priority over settings
         context.telemetry.properties.triggeredSettingsOverride = 'true';
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
         context.telemetry.properties.acceptedSettingsOverride = 'true';
+    } else {
+        // No tree item conflict - means we can display settings output logs since we're actually going to try to apply them
+        displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 
     return {
