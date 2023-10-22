@@ -6,6 +6,10 @@
 import type { SetEnvironmentVariableOption } from "../constants";
 
 export interface DeployWorkspaceProjectTelemetryProps {
+    // Azd
+    isAzdExtensionInstalled?: 'true';
+    isAzdWorkspaceProject?: 'true';
+
     // getDefaultContextValues
     dockerfileCount?: string;  // selectWorkspaceFile
     hasWorkspaceProjectOpen?: 'false';
