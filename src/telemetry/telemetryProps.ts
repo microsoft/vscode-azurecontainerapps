@@ -34,7 +34,7 @@ export interface DeployWorkspaceProjectTelemetryProps {
     dockerfileExposePort?: string;  // IngressPromptStep
 
     // Update
-    hasUnsupportedFeatures?: 'true';  // ContainerAppUpdateStep
+    hasUnsupportedFeatures?: 'true';  // ContainerAppOverwriteConfirmStep
 
     // Save settings
     noNewSettings?: 'true';  // ShouldSaveDeploySettingsPromptStep
