@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../constants";
 import { ext } from "../../extensionVariables";
@@ -41,16 +40,6 @@ export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
     for (const key of Object.keys(settings)) {
         await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath, ConfigurationTarget.WorkspaceFolder);
-    }
-}
-
-export function setDeployWorkspaceProjectSettingsTelemetry(context: IActionContext, settings: DeployWorkspaceProjectSettings): void {
-    if (hasAllDeployWorkspaceProjectSettings(settings)) {
-        context.telemetry.properties.workspaceSettingsState = 'all';
-    } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
-        context.telemetry.properties.workspaceSettingsState = 'partial';
-    } else {
-        context.telemetry.properties.workspaceSettingsState = 'none';
     }
 }
 
