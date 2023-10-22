@@ -6,7 +6,7 @@
 import { IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
 import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
-import { DOCKERFILE_GLOB_PATTERN, ENV_GLOB_PATTERN, browseItem } from "../constants";
+import { browseItem, dockerfileGlobPattern, envGlobPattern } from "../constants";
 import { localize } from "./localize";
 
 interface SelectWorkspaceFileOptions extends OpenDialogOptions {
@@ -35,12 +35,12 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
 
         // If dockerfile(s), log the count
-        if (globPattern === DOCKERFILE_GLOB_PATTERN || globPattern === `**/${DOCKERFILE_GLOB_PATTERN}`) {
+        if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
             context.telemetry.properties.dockerfileCount = String(files.length);
         }
 
         // If environment variable file(s), log the count
-        if (globPattern === ENV_GLOB_PATTERN || globPattern === `**/${ENV_GLOB_PATTERN}`) {
+        if (globPattern === envGlobPattern || globPattern === `**/${envGlobPattern}`) {
             context.telemetry.properties.environmentVariableFileCount = String(files.length);
         }
 
