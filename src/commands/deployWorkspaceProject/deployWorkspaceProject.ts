@@ -205,8 +205,9 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
     await wizard.execute();
 
     displayNotification(wizardContext);
-    ext.branchDataProvider.refresh();
+    wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
 
+    ext.branchDataProvider.refresh();
     ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 }
 
