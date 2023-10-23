@@ -9,6 +9,7 @@ import { webProvider } from "../../../constants";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
+import { settingUtils } from "../../../utils/settingUtils";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
@@ -47,5 +48,7 @@ export async function deployImage(context: IActionContext & Partial<IContainerRe
     await wizard.prompt();
     await wizard.execute();
 
-    void showContainerAppNotification(containerApp, true /** isUpdate */);
+    if (!settingUtils.getSetting('suppressActivityNotifications', undefined, 'azureResourceGroups')) {
+        void showContainerAppNotification(containerApp, true /** isUpdate */);
+    }
 }
