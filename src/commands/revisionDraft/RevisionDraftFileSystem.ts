@@ -15,13 +15,13 @@ import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionI
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
 
+const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
+
 interface WriteFileOptions {
     readonly create?: boolean;  // Existing FileSystemProvider option
     readonly overwrite?: boolean;  // Existing FileSystemProvider option
     isCommandEntrypoint?: boolean;
 }
-
-const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
 
 export class RevisionDraftFile implements FileStat {
     type: FileType = FileType.File;
