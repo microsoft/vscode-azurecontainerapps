@@ -4,10 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { SetEnvironmentVariableOption, SupportedRegistries } from "../constants";
+import type { SupportedRegistries } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
+import type { EnvironmentVariableTelemetryProps } from "./EnvironmentVariableTelemetryProps";
 
-export interface DeployImageApiTelemetryProps {
+export interface DeployImageApiTelemetryProps extends EnvironmentVariableTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     registryDomain?: SupportedRegistries;
@@ -22,7 +23,7 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, EnvironmentVariableTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -43,10 +44,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps 
     confirmedResourceCreation?: 'true';
 
     managedEnvironmentCount?: string;
-
-    // Environment variables
-    environmentVariableFileCount?: string;  // selectWorkspaceFile
-    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
 
     // Ingress
     dockerfileExposePortRangeCount?: string;  // IngressPromptStep
