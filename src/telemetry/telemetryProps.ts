@@ -5,13 +5,17 @@
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
+import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 
-export interface DeployWorkspaceProjectTelemetryProps {
+export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
-    // Azd
-    isAzdExtensionInstalled?: 'true';
-    isAzdWorkspaceProject?: 'true';
+    commandUpdatesCount?: string;
+    directUpdatesCount?: string;
+}
+
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
     dockerfileCount?: string;  // selectWorkspaceFile

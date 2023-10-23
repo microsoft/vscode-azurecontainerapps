@@ -15,6 +15,12 @@ import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionI
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
 
+interface WriteFileOptions {
+    readonly create?: boolean;  // Existing FileSystemProvider option
+    readonly overwrite?: boolean;  // Existing FileSystemProvider option
+    isCommandEntrypoint?: boolean;
+}
+
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
 
 export class RevisionDraftFile implements FileStat {
@@ -24,6 +30,9 @@ export class RevisionDraftFile implements FileStat {
     mtime: number;
 
     contents: Uint8Array;
+
+    commandUpdatesCount: number = 0;  // Updates via revision draft commands
+    directUpdatesCount: number = 0;  // Direct updates via 'editContainerApp' & 'editDraft'
 
     constructor(contents: Uint8Array, readonly containerApp: ContainerAppModel, readonly baseRevisionName: string) {
         this.contents = contents;
@@ -126,10 +135,16 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         await window.showTextDocument(textDoc);
     }
 
-    writeFile(uri: Uri, contents: Uint8Array): void {
+    writeFile(uri: Uri, contents: Uint8Array, options?: WriteFileOptions): void {
         const file: RevisionDraftFile | undefined = this.draftStore.get(uri.path);
-        if (!file || file.contents === contents) {
+        if (!file || (Buffer.from(file.contents).equals(Buffer.from(contents)))) {
             return;
+        }
+
+        if (options?.isCommandEntrypoint) {
+            file.commandUpdatesCount++;
+        } else {
+            file.directUpdatesCount++;
         }
 
         file.contents = contents;
@@ -151,7 +166,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
 
         const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
-        this.writeFile(uri, newContent);
+        this.writeFile(uri, newContent, { isCommandEntrypoint: true });
     }
 
     discardRevisionDraft(item: ContainerAppsItem): void {
