@@ -3,9 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
 
 export interface DeployWorkspaceProjectTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
+
     // Azd
     isAzdExtensionInstalled?: 'true';
     isAzdWorkspaceProject?: 'true';
