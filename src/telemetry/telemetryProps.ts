@@ -10,8 +10,8 @@ import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
-    commandUpdatesCount?: string;
-    directUpdatesCount?: string;
+    commandUpdatesCount?: string;  // Updates via revision draft commands
+    directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
 export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps {
