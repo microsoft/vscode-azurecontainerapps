@@ -4,8 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { SetEnvironmentVariableOption } from "../constants";
+import type { SetEnvironmentVariableOption, SupportedRegistries } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
+
+export interface DeployImageApiTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
+
+    registryDomain?: SupportedRegistries;
+    registryName?: string;  // ContainerRegistryImageConfigureStep
+    hasSecrets?: 'true' | 'false';
+}
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;

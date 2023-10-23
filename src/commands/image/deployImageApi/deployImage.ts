@@ -26,6 +26,9 @@ export async function deployImage(context: IActionContext & Partial<IContainerRe
         containerApp
     };
 
+    wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
+    wizardContext.telemetry.properties.registryDomain = context.registryDomain;
+
     const promptSteps: AzureWizardPromptStep<DeployImageApiContext>[] = [
         new ImageSourceListStep(),
         new ContainerAppOverwriteConfirmStep(),

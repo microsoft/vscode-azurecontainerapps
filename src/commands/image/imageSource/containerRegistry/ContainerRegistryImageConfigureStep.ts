@@ -7,6 +7,7 @@ import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../../constants";
 import { getContainerEnvelopeWithSecrets } from "../../../../tree/ContainerAppItem";
+import { parseImageName } from "../../../../utils/imageNameUtils";
 import type { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
 import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
@@ -46,6 +47,7 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
         context.registries ??= registries;
 
         context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
+        context.telemetry.properties.registryName = parseImageName(context.image).registryName;
     }
 
     public shouldExecute(): boolean {
