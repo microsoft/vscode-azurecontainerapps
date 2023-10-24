@@ -9,10 +9,10 @@ import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 
 export interface ImageSourceTelemetryProps extends ContainerRegistryTelemetryProps, BuildImageInAzureTelemetryProps, EnvironmentVariableTelemetryProps {
     imageSource?: ImageSource;
-    acrCount?: string;  // Number of detected ACRs
 }
 
 export interface ContainerRegistryTelemetryProps {
+    acrCount?: string;  // AcrListStep
     registryDomain?: SupportedRegistries;
     registryName?: string;
     hasRegistrySecrets?: 'true' | 'false';  // Helps us identify private third party registries

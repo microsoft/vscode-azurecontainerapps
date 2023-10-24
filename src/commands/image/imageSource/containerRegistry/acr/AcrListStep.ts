@@ -71,6 +71,7 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
 
     public async getPicks(context: ContainerRegistryImageSourceContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
+        context.telemetry.properties.acrCount = String(registries.length);
 
         // Try to suggest a registry only when the user is deploying to a Container App
         let suggestedRegistry: string | undefined;
