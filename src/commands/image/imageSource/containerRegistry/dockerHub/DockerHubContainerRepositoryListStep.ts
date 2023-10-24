@@ -7,14 +7,14 @@ import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { QuickPickItem } from "vscode";
 import { QuickPicksCache, currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
-import { ContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { getReposForNamespace } from "./DockerHubV2ApiCalls";
 import type { DockerHubV2Repository } from "./DockerHubV2Types";
 
 export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesListStepBase {
-    public async getPicks(context: ContainerRegistryImageContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
+    public async getPicks(context: ContainerRegistryImageSourceContext, cachedPicks: QuickPicksCache): Promise<QuickPickItem[]> {
         const response = await getReposForNamespace(context, nonNullProp(context, 'dockerHubNamespace'), cachedPicks.next);
         if (response.count === 0) {
             return [noMatchingResourcesQp];

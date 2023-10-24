@@ -10,10 +10,10 @@ import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
-import { ContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 
-export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<ContainerRegistryImageContext> {
-    public async prompt(context: ContainerRegistryImageContext): Promise<void> {
+export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
+    public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const message = localize('enableAdminUser', 'An admin user is required to continue. If enabled, you can use the registry name as username and admin user access key as password to docker login to your container registry.');
         await context.ui.showWarningMessage(message, { modal: true }, { title: localize('enable', 'Enable') });
 
@@ -28,7 +28,7 @@ export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<Container
         }
     }
 
-    public shouldPrompt(context: ContainerRegistryImageContext): boolean {
+    public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return !!context.registry && !context.registry.adminUserEnabled;
     }
 }

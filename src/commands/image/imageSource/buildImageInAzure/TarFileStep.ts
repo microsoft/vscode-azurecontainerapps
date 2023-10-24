@@ -6,20 +6,20 @@
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import * as os from 'os';
 import { URI, Utils } from "vscode-uri";
-import { BuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
 
 const idPrecision = 6;
 
-export class TarFileStep extends AzureWizardExecuteStep<BuildImageInAzureContext> {
+export class TarFileStep extends AzureWizardExecuteStep<BuildImageInAzureImageSourceContext> {
     public priority: number = 420;
 
-    public async execute(context: BuildImageInAzureContext): Promise<void> {
+    public async execute(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const id: number = Math.floor(Math.random() * Math.pow(10, idPrecision));
         const archive = `sourceArchive${id}.tar.gz`;
         context.tarFilePath = Utils.joinPath(URI.parse(os.tmpdir()), archive).path;
     }
 
-    public shouldExecute(context: BuildImageInAzureContext): boolean {
+    public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.tarFilePath;
     }
 }

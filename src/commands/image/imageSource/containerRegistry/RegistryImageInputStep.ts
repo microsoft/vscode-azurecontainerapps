@@ -7,11 +7,11 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain, quickStartImageName } from "../../../../constants";
 import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
-import { ContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "./getLatestContainerImage";
 
-export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegistryImageContext> {
-    public async prompt(context: ContainerRegistryImageContext): Promise<void> {
+export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
+    public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const prompt: string = localize('registryImagePrompt', 'Enter the container image with tag');
         const placeHolder: string = localize('registryImagePlaceHolder', 'For example: `mcr.microsoft.com/azuredocs/containerapps-helloworld:latest`');
 
@@ -35,7 +35,7 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegis
         context.valuesToMask.push(context.image);
     }
 
-    public shouldPrompt(context: ContainerRegistryImageContext): boolean {
+    public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return context.image === undefined;
     }
 }

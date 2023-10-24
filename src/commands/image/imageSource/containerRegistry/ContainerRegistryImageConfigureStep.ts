@@ -8,15 +8,15 @@ import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../../constants";
 import { getContainerEnvelopeWithSecrets } from "../../../../tree/ContainerAppItem";
 import { parseImageName } from "../../../../utils/imageNameUtils";
-import { ContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 
-export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<ContainerRegistryImageContext> {
+export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<ContainerRegistryImageSourceContext> {
     public priority: number = 470;
 
     // Configures base image attributes
-    public async execute(context: ContainerRegistryImageContext): Promise<void> {
+    public async execute(context: ContainerRegistryImageSourceContext): Promise<void> {
         // Store any existing secrets and registries
         let secrets: Secret[] | undefined;
         let registries: RegistryCredentials[] | undefined;

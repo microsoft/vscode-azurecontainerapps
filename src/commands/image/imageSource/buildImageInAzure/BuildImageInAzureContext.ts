@@ -7,10 +7,10 @@ import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/ar
 import * as vscode from 'vscode';
 import type { BuildImageInAzureTelemetryProps as TelemetryProps } from '../../../../telemetry/ImageSourceTelemetryProps';
 import type { SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps';
-import { ContainerRegistryImageBaseContext } from '../containerRegistry/IContainerRegistryImageContext';
+import { ContainerRegistryImageSourceBaseContext } from '../containerRegistry/ContainerRegistryImageSourceContext';
 import type { AcrBuildSupportedOS } from './OSPickStep';
 
-export interface BuildImageInAzureBaseContext extends ContainerRegistryImageBaseContext {
+export interface BuildImageInAzureImageSourceBaseContext extends ContainerRegistryImageSourceBaseContext {
     rootFolder: vscode.WorkspaceFolder;
     dockerfilePath: string;
     imageName: string;
@@ -25,4 +25,4 @@ export interface BuildImageInAzureBaseContext extends ContainerRegistryImageBase
     run: AcrRun;
 }
 
-export type BuildImageInAzureContext = BuildImageInAzureBaseContext & SetTelemetryProps<TelemetryProps>;
+export type BuildImageInAzureImageSourceContext = BuildImageInAzureImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;

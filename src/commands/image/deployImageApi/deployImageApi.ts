@@ -10,7 +10,7 @@ import { DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemet
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
-import { ContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import { deployImage } from "./deployImage";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
@@ -29,7 +29,7 @@ export type DeployImageApiContext = ImageSourceBaseContext & ExecuteActivityCont
  * It uses our old `deployImage` command flow which immediately tries to deploy the image to a container app without creating a draft.
  * This command cannot be used to bundle template changes.
  */
-export async function deployImageApi(context: IActionContext & Partial<ContainerRegistryImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
+export async function deployImageApi(context: IActionContext & Partial<ContainerRegistryImageSourceContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     const node = await pickContainerApp(context);
     const { subscription } = node;
 

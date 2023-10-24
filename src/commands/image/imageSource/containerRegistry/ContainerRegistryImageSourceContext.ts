@@ -10,7 +10,7 @@ import { SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps';
 import type { ImageSourceBaseContext } from '../ImageSourceBaseContext';
 import type { CreateAcrContext } from './acr/createAcr/CreateAcrContext';
 
-export interface ContainerRegistryImageBaseContext extends CreateAcrContext, ImageSourceBaseContext {
+export interface ContainerRegistryImageSourceBaseContext extends CreateAcrContext, ImageSourceBaseContext {
     registryDomain?: SupportedRegistries;
     registry?: Registry;
     dockerHubNamespace?: string;
@@ -24,4 +24,4 @@ export interface ContainerRegistryImageBaseContext extends CreateAcrContext, Ima
     secret?: string;
 }
 
-export type ContainerRegistryImageContext = ContainerRegistryImageBaseContext & SetTelemetryProps<TelemetryProps>;
+export type ContainerRegistryImageSourceContext = ContainerRegistryImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;

@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@mic
 import { UIKind, env } from "vscode";
 import { SupportedRegistries, acrDomain, dockerHubDomain } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
-import { ContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { RegistryImageInputStep } from "./RegistryImageInputStep";
 import { AcrListStep } from "./acr/AcrListStep";
 import { AcrRepositoriesListStep } from "./acr/AcrRepositoriesListStep";
@@ -16,10 +16,10 @@ import { DockerHubContainerRepositoryListStep } from "./dockerHub/DockerHubConta
 import { DockerHubContainerTagListStep } from "./dockerHub/DockerHubContainerTagListStep";
 import { DockerHubNamespaceInputStep } from "./dockerHub/DockerHubNamespaceInputStep";
 
-export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRegistryImageContext> {
+export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: ContainerRegistryImageContext): Promise<void> {
+    public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const placeHolder: string = localize('selectTag', 'Select a container registry');
         const picks: IAzureQuickPickItem<SupportedRegistries | undefined>[] = [];
 
@@ -34,16 +34,16 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         context.registryDomain = (await context.ui.showQuickPick(picks, { placeHolder })).data;
     }
 
-    public shouldPrompt(context: ContainerRegistryImageContext): boolean {
+    public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return !context.image && !context.registryDomain;
     }
 
-    public async getSubWizard(context: ContainerRegistryImageContext): Promise<IWizardOptions<ContainerRegistryImageContext> | undefined> {
+    public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
         if (context.image) {
             return undefined;
         }
 
-        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageContext>[] = [];
+        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
         switch (context.registryDomain) {
             case acrDomain:
                 promptSteps.push(new AcrListStep(), new AcrRepositoriesListStep(), new AcrTagListStep());

@@ -6,7 +6,7 @@
 import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain, dockerHubRegistry } from "../../../../constants";
-import { ContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 
 interface RegistryCredentialsAndSecrets {
@@ -14,7 +14,7 @@ interface RegistryCredentialsAndSecrets {
     secrets?: Secret[];
 }
 
-export async function getAcrCredentialsAndSecrets(context: ContainerRegistryImageContext, containerAppSettings?: RegistryCredentialsAndSecrets): Promise<RegistryCredentialsAndSecrets> {
+export async function getAcrCredentialsAndSecrets(context: ContainerRegistryImageSourceContext, containerAppSettings?: RegistryCredentialsAndSecrets): Promise<RegistryCredentialsAndSecrets> {
     const registry = nonNullProp(context, 'registry');
     const { username, password } = await listCredentialsFromRegistry(context, registry);
     const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`;
@@ -37,7 +37,7 @@ export async function getAcrCredentialsAndSecrets(context: ContainerRegistryImag
     return { registries, secrets };
 }
 
-export function getThirdPartyCredentialsAndSecrets(context: ContainerRegistryImageContext, containerAppSettings?: RegistryCredentialsAndSecrets): RegistryCredentialsAndSecrets {
+export function getThirdPartyCredentialsAndSecrets(context: ContainerRegistryImageSourceContext, containerAppSettings?: RegistryCredentialsAndSecrets): RegistryCredentialsAndSecrets {
     // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
     const loginServer: string = (context.registryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
     const passwordSecretRef: string = `${loginServer.replace(/[\.]+/g, '')}-${context.username}`;
