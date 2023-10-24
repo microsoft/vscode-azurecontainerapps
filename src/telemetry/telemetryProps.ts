@@ -7,7 +7,7 @@ import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 
-export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
+export interface DeployRevisionDraftTelemetryProps extends Pick<AzdTelemetryProps, 'isAzdExtensionInstalled'> {
     revisionMode?: KnownActiveRevisionsMode;
 
     commandUpdatesCount?: string;  // Updates via revision draft commands
