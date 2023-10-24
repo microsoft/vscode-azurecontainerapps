@@ -3,14 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
+import { UnsupportedContainerAppFeaturesStepBase } from "../../UnsupportedContainerAppFeaturesStepBase";
 import type { DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 
-export class DeployRevisionDraftConfirmStep extends AzureWizardPromptStep<DeployRevisionDraftContext> {
+export class DeployRevisionDraftConfirmStep extends UnsupportedContainerAppFeaturesStepBase<DeployRevisionDraftContext> {
     public async prompt(context: DeployRevisionDraftContext): Promise<void> {
+        let warning: string = localize('deployRevisionWarning', 'This will deploy any unsaved changes to container app "{0}".', context.containerApp?.name);
+        if (this.hasUnsupportedFeatures(context)) {
+            context.telemetry.properties.hasUnsupportedFeatures = 'true';
+            warning += '\n\n' + this.unsupportedFeaturesWarning;
+        }
+
         await context.ui.showWarningMessage(
-            localize('deployRevisionWarning', 'This will deploy any unsaved changes to container app "{0}".', context.containerApp?.name),
+            warning,
             { modal: true },
             { title: localize('continue', 'Continue') }
         );

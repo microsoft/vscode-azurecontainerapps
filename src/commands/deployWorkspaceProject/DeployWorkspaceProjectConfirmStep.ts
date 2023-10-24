@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
+import { UnsupportedContainerAppFeaturesStepBase } from "../UnsupportedContainerAppFeaturesStepBase";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
-export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
+export class DeployWorkspaceProjectConfirmStep extends UnsupportedContainerAppFeaturesStepBase<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
@@ -42,6 +43,13 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<Dep
         } else {
             confirmMessage = localize('overwriteConfirm', 'The latest deployment of container app "{0}" and the latest image of registry "{1}" will be overwritten.', context.containerApp?.name, context.registry?.name);
             outputMessage = localize('overwriteConfirmed', 'User confirmed overwrite of container app "{0}" and the latest image of registry "{1}".', context.containerApp?.name, context.registry?.name);
+        }
+
+        if (this.hasUnsupportedFeatures(context)) {
+            context.telemetry.properties.hasUnsupportedFeatures = 'true';
+
+            confirmMessage += '\n\n' + this.unsupportedFeaturesWarning;
+            outputMessage += ' ' + localize('unsupportedOverwriteConfirmed', 'User also confirmed that proceeding means that any unsupported container app features in VS Code will be lost.');
         }
 
         await context.ui.showWarningMessage(
