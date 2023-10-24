@@ -7,14 +7,14 @@ import { AzureWizardPromptStep, nonNullValue } from '@microsoft/vscode-azext-uti
 import { dockerfileGlobPattern } from "../../../../constants";
 import { localize } from '../../../../utils/localize';
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
-import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import { BuildImageInAzureContext } from './IBuildImageInAzureContext';
 
-export class DockerFileItemStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
-    public async prompt(context: IBuildImageInAzureContext): Promise<void> {
+export class DockerFileItemStep extends AzureWizardPromptStep<BuildImageInAzureContext> {
+    public async prompt(context: BuildImageInAzureContext): Promise<void> {
         context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, localize('dockerFilePick', 'Select a Dockerfile'), { filters: {} }, `**/${dockerfileGlobPattern}`));
     }
 
-    public shouldPrompt(context: IBuildImageInAzureContext): boolean {
+    public shouldPrompt(context: BuildImageInAzureContext): boolean {
         return !context.dockerfilePath;
     }
 }

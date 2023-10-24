@@ -4,16 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { SupportedRegistries } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
-import type { EnvironmentVariableTelemetryProps } from "./EnvironmentVariableTelemetryProps";
+import { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
 
-export interface DeployImageApiTelemetryProps extends EnvironmentVariableTelemetryProps {
+export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
-    registryDomain?: SupportedRegistries;
-    registryName?: string;  // ContainerRegistryImageConfigureStep
-    hasRegistrySecrets?: 'true' | 'false';  // Typically indicates private third party registries
+    hasUnsupportedFeatures?: 'true';  // ContainerAppOverwriteConfirmStep
 }
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
@@ -23,11 +19,11 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, EnvironmentVariableTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
-    dockerfileCount?: string;  // selectWorkspaceFile
+    dockerfileCount?: string;  // Shared property of 'ImageSourceTelemetryProps' but doesn't get initiated through the normal image source flow
     hasWorkspaceProjectOpen?: 'false';
     workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
     triggeredSettingsOverride?: 'true';
@@ -60,4 +56,10 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
 
 export interface DeployWorkspaceProjectNotificationTelemetryProps {
     userAction?: 'canceled' | 'browse' | 'viewOutput';
+}
+
+export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
+
+    skippedRegistryCredentialUpdate?: 'true';
 }

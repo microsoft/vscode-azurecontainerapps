@@ -11,12 +11,12 @@ import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
+import { ImageSourceContext } from "./ImageSourceBaseContext";
 
 const allEnvGlobPattern: string = `**/${envGlobPattern}`;
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
-    public async prompt(context: ImageSourceBaseContext): Promise<void> {
+export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceContext> {
+    public async prompt(context: ImageSourceContext): Promise<void> {
         const envData: DotenvParseOutput | undefined = await this.selectEnvironmentSettings(context);
         if (!envData) {
             context.environmentVariables = [];
@@ -27,7 +27,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
         }
     }
 
-    public async configureBeforePrompt(context: ImageSourceBaseContext): Promise<void> {
+    public async configureBeforePrompt(context: ImageSourceContext): Promise<void> {
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
             context.telemetry.properties.setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
@@ -35,11 +35,11 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
         }
     }
 
-    public shouldPrompt(context: ImageSourceBaseContext): boolean {
+    public shouldPrompt(context: ImageSourceContext): boolean {
         return context.imageSource !== ImageSource.QuickStartImage && context.environmentVariables === undefined;
     }
 
-    private async selectEnvironmentSettings(context: ImageSourceBaseContext): Promise<DotenvParseOutput | undefined> {
+    private async selectEnvironmentSettings(context: ImageSourceContext): Promise<DotenvParseOutput | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
             { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvGlobPattern);
@@ -58,7 +58,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     }
 
     // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
-    private outputLogs(context: ImageSourceBaseContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+    private outputLogs(context: ImageSourceContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
         if (setEnvironmentVariableOption !== SetEnvironmentVariableOption.ProvideFile) {

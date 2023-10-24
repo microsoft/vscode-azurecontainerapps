@@ -8,6 +8,8 @@ import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { webProvider } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
 import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import type { RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
@@ -21,7 +23,7 @@ import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
 import { UpdateRegistryAndSecretsStep } from "./UpdateRegistryAndSecretsStep";
 
-export type UpdateImageContext = ImageSourceBaseContext & ExecuteActivityContext;
+export type UpdateImageContext = ImageSourceBaseContext & ExecuteActivityContext & SetTelemetryProps<TelemetryProps>;
 
 /**
  * An ACA exclusive command that updates the container app or revision's container image via revision draft.
@@ -52,6 +54,8 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
         subscription,
         containerApp
     };
+
+    wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const promptSteps: AzureWizardPromptStep<UpdateImageContext>[] = [
         new ImageSourceListStep(),

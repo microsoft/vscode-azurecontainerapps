@@ -11,12 +11,12 @@ import { activityFailContext, activityFailIcon } from "../../../../constants";
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
-import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import { BuildImageInAzureContext } from "./IBuildImageInAzureContext";
 
-export class RunStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureContext> {
+export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureContext> {
     public priority: number = 440;
 
-    protected async executeCore(context: IBuildImageInAzureContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: BuildImageInAzureContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         // Need to keep the additional try wrapper here to execute finally, then we can catch any error that percolates up and display its output
         try {
             const rootUri = context.rootFolder.uri;
@@ -41,7 +41,7 @@ export class RunStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureCon
         }
     }
 
-    public shouldExecute(context: IBuildImageInAzureContext): boolean {
+    public shouldExecute(context: BuildImageInAzureContext): boolean {
         return !context.run;
     }
 
@@ -50,7 +50,7 @@ export class RunStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureCon
         return {};
     }
 
-    protected createFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createFailOutput(context: BuildImageInAzureContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['runStep', activityFailContext]),

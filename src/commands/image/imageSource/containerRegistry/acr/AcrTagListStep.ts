@@ -11,13 +11,13 @@ import * as dayjs from 'dayjs';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 import type { QuickPickItem } from "vscode";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
-import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import { ContainerRegistryImageContext } from "../IContainerRegistryImageContext";
 import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
 
 dayjs.extend(relativeTime);
 
 export class AcrTagListStep extends RepositoryTagListStepBase {
-    public async getPicks(context: IContainerRegistryImageContext): Promise<QuickPickItem[]> {
+    public async getPicks(context: ContainerRegistryImageContext): Promise<QuickPickItem[]> {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
         const repoClient = client.getRepository(nonNullProp(context, 'repositoryName'));
 

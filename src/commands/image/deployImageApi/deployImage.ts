@@ -12,10 +12,10 @@ import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
-import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
+import { ContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
 import type { DeployImageApiContext } from "./deployImageApi";
 
-export async function deployImage(context: IActionContext & Partial<IContainerRegistryImageContext>, node: ContainerAppItem): Promise<void> {
+export async function deployImage(context: IActionContext & Partial<ContainerRegistryImageContext>, node: ContainerAppItem): Promise<void> {
     const { subscription, containerApp } = node;
 
     const wizardContext: DeployImageApiContext = {
