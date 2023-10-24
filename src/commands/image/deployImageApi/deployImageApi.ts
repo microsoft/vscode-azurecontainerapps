@@ -50,10 +50,10 @@ export async function deployImageApi(context: IActionContext & Partial<IContaine
     context.valuesToMask.push(deployImageOptions.image);
 
     if (deployImageOptions.secret) {
-        context.telemetry.properties.hasSecrets = 'true';
+        context.telemetry.properties.hasRegistrySecrets = 'true';
         return callWithMaskHandling<void>(() => deployImage(context, node), deployImageOptions.secret);
     } else {
-        context.telemetry.properties.hasSecrets = 'false';
+        context.telemetry.properties.hasRegistrySecrets = 'false';
         return deployImage(context, node);
     }
 }

@@ -13,7 +13,7 @@ export interface DeployImageApiTelemetryProps extends EnvironmentVariableTelemet
 
     registryDomain?: SupportedRegistries;
     registryName?: string;  // ContainerRegistryImageConfigureStep
-    hasSecrets?: 'true' | 'false';
+    hasRegistrySecrets?: 'true' | 'false';  // Typically indicates private third party registries
 }
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
