@@ -7,7 +7,7 @@ import type { Registry } from '@azure/arm-containerregistry';
 import type { SupportedRegistries } from '../../../../constants';
 import { ContainerRegistryTelemetryProps as TelemetryProps } from '../../../../telemetry/ImageSourceTelemetryProps';
 import { SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps';
-import type { ImageSourceBaseContext } from '../ImageSourceBaseContext';
+import type { ImageSourceBaseContext } from '../ImageSourceContext';
 import type { CreateAcrContext } from './acr/createAcr/CreateAcrContext';
 
 export interface ContainerRegistryImageSourceBaseContext extends CreateAcrContext, ImageSourceBaseContext {

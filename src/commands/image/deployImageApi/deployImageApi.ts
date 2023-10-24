@@ -9,7 +9,7 @@ import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
+import type { ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
 import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import { deployImage } from "./deployImage";
 

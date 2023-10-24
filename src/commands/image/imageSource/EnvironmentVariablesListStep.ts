@@ -11,7 +11,7 @@ import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import { ImageSourceContext } from "./ImageSourceBaseContext";
+import { ImageSourceContext } from "./ImageSourceContext";
 
 const allEnvGlobPattern: string = `**/${envGlobPattern}`;
 

@@ -18,7 +18,7 @@ import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
-import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
+import type { ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
 import { UpdateRegistryAndSecretsStep } from "./UpdateRegistryAndSecretsStep";

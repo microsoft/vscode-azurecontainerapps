@@ -12,7 +12,7 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../u
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import { ImageSourceContext } from "./ImageSourceBaseContext";
+import { ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
