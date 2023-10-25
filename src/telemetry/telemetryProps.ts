@@ -4,18 +4,27 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { SetEnvironmentVariableOption } from "../constants";
+import type { SupportedRegistries } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
+import type { EnvironmentVariableTelemetryProps } from "./EnvironmentVariableTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface DeployRevisionDraftTelemetryProps extends Pick<AzdTelemetryProps, 'isAzdExtensionInstalled'> {
+export interface DeployImageApiTelemetryProps extends EnvironmentVariableTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
+
+    registryDomain?: SupportedRegistries | 'other';
+    registryName?: string;  // ContainerRegistryImageConfigureStep
+    hasRegistrySecrets?: 'true' | 'false';  // Typically indicates private third party registries
+}
+
+export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     commandUpdatesCount?: string;  // Updates via revision draft commands
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, WorkspaceFileTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, EnvironmentVariableTelemetryProps, WorkspaceFileTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -31,9 +40,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
     existingRegistry?: 'true' | 'false';
     existingContainerApp?: 'true' | 'false';
     existingLocation?: 'true' | 'false';
-
-    // Environment variables
-    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
 
     // Ingress
     dockerfileExposePortRangeCount?: string;  // IngressPromptStep
