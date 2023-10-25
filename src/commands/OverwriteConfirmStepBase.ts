@@ -4,15 +4,29 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import type { OverwriteConfirmTelemetryProps as TelemetryProps } from "../telemetry/OverwriteConfirmTelemetryProps";
+import type { SetTelemetryProps } from "../telemetry/SetTelemetryProps";
 import type { ContainerAppModel } from "../tree/ContainerAppItem";
 import { localize } from "../utils/localize";
 import type { IContainerAppContext } from "./IContainerAppContext";
 
-export abstract class UnsupportedContainerAppFeaturesStepBase<T extends IContainerAppContext> extends AzureWizardPromptStep<T> {
+export abstract class OverwriteConfirmStepBase<T extends IContainerAppContext & SetTelemetryProps<TelemetryProps>> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
     protected readonly unsupportedFeaturesWarning: string = localize('unsupportedOverwriteConfirm', 'Any unsupported container app features in VS Code will be lost.');
 
-    public abstract prompt(context: T): Promise<void>;
+    public async configureBeforePrompt(context: T): Promise<void> {
+        context.telemetry.properties.hasUnsupportedFeatures = 'false';
+    }
+
+    public async prompt(context: T): Promise<void> {
+        if (this.hasUnsupportedFeatures(context)) {
+            context.telemetry.properties.hasUnsupportedFeatures = 'true';
+        }
+
+        await this.promptCore(context);
+    }
+
+    protected abstract promptCore(context: T): Promise<void>;
     public abstract shouldPrompt(context: T): boolean;
 
     // Check for any portal features that VS Code doesn't currently support

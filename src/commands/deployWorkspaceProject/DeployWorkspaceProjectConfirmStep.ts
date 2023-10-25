@@ -6,11 +6,11 @@
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { UnsupportedContainerAppFeaturesStepBase } from "../UnsupportedContainerAppFeaturesStepBase";
+import { OverwriteConfirmStepBase } from "../OverwriteConfirmStepBase";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
-export class DeployWorkspaceProjectConfirmStep extends UnsupportedContainerAppFeaturesStepBase<DeployWorkspaceProjectContext> {
-    public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
+export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<DeployWorkspaceProjectContext> {
+    protected async promptCore(context: DeployWorkspaceProjectContext): Promise<void> {
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
             resourcesToCreate.push('resource group');
@@ -46,8 +46,6 @@ export class DeployWorkspaceProjectConfirmStep extends UnsupportedContainerAppFe
         }
 
         if (this.hasUnsupportedFeatures(context)) {
-            context.telemetry.properties.hasUnsupportedFeatures = 'true';
-
             confirmMessage += '\n\n' + this.unsupportedFeaturesWarning;
             outputMessage += ' ' + localize('unsupportedOverwriteConfirmed', 'User also confirmed that proceeding means that any unsupported container app features in VS Code will be lost.');
         }
@@ -59,7 +57,6 @@ export class DeployWorkspaceProjectConfirmStep extends UnsupportedContainerAppFe
         );
 
         ext.outputChannel.appendLog(outputMessage);
-        context.telemetry.properties.confirmedResourceCreation = 'true';
     }
 
     public shouldPrompt(): boolean {

@@ -7,13 +7,13 @@ import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { MessageItem } from "vscode";
 import type { ContainerAppModel } from "../tree/ContainerAppItem";
 import { localize } from "../utils/localize";
-import type { IContainerAppContext } from "./IContainerAppContext";
-import { UnsupportedContainerAppFeaturesStepBase } from "./UnsupportedContainerAppFeaturesStepBase";
+import { IContainerAppContext } from "./IContainerAppContext";
+import { OverwriteConfirmStepBase } from "./OverwriteConfirmStepBase";
 
-export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends UnsupportedContainerAppFeaturesStepBase<T> {
+export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends OverwriteConfirmStepBase<T> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: T): Promise<void> {
+    protected async promptCore(context: T): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         let warning: string = localize('confirmDeploy', 'The latest deployment of container app "{0}" will be overwritten.', containerApp.name);
         if (this.hasUnsupportedFeatures(context)) {
