@@ -6,7 +6,7 @@
 import { ExecuteActivityContext, IActionContext, ISubscriptionActionContext, callWithMaskHandling, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain } from "../../../constants";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
+import { DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import type { ImageSourceBaseContext } from "../imageSource/ImageSourceContext";

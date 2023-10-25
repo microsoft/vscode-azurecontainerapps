@@ -9,7 +9,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActi
 import { webProvider } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
+import { UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
 import type { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import type { RevisionItem } from "../../../tree/revisionManagement/RevisionItem";

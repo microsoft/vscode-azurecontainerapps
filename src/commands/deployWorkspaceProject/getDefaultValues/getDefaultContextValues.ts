@@ -9,7 +9,7 @@ import { nonNullValue, type ISubscriptionActionContext } from "@microsoft/vscode
 import { ImageSource } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";

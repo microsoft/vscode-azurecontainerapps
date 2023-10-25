@@ -7,7 +7,7 @@ import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontai
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { IAzureQuickPickItem, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/telemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
 import { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
