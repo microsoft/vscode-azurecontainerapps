@@ -72,5 +72,5 @@ async function displaySettingsOverrideWarning(context: ISubscriptionActionContex
         { title: localize('continue', 'Continue') }
     );
 
-    ext.outputChannel.appendLog(localize('confirmedOverride', 'User confirmed deployment will target {0}"{1}" instead of existing workspace settings.', nonNullValue(treeItemType), resourceName));
+    ext.outputChannel.appendLog(localize('confirmedOverride', 'User confirmed deployment will target {0} "{1}" instead of existing workspace settings.', nonNullValue(treeItemType), resourceName));
 }
