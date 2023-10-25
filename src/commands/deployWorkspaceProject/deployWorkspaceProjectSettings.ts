@@ -7,6 +7,8 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../constants";
 import { ext } from "../../extensionVariables";
+import type { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/telemetryProps";
 import { localize } from "../../utils/localize";
 import { settingUtils } from "../../utils/settingUtils";
 
@@ -44,7 +46,7 @@ export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFol
     }
 }
 
-export function setDeployWorkspaceProjectSettingsTelemetry(context: IActionContext, settings: DeployWorkspaceProjectSettings): void {
+export function setDeployWorkspaceProjectSettingsTelemetry(context: IActionContext & SetTelemetryProps<TelemetryProps>, settings: DeployWorkspaceProjectSettings): void {
     if (hasAllDeployWorkspaceProjectSettings(settings)) {
         context.telemetry.properties.workspaceSettingsState = 'all';
     } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {

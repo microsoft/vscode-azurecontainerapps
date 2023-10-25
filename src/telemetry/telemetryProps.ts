@@ -15,11 +15,10 @@ export interface DeployWorkspaceProjectTelemetryProps {
 
     // getDefaultContextValues
     dockerfileCount?: string;  // selectWorkspaceFile
-    hasWorkspaceProjectOpen?: 'false';
+    hasWorkspaceProjectOpen?: 'true' | 'false';
     workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
-    triggeredSettingsOverride?: 'true';
-    acceptedSettingsOverride?: 'true';
-    promptedForEnvironment?: 'true';
+    settingsOverride?: 'none' | 'triggered' | 'accepted';
+    promptedForEnvironment?: 'true' | "false";
     promptDefaultNameReason?: 'invalid' | 'unavailable';
 
     // Resources
@@ -28,9 +27,6 @@ export interface DeployWorkspaceProjectTelemetryProps {
     existingRegistry?: 'true' | 'false';
     existingContainerApp?: 'true' | 'false';
     existingLocation?: 'true' | 'false';
-    confirmedResourceCreation?: 'true';
-
-    managedEnvironmentCount?: string;
 
     // Environment variables
     environmentVariableFileCount?: string;  // selectWorkspaceFile
@@ -41,11 +37,11 @@ export interface DeployWorkspaceProjectTelemetryProps {
     dockerfileExposePort?: string;  // IngressPromptStep
 
     // Update
-    hasUnsupportedFeatures?: 'true';  // ContainerAppOverwriteConfirmStep
+    hasUnsupportedFeatures?: 'true' | 'false';  // ContainerAppOverwriteConfirmStep
 
     // Save settings
-    noNewSettings?: 'true';  // ShouldSaveDeploySettingsPromptStep
-    shouldSaveSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
+    noNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
+    shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     didSaveSettings?: 'true' | 'false';  // DeployWorkspaceProjectSaveSettingsStep - we swallow errors here, so log the outcome just in case
 }
 
