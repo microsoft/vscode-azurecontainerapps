@@ -31,7 +31,7 @@ suite('IngressPromptStep', async () => {
                 alwaysPromptIngress: i === 3
             };
 
-            await tryConfigureIngressUsingDockerfile(context as IngressContext);
+            await tryConfigureIngressUsingDockerfile(wrapWithMockTelemetry(context) as IngressContext);
 
             assert.deepStrictEqual({
                 enableIngress: context.enableIngress,
@@ -47,3 +47,7 @@ suite('IngressPromptStep', async () => {
         }
     });
 });
+
+function wrapWithMockTelemetry(context: MockIngressContext): MockIngressContext {
+    return Object.assign(context, { telemetry: { properties: {} } });
+}
