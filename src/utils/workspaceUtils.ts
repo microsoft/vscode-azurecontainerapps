@@ -6,7 +6,9 @@
 import { IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
 import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
-import { browseItem, dockerfileGlobPattern, envGlobPattern } from "../constants";
+import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
+import { SetTelemetryProps } from "../telemetry/SetTelemetryProps";
+import { WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
 import { localize } from "./localize";
 
 interface SelectWorkspaceFileOptions extends OpenDialogOptions {
@@ -25,7 +27,12 @@ interface SelectWorkspaceFileOptions extends OpenDialogOptions {
  *
  * @returns Returns a string representing the workspace file path chosen.  A return of undefined is only possible when the `allowSkip` option is set to true.
  */
-export async function selectWorkspaceFile(context: IActionContext, placeHolder: string, options: SelectWorkspaceFileOptions, globPattern?: string): Promise<string | undefined> {
+export async function selectWorkspaceFile(
+    context: IActionContext & SetTelemetryProps<TelemetryProps>,
+    placeHolder: string,
+    options: SelectWorkspaceFileOptions,
+    globPattern?: string
+): Promise<string | undefined> {
     let input: IAzureQuickPickItem<string | undefined> | undefined;
     const quickPicks: IAzureQuickPickItem<string | undefined>[] = [];
     const skipForNow: string = 'skipForNow';
@@ -34,13 +41,16 @@ export async function selectWorkspaceFile(context: IActionContext, placeHolder: 
         // if there's a fileExtension, then only populate the quickPick menu with that, otherwise show the current folders in the workspace
         const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
 
+        context.telemetry.properties.dockerfileCount = '0';
+        context.telemetry.properties.environmentVariableFileCount = '0';
+
         // If dockerfile(s), log the count
         if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
             context.telemetry.properties.dockerfileCount = String(files.length);
         }
 
         // If environment variable file(s), log the count
-        if (globPattern === envGlobPattern || globPattern === `**/${envGlobPattern}`) {
+        if (globPattern === envFileGlobPattern || globPattern === `**/${envFileGlobPattern}`) {
             context.telemetry.properties.environmentVariableFileCount = String(files.length);
         }
 
