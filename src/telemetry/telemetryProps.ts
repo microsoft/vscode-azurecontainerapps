@@ -5,14 +5,18 @@
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
+import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface DeployWorkspaceProjectTelemetryProps extends WorkspaceFileTelemetryProps {
+export interface DeployRevisionDraftTelemetryProps extends Pick<AzdTelemetryProps, 'isAzdExtensionInstalled'> {
     revisionMode?: KnownActiveRevisionsMode;
 
-    // Azd
-    isAzdExtensionInstalled?: 'true';
-    isAzdWorkspaceProject?: 'true';
+    commandUpdatesCount?: string;  // Updates via revision draft commands
+    directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
+}
+
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, WorkspaceFileTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
     hasWorkspaceProjectOpen?: 'true' | 'false';

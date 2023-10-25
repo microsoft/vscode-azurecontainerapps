@@ -9,13 +9,15 @@ import { ext } from "../../../extensionVariables";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
+import type { RevisionDraftFile } from "../RevisionDraftFileSystem";
 import { DeployRevisionDraftConfirmStep } from "./DeployRevisionDraftConfirmStep";
+import type { DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 import { DeployRevisionDraftStep } from "./DeployRevisionDraftStep";
-import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
 
 export async function deployRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {
     if (!node) {
@@ -26,7 +28,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
     const item: ContainerAppItem | RevisionDraftItem = nonNullValue(node);
     const { subscription, containerApp } = item;
 
-    const wizardContext: IDeployRevisionDraftContext = {
+    const wizardContext: DeployRevisionDraftContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         ...(await createActivityContext()),
@@ -39,15 +41,23 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         throw new Error(localize('noUnsavedChanges', 'No unsaved changes detected to deploy to container app "{0}".', containerApp.name));
     }
 
-    const promptSteps: AzureWizardPromptStep<IDeployRevisionDraftContext>[] = [
+    // Set telemetry
+    const file: RevisionDraftFile | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(item);
+    wizardContext.telemetry.properties.commandUpdatesCount = String(file?.commandUpdatesCount ?? 0);
+    wizardContext.telemetry.properties.directUpdatesCount = String(file?.directUpdatesCount ?? 0);
+    wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
+
+    await addAzdTelemetryToContext(wizardContext);
+
+    const promptSteps: AzureWizardPromptStep<DeployRevisionDraftContext>[] = [
         new DeployRevisionDraftConfirmStep()
     ];
 
-    const executeSteps: AzureWizardExecuteStep<IDeployRevisionDraftContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<DeployRevisionDraftContext>[] = [
         new DeployRevisionDraftStep()
     ];
 
-    const wizard: AzureWizard<IDeployRevisionDraftContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<DeployRevisionDraftContext> = new AzureWizard(wizardContext, {
         title: localize('deploy', 'Deploy changes to container app "{0}"', containerApp.name),
         promptSteps,
         executeSteps,
