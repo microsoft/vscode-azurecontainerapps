@@ -8,6 +8,7 @@ import { WorkspaceFolder, commands } from "vscode";
 import { browseItem, dockerfileGlobPattern } from "../../../constants";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
+import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
 import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";
 
@@ -26,6 +27,7 @@ export async function getWorkspaceProjectPaths(context: IActionContext & SetTele
     }
 
     context.telemetry.properties.hasWorkspaceProjectOpen = 'true';
+    await addAzdTelemetryToContext(context, rootFolder);
 
     return {
         rootFolder: nonNullValue(rootFolder),

@@ -5,10 +5,14 @@
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
-import { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
+import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface DeployWorkspaceProjectTelemetryProps extends WorkspaceFileTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
+
+    // Azd
+    isAzdExtensionInstalled?: 'true';
+    isAzdWorkspaceProject?: 'true';
 
     // getDefaultContextValues
     hasWorkspaceProjectOpen?: 'true' | 'false';
@@ -16,7 +20,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends WorkspaceFileTelem
     settingsOverride?: 'none' | 'triggered' | 'accepted';
     promptedForEnvironment?: 'true' | "false";
     promptDefaultNameReason?: 'invalid' | 'unavailable';
-    // dockerfileCount
 
     // Resources
     existingResourceGroup?: 'true' | 'false';
@@ -27,7 +30,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends WorkspaceFileTelem
 
     // Environment variables
     setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
-    // environmentVariableFileCount
 
     // Ingress
     dockerfileExposePortRangeCount?: string;  // IngressPromptStep
