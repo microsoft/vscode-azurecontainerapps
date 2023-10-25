@@ -6,7 +6,7 @@
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
-import { OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
+import type { OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps {

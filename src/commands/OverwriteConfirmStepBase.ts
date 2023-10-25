@@ -10,7 +10,9 @@ import type { ContainerAppModel } from "../tree/ContainerAppItem";
 import { localize } from "../utils/localize";
 import type { IContainerAppContext } from "./IContainerAppContext";
 
-export abstract class OverwriteConfirmStepBase<T extends IContainerAppContext & SetTelemetryProps<TelemetryProps>> extends AzureWizardPromptStep<T> {
+type OverwriteConfirmContext = IContainerAppContext & SetTelemetryProps<TelemetryProps>;
+
+export abstract class OverwriteConfirmStepBase<T extends OverwriteConfirmContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
     protected readonly unsupportedFeaturesWarning: string = localize('unsupportedOverwriteConfirm', 'Any unsupported container app features in VS Code will be lost.');
 
