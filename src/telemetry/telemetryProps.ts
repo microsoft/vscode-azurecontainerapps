@@ -12,14 +12,14 @@ export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps,
     revisionMode?: KnownActiveRevisionsMode;
 }
 
-export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
+export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     commandUpdatesCount?: string;  // Updates via revision draft commands
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -58,8 +58,7 @@ export interface DeployWorkspaceProjectNotificationTelemetryProps {
     userAction?: 'canceled' | 'browse' | 'viewOutput';
 }
 
-export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
+export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
     skippedRegistryCredentialUpdate?: 'true';
 }
