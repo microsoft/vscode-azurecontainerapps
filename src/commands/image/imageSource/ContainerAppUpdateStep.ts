@@ -12,10 +12,10 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../u
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
+import { ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
-export class ContainerAppUpdateStep<T extends ImageSourceBaseContext> extends ExecuteActivityOutputStepBase<T> {
+export class ContainerAppUpdateStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
     public priority: number = 480;
 
     protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

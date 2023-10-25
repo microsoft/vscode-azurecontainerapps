@@ -5,10 +5,12 @@
 
 import type { Registry } from '@azure/arm-containerregistry';
 import type { SupportedRegistries } from '../../../../constants';
-import type { ImageSourceBaseContext } from '../ImageSourceBaseContext';
+import { ContainerRegistryTelemetryProps as TelemetryProps } from '../../../../telemetry/ImageSourceTelemetryProps';
+import { SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps';
+import type { ImageSourceBaseContext } from '../ImageSourceContext';
 import type { CreateAcrContext } from './acr/createAcr/CreateAcrContext';
 
-export interface IContainerRegistryImageContext extends CreateAcrContext, ImageSourceBaseContext {
+export interface ContainerRegistryImageSourceBaseContext extends CreateAcrContext, ImageSourceBaseContext {
     registryDomain?: SupportedRegistries;
     registry?: Registry;
     dockerHubNamespace?: string;
@@ -21,3 +23,5 @@ export interface IContainerRegistryImageContext extends CreateAcrContext, ImageS
     username?: string;
     secret?: string;
 }
+
+export type ContainerRegistryImageSourceContext = ContainerRegistryImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;

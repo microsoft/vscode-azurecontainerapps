@@ -4,27 +4,22 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { SupportedRegistries } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
-import type { EnvironmentVariableTelemetryProps } from "./EnvironmentVariableTelemetryProps";
+import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface DeployImageApiTelemetryProps extends EnvironmentVariableTelemetryProps {
+export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
-    registryDomain?: SupportedRegistries | 'other';
-    registryName?: string;  // ContainerRegistryImageConfigureStep
-    hasRegistrySecrets?: 'true' | 'false';  // Typically indicates private third party registries
+    hasUnsupportedFeatures?: 'true';  // ContainerAppOverwriteConfirmStep
 }
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
     commandUpdatesCount?: string;  // Updates via revision draft commands
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, EnvironmentVariableTelemetryProps, WorkspaceFileTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, WorkspaceFileTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -56,4 +51,9 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
 
 export interface DeployWorkspaceProjectNotificationTelemetryProps {
     userAction?: 'canceled' | 'browse' | 'viewOutput';
+}
+
+export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
+    revisionMode?: KnownActiveRevisionsMode;
+    skippedRegistryCredentialUpdate?: 'true';
 }

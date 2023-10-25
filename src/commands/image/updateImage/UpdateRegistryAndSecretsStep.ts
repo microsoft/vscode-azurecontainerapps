@@ -25,6 +25,7 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
             this.areSecretsDeepEqual(containerAppEnvelope.configuration.secrets, context.secrets) &&
             this.areRegistriesDeepEqual(containerAppEnvelope.configuration.registries, context.registries)
         ) {
+            context.telemetry.properties.skippedRegistryCredentialUpdate = 'true';
             return;
         }
 
