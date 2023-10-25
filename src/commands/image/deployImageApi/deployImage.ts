@@ -49,7 +49,7 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     await wizard.prompt();
     await wizard.execute();
 
-    if (!context.suppressNotification) {
+    if (!wizardContext.suppressNotification) {
         void showContainerAppNotification(containerApp, true /** isUpdate */);
     }
 }

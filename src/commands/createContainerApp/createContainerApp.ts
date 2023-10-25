@@ -74,6 +74,9 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         });
 
     const createdContainerApp = nonNullProp(wizardContext, 'containerApp');
-    void showContainerAppNotification(createdContainerApp);
+    if (!wizardContext.suppressNotification) {
+        void showContainerAppNotification(createdContainerApp);
+    }
+
     return new ContainerAppItem(node.subscription, createdContainerApp);
 }
