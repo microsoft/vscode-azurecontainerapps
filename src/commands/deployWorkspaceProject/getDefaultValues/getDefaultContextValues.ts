@@ -5,8 +5,8 @@
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource, relativeSettingsFilePath } from "../../../constants";
+import { nonNullValue, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { ImageSource } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
@@ -14,7 +14,7 @@ import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
@@ -24,13 +24,11 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
     if (triggerSettingsOverride(settings, item)) {
+        // Tree item / settings conflict
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
     } else {
-        if (!settings.containerAppName && !settings.containerAppResourceGroupName && !settings.containerRegistryName) {
-            ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
-        } else if (!settings.containerAppResourceGroupName || !settings.containerAppName || !settings.containerRegistryName) {
-            ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete container app resource settings at "{0}".', relativeSettingsFilePath));
-        }
+        // No settings conflict
+        displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 
     return {
@@ -60,19 +58,19 @@ export function triggerSettingsOverride(settings: DeployWorkspaceProjectSettings
 }
 
 async function displaySettingsOverrideWarning(context: ISubscriptionActionContext, item: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
-    let treeItemType: string;
+    let treeItemType: string | undefined;
     if (ContainerAppItem.isContainerAppItem(item)) {
-        treeItemType = 'container app item ';
+        treeItemType = 'container app item';
     } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
-        treeItemType = 'container environment item ';
-    } else {
-        treeItemType = '';
+        treeItemType = 'container environment item';
     }
 
     const resourceName: string = parseAzureResourceId(item.id).resourceName;
     await context.ui.showWarningMessage(
-        localize('overrideConfirmation', `Deployment will target {0}"{1}".\n\nAny workspace deployment settings will be skipped.  Would you like to proceed?`, treeItemType, resourceName),
+        localize('overrideConfirmation', `Deployment will target {0} "{1}".\n\nAny workspace deployment settings will be skipped.  Would you like to proceed?`, nonNullValue(treeItemType), resourceName),
         { modal: true },
         { title: localize('continue', 'Continue') }
     );
+
+    ext.outputChannel.appendLog(localize('confirmedOverride', 'User confirmed deployment will target {0} "{1}" instead of existing workspace settings.', nonNullValue(treeItemType), resourceName));
 }

@@ -6,20 +6,14 @@
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { DotenvParseOutput, parse } from "dotenv";
 import { Uri, workspace } from "vscode";
-import { ImageSource, activitySuccessContext, activitySuccessIcon } from "../../../constants";
+import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
 
-enum SetEnvironmentVariableOption {
-    NoDotEnv = 'noDotEnv',
-    SkipForNow = 'skipForNow',
-    ProvideFile = 'provideFile'
-}
-
-const allEnvFilesGlobPattern: string = '**/*.{env,env.*}';
+const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
 export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
     public async prompt(context: ImageSourceBaseContext): Promise<void> {
