@@ -13,6 +13,10 @@ import type { IContainerAppContext } from "./IContainerAppContext";
 export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
 
+    public async configureBeforePrompt(context: T): Promise<void> {
+        context.telemetry.properties.hasUnsupportedFeatures = 'false';
+    }
+
     public async prompt(context: T): Promise<void> {
         context.telemetry.properties.hasUnsupportedFeatures = 'true';
 

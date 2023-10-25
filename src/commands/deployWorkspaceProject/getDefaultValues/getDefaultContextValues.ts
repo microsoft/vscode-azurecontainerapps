@@ -8,6 +8,8 @@ import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
@@ -19,7 +21,10 @@ import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
-export async function getDefaultContextValues(context: ISubscriptionActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<Partial<DeployWorkspaceProjectContext>> {
+export async function getDefaultContextValues(
+    context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>,
+    item?: ContainerAppItem | ManagedEnvironmentItem
+): Promise<Partial<DeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
@@ -27,11 +32,12 @@ export async function getDefaultContextValues(context: ISubscriptionActionContex
 
     if (triggerSettingsOverride(settings, item)) {
         // Tree item / settings conflict
-        context.telemetry.properties.triggeredSettingsOverride = 'true';
+        context.telemetry.properties.settingsOverride = 'triggered';
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
-        context.telemetry.properties.acceptedSettingsOverride = 'true';
+        context.telemetry.properties.settingsOverride = 'accepted';
     } else {
         // No settings conflict
+        context.telemetry.properties.settingsOverride = 'none';
         displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 
