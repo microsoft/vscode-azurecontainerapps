@@ -5,17 +5,18 @@
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
+import { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface DeployWorkspaceProjectTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends WorkspaceFileTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
-    dockerfileCount?: string;  // selectWorkspaceFile
     hasWorkspaceProjectOpen?: 'true' | 'false';
     workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
     settingsOverride?: 'none' | 'triggered' | 'accepted';
     promptedForEnvironment?: 'true' | "false";
     promptDefaultNameReason?: 'invalid' | 'unavailable';
+    // dockerfileCount
 
     // Resources
     existingResourceGroup?: 'true' | 'false';
@@ -25,8 +26,8 @@ export interface DeployWorkspaceProjectTelemetryProps {
     existingLocation?: 'true' | 'false';
 
     // Environment variables
-    environmentVariableFileCount?: string;  // selectWorkspaceFile
     setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
+    // environmentVariableFileCount
 
     // Ingress
     dockerfileExposePortRangeCount?: string;  // IngressPromptStep
