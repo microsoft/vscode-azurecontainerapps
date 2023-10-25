@@ -12,7 +12,7 @@ import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps"
 export interface DeployImageApiTelemetryProps extends EnvironmentVariableTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
-    registryDomain?: SupportedRegistries;
+    registryDomain?: SupportedRegistries | 'other';
     registryName?: string;  // ContainerRegistryImageConfigureStep
     hasRegistrySecrets?: 'true' | 'false';  // Typically indicates private third party registries
 }
