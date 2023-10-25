@@ -31,7 +31,9 @@ export abstract class OverwriteConfirmStepBase<T extends OverwriteConfirmContext
     protected abstract promptCore(context: T): Promise<void>;
     public abstract shouldPrompt(context: T): boolean;
 
-    // Check for any portal features that VS Code doesn't currently support
+    /**
+     * Checks for any portal features that VS Code doesn't currently support
+     */
     protected hasUnsupportedFeatures(context: T): boolean {
         if (!context.containerApp) {
             return false;
