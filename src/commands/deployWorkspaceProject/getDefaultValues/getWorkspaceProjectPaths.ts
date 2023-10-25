@@ -7,7 +7,7 @@ import { IActionContext, UserCancelledError, nonNullValue } from "@microsoft/vsc
 import { WorkspaceFolder, commands } from "vscode";
 import { browseItem, dockerfileGlobPattern } from "../../../constants";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
 import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";

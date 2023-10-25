@@ -7,7 +7,7 @@ import type { ManagedEnvironment } from "@azure/arm-appcontainers";
 import type { ResourceGroup } from "@azure/arm-resources";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/telemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
 import { ContainerAppItem, ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
 import type { DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";

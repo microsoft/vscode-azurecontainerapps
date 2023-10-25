@@ -8,7 +8,7 @@ import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../constants";
 import { ext } from "../../extensionVariables";
 import type { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/telemetryProps";
+import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
 import { localize } from "../../utils/localize";
 import { settingUtils } from "../../utils/settingUtils";
 
