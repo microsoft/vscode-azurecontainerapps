@@ -6,10 +6,10 @@
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { URI, Utils } from "vscode-uri";
 import { localize } from "../../../../utils/localize";
-import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
 
-export class ImageNameStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
-    public async prompt(context: IBuildImageInAzureContext): Promise<void> {
+export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
+    public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const suggestedImageName = await getSuggestedName(context, context.dockerfilePath);
 
         context.imageName = await context.ui.showInputBox({
@@ -18,13 +18,13 @@ export class ImageNameStep extends AzureWizardPromptStep<IBuildImageInAzureConte
         });
     }
 
-    public shouldPrompt(context: IBuildImageInAzureContext): boolean {
+    public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.imageName;
     }
 
 }
 
-async function getSuggestedName(context: IBuildImageInAzureContext, dockerFilePath: string): Promise<string | undefined> {
+async function getSuggestedName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string | undefined> {
     let suggestedImageName: string | undefined;
     suggestedImageName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
     if (suggestedImageName === '') {

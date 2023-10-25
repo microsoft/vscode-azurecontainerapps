@@ -67,7 +67,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     await ext.state.showCreatingChild(
         node.managedEnvironment.id,
-        localize('creatingContainerApp', 'Creating container app "{0}"...', newContainerAppName),
+        localize('creating', 'Creating "{0}"...', newContainerAppName),
         async () => {
             wizardContext.activityTitle = localize('createNamedContainerApp', 'Create container app "{0}"', newContainerAppName);
             await wizard.execute();

@@ -6,6 +6,8 @@
 import type { EnvironmentVar, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { ImageSource, ImageSourceValues } from "../../../constants";
+import type { ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
+import type { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import type { IContainerAppContext } from "../../IContainerAppContext";
 
 export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteActivityContext {
@@ -21,3 +23,5 @@ export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteAct
 
     environmentVariables?: EnvironmentVar[];
 }
+
+export type ImageSourceContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;

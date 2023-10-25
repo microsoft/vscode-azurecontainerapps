@@ -7,15 +7,16 @@ import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../../constants";
 import { getContainerEnvelopeWithSecrets } from "../../../../tree/ContainerAppItem";
-import type { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import { parseImageName } from "../../../../utils/imageNameUtils";
+import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLoginServer } from "./getLoginServer";
 import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from "./getRegistryCredentialsAndSecrets";
 
-export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<IContainerRegistryImageContext> {
+export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<ContainerRegistryImageSourceContext> {
     public priority: number = 470;
 
     // Configures base image attributes
-    public async execute(context: IContainerRegistryImageContext): Promise<void> {
+    public async execute(context: ContainerRegistryImageSourceContext): Promise<void> {
         // Store any existing secrets and registries
         let secrets: Secret[] | undefined;
         let registries: RegistryCredentials[] | undefined;
@@ -46,6 +47,10 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
         context.registries ??= registries;
 
         context.image ||= `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
+
+        const { registryName, registryDomain } = parseImageName(context.image);
+        context.telemetry.properties.registryName = registryName;
+        context.telemetry.properties.registryDomain = registryDomain ?? 'other';
     }
 
     public shouldExecute(): boolean {

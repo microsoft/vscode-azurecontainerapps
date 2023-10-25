@@ -7,11 +7,11 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain, quickStartImageName } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 
-export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IContainerRegistryImageContext> {
-    public async prompt(context: IContainerRegistryImageContext): Promise<void> {
+export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
+    public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const prompt: string = localize('dockerHubNamespacePrompt', 'Enter a Docker Hub namespace');
         context.dockerHubNamespace = (await context.ui.showInputBox({
             prompt,
@@ -22,7 +22,7 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IContaine
         context.valuesToMask.push(context.dockerHubNamespace);
     }
 
-    public shouldPrompt(context: IContainerRegistryImageContext): boolean {
+    public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return !context.dockerHubNamespace;
     }
 
@@ -39,7 +39,7 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<IContaine
         return undefined;
     }
 
-    private getSuggestedNamespace(context: IContainerRegistryImageContext): string {
+    private getSuggestedNamespace(context: ContainerRegistryImageSourceContext): string {
         // Try to suggest a namespace only when the user is deploying to a Container App
         let suggestedNamespace: string | undefined;
         if (context.containerApp) {

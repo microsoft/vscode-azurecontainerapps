@@ -4,11 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/telemetryProps";
 import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
@@ -66,6 +68,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     // Resource group
     if (wizardContext.resourceGroup) {
+        wizardContext.telemetry.properties.existingResourceGroup = 'true';
+
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
         wizardContext.activityChildren?.push(
@@ -79,11 +83,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         await LocationListStep.setLocation(wizardContext, wizardContext.resourceGroup.location);
         ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', resourceGroupName));
     } else {
+        wizardContext.telemetry.properties.existingResourceGroup = 'false';
         executeSteps.push(new ResourceGroupCreateStep());
     }
 
     // Managed environment
     if (wizardContext.managedEnvironment) {
+        wizardContext.telemetry.properties.existingEnvironment = 'true';
+
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
         wizardContext.activityChildren?.push(
@@ -94,11 +101,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
             })
         );
 
-        await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
+        if (!LocationListStep.hasLocation(wizardContext)) {
+            await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
+        }
 
         ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
-        ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', wizardContext.managedEnvironment.location));
     } else {
+        wizardContext.telemetry.properties.existingEnvironment = 'false';
+
         executeSteps.push(
             new LogAnalyticsCreateStep(),
             new ManagedEnvironmentCreateStep()
@@ -108,13 +118,12 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
             appProvider,
             operationalInsightsProvider
         );
-
-        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
-        LocationListStep.addStep(wizardContext, promptSteps);
     }
 
     // Azure Container Registry
     if (wizardContext.registry) {
+        wizardContext.telemetry.properties.existingRegistry = 'true';
+
         const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
 
         wizardContext.activityChildren?.push(
@@ -127,11 +136,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', registryName));
     } else {
+        wizardContext.telemetry.properties.existingRegistry = 'false';
         // ImageSourceListStep can already handle this creation logic
     }
 
     // Container app
     if (wizardContext.containerApp) {
+        wizardContext.telemetry.properties.existingContainerApp = 'true';
+
         const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
 
         promptSteps.unshift(new ContainerAppOverwriteConfirmStep());
@@ -146,7 +158,12 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         );
 
         ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', containerAppName));
+
+        if (!LocationListStep.hasLocation(wizardContext)) {
+            await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
+        }
     } else {
+        wizardContext.telemetry.properties.existingContainerApp = 'false';
         executeSteps.push(new ContainerAppCreateStep());
     }
 
@@ -159,6 +176,16 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     // Verify providers
     executeSteps.push(new VerifyProvidersStep(providers));
+
+    // Location
+    if (LocationListStep.hasLocation(wizardContext)) {
+        wizardContext.telemetry.properties.existingLocation = 'true';
+        ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', (await LocationListStep.getLocation(wizardContext)).name));
+    } else {
+        wizardContext.telemetry.properties.existingLocation = 'false';
+        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
+        LocationListStep.addStep(wizardContext, promptSteps);
+    }
 
     // Save deploy settings
     promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
@@ -178,8 +205,9 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
     await wizard.execute();
 
     displayNotification(wizardContext);
-    ext.branchDataProvider.refresh();
+    wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
 
+    ext.branchDataProvider.refresh();
     ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 }
 
@@ -192,11 +220,19 @@ function displayNotification(context: DeployWorkspaceProjectContext): void {
 
     const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
     void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
-        if (result === viewOutput) {
-            ext.outputChannel.show();
-        } else if (result === browse) {
-            await browseContainerApp(containerApp);
-        }
+        await callWithTelemetryAndErrorHandling('deployWorkspaceProject.displayNotification',
+            async (telemetryContext: IActionContext & SetTelemetryProps<NotificationTelemetryProps>) => {
+                if (result === viewOutput) {
+                    telemetryContext.telemetry.properties.userAction = 'viewOutput';
+                    ext.outputChannel.show();
+                } else if (result === browse) {
+                    telemetryContext.telemetry.properties.userAction = 'browse';
+                    await browseContainerApp(containerApp);
+                } else {
+                    telemetryContext.telemetry.properties.userAction = 'canceled';
+                }
+            }
+        );
     });
 
     // Provide browse link automatically to output channel

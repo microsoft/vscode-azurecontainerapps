@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, getDeployWorkspaceProjectSettings, hasNoDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
@@ -16,13 +16,15 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             context.registry && settings?.containerRegistryName === context.registry.name &&
             context.containerApp && settings?.containerAppName === context.containerApp.name
         ) {
-            // No new changes to save
+            context.telemetry.properties.noNewSettings = 'true';
             return;
         }
 
-        const saveOrOverwrite: string = settings ? localize('overwrite', 'overwrite') : localize('save', 'save');
-        const saveItem = { title: localize('saveItem', 'Save...') };
-        const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save...') };
+        context.telemetry.properties.noNewSettings = 'false';
+
+        const saveOrOverwrite: string = hasNoDeployWorkspaceProjectSettings(settings) ? localize('save', 'save') : localize('overwrite', 'overwrite');
+        const saveItem = { title: localize('saveItem', 'Save') };
+        const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save') };
 
         const userResponse = await context.ui.showWarningMessage(
             localize('saveWorkspaceSettings', `Would you like to ${saveOrOverwrite} your deployment configuration in local project settings?`),
@@ -32,6 +34,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
         );
 
         context.shouldSaveDeploySettings = userResponse === saveItem;
+        context.telemetry.properties.shouldSaveDeploySettings = context.shouldSaveDeploySettings ? 'true' : 'false';
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {

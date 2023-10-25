@@ -11,12 +11,12 @@ import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } 
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
+import type { DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 
-export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevisionDraftContext> {
+export class DeployRevisionDraftStep extends AzureWizardExecuteStep<DeployRevisionDraftContext> {
     public priority: number = 1450;
 
-    public async execute(context: IDeployRevisionDraftContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: DeployRevisionDraftContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
         containerAppEnvelope.template = nonNullProp(context, 'template');
@@ -33,7 +33,7 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevis
 
         progress.report({ message: updating });
 
-        const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : `${containerApp.id}/${RevisionDraftItem.idSuffix}`;
+        const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
 
         await ext.state.runWithTemporaryDescription(id, description, async () => {
             await updateContainerApp(context, context.subscription, containerAppEnvelope);
@@ -46,7 +46,7 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevis
         });
     }
 
-    public shouldExecute(context: IDeployRevisionDraftContext): boolean {
+    public shouldExecute(context: DeployRevisionDraftContext): boolean {
         return !!context.template;
     }
 }

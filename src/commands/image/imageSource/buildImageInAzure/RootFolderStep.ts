@@ -4,15 +4,20 @@
 *--------------------------------------------------------------------------------------------*/
 import { AzureWizardPromptStep, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { isAzdWorkspaceProject } from '../../../../utils/azdUtils';
 import { localize } from '../../../../utils/localize';
-import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
+import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
 
-export class RootFolderStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
-    public async prompt(context: IBuildImageInAzureContext): Promise<void> {
+export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
+    public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
         context.rootFolder = await getRootWorkSpaceFolder();
+
+        if (await isAzdWorkspaceProject(context.rootFolder)) {
+            context.telemetry.properties.isAzdWorkspaceProject = 'true';
+        }
     }
 
-    public shouldPrompt(context: IBuildImageInAzureContext): boolean {
+    public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.rootFolder;
     }
 }

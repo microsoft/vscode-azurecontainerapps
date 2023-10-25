@@ -5,10 +5,10 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
+import type { DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 
-export class DeployRevisionDraftConfirmStep extends AzureWizardPromptStep<IDeployRevisionDraftContext> {
-    public async prompt(context: IDeployRevisionDraftContext): Promise<void> {
+export class DeployRevisionDraftConfirmStep extends AzureWizardPromptStep<DeployRevisionDraftContext> {
+    public async prompt(context: DeployRevisionDraftContext): Promise<void> {
         await context.ui.showWarningMessage(
             localize('deployRevisionWarning', 'This will deploy any unsaved changes to container app "{0}".', context.containerApp?.name),
             { modal: true },
@@ -16,7 +16,7 @@ export class DeployRevisionDraftConfirmStep extends AzureWizardPromptStep<IDeplo
         );
     }
 
-    public shouldPrompt(context: IDeployRevisionDraftContext): boolean {
+    public shouldPrompt(context: DeployRevisionDraftContext): boolean {
         return !!context.template;
     }
 }

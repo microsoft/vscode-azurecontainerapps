@@ -6,7 +6,7 @@
 import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain, dockerHubRegistry } from "../../../../constants";
-import type { IContainerRegistryImageContext } from "./IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 
 interface RegistryCredentialsAndSecrets {
@@ -14,7 +14,7 @@ interface RegistryCredentialsAndSecrets {
     secrets?: Secret[];
 }
 
-export async function getAcrCredentialsAndSecrets(context: IContainerRegistryImageContext, containerAppSettings?: RegistryCredentialsAndSecrets): Promise<RegistryCredentialsAndSecrets> {
+export async function getAcrCredentialsAndSecrets(context: ContainerRegistryImageSourceContext, containerAppSettings?: RegistryCredentialsAndSecrets): Promise<RegistryCredentialsAndSecrets> {
     const registry = nonNullProp(context, 'registry');
     const { username, password } = await listCredentialsFromRegistry(context, registry);
     const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`;
@@ -37,10 +37,10 @@ export async function getAcrCredentialsAndSecrets(context: IContainerRegistryIma
     return { registries, secrets };
 }
 
-export function getThirdPartyCredentialsAndSecrets(context: IContainerRegistryImageContext, containerAppSettings?: RegistryCredentialsAndSecrets): RegistryCredentialsAndSecrets {
+export function getThirdPartyCredentialsAndSecrets(context: ContainerRegistryImageSourceContext, containerAppSettings?: RegistryCredentialsAndSecrets): RegistryCredentialsAndSecrets {
     // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
     const loginServer: string = (context.registryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
-    const passwordSecretRef: string = `${loginServer.replace(/[\.]+/g, '')}-${context.username}`;
+    const passwordSecretRef: string = `${loginServer.replace(/[^a-z0-9-]+/g, '')}-${context.username}`;
 
     // Remove duplicate registries
     const registries: RegistryCredentials[] = containerAppSettings?.registries?.filter(r => r.server !== loginServer) ?? [];

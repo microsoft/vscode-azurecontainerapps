@@ -5,10 +5,12 @@
 
 import { ExecuteActivityContext, IActionContext, ISubscriptionActionContext, callWithMaskHandling, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain } from "../../../constants";
+import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { ImageSourceBaseContext } from "../imageSource/ImageSourceBaseContext";
-import type { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
+import type { ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
+import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import { deployImage } from "./deployImage";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
@@ -20,14 +22,14 @@ interface DeployImageToAcaOptionsContract {
     secret?: string;
 }
 
-export type DeployImageApiContext = ImageSourceBaseContext & ExecuteActivityContext;
+export type DeployImageApiContext = ImageSourceBaseContext & ExecuteActivityContext & SetTelemetryProps<TelemetryProps>;
 
 /**
  * A command shared with the `vscode-docker` extension.
  * It uses our old `deployImage` command flow which immediately tries to deploy the image to a container app without creating a draft.
  * This command cannot be used to bundle template changes.
  */
-export async function deployImageApi(context: IActionContext & Partial<IContainerRegistryImageContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
+export async function deployImageApi(context: IActionContext & Partial<ContainerRegistryImageSourceContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     const node = await pickContainerApp(context);
     const { subscription } = node;
 
@@ -48,8 +50,10 @@ export async function deployImageApi(context: IActionContext & Partial<IContaine
     context.valuesToMask.push(deployImageOptions.image);
 
     if (deployImageOptions.secret) {
+        context.telemetry.properties.hasRegistrySecrets = 'true';
         return callWithMaskHandling<void>(() => deployImage(context, node), deployImageOptions.secret);
     } else {
+        context.telemetry.properties.hasRegistrySecrets = 'false';
         return deployImage(context, node);
     }
 }

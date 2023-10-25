@@ -13,10 +13,10 @@ import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteCon
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
-import { IContainerRegistryImageContext } from "../imageSource/containerRegistry/IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import type { DeployImageApiContext } from "./deployImageApi";
 
-export async function deployImage(context: IActionContext & Partial<IContainerRegistryImageContext>, node: ContainerAppItem): Promise<void> {
+export async function deployImage(context: IActionContext & Partial<ContainerRegistryImageSourceContext>, node: ContainerAppItem): Promise<void> {
     const { subscription, containerApp } = node;
 
     const wizardContext: DeployImageApiContext = {
@@ -26,6 +26,8 @@ export async function deployImage(context: IActionContext & Partial<IContainerRe
         subscription,
         containerApp
     };
+
+    wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const promptSteps: AzureWizardPromptStep<DeployImageApiContext>[] = [
         new ImageSourceListStep(),

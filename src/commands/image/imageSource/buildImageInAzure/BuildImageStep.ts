@@ -10,18 +10,18 @@ import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContex
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
-import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
-export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureContext> {
+export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
 
-    protected async executeCore(context: IBuildImageInAzureContext): Promise<void> {
+    protected async executeCore(context: BuildImageInAzureImageSourceContext): Promise<void> {
         context.registryDomain = acrDomain;
 
         const run = await buildImageInAzure(context);
         const outputImages = run?.outputImages;
-        context.telemetry.properties.outputImages = outputImages?.length?.toString();
+        context.telemetry.properties.outputImagesCount = outputImages?.length?.toString();
 
         if (outputImages) {
             const image = outputImages[0];
@@ -44,11 +44,11 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInA
         }
     }
 
-    public shouldExecute(context: IBuildImageInAzureContext): boolean {
+    public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.image;
     }
 
-    protected createSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['buildImageStep', activitySuccessContext]),
@@ -62,7 +62,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<IBuildImageInA
         };
     }
 
-    protected createFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),

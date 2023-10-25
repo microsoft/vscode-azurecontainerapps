@@ -37,7 +37,6 @@ import { addScaleRule } from './scaling/scaleRule/addScaleRule/addScaleRule';
 import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScaleRule';
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
-import { editSecretName } from './secret/editSecret/editSecretName';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
 
 export function registerCommands(): void {
@@ -73,7 +72,6 @@ export function registerCommands(): void {
 
     // secret
     registerCommandWithTreeNodeUnwrapping('containerApps.addSecret', addSecret);
-    registerCommandWithTreeNodeUnwrapping('containerApps.editSecretName', editSecretName);
     registerCommandWithTreeNodeUnwrapping('containerApps.editSecretValue', editSecretValue);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteSecret', deleteSecret);
 

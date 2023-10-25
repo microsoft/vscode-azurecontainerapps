@@ -19,20 +19,23 @@ import { RevisionDraftItem } from "./RevisionDraftItem";
 import { RevisionItem } from "./RevisionItem";
 
 export class RevisionsItem implements ContainerAppsItem {
-    static readonly idSuffix: string = 'revisions';
     static readonly contextValue: string = 'revisionsItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionsItem.contextValue);
 
     id: string;
 
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
-        this.id = `${containerApp.id}/${RevisionsItem.idSuffix}`;
+        this.id = RevisionsItem.getRevisionsItemId(containerApp.id);
     }
 
     private get contextValue(): string {
         const values: string[] = [RevisionsItem.contextValue];
         values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
         return createContextValue(values);
+    }
+
+    static getRevisionsItemId(containerAppId: string): string {
+        return `${containerAppId}/revisions`;
     }
 
     async getChildren(): Promise<TreeElementBase[]> {

@@ -9,12 +9,12 @@ import type { QuickPickItem } from "vscode";
 import { acrDomain, currentlyDeployed, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
-import type { IContainerRegistryImageContext } from "../IContainerRegistryImageContext";
+import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 
 export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
-    public async getPicks(context: IContainerRegistryImageContext): Promise<QuickPickItem[]> {
+    public async getPicks(context: ContainerRegistryImageSourceContext): Promise<QuickPickItem[]> {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
         const repositoryNames: string[] = await uiUtils.listAllIterator(client.listRepositoryNames());
 

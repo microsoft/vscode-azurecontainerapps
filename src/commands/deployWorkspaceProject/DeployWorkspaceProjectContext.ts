@@ -4,12 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import type { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/telemetryProps";
 import type { ICreateContainerAppContext } from "../createContainerApp/ICreateContainerAppContext";
 import type { IManagedEnvironmentContext } from "../createManagedEnvironment/IManagedEnvironmentContext";
-import type { IBuildImageInAzureContext } from "../image/imageSource/buildImageInAzure/IBuildImageInAzureContext";
+import { BuildImageInAzureImageSourceBaseContext } from "../image/imageSource/buildImageInAzure/BuildImageInAzureContext";
 import type { CreateAcrContext } from "../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 
 // Use intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by having to use the 'Partial' utility
-export type DeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContainerAppContext & CreateAcrContext & Partial<IBuildImageInAzureContext> & ExecuteActivityContext & {
+export type DeployWorkspaceProjectContext = IManagedEnvironmentContext & ICreateContainerAppContext & CreateAcrContext & Partial<BuildImageInAzureImageSourceBaseContext> & ExecuteActivityContext & DeployWorkspaceProjectTelemetryProps & {
     shouldSaveDeploySettings?: boolean;
 };
+
+type DeployWorkspaceProjectTelemetryProps = SetTelemetryProps<TelemetryProps>;

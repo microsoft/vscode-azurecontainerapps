@@ -131,11 +131,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.editSecretName",
-                "title": "%containerApps.editSecretName%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.editSecretValue",
                 "title": "%containerApps.editSecretValue%",
                 "category": "Azure Container Apps"
@@ -304,19 +299,14 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "containerApps.openConsoleInPortal",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "command": "containerApps.restartRevision",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "1@2"
                 },
                 {
-                    "command": "containerApps.restartRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
-                    "group": "2@1"
-                },
-                {
-                    "command": "containerApps.chooseRevisionMode",
+                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "2@2"
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
@@ -339,34 +329,39 @@
                     "group": "3@2"
                 },
                 {
-                    "command": "containerApps.editContainerApp",
+                    "command": "containerApps.updateImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "4@1"
                 },
                 {
-                    "command": "containerApps.deleteContainerApp",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "5@1"
-                },
-                {
-                    "command": "containerApps.updateImage",
+                    "command": "containerApps.editContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
-                    "group": "6@1"
-                },
-                {
-                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "6@2"
+                    "group": "4@2"
                 },
                 {
                     "command": "containerApps.startStreamingLogs",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "7@1"
+                    "group": "5@1"
                 },
                 {
                     "command": "containerApps.stopStreamingLogs",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "7@2"
+                    "group": "5@2"
+                },
+                {
+                    "command": "containerApps.deleteContainerApp",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "6@1"
+                },
+                {
+                    "command": "containerApps.chooseRevisionMode",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "6@2"
+                },
+                {
+                    "command": "containerApps.openConsoleInPortal",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "group": "9@3"
                 },
                 {
                     "command": "containerApps.createRevisionDraft",
@@ -386,17 +381,17 @@
                 {
                     "command": "containerApps.activateRevision",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:inactive/i",
-                    "group": "2@2"
-                },
-                {
-                    "command": "containerApps.deactivateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
-                    "group": "2@3"
+                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.restartRevision",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
-                    "group": "2@4"
+                    "group": "2@1"
+                },
+                {
+                    "command": "containerApps.deactivateRevision",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
+                    "group": "2@2"
                 },
                 {
                     "command": "containerApps.updateImage",
@@ -471,11 +466,6 @@
                 {
                     "command": "containerApps.addSecret",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretsItem/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.editSecretName",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /secretItem/i",
                     "group": "1@1"
                 },
                 {
@@ -618,7 +608,7 @@
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^2.0.0",
         "@microsoft/vscode-azext-github": "^1.0.0",
-        "@microsoft/vscode-azext-utils": "^2.0.5",
+        "@microsoft/vscode-azext-utils": "^2.1.2",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",

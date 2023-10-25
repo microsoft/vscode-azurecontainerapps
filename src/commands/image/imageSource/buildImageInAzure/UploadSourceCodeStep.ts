@@ -12,14 +12,14 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from '../../../.
 import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
-import type { IBuildImageInAzureContext } from './IBuildImageInAzureContext';
+import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
-export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<IBuildImageInAzureContext> {
+export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 430;
 
-    protected async executeCore(context: IBuildImageInAzureContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         context.registryName = nonNullValue(context.registry?.name);
         context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
         context.client = await createContainerRegistryManagementClient(context);
@@ -46,11 +46,11 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<IBuildIm
         context.uploadedSourceLocation = relativePath;
     }
 
-    public shouldExecute(context: IBuildImageInAzureContext): boolean {
+    public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.uploadedSourceLocation;
     }
 
-    protected createSuccessOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
@@ -61,7 +61,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<IBuildIm
         };
     }
 
-    protected createFailOutput(context: IBuildImageInAzureContext): ExecuteActivityOutput {
+    protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),

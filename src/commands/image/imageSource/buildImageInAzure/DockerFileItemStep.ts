@@ -4,17 +4,17 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullValue } from '@microsoft/vscode-azext-utils';
-import { DOCKERFILE_GLOB_PATTERN } from "../../../../constants";
+import { dockerfileGlobPattern } from "../../../../constants";
 import { localize } from '../../../../utils/localize';
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
-import type { IBuildImageInAzureContext } from "./IBuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
 
-export class DockerFileItemStep extends AzureWizardPromptStep<IBuildImageInAzureContext> {
-    public async prompt(context: IBuildImageInAzureContext): Promise<void> {
-        context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, localize('dockerFilePick', 'Select a Dockerfile'), { filters: {} }, `**/${DOCKERFILE_GLOB_PATTERN}`));
+export class DockerFileItemStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
+    public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
+        context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, localize('dockerFilePick', 'Select a Dockerfile'), { filters: {} }, `**/${dockerfileGlobPattern}`));
     }
 
-    public shouldPrompt(context: IBuildImageInAzureContext): boolean {
+    public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.dockerfilePath;
     }
 }

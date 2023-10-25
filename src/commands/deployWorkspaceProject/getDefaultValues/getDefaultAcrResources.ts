@@ -20,12 +20,12 @@ interface DefaultAcrResources {
 
 export async function getDefaultAcrResources(
     context: ISubscriptionActionContext,
-    settings: DeployWorkspaceProjectSettings | undefined,
+    settings: DeployWorkspaceProjectSettings,
     item: ContainerAppItem | ManagedEnvironmentItem | undefined
 ): Promise<DefaultAcrResources> {
     const noMatchingResource = { registry: undefined, imageName: undefined };
 
-    if (!settings || !settings.containerRegistryName || triggerSettingsOverride(settings, item)) {
+    if (!settings.containerRegistryName || triggerSettingsOverride(settings, item)) {
         return noMatchingResource;
     }
 

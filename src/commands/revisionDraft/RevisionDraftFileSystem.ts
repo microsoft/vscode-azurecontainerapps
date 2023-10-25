@@ -6,15 +6,22 @@
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { ParsedAzureResourceId, parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
+import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, commands, window, workspace } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
 import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
 import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
+
+interface WriteFileOptions {
+    readonly create?: boolean;  // Existing FileSystemProvider option
+    readonly overwrite?: boolean;  // Existing FileSystemProvider option
+    isCommandEntrypoint?: boolean;
+}
 
 export class RevisionDraftFile implements FileStat {
     type: FileType = FileType.File;
@@ -23,6 +30,9 @@ export class RevisionDraftFile implements FileStat {
     mtime: number;
 
     contents: Uint8Array;
+
+    commandUpdatesCount: number = 0;  // Updates via revision draft commands
+    directUpdatesCount: number = 0;  // Direct updates via 'editContainerApp' & 'editDraft'
 
     constructor(contents: Uint8Array, readonly containerApp: ContainerAppModel, readonly baseRevisionName: string) {
         this.contents = contents;
@@ -62,6 +72,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
+            // A trick to help the draft item appear properly when the parent isn't already expanded (covers the command palette entrypoints)
+            void ext.state.showCreatingChild(
+                RevisionsItem.getRevisionsItemId(item.containerApp.id),
+                localize('creatingDraft', 'Creating draft...'),
+                () => Promise.resolve());
+
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }
@@ -119,10 +135,16 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         await window.showTextDocument(textDoc);
     }
 
-    writeFile(uri: Uri, contents: Uint8Array): void {
+    writeFile(uri: Uri, contents: Uint8Array, options?: WriteFileOptions): void {
         const file: RevisionDraftFile | undefined = this.draftStore.get(uri.path);
-        if (!file || file.contents === contents) {
+        if (!file || (Buffer.from(file.contents).equals(Buffer.from(contents)))) {
             return;
+        }
+
+        if (options?.isCommandEntrypoint) {
+            file.commandUpdatesCount++;
+        } else {
+            file.directUpdatesCount++;
         }
 
         file.contents = contents;
@@ -132,6 +154,8 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
+        // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
+        void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
         ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
@@ -142,7 +166,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
 
         const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
-        this.writeFile(uri, newContent);
+        this.writeFile(uri, newContent, { isCommandEntrypoint: true });
     }
 
     discardRevisionDraft(item: ContainerAppsItem): void {

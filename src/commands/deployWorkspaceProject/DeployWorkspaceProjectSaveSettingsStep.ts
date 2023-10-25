@@ -37,7 +37,9 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         return !!context.shouldSaveDeploySettings;
     }
 
-    protected createSuccessOutput(): ExecuteActivityOutput {
+    protected createSuccessOutput(context: DeployWorkspaceProjectContext): ExecuteActivityOutput {
+        context.telemetry.properties.didSaveSettings = 'true';
+
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activitySuccessContext]),
@@ -48,7 +50,9 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         };
     }
 
-    protected createFailOutput(): ExecuteActivityOutput {
+    protected createFailOutput(context: DeployWorkspaceProjectContext): ExecuteActivityOutput {
+        context.telemetry.properties.didSaveSettings = 'false';
+
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activityFailContext]),

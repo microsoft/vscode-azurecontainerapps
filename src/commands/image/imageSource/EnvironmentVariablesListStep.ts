@@ -6,23 +6,21 @@
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { DotenvParseOutput, parse } from "dotenv";
 import { Uri, workspace } from "vscode";
-import { ImageSource, activitySuccessContext, activitySuccessIcon } from "../../../constants";
+import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import type { EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/EnvironmentVariableTelemetryProps";
+import type { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
+import type { ImageSourceBaseContext } from "./ImageSourceContext";
 
-enum SetEnvironmentVariableOption {
-    NoDotEnv = 'noDotEnv',
-    SkipForNow = 'skipForNow',
-    ProvideFile = 'provideFile'
-}
+type EnvironmentVariablesContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
 
-const allEnvFilesGlobPattern: string = '**/*.{env,env.*}';
+const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
-    public async prompt(context: ImageSourceBaseContext): Promise<void> {
+export class EnvironmentVariablesListStep extends AzureWizardPromptStep<EnvironmentVariablesContext> {
+    public async prompt(context: EnvironmentVariablesContext): Promise<void> {
         const envData: DotenvParseOutput | undefined = await this.selectEnvironmentSettings(context);
         if (!envData) {
             context.environmentVariables = [];
@@ -33,17 +31,18 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
         }
     }
 
-    public async configureBeforePrompt(context: ImageSourceBaseContext): Promise<void> {
+    public async configureBeforePrompt(context: EnvironmentVariablesContext): Promise<void> {
         if (context.environmentVariables?.length === 0) {
+            context.telemetry.properties.environmentVariableFileCount = '0';
             this.outputLogs(context, SetEnvironmentVariableOption.NoDotEnv);
         }
     }
 
-    public shouldPrompt(context: ImageSourceBaseContext): boolean {
+    public shouldPrompt(context: EnvironmentVariablesContext): boolean {
         return context.imageSource !== ImageSource.QuickStartImage && context.environmentVariables === undefined;
     }
 
-    private async selectEnvironmentSettings(context: ImageSourceBaseContext): Promise<DotenvParseOutput | undefined> {
+    private async selectEnvironmentSettings(context: EnvironmentVariablesContext): Promise<DotenvParseOutput | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
             { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvFilesGlobPattern);
@@ -62,7 +61,9 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     }
 
     // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
-    private outputLogs(context: ImageSourceBaseContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+    private outputLogs(context: EnvironmentVariablesContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+        context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
+
         if (setEnvironmentVariableOption !== SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
