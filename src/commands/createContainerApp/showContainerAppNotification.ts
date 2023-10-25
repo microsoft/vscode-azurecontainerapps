@@ -14,7 +14,7 @@ import { browseContainerApp } from "../browseContainerApp";
 export async function showContainerAppNotification(containerApp: ContainerApp, isUpdate: boolean = false): Promise<void> {
     return await callWithTelemetryAndErrorHandling('containerApps.showCaNotification', async (context: IActionContext) => {
         const createdCa: string = localize('createdCa', 'Successfully created new container app "{0}".', containerApp.name);
-        const deployedCa: string = localize('deployedCa', 'Successfully deployed new update to container app "{0}"', containerApp.name);
+        const deployedCa: string = localize('deployedCa', 'Successfully updated container app "{0}"', containerApp.name);
         const message = isUpdate ? deployedCa : createdCa;
         ext.outputChannel.appendLog(message);
 
