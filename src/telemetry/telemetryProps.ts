@@ -15,7 +15,6 @@ export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps 
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
     commandUpdatesCount?: string;  // Updates via revision draft commands
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
@@ -56,6 +55,5 @@ export interface DeployWorkspaceProjectNotificationTelemetryProps {
 
 export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
     skippedRegistryCredentialUpdate?: 'true';
 }
