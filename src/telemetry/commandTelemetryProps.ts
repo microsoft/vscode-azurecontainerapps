@@ -6,20 +6,20 @@
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
+import { OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps {
+export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-    hasUnsupportedFeatures?: 'true';  // ContainerAppOverwriteConfirmStep
 }
 
-export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
+export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
     commandUpdatesCount?: string;  // Updates via revision draft commands
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, WorkspaceFileTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -40,9 +40,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
     dockerfileExposePortRangeCount?: string;  // IngressPromptStep
     dockerfileExposePort?: string;  // IngressPromptStep
 
-    // Update
-    hasUnsupportedFeatures?: 'true' | 'false';  // ContainerAppOverwriteConfirmStep
-
     // Save settings
     noNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
@@ -55,5 +52,5 @@ export interface DeployWorkspaceProjectNotificationTelemetryProps {
 
 export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-    skippedRegistryCredentialUpdate?: 'true';
+    skippedRegistryCredentialUpdate?: 'true' | 'false';
 }
