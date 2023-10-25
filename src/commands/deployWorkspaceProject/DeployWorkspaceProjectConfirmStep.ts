@@ -51,7 +51,6 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<Dep
         );
 
         ext.outputChannel.appendLog(outputMessage);
-        context.telemetry.properties.confirmedResourceCreation = 'true';
     }
 
     public shouldPrompt(): boolean {

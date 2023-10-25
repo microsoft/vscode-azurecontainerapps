@@ -53,6 +53,7 @@ export async function deployImageApi(context: IActionContext & Partial<Container
         context.telemetry.properties.hasRegistrySecrets = 'true';
         return callWithMaskHandling<void>(() => deployImage(context, node), deployImageOptions.secret);
     } else {
+        context.telemetry.properties.hasRegistrySecrets = 'false';
         return deployImage(context, node);
     }
 }

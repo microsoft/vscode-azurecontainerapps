@@ -13,7 +13,7 @@ export interface ImageSourceTelemetryProps extends ContainerRegistryTelemetryPro
 
 export interface ContainerRegistryTelemetryProps {
     acrCount?: string;  // AcrListStep
-    registryDomain?: SupportedRegistries;
+    registryDomain?: SupportedRegistries | 'other';
     registryName?: string;
     hasRegistrySecrets?: 'true' | 'false';  // Helps us identify private third party registries
 }

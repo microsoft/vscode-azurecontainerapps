@@ -6,6 +6,8 @@
 import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { IAzureQuickPickItem, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/telemetryProps";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
 import { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
@@ -17,10 +19,9 @@ const noMatchingResources = {
     containerApp: undefined
 };
 
-export async function promptForEnvironmentResources(context: ISubscriptionActionContext): Promise<DefaultContainerAppsResources> {
+export async function promptForEnvironmentResources(context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context)
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    context.telemetry.properties.managedEnvironmentCount = String(managedEnvironments.length);
 
     if (!managedEnvironments.length) {
         return noMatchingResources;
