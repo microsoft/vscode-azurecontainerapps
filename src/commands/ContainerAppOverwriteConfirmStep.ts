@@ -13,7 +13,13 @@ import type { IContainerAppContext } from "./IContainerAppContext";
 export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
 
+    public async configureBeforePrompt(context: T): Promise<void> {
+        context.telemetry.properties.hasUnsupportedFeatures = 'false';
+    }
+
     public async prompt(context: T): Promise<void> {
+        context.telemetry.properties.hasUnsupportedFeatures = 'true';
+
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const warning: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ?
             localize('confirmDeploySingle', 'Are you sure you want to deploy to "{0}"? This will overwrite the active revision and unsupported features in VS Code will be lost.', containerApp.name) :

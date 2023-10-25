@@ -16,7 +16,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             context.registry && settings?.containerRegistryName === context.registry.name &&
             context.containerApp && settings?.containerAppName === context.containerApp.name
         ) {
-            // No new changes to save
+            context.telemetry.properties.noNewSettings = 'true';
             return;
         }
 
@@ -32,6 +32,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
         );
 
         context.shouldSaveDeploySettings = userResponse === saveItem;
+        context.telemetry.properties.shouldSaveDeploySettings = context.shouldSaveDeploySettings ? 'true' : 'false';
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {

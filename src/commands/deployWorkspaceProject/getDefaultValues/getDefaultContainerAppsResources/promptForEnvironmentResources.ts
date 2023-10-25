@@ -6,6 +6,8 @@
 import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { IAzureQuickPickItem, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/telemetryProps";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
 import { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
@@ -17,7 +19,7 @@ const noMatchingResources = {
     containerApp: undefined
 };
 
-export async function promptForEnvironmentResources(context: ISubscriptionActionContext): Promise<DefaultContainerAppsResources> {
+export async function promptForEnvironmentResources(context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context)
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
 
@@ -39,6 +41,8 @@ export async function promptForEnvironmentResources(context: ISubscriptionAction
             };
         })
     ];
+
+    context.telemetry.properties.promptedForEnvironment = 'true';
 
     const placeHolder: string = localize('selectManagedEnvironment', 'Select a container apps environment');
     const managedEnvironment: ManagedEnvironment | undefined = (await context.ui.showQuickPick(picks, { placeHolder })).data;

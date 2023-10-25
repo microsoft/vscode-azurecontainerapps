@@ -29,6 +29,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
 
     public async configureBeforePrompt(context: ImageSourceBaseContext): Promise<void> {
         if (context.environmentVariables?.length === 0) {
+            context.telemetry.properties.environmentVariableFileCount = '0';
             this.outputLogs(context, SetEnvironmentVariableOption.NoDotEnv);
         }
     }
@@ -57,6 +58,8 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
 
     // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
     private outputLogs(context: ImageSourceBaseContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+        context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
+
         if (setEnvironmentVariableOption !== SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {

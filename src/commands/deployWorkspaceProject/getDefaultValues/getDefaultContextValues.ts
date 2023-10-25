@@ -8,26 +8,36 @@ import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../constants";
 import { ext } from "../../../extensionVariables";
+import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/telemetryProps";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { DeployWorkspaceProjectSettings, displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettingsTelemetry } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
 
-export async function getDefaultContextValues(context: ISubscriptionActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<Partial<DeployWorkspaceProjectContext>> {
+export async function getDefaultContextValues(
+    context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>,
+    item?: ContainerAppItem | ManagedEnvironmentItem
+): Promise<Partial<DeployWorkspaceProjectContext>> {
     const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
 
+    setDeployWorkspaceProjectSettingsTelemetry(context, settings);
+
     if (triggerSettingsOverride(settings, item)) {
         // Tree item / settings conflict
+        context.telemetry.properties.settingsOverride = 'triggered';
         await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
+        context.telemetry.properties.settingsOverride = 'accepted';
     } else {
         // No settings conflict
+        context.telemetry.properties.settingsOverride = 'none';
         displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 

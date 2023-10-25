@@ -6,6 +6,8 @@
 import type { ManagedEnvironment } from "@azure/arm-appcontainers";
 import type { ResourceGroup } from "@azure/arm-resources";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
+import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/telemetryProps";
 import { ContainerAppItem, ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
 import type { DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
@@ -19,10 +21,12 @@ export interface DefaultContainerAppsResources {
 }
 
 export async function getDefaultContainerAppsResources(
-    context: ISubscriptionActionContext,
+    context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>,
     settings: DeployWorkspaceProjectSettings,
     item?: ContainerAppItem | ManagedEnvironmentItem
 ): Promise<DefaultContainerAppsResources> {
+    context.telemetry.properties.promptedForEnvironment = 'false';  // Initialize the default value
+
     // If a tree item is provided that can be used to deduce default context values, try to use those first
     if (item) {
         return await getContainerAppResourcesFromItem(context, item);
