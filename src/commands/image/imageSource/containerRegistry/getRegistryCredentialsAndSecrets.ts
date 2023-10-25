@@ -40,7 +40,7 @@ export async function getAcrCredentialsAndSecrets(context: IContainerRegistryIma
 export function getThirdPartyCredentialsAndSecrets(context: IContainerRegistryImageContext, containerAppSettings?: RegistryCredentialsAndSecrets): RegistryCredentialsAndSecrets {
     // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
     const loginServer: string = (context.registryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
-    const passwordSecretRef: string = `${loginServer.replace(/[\.]+/g, '')}-${context.username}`;
+    const passwordSecretRef: string = `${loginServer.replace(/[^a-z0-9-]+/g, '')}-${context.username}`;
 
     // Remove duplicate registries
     const registries: RegistryCredentials[] = containerAppSettings?.registries?.filter(r => r.server !== loginServer) ?? [];

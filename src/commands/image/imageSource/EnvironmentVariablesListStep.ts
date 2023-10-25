@@ -6,14 +6,14 @@
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { DotenvParseOutput, parse } from "dotenv";
 import { Uri, workspace } from "vscode";
-import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envGlobPattern } from "../../../constants";
+import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import type { ImageSourceBaseContext } from "./ImageSourceBaseContext";
 
-const allEnvGlobPattern: string = `**/${envGlobPattern}`;
+const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
 export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSourceBaseContext> {
     public async prompt(context: ImageSourceBaseContext): Promise<void> {
@@ -30,7 +30,6 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     public async configureBeforePrompt(context: ImageSourceBaseContext): Promise<void> {
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
-            context.telemetry.properties.setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
             this.outputLogs(context, SetEnvironmentVariableOption.NoDotEnv);
         }
     }
@@ -42,7 +41,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     private async selectEnvironmentSettings(context: ImageSourceBaseContext): Promise<DotenvParseOutput | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
-            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvGlobPattern);
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvFilesGlobPattern);
 
         if (!envFileFsPath) {
             return undefined;
@@ -53,7 +52,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<ImageSou
     }
 
     public static async workspaceHasEnvFile(): Promise<boolean> {
-        const envFileUris: Uri[] = await workspace.findFiles(allEnvGlobPattern);
+        const envFileUris: Uri[] = await workspace.findFiles(allEnvFilesGlobPattern);
         return !!envFileUris.length;
     }
 

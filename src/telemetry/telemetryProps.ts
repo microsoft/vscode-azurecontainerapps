@@ -6,6 +6,7 @@
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { SetEnvironmentVariableOption } from "../constants";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
+import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface DeployRevisionDraftTelemetryProps extends Pick<AzdTelemetryProps, 'isAzdExtensionInstalled'> {
     revisionMode?: KnownActiveRevisionsMode;
@@ -14,16 +15,14 @@ export interface DeployRevisionDraftTelemetryProps extends Pick<AzdTelemetryProp
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, WorkspaceFileTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
-    dockerfileCount?: string;  // selectWorkspaceFile
-    hasWorkspaceProjectOpen?: 'false';
+    hasWorkspaceProjectOpen?: 'true' | 'false';
     workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
-    triggeredSettingsOverride?: 'true';
-    acceptedSettingsOverride?: 'true';
-    promptedForEnvironment?: 'true';
+    settingsOverride?: 'none' | 'triggered' | 'accepted';
+    promptedForEnvironment?: 'true' | "false";
     promptDefaultNameReason?: 'invalid' | 'unavailable';
 
     // Resources
@@ -32,12 +31,8 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps 
     existingRegistry?: 'true' | 'false';
     existingContainerApp?: 'true' | 'false';
     existingLocation?: 'true' | 'false';
-    confirmedResourceCreation?: 'true';
-
-    managedEnvironmentCount?: string;
 
     // Environment variables
-    environmentVariableFileCount?: string;  // selectWorkspaceFile
     setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
 
     // Ingress
@@ -45,11 +40,11 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps 
     dockerfileExposePort?: string;  // IngressPromptStep
 
     // Update
-    hasUnsupportedFeatures?: 'true';  // ContainerAppOverwriteConfirmStep
+    hasUnsupportedFeatures?: 'true' | 'false';  // ContainerAppOverwriteConfirmStep
 
     // Save settings
-    noNewSettings?: 'true';  // ShouldSaveDeploySettingsPromptStep
-    shouldSaveSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
+    noNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
+    shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     didSaveSettings?: 'true' | 'false';  // DeployWorkspaceProjectSaveSettingsStep - we swallow errors here, so log the outcome just in case
 }
 
