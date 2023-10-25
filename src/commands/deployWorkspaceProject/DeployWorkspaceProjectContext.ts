@@ -5,7 +5,7 @@
 
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import type { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/telemetryProps";
+import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
 import type { ICreateContainerAppContext } from "../createContainerApp/ICreateContainerAppContext";
 import type { IManagedEnvironmentContext } from "../createManagedEnvironment/IManagedEnvironmentContext";
 import { BuildImageInAzureImageSourceBaseContext } from "../image/imageSource/buildImageInAzure/BuildImageInAzureContext";

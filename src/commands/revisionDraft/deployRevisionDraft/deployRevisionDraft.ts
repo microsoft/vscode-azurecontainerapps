@@ -43,7 +43,6 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
 
     // Set telemetry
     const file: RevisionDraftFile | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(item);
-
     wizardContext.telemetry.properties.commandUpdatesCount = String(file?.commandUpdatesCount ?? 0);
     wizardContext.telemetry.properties.directUpdatesCount = String(file?.directUpdatesCount ?? 0);
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;

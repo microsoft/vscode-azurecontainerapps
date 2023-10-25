@@ -50,7 +50,7 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
 
         const { registryName, registryDomain } = parseImageName(context.image);
         context.telemetry.properties.registryName = registryName;
-        context.telemetry.properties.registryDomain = registryDomain;
+        context.telemetry.properties.registryDomain = registryDomain ?? 'other';
     }
 
     public shouldExecute(): boolean {

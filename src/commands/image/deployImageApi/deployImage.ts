@@ -10,6 +10,7 @@ import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
+import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
@@ -27,7 +28,6 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     };
 
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
-    wizardContext.telemetry.properties.registryDomain = context.registryDomain;
 
     const promptSteps: AzureWizardPromptStep<DeployImageApiContext>[] = [
         new ImageSourceListStep(),
@@ -48,4 +48,8 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
 
     await wizard.prompt();
     await wizard.execute();
+
+    if (!wizardContext.suppressNotification) {
+        void showContainerAppNotification(containerApp, true /** isUpdate */);
+    }
 }
