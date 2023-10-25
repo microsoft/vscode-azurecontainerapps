@@ -6,7 +6,7 @@
 import { IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
 import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
-import { browseItem, dockerfileGlobPattern, envGlobPattern } from "../constants";
+import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
 import { SetTelemetryProps } from "../telemetry/SetTelemetryProps";
 import { WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
 import { localize } from "./localize";
@@ -50,7 +50,7 @@ export async function selectWorkspaceFile(
         }
 
         // If environment variable file(s), log the count
-        if (globPattern === envGlobPattern || globPattern === `**/${envGlobPattern}`) {
+        if (globPattern === envFileGlobPattern || globPattern === `**/${envFileGlobPattern}`) {
             context.telemetry.properties.environmentVariableFileCount = String(files.length);
         }
 

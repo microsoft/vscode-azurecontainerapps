@@ -60,9 +60,9 @@ export function displayDeployWorkspaceProjectSettingsOutput(settings: DeployWork
     if (hasAllDeployWorkspaceProjectSettings(settings)) {
         // Skip, more detailed logs will come when we confirm whether or not the resources were found
     } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
-        ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Scanned and found incomplete containe app resource settings at "{0}".', relativeSettingsFilePath));
+        ext.outputChannel.appendLog(localize('resourceSettingsIncomplete', 'Found incomplete container app workspace settings at "{0}".', relativeSettingsFilePath));
     } else {
-        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Scanned and found no matching resource settings at "{0}".', relativeSettingsFilePath));
+        ext.outputChannel.appendLog(localize('noWorkspaceSettings', 'Found no container app workspace settings at "{0}".', relativeSettingsFilePath));
     }
 }
 

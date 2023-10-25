@@ -20,11 +20,9 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             return;
         }
 
-        context.telemetry.properties.noNewSettings = 'false';
-
         const saveOrOverwrite: string = hasNoDeployWorkspaceProjectSettings(settings) ? localize('save', 'save') : localize('overwrite', 'overwrite');
-        const saveItem = { title: localize('saveItem', 'Save...') };
-        const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save...') };
+        const saveItem = { title: localize('saveItem', 'Save') };
+        const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save') };
 
         const userResponse = await context.ui.showWarningMessage(
             localize('saveWorkspaceSettings', `Would you like to ${saveOrOverwrite} your deployment configuration in local project settings?`),
