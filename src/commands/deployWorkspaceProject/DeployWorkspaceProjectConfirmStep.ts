@@ -47,7 +47,6 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
 
         if (this.hasUnsupportedFeatures(context)) {
             confirmMessage += '\n\n' + this.unsupportedFeaturesWarning;
-            outputMessage += ' ' + localize('unsupportedOverwriteConfirmed', 'User also confirmed that proceeding means that any unsupported container app features in VS Code will be lost.');
         }
 
         await context.ui.showWarningMessage(
