@@ -9,7 +9,7 @@ import { Uri, workspace } from "vscode";
 import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import type { EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
-import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import type { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
