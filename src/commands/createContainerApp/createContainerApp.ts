@@ -11,6 +11,7 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activity/activityUtils";
+import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
@@ -44,6 +45,10 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         new VerifyProvidersStep([webProvider]),
         new ContainerAppCreateStep(),
     ];
+
+    if (isAzdExtensionInstalled()) {
+        context.telemetry.properties.isAzdWorkspaceProject = 'true';
+    }
 
     // Use the same resource group and location as the parent resource (managed environment)
     const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
