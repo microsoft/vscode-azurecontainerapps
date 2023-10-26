@@ -15,7 +15,6 @@ import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tre
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
-import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
@@ -146,7 +145,6 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
 
-        promptSteps.unshift(new ContainerAppOverwriteConfirmStep());
         executeSteps.push(new ContainerAppUpdateStep());
 
         wizardContext.activityChildren?.push(

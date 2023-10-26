@@ -3,13 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
+import { OverwriteConfirmStepBase } from "../OverwriteConfirmStepBase";
 import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
-export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
-    public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
+export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<DeployWorkspaceProjectContext> {
+    protected async promptCore(context: DeployWorkspaceProjectContext): Promise<void> {
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
             resourcesToCreate.push('resource group');
@@ -42,6 +43,10 @@ export class DeployWorkspaceProjectConfirmStep extends AzureWizardPromptStep<Dep
         } else {
             confirmMessage = localize('overwriteConfirm', 'The latest deployment of container app "{0}" and the latest image of registry "{1}" will be overwritten.', context.containerApp?.name, context.registry?.name);
             outputMessage = localize('overwriteConfirmed', 'User confirmed overwrite of container app "{0}" and the latest image of registry "{1}".', context.containerApp?.name, context.registry?.name);
+        }
+
+        if (this.hasUnsupportedFeatures(context)) {
+            confirmMessage += '\n\n' + this.unsupportedFeaturesWarning;
         }
 
         await context.ui.showWarningMessage(
