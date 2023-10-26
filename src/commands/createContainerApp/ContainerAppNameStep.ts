@@ -8,12 +8,12 @@ import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
-import { ICreateContainerAppContext } from './ICreateContainerAppContext';
+import { CreateContainerAppContext } from './CreateContainerAppContext';
 
-export class ContainerAppNameStep extends AzureWizardPromptStep<ICreateContainerAppContext> {
+export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerAppContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: ICreateContainerAppContext): Promise<void> {
+    public async prompt(context: CreateContainerAppContext): Promise<void> {
         const prompt: string = localize('containerAppNamePrompt', 'Enter a container app name.');
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt,
@@ -24,7 +24,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ICreateContainer
         context.valuesToMask.push(context.newContainerAppName);
     }
 
-    public shouldPrompt(context: ICreateContainerAppContext): boolean {
+    public shouldPrompt(context: CreateContainerAppContext): boolean {
         return !context.containerApp && !context.newContainerAppName;
     }
 
@@ -41,7 +41,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ICreateContainer
         return undefined;
     }
 
-    private async validateNameAvailable(context: ICreateContainerAppContext, name: string): Promise<string | undefined> {
+    private async validateNameAvailable(context: CreateContainerAppContext, name: string): Promise<string | undefined> {
         const resourceGroupName: string = getResourceGroupFromId(nonNullProp(context, 'managedEnvironmentId'));
         if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);

@@ -6,13 +6,17 @@
 import type { ManagedEnvironment } from '@azure/arm-appcontainers';
 import type { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import type { ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
+import { SetTelemetryProps } from '../../telemetry/SetTelemetryProps';
+import { CreateContainerAppTelemetryProps as TelemetryProps } from '../../telemetry/commandTelemetryProps';
 import type { IContainerAppContext } from '../IContainerAppContext';
 import type { ImageSourceBaseContext } from '../image/imageSource/ImageSourceContext';
 import type { IngressContext } from '../ingress/IngressContext';
 
-export interface ICreateContainerAppContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressContext, IContainerAppContext, ExecuteActivityContext {
+export interface CreateContainerAppBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressContext, IContainerAppContext, ExecuteActivityContext {
     newContainerAppName?: string;
 
     managedEnvironmentId?: string;
     managedEnvironment?: ManagedEnvironment;
 }
+
+export type CreateContainerAppContext = CreateContainerAppBaseContext & SetTelemetryProps<TelemetryProps>;

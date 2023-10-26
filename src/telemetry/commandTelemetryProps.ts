@@ -5,7 +5,7 @@
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
-import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
+import type { EnvironmentVariableTelemetryProps, ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps {
@@ -56,4 +56,10 @@ export interface DeployWorkspaceProjectNotificationTelemetryProps {
 export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
     skippedRegistryCredentialUpdate?: 'true';
+}
+
+export interface CreateContainerAppTelemetryProps extends ImageSourceTelemetryProps, EnvironmentVariableTelemetryProps, AzdTelemetryProps {
+    // Ingress
+    enableIngress?: 'true' | 'false'; //IngressPromptStep
+    port?: string; //TargetPortInputStep
 }

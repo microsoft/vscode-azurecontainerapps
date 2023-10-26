@@ -15,6 +15,8 @@ export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {
             value: String(getDefaultPort(context)),
             validateInput: this.validateInput
         }));
+
+        context.telemetry.properties.targetPort = String(context.targetPort);
     }
 
     public shouldPrompt(context: IngressContext): boolean {
