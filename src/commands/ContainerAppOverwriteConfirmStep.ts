@@ -15,16 +15,14 @@ export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> ex
 
     protected async promptCore(context: T): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
-        let warning: string = localize('confirmDeploy', 'The latest deployment of container app "{0}" will be overwritten.', containerApp.name);
-        if (this.hasUnsupportedFeatures(context)) {
-            warning += '\n\n' + this.unsupportedFeaturesWarning;
-        }
+        const warning: string = localize('confirmDeploy', 'The latest deployment of container app "{0}" will be overwritten.', containerApp.name) +
+            '\n\n' + this.unsupportedFeaturesWarning;
 
         const items: MessageItem[] = [{ title: localize('continue', 'Continue') }];
         await context.ui.showWarningMessage(warning, { modal: true, stepName: 'confirmDestructiveDeployment' }, ...items);
     }
 
     public shouldPrompt(context: T): boolean {
-        return !!context.containerApp;
+        return this.hasUnsupportedFeatures(context);
     }
 }
