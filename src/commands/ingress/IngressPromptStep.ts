@@ -20,10 +20,6 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     public async prompt(context: IngressContext): Promise<void> {
         context.enableIngress = (await context.ui.showQuickPick([{ label: localize('enable', 'Enable'), data: true }, { label: localize('disable', 'Disable'), data: false }],
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
-
-        if (context.enableIngress) {
-            context.telemetry.properties.enableIngress = 'true';
-        }
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {
@@ -46,6 +42,8 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
         if (context.containerApp) {
             executeSteps.push(context.enableIngress ? new EnableIngressStep() : new DisableIngressStep());
         }
+
+        context.telemetry.properties.enableIngress = context.enableIngress ? 'true' : 'false';
 
         return { promptSteps, executeSteps };
     }
