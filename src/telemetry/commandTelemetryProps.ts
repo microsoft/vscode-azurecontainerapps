@@ -36,9 +36,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
     existingContainerApp?: 'true' | 'false';
     existingLocation?: 'true' | 'false';
 
-    // Update
-    hasUnsupportedFeatures?: 'true' | 'false';  // ContainerAppOverwriteConfirmStep
-
     // Save settings
     noNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
