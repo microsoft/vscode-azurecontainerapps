@@ -12,7 +12,7 @@ suite('getDefaultPort', async () => {
         const context: MockIngressContext = {
             dockerfileExposePorts: [new PortRange(443), new PortRange(8080, 8090)]
         };
-        assert.equal(getDefaultPort(context as IngressContext), 443);
+        assert.equal(getDefaultPort(wrapWithMockTelemetry(context) as IngressContext), 443);
     });
 
     test('Correctly suggests deployed port when Dockerfile expose ports are detected that overlap with existing container app port', async () => {
@@ -20,17 +20,21 @@ suite('getDefaultPort', async () => {
             containerApp: { configuration: { ingress: { targetPort: 8081 } } },
             dockerfileExposePorts: [new PortRange(80), new PortRange(443), new PortRange(8080, 8090)]
         };
-        assert.equal(getDefaultPort(context as IngressContext), 8081);
+        assert.equal(getDefaultPort(wrapWithMockTelemetry(context) as IngressContext), 8081);
     });
 
     test('Correctly suggests existing deploy port when no expose ports are detected', async () => {
         const context: MockIngressContext = {
             containerApp: { configuration: { ingress: { targetPort: 3000 } } },
         };
-        assert.equal(getDefaultPort(context as IngressContext), 3000);
+        assert.equal(getDefaultPort(wrapWithMockTelemetry(context) as IngressContext), 3000);
     });
 
     test('Correctly suggests fallback port when no other ports are available', async () => {
-        assert.equal(getDefaultPort({} as IngressContext), 80);
+        assert.equal(getDefaultPort(wrapWithMockTelemetry({}) as IngressContext), 80);
     });
 });
+
+function wrapWithMockTelemetry<T extends object>(context: T): T {
+    return Object.assign(context, { telemetry: { properties: {} } });
+}
