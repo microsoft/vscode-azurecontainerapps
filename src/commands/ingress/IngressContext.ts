@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { IngressTelemetryProps as TelemetryProps } from "../../telemetry/IngressTelemetryProps";
 import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import { IngressTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
 import type { IContainerAppContext } from "../IContainerAppContext";
 import { PortRange } from "./tryGetDockerfileExposePorts";
 

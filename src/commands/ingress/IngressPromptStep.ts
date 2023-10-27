@@ -22,7 +22,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
 
         if (context.enableIngress) {
-            context.telemetry.properties.ingressEnabled = 'true';
+            context.telemetry.properties.enableIngress = 'true';
         }
     }
 

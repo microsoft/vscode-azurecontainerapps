@@ -5,7 +5,8 @@
 
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
-import type { EnvironmentVariableTelemetryProps, ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
+import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
+import { IngressTelemetryProps } from "./IngressTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps {
@@ -54,15 +55,4 @@ export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourc
     skippedRegistryCredentialUpdate?: 'true';
 }
 
-export interface IngressTelemetryProps {
-    dockerfileExposePortRangeCount?: string;  // IngressPromptStep
-    enableIngress?: 'true' | 'false'; //IngressPromptStep
-    suggestedTargetPort?: string; //getDefaultPort
-    targetPort?: string; //TargetPortInputStep
-}
-
-export interface CreateContainerAppTelemetryProps extends ImageSourceTelemetryProps, EnvironmentVariableTelemetryProps, AzdTelemetryProps, IngressTelemetryProps {
-    // Ingress
-    enableIngress?: 'true' | 'false'; //IngressPromptStep
-    port?: string; //TargetPortInputStep
-}
+export type CreateContainerAppTelemetryProps = ImageSourceTelemetryProps & AzdTelemetryProps & IngressTelemetryProps

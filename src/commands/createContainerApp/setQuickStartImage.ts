@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { quickStartImageName } from "../../constants";
-import { CreateContainerAppBaseContext } from "./CreateContainerAppContext";
+import { CreateContainerAppContext } from "./CreateContainerAppContext";
 
-export function setQuickStartImage(context: Partial<CreateContainerAppBaseContext>): void {
+export function setQuickStartImage(context: Partial<CreateContainerAppContext>): void {
     context.image = quickStartImageName;
     context.enableIngress = true;
     context.enableExternal = true;
