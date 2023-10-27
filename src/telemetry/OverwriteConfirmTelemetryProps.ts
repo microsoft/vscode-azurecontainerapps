@@ -3,9 +3,6 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { SetEnvironmentVariableOption } from "../constants";
-
-export interface EnvironmentVariableTelemetryProps {
-    environmentVariableFileCount?: string;  // selectWorkspaceFile
-    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
+export interface OverwriteConfirmTelemetryProps {
+    hasUnsupportedFeatures?: 'true' | 'false';
 }

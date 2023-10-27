@@ -29,6 +29,8 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
             return;
         }
 
+        context.telemetry.properties.skippedRegistryCredentialUpdate = 'false';
+
         progress.report({ message: localize('configuringSecrets', 'Configuring registry secrets...') });
 
         containerAppEnvelope.configuration.secrets = context.secrets;
