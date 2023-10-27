@@ -6,13 +6,13 @@
 import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { localize } from "../../../utils/localize";
-import type { IngressContext } from "../IngressContext";
+import type { IngressBaseContext } from "../IngressContext";
 import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 
-export class TargetPortUpdateStep extends IngressUpdateStepBase<IngressContext> {
+export class TargetPortUpdateStep extends IngressUpdateStepBase<IngressBaseContext> {
     public priority: number = 650;
 
-    public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp = nonNullProp(context, 'containerApp');
         const ingress = nonNullValueAndProp(containerApp.configuration, 'ingress');
         ingress.targetPort = context.targetPort;

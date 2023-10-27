@@ -14,12 +14,12 @@ import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
-import type { CreateContainerAppContext } from "./CreateContainerAppContext";
+import type { CreateContainerAppBaseContext } from "./CreateContainerAppContext";
 
-export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppContext> {
+export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppBaseContext> {
     public priority: number = 620;
 
-    protected async executeCore(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: CreateContainerAppBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
@@ -62,11 +62,11 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
         }));
     }
 
-    public shouldExecute(context: CreateContainerAppContext): boolean {
+    public shouldExecute(context: CreateContainerAppBaseContext): boolean {
         return !context.containerApp;
     }
 
-    protected createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: CreateContainerAppBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppCreateStep', activitySuccessContext]),
@@ -77,7 +77,7 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
         };
     }
 
-    protected createFailOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+    protected createFailOutput(context: CreateContainerAppBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppCreateStep', activityFailContext]),

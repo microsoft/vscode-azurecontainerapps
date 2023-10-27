@@ -19,7 +19,7 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps {
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, WorkspaceFileTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, WorkspaceFileTelemetryProps, IngressTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -35,10 +35,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
     existingRegistry?: 'true' | 'false';
     existingContainerApp?: 'true' | 'false';
     existingLocation?: 'true' | 'false';
-
-    // Ingress
-    dockerfileExposePortRangeCount?: string;  // IngressPromptStep
-    dockerfileExposePort?: string;  // IngressPromptStep
 
     // Update
     hasUnsupportedFeatures?: 'true' | 'false';  // ContainerAppOverwriteConfirmStep
@@ -58,7 +54,14 @@ export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourc
     skippedRegistryCredentialUpdate?: 'true';
 }
 
-export interface CreateContainerAppTelemetryProps extends ImageSourceTelemetryProps, EnvironmentVariableTelemetryProps, AzdTelemetryProps {
+export interface IngressTelemetryProps {
+    dockerfileExposePortRangeCount?: string;  // IngressPromptStep
+    enableIngress?: 'true' | 'false'; //IngressPromptStep
+    suggestedTargetPort?: string; //getDefaultPort
+    targetPort?: string; //TargetPortInputStep
+}
+
+export interface CreateContainerAppTelemetryProps extends ImageSourceTelemetryProps, EnvironmentVariableTelemetryProps, AzdTelemetryProps, IngressTelemetryProps {
     // Ingress
     enableIngress?: 'true' | 'false'; //IngressPromptStep
     port?: string; //TargetPortInputStep

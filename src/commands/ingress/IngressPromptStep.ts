@@ -72,8 +72,6 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
         context.targetPort = getDefaultPort(context);
     }
 
-    context.telemetry.properties.dockerfileExposePort = context.targetPort ? String(context.targetPort) : undefined;
-
     // If a container app already exists, activity children will be added automatically in later execute steps
     if (!context.containerApp) {
         context.activityChildren?.push(

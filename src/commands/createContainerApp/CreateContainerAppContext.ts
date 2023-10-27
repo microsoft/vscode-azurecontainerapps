@@ -10,9 +10,9 @@ import { SetTelemetryProps } from '../../telemetry/SetTelemetryProps';
 import { CreateContainerAppTelemetryProps as TelemetryProps } from '../../telemetry/commandTelemetryProps';
 import type { IContainerAppContext } from '../IContainerAppContext';
 import type { ImageSourceBaseContext } from '../image/imageSource/ImageSourceContext';
-import type { IngressContext } from '../ingress/IngressContext';
+import type { IngressBaseContext } from '../ingress/IngressContext';
 
-export interface CreateContainerAppBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressContext, IContainerAppContext, ExecuteActivityContext {
+export interface CreateContainerAppBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressBaseContext, IContainerAppContext, ExecuteActivityContext {
     newContainerAppName?: string;
 
     managedEnvironmentId?: string;

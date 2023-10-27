@@ -7,13 +7,13 @@ import type { IngressEnabledItem } from "../../../tree/configurations/IngressIte
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { IngressContext } from "../IngressContext";
+import type { IngressBaseContext } from "../IngressContext";
 import { ToggleIngressVisibilityStep } from "./ToggleIngressVisibilityStep";
 
 export async function toggleIngressVisibility(context: IActionContext, node?: IngressEnabledItem | ContainerAppItem): Promise<void> {
     const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
-    const wizardContext: IngressContext = {
+    const wizardContext: IngressBaseContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         ...(await createActivityContext()),
@@ -24,11 +24,11 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
     const ingress: Ingress = nonNullValueAndProp(containerApp.configuration, 'ingress');
     const title: string = localize('toggleIngressVisibility', 'Toggle ingress visibility to "{0}" for container app "{1}"', ingress.external ? IngressConstants.internal : IngressConstants.external, containerApp.name);
 
-    const executeSteps: AzureWizardExecuteStep<IngressContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<IngressBaseContext>[] = [
         new ToggleIngressVisibilityStep()
     ];
 
-    const wizard: AzureWizard<IngressContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IngressBaseContext> = new AzureWizard(wizardContext, {
         title,
         executeSteps,
         showLoadingPrompt: true

@@ -18,5 +18,7 @@ export function getDefaultPort(context: IngressContext, fallbackPort: number = 8
         dockerfilePortSuggestion = context.dockerfileExposePorts[0].start;
     }
 
+    context.telemetry.properties.suggestedTargetPort = dockerfilePortSuggestion?.toString();
+
     return dockerfilePortSuggestion || currentDeploymentPort || fallbackPort;
 }
