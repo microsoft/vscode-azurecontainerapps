@@ -11,19 +11,20 @@ import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activity/activityUtils";
+import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
-import type { ICreateContainerAppContext } from "./ICreateContainerAppContext";
+import type { CreateContainerAppContext } from "./CreateContainerAppContext";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
 export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
     node ??= await pickEnvironment(context);
 
-    const wizardContext: ICreateContainerAppContext = {
+    const wizardContext: CreateContainerAppContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
         ...await createActivityContext(),
@@ -34,16 +35,20 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     const title: string = localize('createContainerApp', 'Create container app');
 
-    const promptSteps: AzureWizardPromptStep<ICreateContainerAppContext>[] = [
+    const promptSteps: AzureWizardPromptStep<CreateContainerAppContext>[] = [
         new ContainerAppNameStep(),
         new ImageSourceListStep(),
         new IngressPromptStep(),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<ICreateContainerAppContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<CreateContainerAppContext>[] = [
         new VerifyProvidersStep([webProvider]),
         new ContainerAppCreateStep(),
     ];
+
+    if (isAzdExtensionInstalled()) {
+        context.telemetry.properties.isAzdWorkspaceProject = 'true';
+    }
 
     // Use the same resource group and location as the parent resource (managed environment)
     const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
@@ -52,7 +57,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
-    const wizard: AzureWizard<ICreateContainerAppContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<CreateContainerAppContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps,

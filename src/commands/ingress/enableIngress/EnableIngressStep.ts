@@ -11,12 +11,12 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../u
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import type { IngressContext } from "../IngressContext";
+import type { IngressBaseContext } from "../IngressContext";
 
-export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressContext> {
+export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBaseContext> {
     public priority: number = 750;
 
-    protected async executeCore(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('enablingIngress', 'Enabling ingress...') });
 
         const containerApp = nonNullProp(context, 'containerApp');
@@ -37,11 +37,11 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressCont
     }
 
 
-    public shouldExecute(context: IngressContext): boolean {
+    public shouldExecute(context: IngressBaseContext): boolean {
         return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
     }
 
-    protected createSuccessOutput(context: IngressContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['enableIngressStep', activitySuccessContext]),
@@ -52,7 +52,7 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressCont
         };
     }
 
-    protected createFailOutput(context: IngressContext): ExecuteActivityOutput {
+    protected createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['enableIngressStep', activityFailContext]),

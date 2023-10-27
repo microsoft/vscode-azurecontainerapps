@@ -4,10 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { IngressTelemetryProps as TelemetryProps } from "../../telemetry/IngressTelemetryProps";
+import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import type { IContainerAppContext } from "../IContainerAppContext";
 import { PortRange } from "./tryGetDockerfileExposePorts";
 
-export interface IngressContext extends IContainerAppContext, ExecuteActivityContext {
+export interface IngressBaseContext extends IContainerAppContext, ExecuteActivityContext {
     enableIngress?: boolean;
     enableExternal?: boolean;
 
@@ -18,3 +20,5 @@ export interface IngressContext extends IContainerAppContext, ExecuteActivityCon
     dockerfileExposePorts?: PortRange[];
     alwaysPromptIngress?: boolean;
 }
+
+export type IngressContext = IngressBaseContext & SetTelemetryProps<TelemetryProps>

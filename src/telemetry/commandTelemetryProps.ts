@@ -6,6 +6,7 @@
 import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import type { AzdTelemetryProps } from "./AzdTelemetryProps";
 import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
+import { IngressTelemetryProps } from "./IngressTelemetryProps";
 import type { OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
@@ -18,8 +19,7 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, Ov
     commandUpdatesCount?: string;  // Updates via revision draft commands
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
-
-export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps {
+export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps, IngressTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
@@ -36,10 +36,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
     existingContainerApp?: 'true' | 'false';
     existingLocation?: 'true' | 'false';
 
-    // Ingress
-    dockerfileExposePortRangeCount?: string;  // IngressPromptStep
-    dockerfileExposePort?: string;  // IngressPromptStep
-
     // Save settings
     noNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
@@ -54,3 +50,5 @@ export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourc
     revisionMode?: KnownActiveRevisionsMode;
     skippedRegistryCredentialUpdate?: 'true' | 'false';
 }
+
+export type CreateContainerAppTelemetryProps = ImageSourceTelemetryProps & AzdTelemetryProps & IngressTelemetryProps

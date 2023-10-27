@@ -50,14 +50,17 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
         switch (context.imageSource) {
             case ImageSource.QuickStartImage:
                 setQuickStartImage(context);
+                context.telemetry.properties.imageSource = ImageSource.QuickStartImage;
                 break;
             case ImageSource.ContainerRegistry:
                 promptSteps.push(new ContainerRegistryListStep());
                 executeSteps.push(new ContainerRegistryImageConfigureStep());
+                context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
                 promptSteps.push(new BuildFromProjectListStep());
                 executeSteps.push(new ContainerRegistryImageConfigureStep());
+                context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
             default:
         }

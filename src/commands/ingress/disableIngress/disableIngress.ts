@@ -9,14 +9,14 @@ import type { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataPro
 import { createActivityContext } from '../../../utils/activity/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { IngressContext } from '../IngressContext';
+import type { IngressBaseContext } from '../IngressContext';
 import { IngressPromptStep } from '../IngressPromptStep';
 import { isIngressEnabled } from '../isIngressEnabled';
 
 export async function disableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {
     const { subscription, containerApp } = node ?? await pickContainerApp(context);
 
-    const wizardContext: IngressContext = {
+    const wizardContext: IngressBaseContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         ...(await createActivityContext()),
@@ -31,11 +31,11 @@ export async function disableIngress(context: IActionContext, node?: ContainerAp
 
     const title: string = localize('disable', 'Disable ingress for container app "{0}"', containerApp.name);
 
-    const promptSteps: AzureWizardPromptStep<IngressContext>[] = [
+    const promptSteps: AzureWizardPromptStep<IngressBaseContext>[] = [
         new IngressPromptStep()
     ];
 
-    const wizard: AzureWizard<IngressContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<IngressBaseContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         showLoadingPrompt: true
