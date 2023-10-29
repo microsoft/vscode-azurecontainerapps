@@ -6,9 +6,7 @@
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import type { SecretItem } from "../../../tree/configurations/secrets/SecretItem";
-import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
-import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { pickSecret } from "../../../utils/pickItem/pickSecret";
 import type { ISecretContext } from "../ISecretContext";
@@ -46,8 +44,5 @@ export async function deleteSecret(context: IActionContext, node?: SecretItem): 
     await wizard.prompt();
     await wizard.execute();
 
-    const secretId: string = `${wizardContext.containerApp?.id}/${SecretsItem.idSuffix}/${wizardContext.secretName}`;
-    await ext.state.showDeleting(secretId, async () => {
-        await delay(5);
-    });
+    ext.state.notifyChildrenChanged(containerApp.id);
 }
