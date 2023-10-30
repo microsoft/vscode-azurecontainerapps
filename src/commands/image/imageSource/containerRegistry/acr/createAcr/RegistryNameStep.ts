@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/arm-containerregistry";
+import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
@@ -43,9 +43,14 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         return undefined;
     }
 
-    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<boolean> {
+    public static async isNameAvailable(context: ISubscriptionActionContext, resourceGroupName: string, name: string): Promise<boolean> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
-        return !!nameResponse.nameAvailable;
+
+        try {
+            await client.registries.get(resourceGroupName, name);
+            return false;
+        } catch (_e) {
+            return true;
+        }
     }
 }
