@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
+import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
@@ -36,21 +36,19 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     }
 
     private async validateNameAvalability(context: CreateAcrContext, name: string) {
-        if (!await RegistryNameStep.isNameAvailable(context, name)) {
-            return localize('validateInputError', `The registry name ${name} is already in use.`);
+        const registryNameStatus = await RegistryNameStep.isNameAvailable(context, name);
+        if (!registryNameStatus.nameAvailable) {
+            return registryNameStatus.message ?? localize('validateInputError', `The registry name ${name} is unavailable.`);
         }
-
         return undefined;
     }
 
-    public static async isNameAvailable(context: ISubscriptionActionContext, resourceGroupName: string, name: string): Promise<boolean> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-
+    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<RegistryNameStatus> {
         try {
-            await client.registries.get(resourceGroupName, name);
-            return false;
+            const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+            return await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
         } catch (_e) {
-            return true;
+            return { nameAvailable: true };
         }
     }
 }

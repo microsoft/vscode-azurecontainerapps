@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { RegistryNameStatus } from "@azure/arm-containerregistry";
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullValueAndProp, parseError } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
@@ -89,39 +90,38 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             cancellable: false,
             title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
-            try {
-                const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
+            const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
 
-                const registryAvailable: boolean = !!context.registry || await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
-                if (!registryAvailable) {
-                    return resourceNameUnavailable;
+            if (context.registry) {
+                // Skip check, one already exists so don't need to worry about naming
+            } else {
+                const registryNameStatus: RegistryNameStatus = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
+                if (!registryNameStatus.nameAvailable) {
+                    return `Registry: ${registryNameStatus.message ?? resourceNameUnavailable}`;
                 }
+            }
 
-                const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
-                if (!resourceGroupAvailable) {
-                    return resourceNameUnavailable;
-                }
+            const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
+            if (!resourceGroupAvailable) {
+                return `Resource group: ${resourceNameUnavailable}`;
+            }
 
-                if (context.resourceGroup) {
-                    const managedEnvironmentAvailable: boolean = !!context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
-                    if (!managedEnvironmentAvailable) {
-                        return resourceNameUnavailable;
-                    }
-                } else {
-                    // Skip check - new resource group means unique managed environment
+            if (context.resourceGroup) {
+                const managedEnvironmentAvailable: boolean = !!context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
+                if (!managedEnvironmentAvailable) {
+                    return `Container apps environment: ${resourceNameUnavailable}`;
                 }
+            } else {
+                // Skip check - new resource group means unique managed environment
+            }
 
-                if (context.managedEnvironment) {
-                    const containerAppAvailable: boolean = !!context.containerApp || await ContainerAppNameStep.isNameAvailable(context, name, name);
-                    if (!containerAppAvailable) {
-                        return resourceNameUnavailable;
-                    }
-                } else {
-                    // Skip check - new managed environment means unique container app
+            if (context.managedEnvironment) {
+                const containerAppAvailable: boolean = !!context.containerApp || await ContainerAppNameStep.isNameAvailable(context, name, name);
+                if (!containerAppAvailable) {
+                    return `Container app: ${resourceNameUnavailable}`;
                 }
-            } catch (e) {
-                const err = parseError(e);
-                return err.message;
+            } else {
+                // Skip check - new managed environment means unique container app
             }
 
             return undefined;
