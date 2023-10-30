@@ -28,7 +28,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         /* relative path of src folder from rootFolder and what gets deployed */
         this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code from "{0}" directory...', this._sourceFilePath);
+        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
         progress.report({ message: uploading });
         const source: string = path.join(context.rootFolder.uri.fsPath, this._sourceFilePath);
         let items = await AzExtFsExtra.readDirectory(source);
