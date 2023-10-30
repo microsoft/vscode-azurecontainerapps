@@ -31,7 +31,7 @@ export function getPickRevisionStep(revisionName?: string | RegExp): AzureWizard
 
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: revisionFilter },
-        skipIfOne: true,
+        skipIfOne: false,
     }, {
         placeHolder: localize('selectRevisionItem', 'Select a revision'),
         noPicksMessage: localize('noRevisions', 'Selected container app has no revisions'),
