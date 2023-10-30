@@ -49,7 +49,7 @@ export async function getDefaultContextValues(
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
-        rootFolder
+        rootFolder,
     };
 }
 
