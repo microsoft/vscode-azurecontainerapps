@@ -90,7 +90,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             cancellable: false,
             title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
-            const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
+            const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is unavailable.', name);
 
             if (context.registry) {
                 // Skip check, one already exists so don't need to worry about naming
