@@ -47,7 +47,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         try {
             const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
             return await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
-        } catch (_e) {
+        } catch (_theseHands) {
             return { nameAvailable: true };
         }
     }
