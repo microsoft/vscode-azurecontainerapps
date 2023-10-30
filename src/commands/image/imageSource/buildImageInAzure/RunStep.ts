@@ -25,7 +25,7 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
                 isPushEnabled: true,
                 sourceLocation: context.uploadedSourceLocation,
                 platform: { os: context.os },
-                dockerFilePath: path.join('.', 'Dockerfile') /* Assume the dockerfile is always in the root of the source */
+                dockerFilePath: path.basename(context.dockerfilePath) /* Assume the dockerfile is always in the root of the source */
             };
 
             const building: string = localize('buildingImage', 'Building image...');

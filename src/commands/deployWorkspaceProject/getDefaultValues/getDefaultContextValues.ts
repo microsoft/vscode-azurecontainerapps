@@ -6,7 +6,6 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import * as path from 'path';
 import { ImageSource } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
@@ -42,7 +41,6 @@ export async function getDefaultContextValues(
         displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 
-    const sourceFilePath = path.dirname(path.relative(rootFolder.uri.path, dockerfilePath));
     return {
         ...await getDefaultContainerAppsResources(context, settings, item),
         ...await getDefaultAcrResources(context, settings, item),
@@ -51,8 +49,7 @@ export async function getDefaultContextValues(
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
-        rootFolder,
-        sourceFilePath
+        rootFolder
     };
 }
 
