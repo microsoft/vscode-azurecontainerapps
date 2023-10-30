@@ -1,5 +1,25 @@
 # Change Log
 
+## 0.6.0 - 2023-10-30
+
+### Added
+* `Deploy Workspace to Container App...` command by @MicroFish91 and @motm32 see issue [#464](https://github.com/microsoft/vscode-azurecontainerapps/issues/425)
+* Revision draft support by @MicroFish91 in [#405](https://github.com/microsoft/vscode-azurecontainerapps/pull/405),[#413](https://github.com/microsoft/vscode-azurecontainerapps/pull/413), [#414](https://github.com/microsoft/vscode-azurecontainerapps/pull/414)
+* Support for deploying to a container app via a connected Github reository and enable CI by @MicroFish91 in [#353](https://github.com/microsoft/vscode-azurecontainerapps/pull/353), [#355](https://github.com/microsoft/vscode-azurecontainerapps/pull/355), [#361](https://github.com/microsoft/vscode-azurecontainerapps/pull/361), [#363](https://github.com/microsoft/vscode-azurecontainerapps/pull/361), [#407](https://github.com/microsoft/vscode-azurecontainerapps/pull/407)
+* Log streaming support by @motm32 in [#350](https://github.com/microsoft/vscode-azurecontainerapps/pull/350)
+* Support for editing secrets by @MicroFish91 in [#419](https://github.com/microsoft/vscode-azurecontainerapps/pull/419)
+
+### Changed
+* Pre-fill step responses with suggested values when deploying from a container registry by @MicroFish91 in [#305](https://github.com/microsoft/vscode-azurecontainerapps/pull/305), [#331](https://github.com/microsoft/vscode-azurecontainerapps/pull/331)
+* Updated container apps UI by @nturinski [#379](https://github.com/microsoft/vscode-azurecontainerapps/pull/379)
+* Reconfigure revisions commands to better fit new UI by @MicroFish91 [#390](https://github.com/microsoft/vscode-azurecontainerapps/pull/390)
+* Update `deleteMandagesEnvironment` activity messages by @MicroFish91 [#431](https://github.com/microsoft/vscode-azurecontainerapps/pull/431)
+* Hook up `Scaling` commands and tree items to utilize the new revision draft design by @MicroFish91 and @motm32 in [#423](https://github.com/microsoft/vscode-azurecontainerapps/pull/423), [#461](https://github.com/microsoft/vscode-azurecontainerapps/pull/461), [#466](https://github.com/microsoft/vscode-azurecontainerapps/pull/466)
+
+### Fixed
+* Remove Activate, Deactivate, and Restart Revision commands when not applicable by @motm32 in [#356](https://github.com/microsoft/vscode-azurecontainerapps/pull/356)
+* Command palette support for `Restart Revision...` by @MicroFish91 in [#487](https://github.com/microsoft/vscode-azurecontainerapps/pull/487)
+
 ## 0.5.1 - 2023-05-17
 
 ### Added
