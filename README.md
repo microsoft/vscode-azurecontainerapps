@@ -20,6 +20,7 @@ The Azure Container Apps extension now supports running on [vscode.dev](https://
 The following functionalities are not supported in the web version of the extension:
 - Deploying to ACA through the Docker extension
 - Deploying via `Build from project remotely using Azure Container Registry`
+- Deploying via `Deploy Project from Workspace...` and its derivatives
 
 ## Create your first container app
 
