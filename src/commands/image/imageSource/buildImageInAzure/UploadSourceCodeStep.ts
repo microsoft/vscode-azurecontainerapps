@@ -13,6 +13,7 @@ import { createActivityChildContext } from '../../../../utils/activity/activityU
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
 import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
+import path = require('path');
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
@@ -27,7 +28,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
         progress.report({ message: uploading });
 
-        const source: string = context.rootFolder.uri.fsPath;
+        const source: string = path.join(context.rootFolder.uri.fsPath, context.sourceFilePath);
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => {
             return !vcsIgnoreList.includes(i.name)
