@@ -27,6 +27,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         context.client = await createContainerRegistryManagementClient(context);
         /* relative path of src folder from rootFolder and what gets deployed */
         this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
+        context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
         const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
         progress.report({ message: uploading });
