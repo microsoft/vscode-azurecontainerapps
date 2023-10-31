@@ -4,9 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, ISubscriptionActionContext, randomUtils } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
+import { DeployWorkspaceProjectContext } from "../../../../../deployWorkspaceProject/DeployWorkspaceProjectContext";
 import type { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
@@ -47,5 +48,30 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
         const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
         return !!nameResponse.nameAvailable;
+    }
+
+    public static async tryGenerateRelatedName(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
+        let registryAvailable: boolean = false;
+        let generatedName: string = '';
+
+        const timeoutSeconds: number = 60;
+        const timeoutMs: number = timeoutSeconds * 1000;
+        const start: number = Date.now();
+
+        do {
+            if (Date.now() > start + timeoutMs) {
+                return undefined;
+            }
+
+            generatedName = generateRelatedName(name);
+            registryAvailable = !!context.registry || await RegistryNameStep.isNameAvailable(context, generatedName);
+        } while (!registryAvailable)
+
+        return generatedName;
+
+        function generateRelatedName(name: string): string {
+            const suffix = randomUtils.getRandomHexString(6);
+            return (name.substring(0, 43) + suffix).replace(/[^a-zA-Z0-9]+/g, ''); // max length is 50 characters
+        }
     }
 }

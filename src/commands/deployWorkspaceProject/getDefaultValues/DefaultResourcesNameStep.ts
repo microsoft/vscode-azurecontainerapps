@@ -31,7 +31,6 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
-        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-z0-9]+/g, ''));
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
         context.imageName = `${resourceBaseName}:latest`;
     }
@@ -54,7 +53,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         !context.resourceGroup && (context.newResourceGroupName = workspaceName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = workspaceName);
-        !context.registry && (context.newRegistryName = workspaceName.replace(/[^a-z0-9]+/g, ''));
+        !context.registry && (context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, workspaceName));
         !context.containerApp && (context.newContainerAppName = workspaceName);
         context.imageName = `${context.containerApp?.name || workspaceName}:latest`;
     }
@@ -91,9 +90,10 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         }, async () => {
             const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
 
-            const registryAvailable: boolean = !!context.registry || await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
-            if (!registryAvailable) {
-                return resourceNameUnavailable;
+            context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, name);
+
+            if (!context.newRegistryName) {
+                return localize('timeoutError', 'Timed out waiting for registry name to be generated. Please try another name.');
             }
 
             const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
@@ -134,15 +134,11 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             isAvailable['managedEnvironment'] = true;
         }
 
-        if (context.registry || await RegistryNameStep.isNameAvailable(context, workspaceName.replace(/[^a-z0-9]+/g, ''))) {
-            isAvailable['containerRegistry'] = true;
-        }
-
         if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, workspaceName, workspaceName)) {
             isAvailable['containerApp'] = true;
         }
 
-        return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerRegistry'] && isAvailable['containerApp'];
+        return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerApp'];
     }
 }
 
