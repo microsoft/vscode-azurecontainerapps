@@ -1,39 +1,58 @@
 # Change Log
 
-## 0.6.0 - 2023-10-30
+## 0.6.0 - 2023-10-31
 
 ### Added
-* `Deploy Project from Workspace...`, `Create Container App from Workspace...`, and `Deploy Workspace to Container App...` commands [#464](https://github.com/microsoft/vscode-azurecontainerapps/issues/425)
-    * This command...
-    * Enable creating Azure Container Registries [#435](https://github.com/microsoft/vscode-azurecontainerapps/pull/435)
-    * Add Dockerfile port detection to ingress configuration logic [#449](https://github.com/microsoft/vscode-azurecontainerapps/pull/449)
-    * Leveraged a new form of activity log support for displaying multiple activities in a single command [#464](https://github.com/microsoft/vscode-azurecontainerapps/pull/464)
-* Revision draft support in [#311](https://github.com/microsoft/vscode-azurecontainerapps/issues/311)
-    * This command...
-    *
-* Log streaming support [#350](https://github.com/microsoft/vscode-azurecontainerapps/pull/350)
-* Support for deploying to a container app via a connected Github repository [#353](https://github.com/microsoft/vscode-azurecontainerapps/issues/313)
-* Add tree view and CRUD support for container app secrets
-* Added activity log support to the majority of commands
+* Large rework of the entire container apps extension UI/UX
+    * A new `Configurations` item has now been added to the container app item and is present in all views.  The `Configurations` item houses the old `Dapr` and `Ingress` tree items as well as the new GitHub `Actions` and `Secrets` tree items [#379](https://github.com/microsoft/vscode-azurecontainerapps/pull/379)
+    * Add a `Revision Management` item in multiple revisions mode where revisions now live [#379](https://github.com/microsoft/vscode-azurecontainerapps/pull/379), [#390](https://github.com/microsoft/vscode-azurecontainerapps/pull/390)
+    * Add a conditional revision `Draft` item when in multiple revisions mode [#413](https://github.com/microsoft/vscode-azurecontainerapps/pull/413), [#453](https://github.com/microsoft/vscode-azurecontainerapps/pull/453)
+    * Reconfigured the context menu for many tree items, but especially the container app item [#518](https://github.com/microsoft/vscode-azurecontainerapps/pull/518)
 
+* Added new commands: `Deploy Project from Workspace`, `Create Container App from Workspace`, `Deploy Workspace to Container App` [#464](https://github.com/microsoft/vscode-azurecontainerapps/issues/425)
+    * Todo: Link to README?
+    * Enable creating Azure Container Registries [#435](https://github.com/microsoft/vscode-azurecontainerapps/pull/435)
+    * Add Dockerfile port smart detection for ingress configuration [#449](https://github.com/microsoft/vscode-azurecontainerapps/pull/449)
+    * Improve environment variable file smart detection logic [#450](https://github.com/microsoft/vscode-azurecontainerapps/pull/450)
+    * Add ability to save and re-deploy to Azure resources through workspace settings [#454](https://github.com/microsoft/vscode-azurecontainerapps/pull/454)
+    * Leverage a new form of activity log support for displaying multiple activities in a single command [#464](https://github.com/microsoft/vscode-azurecontainerapps/pull/464)
+    * Expand command entrypoints to include container apps environment and container app tree items [#482](https://github.com/microsoft/vscode-azurecontainerapps/pull/482)
+
+* New revision draft editing mode for bundling deployment changes [#311](https://github.com/microsoft/vscode-azurecontainerapps/issues/311)
+    * Todo: Link to README?
+    * Add support for `Edit Container App (Advanced)` and `Discard Draft` in single revision mode [#405](https://github.com/microsoft/vscode-azurecontainerapps/pull/405)
+    * Add support for `Create Draft` and `Edit Draft (Advanced)` in multiple revision mode [#413](https://github.com/microsoft/vscode-azurecontainerapps/pull/413)
+    * Add `Deploy Draft` support (all modes) [#414](https://github.com/microsoft/vscode-azurecontainerapps/pull/414)
+    * Add ability for container app template commands to hook into the new revision draft update system [#423](https://github.com/microsoft/vscode-azurecontainerapps/pull/423)
+    * Display a user setting controlled deploy pop-up when executing revision draft commands [#478](https://github.com/microsoft/vscode-azurecontainerapps/pull/478)
+
+* Log streaming support [#350](https://github.com/microsoft/vscode-azurecontainerapps/pull/350)
+* Added support for deploying to a container app via a connected Github repository [#353](https://github.com/microsoft/vscode-azurecontainerapps/issues/313)
+* Added tree view and CRUD support for container app secrets
+* Added ability to delete existing scale rules [#461](https://github.com/microsoft/vscode-azurecontainerapps/pull/461)
+* Added activity log support to the majority of commands
 
 ### Changed
 * Use smart detection to suggest values when deploying from a container registry [#305](https://github.com/microsoft/vscode-azurecontainerapps/pull/305), [#331](https://github.com/microsoft/vscode-azurecontainerapps/pull/331)
-* Updated container apps UI [#379](https://github.com/microsoft/vscode-azurecontainerapps/pull/379)
-* Reconfigure commands to support new UI [#390](https://github.com/microsoft/vscode-azurecontainerapps/pull/390)
-* Hook up `Scaling` commands and tree items to utilize the new revision draft design [#420](https://github.com/microsoft/vscode-azurecontainerapps/issues/420)
+* Revision draft commands:
+    * Reconfigure existing `Scaling` commands and tree items to utilize the new revision draft design [#420](https://github.com/microsoft/vscode-azurecontainerapps/issues/420)
+        * `Edit Scaling Range` [#466](https://github.com/microsoft/vscode-azurecontainerapps/pull/466)
+        * `Add Scale Rule` [#423](https://github.com/microsoft/vscode-azurecontainerapps/pull/423)
+        * `Delete Scale Rule` [#461](https://github.com/microsoft/vscode-azurecontainerapps/pull/461)
+    * `Update Container Image` was added as the draft alternative to `Deploy to Container App` [#477](https://github.com/microsoft/vscode-azurecontainerapps/pull/477)
 
 ### Fixed
 * Remove `Activate`, `Deactivate`, and `Restart` revision commands when not applicable [#356](https://github.com/microsoft/vscode-azurecontainerapps/pull/356)
-* Fix command palette support for `Restart Revision...` [#487](https://github.com/microsoft/vscode-azurecontainerapps/pull/487)
+* Fix command palette support for `Restart` [#487](https://github.com/microsoft/vscode-azurecontainerapps/pull/487)
 
-## Removed
-* `Deploy to Container App...`
-    * This
+### Removed
+* `Deploy to Container App...` was removed in favor of `Deploy Workspace to Container App` or `Update Container Image`
+    * `Deploy Workspace to Container App` can be used if one wishes to immediately deploy a VS Code workspace project OR
+    * `Update Container Image` can be used to update the container app's image in draft mode and then later deployed
 
 ### Engineering
-* Decouple commands
-* Improve telemetry types and handling across all major commands
+* Decouple `Ingress` commands [#371](https://github.com/microsoft/vscode-azurecontainerapps/pull/371), [375](https://github.com/microsoft/vscode-azurecontainerapps/pull/375)
+* Improve telemetry types and handling across all major commands [#514](https://github.com/microsoft/vscode-azurecontainerapps/pull/514), [#517](https://github.com/microsoft/vscode-azurecontainerapps/pull/517), [#524](https://github.com/microsoft/vscode-azurecontainerapps/pull/524)
 
 ## 0.5.1 - 2023-05-17
 
