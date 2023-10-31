@@ -27,7 +27,7 @@
     * Display a user setting controlled deploy pop-up when executing revision draft commands [#478](https://github.com/microsoft/vscode-azurecontainerapps/pull/478)
 
 * Log streaming support [#350](https://github.com/microsoft/vscode-azurecontainerapps/pull/350)
-* Deploying to a container app via a connected Github repository [#353](https://github.com/microsoft/vscode-azurecontainerapps/issues/313)
+* Deploying to a container app via a connected GitHub repository [#353](https://github.com/microsoft/vscode-azurecontainerapps/issues/313)
 * Tree view and CRUD support for container app secrets
 * Delete existing scale rules [#461](https://github.com/microsoft/vscode-azurecontainerapps/pull/461)
 * Activity log support to the majority of commands
