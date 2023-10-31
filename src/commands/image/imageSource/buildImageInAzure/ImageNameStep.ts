@@ -10,7 +10,7 @@ import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext"
 
 export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const suggestedImageName = await getSuggestedName(context, context.rootFolder.uri.fsPath);
+        const suggestedImageName = await getSuggestedName(context, context.rootFolder.name);
 
         context.imageName = await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),
