@@ -6,6 +6,7 @@
 import { AzExtTreeItem, NoResourceFoundError, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
+import { TreeElementBase } from '../tree/ContainerAppsBranchDataProvider';
 
 export namespace treeUtils {
     export function getIconPath(iconName: string): TreeItemIconPath {
@@ -35,5 +36,9 @@ export namespace treeUtils {
         }
         if (!foundParent) throw new NoResourceFoundError();
         return currentNode as T;
+    }
+
+    export function sortById(a: TreeElementBase, b: TreeElementBase): number {
+        return a.id && b.id ? a.id.localeCompare(b.id) : 0;
     }
 }
