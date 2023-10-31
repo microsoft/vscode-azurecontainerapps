@@ -88,23 +88,27 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             cancellable: false,
             title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
-            const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is already taken.', name);
+            const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is unavailable.', name);
 
-            context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, name);
+            if (context.registry) {
+                // Skip check, one already exists so don't need to worry about naming
+            } else {
+                context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, name);
 
-            if (!context.newRegistryName) {
-                return localize('timeoutError', 'Timed out waiting for registry name to be generated. Please try another name.');
+                if (!context.newRegistryName) {
+                    return localize('timeoutError', 'Timed out waiting for registry name to be generated. Please try another name.');
+                }
             }
 
             const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
             if (!resourceGroupAvailable) {
-                return resourceNameUnavailable;
+                return `Resource group: ${resourceNameUnavailable}`;
             }
 
             if (context.resourceGroup) {
                 const managedEnvironmentAvailable: boolean = !!context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, name, name);
                 if (!managedEnvironmentAvailable) {
-                    return resourceNameUnavailable;
+                    return `Container apps environment: ${resourceNameUnavailable}`;
                 }
             } else {
                 // Skip check - new resource group means unique managed environment
@@ -113,7 +117,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             if (context.managedEnvironment) {
                 const containerAppAvailable: boolean = !!context.containerApp || await ContainerAppNameStep.isNameAvailable(context, name, name);
                 if (!containerAppAvailable) {
-                    return resourceNameUnavailable;
+                    return `Container app: ${resourceNameUnavailable}`;
                 }
             } else {
                 // Skip check - new managed environment means unique container app

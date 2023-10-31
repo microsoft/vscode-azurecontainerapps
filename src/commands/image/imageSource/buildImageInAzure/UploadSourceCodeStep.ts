@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, GenericTreeItem, nonNullValue } from '@microsoft/vscode-azext-utils';
+import * as path from 'path';
 import type { Progress } from 'vscode';
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from '../../../../constants';
 import { fse } from '../../../../node/fs-extra';
@@ -18,16 +19,18 @@ const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgign
 
 export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 430;
+    private _sourceFilePath: string;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         context.registryName = nonNullValue(context.registry?.name);
         context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
         context.client = await createContainerRegistryManagementClient(context);
+        /* relative path of src folder from rootFolder and what gets deployed */
+        this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
+        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
         progress.report({ message: uploading });
-
-        const source: string = context.rootFolder.uri.fsPath;
+        const source: string = path.join(context.rootFolder.uri.fsPath, this._sourceFilePath);
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => {
             return !vcsIgnoreList.includes(i.name)
@@ -54,10 +57,10 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
-                label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registry?.name),
+                label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('uploadedSourceCodeSuccess', 'Uploaded source code to registry "{0}" for remote build.', context.registry?.name)
+            message: localize('uploadedSourceCodeSuccess', 'Uploaded source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
         };
     }
 
@@ -65,10 +68,10 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),
-                label: localize('uploadSourceCodeLabel', 'Upload source code to registry "{0}"', context.registry?.name),
+                label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activityFailIcon
             }),
-            message: localize('uploadedSourceCodeFail', 'Failed to upload source code to registry "{0}" for remote build.', context.registry?.name)
+            message: localize('uploadedSourceCodeFail', 'Failed to upload source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
         };
     }
 }

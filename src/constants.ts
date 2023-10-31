@@ -92,6 +92,7 @@ export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
 export const dockerfileGlobPattern = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
 export const envFileGlobPattern = '*.{env,env.*}';
+export const dockerFilePick = localize('dockerFilePick', 'Choose a Dockerfile from your source code directory.')
 
 export const activityInfoIcon: ThemeIcon = new ThemeIcon('info', new ThemeColor('charts.blue'));
 export const activitySuccessIcon: ThemeIcon = new ThemeIcon('pass', new ThemeColor('testing.iconPassed'));

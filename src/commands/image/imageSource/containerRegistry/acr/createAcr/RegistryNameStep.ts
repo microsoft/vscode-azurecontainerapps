@@ -37,17 +37,20 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     }
 
     private async validateNameAvalability(context: CreateAcrContext, name: string) {
-        if (!await RegistryNameStep.isNameAvailable(context, name)) {
-            return localize('validateInputError', `The registry name ${name} is already in use.`);
+        const registryNameStatus = await RegistryNameStep.isNameAvailable(context, name);
+        if (!registryNameStatus.nameAvailable) {
+            return registryNameStatus.message ?? localize('validateInputError', `The registry name ${name} is unavailable.`);
         }
-
         return undefined;
     }
 
-    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<boolean> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
-        return !!nameResponse.nameAvailable;
+    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<RegistryNameStatus> {
+        try {
+            const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+            return await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
+        } catch (_theseHands) {
+            return { nameAvailable: true };
+        }
     }
 
     public static async tryGenerateRelatedName(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
