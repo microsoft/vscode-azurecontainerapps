@@ -21,7 +21,7 @@ export function getPickContainerAppStep(containerAppName?: string | RegExp): Azu
 
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: containerAppFilter },
-        skipIfOne: false,
+        skipIfOne: !!containerAppName,
     }, {
         placeHolder: localize('selectContainerApp', 'Select a container app'),
         noPicksMessage: localize('noContainerApps', 'Selected container apps environment has no apps'),
