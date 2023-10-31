@@ -3,7 +3,7 @@
 ## 0.6.0 - 2023-10-31
 
 ### Added
-* Large rework of the entire container apps extension UI/UX
+* Large rework of the container apps UI
     * A new `Configurations` item has now been added to the container app item and is present in all views.  The `Configurations` item houses the old `Dapr` and `Ingress` tree items as well as the new GitHub `Actions` and `Secrets` tree items [#379](https://github.com/microsoft/vscode-azurecontainerapps/pull/379)
     * Add a `Revision Management` item in multiple revisions mode where revisions now live [#379](https://github.com/microsoft/vscode-azurecontainerapps/pull/379), [#390](https://github.com/microsoft/vscode-azurecontainerapps/pull/390)
     * Add a conditional revision `Draft` item when in multiple revisions mode [#413](https://github.com/microsoft/vscode-azurecontainerapps/pull/413), [#453](https://github.com/microsoft/vscode-azurecontainerapps/pull/453)
