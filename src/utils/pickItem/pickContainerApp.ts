@@ -11,7 +11,7 @@ import { localize } from "../localize";
 import type { PickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
-export function getPickContainerAppStep(skipIfOne: boolean = false, containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
+export function getPickContainerAppStep(containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
     let containerAppFilter: RegExp | undefined;
     if (containerAppName) {
         containerAppFilter = containerAppName instanceof RegExp ? containerAppName : new RegExp(containerAppName);
@@ -21,7 +21,7 @@ export function getPickContainerAppStep(skipIfOne: boolean = false, containerApp
 
     return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         contextValueFilter: { include: containerAppFilter },
-        skipIfOne,
+        skipIfOne: containerAppName ? true : false,
     }, {
         placeHolder: localize('selectContainerApp', 'Select a container app'),
         noPicksMessage: localize('noContainerApps', 'Selected container apps environment has no apps'),
@@ -57,7 +57,7 @@ export async function pickContainerAppWithoutPrompt(
     return await runQuickPickWizard(context, {
         promptSteps: [
             ...getPickEnvironmentSteps(true /** skipIfOne */, environmentName),
-            getPickContainerAppStep(true /** skipIfOne */, containerApp.name)
+            getPickContainerAppStep(containerApp.name)
         ],
         title: options?.title,
         showLoadingPrompt: options?.showLoadingPrompt
