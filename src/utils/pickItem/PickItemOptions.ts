@@ -16,5 +16,4 @@ export interface RevisionPickItemOptions extends PickItemOptions {
 export interface PickItemOptions {
     title?: string;
     showLoadingPrompt?: boolean;
-    skipIfOne?: boolean;
 }
