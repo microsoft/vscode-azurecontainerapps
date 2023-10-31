@@ -67,7 +67,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
             }
 
             generatedName = generateRelatedName(name);
-            registryAvailable = !!context.registry || await RegistryNameStep.isNameAvailable(context, generatedName);
+            registryAvailable = !!context.registry || !!(await RegistryNameStep.isNameAvailable(context, generatedName)).nameAvailable;
         } while (!registryAvailable)
 
         return generatedName;
