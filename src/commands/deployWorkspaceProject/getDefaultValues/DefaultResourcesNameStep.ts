@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { RegistryNameStatus } from "@azure/arm-containerregistry";
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
@@ -32,7 +31,6 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
-        !context.registry && (context.newRegistryName = resourceBaseName.replace(/[^a-z0-9]+/g, ''));
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
         context.imageName = `${resourceBaseName}:latest`;
     }
@@ -55,7 +53,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         !context.resourceGroup && (context.newResourceGroupName = workspaceName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = workspaceName);
-        !context.registry && (context.newRegistryName = workspaceName.replace(/[^a-z0-9]+/g, ''));
+        !context.registry && (context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, workspaceName));
         !context.containerApp && (context.newContainerAppName = workspaceName);
         context.imageName = `${context.containerApp?.name || workspaceName}:latest`;
     }
@@ -95,9 +93,10 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             if (context.registry) {
                 // Skip check, one already exists so don't need to worry about naming
             } else {
-                const registryNameStatus: RegistryNameStatus = await RegistryNameStep.isNameAvailable(context, name.replace(/[^a-zA-Z0-9]+/g, ''));
-                if (!registryNameStatus.nameAvailable) {
-                    return `Registry: ${registryNameStatus.message ?? resourceNameUnavailable}`;
+                context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, name);
+
+                if (!context.newRegistryName) {
+                    return localize('timeoutError', 'Timed out waiting for registry name to be generated. Please try another name.');
                 }
             }
 
@@ -139,15 +138,11 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             isAvailable['managedEnvironment'] = true;
         }
 
-        if (context.registry || await RegistryNameStep.isNameAvailable(context, workspaceName.replace(/[^a-z0-9]+/g, ''))) {
-            isAvailable['containerRegistry'] = true;
-        }
-
         if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, workspaceName, workspaceName)) {
             isAvailable['containerApp'] = true;
         }
 
-        return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerRegistry'] && isAvailable['containerApp'];
+        return isAvailable['resourceGroup'] && isAvailable['managedEnvironment'] && isAvailable['containerApp'];
     }
 }
 
