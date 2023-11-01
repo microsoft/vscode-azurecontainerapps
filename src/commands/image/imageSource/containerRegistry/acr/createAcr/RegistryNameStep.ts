@@ -57,7 +57,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         let registryAvailable: boolean = false;
         let generatedName: string = '';
 
-        const timeoutSeconds: number = 60;
+        const timeoutSeconds: number = 15;
         const timeoutMs: number = timeoutSeconds * 1000;
         const start: number = Date.now();
 
