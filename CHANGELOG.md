@@ -17,7 +17,6 @@
 
     _For more information please see our [README](https://github.com/microsoft/vscode-azurecontainerapps#readme)_
     * `Edit Container App (Advanced)` and `Discard Draft` in single revision mode [#405](https://github.com/microsoft/vscode-azurecontainerapps/pull/405)
-    * `Create Draft` and `Edit Draft (Advanced)` in multiple revision mode [#413](https://github.com/microsoft/vscode-azurecontainerapps/pull/413)
     * `Deploy Draft` support (all modes) [#414](https://github.com/microsoft/vscode-azurecontainerapps/pull/414)
     * Ability for container app template commands to hook into the new revision draft update system [#423](https://github.com/microsoft/vscode-azurecontainerapps/pull/423)
     * Display a user setting controlled deployment pop-up when executing revision draft commands [#478](https://github.com/microsoft/vscode-azurecontainerapps/pull/478)
