@@ -30,11 +30,13 @@ Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vsc
 
 ## Deploy Project from Workspace
 
-We've introduced a new command to simplify the process of deploying a local workspace project to a container app! By analyzing your project directory, we automatically detect any Dockerfiles and proceed to generate all the necessary Azure resources required for creating a containerized application with a minimal number of prompts (monorepo support coming soon).
+We've introduced a new command to simplify the process of deploying a local workspace project to a container app!  By analyzing your project directory, we automatically detect any Dockerfiles and proceed to generate all the necessary Azure resources required for creating a containerized application (monorepo support coming soon).  Some steps may be omitted based on the state of your workspace project.
 
-1.  Select the button to deploy a project from your local workspace:
+1.  Navigate to the `Azure` view and select the `Deploy Project from Workspace...` button in the local workspace section:
 
-    _(If you do not have a workspace project open, you will be required to open one and restart the command)_
+    <img src='resources/readme/deploy-workspace-project.png' alt='Select the Deploy Project from Workspace button' width=600px />
+
+    _(If you do not have a workspace project open, you will be prompted to open one and restart the command)_
 
 1.  If prompted, select a Dockerfile.
 
@@ -44,13 +46,23 @@ We've introduced a new command to simplify the process of deploying a local work
 
 1.  If prompted, provide a name to be used to create new resources.
 
+1.  If prompted, select an environment variables file.
+
 1.  If prompted, select a location where new resources will be created.
 
-1.  Choose whether or not to save deployment settings to your local workspace project.
+1.  Choose to save the deployment configuration in your workspace project settings.
 
-    _(These can be re-used later for quick re-deployment)_
+    _(These can be used later for easy re-deployment)_
 
-__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands can be used to automatically target project deployment to these nodes.
+<br />
+
+__Expand the activity log for a summary of the results__:
+
+<img src='resources/readme/deploy-workspace-project-activity.png' alt='Deploy Project from Workspace activity log' width=500px />
+
+<br />
+
+__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands can be used to automatically target project deployment to existing resources.
 
 ## Contributing
 
