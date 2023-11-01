@@ -14,8 +14,6 @@
     * Expand command entry-points to include container apps environment and container app items [#482](https://github.com/microsoft/vscode-azurecontainerapps/pull/482)
 
 * New revision draft editing mode for bundling deployment changes [#311](https://github.com/microsoft/vscode-azurecontainerapps/issues/311)
-
-    _For more information please see our [README](https://github.com/microsoft/vscode-azurecontainerapps#readme)_
     * `Edit Container App (Advanced)` and `Discard Draft` in single revision mode [#405](https://github.com/microsoft/vscode-azurecontainerapps/pull/405)
     * `Deploy Draft` support (all modes) [#414](https://github.com/microsoft/vscode-azurecontainerapps/pull/414)
     * Ability for container app template commands to hook into the new revision draft update system [#423](https://github.com/microsoft/vscode-azurecontainerapps/pull/423)
@@ -48,8 +46,6 @@
 
 ### Removed
 * `Deploy to Container App...` was removed in favor of `Deploy Workspace to Container App` or `Update Container Image`
-
-    _For more information please see our [README](https://github.com/microsoft/vscode-azurecontainerapps#readme)_
 
 ### Engineering
 * Decoupled `Ingress` commands from the `createContainerApp` workflow [#371](https://github.com/microsoft/vscode-azurecontainerapps/pull/371), [375](https://github.com/microsoft/vscode-azurecontainerapps/pull/375)
