@@ -46,7 +46,9 @@ We've introduced a new command to simplify the process of deploying a local work
 
 1.  If prompted, select a location where new resources will be created.
 
-1.  Choose whether or not to save deployment settings to your local workspace project (these can be re-used later for quick re-deployment).
+1.  Choose whether or not to save deployment settings to your local workspace project.
+
+    _(These can be re-used later for quick re-deployment)_
 
 __Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands can be used to automatically target project deployment to these nodes.
 
