@@ -38,8 +38,6 @@ _Draft support has only been added for these actions: Scaling commands, Update C
     ![deployDraft](resources/readme/deployDraft.png)
 1. Once your deployment has completed your changes should accurately be reflected in the Azure view!
 
-
-
 ## Contributing
 
 There are a couple of ways you can contribute to this repo:
