@@ -63,7 +63,6 @@ suite('DefaultResourcesNameStep', async () => {
                         containerApp: undefined,
                         newResourceGroupName: 'workspace-name',
                         newManagedEnvironmentName: 'workspace-name',
-                        newRegistryName: 'workspacename',
                         newContainerAppName: 'workspace-name',
                         imageName: 'workspace-name:latest'
                     } as MockDefaultResourcesNameStepContext,
@@ -93,7 +92,6 @@ suite('DefaultResourcesNameStep', async () => {
                         containerApp: undefined,
                         newResourceGroupName: 'user-name',
                         newManagedEnvironmentName: 'user-name',
-                        newRegistryName: 'username',
                         newContainerAppName: 'user-name',
                         imageName: 'user-name:latest'
                     } as MockDefaultResourcesNameStepContext,
@@ -125,7 +123,6 @@ suite('DefaultResourcesNameStep', async () => {
                         containerApp: undefined,
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
-                        newRegistryName: 'workspacename',
                         newContainerAppName: 'workspace-name',
                         imageName: 'workspace-name:latest'
                     } as MockDefaultResourcesNameStepContext,
@@ -157,7 +154,6 @@ suite('DefaultResourcesNameStep', async () => {
                         containerApp: undefined,
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
-                        newRegistryName: 'username',
                         newContainerAppName: 'user-name',
                         imageName: 'user-name:latest'
                     } as MockDefaultResourcesNameStepContext,
@@ -191,7 +187,6 @@ suite('DefaultResourcesNameStep', async () => {
                         containerApp: { name: 'acr-build-1' },
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
-                        newRegistryName: undefined,
                         newContainerAppName: undefined,
                         imageName: 'acr-build-1:latest'
                     } as MockDefaultResourcesNameStepContext,
@@ -220,7 +215,6 @@ function getMockResultContext(context: MockDefaultResourcesNameStepContext): Moc
         containerApp: context.containerApp,
         newResourceGroupName: context.newResourceGroupName,
         newManagedEnvironmentName: context.newManagedEnvironmentName,
-        newRegistryName: context.newRegistryName,
         newContainerAppName: context.newContainerAppName,
         imageName: context.imageName
     };

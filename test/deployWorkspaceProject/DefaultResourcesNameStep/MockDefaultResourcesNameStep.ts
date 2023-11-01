@@ -15,7 +15,6 @@ export interface MockDefaultResourcesNameStepContext {
 
     newResourceGroupName?: string;
     newManagedEnvironmentName?: string;
-    newRegistryName?: string;
     newContainerAppName?: string;
 
     imageName?: string;

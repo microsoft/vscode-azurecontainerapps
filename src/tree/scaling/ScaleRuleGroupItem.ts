@@ -11,6 +11,7 @@ import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
+import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
@@ -65,7 +66,9 @@ export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
     }
 
     getChildren(): TreeElementBase[] {
-        return this.scaleRules.map(scaleRule => RevisionDraftDescendantBase.createTreeItem(ScaleRuleItem, this.subscription, this.containerApp, this.revision, scaleRule, this.hasUnsavedChanges())) ?? [];
+        return this.scaleRules
+            .map(scaleRule => RevisionDraftDescendantBase.createTreeItem(ScaleRuleItem, this.subscription, this.containerApp, this.revision, scaleRule, this.hasUnsavedChanges()))
+            .sort((a, b) => treeUtils.sortById(a, b));
     }
 
     hasUnsavedChanges(): boolean {
