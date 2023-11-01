@@ -62,7 +62,7 @@ __Expand the activity log for a summary of the results__:
 
 <br />
 
-__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands can be used to automatically target project deployment to existing resources.
+__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands can be used to target project deployment to existing resources.
 
 ## Contributing
 
