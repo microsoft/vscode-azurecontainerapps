@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.6.0 - 2023-10-31'
+## 0.6.0 - 2023-10-31
 
 ### Added
 * Large rework of the container apps UI
