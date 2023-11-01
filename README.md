@@ -34,7 +34,7 @@ We've introduced a new command to simplify the process of deploying a local work
 
 1.  Navigate to the `Azure` view and select the `Deploy Project from Workspace...` button in the local workspace section:
 
-    <img src='resources/readme/deploy-workspace-project.png' alt='Select the Deploy Project from Workspace button' width=600px />
+    <img src='resources/readme/deploy-workspace-project.png' alt='Select the Deploy Project from Workspace button' width=700px />
 
     _(If you do not have a workspace project open, you will be prompted to open one and restart the command)_
 
@@ -58,7 +58,7 @@ We've introduced a new command to simplify the process of deploying a local work
 
 __Expand the activity log for a summary of the results__:
 
-<img src='resources/readme/deploy-workspace-project-activity.png' alt='Deploy Project from Workspace activity log' width=500px />
+<img src='resources/readme/deploy-workspace-project-activity.png' alt='Deploy Project from Workspace activity log' width=700px />
 
 <br />
 
