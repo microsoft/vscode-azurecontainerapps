@@ -18,6 +18,21 @@ Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vsc
 
 <!-- region exclude-from-marketplace -->
 
+## Edit and deploy your app
+
+_Draft support has only been added for these actions: Scaling commands, Update Container Image..., Edit Container App (Advanced)_
+
+1. Make a supported edit to your container app. In this example we will be editing the scaling range.
+1. Changes made to your container app will be reflected by the appended "*" and the "Unsaved changes" tag added to the container app
+
+    ![unsavedChanges](resources/readme/unsavedChanges.png)
+
+1. More changes can be made and deployed together!
+1. Deploy these changes to your container app by clicking the cloud icon located next to your container app
+
+    ![deployDraft](resources/readme/deployDraft.png)
+1. Once your deployment has completed your changes should accurately be reflected in the Azure view!
+
 ## Contributing
 
 There are a couple of ways you can contribute to this repo:
