@@ -11,22 +11,27 @@ Use the Azure Containers extension to quickly create and deploy containerized ap
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
-## Support for [vscode.dev](https://vscode.dev/)
-
-![Create a quickstart container app with vscode.dev](resources/readme/vscode_dev_demo.gif)
-
-The Azure Container Apps extension now supports running on [vscode.dev](https://vscode.dev/) and [github.dev](http://github.dev/).  This means you can use the extension to manage your resources directly from the browser!
-
-The following functionalities are not supported in the web version of the extension:
-- Deploying to ACA through the Docker extension
-- Deploying via `Build from project remotely using Azure Container Registry`
-
 ## Create your first container app
 
 Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vscode) to create your first container app!
 
 
 <!-- region exclude-from-marketplace -->
+
+## Edit and deploy your app
+
+_Draft support has only been added for these actions: Scaling commands, Update Container Image..., Edit Container App (Advanced)_
+
+1. Make a supported edit to your container app. In this example we will be editing the scaling range.
+1. Changes made to your container app will be reflected by the appended "*" and the "Unsaved changes" tag added to the container app
+
+    ![unsavedChanges](resources/readme/unsavedChanges.png)
+
+1. More changes can be made and deployed together!
+1. Deploy these changes to your container app by clicking the cloud icon located next to your container app
+
+    ![deployDraft](resources/readme/deployDraft.png)
+1. Once your deployment has completed your changes should accurately be reflected in the Azure view!
 
 ## Deploy project from workspace
 
