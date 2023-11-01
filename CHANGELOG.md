@@ -30,7 +30,7 @@
 * Deploying to a container app via a connected GitHub repository [#353](https://github.com/microsoft/vscode-azurecontainerapps/issues/313)
 * Tree view and CRUD support for container app secrets
 * Delete existing scale rules [#461](https://github.com/microsoft/vscode-azurecontainerapps/pull/461)
-* Activity log support to the majority of commands
+* Improve activity log support for the majority of commands
 
 ### Changed
 * Use smart detection to suggest values when deploying from a container registry [#305](https://github.com/microsoft/vscode-azurecontainerapps/pull/305), [#331](https://github.com/microsoft/vscode-azurecontainerapps/pull/331)
