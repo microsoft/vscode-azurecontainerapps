@@ -19,15 +19,13 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         // Need to keep the additional try wrapper here to execute finally, then we can catch any error that percolates up and display its output
         try {
-            const rootUri = context.rootFolder.uri;
-
             const runRequest: AcrDockerBuildRequest = {
                 type: 'DockerBuildRequest',
                 imageNames: [context.imageName],
                 isPushEnabled: true,
                 sourceLocation: context.uploadedSourceLocation,
                 platform: { os: context.os },
-                dockerFilePath: path.relative(rootUri.path, context.dockerfilePath)
+                dockerFilePath: path.basename(context.dockerfilePath) /* Assume the dockerfile is always in the root of the source */
             };
 
             const building: string = localize('buildingImage', 'Building image...');

@@ -82,6 +82,9 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }
 
+        // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
+        void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
+
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Created, uri });
     }

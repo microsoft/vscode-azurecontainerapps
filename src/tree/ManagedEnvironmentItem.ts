@@ -38,7 +38,9 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     async getChildren(): Promise<ContainerAppsItem[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
             const containerApps = await ContainerAppItem.List(context, this.subscription, this.id);
-            return containerApps.map(ca => new ContainerAppItem(this.subscription, ca));
+            return containerApps
+                .map(ca => new ContainerAppItem(this.subscription, ca))
+                .sort((a, b) => treeUtils.sortById(a, b));
         });
 
         return result ?? [];

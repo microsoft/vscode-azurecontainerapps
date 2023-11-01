@@ -31,7 +31,9 @@ export class SecretsItem implements ContainerAppsItem {
 
     async getChildren(): Promise<TreeElementBase[]> {
         const secrets: Secret[] = this.containerApp.configuration?.secrets ?? [];
-        return secrets.map((secret) => new SecretItem(this.subscription, this.containerApp, nonNullProp(secret, 'name')));
+        return secrets
+            .map((secret) => new SecretItem(this.subscription, this.containerApp, nonNullProp(secret, 'name')))
+            .sort((a, b) => treeUtils.sortById(a, b));
     }
 
     getTreeItem(): TreeItem {

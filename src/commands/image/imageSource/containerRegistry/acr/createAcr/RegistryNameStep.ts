@@ -4,9 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep, ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, ISubscriptionActionContext, randomUtils } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
+import { DeployWorkspaceProjectContext } from "../../../../../deployWorkspaceProject/DeployWorkspaceProjectContext";
 import type { CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
@@ -36,16 +37,44 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     }
 
     private async validateNameAvalability(context: CreateAcrContext, name: string) {
-        if (!await RegistryNameStep.isNameAvailable(context, name)) {
-            return localize('validateInputError', `The registry name ${name} is already in use.`);
+        const registryNameStatus = await RegistryNameStep.isNameAvailable(context, name);
+        if (!registryNameStatus.nameAvailable) {
+            return registryNameStatus.message ?? localize('validateInputError', `The registry name ${name} is unavailable.`);
         }
-
         return undefined;
     }
 
-    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<boolean> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        const nameResponse: RegistryNameStatus = await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
-        return !!nameResponse.nameAvailable;
+    public static async isNameAvailable(context: ISubscriptionActionContext, name: string): Promise<RegistryNameStatus> {
+        try {
+            const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+            return await client.registries.checkNameAvailability({ name: name, type: "Microsoft.ContainerRegistry/registries" });
+        } catch (_theseHands) {
+            return { nameAvailable: true };
+        }
+    }
+
+    public static async tryGenerateRelatedName(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
+        let registryAvailable: boolean = false;
+        let generatedName: string = '';
+
+        const timeoutSeconds: number = 15;
+        const timeoutMs: number = timeoutSeconds * 1000;
+        const start: number = Date.now();
+
+        do {
+            if (Date.now() > start + timeoutMs) {
+                return undefined;
+            }
+
+            generatedName = generateRelatedName(name);
+            registryAvailable = !!context.registry || !!(await RegistryNameStep.isNameAvailable(context, generatedName)).nameAvailable;
+        } while (!registryAvailable)
+
+        return generatedName;
+
+        function generateRelatedName(name: string): string {
+            const suffix = randomUtils.getRandomHexString(6);
+            return (name.substring(0, 43) + suffix).replace(/[^a-zA-Z0-9]+/g, ''); // max length is 50 characters
+        }
     }
 }
