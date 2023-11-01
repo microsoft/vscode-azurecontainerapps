@@ -13,8 +13,13 @@ Use the Azure Containers extension to quickly create and deploy containerized ap
 
 ## Create your first container app
 
-Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vscode) to create your first container app!
+We've introduced a new command `Deploy Project from Workspace...` to simplify the process of deploying a local workspace project to a container app!  By analyzing your project directory, we automatically detect any Dockerfiles and generate all the necessary Azure resources required for creating a containerized application (monorepo support coming soon).
 
+Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vscode) to get started!
+
+You can re-run the command with your saved workspace settings to quickly re-deploy your project to the same Azure resources.
+
+__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands offer the flexibility to quickly target project deployment to existing resources.
 
 <!-- region exclude-from-marketplace -->
 
