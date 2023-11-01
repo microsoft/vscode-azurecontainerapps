@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.6.0 - 2023-10-31
+## 0.6.0 - 2023-11-1
 
 ### Added
 * New family of commands: `Deploy Project from Workspace`, `Create Container App from Workspace`, `Deploy Workspace to Container App` [#425](https://github.com/microsoft/vscode-azurecontainerapps/issues/425)
