@@ -30,7 +30,7 @@ Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vsc
 
 ## Deploy Project from Workspace
 
-We've introduced a new command to simplify the process of deploying a local workspace project to a container app!  By analyzing your project directory, we automatically detect any Dockerfiles and proceed to generate all the necessary Azure resources required for creating a containerized application (monorepo support coming soon).  Some steps may be omitted based on the state of your workspace project.
+We've introduced a new command to simplify the process of deploying a local workspace project to a container app!  By analyzing your project directory, we automatically detect any Dockerfiles and generate all the necessary Azure resources required for creating a containerized application (monorepo support coming soon).  Some steps may be omitted based on the state of your workspace project.
 
 1.  Navigate to the `Azure` view and select the `Deploy Project from Workspace...` button in the local workspace section:
 
