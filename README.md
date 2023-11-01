@@ -21,8 +21,6 @@ You can re-run the command with your saved workspace settings to quickly re-depl
 
 __Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands offer the flexibility to quickly target project deployment to existing resources.
 
-<!-- region exclude-from-marketplace -->
-
 ## Edit and deploy your app
 
 _Draft support has only been added for these actions: Scaling commands, Update Container Image..., Edit Container App (Advanced)_
@@ -37,6 +35,8 @@ _Draft support has only been added for these actions: Scaling commands, Update C
 
     ![deployDraft](resources/readme/deployDraft.png)
 1. Once your deployment has completed your changes should accurately be reflected in the Azure view!
+
+<!-- region exclude-from-marketplace -->
 
 ## Contributing
 
