@@ -7,7 +7,7 @@ import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
-import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
+import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, registryProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
@@ -135,8 +135,10 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', registryName));
     } else {
-        wizardContext.telemetry.properties.existingRegistry = 'false';
         // ImageSourceListStep can already handle this creation logic
+
+        providers.push(registryProvider);
+        wizardContext.telemetry.properties.existingRegistry = 'false';
     }
 
     // Container app

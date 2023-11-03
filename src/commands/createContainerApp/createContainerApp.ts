@@ -6,7 +6,7 @@
 import type { ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { webProvider } from "../../constants";
+import { registryProvider, webProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
@@ -42,7 +42,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     ];
 
     const executeSteps: AzureWizardExecuteStep<CreateContainerAppContext>[] = [
-        new VerifyProvidersStep([webProvider]),
+        new VerifyProvidersStep([webProvider, registryProvider]),
         new ContainerAppCreateStep(),
     ];
 

@@ -3,9 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { registryProvider } from "../../../../../../constants";
 import { ext } from "../../../../../../extensionVariables";
 import { createActivityContext } from "../../../../../../utils/activity/activityUtils";
 import { localize } from "../../../../../../utils/localize";
@@ -31,6 +32,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     ];
 
     const executeSteps: AzureWizardExecuteStep<CreateAcrContext>[] = [
+        new VerifyProvidersStep([registryProvider]),
         new ResourceGroupCreateStep(),
         new RegistryCreateStep(),
     ];
