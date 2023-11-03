@@ -32,7 +32,7 @@ import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextVal
 export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
     ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
 
-    // If an incompatible tree item is passed, treat it as if no item as passed
+    // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
         item = undefined;
     }
