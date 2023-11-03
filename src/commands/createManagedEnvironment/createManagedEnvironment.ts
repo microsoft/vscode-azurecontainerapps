@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { appProvider, managedEnvironmentsId, operationalInsightsProvider } from "../../constants";
+import { appProvider, managedEnvironmentsId } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activity/activityUtils";
+import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
@@ -30,7 +31,12 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
 
     promptSteps.push(new ManagedEnvironmentNameStep());
-    executeSteps.push(new VerifyProvidersStep([appProvider, operationalInsightsProvider]), new ResourceGroupCreateStep(), new LogAnalyticsCreateStep(), new ManagedEnvironmentCreateStep());
+    executeSteps.push(
+        getVerifyProvidersStep<IManagedEnvironmentContext>(),
+        new ResourceGroupCreateStep(),
+        new LogAnalyticsCreateStep(),
+        new ManagedEnvironmentCreateStep()
+    );
     LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
     LocationListStep.addStep(wizardContext, promptSteps);
 

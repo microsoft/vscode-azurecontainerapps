@@ -3,11 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { webProvider } from "../../../constants";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
@@ -35,7 +34,7 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     ];
 
     const executeSteps: AzureWizardExecuteStep<DeployImageApiContext>[] = [
-        new VerifyProvidersStep([webProvider]),
+        getVerifyProvidersStep<DeployImageApiContext>(),
         new ContainerAppUpdateStep()
     ];
 
