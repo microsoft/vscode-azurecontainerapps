@@ -14,8 +14,7 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
 
         context.imageName = await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),
-            value: suggestedImageName ? localize('dockerfilePlaceholder', suggestedImageName) : '',
-            validateInput: this.validateInput
+            value: suggestedImageName ? localize('dockerfilePlaceholder', suggestedImageName) : ''
         });
     }
 
@@ -23,18 +22,6 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
         return !context.imageName;
     }
 
-    private validateInput(name: string | undefined): string | undefined {
-        name = name ? name.trim() : '';
-
-        const { minLength, maxLength } = { minLength: 1, maxLength: 32 };
-        if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
-            return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`);
-        } else if ((name.length < minLength) || name.length > maxLength) {
-            return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
-        }
-
-        return undefined;
-    }
 }
 
 async function getSuggestedName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string | undefined> {
