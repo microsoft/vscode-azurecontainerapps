@@ -17,7 +17,7 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
 
         context.imageName = (await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),
-            value: suggestedImageName ? suggestedImageName.slice() : '',
+            value: suggestedImageName ?? '',
             validateInput: this.validateInput
         })).trim();
     }
