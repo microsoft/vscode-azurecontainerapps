@@ -9,13 +9,15 @@ import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
 import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
 
+const maxImageNameLength: number = 46;
+
 export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const suggestedImageName = await getSuggestedName(context, context.rootFolder.name);
 
         context.imageName = (await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),
-            value: suggestedImageName ? localize('dockerfilePlaceholder', suggestedImageName) : '',
+            value: suggestedImageName ? suggestedImageName.slice() : '',
             validateInput: this.validateInput
         })).trim();
     }
@@ -27,8 +29,8 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
     private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
-        if (!validateUtils.isValidLength(name, 1, 46)) {
-            return validateUtils.getInvalidLengthMessage(1, 46);
+        if (!validateUtils.isValidLength(name, 1, maxImageNameLength)) {
+            return validateUtils.getInvalidLengthMessage(1, maxImageNameLength);
         }
 
         return undefined;
@@ -43,6 +45,9 @@ async function getSuggestedName(context: BuildImageInAzureImageSourceContext, do
             suggestedImageName = Utils.basename(context.rootFolder.uri).toLowerCase().replace(/\s/g, '');
         }
     }
-    suggestedImageName += ":{{.Run.ID}}";
+
+    const tag: string = ':latest';
+    suggestedImageName = suggestedImageName?.slice(0, maxImageNameLength - tag.length);
+    suggestedImageName += tag;
     return suggestedImageName;
 }
