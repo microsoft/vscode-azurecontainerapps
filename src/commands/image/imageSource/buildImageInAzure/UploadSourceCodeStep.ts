@@ -3,10 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, GenericTreeItem, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, GenericTreeItem, nonNullValue, parseError } from '@microsoft/vscode-azext-utils';
+import { exec } from 'child_process';
 import * as path from 'path';
 import type { Progress } from 'vscode';
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from '../../../../constants';
+import { ext } from '../../../../extensionVariables';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
@@ -43,11 +45,37 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
         const relativePath: string = nonNullValue(sourceUploadLocation.relativePath);
 
+        ext.outputChannel.appendLog('Tar File Path: ' + context.tarFilePath);
+        ext.outputChannel.appendLog('List tar contents: ');
+
+        // Try to list tar contents
+        await new Promise<void>((res, rej) => {
+            exec(`tar tvf ${context.tarFilePath}`, (e, stdout, stderr) => {
+                if (e) {
+                    const err = parseError(e);
+                    ext.outputChannel.appendLog(err.message);
+                    rej();
+                }
+
+                if (stderr) {
+                    const err = parseError(stderr);
+                    ext.outputChannel.appendLog(err.message);
+                    rej();
+                }
+
+                ext.outputChannel.appendLog(stdout);
+                res();
+            });
+        });
+
+        ext.outputChannel.appendLog('Source Upload Location - Upload Url: ' + uploadUrl);
+        ext.outputChannel.appendLog('Source Upload Location - Relative Path: ' + relativePath);
+
         const storageBlob = await import('@azure/storage-blob');
         const blobClient = new storageBlob.BlockBlobClient(uploadUrl);
         await blobClient.uploadFile(context.tarFilePath);
 
-        context.uploadedSourceLocation = relativePath;
+        context.uploadedSourceLocation = uploadUrl;
     }
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
