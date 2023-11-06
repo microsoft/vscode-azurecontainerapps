@@ -3,17 +3,18 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { LocationListStep, ResourceGroupCreateStep, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
 import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
-import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId, operationalInsightsProvider, webProvider } from "../../constants";
+import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
 import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
+import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
@@ -31,6 +32,11 @@ import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextVal
 
 export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
     ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
+
+    // If an incompatible tree item is passed, treat it as if no item was passed
+    if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        item = undefined;
+    }
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
@@ -62,8 +68,6 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectContext>[] = [
         new DeployWorkspaceProjectSaveSettingsStep()
     ];
-
-    const providers: string[] = [];
 
     // Resource group
     if (wizardContext.resourceGroup) {
@@ -112,11 +116,6 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
             new LogAnalyticsCreateStep(),
             new ManagedEnvironmentCreateStep()
         );
-
-        providers.push(
-            appProvider,
-            operationalInsightsProvider
-        );
     }
 
     // Azure Container Registry
@@ -135,8 +134,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
         ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', registryName));
     } else {
-        wizardContext.telemetry.properties.existingRegistry = 'false';
         // ImageSourceListStep can already handle this creation logic
+        wizardContext.telemetry.properties.existingRegistry = 'false';
     }
 
     // Container app
@@ -170,10 +169,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         new IngressPromptStep(),
     );
 
-    providers.push(webProvider);
-
     // Verify providers
-    executeSteps.push(new VerifyProvidersStep(providers));
+    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectContext>());
 
     // Location
     if (LocationListStep.hasLocation(wizardContext)) {

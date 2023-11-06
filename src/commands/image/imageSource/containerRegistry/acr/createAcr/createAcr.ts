@@ -8,6 +8,7 @@ import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionCont
 import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../../../../extensionVariables";
 import { createActivityContext } from "../../../../../../utils/activity/activityUtils";
+import { getVerifyProvidersStep } from "../../../../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../../../../utils/localize";
 import { CreateAcrContext } from "./CreateAcrContext";
 import { RegistryCreateStep } from "./RegistryCreateStep";
@@ -31,6 +32,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     ];
 
     const executeSteps: AzureWizardExecuteStep<CreateAcrContext>[] = [
+        getVerifyProvidersStep<CreateAcrContext>(),
         new ResourceGroupCreateStep(),
         new RegistryCreateStep(),
     ];
