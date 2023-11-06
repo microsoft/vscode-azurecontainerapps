@@ -8,7 +8,7 @@ import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import type { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
+import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activity/activityUtils";
 import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
@@ -22,6 +22,11 @@ import type { CreateContainerAppContext } from "./CreateContainerAppContext";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
 export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
+    // If an incompatible tree item is passed, treat it as if no item was passed
+    if (node && !ManagedEnvironmentItem.isManagedEnvironmentItem(node)) {
+        node = undefined;
+    }
+
     node ??= await pickEnvironment(context);
 
     const wizardContext: CreateContainerAppContext = {
