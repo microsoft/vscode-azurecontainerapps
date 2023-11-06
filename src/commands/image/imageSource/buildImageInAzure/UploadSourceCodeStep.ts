@@ -73,7 +73,9 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
 
         const storageBlob = await import('@azure/storage-blob');
         const blobClient = new storageBlob.BlockBlobClient(uploadUrl);
-        await blobClient.uploadFile(context.tarFilePath);
+        const blobResponse = await blobClient.uploadFile(context.tarFilePath);
+
+        ext.outputChannel.appendLog("Blob upload response code: " + blobResponse._response.status.toString());
 
         context.uploadedSourceLocation = relativePath;
     }
