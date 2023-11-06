@@ -11,6 +11,7 @@ export const managedEnvironmentsId = 'managedEnvironments';
 export const containerAppsId = 'containerApps';
 export const appProvider: string = 'Microsoft.App';
 export const webProvider: string = 'Microsoft.Web';
+export const registryProvider: string = 'Microsoft.ContainerRegistry';
 export const operationalInsightsProvider: string = 'Microsoft.OperationalInsights';
 
 export const containerAppsWebProvider: string = `${webProvider}/${containerAppsId}`;

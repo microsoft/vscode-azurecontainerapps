@@ -4,9 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
-import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { webProvider } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
@@ -14,6 +12,7 @@ import type { ContainerAppItem, ContainerAppModel } from "../../../tree/Containe
 import type { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import type { RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
@@ -62,7 +61,7 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     ];
 
     const executeSteps: AzureWizardExecuteStep<UpdateImageContext>[] = [
-        new VerifyProvidersStep([webProvider]),
+        getVerifyProvidersStep<UpdateImageContext>(),
         new UpdateRegistryAndSecretsStep(),
         new UpdateImageDraftStep(item)
     ];
