@@ -46,8 +46,8 @@ async function getSuggestedName(context: BuildImageInAzureImageSourceContext, do
         }
     }
 
-    const tag: string = ':latest';
-    suggestedImageName = suggestedImageName?.slice(0, maxImageNameLength - tag.length);
-    suggestedImageName += tag;
+    const colonTag: string = ':latest';
+    suggestedImageName = suggestedImageName?.slice(0, maxImageNameLength - colonTag.length);
+    suggestedImageName += colonTag;
     return suggestedImageName;
 }
