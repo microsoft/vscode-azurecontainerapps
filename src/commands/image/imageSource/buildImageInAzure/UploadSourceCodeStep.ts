@@ -75,7 +75,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         const blobClient = new storageBlob.BlockBlobClient(uploadUrl);
         await blobClient.uploadFile(context.tarFilePath);
 
-        context.uploadedSourceLocation = uploadUrl;
+        context.uploadedSourceLocation = relativePath;
     }
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
