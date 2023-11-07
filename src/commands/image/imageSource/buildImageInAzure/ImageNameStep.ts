@@ -4,7 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { URI, Utils } from "vscode-uri";
 import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
 import { CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
@@ -18,7 +17,7 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
             context.containerApp?.name ||
             // Step is also technically reachable from the `createContainerApp` entry point
             (context as CreateContainerAppContext).newContainerAppName ||
-            await getSuggestedRepositoryName(context, context.rootFolder.name)
+            'hello-world'
         );
 
         context.imageName = (await context.ui.showInputBox({
@@ -46,19 +45,6 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
         const tag: string = getTimestampTag();
         return repositoryName.slice(0, maxImageNameLength - (tag.length + 1)) + ':' + tag;
     }
-}
-
-async function getSuggestedRepositoryName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string> {
-    let suggestedRepositoryName: string | undefined;
-    suggestedRepositoryName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
-
-    if (suggestedRepositoryName === '') {
-        if (context.rootFolder) {
-            suggestedRepositoryName = Utils.basename(context.rootFolder.uri).toLowerCase().replace(/\s/g, '');
-        }
-    }
-
-    return suggestedRepositoryName || 'hello-world';
 }
 
 function getTimestampTag(): string {
