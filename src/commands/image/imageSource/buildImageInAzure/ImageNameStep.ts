@@ -13,7 +13,7 @@ const maxImageNameLength: number = 46;
 
 export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const suggestedImageName = ImageNameStep.generateSuggestedImageName(
+        const suggestedImageName = ImageNameStep.getTimestampedImageName(
             context.containerApp?.name ||
             // Step is also technically reachable from the `createContainerApp` entry point
             (context as CreateContainerAppContext).newContainerAppName ||
@@ -41,7 +41,7 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
         return undefined;
     }
 
-    static generateSuggestedImageName(repositoryName: string): string {
+    static getTimestampedImageName(repositoryName: string): string {
         const tag: string = getTimestampTag();
         return repositoryName.slice(0, maxImageNameLength - (tag.length + 1)) + ':' + tag;
     }
