@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
-import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 export enum AcrBuildSupportedOS {
     Windows = 'Windows',

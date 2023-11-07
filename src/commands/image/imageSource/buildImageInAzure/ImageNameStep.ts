@@ -7,13 +7,13 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { URI, Utils } from "vscode-uri";
 import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
-import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
+import type { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
-const maxImageNameLength: number = 46;
+export const maxImageNameLength: number = 46;
 
 export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const suggestedImageName = await getSuggestedName(context, context.rootFolder.name);
+        const suggestedImageName = ImageNameStep.generateSuggestedImageName(await getSuggestedRepositoryName(context, context.rootFolder.name));
 
         context.imageName = (await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),
@@ -35,19 +35,35 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
 
         return undefined;
     }
+
+    static generateSuggestedImageName(repositoryName: string = 'hello-world'): string {
+        const tag: string = getTimestampTag();
+        return repositoryName.slice(0, maxImageNameLength - (tag.length + 1)) + ':' + tag;
+    }
 }
 
-async function getSuggestedName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string | undefined> {
-    let suggestedImageName: string | undefined;
-    suggestedImageName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
-    if (suggestedImageName === '') {
+async function getSuggestedRepositoryName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string | undefined> {
+    let suggestedRepositoryName: string | undefined;
+    suggestedRepositoryName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
+
+    if (suggestedRepositoryName === '') {
         if (context.rootFolder) {
-            suggestedImageName = Utils.basename(context.rootFolder.uri).toLowerCase().replace(/\s/g, '');
+            suggestedRepositoryName = Utils.basename(context.rootFolder.uri).toLowerCase().replace(/\s/g, '');
         }
     }
 
-    const colonTag: string = ':latest';
-    suggestedImageName = suggestedImageName?.slice(0, maxImageNameLength - colonTag.length);
-    suggestedImageName += colonTag;
-    return suggestedImageName;
+    return suggestedRepositoryName;
+}
+
+function getTimestampTag(): string {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months start at 0, so add 1
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}_${hours}${minutes}${seconds}`;
 }

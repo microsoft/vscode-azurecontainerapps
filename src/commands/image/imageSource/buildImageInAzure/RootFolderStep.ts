@@ -6,7 +6,7 @@ import { AzureWizardPromptStep, UserCancelledError } from '@microsoft/vscode-aze
 import * as vscode from 'vscode';
 import { isAzdWorkspaceProject } from '../../../../utils/azdUtils';
 import { localize } from '../../../../utils/localize';
-import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
+import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {

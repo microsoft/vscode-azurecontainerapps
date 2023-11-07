@@ -8,7 +8,7 @@ import type { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
 import type { CreateContainerAppBaseContext } from "../createContainerApp/CreateContainerAppContext";
 import type { IManagedEnvironmentContext } from "../createManagedEnvironment/IManagedEnvironmentContext";
-import { BuildImageInAzureImageSourceBaseContext } from "../image/imageSource/buildImageInAzure/BuildImageInAzureContext";
+import { BuildImageInAzureImageSourceBaseContext } from "../image/imageSource/buildImageInAzure/BuildImageInAzureImageSourceContext";
 import type { CreateAcrContext } from "../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 
 // Use intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by having to use the 'Partial' utility

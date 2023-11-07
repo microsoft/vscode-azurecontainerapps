@@ -7,7 +7,7 @@ import type { Run as AcrRun } from '@azure/arm-containerregistry';
 import { KnownRunStatus } from '@azure/arm-containerregistry';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import { delay } from '../../../../utils/delay';
-import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
+import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 const WAIT_MS = 5000;
 

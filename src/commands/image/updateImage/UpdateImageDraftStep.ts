@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Revision } from "@azure/arm-appcontainers";
-import { nonNullProp, randomUtils } from "@microsoft/vscode-azext-utils";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import type { Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
@@ -29,8 +29,7 @@ export class UpdateImageDraftStep<T extends UpdateImageContext> extends Revision
         this.revisionDraftTemplate.containers.push({
             env: context.environmentVariables,
             image: context.image,
-            // We need the revision draft to always show up as having unsaved changes, we can ensure this by adding a unique ID at end of the container name
-            name: getContainerNameForImage(nonNullProp(context, 'image')) + `-${randomUtils.getRandomHexString(5)}`,
+            name: getContainerNameForImage(nonNullProp(context, 'image')),
         });
 
         await this.updateRevisionDraftWithTemplate(context);
