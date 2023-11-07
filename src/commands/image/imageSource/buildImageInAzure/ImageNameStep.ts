@@ -42,13 +42,13 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
         return undefined;
     }
 
-    static generateSuggestedImageName(repositoryName: string = 'hello-world'): string {
+    static generateSuggestedImageName(repositoryName: string): string {
         const tag: string = getTimestampTag();
         return repositoryName.slice(0, maxImageNameLength - (tag.length + 1)) + ':' + tag;
     }
 }
 
-async function getSuggestedRepositoryName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string | undefined> {
+async function getSuggestedRepositoryName(context: BuildImageInAzureImageSourceContext, dockerFilePath: string): Promise<string> {
     let suggestedRepositoryName: string | undefined;
     suggestedRepositoryName = Utils.dirname(URI.parse(dockerFilePath)).path.split('/').pop();
 
@@ -58,7 +58,7 @@ async function getSuggestedRepositoryName(context: BuildImageInAzureImageSourceC
         }
     }
 
-    return suggestedRepositoryName;
+    return suggestedRepositoryName || 'hello-world';
 }
 
 function getTimestampTag(): string {

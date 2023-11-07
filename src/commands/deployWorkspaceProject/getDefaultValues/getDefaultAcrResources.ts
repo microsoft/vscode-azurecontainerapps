@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { Registry } from "@azure/arm-containerregistry";
-import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import type { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
@@ -37,7 +37,7 @@ export async function getDefaultAcrResources(
         ext.outputChannel.appendLog(localize('foundResourceMatch', 'Used saved workspace settings and found an existing container registry.'));
         return {
             registry: savedRegistry,
-            imageName: ImageNameStep.generateSuggestedImageName(settings.containerAppName || savedRegistry.name)
+            imageName: ImageNameStep.generateSuggestedImageName(settings.containerAppName || nonNullProp(savedRegistry, 'name'))
         };
     } else {
         ext.outputChannel.appendLog(localize('noResourceMatch', 'Used saved workspace settings to search for Azure Container Registry "{0}" but found no match.', settings.containerRegistryName));
