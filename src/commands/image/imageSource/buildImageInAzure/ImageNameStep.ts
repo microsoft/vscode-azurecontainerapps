@@ -10,7 +10,7 @@ import { validateUtils } from "../../../../utils/validateUtils";
 import { CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
 import type { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
-export const maxImageNameLength: number = 46;
+const maxImageNameLength: number = 46;
 
 export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
