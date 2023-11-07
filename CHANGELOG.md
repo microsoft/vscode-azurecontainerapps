@@ -9,7 +9,7 @@
 * Improve image name validation and make suggested images names unique by appending a timestamped tag [#560](https://github.com/microsoft/vscode-azurecontainerapps/pull/560) [#565](https://github.com/microsoft/vscode-azurecontainerapps/pull/565)
 
 ### Fixed
-* Addressed an issue where VS Code was passing incompatible tree items to the container apps local workspace ribbon commands. If an incompatible tree item is now passed, we will now treat it as if no tree item was passed [#559](https://github.com/microsoft/vscode-azurecontainerapps/pull/559)
+* Addressed an issue where VS Code was passing incompatible tree items to the container apps local workspace ribbon commands. If an incompatible tree item is passed, we will now treat it as if no tree item was passed [#559](https://github.com/microsoft/vscode-azurecontainerapps/pull/559)
 
 ## 0.6.0 - 2023-11-01
 
