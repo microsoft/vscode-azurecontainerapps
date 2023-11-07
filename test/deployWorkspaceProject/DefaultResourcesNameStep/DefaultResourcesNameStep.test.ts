@@ -64,7 +64,6 @@ suite('DefaultResourcesNameStep', async () => {
                         newResourceGroupName: 'workspace-name',
                         newManagedEnvironmentName: 'workspace-name',
                         newContainerAppName: 'workspace-name',
-                        imageName: 'workspace-name:latest'
                     } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
@@ -93,7 +92,6 @@ suite('DefaultResourcesNameStep', async () => {
                         newResourceGroupName: 'user-name',
                         newManagedEnvironmentName: 'user-name',
                         newContainerAppName: 'user-name',
-                        imageName: 'user-name:latest'
                     } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
@@ -124,7 +122,6 @@ suite('DefaultResourcesNameStep', async () => {
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
                         newContainerAppName: 'workspace-name',
-                        imageName: 'workspace-name:latest'
                     } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
@@ -155,7 +152,6 @@ suite('DefaultResourcesNameStep', async () => {
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
                         newContainerAppName: 'user-name',
-                        imageName: 'user-name:latest'
                     } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
@@ -188,7 +184,6 @@ suite('DefaultResourcesNameStep', async () => {
                         newResourceGroupName: undefined,
                         newManagedEnvironmentName: undefined,
                         newContainerAppName: undefined,
-                        imageName: 'acr-build-1:latest'
                     } as MockDefaultResourcesNameStepContext,
                     getMockResultContext(wizardContext)
                 );
@@ -216,6 +211,5 @@ function getMockResultContext(context: MockDefaultResourcesNameStepContext): Moc
         newResourceGroupName: context.newResourceGroupName,
         newManagedEnvironmentName: context.newManagedEnvironmentName,
         newContainerAppName: context.newContainerAppName,
-        imageName: context.imageName
     };
 }
