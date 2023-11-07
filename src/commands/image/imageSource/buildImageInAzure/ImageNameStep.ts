@@ -7,13 +7,19 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { URI, Utils } from "vscode-uri";
 import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
+import { CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
 import type { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 export const maxImageNameLength: number = 46;
 
 export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const suggestedImageName = ImageNameStep.generateSuggestedImageName(await getSuggestedRepositoryName(context, context.rootFolder.name));
+        const suggestedImageName = ImageNameStep.generateSuggestedImageName(
+            context.containerApp?.name ||
+            // Step is also technically reachable from the `createContainerApp` entry point
+            (context as CreateContainerAppContext).newContainerAppName ||
+            await getSuggestedRepositoryName(context, context.rootFolder.name)
+        );
 
         context.imageName = (await context.ui.showInputBox({
             prompt: localize('imageNamePrompt', 'Enter a name for the image'),

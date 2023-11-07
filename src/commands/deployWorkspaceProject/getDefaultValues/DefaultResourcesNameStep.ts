@@ -33,7 +33,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
-        context.imageName = ImageNameStep.generateSuggestedImageName(resourceBaseName);
+        context.imageName = ImageNameStep.generateSuggestedImageName(context.containerApp?.name || resourceBaseName);
     }
 
     public async configureBeforePrompt(context: DeployWorkspaceProjectContext): Promise<void> {
