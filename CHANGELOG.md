@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.6.1 - 2023-11-7
+
+### Added
+* Added the `Microsoft.ContainerRegistry` provider to the verify providers list.  This will make it so that users do not have to go into the portal to register their subscription when accessing registries for the first time [#558](https://github.com/microsoft/vscode-azurecontainerapps/pull/558)
+
+### Changed
+* Improve image name validation and make suggested images names unique by appending a timestamped tag [#560](https://github.com/microsoft/vscode-azurecontainerapps/pull/560) [#565](https://github.com/microsoft/vscode-azurecontainerapps/pull/565)
+
+### Fixed
+* Addressed an issue where VS Code was passing incompatible tree items to the container apps local workspace ribbon commands. If an incompatible tree item is now passed, we will now treat it as if no tree item was passed [#559](https://github.com/microsoft/vscode-azurecontainerapps/pull/559)
+
 ## 0.6.0 - 2023-11-1
 
 ### Added
