@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
 import { CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
@@ -16,8 +16,7 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
         const suggestedImageName = ImageNameStep.getTimestampedImageName(
             context.containerApp?.name ||
             // Step is also technically reachable from the `createContainerApp` entry point
-            (context as CreateContainerAppContext).newContainerAppName ||
-            'hello-world'
+            nonNullProp((context as CreateContainerAppContext), 'newContainerAppName')
         );
 
         context.imageName = (await context.ui.showInputBox({
