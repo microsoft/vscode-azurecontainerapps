@@ -41,8 +41,8 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
                 resourcesToCreate.join(', ')
             );
         } else {
-            confirmMessage = localize('overwriteConfirm', 'The latest deployment of container app "{0}" and the latest image of registry "{1}" will be overwritten.', context.containerApp?.name, context.registry?.name);
-            outputMessage = localize('overwriteConfirmed', 'User confirmed overwrite of container app "{0}" and the latest image of registry "{1}".', context.containerApp?.name, context.registry?.name);
+            confirmMessage = localize('overwriteConfirm', 'The latest deployment of container app "{0}" will be overwritten.', context.containerApp?.name);
+            outputMessage = localize('overwriteConfirmed', 'User confirmed overwrite of container app "{0}".', context.containerApp?.name);
         }
 
         if (this.hasUnsupportedFeatures(context)) {

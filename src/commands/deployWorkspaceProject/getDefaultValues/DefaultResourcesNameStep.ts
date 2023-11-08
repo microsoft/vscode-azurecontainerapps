@@ -11,6 +11,7 @@ import { localize } from "../../../utils/localize";
 import { validateUtils } from "../../../utils/validateUtils";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
+import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import type { DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 
@@ -32,7 +33,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         !context.resourceGroup && (context.newResourceGroupName = resourceBaseName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceBaseName);
         !context.containerApp && (context.newContainerAppName = resourceBaseName);
-        context.imageName = `${resourceBaseName}:latest`;
+        context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp?.name || resourceBaseName);
     }
 
     public async configureBeforePrompt(context: DeployWorkspaceProjectContext): Promise<void> {
@@ -55,7 +56,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         !context.managedEnvironment && (context.newManagedEnvironmentName = workspaceName);
         !context.registry && (context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, workspaceName));
         !context.containerApp && (context.newContainerAppName = workspaceName);
-        context.imageName = `${context.containerApp?.name || workspaceName}:latest`;
+        context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp?.name || workspaceName);
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {

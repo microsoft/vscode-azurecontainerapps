@@ -14,7 +14,7 @@ import { getPickEnvironmentSteps } from "./pickEnvironment";
 export function getPickContainerAppStep(containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
     let containerAppFilter: RegExp | undefined;
     if (containerAppName) {
-        containerAppFilter = containerAppName instanceof RegExp ? containerAppName : new RegExp(containerAppName);
+        containerAppFilter = containerAppName instanceof RegExp ? containerAppName : new RegExp(`^${containerAppName}$`);
     } else {
         containerAppFilter = ContainerAppItem.contextValueRegExp;
     }

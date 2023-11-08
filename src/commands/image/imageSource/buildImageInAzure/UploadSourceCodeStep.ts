@@ -13,7 +13,7 @@ import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from '../../../.
 import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
-import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureContext';
+import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 

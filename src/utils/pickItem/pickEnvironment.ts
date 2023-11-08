@@ -16,7 +16,7 @@ export function getPickEnvironmentSteps(skipIfOne: boolean = false, environmentN
 
     let environmentFilter: RegExp | undefined;
     if (environmentName) {
-        environmentFilter = environmentName instanceof RegExp ? environmentName : new RegExp(environmentName);
+        environmentFilter = environmentName instanceof RegExp ? environmentName : new RegExp(`^${environmentName}$`);
     } else {
         environmentFilter = ManagedEnvironmentItem.contextValueRegExp;
     }
