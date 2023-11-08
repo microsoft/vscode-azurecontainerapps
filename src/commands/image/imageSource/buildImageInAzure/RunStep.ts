@@ -11,7 +11,7 @@ import { activityFailContext, activityFailIcon } from "../../../../constants";
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
-import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 440;

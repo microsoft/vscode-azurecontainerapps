@@ -10,7 +10,7 @@ import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContex
 import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
-import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureContext";
+import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
