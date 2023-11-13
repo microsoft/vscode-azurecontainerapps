@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { Extension, WorkspaceFolder, extensions } from "vscode";
+import { extensions, type Extension, type WorkspaceFolder } from "vscode";
 
 const azdExtensionId: string = 'ms-azuretools.azure-dev';
 const azureYamlFile: string = 'azure.yaml';

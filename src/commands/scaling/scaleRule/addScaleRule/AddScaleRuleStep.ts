@@ -7,11 +7,11 @@ import { type ScaleRule } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ScaleRuleTypes } from "../../../../constants";
 import { ext } from "../../../../extensionVariables";
-import type { RevisionsItemModel } from "../../../../tree/revisionManagement/RevisionItem";
+import { type RevisionsItemModel } from "../../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../../utils/localize";
 import { getParentResourceFromItem } from "../../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../../revisionDraft/RevisionDraftUpdateBaseStep";
-import type { IAddScaleRuleContext } from "./IAddScaleRuleContext";
+import { type IAddScaleRuleContext } from "./IAddScaleRuleContext";
 
 export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 1120;

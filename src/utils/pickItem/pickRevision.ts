@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, NoResourceFoundError, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
+import { ContextValueQuickPickStep, NoResourceFoundError, runQuickPickWizard, type AzureWizardPromptStep, type IActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../localize";
-import type { PickItemOptions, RevisionPickItemOptions } from "./PickItemOptions";
+import { type PickItemOptions, type RevisionPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 
 export function getPickRevisionDraftStep(): AzureWizardPromptStep<QuickPickWizardContext> {

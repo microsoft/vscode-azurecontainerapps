@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
-import type { ResourceGroup } from "@azure/arm-resources";
+import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
-import type { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
+import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 
 export async function getResourcesFromContainerAppHelper(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);

@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, AzureWizardPromptStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { AzureWizard, createSubscriptionContext, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { ContainerListStep } from "./ContainerListStep";
-import { IStreamLogsContext } from "./IStreamLogsContext";
+import { type IStreamLogsContext } from "./IStreamLogsContext";
 import { ReplicaListStep } from "./ReplicaListStep";
 import { RevisionListStep } from "./RevisionListStep";
 import { logStreamRequest } from "./logStreamRequest";

@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { quickStartImageName } from "../../constants";
-import { CreateContainerAppContext } from "./CreateContainerAppContext";
+import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 
 export function setQuickStartImage(context: Partial<CreateContainerAppContext>): void {
     context.image = quickStartImageName;

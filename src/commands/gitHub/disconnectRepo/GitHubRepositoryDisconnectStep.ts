@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { gitHubUrlParse } from "@microsoft/vscode-azext-github";
 import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
-import type { IDisconnectRepoContext } from "./IDisconnectRepoContext";
+import { type IDisconnectRepoContext } from "./IDisconnectRepoContext";
 
 export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisconnectRepoContext> {
     public priority: number = 300;

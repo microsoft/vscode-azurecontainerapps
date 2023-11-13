@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem } from "@microsoft/vscode-azext-utils";
-import { DotenvParseOutput, parse } from "dotenv";
-import { Uri, workspace } from "vscode";
+import { parse, type DotenvParseOutput } from "dotenv";
+import { workspace, type Uri } from "vscode";
 import { ImageSource, SetEnvironmentVariableOption, activitySuccessContext, activitySuccessIcon, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import type { EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
-import type { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
+import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import type { ImageSourceBaseContext } from "./ImageSourceContext";
+import { type ImageSourceBaseContext } from "./ImageSourceContext";
 
 type EnvironmentVariablesContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
 

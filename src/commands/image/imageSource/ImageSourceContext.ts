@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { EnvironmentVar, RegistryCredentials, Secret } from "@azure/arm-appcontainers";
-import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import type { ImageSource, ImageSourceValues } from "../../../constants";
-import type { ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
-import type { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import type { IContainerAppContext } from "../../IContainerAppContext";
+import { type EnvironmentVar, type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
+import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { type ImageSource, type ImageSourceValues } from "../../../constants";
+import { type ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
+import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { type IContainerAppContext } from "../../IContainerAppContext";
 
 export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteActivityContext {
     // ImageSourceListStep

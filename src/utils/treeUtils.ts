@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { type TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
-import { TreeElementBase } from '../tree/ContainerAppsBranchDataProvider';
+import { type TreeElementBase } from '../tree/ContainerAppsBranchDataProvider';
 
 export namespace treeUtils {
     export function getIconPath(iconName: string): TreeItemIconPath {

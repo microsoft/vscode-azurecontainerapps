@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Run as AcrRun, ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
-import * as vscode from 'vscode';
-import type { BuildImageInAzureTelemetryProps as TelemetryProps } from '../../../../telemetry/ImageSourceTelemetryProps';
-import type { SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps';
-import { ContainerRegistryImageSourceBaseContext } from '../containerRegistry/ContainerRegistryImageSourceContext';
-import type { AcrBuildSupportedOS } from './OSPickStep';
+import { type Run as AcrRun, type ContainerRegistryManagementClient } from '@azure/arm-containerregistry';
+import type * as vscode from 'vscode';
+import { type BuildImageInAzureTelemetryProps as TelemetryProps } from '../../../../telemetry/ImageSourceTelemetryProps';
+import { type SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps';
+import { type ContainerRegistryImageSourceBaseContext } from '../containerRegistry/ContainerRegistryImageSourceContext';
+import { type AcrBuildSupportedOS } from './OSPickStep';
 
 export interface BuildImageInAzureImageSourceBaseContext extends ContainerRegistryImageSourceBaseContext {
     rootFolder: vscode.WorkspaceFolder;

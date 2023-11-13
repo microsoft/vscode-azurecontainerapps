@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
 import { validateUtils } from "../../../utils/validateUtils";
-import type { ISecretContext } from "../ISecretContext";
+import { type ISecretContext } from "../ISecretContext";
 
 export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {

@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../constants";
 import { ext } from "../../extensionVariables";
-import type { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import type { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
+import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
 import { localize } from "../../utils/localize";
 import { settingUtils } from "../../utils/settingUtils";
 

@@ -3,10 +3,10 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { AcrBuildSupportedOS } from "../commands/image/imageSource/buildImageInAzure/OSPickStep";
-import type { ImageSource, SetEnvironmentVariableOption, SupportedRegistries } from "../constants";
-import type { AzdTelemetryProps } from "./AzdTelemetryProps";
-import { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
+import { type AcrBuildSupportedOS } from "../commands/image/imageSource/buildImageInAzure/OSPickStep";
+import { type ImageSource, type SetEnvironmentVariableOption, type SupportedRegistries } from "../constants";
+import { type AzdTelemetryProps } from "./AzdTelemetryProps";
+import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface ImageSourceTelemetryProps extends ContainerRegistryTelemetryProps, BuildImageInAzureTelemetryProps, EnvironmentVariableTelemetryProps {
     imageSource?: ImageSource;

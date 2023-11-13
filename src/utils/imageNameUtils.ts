@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
+import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { SupportedRegistries, acrDomain, dockerHubDomain } from "../constants";
+import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { acrDomain, dockerHubDomain, type SupportedRegistries } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 
 interface ParsedImageName {

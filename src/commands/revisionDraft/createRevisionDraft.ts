@@ -3,20 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, IAzureQuickPickItem, createSubscriptionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as dayjs from "dayjs";
 // eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { ext } from "../../extensionVariables";
-import type { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
-import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
+import { type RevisionItem } from "../../tree/revisionManagement/RevisionItem";
+import { type RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { pickRevision } from "../../utils/pickItem/pickRevision";
-import type { IContainerAppContext } from "../IContainerAppContext";
+import { type IContainerAppContext } from "../IContainerAppContext";
 
 dayjs.extend(relativeTime);
 

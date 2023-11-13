@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
-import type { RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
+import { type RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { ChangeRevisionModeStep } from "./ChangeRevisionModeStep";
 import { ChooseRevisionModeConfirmStep } from "./ChooseRevisionModeConfirmStep";
 import { ChooseRevisionModeStep } from "./ChooseRevisionModeStep";
-import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
+import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export async function chooseRevisionMode(context: IActionContext, item?: ContainerAppItem | RevisionsItem): Promise<void> {
     item ??= await pickContainerApp(context);

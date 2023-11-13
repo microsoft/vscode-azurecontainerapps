@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
+import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export class ChangeRevisionModeStep extends AzureWizardExecuteStep<IChooseRevisionModeContext> {
     public priority: number = 200;

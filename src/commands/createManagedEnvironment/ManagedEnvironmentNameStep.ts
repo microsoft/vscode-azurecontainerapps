@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, ISubscriptionActionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { AzureWizardPromptStep, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { IManagedEnvironmentContext } from './IManagedEnvironmentContext';
+import { type IManagedEnvironmentContext } from './IManagedEnvironmentContext';
 
 export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
     public async prompt(context: IManagedEnvironmentContext): Promise<void> {

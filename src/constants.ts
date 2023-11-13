@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { QuickPickItem, ThemeColor, ThemeIcon } from "vscode";
+import { type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { ThemeColor, ThemeIcon, type QuickPickItem } from "vscode";
 import { localize } from "./utils/localize";
 
 export const managedEnvironmentsId = 'managedEnvironments';

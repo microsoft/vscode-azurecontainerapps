@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { MessageItem } from "vscode";
-import type { ContainerAppModel } from "../tree/ContainerAppItem";
+import { type MessageItem } from "vscode";
+import { type ContainerAppModel } from "../tree/ContainerAppItem";
 import { localize } from "../utils/localize";
-import { IContainerAppContext } from "./IContainerAppContext";
+import { type IContainerAppContext } from "./IContainerAppContext";
 import { OverwriteConfirmStepBase } from "./OverwriteConfirmStepBase";
 
 export class ContainerAppOverwriteConfirmStep<T extends IContainerAppContext> extends OverwriteConfirmStepBase<T> {

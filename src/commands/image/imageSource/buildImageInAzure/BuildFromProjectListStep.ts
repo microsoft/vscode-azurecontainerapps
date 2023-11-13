@@ -3,10 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
-import type { ImageSourceBaseContext, ImageSourceContext } from "../ImageSourceContext";
+import { type ImageSourceBaseContext, type ImageSourceContext } from "../ImageSourceContext";
 import { AcrListStep } from "../containerRegistry/acr/AcrListStep";
 import { BuildImageStep } from "./BuildImageStep";
 import { DockerFileItemStep } from "./DockerFileItemStep";

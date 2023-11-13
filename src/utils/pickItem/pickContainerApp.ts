@@ -4,11 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import { AzureResourceQuickPickWizardContext, AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickWizardContext, nonNullProp, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
+import  { type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type IActionContext, type QuickPickWizardContext} from "@microsoft/vscode-azext-utils";
+import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem, ContainerAppModel } from "../../tree/ContainerAppItem";
+import  { type ContainerAppModel } from "../../tree/ContainerAppItem";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
-import type { PickItemOptions } from "./PickItemOptions";
+import  { type PickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
 export function getPickContainerAppStep(containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {

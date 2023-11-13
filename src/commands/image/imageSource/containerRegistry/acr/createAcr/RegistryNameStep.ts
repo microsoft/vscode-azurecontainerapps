@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient, RegistryNameStatus } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep, ISubscriptionActionContext, randomUtils } from "@microsoft/vscode-azext-utils";
+import { type ContainerRegistryManagementClient, type RegistryNameStatus } from "@azure/arm-containerregistry";
+import { AzureWizardPromptStep, randomUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { DeployWorkspaceProjectContext } from "../../../../../deployWorkspaceProject/DeployWorkspaceProjectContext";
-import type { CreateAcrContext } from "./CreateAcrContext";
+import { type DeployWorkspaceProjectContext } from "../../../../../deployWorkspaceProject/DeployWorkspaceProjectContext";
+import { type CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     public async prompt(context: CreateAcrContext): Promise<void> {

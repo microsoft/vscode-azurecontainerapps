@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ArtifactManifestProperties } from "@azure/container-registry";
+import { type ArtifactManifestProperties } from "@azure/container-registry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import * as dayjs from 'dayjs';
 // eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
-import type { QuickPickItem } from "vscode";
+import { type QuickPickItem } from "vscode";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
-import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
 
 dayjs.extend(relativeTime);

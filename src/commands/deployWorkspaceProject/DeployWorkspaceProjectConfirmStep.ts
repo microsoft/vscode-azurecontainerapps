@@ -7,7 +7,7 @@ import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { OverwriteConfirmStepBase } from "../OverwriteConfirmStepBase";
-import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import  { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
 export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<DeployWorkspaceProjectContext> {
     protected async promptCore(context: DeployWorkspaceProjectContext): Promise<void> {

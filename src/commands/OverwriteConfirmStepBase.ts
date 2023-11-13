@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { OverwriteConfirmTelemetryProps as TelemetryProps } from "../telemetry/OverwriteConfirmTelemetryProps";
-import type { SetTelemetryProps } from "../telemetry/SetTelemetryProps";
-import type { ContainerAppModel } from "../tree/ContainerAppItem";
+import { type OverwriteConfirmTelemetryProps as TelemetryProps } from "../telemetry/OverwriteConfirmTelemetryProps";
+import { type SetTelemetryProps } from "../telemetry/SetTelemetryProps";
+import { type ContainerAppModel } from "../tree/ContainerAppItem";
 import { localize } from "../utils/localize";
-import type { IContainerAppContext } from "./IContainerAppContext";
+import { type IContainerAppContext } from "./IContainerAppContext";
 
 type OverwriteConfirmContext = IContainerAppContext & SetTelemetryProps<TelemetryProps>;
 

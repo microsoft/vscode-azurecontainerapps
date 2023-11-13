@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import type { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
+import { type RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 

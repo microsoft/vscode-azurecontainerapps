@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import { dockerFilePick, dockerfileGlobPattern } from "../../../../constants";
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
-import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
+import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 export class DockerFileItemStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {

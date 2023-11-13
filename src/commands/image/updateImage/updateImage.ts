@@ -3,21 +3,21 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ExecuteActivityContext, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { KnownActiveRevisionsMode, type Revision } from "@azure/arm-appcontainers";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
-import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
-import type { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
-import type { RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
+import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { type UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
+import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
+import { type RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
-import type { ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
+import { type ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
 import { UpdateRegistryAndSecretsStep } from "./UpdateRegistryAndSecretsStep";

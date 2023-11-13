@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { IActionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { KnownActiveRevisionsMode, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { nonNullProp, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import type { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";

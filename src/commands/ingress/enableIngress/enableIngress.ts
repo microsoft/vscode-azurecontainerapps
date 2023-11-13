@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, AzureWizardPromptStep, createSubscriptionContext, IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, createSubscriptionContext, type AzureWizardPromptStep, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../extensionVariables';
-import type { ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
+import { type ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
 import { createActivityContext } from '../../../utils/activity/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { IngressBaseContext } from "../IngressContext";
+import { type IngressBaseContext } from "../IngressContext";
 import { IngressPromptStep } from '../IngressPromptStep';
 
 export async function enableIngress(context: IActionContext, node?: ContainerAppsItem): Promise<void> {

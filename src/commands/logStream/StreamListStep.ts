@@ -3,10 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, IAzureQuickPickItem, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValue, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
-import { IStreamLogsContext } from "./IStreamLogsContext";
-import { ILogStream, getActiveLogStreams } from "./logStreamRequest";
+import { type IStreamLogsContext } from "./IStreamLogsContext";
+import { getActiveLogStreams, type ILogStream } from "./logStreamRequest";
 
 export class StreamListStep extends AzureWizardPromptStep<IStreamLogsContext> {
     public async prompt(context: IStreamLogsContext): Promise<void> {

@@ -5,7 +5,7 @@
 
 import { localize } from "../../../utils/localize";
 import { OverwriteConfirmStepBase } from "../../OverwriteConfirmStepBase";
-import type { DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
+import { type DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 
 export class DeployRevisionDraftConfirmStep extends OverwriteConfirmStepBase<DeployRevisionDraftContext> {
     protected async promptCore(context: DeployRevisionDraftContext): Promise<void> {

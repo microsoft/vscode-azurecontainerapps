@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
+import { ContextValueQuickPickStep, runQuickPickWizard, type AzureWizardPromptStep, type IActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import type { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ScaleItem } from "../../tree/scaling/ScaleItem";
 import { ScaleRuleGroupItem } from "../../tree/scaling/ScaleRuleGroupItem";
 import { ScaleRuleItem } from "../../tree/scaling/ScaleRuleItem";
 import { localize } from "../localize";
-import type { RevisionDraftPickItemOptions } from "./PickItemOptions";
+import { type RevisionDraftPickItemOptions } from "./PickItemOptions";
 import { pickContainerApp } from "./pickContainerApp";
 import { getPickRevisionDraftStep, getPickRevisionStep, getPickRevisionsStep } from "./pickRevision";
 

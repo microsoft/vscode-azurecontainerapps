@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ScaleRule } from "@azure/arm-appcontainers";
-import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
-import type { ISecretContext } from "../../../secret/ISecretContext";
-import type { ScaleRuleContext } from "../ScaleRuleContext";
+import { type ScaleRule } from "@azure/arm-appcontainers";
+import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import { type ISecretContext } from "../../../secret/ISecretContext";
+import { type ScaleRuleContext } from "../ScaleRuleContext";
 
 export interface IAddScaleRuleContext extends ScaleRuleContext, ISecretContext {
     // Make containerApp _required_

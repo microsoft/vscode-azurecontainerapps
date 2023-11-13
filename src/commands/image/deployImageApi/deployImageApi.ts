@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExecuteActivityContext, IActionContext, ISubscriptionActionContext, callWithMaskHandling, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { callWithMaskHandling, createSubscriptionContext, type ExecuteActivityContext, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain } from "../../../constants";
-import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
+import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { type DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
-import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
+import { type ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import { deployImage } from "./deployImage";
 
 // The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command

@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Secret } from '@azure/arm-appcontainers';
-import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { ContainerAppModel, getContainerEnvelopeWithSecrets } from '../../tree/ContainerAppItem';
+import { type Secret } from '@azure/arm-appcontainers';
+import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
+import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from '../../tree/ContainerAppItem';
 import { localize } from '../../utils/localize';
-import type { ISecretContext } from './ISecretContext';
+import { type ISecretContext } from './ISecretContext';
 import { SecretCreateStep } from './addSecret/SecretCreateStep';
 import { SecretNameStep } from './addSecret/SecretNameStep';
 import { SecretValueStep } from './addSecret/SecretValueStep';

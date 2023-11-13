@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
+import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export class ChooseRevisionModeStep extends AzureWizardPromptStep<IChooseRevisionModeContext> {
     public async prompt(context: IChooseRevisionModeContext): Promise<void> {

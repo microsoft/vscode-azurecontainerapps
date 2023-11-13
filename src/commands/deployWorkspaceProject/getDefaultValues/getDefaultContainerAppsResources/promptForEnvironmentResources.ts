@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IAzureQuickPickItem, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
+import { nonNullProp, type IAzureQuickPickItem, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
-import { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
+import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
 const noMatchingResources = {

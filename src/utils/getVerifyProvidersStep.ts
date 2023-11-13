@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { appProvider, operationalInsightsProvider, registryProvider, webProvider } from "../constants";
 
 /**

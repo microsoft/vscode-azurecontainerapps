@@ -6,7 +6,7 @@
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import * as os from 'os';
 import { URI, Utils } from "vscode-uri";
-import { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
+import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 const idPrecision = 6;
 

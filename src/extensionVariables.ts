@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IAzExtOutputChannel, IExperimentationServiceAdapter, TreeElementStateManager } from "@microsoft/vscode-azext-utils";
-import { AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
-import { ExtensionContext } from "vscode";
-import { RevisionDraftFileSystem } from "./commands/revisionDraft/RevisionDraftFileSystem";
-import { ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
+import { type IAzExtOutputChannel, type IExperimentationServiceAdapter, type TreeElementStateManager } from "@microsoft/vscode-azext-utils";
+import { type AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
+import { type ExtensionContext } from "vscode";
+import { type RevisionDraftFileSystem } from "./commands/revisionDraft/RevisionDraftFileSystem";
+import { type ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
