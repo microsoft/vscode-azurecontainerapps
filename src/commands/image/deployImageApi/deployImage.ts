@@ -12,8 +12,9 @@ import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteCon
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
-import { type ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
-import { type DeployImageApiContext } from "./deployImageApi";
+import { ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
+import { RegistryEnableAdminUserStep } from "../imageSource/containerRegistry/acr/RegistryEnableAdminUserStep";
+import type { DeployImageApiContext } from "./deployImageApi";
 
 export async function deployImage(context: IActionContext & Partial<ContainerRegistryImageSourceContext>, node: ContainerAppItem): Promise<void> {
     const { subscription, containerApp } = node;
@@ -29,6 +30,7 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const promptSteps: AzureWizardPromptStep<DeployImageApiContext>[] = [
+        new RegistryEnableAdminUserStep(),
         new ImageSourceListStep(),
         new ContainerAppOverwriteConfirmStep(),
     ];
