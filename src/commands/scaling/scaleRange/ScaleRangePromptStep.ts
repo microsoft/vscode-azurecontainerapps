@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../utils/localize';
-import type { ScaleRangeContext } from './ScaleRangeContext';
+import { type ScaleRangeContext } from './ScaleRangeContext';
 
 export class ScaleRangePromptStep extends AzureWizardPromptStep<ScaleRangeContext> {
     public async prompt(context: ScaleRangeContext): Promise<void> {

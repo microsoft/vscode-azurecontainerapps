@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
-import type { IngressBaseContext } from "../IngressContext";
+import { type IngressBaseContext } from "../IngressContext";
 import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 
 export class TargetPortUpdateStep extends IngressUpdateStepBase<IngressBaseContext> {

@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, Template } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ContainerApp, type ContainerAppsAPIClient, type Revision, type Template } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { AzureWizard, DeleteConfirmationStep, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
-import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import { TreeItemCollapsibleState, type TreeItem, type Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
-import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
+import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activity/activityUtils";
@@ -18,10 +18,10 @@ import { createContainerAppsAPIClient, createContainerAppsClient } from "../util
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { type ContainerAppsItem, type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
-import { RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
+import { type RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
 

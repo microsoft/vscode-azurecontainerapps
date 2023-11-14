@@ -3,15 +3,15 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, ManagedEnvironment, Resource } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient, type ManagedEnvironment, type Resource } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { AzureResource, AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureResource, type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppItem } from "./ContainerAppItem";
-import { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { type ContainerAppsItem, type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
 type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 

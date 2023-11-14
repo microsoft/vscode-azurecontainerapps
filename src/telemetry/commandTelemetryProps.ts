@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { AzdTelemetryProps } from "./AzdTelemetryProps";
-import type { ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
-import { IngressTelemetryProps } from "./IngressTelemetryProps";
-import type { OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
-import type { WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
+import { type KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { type AzdTelemetryProps } from "./AzdTelemetryProps";
+import { type ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
+import { type IngressTelemetryProps } from "./IngressTelemetryProps";
+import { type OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
+import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
 export interface DeployImageApiTelemetryProps extends ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;

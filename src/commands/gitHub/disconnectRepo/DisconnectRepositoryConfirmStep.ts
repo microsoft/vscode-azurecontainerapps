@@ -6,7 +6,7 @@
 import { gitHubUrlParse } from "@microsoft/vscode-azext-github";
 import { AzureWizardPromptStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import type { IDisconnectRepoContext } from "./IDisconnectRepoContext";
+import { type IDisconnectRepoContext } from "./IDisconnectRepoContext";
 
 export class DisconnectRepositoryConfirmStep extends AzureWizardPromptStep<IDisconnectRepoContext> {
     public async prompt(context: IDisconnectRepoContext): Promise<void> {

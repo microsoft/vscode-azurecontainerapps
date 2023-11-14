@@ -1,13 +1,18 @@
-import type { Ingress } from "@azure/arm-appcontainers";
-import { AzureWizard, AzureWizardExecuteStep, IActionContext, createSubscriptionContext, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+import { type Ingress } from "@azure/arm-appcontainers";
+import { AzureWizard, createSubscriptionContext, nonNullValueAndProp, type AzureWizardExecuteStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { IngressConstants } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
-import type { IngressEnabledItem } from "../../../tree/configurations/IngressItem";
+import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { type IngressEnabledItem } from "../../../tree/configurations/IngressItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { IngressBaseContext } from "../IngressContext";
+import { type IngressBaseContext } from "../IngressContext";
 import { ToggleIngressVisibilityStep } from "./ToggleIngressVisibilityStep";
 
 export async function toggleIngressVisibility(context: IActionContext, node?: IngressEnabledItem | ContainerAppItem): Promise<void> {

@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
-import type { CreateContainerAppContext } from "./CreateContainerAppContext";
+import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 
 export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppContext> {
     public priority: number = 620;

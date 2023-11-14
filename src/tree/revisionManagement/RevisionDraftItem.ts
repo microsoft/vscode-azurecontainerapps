@@ -3,18 +3,18 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, Template } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient, type KnownActiveRevisionsMode, type Revision, type Template } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, type IActionContext, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
-import type { ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionItem, type RevisionsItemModel } from "./RevisionItem";
 
 // For tree items that depend on the container app's revision draft template

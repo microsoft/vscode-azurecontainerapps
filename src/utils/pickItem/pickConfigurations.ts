@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, ContextValueQuickPickStep, QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
+import { ContextValueQuickPickStep, type AzureWizardPromptStep, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ConfigurationItem } from "../../tree/configurations/ConfigurationItem";
 

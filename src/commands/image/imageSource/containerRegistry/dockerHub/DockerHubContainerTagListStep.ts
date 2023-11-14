@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { QuickPickItem } from "vscode";
-import { QuickPicksCache, loadMoreQp } from "../../../../../constants";
-import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
+import { type QuickPickItem } from "vscode";
+import { loadMoreQp, type QuickPicksCache } from "../../../../../constants";
+import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RepositoryTagListStepBase } from "../RepositoryTagListStepBase";
 import { getTagsForRepo } from "./DockerHubV2ApiCalls";
 

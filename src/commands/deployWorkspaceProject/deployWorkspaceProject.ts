@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, GenericTreeItem, IActionContext, ISubscriptionContext, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { AzureWizard, GenericTreeItem, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
-import { ContainerAppItem, ContainerAppModel, isIngressEnabled } from "../../tree/ContainerAppItem";
+import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
+import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
@@ -24,7 +24,7 @@ import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateS
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
-import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";

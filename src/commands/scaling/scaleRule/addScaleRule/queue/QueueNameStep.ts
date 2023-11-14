@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../../../utils/localize';
-import type { IAddScaleRuleContext } from '../IAddScaleRuleContext';
+import { type IAddScaleRuleContext } from '../IAddScaleRuleContext';
 
 export class QueueNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public async prompt(context: IAddScaleRuleContext): Promise<void> {

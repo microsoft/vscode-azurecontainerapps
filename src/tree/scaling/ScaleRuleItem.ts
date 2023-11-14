@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, Revision, ScaleRule } from "@azure/arm-appcontainers";
-import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { KnownActiveRevisionsMode, type Revision, type ScaleRule } from "@azure/arm-appcontainers";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
-import { ThemeIcon, TreeItem } from "vscode";
+import { ThemeIcon, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
-import type { ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 

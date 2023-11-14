@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerRegistryManagementClient, Registry, RegistryPassword } from "@azure/arm-containerregistry";
+import { type ContainerRegistryManagementClient, type Registry, type RegistryPassword } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
-import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 
 export async function listCredentialsFromRegistry(context: ContainerRegistryImageSourceContext, registry: Registry):
     Promise<{ username: string, password: RegistryPassword }> {

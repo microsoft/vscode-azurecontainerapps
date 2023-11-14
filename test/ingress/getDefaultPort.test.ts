@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
-import { IngressContext, PortRange, getDefaultPort } from "../../extension.bundle";
-import type { MockIngressContext } from "./MockIngressContext";
+import { PortRange, getDefaultPort, type IngressContext } from "../../extension.bundle";
+import { type MockIngressContext } from "./MockIngressContext";
 
 suite('getDefaultPort', async () => {
     test('Correctly suggests a new port when Dockerfile expose ports are detected with no existing container app port', async () => {

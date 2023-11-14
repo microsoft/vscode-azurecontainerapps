@@ -5,8 +5,8 @@
 
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
-import { DeployWorkspaceProjectContext, cleanWorkspaceName } from '../../../extension.bundle';
-import { MockDefaultResourcesNameStep, MockDefaultResourcesNameStepContext } from './MockDefaultResourcesNameStep';
+import { cleanWorkspaceName, type DeployWorkspaceProjectContext } from '../../../extension.bundle';
+import { MockDefaultResourcesNameStep, type MockDefaultResourcesNameStepContext } from './MockDefaultResourcesNameStep';
 
 suite('DefaultResourcesNameStep', async () => {
     test('cleanWorkspaceName', async () => {

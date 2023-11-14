@@ -2,15 +2,16 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
-import type { Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, DeleteConfirmationStep, IActionContext, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import type { ContainerAppModel } from "../../../../tree/ContainerAppItem";
-import type { ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
+
+import { type Revision } from "@azure/arm-appcontainers";
+import { AzureWizard, DeleteConfirmationStep, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import { type ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRule } from "../../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../../utils/revisionDraftUtils";
-import type { ScaleRuleContext } from "../ScaleRuleContext";
+import { type ScaleRuleContext } from "../ScaleRuleContext";
 import { DeleteScaleRuleStep } from "./DeleteScaleRuleStep";
 
 export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleItem): Promise<void> {

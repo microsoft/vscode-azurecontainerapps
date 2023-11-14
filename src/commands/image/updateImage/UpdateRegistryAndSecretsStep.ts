@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
+import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
+import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import type { UpdateImageContext } from "./updateImage";
+import { type UpdateImageContext } from "./updateImage";
 
 export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {
     public priority: number = 480;

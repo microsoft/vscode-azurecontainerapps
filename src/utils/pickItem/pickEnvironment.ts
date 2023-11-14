@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureResourceQuickPickWizardContext, AzureWizardPromptStep, ContextValueQuickPickStep, IActionContext, QuickPickAzureSubscriptionStep, QuickPickGroupStep, QuickPickWizardContext, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
-import { AzExtResourceType, ResourceGroupsTreeDataProvider } from "@microsoft/vscode-azureresources-api";
+import { ContextValueQuickPickStep, QuickPickAzureSubscriptionStep, QuickPickGroupStep, runQuickPickWizard, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type IActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
+import { AzExtResourceType, type ResourceGroupsTreeDataProvider } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../extensionVariables";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../localize";
-import type { PickItemOptions } from "./PickItemOptions";
+import { type PickItemOptions } from "./PickItemOptions";
 
 export function getPickEnvironmentSteps(skipIfOne: boolean = false, environmentName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;

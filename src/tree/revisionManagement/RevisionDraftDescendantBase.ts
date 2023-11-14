@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Revision } from "@azure/arm-appcontainers";
-import type { TreeElementBase } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import type { TreeItem } from "vscode";
-import type { ContainerAppModel } from "../ContainerAppItem";
-import type { RevisionsDraftModel } from "./RevisionDraftItem";
-import { RevisionsItemModel } from "./RevisionItem";
+import { type Revision } from "@azure/arm-appcontainers";
+import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { type TreeItem } from "vscode";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type RevisionsDraftModel } from "./RevisionDraftItem";
+import { type RevisionsItemModel } from "./RevisionItem";
 
 /**
  * Can be implemented by any tree item that has the potential to show up as a RevisionDraftItem's descendant

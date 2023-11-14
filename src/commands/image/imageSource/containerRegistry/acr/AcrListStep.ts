@@ -3,20 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerRegistryManagementClient, Registry } from "@azure/arm-containerregistry";
-import type { ResourceGroup } from "@azure/arm-resources";
+import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
+import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, AzureWizardPromptStep, IAzureQuickPickItem, ISubscriptionActionContext, IWizardOptions, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ImageSource, acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import type { CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
-import type { IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
-import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
+import { type CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
+import { type IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
+import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
-import type { CreateAcrContext } from "./createAcr/CreateAcrContext";
+import { type CreateAcrContext } from "./createAcr/CreateAcrContext";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";

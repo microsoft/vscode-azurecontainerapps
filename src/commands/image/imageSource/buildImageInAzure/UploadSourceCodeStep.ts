@@ -2,18 +2,19 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
+
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, GenericTreeItem, nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
-import type { Progress } from 'vscode';
+import { type Progress } from 'vscode';
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from '../../../../constants';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
-import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
 import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
-import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
+import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 

@@ -5,12 +5,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
+import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
-import { ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 
 export class RegistryEnableAdminUserStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
     public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {

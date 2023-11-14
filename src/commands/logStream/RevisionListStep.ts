@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerAppsAPIClient, Revision } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient, type Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, IAzureQuickPickItem, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, createSubscriptionContext, nonNullProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as dayjs from 'dayjs';
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { IStreamLogsContext } from "./IStreamLogsContext";
+import { type IStreamLogsContext } from "./IStreamLogsContext";
 
 export class RevisionListStep extends AzureWizardPromptStep<IStreamLogsContext> {
     private revisions: Revision[] | undefined;

@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp } from "@azure/arm-appcontainers";
+import { type ContainerApp } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
-import { TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
 const logStreamItemContextValue: string = 'logStreamItem';
 const logsItemContextValue: string = 'logsItem';

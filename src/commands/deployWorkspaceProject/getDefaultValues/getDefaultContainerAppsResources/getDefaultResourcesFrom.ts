@@ -3,15 +3,15 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import type { ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerApp, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../../extensionVariables";
-import { ContainerAppItem, ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import { ContainerAppItem, type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
-import type { DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
-import type { DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
+import { type DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
+import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
 const noMatchingResources = {

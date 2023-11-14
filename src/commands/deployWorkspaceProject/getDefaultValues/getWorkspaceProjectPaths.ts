@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext, UserCancelledError, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { WorkspaceFolder, commands } from "vscode";
+import { UserCancelledError, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { commands, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerFilePick, dockerfileGlobPattern } from "../../../constants";
-import { SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
+import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
 import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";

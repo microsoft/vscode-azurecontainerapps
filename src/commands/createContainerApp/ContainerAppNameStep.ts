@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, ISubscriptionActionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
-import { CreateContainerAppContext } from './CreateContainerAppContext';
+import { type CreateContainerAppContext } from './CreateContainerAppContext';
 
 export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerAppContext> {
     public hideStepCount: boolean = true;

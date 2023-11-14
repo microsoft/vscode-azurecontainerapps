@@ -3,10 +3,9 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { commands } from "vscode";
-import { ContainerAppItem } from "../tree/ContainerAppItem";
+import { type ContainerAppItem } from "../tree/ContainerAppItem";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
 

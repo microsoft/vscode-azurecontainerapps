@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import type { ISecretContext } from "../ISecretContext";
+import { type ISecretContext } from "../ISecretContext";
 
 export class SecretDeleteConfirmStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {

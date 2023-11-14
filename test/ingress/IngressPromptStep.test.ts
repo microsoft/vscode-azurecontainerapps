@@ -6,8 +6,8 @@
 import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
 import * as path from "path";
-import { IngressContext, tryConfigureIngressUsingDockerfile } from "../../extension.bundle";
-import type { MockIngressContext } from "./MockIngressContext";
+import { tryConfigureIngressUsingDockerfile, type IngressContext } from "../../extension.bundle";
+import { type MockIngressContext } from "./MockIngressContext";
 import { expectedSamplePorts } from "./tryGetDockerfileExposePorts.test";
 
 suite('IngressPromptStep', async () => {

@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppsItem, type TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { ActionsItem } from "./ActionsItem";
 import { DaprEnabledItem, createDaprDisabledItem } from "./DaprItem";
 import { IngressDisabledItem, IngressEnabledItem } from "./IngressItem";

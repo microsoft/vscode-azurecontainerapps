@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { ManagedEnvironment } from "@azure/arm-appcontainers";
-import type { ResourceGroup } from "@azure/arm-resources";
+import { type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type ResourceGroup } from "@azure/arm-resources";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
-import { DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
-import { ContainerAppItem, ContainerAppModel } from "../../../../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
-import type { DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
+import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
+import { type ContainerAppItem, type ContainerAppModel } from "../../../../tree/ContainerAppItem";
+import { type ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
+import { type DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
 import { getContainerAppResourcesFromItem, getContainerAppResourcesFromSettings } from "./getDefaultResourcesFrom";
 import { promptForEnvironmentResources } from "./promptForEnvironmentResources";
 

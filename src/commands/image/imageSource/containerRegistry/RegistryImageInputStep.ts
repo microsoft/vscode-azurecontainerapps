@@ -7,7 +7,7 @@ import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain, quickStartImageName } from "../../../../constants";
 import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
-import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "./getLatestContainerImage";
 
 export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {

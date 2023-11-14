@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, ScaleRule } from '@azure/arm-appcontainers';
+import { KnownActiveRevisionsMode, type ContainerApp, type ContainerAppsAPIClient, type Revision, type ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { createContainerAppsAPIClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
-import type { IAddScaleRuleContext } from './IAddScaleRuleContext';
+import { type IAddScaleRuleContext } from './IAddScaleRuleContext';
 
 export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public hideStepCount: boolean = true;

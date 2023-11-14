@@ -3,11 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Run as AcrRun } from '@azure/arm-containerregistry';
-import { KnownRunStatus } from '@azure/arm-containerregistry';
+import { KnownRunStatus, type Run as AcrRun } from '@azure/arm-containerregistry';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import { delay } from '../../../../utils/delay';
-import { BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
+import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 const WAIT_MS = 5000;
 

@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, parseError } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import type { IDeleteManagedEnvironmentContext } from "./IDeleteManagedEnvironmentContext";
+import { type IDeleteManagedEnvironmentContext } from "./IDeleteManagedEnvironmentContext";
 
 export class DeleteManagedEnvironmentStep extends AzureWizardExecuteStep<IDeleteManagedEnvironmentContext> {
     public priority: number = 110;

@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { SourceControl } from "@azure/arm-appcontainers";
-import { ITreeItemPickerContext, openUrl } from "@microsoft/vscode-azext-utils";
-import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
-import type { ActionsItem } from "../../tree/configurations/ActionsItem";
+import { type SourceControl } from "@azure/arm-appcontainers";
+import { openUrl, type ITreeItemPickerContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
+import { type ActionsItem } from "../../tree/configurations/ActionsItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { getContainerAppSourceControl } from "./connectToGitHub/getContainerAppSourceControl";

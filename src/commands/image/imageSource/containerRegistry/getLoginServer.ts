@@ -5,7 +5,7 @@
 
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain } from "../../../../constants";
-import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 
 export function getLoginServer(context: ContainerRegistryImageSourceContext): string {
     switch (context.registryDomain) {

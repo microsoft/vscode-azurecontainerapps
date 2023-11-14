@@ -6,11 +6,11 @@
 import { GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, relativeSettingsFilePath } from "../../constants";
-import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
-import type { DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { DeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
+import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import { setDeployWorkspaceProjectSettings, type DeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
 
 const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
 

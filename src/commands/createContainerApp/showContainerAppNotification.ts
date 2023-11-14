@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp } from "@azure/arm-appcontainers";
-import { callWithTelemetryAndErrorHandling, IActionContext } from "@microsoft/vscode-azext-utils";
-import { MessageItem, window } from "vscode";
+import { type ContainerApp } from "@azure/arm-appcontainers";
+import { callWithTelemetryAndErrorHandling, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { window, type MessageItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { isIngressEnabled } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";

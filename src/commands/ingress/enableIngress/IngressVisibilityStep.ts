@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { IngressConstants } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import type { IngressBaseContext } from "../IngressContext";
+import { type IngressBaseContext } from "../IngressContext";
 
 export class IngressVisibilityStep extends AzureWizardPromptStep<IngressBaseContext> {
     public async prompt(context: IngressBaseContext): Promise<void> {

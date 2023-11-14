@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ManagedEnvironment } from "@azure/arm-appcontainers";
-import { Workspace } from '@azure/arm-operationalinsights';
-import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { ExecuteActivityContext, ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type Workspace } from '@azure/arm-operationalinsights';
+import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { type ExecuteActivityContext, type ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
 export interface IManagedEnvironmentContext extends ISubscriptionActionContext, IResourceGroupWizardContext, ExecuteActivityContext {
     subscription: AzureSubscription;

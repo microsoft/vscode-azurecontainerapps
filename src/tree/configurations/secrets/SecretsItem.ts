@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Secret } from "@azure/arm-appcontainers";
+import { type Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { localize } from "../../../utils/localize";
 import { treeUtils } from "../../../utils/treeUtils";
-import type { ContainerAppModel } from "../../ContainerAppItem";
-import type { ContainerAppsItem, TreeElementBase } from "../../ContainerAppsBranchDataProvider";
+import { type ContainerAppModel } from "../../ContainerAppItem";
+import { type ContainerAppsItem, type TreeElementBase } from "../../ContainerAppsBranchDataProvider";
 import { SecretItem } from "./SecretItem";
 
 const secrets: string = localize('secrets', 'Secrets');

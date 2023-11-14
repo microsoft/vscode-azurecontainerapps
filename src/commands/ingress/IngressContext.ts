@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { IngressTelemetryProps as TelemetryProps } from "../../telemetry/IngressTelemetryProps";
-import { SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import type { IContainerAppContext } from "../IContainerAppContext";
-import { PortRange } from "./tryGetDockerfileExposePorts";
+import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { type IngressTelemetryProps as TelemetryProps } from "../../telemetry/IngressTelemetryProps";
+import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import { type IContainerAppContext } from "../IContainerAppContext";
+import { type PortRange } from "./tryGetDockerfileExposePorts";
 
 export interface IngressBaseContext extends IContainerAppContext, ExecuteActivityContext {
     enableIngress?: boolean;

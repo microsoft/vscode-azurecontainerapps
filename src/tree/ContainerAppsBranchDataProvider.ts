@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { callWithTelemetryAndErrorHandling, IActionContext, nonNullProp } from '@microsoft/vscode-azext-utils';
-import { AzureResource, AzureResourceBranchDataProvider, AzureSubscription, ResourceModelBase, ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
+import { callWithTelemetryAndErrorHandling, nonNullProp, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureResource, type AzureResourceBranchDataProvider, type AzureSubscription, type ResourceModelBase, type ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { ext } from '../extensionVariables';
-import { ContainerAppModel } from './ContainerAppItem';
+import { type ContainerAppModel } from './ContainerAppItem';
 import { ManagedEnvironmentItem } from './ManagedEnvironmentItem';
 
 export interface TreeElementBase extends ResourceModelBase {

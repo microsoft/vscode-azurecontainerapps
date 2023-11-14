@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
+import { UserCancelledError, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
-import { OpenDialogOptions, Uri, WorkspaceFolder, window, workspace } from "vscode";
+import { window, workspace, type OpenDialogOptions, type Uri, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
-import { SetTelemetryProps } from "../telemetry/SetTelemetryProps";
-import { WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
+import { type SetTelemetryProps } from "../telemetry/SetTelemetryProps";
+import { type WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
 import { localize } from "./localize";
 
 interface SelectWorkspaceFileOptions extends OpenDialogOptions {

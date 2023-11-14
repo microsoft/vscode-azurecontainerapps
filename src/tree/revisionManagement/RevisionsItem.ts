@@ -3,18 +3,18 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Revision } from "@azure/arm-appcontainers";
+import { type Revision } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { TreeElementBase, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { revisionDraftFalseContextValue, revisionDraftTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
-import type { ContainerAppModel } from "../ContainerAppItem";
-import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
 import { RevisionDraftItem } from "./RevisionDraftItem";
 import { RevisionItem } from "./RevisionItem";
 

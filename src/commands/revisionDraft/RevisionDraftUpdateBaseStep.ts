@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, IActionContext, callWithTelemetryAndErrorHandling, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window, type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
-import type { RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { type ContainerAppItem } from "../../tree/ContainerAppItem";
+import { type RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
+import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../utils/localize";
 import { pickContainerAppWithoutPrompt } from "../../utils/pickItem/pickContainerApp";
 import { pickRevisionDraft } from "../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
 import { settingUtils } from "../../utils/settingUtils";
-import type { IContainerAppContext } from "../IContainerAppContext";
+import { type IContainerAppContext } from "../IContainerAppContext";
 import { deployRevisionDraft } from "./deployRevisionDraft/deployRevisionDraft";
 
 export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {

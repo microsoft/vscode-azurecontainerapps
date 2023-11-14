@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericTreeItem } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, managedEnvironmentsAppProvider } from "../../constants";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
-import { ExecuteActivityOutput, ExecuteActivityOutputStepBase } from "../../utils/activity/ExecuteActivityOutputStepBase";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
-import { IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import { type IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
 
 export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<IManagedEnvironmentContext> {
     public priority: number = 250;

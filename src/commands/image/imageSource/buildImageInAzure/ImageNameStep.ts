@@ -6,8 +6,8 @@
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
-import { CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
-import type { BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
+import { type CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
+import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 const maxImageNameLength: number = 46;
 

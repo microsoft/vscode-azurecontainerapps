@@ -5,11 +5,11 @@
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import type { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
+import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import type { ScaleRangeContext } from "./ScaleRangeContext";
+import { type ScaleRangeContext } from "./ScaleRangeContext";
 
 export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 1110;

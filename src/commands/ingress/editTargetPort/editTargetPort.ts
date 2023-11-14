@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import { IngressEnabledItem } from "../../../tree/configurations/IngressItem";
-import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { type IngressEnabledItem } from "../../../tree/configurations/IngressItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
-import type { IngressContext } from "../IngressContext";
+import { type IngressContext } from "../IngressContext";
 import { TargetPortInputStep } from "./TargetPortInputStep";
 import { TargetPortUpdateStep } from "./TargetPortUpdateStep";
 

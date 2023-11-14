@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Revision } from "@azure/arm-appcontainers";
+import { type Revision } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppItem, ContainerAppModel } from "../../../tree/ContainerAppItem";
-import type { RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
+import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
-import type { UpdateImageContext } from "./updateImage";
+import { type UpdateImageContext } from "./updateImage";
 
 export class UpdateImageDraftStep<T extends UpdateImageContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 490;

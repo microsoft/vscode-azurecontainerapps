@@ -3,8 +3,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { OpenInPortalOptions } from "@microsoft/vscode-azext-azureutils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { type OpenInPortalOptions } from "@microsoft/vscode-azext-azureutils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as vscode from 'vscode';
 
 // TODO move to shared package

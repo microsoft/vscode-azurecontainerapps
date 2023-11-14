@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue, subscriptionExperience } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { AzureWizard, createSubscriptionContext, nonNullValue, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../../../../extensionVariables";
 import { createActivityContext } from "../../../../../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../../../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../../../../utils/localize";
-import { CreateAcrContext } from "./CreateAcrContext";
+import { type CreateAcrContext } from "./CreateAcrContext";
 import { RegistryCreateStep } from "./RegistryCreateStep";
 import { RegistryNameStep } from "./RegistryNameStep";
 import { SkuListStep } from "./SkuListStep";

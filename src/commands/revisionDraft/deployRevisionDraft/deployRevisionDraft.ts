@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, createSubscriptionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullValue, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
@@ -14,9 +14,9 @@ import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
-import type { RevisionDraftFile } from "../RevisionDraftFileSystem";
+import { type RevisionDraftFile } from "../RevisionDraftFileSystem";
 import { DeployRevisionDraftConfirmStep } from "./DeployRevisionDraftConfirmStep";
-import type { DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
+import { type DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 import { DeployRevisionDraftStep } from "./DeployRevisionDraftStep";
 
 export async function deployRevisionDraft(context: IActionContext, node?: ContainerAppItem | RevisionDraftItem): Promise<void> {

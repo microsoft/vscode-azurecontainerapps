@@ -3,8 +3,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ExecuteActivityContext, createContextValue } from "@microsoft/vscode-azext-utils";
-import type { AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-azext-utils/activity";
+import { createContextValue, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { type AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-azext-utils/activity";
 import { randomUUID } from "crypto";
 import { ext } from "../../extensionVariables";
 import { settingUtils } from "../settingUtils";

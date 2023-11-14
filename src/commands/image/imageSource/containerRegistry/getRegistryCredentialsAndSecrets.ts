@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { RegistryCredentials, Secret } from "@azure/arm-appcontainers";
+import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain, dockerHubRegistry } from "../../../../constants";
-import { ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
+import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { listCredentialsFromRegistry } from "./acr/listCredentialsFromRegistry";
 
 interface RegistryCredentialsAndSecrets {
