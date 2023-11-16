@@ -16,6 +16,7 @@ import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { deployImageApi } from './image/deployImageApi/deployImageApi';
 import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
+import { openAcrBuildLogs } from './image/openAcrBuildLogs';
 import { updateImage } from './image/updateImage/updateImage';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
@@ -101,4 +102,5 @@ export function registerCommands(): void {
 
     // registries
     registerCommandWithTreeNodeUnwrapping('containerApps.createAcr', createAcr);
+    registerCommandWithTreeNodeUnwrapping('containerApps.openAcrBuildLogs', openAcrBuildLogs);
 }
