@@ -49,7 +49,6 @@ export async function disconnectRepo(context: ITreeItemPickerContext, node?: Con
         title: localize('disconnectRepository', 'Disconnect "{0}" from a GitHub repository', containerApp.name),
         promptSteps,
         executeSteps,
-        showLoadingPrompt: true
     });
 
     await wizard.prompt();
