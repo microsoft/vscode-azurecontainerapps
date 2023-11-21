@@ -7,6 +7,7 @@ import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/v
 import { GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtParentTreeItem, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
 import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
+import { GenericParentTreeItem } from "../../../../tree/GenericParentTreeItem";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
@@ -72,27 +73,33 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
-        const item: AzExtTreeItem & { getChildren?: (parent: AzExtParentTreeItem) => AzExtTreeItem[] } = new GenericTreeItem(undefined, {
+        const treeItemProps = {
             contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
             label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
             iconPath: activityFailIcon,
-        });
+        };
 
+        let item: AzExtTreeItem | AzExtParentTreeItem;
         if (this.acrBuildError) {
-            item.getChildren = (parent: AzExtParentTreeItem) => {
-                const buildImageLogsItem = new GenericTreeItem(parent, {
-                    contextValue: createActivityChildContext(['buildImageStep', 'logsLinkItem']),
-                    label: localize('buildImageLogs', 'Click to view build image logs'),
-                    iconPath: new ThemeIcon('note', new ThemeColor('terminal.ansiWhite')),
-                    commandId: 'containerApps.openAcrBuildLogs',
-                });
-                buildImageLogsItem.commandArgs = [this.acrBuildError];
-                return [buildImageLogsItem];
-            };
+            item = new GenericParentTreeItem(undefined, {
+                ...treeItemProps,
+                loadMoreChildrenImpl: () => {
+                    const buildImageLogsItem = new GenericTreeItem(undefined, {
+                        contextValue: createActivityChildContext(['buildImageStep', 'logsLinkItem']),
+                        label: localize('buildImageLogs', 'Click to view build image logs'),
+                        iconPath: new ThemeIcon('note', new ThemeColor('terminal.ansiWhite')),
+                        commandId: 'containerApps.openAcrBuildLogs',
+                    });
+                    buildImageLogsItem.commandArgs = [this.acrBuildError];
+                    return [buildImageLogsItem];
+                }
+            });
+        } else {
+            item = new GenericTreeItem(undefined, treeItemProps);
         }
 
         return {
-            item,
+            item: item as AzExtTreeItem,
             message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }
