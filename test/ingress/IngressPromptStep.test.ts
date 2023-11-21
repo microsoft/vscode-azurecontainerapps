@@ -7,6 +7,7 @@ import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
 import * as path from "path";
 import { tryConfigureIngressUsingDockerfile, type IngressContext } from "../../extension.bundle";
+import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
 import { type MockIngressContext } from "./MockIngressContext";
 import { expectedSamplePorts } from "./tryGetDockerfileExposePorts.test";
 
@@ -47,7 +48,3 @@ suite('IngressPromptStep', async () => {
         }
     });
 });
-
-function wrapWithMockTelemetry(context: MockIngressContext): MockIngressContext {
-    return Object.assign(context, { telemetry: { properties: {} } });
-}
