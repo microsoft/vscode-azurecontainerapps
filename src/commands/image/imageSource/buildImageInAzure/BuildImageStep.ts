@@ -4,10 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtParentTreeItem, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtParentTreeItem, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
 import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
-import { GenericParentTreeItem } from "../../../../tree/GenericParentTreeItem";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
@@ -91,7 +90,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                         commandId: 'containerApps.openAcrBuildLogs',
                     });
                     buildImageLogsItem.commandArgs = [this.acrBuildError];
-                    return [buildImageLogsItem];
+                    return Promise.resolve([buildImageLogsItem]);
                 }
             });
         } else {
