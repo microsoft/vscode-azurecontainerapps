@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtParentTreeItem, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, window, type MessageItem } from "vscode";
 import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
@@ -72,34 +72,28 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
-        const treeItemProps = {
-            contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
-            label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
-            iconPath: activityFailIcon,
-        };
-
-        let item: AzExtTreeItem | AzExtParentTreeItem;
+        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
         if (this.acrBuildError) {
-            item = new GenericParentTreeItem(undefined, {
-                ...treeItemProps,
-                initialCollapsibleState: TreeItemCollapsibleState.Collapsed,
-                loadMoreChildrenImpl: () => {
-                    const buildImageLogsItem = new GenericTreeItem(undefined, {
-                        contextValue: createActivityChildContext(['buildImageStep', 'logsLinkItem']),
-                        label: localize('buildImageLogs', 'Click to view build image logs'),
-                        iconPath: new ThemeIcon('note', new ThemeColor('terminal.ansiWhite')),
-                        commandId: 'containerApps.openAcrBuildLogs',
-                    });
-                    buildImageLogsItem.commandArgs = [this.acrBuildError];
-                    return Promise.resolve([buildImageLogsItem]);
-                }
-            });
-        } else {
-            item = new GenericTreeItem(undefined, treeItemProps);
+            loadMoreChildrenImpl = () => {
+                const buildImageLogsItem = new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(['buildImageStep', 'logsLinkItem']),
+                    label: localize('buildImageLogs', 'Click to view build image logs'),
+                    iconPath: new ThemeIcon('note', new ThemeColor('terminal.ansiWhite')),
+                    commandId: 'containerApps.openAcrBuildLogs',
+                });
+                buildImageLogsItem.commandArgs = [this.acrBuildError];
+                return Promise.resolve([buildImageLogsItem]);
+            };
         }
 
         return {
-            item: item as AzExtTreeItem,
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
+                label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                iconPath: activityFailIcon,
+                initialCollapsibleState: this.acrBuildError ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.None,
+                loadMoreChildrenImpl: loadMoreChildrenImpl ?? (() => Promise.resolve([]))
+            }),
             message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }
