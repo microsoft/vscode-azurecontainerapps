@@ -71,6 +71,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
         };
     }
 
+    // Todo: Incorporate the new activity icon and context constants using azure tools exports
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
         if (this.acrBuildError) {
