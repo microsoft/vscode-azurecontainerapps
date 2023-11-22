@@ -5,6 +5,7 @@
 
 import * as assert from "assert";
 import { PortRange, getDefaultPort, type IngressContext } from "../../extension.bundle";
+import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
 import { type MockIngressContext } from "./MockIngressContext";
 
 suite('getDefaultPort', async () => {
@@ -34,7 +35,3 @@ suite('getDefaultPort', async () => {
         assert.equal(getDefaultPort(wrapWithMockTelemetry({}) as IngressContext), 80);
     });
 });
-
-function wrapWithMockTelemetry<T extends object>(context: T): T {
-    return Object.assign(context, { telemetry: { properties: {} } });
-}
