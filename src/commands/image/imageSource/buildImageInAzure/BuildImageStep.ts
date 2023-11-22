@@ -5,7 +5,7 @@
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
-import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, window, type MessageItem } from "vscode";
+import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
 import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
@@ -91,7 +91,6 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                 contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon,
-                initialCollapsibleState: this.acrBuildError ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.None,
                 loadMoreChildrenImpl: loadMoreChildrenImpl ?? (() => Promise.resolve([]))
             }),
             message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
