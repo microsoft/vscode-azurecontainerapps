@@ -48,7 +48,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                 }
             });
 
-            // context.errorHandling.suppressDisplay = true;
+            context.errorHandling.suppressDisplay = true;
             throw new Error(errorMessage);
         }
     }
