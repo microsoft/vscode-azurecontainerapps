@@ -5,7 +5,7 @@
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtParentTreeItem, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
-import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
+import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, window, type MessageItem } from "vscode";
 import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
@@ -48,7 +48,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                 }
             });
 
-            context.errorHandling.suppressDisplay = true;
+            // context.errorHandling.suppressDisplay = true;
             throw new Error(errorMessage);
         }
     }
@@ -82,6 +82,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
         if (this.acrBuildError) {
             item = new GenericParentTreeItem(undefined, {
                 ...treeItemProps,
+                initialCollapsibleState: TreeItemCollapsibleState.Collapsed,
                 loadMoreChildrenImpl: () => {
                     const buildImageLogsItem = new GenericTreeItem(undefined, {
                         contextValue: createActivityChildContext(['buildImageStep', 'logsLinkItem']),
