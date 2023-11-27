@@ -60,7 +60,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['buildImageStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['buildImageStepSuccessItem', activitySuccessContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activitySuccessIcon
             }),
@@ -76,7 +76,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
         if (this.acrBuildError) {
             loadMoreChildrenImpl = () => {
                 const buildImageLogsItem = new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['buildImageStep', 'logsLinkItem']),
+                    contextValue: createActivityChildContext(['logsLinkItem']),
                     label: localize('buildImageLogs', 'Click to view build image logs'),
                     iconPath: new ThemeIcon('note', new ThemeColor('terminal.ansiWhite')),
                     commandId: 'containerApps.openAcrBuildLogs',
@@ -88,7 +88,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
 
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
+                contextValue: createActivityChildContext(['buildImageStepFailItem', activityFailContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon,
                 loadMoreChildrenImpl: loadMoreChildrenImpl ?? (() => Promise.resolve([]))
