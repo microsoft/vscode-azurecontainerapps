@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GenericTreeItem, type AzureWizardExecuteStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { activitySuccessContext, activitySuccessIcon } from "../../constants";
+import { AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon, type AzureWizardExecuteStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";

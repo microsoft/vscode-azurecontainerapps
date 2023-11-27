@@ -5,9 +5,9 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem } from "@microsoft/vscode-azext-utils";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, managedEnvironmentsAppProvider } from "../../constants";
+import { managedEnvironmentsAppProvider } from "../../constants";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';

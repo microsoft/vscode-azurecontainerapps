@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
-import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
+import { acrDomain } from "../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
@@ -71,7 +71,6 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
         };
     }
 
-    // Todo: Incorporate the new activity icon and context constants using azure tools exports
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
         if (this.acrBuildError) {

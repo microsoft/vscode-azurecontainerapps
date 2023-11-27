@@ -4,9 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Ingress } from "@azure/arm-appcontainers";
-import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -35,7 +34,6 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBase
 
         await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
     }
-
 
     public shouldExecute(context: IngressBaseContext): boolean {
         return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
