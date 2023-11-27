@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
+import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
@@ -101,6 +101,6 @@ export function registerCommands(): void {
     registerReportIssueCommand('containerApps.reportIssue');
 
     // registries
-    registerCommandWithTreeNodeUnwrapping('containerApps.createAcr', createAcr);
-    registerCommandWithTreeNodeUnwrapping('containerApps.openAcrBuildLogs', openAcrBuildLogs);
+    registerCommand('containerApps.createAcr', createAcr);
+    registerCommand('containerApps.openAcrBuildLogs', openAcrBuildLogs);
 }
