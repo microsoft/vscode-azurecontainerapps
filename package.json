@@ -96,6 +96,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployWorkspaceProjectApi",
+                "title": "%containerApps.deployWorkspaceProjectApi%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deployWorkspaceProjectToContainerApp",
                 "title": "%containerApps.deployWorkspaceProjectToContainerApp%",
                 "category": "Azure Container Apps"
@@ -496,6 +501,10 @@
                 },
                 {
                     "command": "containerApps.deployWorkspaceProjectToContainerApp",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.deployWorkspaceProjectApi",
                     "when": "never"
                 },
                 {
