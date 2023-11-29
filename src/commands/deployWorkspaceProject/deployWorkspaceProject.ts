@@ -30,7 +30,15 @@ import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPr
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
-export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
+export interface DeployWorkspaceProjectResults {
+    resourceGroupId?: string;
+    managedEnvironmentId?: string;
+    registryId?: string;
+    containerAppId?: string;
+    imageName?: string;
+}
+
+export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
 
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -204,6 +212,14 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     ext.branchDataProvider.refresh();
     ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
+
+    return {
+        resourceGroupId: wizardContext.resourceGroup?.id,
+        managedEnvironmentId: wizardContext.managedEnvironment?.id,
+        registryId: wizardContext.registry?.id,
+        containerAppId: wizardContext.containerApp?.id,
+        imageName: wizardContext.imageName
+    };
 }
 
 function displayNotification(context: DeployWorkspaceProjectContext): void {
