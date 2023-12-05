@@ -5,9 +5,11 @@
 
 import { type DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
 import { AzExtFsExtra, GenericTreeItem } from "@microsoft/vscode-azext-utils";
+import * as retry from 'p-retry';
 import * as path from 'path';
 import { type Progress } from "vscode";
 import { activityFailContext, activityFailIcon } from "../../../../constants";
+import { ext } from "../../../../extensionVariables";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
@@ -28,10 +30,18 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
                 dockerFilePath: path.basename(context.dockerfilePath) /* Assume the dockerfile is always in the root of the source */
             };
 
-            const building: string = localize('buildingImage', 'Building image...');
-            progress.report({ message: building });
-
-            context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
+            const retries = 3;
+            await retry(
+                async (currentAttempt: number) => {
+                    context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
+                    const message: string = currentAttempt === 1 ?
+                        localize('buildingImage', 'Building image...') :
+                        localize('buildingImageAttempt', 'Building image (Attempt {0}/{1})...', currentAttempt, retries + 1);
+                    ext.outputChannel.appendLog(message);
+                    progress.report({ message: message });
+                },
+                { retries, minTimeout: 2 * 1000 }
+            );
         } finally {
             if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
                 await AzExtFsExtra.deleteResource(context.tarFilePath);
