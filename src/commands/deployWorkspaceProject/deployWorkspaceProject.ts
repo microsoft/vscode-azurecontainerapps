@@ -41,7 +41,7 @@ export interface DeployWorkspaceProjectResults {
 export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     ext.outputChannel.appendLog(
         (context as DeployWorkspaceProjectContext).apiEntryPoint ?
-            localize('beginCommandExecution', '--------Initializing deploy workspace project (Azure Container Apps - API)--------') :
+            localize('beginCommandExecutionApi', '--------Initializing deploy workspace project (Azure Container Apps - API)--------') :
             localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
 
 
@@ -213,13 +213,13 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     wizardContext.activityTitle = wizardContext.customActivityTitle ??
         (wizardContext.apiEntryPoint ?
-            localize('deployWorkspaceProjectActivityTitleNoContainerApp', 'Deploy workspace project (Azure Container Apps - API)') :
-            localize('deployWorkspaceProjectActivityTitleContainerApp', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
+            localize('deployWorkspaceProjectActivityTitleApi', 'Deploy workspace project (Azure Container Apps - API)') :
+            localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
 
     ext.outputChannel.appendLog(
         wizardContext.apiEntryPoint ?
-            localize('beginCommandExecutionNoContainerApp', '--------Deploying workspace project (Azure Container Apps - API)--------') :
-            localize('beginCommandExecutionContainerApp', '--------Deploying workspace project to container app--------'));
+            localize('beginCommandExecutionApi', '--------Deploying workspace project (Azure Container Apps - API)--------') :
+            localize('beginCommandExecution', '--------Deploying workspace project to container app--------'));
 
     await wizard.execute();
 
@@ -233,8 +233,8 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     ext.outputChannel.appendLog(
         wizardContext.skipContainerAppCreation ?
-            localize('finishCommandExecutionNoContainerApp', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
-            localize('finishCommandExecutionContainerApp', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
+            localize('finishCommandExecutionApi', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
+            localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 
     return {
         resourceGroupId: wizardContext.resourceGroup?.id,
