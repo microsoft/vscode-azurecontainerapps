@@ -25,7 +25,7 @@ export interface ExecuteActivityOutputOptions {
 /**
  * An execute activity base step (wrapper) that automatically handles displaying activity children and/or output log messages on success or fail
  */
-export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & ExecuteActivityContext> extends AzureWizardExecuteStep<T> {
+export abstract class ExecuteActivityOutputStepBase<T extends IActionContext & Partial<ExecuteActivityContext>> extends AzureWizardExecuteStep<T> {
     abstract priority: number;
     protected options: ExecuteActivityOutputOptions = {};
 

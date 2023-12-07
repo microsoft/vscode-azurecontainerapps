@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, GenericTreeItem, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, GenericTreeItem, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { activityInfoIcon, activitySuccessContext, appProvider, managedEnvironmentsId } from "../../constants";
@@ -32,18 +32,18 @@ import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextVal
 
 export interface DeployWorkspaceProjectResults {
     resourceGroupId?: string;
+    logAnalyticsWorkspaceId?: string;
     managedEnvironmentId?: string;
     registryId?: string;
     containerAppId?: string;
     imageName?: string;
 }
 
-export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
+export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     ext.outputChannel.appendLog(
-        (context as DeployWorkspaceProjectContext).apiEntryPoint ?
+        context.apiEntryPoint ?
             localize('beginCommandExecutionApi', '--------Initializing deploy workspace project (Azure Container Apps - API)--------') :
             localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
-
 
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
@@ -63,12 +63,19 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
     });
 
+    let activityContext: Partial<ExecuteActivityContext>;
+    if (context.apiEntryPoint) {
+        activityContext = {};
+    } else {
+        activityContext = await createActivityContext();
+        activityContext.activityChildren = [];
+    }
+
     const wizardContext: DeployWorkspaceProjectContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(),
+        ...activityContext,
         ...defaultContextValues,
-        activityChildren: [],
         subscription,
     };
 
@@ -175,7 +182,7 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         wizardContext.telemetry.properties.existingContainerApp = 'false';
 
         if (wizardContext.skipContainerAppCreation) {
-            ext.outputChannel.appendLog(localize('skippingContainerApp', 'Received option to skip container app creation.'));
+            ext.outputChannel.appendLog(localize('skippingContainerApp', 'Option detected to skip container app creation.'));
         } else {
             executeSteps.push(new ContainerAppCreateStep());
         }
@@ -211,10 +218,9 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     await wizard.prompt();
 
-    wizardContext.activityTitle = wizardContext.customActivityTitle ??
-        (wizardContext.apiEntryPoint ?
-            localize('deployWorkspaceProjectActivityTitleApi', 'Deploy workspace project (Azure Container Apps - API)') :
-            localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
+    if (wizardContext.containerApp && !wizardContext.apiEntryPoint) {
+        wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
+    }
 
     ext.outputChannel.appendLog(
         wizardContext.apiEntryPoint ?
@@ -232,12 +238,13 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
     ext.branchDataProvider.refresh();
 
     ext.outputChannel.appendLog(
-        wizardContext.skipContainerAppCreation ?
+        wizardContext.apiEntryPoint ?
             localize('finishCommandExecutionApi', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
             localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 
     return {
         resourceGroupId: wizardContext.resourceGroup?.id,
+        logAnalyticsWorkspaceId: wizardContext.logAnalyticsWorkspace?.id,
         managedEnvironmentId: wizardContext.managedEnvironment?.id,
         registryId: wizardContext.registry?.id,
         containerAppId: wizardContext.containerApp?.id,
