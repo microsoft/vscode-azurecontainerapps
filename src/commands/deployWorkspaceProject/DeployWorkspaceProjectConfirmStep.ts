@@ -25,7 +25,7 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
             resourcesToCreate.push('container registry');
         }
 
-        if (!context.containerApp && !context.skipContainerAppCreation) {
+        if (!context.containerApp) {
             resourcesToCreate.push('container app');
         }
 

@@ -14,7 +14,7 @@ import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectCont
 import { deployWorkspaceProject, type DeployWorkspaceProjectResults } from "./deployWorkspaceProject";
 
 interface DeployWorkspaceProjectApiOptionsContract {
-    // Resources
+    // Existing resources
     resourceGroupId?: string;
 
     // Workspace deployment paths
@@ -22,6 +22,7 @@ interface DeployWorkspaceProjectApiOptionsContract {
     srcPath?: string;
     dockerfilePath?: string;
 
+    // Options
     skipContainerAppCreation?: boolean;
     shouldSaveDeploySettings?: boolean;
 }
