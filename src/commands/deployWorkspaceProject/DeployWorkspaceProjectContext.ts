@@ -15,6 +15,7 @@ import { type CreateAcrContext } from "../image/imageSource/containerRegistry/ac
 // Use intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by having to use the 'Partial' utility
 export type DeployWorkspaceProjectContext =
     IContainerAppContext &
+    Partial<DeployWorkspaceProjectApiContext> &
     Partial<IManagedEnvironmentContext> &
     Partial<CreateContainerAppBaseContext> &
     Partial<CreateAcrContext> &
@@ -23,10 +24,12 @@ export type DeployWorkspaceProjectContext =
     DeployWorkspaceProjectTelemetryProps &
     {
         shouldSaveDeploySettings?: boolean;
-
-        // API
-        apiEntryPoint?: boolean;
-        skipContainerAppCreation?: boolean;
     };
+
+// Properties that only get set from the API entry-point
+type DeployWorkspaceProjectApiContext = {
+    apiEntryPoint?: boolean;
+    skipContainerAppCreation?: boolean;
+};
 
 type DeployWorkspaceProjectTelemetryProps = SetTelemetryProps<TelemetryProps>;
