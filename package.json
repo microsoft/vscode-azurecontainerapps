@@ -504,6 +504,10 @@
                     "when": "never"
                 },
                 {
+                    "command": "containerApps.deployWorkspaceProjectApi",
+                    "when": "never"
+                },
+                {
                     "command": "containerApps.deployImageApi",
                     "when": "never"
                 }
