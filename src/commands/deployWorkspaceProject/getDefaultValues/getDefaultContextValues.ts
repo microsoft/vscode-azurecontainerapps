@@ -6,28 +6,29 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource } from "../../../constants";
+import { type WorkspaceFolder } from "vscode";
+import { ImageSource, dockerFilePick, dockerfileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
+import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettingsTelemetry, type DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
-import { getWorkspaceProjectPaths } from "./getWorkspaceProjectPaths";
+import { getWorkspaceProjectRootFolder } from "./getWorkspaceProjectRootFolder";
 
 export async function getDefaultContextValues(
-    context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>,
+    context: ISubscriptionActionContext & Partial<DeployWorkspaceProjectContext>,
     item?: ContainerAppItem | ManagedEnvironmentItem
 ): Promise<Partial<DeployWorkspaceProjectContext>> {
-    const { rootFolder, dockerfilePath } = await getWorkspaceProjectPaths(context);
-    const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
+    const rootFolder: WorkspaceFolder = context.rootFolder ?? await getWorkspaceProjectRootFolder(context);
+    const dockerfilePath: string = context.dockerfilePath ?? nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
 
+    const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
     setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
     if (triggerSettingsOverride(settings, item)) {

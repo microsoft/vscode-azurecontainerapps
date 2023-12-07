@@ -5,26 +5,29 @@
 
 import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { nonNullProp, type IAzureQuickPickItem, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
-import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
+import { nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
+import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
 import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
-const noMatchingResources = {
-    resourceGroup: undefined,
-    managedEnvironment: undefined,
-    containerApp: undefined
-};
+export async function promptForEnvironmentResources(context: ISubscriptionActionContext & Partial<DeployWorkspaceProjectContext>): Promise<DefaultContainerAppsResources> {
+    const noMatchingEnvironmentResources = {
+        resourceGroup: context.resourceGroup,
+        managedEnvironment: undefined,
+        containerApp: undefined
+    };
 
-export async function promptForEnvironmentResources(context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context)
-    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(
+        context.resourceGroup ?
+            client.managedEnvironments.listByResourceGroup(nonNullValueAndProp(context.resourceGroup, 'name')) :
+            client.managedEnvironments.listBySubscription()
+    );
 
     if (!managedEnvironments.length) {
-        return noMatchingResources;
+        return noMatchingEnvironmentResources;
     }
 
     const picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[] = [
@@ -48,7 +51,7 @@ export async function promptForEnvironmentResources(context: ISubscriptionAction
     const managedEnvironment: ManagedEnvironment | undefined = (await context.ui.showQuickPick(picks, { placeHolder })).data;
 
     if (!managedEnvironment) {
-        return noMatchingResources;
+        return noMatchingEnvironmentResources;
     }
 
     return await getResourcesFromManagedEnvironmentHelper(context, managedEnvironment);

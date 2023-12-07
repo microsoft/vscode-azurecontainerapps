@@ -7,7 +7,7 @@ import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { OverwriteConfirmStepBase } from "../OverwriteConfirmStepBase";
-import  { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
 export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<DeployWorkspaceProjectContext> {
     protected async promptCore(context: DeployWorkspaceProjectContext): Promise<void> {
@@ -25,7 +25,7 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
             resourcesToCreate.push('container registry');
         }
 
-        if (!context.containerApp) {
+        if (!context.containerApp && !context.skipContainerAppCreation) {
             resourcesToCreate.push('container app');
         }
 
@@ -58,7 +58,7 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
         ext.outputChannel.appendLog(outputMessage);
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {
+        return !context.apiEntryPoint;
     }
 }

@@ -39,7 +39,11 @@ export interface DeployWorkspaceProjectResults {
 }
 
 export async function deployWorkspaceProject(context: IActionContext, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
-    ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
+    ext.outputChannel.appendLog(
+        (context as DeployWorkspaceProjectContext).apiEntryPoint ?
+            localize('beginCommandExecution', '--------Initializing deploy workspace project (Azure Container Apps - API)--------') :
+            localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
+
 
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
@@ -169,7 +173,12 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
         }
     } else {
         wizardContext.telemetry.properties.existingContainerApp = 'false';
-        executeSteps.push(new ContainerAppCreateStep());
+
+        if (wizardContext.skipContainerAppCreation) {
+            ext.outputChannel.appendLog(localize('skippingContainerApp', 'Received option to skip container app creation.'));
+        } else {
+            executeSteps.push(new ContainerAppCreateStep());
+        }
     }
 
     promptSteps.push(
@@ -202,16 +211,30 @@ export async function deployWorkspaceProject(context: IActionContext, item?: Con
 
     await wizard.prompt();
 
-    wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName'));
+    wizardContext.activityTitle = wizardContext.customActivityTitle ??
+        (wizardContext.apiEntryPoint ?
+            localize('deployWorkspaceProjectActivityTitleNoContainerApp', 'Deploy workspace project (Azure Container Apps - API)') :
+            localize('deployWorkspaceProjectActivityTitleContainerApp', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
 
-    ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Deploying workspace project to container app--------', wizardContext.containerApp?.name || nonNullProp(wizardContext, 'newContainerAppName')));
+    ext.outputChannel.appendLog(
+        wizardContext.apiEntryPoint ?
+            localize('beginCommandExecutionNoContainerApp', '--------Deploying workspace project (Azure Container Apps - API)--------') :
+            localize('beginCommandExecutionContainerApp', '--------Deploying workspace project to container app--------'));
+
     await wizard.execute();
 
-    displayNotification(wizardContext);
+    if (wizardContext.containerApp && !wizardContext.apiEntryPoint) {
+        displayNotification(wizardContext);
+    }
+
     wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
 
     ext.branchDataProvider.refresh();
-    ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
+
+    ext.outputChannel.appendLog(
+        wizardContext.skipContainerAppCreation ?
+            localize('finishCommandExecutionNoContainerApp', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
+            localize('finishCommandExecutionContainerApp', '--------Finished deploying workspace project to container app "{0}"--------', wizardContext.containerApp?.name));
 
     return {
         resourceGroupId: wizardContext.resourceGroup?.id,

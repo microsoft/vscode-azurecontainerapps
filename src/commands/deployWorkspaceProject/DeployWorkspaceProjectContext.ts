@@ -14,6 +14,11 @@ import { type CreateAcrContext } from "../image/imageSource/containerRegistry/ac
 // Use intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by having to use the 'Partial' utility
 export type DeployWorkspaceProjectContext = IManagedEnvironmentContext & CreateContainerAppBaseContext & CreateAcrContext & Partial<BuildImageInAzureImageSourceBaseContext> & ExecuteActivityContext & DeployWorkspaceProjectTelemetryProps & {
     shouldSaveDeploySettings?: boolean;
+
+    // API
+    apiEntryPoint?: boolean;
+    customActivityTitle?: string;
+    skipContainerAppCreation?: boolean;
 };
 
 type DeployWorkspaceProjectTelemetryProps = SetTelemetryProps<TelemetryProps>;

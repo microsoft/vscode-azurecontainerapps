@@ -99,3 +99,7 @@ export async function getRootWorkspaceFolder(placeHolder?: string): Promise<Work
         return folder;
     }
 }
+
+export function getWorkspaceFolderFromPath(path: string): WorkspaceFolder | undefined {
+    return workspace.workspaceFolders?.find(folder => folder.uri.path === path);
+}
