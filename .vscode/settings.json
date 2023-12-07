@@ -1,7 +1,7 @@
 {
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
-        "source.organizeImports": "explicit"
+        "source.fixAll.eslint": true,
+        "source.organizeImports": true
     },
     "editor.formatOnSave": true,
     "editor.insertSpaces": true,
@@ -15,11 +15,5 @@
         ".vscode-test": true
     },
     "typescript.preferences.importModuleSpecifier": "relative",
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "[javascript][javascriptreact][typescript][typescriptreact]": {
-        "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": "explicit",
-            "source.organizeImports": "explicit"
-        }
-    }
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
