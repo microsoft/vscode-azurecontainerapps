@@ -27,14 +27,6 @@ interface DeployWorkspaceProjectApiOptionsContract {
 }
 
 export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: DeployWorkspaceProjectApiOptionsContract): Promise<DeployWorkspaceProjectResults> {
-    deployWorkspaceProjectOptions = {
-        resourceGroupId: '/subscriptions/c85e9868-f46d-45f5-9f5d-3ef2829ec63d/resourceGroups/testbox',
-        rootPath: '/Users/mfisher/Projects/code-sandboxes/azure-containerapps/aca-hello-world',
-        dockerfilePath: '/Users/mfisher/Projects/code-sandboxes/azure-containerapps/aca-hello-world/Dockerfile',
-        skipContainerAppCreation: true,
-        shouldSaveDeploySettings: false
-    };
-
     const { resourceGroupId, rootPath, srcPath, dockerfilePath, skipContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
