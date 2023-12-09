@@ -23,6 +23,7 @@ export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImage
     }
 }
 
+// Todo: Leverage workspace function instead.  Also, instead of throwing an error, offer up a browse option as well as the ability to go back
 async function getRootWorkSpaceFolder(): Promise<vscode.WorkspaceFolder> {
     if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
         throw new Error(localize('noOpenFolder', 'No folder is open. Please open a folder and try again.'));

@@ -14,6 +14,7 @@ import { ImageNameStep } from "./ImageNameStep";
 import { OSPickStep } from "./OSPickStep";
 import { RootFolderStep } from "./RootFolderStep";
 import { RunStep } from "./RunStep";
+import { SourcePathStep } from "./SourcePathStep";
 import { TarFileStep } from "./TarFileStep";
 import { UploadSourceCodeStep } from "./UploadSourceCodeStep";
 
@@ -49,7 +50,7 @@ export class BuildFromProjectListStep extends AzureWizardPromptStep<ImageSourceC
 
         switch (context.buildType) {
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new AcrListStep(), new RootFolderStep(), new DockerFileItemStep(), new ImageNameStep(), new OSPickStep());
+                promptSteps.push(new AcrListStep(), new RootFolderStep(), new DockerFileItemStep(), new SourcePathStep(), new ImageNameStep(), new OSPickStep());
                 executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep());
                 break;
             //TODO: case for 'Build from project locally using Docker'

@@ -10,8 +10,10 @@ import { type SetTelemetryProps } from '../../../../telemetry/SetTelemetryProps'
 import { type ContainerRegistryImageSourceBaseContext } from '../containerRegistry/ContainerRegistryImageSourceContext';
 import { type AcrBuildSupportedOS } from './OSPickStep';
 
+// Todo: Investigate if these properties should actually be optional
 export interface BuildImageInAzureImageSourceBaseContext extends ContainerRegistryImageSourceBaseContext {
     rootFolder: vscode.WorkspaceFolder;
+    srcPath: string;
     dockerfilePath: string;
     imageName: string;
     os: AcrBuildSupportedOS;
