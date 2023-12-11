@@ -28,12 +28,12 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         context.client = await createContainerRegistryManagementClient(context);
 
         if (context.srcPath) {
-            this._sourceFilePath = context.srcPath;
+            this._sourceFilePath = path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         } else {
             this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.fsPath, context.dockerfilePath));
         }
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
+        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
         progress.report({ message: uploading });
 
         const source: string = path.join(context.rootFolder.uri.fsPath, this._sourceFilePath);
