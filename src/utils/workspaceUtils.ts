@@ -85,7 +85,7 @@ export async function selectWorkspaceFile(
         // Todo: Check if showOpenDialog can be given a starting point path to show from, perhaps this
         // will allow us to not have to stop the user mid-way through the process if they choose
         // build image in azure without a workspace open (option => `defaultUri`)
-        return input?.data || (await context.ui.showOpenDialog(options))[0].path;
+        return input?.data || (await context.ui.showOpenDialog(options))[0].fsPath;
     }
 }
 
@@ -104,5 +104,5 @@ export async function getRootWorkspaceFolder(placeHolder?: string): Promise<Work
 }
 
 export function getWorkspaceFolderFromPath(path: string): WorkspaceFolder | undefined {
-    return workspace.workspaceFolders?.find(folder => folder.uri.path === path);
+    return workspace.workspaceFolders?.find(folder => folder.uri.fsPath === path);
 }

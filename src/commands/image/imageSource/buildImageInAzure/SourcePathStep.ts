@@ -5,11 +5,28 @@
 
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
+import { browseItem } from '../../../../constants';
+import { localize } from '../../../../utils/localize';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        context.srcPath = 'Placeholder';
+        await context.ui.showQuickPick([browseItem], {
+            placeHolder: localize('sourceDirectoryPick', 'Choose your source code directory')
+        });
+
+        context.srcPath = (await context.ui.showOpenDialog({
+            defaultUri: context.rootFolder?.uri,
+            canSelectFiles: false,
+            canSelectFolders: true
+        }))[0].fsPath;
+        context.telemetry.properties.sourceDepth = String(this.getRelativePathDepth(context.srcPath));
+    }
+
+    public async configureBeforePrompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
+        if (context.srcPath) {
+            context.telemetry.properties.sourceDepth = String(this.getRelativePathDepth(context.srcPath));
+        }
     }
 
     public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
@@ -22,8 +39,11 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
             return false;
         }
 
-        const rootPath: string = context.rootFolder.uri.path;
-        // Try something with path.relative instead?
-        return path.join(rootPath, path.basename(context.dockerfilePath)) === path.normalize(context.dockerfilePath);
+        const rootPath: string = context.rootFolder.uri.fsPath;
+        return path.relative(rootPath, context.dockerfilePath) === path.basename(context.dockerfilePath);
+    }
+
+    private getRelativePathDepth(relativePath: string): number {
+        return relativePath === '.' ? 0 : relativePath.split(path.sep).length;
     }
 }
