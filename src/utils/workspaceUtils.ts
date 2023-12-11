@@ -82,9 +82,6 @@ export async function selectWorkspaceFile(
     if (input?.data === skipForNow) {
         return undefined;
     } else {
-        // Todo: Check if showOpenDialog can be given a starting point path to show from, perhaps this
-        // will allow us to not have to stop the user mid-way through the process if they choose
-        // build image in azure without a workspace open (option => `defaultUri`)
         return input?.data || (await context.ui.showOpenDialog(options))[0].fsPath;
     }
 }
