@@ -5,7 +5,7 @@
 
 import { UserCancelledError, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
-import { window, workspace, type OpenDialogOptions, type Uri, type WorkspaceFolder } from "vscode";
+import { Uri, window, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
 import { type SetTelemetryProps } from "../telemetry/SetTelemetryProps";
 import { type WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
@@ -55,14 +55,14 @@ export async function selectWorkspaceFile(
         }
 
         if (options.autoSelectIfOne && files.length === 1) {
-            return files[0].path;
+            return files[0].fsPath;
         }
 
         quickPicks.push(...files.map((uri: Uri) => {
             return {
                 label: basename(uri.path),
                 description: uri.path,
-                data: uri.path
+                data: uri.fsPath
             };
         }));
 
@@ -82,7 +82,7 @@ export async function selectWorkspaceFile(
     if (input?.data === skipForNow) {
         return undefined;
     } else {
-        return input?.data || (await context.ui.showOpenDialog(options))[0].path;
+        return input?.data || (await context.ui.showOpenDialog(options))[0].fsPath;
     }
 }
 
@@ -101,5 +101,5 @@ export async function getRootWorkspaceFolder(placeHolder?: string): Promise<Work
 }
 
 export function getWorkspaceFolderFromPath(path: string): WorkspaceFolder | undefined {
-    return workspace.workspaceFolders?.find(folder => folder.uri.path === path);
+    return workspace.workspaceFolders?.find(folder => folder.uri.fsPath === Uri.file(path).fsPath);
 }

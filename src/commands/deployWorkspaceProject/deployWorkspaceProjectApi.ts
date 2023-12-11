@@ -7,7 +7,7 @@ import { type ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { type WorkspaceFolder } from "vscode";
+import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
@@ -40,8 +40,8 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
         Object.assign(subscriptionActionContext, {
             resourceGroup,
             rootFolder,
-            srcPath,
-            dockerfilePath,
+            srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
+            dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
             skipContainerAppCreation,
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
             apiEntryPoint: true,
