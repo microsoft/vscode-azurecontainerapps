@@ -20,12 +20,12 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
             canSelectFiles: false,
             canSelectFolders: true
         }))[0].fsPath;
-        context.telemetry.properties.sourceDepth = String(this.getRelativePathDepth(context.srcPath));
+        context.telemetry.properties.sourceDepth = String(this.getRelativePathDepthFromRoot(context.srcPath));
     }
 
     public async configureBeforePrompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
         if (context.srcPath) {
-            context.telemetry.properties.sourceDepth = String(this.getRelativePathDepth(context.srcPath));
+            context.telemetry.properties.sourceDepth = String(this.getRelativePathDepthFromRoot(context.srcPath));
         }
     }
 
@@ -43,7 +43,7 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
         return path.relative(rootPath, context.dockerfilePath) === path.basename(context.dockerfilePath);
     }
 
-    private getRelativePathDepth(relativePath: string): number {
+    private getRelativePathDepthFromRoot(relativePath: string): number {
         return relativePath === '.' ? 0 : relativePath.split(path.sep).length;
     }
 }
