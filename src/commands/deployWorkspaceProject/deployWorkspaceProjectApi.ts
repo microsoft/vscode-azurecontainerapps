@@ -44,7 +44,7 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
             dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
             skipContainerAppCreation,
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
-            apiEntryPoint: true,
+            invokedFromApi: true,
         } as Partial<DeployWorkspaceProjectContext>)
     );
 }

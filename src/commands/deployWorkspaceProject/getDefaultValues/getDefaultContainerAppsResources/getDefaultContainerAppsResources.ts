@@ -26,7 +26,7 @@ export async function getDefaultContainerAppsResources(
 ): Promise<DefaultContainerAppsResources> {
     context.telemetry.properties.promptedForEnvironment = 'false';  // Initialize the default value
 
-    if (!context.apiEntryPoint) {
+    if (!context.invokedFromApi) {
         // If a tree item is provided that can be used to deduce default context values, try to use those first
         if (item) {
             return await getContainerAppResourcesFromItem(context, item);

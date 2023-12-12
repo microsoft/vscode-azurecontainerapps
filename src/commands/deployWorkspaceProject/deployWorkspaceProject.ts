@@ -41,7 +41,7 @@ export interface DeployWorkspaceProjectResults {
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     ext.outputChannel.appendLog(
-        context.apiEntryPoint ?
+        context.invokedFromApi ?
             localize('beginCommandExecutionApi', '--------Initializing deploy workspace project (Azure Container Apps - API)--------') :
             localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
 
@@ -64,7 +64,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     let activityContext: Partial<ExecuteActivityContext>;
-    if (context.apiEntryPoint) {
+    if (context.invokedFromApi) {
         activityContext = {};
     } else {
         activityContext = await createActivityContext();
@@ -218,18 +218,18 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     await wizard.prompt();
 
-    if (!wizardContext.apiEntryPoint) {
+    if (!wizardContext.invokedFromApi) {
         wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
     }
 
     ext.outputChannel.appendLog(
-        wizardContext.apiEntryPoint ?
+        wizardContext.invokedFromApi ?
             localize('beginCommandExecutionApi', '--------Deploying workspace project (Azure Container Apps - API)--------') :
             localize('beginCommandExecution', '--------Deploying workspace project--------'));
 
     await wizard.execute();
 
-    if (!wizardContext.apiEntryPoint) {
+    if (!wizardContext.invokedFromApi) {
         displayNotification(wizardContext);
     }
 
@@ -238,7 +238,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     ext.branchDataProvider.refresh();
 
     ext.outputChannel.appendLog(
-        wizardContext.apiEntryPoint ?
+        wizardContext.invokedFromApi ?
             localize('finishCommandExecutionApi', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
             localize('finishCommandExecution', '--------Finished deploying workspace project--------'));
 

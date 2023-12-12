@@ -28,7 +28,7 @@ export type DeployWorkspaceProjectContext =
 
 // Properties that only get set from the API entry-point
 type DeployWorkspaceProjectApiContext = {
-    apiEntryPoint?: boolean;
+    invokedFromApi?: boolean;
     skipContainerAppCreation?: boolean;
 };
 
