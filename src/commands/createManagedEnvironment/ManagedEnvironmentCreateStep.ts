@@ -42,7 +42,13 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
                         "customerId": logAnalyticsWorkspace.customerId,
                         "sharedKey": sharedKeys.primarySharedKey
                     }
-                }
+                },
+                workloadProfiles: [
+                    {
+                        name: "Consumption",
+                        workloadProfileType: "Consumption"
+                    }
+                ]
             }
         );
 
