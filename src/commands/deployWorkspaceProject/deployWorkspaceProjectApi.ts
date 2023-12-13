@@ -10,22 +10,9 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
+import { type DeployWorkspaceProjectApiOptionsContract, type DeployWorkspaceProjectResults } from "../../vscode-azurecontainerapps.api";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { deployWorkspaceProject, type DeployWorkspaceProjectResults } from "./deployWorkspaceProject";
-
-interface DeployWorkspaceProjectApiOptionsContract {
-    // Existing resources
-    resourceGroupId?: string;
-
-    // Workspace deployment paths
-    rootPath?: string;
-    srcPath?: string;
-    dockerfilePath?: string;
-
-    // Options
-    skipContainerAppCreation?: boolean;
-    shouldSaveDeploySettings?: boolean;
-}
+import { deployWorkspaceProject } from "./deployWorkspaceProject";
 
 export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: DeployWorkspaceProjectApiOptionsContract): Promise<DeployWorkspaceProjectResults> {
     const { resourceGroupId, rootPath, srcPath, dockerfilePath, skipContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;

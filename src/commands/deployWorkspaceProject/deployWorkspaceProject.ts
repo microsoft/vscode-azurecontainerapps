@@ -16,6 +16,7 @@ import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
+import { type DeployWorkspaceProjectResults } from "../../vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
@@ -29,15 +30,6 @@ import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProject
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
-
-export interface DeployWorkspaceProjectResults {
-    resourceGroupId?: string;
-    logAnalyticsWorkspaceId?: string;
-    managedEnvironmentId?: string;
-    registryId?: string;
-    containerAppId?: string;
-    imageName?: string;
-}
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     ext.outputChannel.appendLog(
