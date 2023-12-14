@@ -50,7 +50,9 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     await window.withProgress({
         location: ProgressLocation.Notification,
         cancellable: false,
-        title: localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
+        title: context.invokedFromApi ?
+            undefined :
+            localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
     }, async () => {
         defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
     });
@@ -202,10 +204,12 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
 
     const wizard: AzureWizard<DeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
-        title: localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
+        title: context.invokedFromApi ?
+            undefined :
+            localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
-        showLoadingPrompt: true
+        showLoadingPrompt: !context.invokedFromApi
     });
 
     await wizard.prompt();
