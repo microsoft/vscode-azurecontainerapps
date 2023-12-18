@@ -2,6 +2,7 @@ import { type IActionContext } from "@microsoft/vscode-azext-utils";
 
 export interface DeployWorkspaceProjectApiOptionsContract {
     // Existing resources
+    subscriptionId?: string;
     resourceGroupId?: string;
 
     // Workspace deployment paths (absolute fs path)

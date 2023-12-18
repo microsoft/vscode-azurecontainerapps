@@ -42,7 +42,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         item = undefined;
     }
 
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscription: AzureSubscription = context.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
     // Show loading indicator while we configure default values
@@ -209,7 +209,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
             localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
-        showLoadingPrompt: !context.invokedFromApi
+        showLoadingPrompt: true
     });
 
     await wizard.prompt();
