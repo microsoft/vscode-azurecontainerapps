@@ -5,11 +5,11 @@
 
 import { type ContainerRegistryManagementClient, type Registry, type RegistryPassword } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, nonNullValue, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 
-export async function listCredentialsFromRegistry(context: ContainerRegistryImageSourceContext, registry: Registry):
+export async function listCredentialsFromRegistry(context: ISubscriptionActionContext & Partial<ContainerRegistryImageSourceContext>, registry: Registry):
     Promise<{ username: string, password: RegistryPassword }> {
 
     const containerClient: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);

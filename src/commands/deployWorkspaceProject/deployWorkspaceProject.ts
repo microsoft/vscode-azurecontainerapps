@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type RegistryPassword } from "@azure/arm-containerregistry";
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, GenericTreeItem, callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, nonNullValueAndProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
@@ -23,6 +24,7 @@ import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalytics
 import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
+import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
@@ -238,12 +240,17 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
             localize('finishCommandExecutionApi', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
             localize('finishCommandExecution', '--------Finished deploying workspace project--------'));
 
+    const registryCredentials: { username: string, password: RegistryPassword } | undefined = wizardContext.registry ? await listCredentialsFromRegistry(wizardContext, wizardContext.registry) : undefined;
+
     return {
         resourceGroupId: wizardContext.resourceGroup?.id,
         logAnalyticsWorkspaceId: wizardContext.logAnalyticsWorkspace?.id,
         managedEnvironmentId: wizardContext.managedEnvironment?.id,
-        registryId: wizardContext.registry?.id,
         containerAppId: wizardContext.containerApp?.id,
+        registryId: wizardContext.registry?.id,
+        registryLoginServer: wizardContext.registry?.loginServer,
+        registryUsername: registryCredentials?.username,
+        registryPassword: registryCredentials?.password.value,
         imageName: wizardContext.imageName
     };
 }

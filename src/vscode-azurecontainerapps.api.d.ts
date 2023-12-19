@@ -19,8 +19,13 @@ export interface DeployWorkspaceProjectResults {
     resourceGroupId?: string;
     logAnalyticsWorkspaceId?: string;
     managedEnvironmentId?: string;
-    registryId?: string;
     containerAppId?: string;
+
+    // ACR
+    registryId?: string;
+    registryLoginServer?: string;
+    registryUsername?: string;
+    registryPassword?: string;
     imageName?: string;
 }
 
