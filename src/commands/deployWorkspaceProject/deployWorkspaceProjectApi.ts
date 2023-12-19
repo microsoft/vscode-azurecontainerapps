@@ -19,7 +19,7 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
     const { resourceGroupId, rootPath, srcPath, dockerfilePath, skipContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-        selectSubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
+        selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
         showLoadingPrompt: false
     });
 
