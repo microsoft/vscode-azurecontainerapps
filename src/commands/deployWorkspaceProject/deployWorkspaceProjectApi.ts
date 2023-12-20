@@ -25,8 +25,6 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
 
     const subscriptionActionContext: ISubscriptionActionContext = Object.assign(context, createSubscriptionContext(subscription));
 
-    // Todo: Add any additional output logs/errors if the paths or resources don't resolve properly?
-
     const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
     const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId(subscriptionActionContext, resourceGroupId) : undefined;
 

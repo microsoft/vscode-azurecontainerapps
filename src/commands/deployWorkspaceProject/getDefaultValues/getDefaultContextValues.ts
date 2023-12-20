@@ -31,15 +31,18 @@ export async function getDefaultContextValues(
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
     setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
-    if (triggerSettingsOverride(settings, item)) {
-        // Tree item / settings conflict
-        context.telemetry.properties.settingsOverride = 'triggered';
-        await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
-        context.telemetry.properties.settingsOverride = 'accepted';
-    } else {
-        // No settings conflict
-        context.telemetry.properties.settingsOverride = 'none';
-        displayDeployWorkspaceProjectSettingsOutput(settings);
+    if (!context.invokedFromApi) {
+        // Logic to display local workspace settings related outputs
+        if (triggerSettingsOverride(settings, item)) {
+            // Tree item & settings conflict
+            context.telemetry.properties.settingsOverride = 'triggered';
+            await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
+            context.telemetry.properties.settingsOverride = 'accepted';
+        } else {
+            // No settings conflict
+            context.telemetry.properties.settingsOverride = 'none';
+            displayDeployWorkspaceProjectSettingsOutput(settings);
+        }
     }
 
     return {
