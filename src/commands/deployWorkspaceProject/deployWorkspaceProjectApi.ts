@@ -4,12 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type ResourceGroup } from "@azure/arm-resources";
-import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
+import { ResourceGroupListStep, parseAzureResourceGroupId } from "@microsoft/vscode-azext-azureutils";
 import { createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
-import { localize } from "../../utils/localize";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
 import { type DeployWorkspaceProjectApiOptionsContract, type DeployWorkspaceProjectResults } from "../../vscode-azurecontainerapps.api";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
@@ -50,21 +49,6 @@ function getSubscriptionIdFromOptions(deployWorkspaceProjectOptions: DeployWorks
     } else {
         return undefined;
     }
-}
-
-// Todo: Combine with AzureTools
-function parseAzureResourceGroupId(id: string) {
-    const matches: RegExpMatchArray | null = id.match(/\/subscriptions\/(.*)\/resourceGroups\/(.*)/i);
-
-    if (!matches) {
-        throw new Error(localize('invalidResourceGroupId', 'Invalid resource group ID.'));
-    }
-
-    return {
-        rawId: id,
-        subscriptionId: matches[1],
-        resourceGroup: matches[2],
-    };
 }
 
 async function getResourceGroupFromId(context: ISubscriptionActionContext, resourceGroupId: string): Promise<ResourceGroup | undefined> {

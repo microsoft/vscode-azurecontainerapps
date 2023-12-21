@@ -61,7 +61,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     let activityContext: Partial<ExecuteActivityContext>;
     if (context.invokedFromApi) {
-        activityContext = {};
+        activityContext = { suppressNotification: true };
     } else {
         activityContext = await createActivityContext();
         activityContext.activityChildren = [];
