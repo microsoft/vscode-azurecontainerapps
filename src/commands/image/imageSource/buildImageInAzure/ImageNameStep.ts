@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
-import { validateUtils } from "../../../../utils/validateUtils";
+import { validationUtils } from "../../../../utils/validationUtils";
 import { type CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
@@ -33,8 +33,8 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
     private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
-        if (!validateUtils.isValidLength(name, 1, maxImageNameLength)) {
-            return validateUtils.getInvalidLengthMessage(1, maxImageNameLength);
+        if (!validationUtils.hasValidCharLength(name, 1, maxImageNameLength)) {
+            return validationUtils.getInvalidCharLengthMessage(1, maxImageNameLength);
         }
 
         return undefined;

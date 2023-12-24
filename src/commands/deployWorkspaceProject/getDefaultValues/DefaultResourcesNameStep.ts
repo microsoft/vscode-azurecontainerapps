@@ -8,7 +8,7 @@ import { AzureWizardPromptStep, nonNullValueAndProp } from "@microsoft/vscode-az
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
-import { validateUtils } from "../../../utils/validateUtils";
+import { validationUtils, type ValidAlphanumericAndSymbolsOptions } from "../../../utils/validationUtils";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
@@ -71,13 +71,13 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         // No symbols are allowed for ACR - we will strip out any offending characters from the base name, but still need to ensure this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-z0-9]+/g, '');
-        if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
+        if (!validationUtils.hasValidCharLength(nameWithoutSymbols, 5, 20)) {
             return localize('invalidLength', 'The alphanumeric portion of the name must be least 5 characters but no more than 20 characters.');
         }
 
-        const symbols: string = '-';
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(name, symbols, false /** canSymbolsRepeat */)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols);
+        const options: ValidAlphanumericAndSymbolsOptions = { allowedSymbols: '-', canSymbolsRepeat: false, requireCase: 'lowercase' };
+        if (!validationUtils.hasValidAlphanumericAndSymbols(name, options)) {
+            return validationUtils.getInvalidAlphanumericAndSymbolsMessage(options);
         }
 
         return undefined;

@@ -6,7 +6,7 @@
 import { type Secret } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { validateUtils } from "../../../utils/validateUtils";
+import { validationUtils, type ValidAlphanumericAndSymbolsOptions } from "../../../utils/validationUtils";
 import { type ISecretContext } from "../ISecretContext";
 
 export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
@@ -25,12 +25,13 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
     private validateInput(context: ISecretContext, val: string | undefined): string | undefined {
         const value: string = val ? val.trim() : '';
 
-        if (!validateUtils.isValidLength(value)) {
-            return validateUtils.getInvalidLengthMessage();
+        if (!validationUtils.hasValidCharLength(value)) {
+            return validationUtils.getInvalidCharLengthMessage();
         }
 
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage();
+        const options: ValidAlphanumericAndSymbolsOptions = { allowedSymbols: '-', canSymbolsRepeat: true, requireCase: 'lowercase' };
+        if (!validationUtils.hasValidAlphanumericAndSymbols(value, options)) {
+            return validationUtils.getInvalidAlphanumericAndSymbolsMessage(options);
         }
 
         const secrets: Secret[] = context.containerApp?.configuration?.secrets ?? [];
