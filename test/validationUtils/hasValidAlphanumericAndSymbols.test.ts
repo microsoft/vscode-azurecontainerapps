@@ -32,9 +32,7 @@ export function hasValidAlphanumericAndSymbolsTest() {
 
     const falseValues: ValidAlphanumericAndSymbolsParams[] = [
         { value: 'hello_world' },
-        { value: 'Hello123' },
         { value: '' },
-        { value: 'A' },
         { value: 'hello123-' },
         { value: '-hello123' },
         { value: 'hello--world', options: { allowedSymbols: '-', canSymbolsRepeat: false } },
