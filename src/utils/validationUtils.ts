@@ -12,18 +12,25 @@ export interface ValidNumberFormatOptions {
 }
 
 export interface ValidAlphanumericAndSymbolsOptions {
+    allowNumbers?: boolean;
+    allowedAlphabetCasing?: 'case-insensitive' | 'uppercase' | 'lowercase' | 'none';
+    requireLeadingAlphabet?: boolean;
     allowedSymbols?: string;
-    canSymbolsRepeat?: boolean;
-    requireCase?: 'uppercase' | 'lowercase';
+    allowSymbolRepetition?: boolean;
 }
+
+const invalidAlphabetOptionsMessage: string = localize('invalidAlphabetOptions', 'Invalid options. Cannot require leading alphabet character when alphabet casing is set to none.');
 
 export namespace validationUtils {
     const thirtyTwoBitMaxSafeInteger: number = 2147483647;
     const thirtyTwoBitMinSafeInteger: number = -2147483648;
     const allSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
     const alphanumericAndSymbolsDefault: ValidAlphanumericAndSymbolsOptions = {
+        allowNumbers: true,
+        allowedAlphabetCasing: 'case-insensitive',
         allowedSymbols: '-',
-        canSymbolsRepeat: true
+        allowSymbolRepetition: true,
+        requireLeadingAlphabet: false
     };
 
     export function hasValidNumberValue(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
@@ -48,24 +55,24 @@ export namespace validationUtils {
         }
     }
 
-    export function hasValidNumberFormat(value: string, options?: ValidNumberFormatOptions): boolean {
+    export function hasValidNumberFormat(value: string, options: ValidNumberFormatOptions): boolean {
         let pattern: string = '^';
 
-        if (options?.signType === 'negative') {
+        if (options.signType === 'negative') {
             pattern += '-';
-        } else if (options?.signType === 'positive') {
+        } else if (options.signType === 'positive') {
             // Add nothing
         } else {
             pattern += '-?';
         }
 
-        if (options?.allowZero) {
+        if (options.allowZero) {
             pattern += '\\d+';
         } else {
             pattern += '[1-9]\\d*';
         }
 
-        if (options?.allowFloat) {
+        if (options.allowFloat) {
             pattern += '(\\.\\d+)?';
         }
 
@@ -75,10 +82,10 @@ export namespace validationUtils {
         return regex.test(value);
     }
 
-    export function getInvalidNumberFormatMessage(options?: ValidNumberFormatOptions): string {
-        const signType: string = options?.signType ? options.signType + ' ' : '';
-        const decimalType: string = options?.allowFloat ? 'real ' : 'whole ';
-        const zeroType: string = options?.allowZero ? ' or zero' : '';
+    export function getInvalidNumberFormatMessage(options: ValidNumberFormatOptions): string {
+        const signType: string = options.signType ? options.signType + ' ' : '';
+        const decimalType: string = options.allowFloat ? 'real ' : 'whole ';
+        const zeroType: string = options.allowZero ? ' or zero' : '';
         return localize('invalidNumberTypeMessage', `The value must be a ${signType}${decimalType}number${zeroType}.`);
     }
 
@@ -121,22 +128,35 @@ export namespace validationUtils {
     export function hasValidAlphanumericAndSymbols(value: string, options?: ValidAlphanumericAndSymbolsOptions): boolean {
         options = { ...alphanumericAndSymbolsDefault, ...(options ?? {}) };
 
-        let alphanumericPattern: string;
-        if (options.requireCase === 'uppercase') {
-            alphanumericPattern = 'A-Z0-9';
-        } else if (options.requireCase === 'lowercase') {
-            alphanumericPattern = 'a-z0-9';
-        } else {
-            alphanumericPattern = 'a-zA-Z0-9';
+        if (options.allowedAlphabetCasing === 'none' && options.requireLeadingAlphabet) {
+            throw new Error(invalidAlphabetOptionsMessage);
         }
 
+        let alphabetPattern: string;
+        switch (options.allowedAlphabetCasing) {
+            case 'uppercase':
+                alphabetPattern = 'A-Z';
+                break;
+            case 'lowercase':
+                alphabetPattern = 'a-z';
+                break;
+            case 'none':
+                alphabetPattern = '';
+                break;
+            case 'case-insensitive':
+            default:
+                alphabetPattern = 'a-zA-Z';
+        }
+
+        const numericPattern: string = options.allowNumbers ? '0-9' : '';
+        const alphanumericPattern: string = alphabetPattern + numericPattern;
         // Search through the passed symbols and match any allowed symbols
         // If we find a match, escape the symbol using '\\$&'
         const symbolPattern: string = (options.allowedSymbols as string).replace(new RegExp(allSymbols, 'g'), '\\$&');
-        const symbolsRepeatPattern: RegExp = new RegExp('[^a-z0-9]{2}', 'g');
 
-        const pattern: RegExp = new RegExp(`^[${alphanumericPattern}](?:[${alphanumericPattern}${symbolPattern}]*[${alphanumericPattern}])?$`);
-        return pattern.test(value) && (!!options.canSymbolsRepeat || !symbolsRepeatPattern.test(value));
+        const validAlphanumericAndSymbols: RegExp = new RegExp(`^[${options.requireLeadingAlphabet ? alphabetPattern : alphanumericPattern}](?:[${alphanumericPattern}${symbolPattern}]*[${alphanumericPattern}])?$`);
+        const symbolsRepeat: RegExp = new RegExp('[^a-z0-9]{2}', 'g');
+        return validAlphanumericAndSymbols.test(value) && (!!options.allowSymbolRepetition || !symbolsRepeat.test(value));
     }
 
     /**
@@ -145,15 +165,41 @@ export namespace validationUtils {
     export function getInvalidAlphanumericAndSymbolsMessage(options?: ValidAlphanumericAndSymbolsOptions): string {
         options = { ...alphanumericAndSymbolsDefault, ...(options ?? {}) };
 
-        let caseMessage: string;
-        if (options.requireCase === 'lowercase') {
-            caseMessage = 'lower-case ';
-        } else if (options.requireCase === 'uppercase') {
-            caseMessage = 'upper-case ';
-        } else {
-            caseMessage = '';
+        if (options.allowedAlphabetCasing === 'none' && options.requireLeadingAlphabet) {
+            throw new Error(invalidAlphabetOptionsMessage);
         }
 
-        return localize('invalidAlphanumericAndSymbols', `A value must consist of ${caseMessage}alphanumeric characters or one of the following symbols: "{0}", and must start and end with ${options.requireCase === 'lowercase' ? 'a' : 'an'} ${caseMessage}alphanumeric character.`, options.allowedSymbols);
+        let caseMessage: string = '';
+        switch (options.allowedAlphabetCasing) {
+            case 'uppercase':
+                caseMessage = 'upper-case ';
+                break;
+            case 'lowercase':
+                caseMessage = 'lower-case ';
+                break;
+            case 'none':
+            case 'case-insensitive':
+            default:
+                caseMessage = '';
+        }
+
+        let charTypeMessage: string;
+        switch (true) {
+            case options.allowedAlphabetCasing !== 'none' && options.allowNumbers:
+                charTypeMessage = 'alphanumeric ';
+                break;
+            case options.allowNumbers:
+                charTypeMessage = 'numeric ';
+                break;
+            case options.allowedAlphabetCasing !== 'none':
+                charTypeMessage = 'alphabet ';
+                break;
+            default:
+                charTypeMessage = '';
+        }
+
+        const leadingCharMessage: string = options.requireLeadingAlphabet ? `begin with ${caseMessage}alphabet character, followed by ` : 'consist of ';
+
+        return localize('invalidAlphanumericAndSymbols', `The value must ${leadingCharMessage}${caseMessage}${charTypeMessage} characters or one of the following symbols: "${options.allowedSymbols}", and must ${options.requireLeadingAlphabet ? '' : 'start and '}end with ${caseMessage}${charTypeMessage} characters.`);
     }
 }

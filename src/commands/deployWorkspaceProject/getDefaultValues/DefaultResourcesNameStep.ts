@@ -75,7 +75,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             return localize('invalidLength', 'The alphanumeric portion of the name must be least 5 characters but no more than 20 characters.');
         }
 
-        const options: ValidAlphanumericAndSymbolsOptions = { allowedSymbols: '-', canSymbolsRepeat: false, requireCase: 'lowercase' };
+        const options: ValidAlphanumericAndSymbolsOptions = { allowedSymbols: '-', allowSymbolRepetition: false, allowedAlphabetCasing: 'lowercase' };
         if (!validationUtils.hasValidAlphanumericAndSymbols(name, options)) {
             return validationUtils.getInvalidAlphanumericAndSymbolsMessage(options);
         }
