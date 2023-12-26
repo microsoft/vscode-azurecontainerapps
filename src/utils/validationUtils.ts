@@ -20,6 +20,7 @@ export interface ValidAlphanumericAndSymbolsOptions {
 }
 
 const invalidAlphabetOptionsMessage: string = localize('invalidAlphabetOptions', 'Invalid options. Cannot require leading alphabet character when alphabet casing is set to none.');
+const invalidAlphanumericOptionsMessage: string = localize('invalidAlphanumericOptions', 'Invalid options. Alphanumeric validation requires at least one of alphabet casing or numerals to be allowed.');
 
 export namespace validationUtils {
     const thirtyTwoBitMaxSafeInteger: number = 2147483647;
@@ -55,24 +56,24 @@ export namespace validationUtils {
         }
     }
 
-    export function hasValidNumberFormat(value: string, options: ValidNumberFormatOptions): boolean {
+    export function hasValidNumberFormat(value: string, options?: ValidNumberFormatOptions): boolean {
         let pattern: string = '^';
 
-        if (options.signType === 'negative') {
+        if (options?.signType === 'negative') {
             pattern += '-';
-        } else if (options.signType === 'positive') {
+        } else if (options?.signType === 'positive') {
             // Add nothing
         } else {
             pattern += '-?';
         }
 
-        if (options.allowZero) {
+        if (options?.allowZero) {
             pattern += '\\d+';
         } else {
             pattern += '[1-9]\\d*';
         }
 
-        if (options.allowFloat) {
+        if (options?.allowFloat) {
             pattern += '(\\.\\d+)?';
         }
 
@@ -132,6 +133,10 @@ export namespace validationUtils {
             throw new Error(invalidAlphabetOptionsMessage);
         }
 
+        if (options.allowedAlphabetCasing === 'none' && options.allowNumbers === false) {
+            throw new Error(invalidAlphanumericOptionsMessage);
+        }
+
         let alphabetPattern: string;
         switch (options.allowedAlphabetCasing) {
             case 'uppercase':
@@ -169,6 +174,10 @@ export namespace validationUtils {
             throw new Error(invalidAlphabetOptionsMessage);
         }
 
+        if (options.allowedAlphabetCasing === 'none' && options.allowNumbers === false) {
+            throw new Error(invalidAlphanumericOptionsMessage);
+        }
+
         let caseMessage: string = '';
         switch (options.allowedAlphabetCasing) {
             case 'uppercase':
@@ -186,20 +195,21 @@ export namespace validationUtils {
         let charTypeMessage: string;
         switch (true) {
             case options.allowedAlphabetCasing !== 'none' && options.allowNumbers:
-                charTypeMessage = 'alphanumeric ';
+                charTypeMessage = 'alphanumeric';
                 break;
             case options.allowNumbers:
-                charTypeMessage = 'numeric ';
+                charTypeMessage = 'numeric';
                 break;
             case options.allowedAlphabetCasing !== 'none':
-                charTypeMessage = 'alphabet ';
+                charTypeMessage = 'alphabet';
                 break;
             default:
                 charTypeMessage = '';
         }
 
-        const leadingCharMessage: string = options.requireLeadingAlphabet ? `begin with ${caseMessage}alphabet character, followed by ` : 'consist of ';
+        const nonRepeatingMessage: string = options.allowSymbolRepetition ? '' : 'non-repeating ';
+        const leadingCharMessage: string = options.requireLeadingAlphabet ? `begin with ${caseMessage}alphabet characters, followed by ` : 'consist of ';
 
-        return localize('invalidAlphanumericAndSymbols', `The value must ${leadingCharMessage}${caseMessage}${charTypeMessage} characters or one of the following symbols: "${options.allowedSymbols}", and must ${options.requireLeadingAlphabet ? '' : 'start and '}end with ${caseMessage}${charTypeMessage} characters.`);
+        return localize('invalidAlphanumericAndSymbols', `The value must ${leadingCharMessage}${caseMessage}${charTypeMessage} characters or one of the following ${nonRepeatingMessage}symbols: "${options.allowedSymbols}", and must ${options.requireLeadingAlphabet ? '' : 'start and '}end with ${caseMessage}${charTypeMessage} characters.`);
     }
 }
