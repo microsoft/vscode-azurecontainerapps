@@ -23,6 +23,7 @@ export interface ValidAlphanumericAndSymbolsOptions {
 const invalidAlphabetOptionsMessage: string = localize('invalidAlphabetOptions', 'Invalid options. Cannot require leading alphabet character when alphabet casing is set to none.');
 const invalidAlphanumericOptionsMessage: string = localize('invalidAlphanumericOptions', 'Invalid options. Alphanumeric validation requires at least one of alphabet casing or numerals to be allowed.');
 const invalidNumberFormatOptionsMessage: string = localize('invalidNumberFormatOptions', 'Invalid options. The specified decimal digits conflict with the allowed floating point setting.');
+
 export namespace validationUtils {
     const thirtyTwoBitMaxSafeInteger: number = 2147483647;
     const thirtyTwoBitMinSafeInteger: number = -2147483648;
@@ -68,7 +69,7 @@ export namespace validationUtils {
 
         if (options.allowFloat) {
             pattern += `(\\.\\d{0,${options?.decimalDigits || ''}}` +
-                '(?!\\.))?'; //Prevents a trailing decimal
+                '(?!\\.))?'; // Prevents a trailing decimal
         }
 
         pattern += '$';
