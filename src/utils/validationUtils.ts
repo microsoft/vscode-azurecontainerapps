@@ -41,86 +41,12 @@ export namespace validationUtils {
         requireLeadingAlphabet: false
     };
 
-    // Call this first
-    export function hasValidNumericFormat(value: string, options?: ValidNumericFormatOptions): boolean {
-        options = { ...numericFormatDefaults, ...(options ?? {}) };
-        if (
-            (options.allowFloat && options.decimalDigits === 0) ||
-            (!options.allowFloat && options.decimalDigits !== undefined)
-        ) {
-            throw new Error(invalidNumericFormatOptionsMessage);
-        }
-
-        let pattern: string = '^';
-
-        if (options.signType === 'negative') {
-            pattern += '-';
-        } else if (options?.signType === 'positive') {
-            // Add nothing
-        } else {
-            pattern += '-?';
-        }
-
-        if (options.allowZero) {
-            pattern += '(0|([1-9]\\d*))';
-        } else {
-            pattern += '([1-9]\\d*)';
-        }
-
-        if (options.allowFloat) {
-            pattern += `(\\.\\d{0,${options?.decimalDigits || ''}}` +
-                '(?!\\.))?'; // Prevents a trailing decimal
-        }
-
-        pattern += '$';
-
-        const regex: RegExp = new RegExp(pattern);
-        return regex.test(value);
-    }
-
-    export function getInvalidNumericFormatMessage(options?: ValidNumericFormatOptions): string {
-        options = { ...numericFormatDefaults, ...(options ?? {}) };
-        if (
-            (options.allowFloat && options.decimalDigits === 0) ||
-            (!options.allowFloat && options.decimalDigits !== undefined)
-        ) {
-            throw new Error(invalidNumericFormatOptionsMessage);
-        }
-
-        const signTypeMsg: string = options.signType && options.signType !== 'either' ? `${options.signType} ` : '';
-        const decimalTypeMsg: string = options.allowFloat ? 'real ' : 'whole ';
-        const decimalDigitsMsg: string = options.allowFloat && options.decimalDigits ? ` with up to ${options.decimalDigits} decimal places` : '';
-        const zeroTypeMsg: string = options.allowZero ? ' or zero' : '';
-        return localize('invalidNumericFormatMessage', `The value must be a ${signTypeMsg}${decimalTypeMsg}number${decimalDigitsMsg}${zeroTypeMsg}.`);
-    }
-
-    // Call this second
-    export function isValidNumericValue(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
-        const numeric = parseFloat(value);
-        if (isNaN(numeric)) {
-            return false;
-        }
-
-        lowerLimitIncl = (!lowerLimitIncl || lowerLimitIncl < thirtyTwoBitMinSafeInteger) ? thirtyTwoBitMinSafeInteger : lowerLimitIncl;
-        upperLimitIncl = (!upperLimitIncl || upperLimitIncl > thirtyTwoBitMaxSafeInteger) ? thirtyTwoBitMaxSafeInteger : upperLimitIncl;
-
-        return lowerLimitIncl <= upperLimitIncl && numeric >= lowerLimitIncl && numeric <= upperLimitIncl;
-    }
-
-    export function getInvalidNumericValueMessage(lowerLimitIncl?: number, upperLimitIncl?: number): string {
-        if (!lowerLimitIncl && !upperLimitIncl) {
-            return localize('invalidNumericValue', `A numeric value is required to proceed.`);
-        } else if (lowerLimitIncl && !upperLimitIncl) {
-            return localize('numericValueTooSmall', `The numeric value must be greater than or equal to {0}.`, lowerLimitIncl);
-        } else if (!lowerLimitIncl && upperLimitIncl) {
-            return localize('numericValueTooLarge', `The numeric value must be less than or equal to {0}.`, upperLimitIncl);
-        } else {
-            return localize('invalidNumericValueBounded', `The numeric value must be between {0} and {1}.`, lowerLimitIncl, upperLimitIncl);
-        }
-    }
-
     /**
      * Validates that the given input string is the appropriate length as determined by the optional lower and upper limit parameters
+     * @param value The original input string to validate
+     * @param lowerLimitIncl The minimum length of the input string
+     * @param upperLimitIncl The maximum length of the input string
+     * @see getInvalidCharLengthMessage
      */
     export function hasValidCharLength(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
         lowerLimitIncl = (!lowerLimitIncl || lowerLimitIncl < 1) ? 1 : lowerLimitIncl;
@@ -130,6 +56,8 @@ export namespace validationUtils {
 
     /**
      * Provides a message that can be used to inform the user of invalid input lengths as determined by the optional lower and upper limit parameters
+     * @param lowerLimitIncl The minimum length of the input string
+     * @param upperLimitIncl The maximum length of the input string
      * @see hasValidCharLength
      */
     export function getInvalidCharLengthMessage(lowerLimitIncl?: number, upperLimitIncl?: number): string {
@@ -145,12 +73,11 @@ export namespace validationUtils {
     }
 
     /**
-     * Validates that the given input string consists of lower case alphanumeric characters,
-     * starts and ends with an alphanumeric character, and does not contain any special symbols not explicitly specified
-     *
+     * Validates that the given input string consists of the appropriate alphanumeric characters and symbols.
+     * Adheres to the common Azure naming convention where names must start and end with an alphanumeric character.
      * @param value The original input string to validate
-     * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
-     *
+     * @param {ValidAlphanumericAndSymbolsOptions} [options] - The options for validation.
+     * @see getInvalidAlphanumericAndSymbolsMessage
      * @example
      * "abcd-1234" // returns true
      * "-abcd-1234" // returns false
@@ -194,7 +121,9 @@ export namespace validationUtils {
     }
 
     /**
-     * @param symbols Any custom symbols that are also allowed in the input string. Defaults to '-'.
+     * Provides a message that can be used to inform the user of invalid alphanumeric and symbols input.
+     * @param {ValidAlphanumericAndSymbolsOptions} [options] - The options for validation.
+     * @see hasValidAlphanumericAndSymbols
      */
     export function getInvalidAlphanumericAndSymbolsMessage(options?: ValidAlphanumericAndSymbolsOptions): string {
         options = { ...alphanumericAndSymbolsDefaults, ...(options ?? {}) };
@@ -240,5 +169,107 @@ export namespace validationUtils {
         const leadingCharMsg: string = options.requireLeadingAlphabet ? `begin with ${caseMsg}alphabet characters, followed by ` : 'consist of ';
 
         return localize('invalidAlphanumericAndSymbols', `The value must ${leadingCharMsg}${caseMsg}${charTypeMsg} characters or one of the following ${nonRepeatingMsg}symbols: "{0}", and must ${options.requireLeadingAlphabet ? '' : 'start and '}end with ${caseMsg}${charTypeMsg} characters.`, options.allowedSymbols);
+    }
+
+    /**
+     * Validates that the given numeric input string matches the specified format as determined by the input options.
+     * @param value The original input string to validate
+     * @param {ValidNumericFormatOptions} options The options for validation.
+     * @see getInvalidNumericFormatMessage
+     */
+    export function hasValidNumericFormat(value: string, options?: ValidNumericFormatOptions): boolean {
+        options = { ...numericFormatDefaults, ...(options ?? {}) };
+        if (
+            (options.allowFloat && options.decimalDigits === 0) ||
+            (!options.allowFloat && options.decimalDigits !== undefined)
+        ) {
+            throw new Error(invalidNumericFormatOptionsMessage);
+        }
+
+        let pattern: string = '^';
+
+        if (options.signType === 'negative') {
+            pattern += '-';
+        } else if (options?.signType === 'positive') {
+            // Add nothing
+        } else {
+            pattern += '-?';
+        }
+
+        if (options.allowZero) {
+            pattern += '(0|([1-9]\\d*))';
+        } else {
+            pattern += '([1-9]\\d*)';
+        }
+
+        if (options.allowFloat) {
+            pattern += `(\\.\\d{0,${options?.decimalDigits || ''}}` +
+                '(?!\\.))?'; // Prevents a trailing decimal
+        }
+
+        pattern += '$';
+
+        const regex: RegExp = new RegExp(pattern);
+        return regex.test(value);
+    }
+
+    /**
+     * Provides a message that can be used to inform the user of invalid numerical format as determined by the input options.
+     * @param value The original input string to validate
+     * @param {ValidNumericFormatOptions} options The options for validation.
+     * @see hasValidNumericFormat
+     */
+    export function getInvalidNumericFormatMessage(options?: ValidNumericFormatOptions): string {
+        options = { ...numericFormatDefaults, ...(options ?? {}) };
+        if (
+            (options.allowFloat && options.decimalDigits === 0) ||
+            (!options.allowFloat && options.decimalDigits !== undefined)
+        ) {
+            throw new Error(invalidNumericFormatOptionsMessage);
+        }
+
+        const signTypeMsg: string = options.signType && options.signType !== 'either' ? `${options.signType} ` : '';
+        const decimalTypeMsg: string = options.allowFloat ? 'real ' : 'whole ';
+        const decimalDigitsMsg: string = options.allowFloat && options.decimalDigits ? ` with up to ${options.decimalDigits} decimal places` : '';
+        const zeroTypeMsg: string = options.allowZero ? ' or zero' : '';
+        return localize('invalidNumericFormatMessage', `The value must be a ${signTypeMsg}${decimalTypeMsg}number${decimalDigitsMsg}${zeroTypeMsg}.`);
+    }
+
+    /**
+     * Validates that the given numerical input string has a suitable value as determined by the optional lower and upper limit parameters.
+     * @param value The original input string to validate
+     * @param lowerLimitIncl The minimum numerical value that can be represented by the input string
+     * @param upperLimitIncl The maximum numerical value that can be represented by the input string
+     * @see getInvalidNumericValueMessage
+     */
+    export function isValidNumericValue(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
+        const numeric = parseFloat(value);
+        if (isNaN(numeric)) {
+            return false;
+        }
+
+        lowerLimitIncl = (!lowerLimitIncl || lowerLimitIncl < thirtyTwoBitMinSafeInteger) ? thirtyTwoBitMinSafeInteger : lowerLimitIncl;
+        upperLimitIncl = (!upperLimitIncl || upperLimitIncl > thirtyTwoBitMaxSafeInteger) ? thirtyTwoBitMaxSafeInteger : upperLimitIncl;
+
+        return lowerLimitIncl <= upperLimitIncl && numeric >= lowerLimitIncl && numeric <= upperLimitIncl;
+    }
+
+    /**
+     * Provides a message that can be used to inform the user of invalid numerical value as determined by the optional lower and upper limit parameters.
+     * @param value The original input string to validate
+     * @param lowerLimitIncl The minimum numerical value that can be represented
+     * @param upperLimitIncl The maximum numerical value that can be represented
+     * @see isValidNumericValue
+     */
+    export function getInvalidNumericValueMessage(lowerLimitIncl?: number, upperLimitIncl?: number): string {
+        if (!lowerLimitIncl && !upperLimitIncl) {
+            return localize('invalidNumericValue', `A numeric value is required to proceed.`);
+        } else if (lowerLimitIncl && !upperLimitIncl) {
+            return localize('numericValueTooSmall', `The numeric value must be greater than or equal to {0}.`, lowerLimitIncl);
+        } else if (!lowerLimitIncl && upperLimitIncl) {
+            return localize('numericValueTooLarge', `The numeric value must be less than or equal to {0}.`, upperLimitIncl);
+        } else {
+            return localize('invalidNumericValueBounded', `The numeric value must be between {0} and {1}.`, lowerLimitIncl, upperLimitIncl);
+        }
     }
 }
