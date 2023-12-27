@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import { validationUtils, type ValidNumberFormatOptions } from '../../extension.bundle';
+import { validationUtils, type ValidNumericFormatOptions } from '../../extension.bundle';
 
-type InvalidNumberFormatMessageParams = {
+type InvalidNumericFormatMessageParams = {
     output: string;
-    options?: ValidNumberFormatOptions
+    options?: ValidNumericFormatOptions
 };
 
-export function gewtInvalidNumberFormatMessageTest() {
-    const optionsList: InvalidNumberFormatMessageParams[] = [
+export function getInvalidNumericFormatMessageTest() {
+    const parameterList: InvalidNumericFormatMessageParams[] = [
         // Default options
         {
             options: {},
@@ -82,7 +82,7 @@ export function gewtInvalidNumberFormatMessageTest() {
         },
     ];
 
-    for (const { output, options } of optionsList) {
-        assert.equal(validationUtils.getInvalidNumberFormatMessage(options), output);
+    for (const { output, options } of parameterList) {
+        assert.equal(validationUtils.getInvalidNumericFormatMessage(options), output);
     }
 }

@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import { validationUtils, type ValidNumberFormatOptions } from '../../extension.bundle';
+import { validationUtils, type ValidNumericFormatOptions } from '../../extension.bundle';
 
-type ValidNumberFormatParams = {
+type ValidNumericFormatParams = {
     value: string;
-    options?: ValidNumberFormatOptions
+    options?: ValidNumericFormatOptions
 };
 
-export function hasValidNumberFormatTest() {
-    const trueValues: ValidNumberFormatParams[] = [
+export function hasValidNumericFormatTest() {
+    const trueValues: ValidNumericFormatParams[] = [
         // Default options
         { value: '100' },
         { value: '-100' },
@@ -59,10 +59,10 @@ export function hasValidNumberFormatTest() {
     ];
 
     for (const { value, options } of trueValues) {
-        assert.equal(validationUtils.hasValidNumberFormat(value, options), true);
+        assert.equal(validationUtils.hasValidNumericFormat(value, options), true);
     }
 
-    const falseValues: ValidNumberFormatParams[] = [
+    const falseValues: ValidNumericFormatParams[] = [
         // Default options
         { value: '' },
         { value: 'abc' },
@@ -108,7 +108,7 @@ export function hasValidNumberFormatTest() {
 
     for (const { value, options } of falseValues) {
         try {
-            assert.equal(validationUtils.hasValidNumberFormat(value, options), false);
+            assert.equal(validationUtils.hasValidNumericFormat(value, options), false);
         } catch {
             continue;
         }

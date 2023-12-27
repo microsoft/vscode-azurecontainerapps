@@ -4,18 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getInvalidAlphanumericAndSymbolsMessageTest } from "./getInvalidAlphanumericAndSymbolsMessage.test";
-import { gewtInvalidNumberFormatMessageTest } from "./getInvalidNumberFormatMessage.test";
+import { getInvalidCharLengthMessageTest } from "./getInvalidCharLengthMessage.test";
+import { getInvalidNumericFormatMessageTest } from "./getInvalidNumericFormatMessage.test";
+import { getInvalidNumericValueMessageTest } from "./getInvalidNumericValueMessage.test";
 import { hasValidAlphanumericAndSymbolsTest } from "./hasValidAlphanumericAndSymbols.test";
-import { hasValidNumberFormatTest } from "./hasValidNumberFormat.test";
+import { hasValidCharLengthTest } from "./hasValidCharLength.test";
+import { hasValidNumericFormatTest } from "./hasValidNumericFormat.test";
+import { isValidNumericValueTest } from "./isValidNumericValue.test";
 
 suite('validationUtils', () => {
-    test('hasValidNumberRange', () => { /** Todo */ });
-    test('getInvalidNumberRangeMessage', () => { /** Todo */ });
-    test('hasValidCharLength', () => { /** Todo */ });
-    test('getInvalidCharLengthMessage', () => { /** Todo */ });
-
+    // General
+    test('hasValidCharLength', hasValidCharLengthTest);
+    test('getInvalidCharLengthMessage', getInvalidCharLengthMessageTest);
     test('hasValidAlphanumericAndSymbols', hasValidAlphanumericAndSymbolsTest);
     test('getInvalidAlphanumericAndSymbolsMessage', getInvalidAlphanumericAndSymbolsMessageTest);
-    test('hasValidNumberFormat', hasValidNumberFormatTest);
-    test('getInvalidNumberFormatMessage', gewtInvalidNumberFormatMessageTest);
+
+    // Numbers
+    test('hasValidNumericFormat', hasValidNumericFormatTest);
+    test('getInvalidNumericFormatMessage', getInvalidNumericFormatMessageTest);
+    test('isValidNumericValue', isValidNumericValueTest);
+    test('getInvalidNumericValueMessage', getInvalidNumericValueMessageTest);
 });

@@ -5,7 +5,7 @@
 
 import { localize } from "./localize";
 
-export interface ValidNumberFormatOptions {
+export interface ValidNumericFormatOptions {
     signType?: 'positive' | 'negative' | 'either';
     allowFloat?: boolean;
     allowZero?: boolean;
@@ -22,13 +22,13 @@ export interface ValidAlphanumericAndSymbolsOptions {
 
 const invalidAlphabetOptionsMessage: string = localize('invalidAlphabetOptions', 'Invalid options. Cannot require leading alphabet character when alphabet casing is set to none.');
 const invalidAlphanumericOptionsMessage: string = localize('invalidAlphanumericOptions', 'Invalid options. Alphanumeric validation requires at least one of alphabet casing or numerals to be allowed.');
-const invalidNumberFormatOptionsMessage: string = localize('invalidNumberFormatOptions', 'Invalid options. The specified decimal digits conflict with the allowed floating point setting.');
+const invalidNumericFormatOptionsMessage: string = localize('invalidNumericFormatOptions', 'Invalid options. The specified decimal digits conflict with the allowed floating point setting.');
 
 export namespace validationUtils {
     const thirtyTwoBitMaxSafeInteger: number = 2147483647;
     const thirtyTwoBitMinSafeInteger: number = -2147483648;
     const allSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
-    const numberFormatDefaults: ValidNumberFormatOptions = {
+    const numericFormatDefaults: ValidNumericFormatOptions = {
         signType: 'either',
         allowFloat: true,
         allowZero: true
@@ -42,13 +42,13 @@ export namespace validationUtils {
     };
 
     // Call this first
-    export function hasValidNumberFormat(value: string, options?: ValidNumberFormatOptions): boolean {
-        options = { ...numberFormatDefaults, ...(options ?? {}) };
+    export function hasValidNumericFormat(value: string, options?: ValidNumericFormatOptions): boolean {
+        options = { ...numericFormatDefaults, ...(options ?? {}) };
         if (
             (options.allowFloat && options.decimalDigits === 0) ||
             (!options.allowFloat && options.decimalDigits !== undefined)
         ) {
-            throw new Error(invalidNumberFormatOptionsMessage);
+            throw new Error(invalidNumericFormatOptionsMessage);
         }
 
         let pattern: string = '^';
@@ -78,42 +78,44 @@ export namespace validationUtils {
         return regex.test(value);
     }
 
-    export function getInvalidNumberFormatMessage(options?: ValidNumberFormatOptions): string {
-        options = { ...numberFormatDefaults, ...(options ?? {}) };
+    export function getInvalidNumericFormatMessage(options?: ValidNumericFormatOptions): string {
+        options = { ...numericFormatDefaults, ...(options ?? {}) };
         if (
             (options.allowFloat && options.decimalDigits === 0) ||
             (!options.allowFloat && options.decimalDigits !== undefined)
         ) {
-            throw new Error(invalidNumberFormatOptionsMessage);
+            throw new Error(invalidNumericFormatOptionsMessage);
         }
 
         const signTypeMsg: string = options.signType && options.signType !== 'either' ? `${options.signType} ` : '';
         const decimalTypeMsg: string = options.allowFloat ? 'real ' : 'whole ';
         const decimalDigitsMsg: string = options.allowFloat && options.decimalDigits ? ` with up to ${options.decimalDigits} decimal places` : '';
         const zeroTypeMsg: string = options.allowZero ? ' or zero' : '';
-        return localize('invalidNumberTypeMessage', `The value must be a ${signTypeMsg}${decimalTypeMsg}number${decimalDigitsMsg}${zeroTypeMsg}.`);
+        return localize('invalidNumericFormatMessage', `The value must be a ${signTypeMsg}${decimalTypeMsg}number${decimalDigitsMsg}${zeroTypeMsg}.`);
     }
 
     // Call this second
-    export function hasValidNumberRange(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
-        const numberValue = parseFloat(value);
-        if (isNaN(numberValue)) {
+    export function isValidNumericValue(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
+        const numeric = parseFloat(value);
+        if (isNaN(numeric)) {
             return false;
         }
 
         lowerLimitIncl = (!lowerLimitIncl || lowerLimitIncl < thirtyTwoBitMinSafeInteger) ? thirtyTwoBitMinSafeInteger : lowerLimitIncl;
         upperLimitIncl = (!upperLimitIncl || upperLimitIncl > thirtyTwoBitMaxSafeInteger) ? thirtyTwoBitMaxSafeInteger : upperLimitIncl;
 
-        return lowerLimitIncl <= upperLimitIncl && numberValue >= lowerLimitIncl && numberValue <= upperLimitIncl;
+        return lowerLimitIncl <= upperLimitIncl && numeric >= lowerLimitIncl && numeric <= upperLimitIncl;
     }
 
-    export function getInvalidNumberRangeMessage(lowerLimitIncl?: number, upperLimitIncl?: number): string {
-        if (lowerLimitIncl && !upperLimitIncl) {
-            return localize('numberValueTooSmall', `The value must be greater than or equal to {0}.`, lowerLimitIncl);
+    export function getInvalidNumericValueMessage(lowerLimitIncl?: number, upperLimitIncl?: number): string {
+        if (!lowerLimitIncl && !upperLimitIncl) {
+            return localize('invalidNumericValue', `A numeric value is required to proceed.`);
+        } else if (lowerLimitIncl && !upperLimitIncl) {
+            return localize('numericValueTooSmall', `The numeric value must be greater than or equal to {0}.`, lowerLimitIncl);
         } else if (!lowerLimitIncl && upperLimitIncl) {
-            return localize('numberValueTooLarge', `The value must less than or equal to {0}.`, upperLimitIncl);
+            return localize('numericValueTooLarge', `The numeric value must be less than or equal to {0}.`, upperLimitIncl);
         } else {
-            return localize('invalidNumberValue', `The value must be between {0} and {1}.`, lowerLimitIncl, upperLimitIncl);
+            return localize('invalidNumericValueBounded', `The numeric value must be between {0} and {1}.`, lowerLimitIncl, upperLimitIncl);
         }
     }
 

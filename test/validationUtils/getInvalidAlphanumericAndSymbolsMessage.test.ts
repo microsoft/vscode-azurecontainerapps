@@ -12,7 +12,7 @@ type InvalidAlphanumericAndSymbolsMessageParams = {
 };
 
 export function getInvalidAlphanumericAndSymbolsMessageTest() {
-    const optionsList: InvalidAlphanumericAndSymbolsMessageParams[] = [
+    const parameterList: InvalidAlphanumericAndSymbolsMessageParams[] = [
         // Default options
         {
             options: {},
@@ -94,7 +94,7 @@ export function getInvalidAlphanumericAndSymbolsMessageTest() {
         },
     ];
 
-    for (const { output, options } of optionsList) {
+    for (const { output, options } of parameterList) {
         assert.equal(validationUtils.getInvalidAlphanumericAndSymbolsMessage(options), output);
     }
 }
