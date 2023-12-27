@@ -582,7 +582,7 @@
         "@types/semver": "^7.3.8",
         "@types/vscode": "1.76.0",
         "@typescript-eslint/eslint-plugin": "^5.59.11",
-        "@vscode/test-electron": "^2.2.3",
+        "@vscode/test-electron": "^2.3.8",
         "@vscode/vsce": "^2.19.0",
         "assert": "^2.0.0",
         "eslint": "^8.42.0",
