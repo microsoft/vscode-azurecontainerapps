@@ -242,6 +242,11 @@
                 "command": "containerApps.createAcr",
                 "title": "%containerApps.createAcr%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.openAcrBuildLogs",
+                "title": "%containerApps.openAcrBuildLogs%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -500,6 +505,10 @@
                 },
                 {
                     "command": "containerApps.deployImageApi",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.openAcrBuildLogs",
                     "when": "never"
                 }
             ]
