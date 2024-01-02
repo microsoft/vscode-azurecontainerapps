@@ -59,6 +59,8 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
     });
 
+    // Don't show activity log updates in ACA when another client function calls into this API.
+    // Let each client decide how it wants to show its own activity log updates.
     let activityContext: Partial<ExecuteActivityContext>;
     if (context.invokedFromApi) {
         activityContext = { suppressNotification: true };
