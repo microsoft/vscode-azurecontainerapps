@@ -6,7 +6,7 @@
 import { type ContainerAppsAPIClient, type ManagedEnvironment, type Resource } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
-import { type AzureResource, type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { type AzureResource, type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { treeUtils } from "../utils/treeUtils";
@@ -23,6 +23,11 @@ export class ManagedEnvironmentItem implements TreeElementBase {
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
         this.id = managedEnvironment.id;
+    }
+
+    viewProperties: ViewPropertiesModel = {
+        data: this.managedEnvironment,
+        label: this.managedEnvironment.name,
     }
 
     private get contextValue(): string {
