@@ -53,16 +53,16 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         location: ProgressLocation.Notification,
         cancellable: false,
         title: context.invokedFromApi ?
-            undefined :
+            undefined :  // Hides the progress bar
             localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
     }, async () => {
         defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
     });
 
-    // Don't show activity log updates in ACA when another client function calls into this API.
-    // Let each client decide how it wants to show its own activity log updates.
     let activityContext: Partial<ExecuteActivityContext>;
     if (context.invokedFromApi) {
+        // Don't show activity log updates in ACA when another client function calls into this API.
+        // Let each client decide how it wants to show its own activity log updates.
         activityContext = { suppressNotification: true };
     } else {
         activityContext = await createActivityContext();
@@ -209,7 +209,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     const wizard: AzureWizard<DeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
         title: context.invokedFromApi ?
-            undefined :
+            undefined : // We don't know the title the client extension is using. Don't set our own.
             localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
