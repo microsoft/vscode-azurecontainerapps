@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValueAndProp, validationUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { type IManagedEnvironmentContext } from './IManagedEnvironmentContext';
@@ -28,11 +28,13 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<IManagedEn
     private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
-        const { minLength, maxLength } = { minLength: 4, maxLength: 20 };
+        const rc: validationUtils.RangeConstraints = { lowerLimitIncl: 4, upperLimitIncl: 20 };
+        if (!validationUtils.hasValidCharLength(name, rc)) {
+            return validationUtils.getInvalidCharLengthMessage(rc);
+        }
+
         if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`);
-        } else if ((name.length < minLength) || name.length > maxLength) {
-            return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
         }
 
         return undefined;
