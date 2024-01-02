@@ -45,7 +45,7 @@ function getSubscriptionIdFromOptions(deployWorkspaceProjectOptions: DeployWorks
     if (deployWorkspaceProjectOptions.subscriptionId) {
         return deployWorkspaceProjectOptions.subscriptionId;
     } else if (deployWorkspaceProjectOptions.resourceGroupId) {
-        return parseAzureResourceGroupId(deployWorkspaceProjectOptions.resourceGroupId).subscriptionId;
+        return parseAzureResourceGroupId(deployWorkspaceProjectOptions.resourceGroupId).subscriptionId as string;
     } else {
         return undefined;
     }
