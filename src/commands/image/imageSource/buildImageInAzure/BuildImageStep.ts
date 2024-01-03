@@ -72,7 +72,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
-        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
+        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) = () => Promise.resolve([]);
         if (this.acrBuildError) {
             loadMoreChildrenImpl = () => {
                 const buildImageLogsItem = new GenericTreeItem(undefined, {
@@ -91,7 +91,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                 contextValue: createActivityChildContext(['buildImageStepFailItem', activityFailContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon,
-                loadMoreChildrenImpl: loadMoreChildrenImpl ?? (() => Promise.resolve([]))
+                loadMoreChildrenImpl
             }),
             message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
