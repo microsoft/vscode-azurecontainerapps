@@ -179,9 +179,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     } else {
         wizardContext.telemetry.properties.existingContainerApp = 'false';
 
-        if (wizardContext.skipContainerAppCreation) {
-            ext.outputChannel.appendLog(localize('skippingContainerApp', 'Option detected to skip container app creation.'));
-        } else {
+        if (!wizardContext.skipContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
         }
     }
