@@ -59,6 +59,6 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {
-        return !context.invokedFromApi;
+        return !context.suppressConfirmation;
     }
 }

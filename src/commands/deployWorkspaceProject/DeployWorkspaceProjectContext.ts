@@ -23,6 +23,7 @@ export type DeployWorkspaceProjectContext =
     Partial<ExecuteActivityContext> &
     DeployWorkspaceProjectTelemetryProps &
     {
+        suppressConfirmation?: boolean;  // Suppress any [resource] confirmation prompts
         shouldSaveDeploySettings?: boolean;
     };
 

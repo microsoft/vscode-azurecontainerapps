@@ -15,7 +15,7 @@ import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectCont
 import { deployWorkspaceProject } from "./deployWorkspaceProject";
 
 export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: DeployWorkspaceProjectApiOptionsContract): Promise<DeployWorkspaceProjectResults> {
-    const { resourceGroupId, rootPath, srcPath, dockerfilePath, skipContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
+    const { resourceGroupId, rootPath, srcPath, dockerfilePath, suppressConfirmation, skipContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
         selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
@@ -34,6 +34,7 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
             rootFolder,
             srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
             dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
+            suppressConfirmation,
             skipContainerAppCreation,
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
             invokedFromApi: true,
