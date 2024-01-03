@@ -78,7 +78,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                 const buildImageLogsItem = new GenericTreeItem(undefined, {
                     contextValue: createActivityChildContext(['logsLinkItem']),
                     label: localize('buildImageLogs', 'Click to view build image logs'),
-                    iconPath: new ThemeIcon('note', new ThemeColor('terminal.ansiWhite')),
+                    iconPath: new ThemeIcon('link-external', new ThemeColor('terminal.ansiWhite')),
                     commandId: 'containerApps.openAcrBuildLogs',
                 });
                 buildImageLogsItem.commandArgs = [this.acrBuildError];
