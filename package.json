@@ -242,6 +242,11 @@
                 "command": "containerApps.createAcr",
                 "title": "%containerApps.createAcr%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.openAcrBuildLogs",
+                "title": "%containerApps.openAcrBuildLogs%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -501,6 +506,10 @@
                 {
                     "command": "containerApps.deployImageApi",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.openAcrBuildLogs",
+                    "when": "never"
                 }
             ]
         },
@@ -608,7 +617,7 @@
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^2.0.0",
         "@microsoft/vscode-azext-github": "^1.0.0",
-        "@microsoft/vscode-azext-utils": "^2.1.3",
+        "@microsoft/vscode-azext-utils": "^2.1.5",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",

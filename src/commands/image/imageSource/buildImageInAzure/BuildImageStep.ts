@@ -3,18 +3,20 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, nonNullProp, nonNullValue, openReadOnlyContent } from "@microsoft/vscode-azext-utils";
-import { window, type MessageItem } from "vscode";
-import { acrDomain, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../constants";
+import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
+import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
+import { acrDomain } from "../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
+import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
+    protected acrBuildError: AcrBuildResults;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext): Promise<void> {
         context.registryDomain = acrDomain;
@@ -28,14 +30,21 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
         } else {
             const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
-            const contentTask = sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined)
+            const response: AzExtPipelineResponse = await sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined);
+            const content: string = nonNullProp(response, 'bodyAsText');
+
+            this.acrBuildError = {
+                name: nonNullValueAndProp(context.run, 'name'),
+                runId: nonNullValueAndProp(context.run, 'id'),
+                content
+            };
 
             const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
             const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
+
             void window.showErrorMessage(errorMessage, viewLogsButton).then(async result => {
                 if (result === viewLogsButton) {
-                    const content = nonNullProp((await contentTask), 'bodyAsText')
-                    await openReadOnlyContent({ label: nonNullValue(context.run.name), fullId: nonNullValue(context.run.id) }, content, '.log');
+                    await openAcrBuildLogs(context, this.acrBuildError);
                 }
             });
 
@@ -51,7 +60,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['buildImageStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['buildImageStepSuccessItem', activitySuccessContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activitySuccessIcon
             }),
@@ -63,11 +72,26 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) = () => Promise.resolve([]);
+        if (this.acrBuildError) {
+            loadMoreChildrenImpl = () => {
+                const buildImageLogsItem = new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(['logsLinkItem']),
+                    label: localize('buildImageLogs', 'Click to view build image logs'),
+                    iconPath: new ThemeIcon('link-external', new ThemeColor('terminal.ansiWhite')),
+                    commandId: 'containerApps.openAcrBuildLogs',
+                });
+                buildImageLogsItem.commandArgs = [this.acrBuildError];
+                return Promise.resolve([buildImageLogsItem]);
+            };
+        }
+
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['buildImageStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['buildImageStepFailItem', activityFailContext]),
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
-                iconPath: activityFailIcon
+                iconPath: activityFailIcon,
+                loadMoreChildrenImpl
             }),
             message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };

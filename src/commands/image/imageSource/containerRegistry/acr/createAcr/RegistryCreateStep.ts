@@ -5,9 +5,8 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../../../utils/activity/activityUtils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
