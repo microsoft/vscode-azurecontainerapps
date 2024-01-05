@@ -26,13 +26,13 @@ export async function getDefaultContainerAppsResources(
 ): Promise<DefaultContainerAppsResources> {
     context.telemetry.properties.promptedForEnvironment = 'false';  // Initialize the default value
 
-    if (!context.invokedFromApi) {
-        // If a tree item is provided that can be used to deduce default context values, try to use those first
-        if (item) {
-            return await getContainerAppResourcesFromItem(context, item);
-        }
+    // If a tree item is provided that can be used to deduce default context values, try to use those first
+    if (item) {
+        return await getContainerAppResourcesFromItem(context, item);
+    }
 
-        // Otherwise try to obtain container app resources using any saved workspace settings
+    // Otherwise try to obtain container app resources using any saved workspace settings
+    if (!context.ignoreExistingDeploySettings) {
         const { resourceGroup, managedEnvironment, containerApp } = await getContainerAppResourcesFromSettings(context, settings);
         if (resourceGroup && managedEnvironment && containerApp) {
             return { resourceGroup, managedEnvironment, containerApp };

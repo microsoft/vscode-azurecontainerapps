@@ -23,7 +23,7 @@ import { getWorkspaceProjectRootFolder } from "./getWorkspaceProjectRootFolder";
 
 export async function getDefaultContextValues(
     context: ISubscriptionActionContext & Partial<DeployWorkspaceProjectContext>,
-    item?: ContainerAppItem | ManagedEnvironmentItem
+    item: ContainerAppItem | ManagedEnvironmentItem | undefined
 ): Promise<Partial<DeployWorkspaceProjectContext>> {
     const rootFolder: WorkspaceFolder = context.rootFolder ?? await getWorkspaceProjectRootFolder(context);
     const dockerfilePath: string = context.dockerfilePath ?? nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
@@ -31,7 +31,7 @@ export async function getDefaultContextValues(
     const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
     setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
-    if (!context.invokedFromApi) {
+    if (!context.ignoreExistingDeploySettings) {
         // Logic to display local workspace settings related outputs
         if (triggerSettingsOverride(settings, item)) {
             // Tree item & settings conflict

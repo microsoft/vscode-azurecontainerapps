@@ -18,6 +18,7 @@ export interface DeployWorkspaceProjectApiOptionsContract {
     // Options
     suppressConfirmation?: boolean;  // Suppress any [resource] confirmation prompts
     skipContainerAppCreation?: boolean;
+    ignoreExistingDeploySettings?: boolean;
     shouldSaveDeploySettings?: boolean;
 }
 
