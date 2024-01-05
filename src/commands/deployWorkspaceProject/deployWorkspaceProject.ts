@@ -34,10 +34,7 @@ import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNam
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
-    ext.outputChannel.appendLog(
-        context.invokedFromApi ?
-            localize('beginCommandExecutionApi', '--------Initializing deploy workspace project (Azure Container Apps - API)--------') :
-            localize('beginCommandExecution', '--------Initializing deploy workspace project--------'));
+    ext.outputChannel.appendLog(localize('initCommandExecution', '--------Initializing deploy workspace project--------'));
 
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
@@ -220,10 +217,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
     }
 
-    ext.outputChannel.appendLog(
-        wizardContext.invokedFromApi ?
-            localize('beginCommandExecutionApi', '--------Deploying workspace project (Azure Container Apps - API)--------') :
-            localize('beginCommandExecution', '--------Deploying workspace project--------'));
+    ext.outputChannel.appendLog(localize('beginCommandExecution', '--------Deploying workspace project--------'));
 
     await wizard.execute();
 
@@ -235,10 +229,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     ext.branchDataProvider.refresh();
 
-    ext.outputChannel.appendLog(
-        wizardContext.invokedFromApi ?
-            localize('finishCommandExecutionApi', '--------Finished deploying workspace project (Azure Container Apps - API)--------') :
-            localize('finishCommandExecution', '--------Finished deploying workspace project--------'));
+    ext.outputChannel.appendLog(localize('finishCommandExecution', '--------Finished deploying workspace project--------'));
 
     const registryCredentials: { username: string, password: RegistryPassword } | undefined = wizardContext.registry ? await listCredentialsFromRegistry(wizardContext, wizardContext.registry) : undefined;
 
