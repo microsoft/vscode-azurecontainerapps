@@ -4,10 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
-import { AzExtFsExtra, GenericTreeItem } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon } from "@microsoft/vscode-azext-utils";
 import * as path from 'path';
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon } from "../../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";

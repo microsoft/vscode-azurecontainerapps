@@ -3,9 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";

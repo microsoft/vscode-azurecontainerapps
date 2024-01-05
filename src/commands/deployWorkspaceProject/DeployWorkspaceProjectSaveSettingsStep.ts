@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, relativeSettingsFilePath } from "../../constants";
+import { relativeSettingsFilePath } from "../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
