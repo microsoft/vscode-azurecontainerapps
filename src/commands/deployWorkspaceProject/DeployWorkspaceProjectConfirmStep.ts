@@ -10,6 +10,10 @@ import { OverwriteConfirmStepBase } from "../OverwriteConfirmStepBase";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
 export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<DeployWorkspaceProjectContext> {
+    constructor(private readonly suppressConfirmation: boolean) {
+        super();
+    }
+
     protected async promptCore(context: DeployWorkspaceProjectContext): Promise<void> {
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
@@ -58,7 +62,7 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
         ext.outputChannel.appendLog(outputMessage);
     }
 
-    public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {
-        return !context.suppressConfirmation;
+    public shouldPrompt(): boolean {
+        return !this.suppressConfirmation;
     }
 }

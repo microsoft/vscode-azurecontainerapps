@@ -4,16 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { type ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
+import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
+import { type IContainerAppContext } from "../IContainerAppContext";
 import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
@@ -27,17 +27,33 @@ import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPr
 import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
 import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
+export type DeployWorkspaceProjectInternalContext = IContainerAppContext & Partial<DeployWorkspaceProjectContext>;
+
 export interface DeployWorkspaceProjectInternalOptions {
-    subscription: AzureSubscription;
-    subscriptionContext: ISubscriptionContext;
-    activityContext: Partial<ExecuteActivityContext>;
-    showProgress?: boolean;
-    showWizardTitle?: boolean;
-    showActivityTitle?: boolean;
+    /**
+     * Suppress showing the wizard execution through the activity log
+     */
+    suppressActivity?: boolean;
+    /**
+     * Suppress any [resource] confirmation prompts
+     */
+    suppressConfirmation?: boolean;
+    /**
+     * Suppress the creation of a container app (last potential resource creation step in the process)
+     */
+    suppressContainerAppCreation?: boolean;
+    /**
+     * Suppress loading progress notification
+     */
+    suppressProgress?: boolean;
+    /**
+     * Suppress the default wizard [prompting] title
+     */
+    suppressWizardTitle?: boolean;
 }
 
 export async function deployWorkspaceProjectInternal(
-    context: IActionContext & Partial<DeployWorkspaceProjectContext>,
+    context: DeployWorkspaceProjectInternalContext,
     item: ContainerAppItem | ManagedEnvironmentItem | undefined,
     options: DeployWorkspaceProjectInternalOptions
 ): Promise<DeployWorkspaceProjectContext> {
@@ -46,28 +62,34 @@ export async function deployWorkspaceProjectInternal(
         wrapWithDashFormatting(localize('initCommandExecution', 'Initializing deploy workspace project'))
     );
 
+    let activityContext: Partial<ExecuteActivityContext>;
+    if (options.suppressActivity) {
+        activityContext = { suppressNotification: true };
+    } else {
+        activityContext = await createActivityContext();
+        activityContext.activityChildren = [];
+    }
+
     // Show loading indicator while we configure default values
     let defaultContextValues: Partial<DeployWorkspaceProjectContext> | undefined;
     await window.withProgress({
         location: ProgressLocation.Notification,
         cancellable: false,
-        title: options.showProgress ?
-            localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...') :
-            undefined
+        title: options.suppressProgress ?
+            undefined :
+            localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
     }, async () => {
-        defaultContextValues = await getDefaultContextValues({ ...context, ...options.subscriptionContext }, item);
+        defaultContextValues = await getDefaultContextValues(context, item);
     });
 
     const wizardContext: DeployWorkspaceProjectContext = {
         ...context,
-        ...options.subscriptionContext,
-        ...options.activityContext,
+        ...activityContext,
         ...defaultContextValues,
-        subscription: options.subscription
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [
-        new DeployWorkspaceProjectConfirmStep(),
+        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new DefaultResourcesNameStep()
     ];
 
@@ -168,7 +190,7 @@ export async function deployWorkspaceProjectInternal(
     } else {
         wizardContext.telemetry.properties.existingContainerApp = 'false';
 
-        if (!wizardContext.skipContainerAppCreation) {
+        if (!options.suppressContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
         }
     }
@@ -195,9 +217,9 @@ export async function deployWorkspaceProjectInternal(
     promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
 
     const wizard: AzureWizard<DeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
-        title: options.showWizardTitle ?
-            localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app') :
-            undefined,
+        title: options.suppressWizardTitle ?
+            undefined :
+            localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
         showLoadingPrompt: true
@@ -205,7 +227,7 @@ export async function deployWorkspaceProjectInternal(
 
     await wizard.prompt();
 
-    if (options.showActivityTitle) {
+    if (!options.suppressActivity) {
         wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
     }
 
@@ -226,6 +248,10 @@ export async function deployWorkspaceProjectInternal(
     return wizardContext;
 }
 
+/**
+ * Wrap a string with dashes to make key text more easily visible
+ * @example "--------hello-world--------"
+ */
 function wrapWithDashFormatting(text: string): string {
     return `--------${text}--------`;
 }

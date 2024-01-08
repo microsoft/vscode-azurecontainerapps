@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryPassword } from "@azure/arm-containerregistry";
-import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { window } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -18,7 +18,7 @@ import { type DeployWorkspaceProjectResults } from "../../vscode-azurecontainera
 import { browseContainerApp } from "../browseContainerApp";
 import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { deployWorkspaceProjectInternal } from "./deployWorkspaceProjectInternal";
+import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./deployWorkspaceProjectInternal";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -26,43 +26,40 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         item = undefined;
     }
 
-    const subscription: AzureSubscription = context.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
-    let activityContext: Partial<ExecuteActivityContext>;
-    if (context.invokedFromApi) {
-        // Don't show activity log updates in ACA when another client extension calls into this API.
-        // Let each client decide how it wants to show its own activity log updates.
-        activityContext = { suppressNotification: true };
-    } else {
-        activityContext = await createActivityContext();
-        activityContext.activityChildren = [];
-    }
+    const activityContext = await createActivityContext();
+    activityContext.activityChildren = [];
 
-    const wizardContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(context, item, {
-        subscription,
-        subscriptionContext,
-        activityContext,
-        showProgress: !context.invokedFromApi,
-        showActivityTitle: !context.invokedFromApi,
-        showWizardTitle: !context.invokedFromApi
+    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
+        ...subscriptionContext,
+        subscription
     });
 
-    if (!wizardContext.invokedFromApi) {
-        displayNotification(wizardContext);
-    }
+    const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, item, {
+        suppressActivity: false,
+        suppressConfirmation: false,
+        suppressContainerAppCreation: false,
+        suppressProgress: false,
+        suppressWizardTitle: false
+    });
 
-    const registryCredentials: { username: string, password: RegistryPassword } | undefined = wizardContext.registry ? await listCredentialsFromRegistry(wizardContext, wizardContext.registry) : undefined;
+    displayNotification(deployWorkspaceProjectResultContext);
+
+    const registryCredentials: { username: string, password: RegistryPassword } | undefined = deployWorkspaceProjectResultContext.registry ?
+        await listCredentialsFromRegistry(deployWorkspaceProjectResultContext, deployWorkspaceProjectResultContext.registry) : undefined;
+
     return {
-        resourceGroupId: wizardContext.resourceGroup?.id,
-        logAnalyticsWorkspaceId: wizardContext.logAnalyticsWorkspace?.id,
-        managedEnvironmentId: wizardContext.managedEnvironment?.id,
-        containerAppId: wizardContext.containerApp?.id,
-        registryId: wizardContext.registry?.id,
-        registryLoginServer: wizardContext.registry?.loginServer,
+        resourceGroupId: deployWorkspaceProjectResultContext.resourceGroup?.id,
+        logAnalyticsWorkspaceId: deployWorkspaceProjectResultContext.logAnalyticsWorkspace?.id,
+        managedEnvironmentId: deployWorkspaceProjectResultContext.managedEnvironment?.id,
+        containerAppId: deployWorkspaceProjectResultContext.containerApp?.id,
+        registryId: deployWorkspaceProjectResultContext.registry?.id,
+        registryLoginServer: deployWorkspaceProjectResultContext.registry?.loginServer,
         registryUsername: registryCredentials?.username,
         registryPassword: registryCredentials?.password.value,
-        imageName: wizardContext.imageName
+        imageName: deployWorkspaceProjectResultContext.imageName
     };
 }
 
