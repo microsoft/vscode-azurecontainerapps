@@ -12,14 +12,18 @@ import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProject
 import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
+/**
+ * Prompts the user to select or create a container apps environment and retrieves any resource group associated with it.
+ * A returned resource of `undefined` indicates that the resource required does not currently exist and must be created later.
+ */
 export async function promptForEnvironmentResources(context: ISubscriptionActionContext & Partial<DeployWorkspaceProjectContext>): Promise<DefaultContainerAppsResources> {
-    const noMatchingEnvironmentResources = {
+    // Define a default object ahead of time to represent the case for no matching environments found
+    const noMatchingEnvironmentResources: DefaultContainerAppsResources = {
         resourceGroup: context.resourceGroup,
         managedEnvironment: undefined,
-        containerApp: undefined
     };
 
-    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context)
+    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(
         context.resourceGroup ?
             client.managedEnvironments.listByResourceGroup(nonNullValueAndProp(context.resourceGroup, 'name')) :
