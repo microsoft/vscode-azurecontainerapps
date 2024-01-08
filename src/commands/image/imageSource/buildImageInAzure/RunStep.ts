@@ -32,13 +32,16 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
 
             const retries = 3;
             await retry(
-                async (currentAttempt: number) => {
-                    context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
+                async (currentAttempt: number): Promise<void> => {
                     const message: string = currentAttempt === 1 ?
                         localize('buildingImage', 'Building image...') :
                         localize('buildingImageAttempt', 'Building image (Attempt {0}/{1})...', currentAttempt, retries + 1);
-                    ext.outputChannel.appendLog(message);
                     progress.report({ message: message });
+                    ext.outputChannel.appendLog(message);
+
+                    runRequest.sourceLocation = 'a'
+                    context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
+
                 },
                 { retries, minTimeout: 2 * 1000 }
             );
