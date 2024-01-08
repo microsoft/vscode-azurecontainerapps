@@ -11,9 +11,7 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
-import { type IContainerAppContext } from "../IContainerAppContext";
-import { type DeployWorkspaceProjectContext } from "../deployWorkspaceProject/DeployWorkspaceProjectContext";
-import { deployWorkspaceProjectInternal } from "../deployWorkspaceProject/deployWorkspaceProjectInternal";
+import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/deployWorkspaceProjectInternal";
 import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import type * as api from "./vscode-azurecontainerapps.api";
 
@@ -29,7 +27,7 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
     const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
     const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId({ ...context, ...subscriptionContext }, resourceGroupId) : undefined;
 
-    const deployWorkspaceProjectInternalContext: IContainerAppContext & Partial<DeployWorkspaceProjectContext> = Object.assign(context, {
+    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
         ...subscriptionContext,
         subscription,
         resourceGroup,
