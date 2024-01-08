@@ -107,7 +107,7 @@ export namespace settingUtils {
     }
 
     export function getDefaultRootWorkspaceSettingsPath(rootWorkspaceFolder: WorkspaceFolder): string {
-        return path.join(rootWorkspaceFolder.uri.path, vscodeFolder, settingsFile);
+        return path.join(rootWorkspaceFolder.uri.fsPath, vscodeFolder, settingsFile);
     }
 
     function getLowestConfigurationLevel(projectConfiguration: WorkspaceConfiguration, key: string): ConfigurationTarget | undefined {

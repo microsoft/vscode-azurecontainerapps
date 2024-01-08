@@ -16,7 +16,7 @@ export class TarFileStep extends AzureWizardExecuteStep<BuildImageInAzureImageSo
     public async execute(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const id: number = Math.floor(Math.random() * Math.pow(10, idPrecision));
         const archive = `sourceArchive${id}.tar.gz`;
-        context.tarFilePath = Utils.joinPath(URI.parse(os.tmpdir()), archive).path;
+        context.tarFilePath = Utils.joinPath(URI.parse(os.tmpdir()), archive).fsPath;
     }
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
