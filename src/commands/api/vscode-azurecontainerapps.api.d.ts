@@ -3,9 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from "@microsoft/vscode-azext-utils";
+export interface AzureContainerAppsExtensionApi {
+    apiVersion: string;
 
-export interface DeployWorkspaceProjectApiOptionsContract {
+    deployWorkspaceProject(options: DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults>;
+}
+
+export interface DeployWorkspaceProjectOptionsContract {
     // Existing resources
     subscriptionId?: string;
     resourceGroupId?: string;
@@ -35,5 +39,3 @@ export interface DeployWorkspaceProjectResults {
     registryPassword?: string;
     imageName?: string;
 }
-
-export declare function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: DeployWorkspaceProjectApiOptionsContract): Promise<DeployWorkspaceProjectResults>;

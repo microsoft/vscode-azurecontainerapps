@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
+import { deployWorkspaceProjectApi } from './api/deployWorkspaceProjectApi';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
-import { deployWorkspaceProjectApi } from './deployWorkspaceProject/deployWorkspaceProjectApi';
 import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';

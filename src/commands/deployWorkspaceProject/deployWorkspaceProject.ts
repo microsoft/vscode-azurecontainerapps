@@ -14,7 +14,7 @@ import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../.
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
-import { type DeployWorkspaceProjectResults } from "../../vscode-azurecontainerapps.api";
+import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
 import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";

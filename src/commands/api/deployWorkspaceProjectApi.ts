@@ -11,13 +11,13 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
-import { type DeployWorkspaceProjectApiOptionsContract, type DeployWorkspaceProjectResults } from "../../vscode-azurecontainerapps.api";
 import { type IContainerAppContext } from "../IContainerAppContext";
+import { type DeployWorkspaceProjectContext } from "../deployWorkspaceProject/DeployWorkspaceProjectContext";
+import { deployWorkspaceProjectInternal } from "../deployWorkspaceProject/deployWorkspaceProjectInternal";
 import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
-import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { deployWorkspaceProjectInternal } from "./deployWorkspaceProjectInternal";
+import type * as api from "./vscode-azurecontainerapps.api";
 
-export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: DeployWorkspaceProjectApiOptionsContract): Promise<DeployWorkspaceProjectResults> {
+export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<api.DeployWorkspaceProjectResults> {
     const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, ignoreExistingDeploySettings, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
@@ -67,7 +67,7 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
     };
 }
 
-function getSubscriptionIdFromOptions(deployWorkspaceProjectOptions: DeployWorkspaceProjectApiOptionsContract): string | undefined {
+function getSubscriptionIdFromOptions(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): string | undefined {
     if (deployWorkspaceProjectOptions.subscriptionId) {
         return deployWorkspaceProjectOptions.subscriptionId;
     } else if (deployWorkspaceProjectOptions.resourceGroupId) {
