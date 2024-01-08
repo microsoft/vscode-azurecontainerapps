@@ -7,7 +7,6 @@ import { callWithTelemetryAndErrorHandling, createApiProvider, type IActionConte
 import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
-// Add links to changelog and type interface
 export function getAzureContainerAppsApiProvider(): apiUtils.AzureExtensionApiProvider {
     return createApiProvider([<api.AzureContainerAppsExtensionApi>{
         apiVersion: '0.0.1',
