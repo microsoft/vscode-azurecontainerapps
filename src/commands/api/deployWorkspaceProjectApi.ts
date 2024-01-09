@@ -33,7 +33,6 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
         rootFolder,
         srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
         dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
-        suppressConfirmation,
         ignoreExistingDeploySettings,
         shouldSaveDeploySettings: !!shouldSaveDeploySettings,
     });

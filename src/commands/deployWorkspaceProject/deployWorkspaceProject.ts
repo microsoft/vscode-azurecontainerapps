@@ -11,7 +11,6 @@ import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
 import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
@@ -27,9 +26,6 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
-    const activityContext = await createActivityContext();
-    activityContext.activityChildren = [];
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
         ...subscriptionContext,
