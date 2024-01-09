@@ -55,14 +55,14 @@ export async function selectWorkspaceFile(
         }
 
         if (options.autoSelectIfOne && files.length === 1) {
-            return files[0].path;
+            return files[0].fsPath;
         }
 
         quickPicks.push(...files.map((uri: Uri) => {
             return {
                 label: basename(uri.path),
                 description: uri.path,
-                data: uri.path
+                data: uri.fsPath
             };
         }));
 
@@ -82,7 +82,7 @@ export async function selectWorkspaceFile(
     if (input?.data === skipForNow) {
         return undefined;
     } else {
-        return input?.data || (await context.ui.showOpenDialog(options))[0].path;
+        return input?.data || (await context.ui.showOpenDialog(options))[0].fsPath;
     }
 }
 
