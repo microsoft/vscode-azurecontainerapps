@@ -3,7 +3,6 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type RegistryPassword } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, parseAzureResourceGroupId } from "@microsoft/vscode-azext-azureutils";
 import { createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
@@ -12,10 +11,10 @@ import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/deployWorkspaceProjectInternal";
-import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
+import { getDeployWorkspaceProjectResults, type DeployWorkspaceProjectResults } from "../deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import type * as api from "./vscode-azurecontainerapps.api";
 
-export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<api.DeployWorkspaceProjectResults> {
+export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
     const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, ignoreExistingDeploySettings, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
@@ -49,20 +48,7 @@ export async function deployWorkspaceProjectApi(context: IActionContext, deployW
         suppressWizardTitle: true,
     });
 
-    const registryCredentials: { username: string, password: RegistryPassword } | undefined = deployWorkspaceProjectResultContext.registry ?
-        await listCredentialsFromRegistry(deployWorkspaceProjectResultContext, deployWorkspaceProjectResultContext.registry) : undefined;
-
-    return {
-        resourceGroupId: deployWorkspaceProjectResultContext.resourceGroup?.id,
-        logAnalyticsWorkspaceId: deployWorkspaceProjectResultContext.logAnalyticsWorkspace?.id,
-        managedEnvironmentId: deployWorkspaceProjectResultContext.managedEnvironment?.id,
-        containerAppId: deployWorkspaceProjectResultContext.containerApp?.id,
-        registryId: deployWorkspaceProjectResultContext.registry?.id,
-        registryLoginServer: deployWorkspaceProjectResultContext.registry?.loginServer,
-        registryUsername: registryCredentials?.username,
-        registryPassword: registryCredentials?.password.value,
-        imageName: deployWorkspaceProjectResultContext.imageName
-    };
+    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
 }
 
 function getSubscriptionIdFromOptions(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): string | undefined {

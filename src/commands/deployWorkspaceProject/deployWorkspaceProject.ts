@@ -3,7 +3,6 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type RegistryPassword } from "@azure/arm-containerregistry";
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { window } from "vscode";
@@ -16,9 +15,9 @@ import { createActivityContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
-import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./deployWorkspaceProjectInternal";
+import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -46,21 +45,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     displayNotification(deployWorkspaceProjectResultContext);
-
-    const registryCredentials: { username: string, password: RegistryPassword } | undefined = deployWorkspaceProjectResultContext.registry ?
-        await listCredentialsFromRegistry(deployWorkspaceProjectResultContext, deployWorkspaceProjectResultContext.registry) : undefined;
-
-    return {
-        resourceGroupId: deployWorkspaceProjectResultContext.resourceGroup?.id,
-        logAnalyticsWorkspaceId: deployWorkspaceProjectResultContext.logAnalyticsWorkspace?.id,
-        managedEnvironmentId: deployWorkspaceProjectResultContext.managedEnvironment?.id,
-        containerAppId: deployWorkspaceProjectResultContext.containerApp?.id,
-        registryId: deployWorkspaceProjectResultContext.registry?.id,
-        registryLoginServer: deployWorkspaceProjectResultContext.registry?.loginServer,
-        registryUsername: registryCredentials?.username,
-        registryPassword: registryCredentials?.password.value,
-        imageName: deployWorkspaceProjectResultContext.imageName
-    };
+    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
 }
 
 function displayNotification(context: DeployWorkspaceProjectContext): void {
