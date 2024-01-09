@@ -25,17 +25,19 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         context.registryName = nonNullValue(context.registry?.name);
         context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
         context.client = await createContainerRegistryManagementClient(context);
-        /* relative path of src folder from rootFolder and what gets deployed */
-        this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
-        context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
+        if (context.srcPath) {
+            this._sourceFilePath = path.relative(context.rootFolder.uri.fsPath, context.srcPath);
+        } else {
+            this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.fsPath, context.dockerfilePath));
+        }
+
+        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
         progress.report({ message: uploading });
+
         const source: string = path.join(context.rootFolder.uri.fsPath, this._sourceFilePath);
         let items = await AzExtFsExtra.readDirectory(source);
-        items = items.filter(i => {
-            return !vcsIgnoreList.includes(i.name)
-        });
+        items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
         tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
 
