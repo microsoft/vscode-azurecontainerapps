@@ -557,6 +557,12 @@
                     }
                 }
             }
+        ],
+        "jsonValidation": [
+            {
+                "fileMatch": "*.containerapp-template.json",
+                "url": "https://json.schemastore.org/azure-containerapp-template.json"
+            }
         ]
     },
     "capabilities": {
