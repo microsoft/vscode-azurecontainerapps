@@ -22,12 +22,13 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
     private _sourceFilePath: string;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        context.registryName = nonNullValue(context.registry?.name);
-        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
-        context.client = await createContainerRegistryManagementClient(context);
         /* relative path of src folder from rootFolder and what gets deployed */
         this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
+
+        context.registryName = nonNullValue(context.registry?.name);
+        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
+        context.client = await createContainerRegistryManagementClient(context);
 
         const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
         progress.report({ message: uploading });
