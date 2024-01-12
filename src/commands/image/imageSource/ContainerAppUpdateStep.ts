@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
@@ -50,7 +50,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
     protected createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppUpdateStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['containerAppUpdateStepSuccessItem', activitySuccessContext]),
                 label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
@@ -60,8 +60,8 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
 
     protected createFailOutput(context: T): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppUpdateStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppUpdateStepFailItem', activityFailContext]),
                 label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
                 iconPath: activityFailIcon
             }),

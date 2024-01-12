@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { relativeSettingsFilePath } from "../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
@@ -42,7 +42,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['dwpSaveSettingsStepSuccessItem', activitySuccessContext]),
                 label: saveSettingsLabel,
                 iconPath: activitySuccessIcon
             }),
@@ -54,8 +54,8 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         context.telemetry.properties.didSaveSettings = 'false';
 
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['dwpSaveSettingsStepFailItem', activityFailContext]),
                 label: saveSettingsLabel,
                 iconPath: activityFailIcon
             }),

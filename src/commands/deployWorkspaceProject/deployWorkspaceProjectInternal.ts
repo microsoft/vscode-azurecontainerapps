@@ -105,7 +105,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingResourceGroup', activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingResourceGroupInfoItem', activitySuccessContext]),
                 label: localize('useResourceGroup', 'Using resource group "{0}"', resourceGroupName),
                 iconPath: activityInfoIcon
             })
@@ -126,7 +126,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingManagedEnvironment', activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingManagedEnvironmentInfoItem', activitySuccessContext]),
                 label: localize('useManagedEnvironment', 'Using container apps environment "{0}"', managedEnvironmentName),
                 iconPath: activityInfoIcon
             })
@@ -154,7 +154,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingAcr', activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingAcrInfoItem', activitySuccessContext]),
                 label: localize('useAcr', 'Using container registry "{0}"', registryName),
                 iconPath: activityInfoIcon
             })
@@ -176,7 +176,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingContainerApp', activitySuccessContext]),
+                contextValue: createActivityChildContext(['useExistingContainerAppInfoItem', activitySuccessContext]),
                 label: localize('useContainerApp', 'Using container app "{0}"', containerAppName),
                 iconPath: activityInfoIcon
             })
