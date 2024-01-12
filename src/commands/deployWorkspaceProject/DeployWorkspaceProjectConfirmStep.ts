@@ -7,9 +7,13 @@ import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { OverwriteConfirmStepBase } from "../OverwriteConfirmStepBase";
-import  { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
 export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<DeployWorkspaceProjectContext> {
+    constructor(private readonly suppressConfirmation: boolean) {
+        super();
+    }
+
     protected async promptCore(context: DeployWorkspaceProjectContext): Promise<void> {
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
@@ -59,6 +63,6 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
     }
 
     public shouldPrompt(): boolean {
-        return true;
+        return !this.suppressConfirmation;
     }
 }
