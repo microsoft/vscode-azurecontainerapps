@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import { type Progress } from 'vscode';
 import { fse } from '../../../../node/fs-extra';
@@ -22,12 +22,13 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
     private _sourceFilePath: string;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        context.registryName = nonNullValue(context.registry?.name);
-        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
-        context.client = await createContainerRegistryManagementClient(context);
         /* relative path of src folder from rootFolder and what gets deployed */
         this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
+
+        context.registryName = nonNullValue(context.registry?.name);
+        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
+        context.client = await createContainerRegistryManagementClient(context);
 
         const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
         progress.report({ message: uploading });
@@ -57,7 +58,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
     protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activitySuccessIcon
             }),
@@ -67,8 +68,8 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['uploadSourceCodeStepFailItem', activityFailContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activityFailIcon
             }),

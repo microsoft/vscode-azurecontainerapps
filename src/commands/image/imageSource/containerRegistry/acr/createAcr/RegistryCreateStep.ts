@@ -5,7 +5,7 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../../../utils/activity/activityUtils";
@@ -38,7 +38,7 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
     protected createSuccessOutput(context: CreateAcrContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['registryCreateStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['registryCreateStepSuccessItem', activitySuccessContext]),
                 label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
                 iconPath: activitySuccessIcon
             }),
@@ -48,8 +48,8 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
 
     protected createFailOutput(context: CreateAcrContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['registryCreateStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['registryCreateStepFailItem', activityFailContext]),
                 label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
                 iconPath: activityFailIcon
             }),

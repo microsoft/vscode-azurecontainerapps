@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
-import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, GenericParentTreeItem, activityFailContext, activityFailIcon } from "@microsoft/vscode-azext-utils";
 import * as path from 'path';
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
@@ -49,8 +49,8 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['runStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['runStepFailItem', activityFailContext]),
                 label: localize('runLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon
             }),

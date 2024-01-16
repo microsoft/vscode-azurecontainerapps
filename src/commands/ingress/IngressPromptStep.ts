@@ -73,7 +73,7 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
     if (!context.containerApp) {
         context.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['ingressPromptStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['ingressPromptStepSuccessItem', activitySuccessContext]),
                 label: context.enableIngress ?
                     localize('ingressEnableLabel', 'Enable ingress on port {0} (from Dockerfile configuration)', context.targetPort) :
                     localize('ingressDisableLabel', 'Disable ingress (from Dockerfile configuration)'),
