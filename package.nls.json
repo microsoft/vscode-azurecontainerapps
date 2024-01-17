@@ -57,5 +57,8 @@
     "containerApps.walkthrough.clearWorkspace.description": "Before proceeding with the demo, an empty VS Code workspace is required.\nPress the button below and hit enter until all active workspaces have been removed.\n[Remove Folders from Workspace](command:containerApps.walkthrough.clearWorkspace)",
     "containerApps.walkthrough.cloneProject": "Clone the Project",
     "containerApps.walkthrough.cloneProject.title": "Clone the project",
-    "containerApps.walkthrough.cloneProject.description": "Starting from an empty workspace, begin by cloning down the sample project from GitHub. Azure Container Apps projects should include a Dockerfile in the source code.\n[Git: Clone](command:containerApps.walkthrough.cloneProject)"
+    "containerApps.walkthrough.cloneProject.description": "Starting from an empty workspace, begin by cloning down the sample project from GitHub. Azure Container Apps projects should include a Dockerfile in the source code.\n[Git: Clone](command:containerApps.walkthrough.cloneProject)",
+    "containerApps.walkthrough.azureSignIn": "Sign in to Azure",
+    "containerApps.walkthrough.azureSignIn.title": "Sign in to Azure",
+    "containerApps.walkthrough.azureSignIn.description": "Follow the prompts to authenticate. Once signed in, return to Visual Studio Code.\n[Azure: Sign In](command:containerApps.walkthrough.azureSignIn)"
 }

@@ -257,6 +257,11 @@
                 "command": "containerApps.walkthrough.cloneProject",
                 "title": "%containerApps.walkthrough.cloneProject%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.azureSignIn",
+                "title": "%containerApps.walkthrough.azureSignIn%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -528,6 +533,10 @@
                 {
                     "command": "containerApps.walkthrough.cloneProject",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.azureSignIn",
+                    "when": "never"
                 }
             ]
         },
@@ -603,6 +612,17 @@
                         ],
                         "media": {
                             "markdown": "resources/walkthroughs/clone-the-project.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.azureSignIn",
+                        "title": "%containerApps.walkthrough.azureSignIn.title%",
+                        "description": "%containerApps.walkthrough.azureSignIn.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.azureSignIn"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthroughs/empty.md"
                         }
                     }
                 ]

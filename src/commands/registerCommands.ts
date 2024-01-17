@@ -39,6 +39,7 @@ import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScale
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
+import { azureSignIn } from './walkthrough/azureSignIn';
 import { clearWorkspace } from './walkthrough/clearWorkspace';
 import { cloneProject } from './walkthrough/cloneProject';
 
@@ -109,4 +110,5 @@ export function registerCommands(): void {
     // walkthrough
     registerCommand('containerApps.walkthrough.clearWorkspace', clearWorkspace);
     registerCommand('containerApps.walkthrough.cloneProject', cloneProject);
+    registerCommand('containerApps.walkthrough.azureSignIn', azureSignIn);
 }

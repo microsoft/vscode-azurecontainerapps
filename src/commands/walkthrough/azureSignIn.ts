@@ -5,8 +5,6 @@
 
 import { commands } from "vscode";
 
-export async function cloneProject(): Promise<void> {
-    await commands.executeCommand('git.clone');
-    // await commands.executeCommand('workbench.view.explorer');
-    await commands.executeCommand('setContext', 'containerApps.isSampleProject', true);
+export async function azureSignIn(): Promise<void> {
+    await commands.executeCommand('azure-account.login');
 }

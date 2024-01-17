@@ -6,7 +6,7 @@
 import { commands, workspace } from "vscode";
 
 export async function clearWorkspace(): Promise<void> {
-    await commands.executeCommand('workbench.view.explorer');
+    // await commands.executeCommand('workbench.view.explorer');
 
     const workspaceFolders = workspace.workspaceFolders;
     if (!workspaceFolders?.length) {
