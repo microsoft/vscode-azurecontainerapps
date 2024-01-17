@@ -5,7 +5,7 @@
 
 import { type ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep, parseAzureResourceGroupId } from "@microsoft/vscode-azext-azureutils";
-import { createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling, createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -14,40 +14,40 @@ import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalCont
 import { getDeployWorkspaceProjectResults, type DeployWorkspaceProjectResults } from "../deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import type * as api from "./vscode-azurecontainerapps.api";
 
-export async function deployWorkspaceProjectApi(context: IActionContext, deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
-    const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, ignoreExistingDeploySettings, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
+export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
+    return await callWithTelemetryAndErrorHandling('containerApps.api.deployWorkspaceProject', async (context: IActionContext): Promise<DeployWorkspaceProjectResults> => {
+        const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, ignoreExistingDeploySettings, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-        selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
-        showLoadingPrompt: false
-    });
-    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+        const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+            selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
+            showLoadingPrompt: false
+        });
+        const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
-    const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
-    const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId({ ...context, ...subscriptionContext }, resourceGroupId) : undefined;
+        const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
+        const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId({ ...context, ...subscriptionContext }, resourceGroupId) : undefined;
 
-    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
-        ...subscriptionContext,
-        subscription,
-        resourceGroup,
-        rootFolder,
-        srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
-        dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
-        ignoreExistingDeploySettings,
-        shouldSaveDeploySettings: !!shouldSaveDeploySettings,
-    });
+        const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
+            ...subscriptionContext,
+            subscription,
+            resourceGroup,
+            rootFolder,
+            srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
+            dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
+            ignoreExistingDeploySettings,
+            shouldSaveDeploySettings: !!shouldSaveDeploySettings,
+        });
 
-    const deployWorkspaceProjectResultContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, undefined, {
-        // Don't show activity log updates in ACA when another client extension calls into this API.
-        // Let each client decide how it wants to show its own activity log updates.
-        suppressActivity: true,
-        suppressConfirmation,
-        suppressContainerAppCreation,
-        suppressProgress: true,
-        suppressWizardTitle: true,
-    });
+        const deployWorkspaceProjectResultContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, undefined, {
+            suppressActivity: true,
+            suppressConfirmation,
+            suppressContainerAppCreation,
+            suppressProgress: true,
+            suppressWizardTitle: true,
+        });
 
-    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
+        return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
+    }) ?? {};
 }
 
 function getSubscriptionIdFromOptions(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): string | undefined {
