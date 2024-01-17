@@ -38,7 +38,6 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
                     progress.report({ message: message });
                     ext.outputChannel.appendLog(message);
 
-                    runRequest.sourceLocation = 'a'
                     context.run = await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
 
                 },
