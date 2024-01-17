@@ -5,7 +5,6 @@
 
 import { commands, workspace } from "vscode";
 
-
 export async function clearWorkspace(): Promise<void> {
     await commands.executeCommand('workbench.view.explorer');
 
