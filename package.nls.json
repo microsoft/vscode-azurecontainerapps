@@ -49,5 +49,13 @@
     "containerApps.openAcrBuildLogs": "Open Azure Container Registry Build Logs",
     "containerApps.deployWorkspaceProject.containerAppName": "When deploying from a local workspace project, the name of the target container app to deploy to.",
     "containerApps.deployWorkspaceProject.containerAppResourceGroupName": "When deploying from a local workspace project, the name of the target container app's resource group.",
-    "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images."
+    "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images.",
+    "containerApps.walkthrough.gettingStarted.title": "Getting Started with Azure Container Apps",
+    "containerApps.walkthrough.gettingStarted.description": "Learn to deploy a containerized application to Azure Container Apps using a sample GitHub repository.",
+    "containerApps.walkthrough.clearWorkspace": "Clear Workspace",
+    "containerApps.walkthrough.clearWorkspace.title": "Start from an empty workspace (prerequisite)",
+    "containerApps.walkthrough.clearWorkspace.description": "Before proceeding with the demo, an empty VS Code workspace is required.\nPress the button below and hit enter until all active workspaces have been removed.\n[Remove Folders from Workspace](command:containerApps.walkthrough.clearWorkspace)",
+    "containerApps.walkthrough.cloneProject": "Clone the Project",
+    "containerApps.walkthrough.cloneProject.title": "Clone the project",
+    "containerApps.walkthrough.cloneProject.description": "Starting from an empty workspace, begin by cloning down the sample project from GitHub. Azure Container Apps projects should include a Dockerfile in the source code.\n[Git: Clone](command:containerApps.walkthrough.cloneProject)"
 }

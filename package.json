@@ -247,6 +247,16 @@
                 "command": "containerApps.openAcrBuildLogs",
                 "title": "%containerApps.openAcrBuildLogs%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.clearWorkspace",
+                "title": "%containerApps.walkthrough.clearWorkspace%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.cloneProject",
+                "title": "%containerApps.walkthrough.cloneProject%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -510,6 +520,14 @@
                 {
                     "command": "containerApps.openAcrBuildLogs",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.clearWorkspace",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.cloneProject",
+                    "when": "never"
                 }
             ]
         },
@@ -556,6 +574,38 @@
                         "default": true
                     }
                 }
+            }
+        ],
+        "walkthroughs": [
+            {
+                "id": "containerApps.walkthrough.gettingStarted",
+                "title": "%containerApps.walkthrough.gettingStarted.title%",
+                "description": "%containerApps.walkthrough.gettingStarted.description%",
+                "steps": [
+                    {
+                        "id": "containerApps.walkthrough.clearWorkspace",
+                        "title": "%containerApps.walkthrough.clearWorkspace.title%",
+                        "description": "%containerApps.walkthrough.clearWorkspace.description%",
+                        "when": "workspaceFolderCount > 0 && !(workspaceFolderCount == 1 && containerApps.isSampleProject == true)",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.clearWorkspace"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthroughs/empty.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.cloneProject",
+                        "title": "%containerApps.walkthrough.cloneProject.title%",
+                        "description": "%containerApps.walkthrough.cloneProject.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.cloneProject"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthroughs/clone-the-project.md"
+                        }
+                    }
+                ]
             }
         ]
     },
