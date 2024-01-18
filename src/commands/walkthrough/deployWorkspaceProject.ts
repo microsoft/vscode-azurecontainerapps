@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { commands } from "vscode";
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { deployWorkspaceProject } from '../deployWorkspaceProject/deployWorkspaceProject';
 
-export async function azureSignInWalkthrough(): Promise<void> {
-    await commands.executeCommand('azure-account.login');
+export async function deployWorkspaceProjectWalkthrough(context: IActionContext): Promise<void> {
+    await deployWorkspaceProject(context);
 }

@@ -262,6 +262,11 @@
                 "command": "containerApps.walkthrough.azureSignIn",
                 "title": "%containerApps.walkthrough.azureSignIn%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.deployWorkspaceProject",
+                "title": "%containerApps.walkthrough.deployWorkspaceProject%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -537,6 +542,10 @@
                 {
                     "command": "containerApps.walkthrough.azureSignIn",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.deployWorkspaceProject",
+                    "when": "never"
                 }
             ]
         },
@@ -600,7 +609,7 @@
                             "onCommand:containerApps.walkthrough.clearWorkspace"
                         ],
                         "media": {
-                            "markdown": "resources/walkthroughs/empty.md"
+                            "markdown": "resources/walkthrough/empty.md"
                         }
                     },
                     {
@@ -611,7 +620,7 @@
                             "onCommand:containerApps.walkthrough.cloneProject"
                         ],
                         "media": {
-                            "markdown": "resources/walkthroughs/clone-the-project.md"
+                            "markdown": "resources/walkthrough/clone-the-project.md"
                         }
                     },
                     {
@@ -622,7 +631,29 @@
                             "onCommand:containerApps.walkthrough.azureSignIn"
                         ],
                         "media": {
-                            "markdown": "resources/walkthroughs/empty.md"
+                            "markdown": "resources/walkthrough/empty.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.deployWorkspaceProject",
+                        "title": "%containerApps.walkthrough.deployWorkspaceProject.title%",
+                        "description": "%containerApps.walkthrough.deployWorkspaceProject.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.deployWorkspaceProject"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/create-and-deploy.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.review",
+                        "title": "%containerApps.walkthrough.review.title%",
+                        "description": "%containerApps.walkthrough.review.description%",
+                        "completionEvents": [
+                            "onStepSelected"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/review.md"
                         }
                     }
                 ]

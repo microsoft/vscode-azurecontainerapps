@@ -39,9 +39,10 @@ import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScale
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
-import { azureSignIn } from './walkthrough/azureSignIn';
-import { clearWorkspace } from './walkthrough/clearWorkspace';
-import { cloneProject } from './walkthrough/cloneProject';
+import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
+import { clearWorkspaceWalkthrough } from './walkthrough/clearWorkspace';
+import { cloneProjectWalkthrough } from './walkthrough/cloneProject';
+import { deployWorkspaceProjectWalkthrough } from './walkthrough/deployWorkspaceProject';
 
 export function registerCommands(): void {
     // managed environments
@@ -108,7 +109,8 @@ export function registerCommands(): void {
     registerCommand('containerApps.openAcrBuildLogs', openAcrBuildLogs);
 
     // walkthrough
-    registerCommand('containerApps.walkthrough.clearWorkspace', clearWorkspace);
-    registerCommand('containerApps.walkthrough.cloneProject', cloneProject);
-    registerCommand('containerApps.walkthrough.azureSignIn', azureSignIn);
+    registerCommand('containerApps.walkthrough.clearWorkspace', clearWorkspaceWalkthrough);
+    registerCommand('containerApps.walkthrough.cloneProject', cloneProjectWalkthrough);
+    registerCommand('containerApps.walkthrough.azureSignIn', azureSignInWalkthrough);
+    registerCommand('containerApps.walkthrough.deployWorkspaceProject', deployWorkspaceProjectWalkthrough);
 }
