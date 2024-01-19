@@ -1,8 +1,8 @@
-| Prompt           | Value                                                                                                                                    |
-|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| Select subscription             | Select the Azure subscription you want to use.                  |
-| Select a container apps environment         | Select: <b>Create new container apps environment</b>. You’re only asked this question if you have existing container apps environments.
-| Confirm resources to create | Select: <b>Continue</b>
-| Enter a name for the new container apps resource(s) | Enter: <b>my-container-app</b>
-| Select a location         |   Select an Azure region close to you.
-| Save deployment configuration | Select: <b>Save</b>
+| Prompt | Value |
+|--------|-------|
+| Select subscription | Select the Azure subscription you want to use. |
+| Select a container apps environment | Select: <b>Create new container apps environment</b>. You’re only asked this question if you have existing container apps environments. |
+| Confirm resources to create | Select: <b>Continue</b> |
+| Enter a name for the new container apps resource(s) | Enter: <b>my-container-app</b> |
+| Select a location | Select an Azure region close to you. |
+| Save deployment configuration | Select: <b>Save</b> |

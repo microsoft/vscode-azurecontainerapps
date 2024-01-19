@@ -54,16 +54,16 @@
     "containerApps.walkthrough.gettingStarted.description": "Learn to deploy a containerized application to Azure Container Apps using a sample GitHub repository.",
     "containerApps.walkthrough.clearWorkspace": "Clear Workspace (Walkthrough)",
     "containerApps.walkthrough.clearWorkspace.title": "Start from an empty workspace (prerequisite)",
-    "containerApps.walkthrough.clearWorkspace.description": "Before proceeding with the demo, an empty VS Code workspace is required.\nPress the button below and hit enter until all active workspaces have been removed.\n[Remove Folders from Workspace](command:containerApps.walkthrough.clearWorkspace)",
+    "containerApps.walkthrough.clearWorkspace.description": "Before proceeding with the demo, an empty VS Code workspace is required.\nUse the button provided below and press enter until all active workspaces have been removed.\n[Remove Folders from Workspace](command:containerApps.walkthrough.clearWorkspace)",
     "containerApps.walkthrough.cloneProject": "Clone the Project (Walkthrough)",
     "containerApps.walkthrough.cloneProject.title": "Clone the project",
-    "containerApps.walkthrough.cloneProject.description": "Start from an empty workspace and clone the sample project from GitHub. \nEnter the provided table values when prompted by Visual Studio Code.\n[Git: Clone](command:containerApps.walkthrough.cloneProject)",
+    "containerApps.walkthrough.cloneProject.description": "Start from an empty project and use the button provided below. This will clone the sample project from GitHub onto your local workspace.\nEnter the provided table values when prompted by Visual Studio Code.\n[Git: Clone](command:containerApps.walkthrough.cloneProject)",
     "containerApps.walkthrough.azureSignIn": "Sign in to Azure (Walkthrough)",
     "containerApps.walkthrough.azureSignIn.title": "Sign in to Azure",
-    "containerApps.walkthrough.azureSignIn.description": "Follow the prompts to authenticate. Once signed in, return to Visual Studio Code.\n[Azure: Sign In](command:containerApps.walkthrough.azureSignIn)",
+    "containerApps.walkthrough.azureSignIn.description": "Sign in is required before you can access Azure services. Use the button provided below to sign in.\nA window will open up in your browser. Follow the prompts to authenticate.\nOnce signed in, return to Visual Studio Code.\n[Azure: Sign In](command:containerApps.walkthrough.azureSignIn)",
     "containerApps.walkthrough.deployWorkspaceProject": "Deploy Project from Workspace (Walkthrough)",
     "containerApps.walkthrough.deployWorkspaceProject.title": "Create and deploy",
-    "containerApps.walkthrough.deployWorkspaceProject.description": "Next, create the container app resources necessary to host the application.\nEnter the provided table values when prompted by Visual Studio Code.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)",
+    "containerApps.walkthrough.deployWorkspaceProject.description": "Use the button provided below to create the container app resources necessary to host the application.\nEnter the provided table values when prompted by Visual Studio Code.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)",
     "containerApps.walkthrough.review.title": "Review",
-    "containerApps.walkthrough.review.description": "Take this time to review what we've done so far using the provided table.\nWhen you're done reviewing, you can use the command below to delete any created resources.\n[Azure: Delete Resource Group](command:containerApps.walkthrough.deployWorkspaceProject)"
+    "containerApps.walkthrough.review.description": "Take this time to review what we've done so far using the provided table.\nWhen you're done reviewing, you can use the button provided below to delete any created resources during this session.\n[Azure: Delete Resource Group](command:containerApps.walkthrough.deployWorkspaceProject)"
 }

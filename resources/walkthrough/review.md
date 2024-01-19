@@ -9,5 +9,5 @@
 
 | Step description...      | Where it's located...                                                                                                                                    |
 |-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| Add a project with a Dockerfile to the local VS Code workspace.  You can use | <img src="./images/explorer-workspace-project.png" width="100%"> |
+| Add a project with a Dockerfile to the local VS Code workspace.  You can use | <img src="./images/explorer-workspace-project.png"> |
 
