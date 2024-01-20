@@ -5,7 +5,7 @@
 
 import { commands } from "vscode";
 
-export async function cloneProjectWalkthrough(): Promise<void> {
+export async function addWorkspaceProjectWalkthrough(): Promise<void> {
     await commands.executeCommand('git.clone');
     // await commands.executeCommand('workbench.view.explorer');
     await commands.executeCommand('setContext', 'containerApps.isSampleProject', true);

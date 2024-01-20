@@ -249,13 +249,13 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.walkthrough.clearWorkspace",
-                "title": "%containerApps.walkthrough.clearWorkspace%",
+                "command": "containerApps.walkthrough.emptyWorkspace",
+                "title": "%containerApps.walkthrough.emptyWorkspace%",
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.walkthrough.cloneProject",
-                "title": "%containerApps.walkthrough.cloneProject%",
+                "command": "containerApps.walkthrough.addWorkspaceProject",
+                "title": "%containerApps.walkthrough.addWorkspaceProject%",
                 "category": "Azure Container Apps"
             },
             {
@@ -532,11 +532,11 @@
                     "when": "never"
                 },
                 {
-                    "command": "containerApps.walkthrough.clearWorkspace",
+                    "command": "containerApps.walkthrough.emptyWorkspace",
                     "when": "never"
                 },
                 {
-                    "command": "containerApps.walkthrough.cloneProject",
+                    "command": "containerApps.walkthrough.addWorkspaceProject",
                     "when": "never"
                 },
                 {
@@ -601,26 +601,26 @@
                 "description": "%containerApps.walkthrough.gettingStarted.description%",
                 "steps": [
                     {
-                        "id": "containerApps.walkthrough.clearWorkspace",
-                        "title": "%containerApps.walkthrough.clearWorkspace.title%",
-                        "description": "%containerApps.walkthrough.clearWorkspace.description%",
+                        "id": "containerApps.walkthrough.emptyWorkspace",
+                        "title": "%containerApps.walkthrough.emptyWorkspace.title%",
+                        "description": "%containerApps.walkthrough.emptyWorkspace.description%",
                         "when": "workspaceFolderCount > 0 && !(workspaceFolderCount == 1 && containerApps.isSampleProject == true)",
                         "completionEvents": [
-                            "onCommand:containerApps.walkthrough.clearWorkspace"
+                            "onCommand:containerApps.walkthrough.emptyWorkspace"
                         ],
                         "media": {
                             "markdown": "resources/walkthrough/empty.md"
                         }
                     },
                     {
-                        "id": "containerApps.walkthrough.cloneProject",
-                        "title": "%containerApps.walkthrough.cloneProject.title%",
-                        "description": "%containerApps.walkthrough.cloneProject.description%",
+                        "id": "containerApps.walkthrough.addWorkspaceProject",
+                        "title": "%containerApps.walkthrough.addWorkspaceProject.title%",
+                        "description": "%containerApps.walkthrough.addWorkspaceProject.description%",
                         "completionEvents": [
-                            "onCommand:containerApps.walkthrough.cloneProject"
+                            "onCommand:containerApps.walkthrough.addWorkspaceProject"
                         ],
                         "media": {
-                            "markdown": "resources/walkthrough/clone-the-project.md"
+                            "markdown": "resources/walkthrough/add-workspace-project.md"
                         }
                     },
                     {
