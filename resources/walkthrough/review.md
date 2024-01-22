@@ -1,5 +1,5 @@
 | Step summary... | Where it's located... |
 |-----------------|-----------------------|
-| Navigate to the <b>Explorer</b> tab and add a project with a Dockerfile to the local VS Code workspace using <b>Open Folder</b> or <b>Clone Repository</b>. | <details><summary>View Location: </summary><img src="./images/explorer-workspace-project.png"></details> |
-| <h3>II. Sign in to Azure</h3>Navigate to the <b>Azure</b> tab and select: <b>Sign in to Azure</b>.<br /><br /><u>Tip</u>: If you already see subscription resources at this step, it means you may have already signed in recently. | <img src="./images/azure-sign-in.png"> |
-| <h3>III. Create and deploy | <img src="./images/deploy-workspace-project.png"> |
+| <h4>I. <u>Add a workspace project</u></h4>Navigate to the <i>Explorer</i> view and add a project with a Dockerfile to the local VS Code workspace using <b>Open Folder</b> or <b>Clone Repository</b>. | <img src="./images/explorer-workspace-project.png"> |
+| <h4>II. <u>Sign in to Azure</u></h4>Navigate to the <i>Azure Resources</i> view and select: <b>Sign in to Azure</b>. | <img src="./images/azure-sign-in.png"></details> |
+| <h4>III. <u>Create and deploy</u></h4>Navigate to the <i>Azure Workspace</i> view and use the container app icon to select: <b>Deploy Project from Workspace</b>.<br /><br />Re-deploy to the same resources by running the command again with saved workspace settings (<i>.vscode/settings.json</i>). | <img src="./images/deploy-workspace-project.png"> |

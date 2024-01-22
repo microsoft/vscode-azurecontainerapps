@@ -65,7 +65,7 @@
     "containerApps.walkthrough.deployWorkspaceProject.title": "Create and deploy",
     "containerApps.walkthrough.deployWorkspaceProject.description": "Create the container app resources necessary to host the application by using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)",
     "containerApps.walkthrough.review.title": "Review",
-    "containerApps.walkthrough.review.description": "Let's review what we've accomplished so far using the table provided.",
+    "containerApps.walkthrough.review.description": "Let's review what we have accomplished so far.\nIn this tutorial, the commands were provided to you directly in each step.  In practice, most of these commands will need to be accessed via the Azure Resources pane.\nUse the provided table to review and discover the real location of each command.",
     "containerApps.walkthrough.deleteResources": "",
     "containerApps.walkthrough.deleteResources.title": "",
     "containerApps.walkthrough.deleteResources.description": ""
