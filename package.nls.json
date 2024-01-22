@@ -54,7 +54,7 @@
     "containerApps.walkthrough.gettingStarted.description": "Learn to deploy a containerized application to Azure Container Apps using a sample GitHub repository.",
     "containerApps.walkthrough.emptyWorkspace": "Empty Workspace (Walkthrough)",
     "containerApps.walkthrough.emptyWorkspace.title": "Empty the workspace (prerequisite)",
-    "containerApps.walkthrough.emptyWorkspace.description": "An empty workspace is required. Use the button below to empty your workspace.\nYou will be prompted by Visual Studio Code at the top of the page.  Press enter until all workspace items have been removed.\n[Remove Folders from Workspace](command:containerApps.walkthrough.emptyWorkspace)",
+    "containerApps.walkthrough.emptyWorkspace.description": "An empty workspace is required. Use the button below to empty your workspace.\n[Remove Folders from Workspace](command:containerApps.walkthrough.emptyWorkspace)",
     "containerApps.walkthrough.addWorkspaceProject": "Add Workspace Project (Walkthrough)",
     "containerApps.walkthrough.addWorkspaceProject.title": "Add a workspace project",
     "containerApps.walkthrough.addWorkspaceProject.description": "Start from an empty project. Use the button below to clone the sample project from GitHub.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Clone Repository](command:containerApps.walkthrough.addWorkspaceProject)",
@@ -65,5 +65,8 @@
     "containerApps.walkthrough.deployWorkspaceProject.title": "Create and deploy",
     "containerApps.walkthrough.deployWorkspaceProject.description": "Create the container app resources necessary to host the application by using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)",
     "containerApps.walkthrough.review.title": "Review",
-    "containerApps.walkthrough.review.description": "We'll review what we've accomplished so far using the table provided.\nWhen you're done reviewing, you can use the button below to delete any resources created during this session.\n[Delete Resource Group](command:containerApps.walkthrough.deployWorkspaceProject)"
+    "containerApps.walkthrough.review.description": "Let's review what we've accomplished so far using the table provided.",
+    "containerApps.walkthrough.deleteResources": "",
+    "containerApps.walkthrough.deleteResources.title": "",
+    "containerApps.walkthrough.deleteResources.description": ""
 }

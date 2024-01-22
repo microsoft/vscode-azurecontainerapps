@@ -3,17 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { commands, workspace } from "vscode";
+import { workspace } from "vscode";
 
 export async function emptyWorkspaceWalkthrough(): Promise<void> {
-    // await commands.executeCommand('workbench.view.explorer');
-
-    const workspaceFolders = workspace.workspaceFolders;
-    if (!workspaceFolders?.length) {
-        return;
-    }
-
-    for (let i = 0; i < workspaceFolders.length; i++) {
-        await commands.executeCommand('workbench.action.removeRootFolder');
-    }
+    workspace.updateWorkspaceFolders(0, workspace.workspaceFolders?.length ?? 0);
 }
