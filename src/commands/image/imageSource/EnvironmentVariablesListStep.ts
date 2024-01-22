@@ -67,7 +67,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         if (setEnvironmentVariableOption !== SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createActivityChildContext(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
@@ -85,7 +85,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         } else {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['environmentVariablesListStep', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createActivityChildContext(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
                     iconPath: activitySuccessIcon
                 })

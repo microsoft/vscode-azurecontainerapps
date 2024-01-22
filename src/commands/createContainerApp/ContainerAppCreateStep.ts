@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -69,7 +69,7 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
     protected createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppCreateStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['containerAppCreateStepSuccessItem', activitySuccessContext]),
                 label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
                 iconPath: activitySuccessIcon
             }),
@@ -79,8 +79,8 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
 
     protected createFailOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppCreateStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppCreateStepFailItem', activityFailContext]),
                 label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
                 iconPath: activityFailIcon
             }),

@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericTreeItem } from "@microsoft/vscode-azext-utils";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericParentTreeItem, GenericTreeItem } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { managedEnvironmentsAppProvider } from "../../constants";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
@@ -68,7 +68,7 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
     protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['managedEnvironmentCreateStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['managedEnvironmentCreateStepSuccessItem', activitySuccessContext]),
                 label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
                 iconPath: activitySuccessIcon
             }),
@@ -78,8 +78,8 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
 
     protected createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['managedEnvironmentCreateStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['managedEnvironmentCreateStepFailItem', activityFailContext]),
                 label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
                 iconPath: activityFailIcon
             }),
