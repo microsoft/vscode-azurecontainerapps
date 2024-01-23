@@ -57,7 +57,7 @@
     "containerApps.walkthrough.emptyWorkspace.description": "An empty workspace is required. Use the button below to empty your workspace.\n[Remove Folders from Workspace](command:containerApps.walkthrough.emptyWorkspace)",
     "containerApps.walkthrough.addWorkspaceProject": "Add Workspace Project (Walkthrough)",
     "containerApps.walkthrough.addWorkspaceProject.title": "Add a workspace project",
-    "containerApps.walkthrough.addWorkspaceProject.description": "Start from an empty project. Use the button below to clone the sample project from GitHub.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Clone Repository](command:containerApps.walkthrough.addWorkspaceProject)",
+    "containerApps.walkthrough.addWorkspaceProject.description": "Start from an empty workspace. Use the button below to clone the sample project from GitHub.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Clone Repository](command:containerApps.walkthrough.addWorkspaceProject)",
     "containerApps.walkthrough.azureSignIn": "Sign in to Azure (Walkthrough)",
     "containerApps.walkthrough.azureSignIn.title": "Sign in to Azure",
     "containerApps.walkthrough.azureSignIn.description": "Sign in using the button below.\nYou will be prompted to authenticate using your browser. Once signed in, return to Visual Studio Code.\n[Sign in to Azure](command:containerApps.walkthrough.azureSignIn)",
@@ -65,8 +65,8 @@
     "containerApps.walkthrough.deployWorkspaceProject.title": "Create and deploy",
     "containerApps.walkthrough.deployWorkspaceProject.description": "Create the container app resources necessary to host the application by using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)",
     "containerApps.walkthrough.review.title": "Review",
-    "containerApps.walkthrough.review.description": "Let's review what we have accomplished so far.\nIn this tutorial, the commands were provided to you directly in each step.  In practice, most of these commands will need to be accessed via the Azure Resources pane.\nUse the provided table to review and discover the real location of each command.",
-    "containerApps.walkthrough.deleteResources": "",
-    "containerApps.walkthrough.deleteResources.title": "",
-    "containerApps.walkthrough.deleteResources.description": ""
+    "containerApps.walkthrough.review.description": "Let's review what we have accomplished so far.\nIn this walkthrough, the commands were provided to you directly in each step.  In practice, most of these commands will need to be accessed via the Azure Resources pane.\nUse the provided table to review and discover the real location of each command.",
+    "containerApps.walkthrough.cleanUpResources": "Clean up Resources (Walkthrough)",
+    "containerApps.walkthrough.cleanUpResources.title": "Clean up resources",
+    "containerApps.walkthrough.cleanUpResources.description": "Remove the resources created in this walkthrough by deleting the containing resource group using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Delete Resource Group](command:containerApps.walkthrough.cleanUpResources)"
 }
