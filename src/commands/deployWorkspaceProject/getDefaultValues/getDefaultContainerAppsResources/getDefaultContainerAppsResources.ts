@@ -6,10 +6,9 @@
 import { type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
-import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../telemetry/commandTelemetryProps";
 import { type ContainerAppItem, type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { type ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
+import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
 import { type DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
 import { getContainerAppResourcesFromItem, getContainerAppResourcesFromSettings } from "./getDefaultResourcesFrom";
 import { promptForEnvironmentResources } from "./promptForEnvironmentResources";
@@ -21,7 +20,7 @@ export interface DefaultContainerAppsResources {
 }
 
 export async function getDefaultContainerAppsResources(
-    context: ISubscriptionActionContext & SetTelemetryProps<TelemetryProps>,
+    context: ISubscriptionActionContext & Partial<DeployWorkspaceProjectContext>,
     settings: DeployWorkspaceProjectSettings,
     item?: ContainerAppItem | ManagedEnvironmentItem
 ): Promise<DefaultContainerAppsResources> {
@@ -33,9 +32,11 @@ export async function getDefaultContainerAppsResources(
     }
 
     // Otherwise try to obtain container app resources using any saved workspace settings
-    const { resourceGroup, managedEnvironment, containerApp } = await getContainerAppResourcesFromSettings(context, settings);
-    if (resourceGroup && managedEnvironment && containerApp) {
-        return { resourceGroup, managedEnvironment, containerApp };
+    if (!context.ignoreExistingDeploySettings) {
+        const { resourceGroup, managedEnvironment, containerApp } = await getContainerAppResourcesFromSettings(context, settings);
+        if (resourceGroup && managedEnvironment && containerApp) {
+            return { resourceGroup, managedEnvironment, containerApp };
+        }
     }
 
     // Otherwise prompt the user for managed environment resources to use

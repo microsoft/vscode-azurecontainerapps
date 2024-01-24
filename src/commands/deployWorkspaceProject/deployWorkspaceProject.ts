@@ -12,11 +12,13 @@ import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTe
 import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../../utils/localize";
+import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./deployWorkspaceProjectInternal";
+import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 
-export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
+export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
         item = undefined;
@@ -39,6 +41,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     displayNotification(deployWorkspaceProjectResultContext);
+    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
 }
 
 function displayNotification(context: DeployWorkspaceProjectContext): void {

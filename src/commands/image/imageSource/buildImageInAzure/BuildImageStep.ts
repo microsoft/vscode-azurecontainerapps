@@ -64,10 +64,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activitySuccessIcon
             }),
-            message: [
-                localize('buildImageSuccess', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName),
-                localize('useImage', 'Using image "{0}".', context.image)
-            ]
+            message: localize('buildImageSuccess', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }
 

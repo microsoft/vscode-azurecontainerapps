@@ -5,14 +5,15 @@
 
 import { UserCancelledError, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { commands, type WorkspaceFolder } from "vscode";
-import { browseItem, dockerFilePick, dockerfileGlobPattern } from "../../../constants";
+import { browseItem } from "../../../constants";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { localize } from "../../../utils/localize";
-import { getRootWorkspaceFolder, selectWorkspaceFile } from "../../../utils/workspaceUtils";
+import { getRootWorkspaceFolder } from "../../../utils/workspaceUtils";
+import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 
-export async function getWorkspaceProjectPaths(context: IActionContext & SetTelemetryProps<TelemetryProps>): Promise<{ rootFolder: WorkspaceFolder, dockerfilePath: string }> {
+export async function getWorkspaceProjectRootFolder(context: IActionContext & Partial<DeployWorkspaceProjectContext> & SetTelemetryProps<TelemetryProps>): Promise<WorkspaceFolder> {
     const prompt: string = localize('selectRootWorkspace', 'Select a project with a Dockerfile');
     const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(prompt);
 
@@ -29,8 +30,5 @@ export async function getWorkspaceProjectPaths(context: IActionContext & SetTele
     context.telemetry.properties.hasWorkspaceProjectOpen = 'true';
     await addAzdTelemetryToContext(context, rootFolder);
 
-    return {
-        rootFolder: nonNullValue(rootFolder),
-        dockerfilePath: nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`))
-    };
+    return nonNullValue(rootFolder);
 }

@@ -135,11 +135,11 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             isAvailable['resourceGroup'] = true;
         }
 
-        if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, workspaceName, workspaceName)) {
+        if (context.managedEnvironment || await ManagedEnvironmentNameStep.isNameAvailable(context, context.resourceGroup?.name ?? workspaceName, workspaceName)) {
             isAvailable['managedEnvironment'] = true;
         }
 
-        if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, workspaceName, workspaceName)) {
+        if (context.containerApp || await ContainerAppNameStep.isNameAvailable(context, context.resourceGroup?.name ?? workspaceName, workspaceName)) {
             isAvailable['containerApp'] = true;
         }
 

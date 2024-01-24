@@ -5,7 +5,7 @@
 
 import { UserCancelledError, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
-import { window, workspace, type OpenDialogOptions, type Uri, type WorkspaceFolder } from "vscode";
+import { Uri, window, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
 import { type SetTelemetryProps } from "../telemetry/SetTelemetryProps";
 import { type WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
@@ -98,4 +98,8 @@ export async function getRootWorkspaceFolder(placeHolder?: string): Promise<Work
         }
         return folder;
     }
+}
+
+export function getWorkspaceFolderFromPath(path: string): WorkspaceFolder | undefined {
+    return workspace.workspaceFolders?.find(folder => folder.uri.fsPath === Uri.file(path).fsPath);
 }

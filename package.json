@@ -96,6 +96,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployWorkspaceProjectApi",
+                "title": "%containerApps.deployWorkspaceProjectApi%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deployWorkspaceProjectToContainerApp",
                 "title": "%containerApps.deployWorkspaceProjectToContainerApp%",
                 "category": "Azure Container Apps"
@@ -504,6 +509,10 @@
                     "when": "never"
                 },
                 {
+                    "command": "containerApps.deployWorkspaceProjectApi",
+                    "when": "never"
+                },
+                {
                     "command": "containerApps.deployImageApi",
                     "when": "never"
                 },
@@ -621,7 +630,7 @@
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/core-rest-pipeline": "1.10.3",
         "@azure/storage-blob": "^12.4.1",
-        "@microsoft/vscode-azext-azureutils": "^2.0.0",
+        "@microsoft/vscode-azext-azureutils": "^2.0.3",
         "@microsoft/vscode-azext-github": "^1.0.0",
         "@microsoft/vscode-azext-utils": "^2.1.5",
         "@microsoft/vscode-azureresources-api": "^2.0.2",

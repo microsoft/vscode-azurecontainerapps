@@ -17,7 +17,7 @@ export function isAzdExtensionInstalled(): boolean {
 }
 
 export async function isAzdWorkspaceProject(rootFolder: WorkspaceFolder): Promise<boolean> {
-    const azureYamlPath: string = path.join(rootFolder.uri.path, azureYamlFile);
+    const azureYamlPath: string = path.join(rootFolder.uri.fsPath, azureYamlFile);
     return await AzExtFsExtra.pathExists(azureYamlPath);
 }
 

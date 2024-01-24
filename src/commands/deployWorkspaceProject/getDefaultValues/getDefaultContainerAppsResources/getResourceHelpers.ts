@@ -34,6 +34,5 @@ export async function getResourcesFromManagedEnvironmentHelper(context: ISubscri
     return {
         resourceGroup,
         managedEnvironment,
-        containerApp: undefined
     };
 }
