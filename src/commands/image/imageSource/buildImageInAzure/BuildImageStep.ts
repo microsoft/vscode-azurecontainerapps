@@ -69,7 +69,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
-        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) = () => Promise.resolve([]);
+        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
         if (this.acrBuildError) {
             loadMoreChildrenImpl = () => {
                 const buildImageLogsItem = new GenericTreeItem(undefined, {

@@ -566,6 +566,12 @@
                     }
                 }
             }
+        ],
+        "jsonValidation": [
+            {
+                "fileMatch": "*.containerapp-template.json",
+                "url": "https://json.schemastore.org/azure-containerapp-template.json"
+            }
         ]
     },
     "capabilities": {
@@ -634,6 +640,7 @@
         "dotenv": "^16.0.0",
         "fs-extra": "^8.1.0",
         "semver": "^7.5.2",
+        "p-retry": "^4.6.2",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
     },

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
@@ -35,7 +35,7 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
     protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['logAnalyticsCreateStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
                 label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
                 iconPath: activitySuccessIcon
             }),
@@ -45,8 +45,8 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
 
     protected createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['logAnalyticsCreateStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['logAnalyticsCreateStepFailItem', activityFailContext]),
                 label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
                 iconPath: activityFailIcon
             }),

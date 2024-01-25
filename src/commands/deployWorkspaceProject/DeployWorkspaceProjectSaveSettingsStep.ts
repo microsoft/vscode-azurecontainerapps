@@ -42,7 +42,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['dwpSaveSettingsStepSuccessItem', activitySuccessContext]),
                 label: saveSettingsLabel,
                 iconPath: activitySuccessIcon
             }),
@@ -55,7 +55,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['deployWorkspaceProjectSaveSettingsStep', activityFailContext]),
+                contextValue: createActivityChildContext(['dwpSaveSettingsStepFailItem', activityFailContext]),
                 label: saveSettingsLabel,
                 iconPath: activityFailIcon
             }),

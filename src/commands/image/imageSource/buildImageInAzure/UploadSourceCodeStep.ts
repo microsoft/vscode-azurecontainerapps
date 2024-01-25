@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import { type Progress } from 'vscode';
 import { fse } from '../../../../node/fs-extra';
@@ -19,21 +19,22 @@ const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgign
 
 export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 430;
-    private _sourceFilePath: string;
+    private _sourceFilePath: string;  // Relative path of src folder from rootFolder and what gets deployed
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        context.registryName = nonNullValue(context.registry?.name);
-        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
-        context.client = await createContainerRegistryManagementClient(context);
-
         if (context.srcPath) {
             this._sourceFilePath = path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         } else {
             this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.fsPath, context.dockerfilePath));
         }
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...');
-        progress.report({ message: uploading });
+        context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
+
+        context.registryName = nonNullValue(context.registry?.name);
+        context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
+        context.client = await createContainerRegistryManagementClient(context);
+
+        progress.report({ message: localize('uploadingSourceCode', 'Uploading source code...') });
 
         const source: string = path.join(context.rootFolder.uri.fsPath, this._sourceFilePath);
         let items = await AzExtFsExtra.readDirectory(source);
@@ -59,7 +60,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
     protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['uploadSourceCodeStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activitySuccessIcon
             }),
@@ -69,8 +70,8 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
 
     protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['uploadSourceCodeStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['uploadSourceCodeStepFailItem', activityFailContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activityFailIcon
             }),

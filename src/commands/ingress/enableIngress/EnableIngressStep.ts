@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Ingress } from "@azure/arm-appcontainers";
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
@@ -42,7 +42,7 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBase
     protected createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['enableIngressStep', activitySuccessContext]),
+                contextValue: createActivityChildContext(['enableIngressStepSuccessItem', activitySuccessContext]),
                 label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
@@ -52,8 +52,8 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBase
 
     protected createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['enableIngressStep', activityFailContext]),
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['enableIngressStepFailItem', activityFailContext]),
                 label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
                 iconPath: activityFailIcon
             }),
