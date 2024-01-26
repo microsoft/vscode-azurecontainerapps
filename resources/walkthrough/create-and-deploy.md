@@ -6,4 +6,4 @@
 | Enter a name for the new container apps resource(s) | Enter: <b>my-container-app</b> |
 | Select a location | Select an Azure region close to you. |
 | Save deployment configuration | Select: <b>Save</b> |
-| <i>On completion<i>: | <details><summary>View Activity Log: </summary><img src="./images/dwp-activity-log.png"></details> <details><summary>View Deployment: </summary><img src="./images/dwp-popup.png"></details> <details><summary>View <i>Azure Resources</i> tree: </summary><img src="./images/dwp-resource-tree.png"></details> |
+| <i>On completion<i>: | <details><summary>View Activity Log: </summary><img src="./images/dwp-activity-log.png"></details> <details><summary>View Deployment: </summary><img src="./images/dwp-popup.png"></details> <details><summary>View Azure Resources Tree: </summary><img src="./images/dwp-resource-tree.png"></details> |

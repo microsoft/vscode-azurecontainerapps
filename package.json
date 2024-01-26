@@ -659,6 +659,17 @@
                         }
                     },
                     {
+                        "id": "containerApps.walkthrough.exploreDetails",
+                        "title": "%containerApps.walkthrough.exploreDetails.title%",
+                        "description": "%containerApps.walkthrough.exploreDetails.description%",
+                        "completionEvents": [
+                            "onStepSelected"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/explore-details.md"
+                        }
+                    },
+                    {
                         "id": "containerApps.walkthrough.cleanUpResources",
                         "title": "%containerApps.walkthrough.cleanUpResources.title%",
                         "description": "%containerApps.walkthrough.cleanUpResources.description%",
@@ -667,17 +678,6 @@
                         ],
                         "media": {
                             "markdown": "resources/walkthrough/clean-up-resources.md"
-                        }
-                    },
-                    {
-                        "id": "containerApps.walkthrough.review",
-                        "title": "%containerApps.walkthrough.review.title%",
-                        "description": "%containerApps.walkthrough.review.description%",
-                        "completionEvents": [
-                            "onStepSelected"
-                        ],
-                        "media": {
-                            "markdown": "resources/walkthrough/review.md"
                         }
                     }
                 ]
