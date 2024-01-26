@@ -19,15 +19,11 @@ const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgign
 
 export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 430;
-    private _sourceFilePath: string;  // Relative path of src folder from rootFolder and what gets deployed
+    /** Relative path of src folder from rootFolder and what gets deployed */
+    private _sourceFilePath: string;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        if (context.srcPath) {
-            this._sourceFilePath = path.relative(context.rootFolder.uri.fsPath, context.srcPath);
-        } else {
-            this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.fsPath, context.dockerfilePath));
-        }
-
+        this._sourceFilePath = context.rootFolder.uri.fsPath === context.srcPath ? "." : path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
         context.registryName = nonNullValue(context.registry?.name);

@@ -20,21 +20,18 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
             canSelectFiles: false,
             canSelectFolders: true
         }))[0].fsPath;
-
-        context.telemetry.properties.sourceDepth = String(this.getRelativePathDepthFromRoot(context.srcPath));
     }
 
     public async configureBeforePrompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        if (context.srcPath) {
-            context.telemetry.properties.sourceDepth = String(this.getRelativePathDepthFromRoot(context.srcPath));
+        if (this.hasRootDockerfile(context)) {
+            context.srcPath = context.rootFolder.uri.fsPath;
         }
     }
 
     public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
-        return !context.srcPath && !this.hasRootDockerfile(context);
+        return !context.srcPath;
     }
 
-    // If a provided dockerfile is not at the project root, we need to acquire the project's source context
     private hasRootDockerfile(context: BuildImageInAzureImageSourceContext): boolean {
         if (!context.rootFolder || !context.dockerfilePath) {
             return false;
@@ -42,9 +39,5 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
 
         const rootPath: string = context.rootFolder.uri.fsPath;
         return path.relative(rootPath, context.dockerfilePath) === path.basename(context.dockerfilePath);
-    }
-
-    private getRelativePathDepthFromRoot(relativePath: string): number {
-        return relativePath === '.' ? 0 : relativePath.split(path.sep).length;
     }
 }
