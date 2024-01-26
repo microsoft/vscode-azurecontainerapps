@@ -23,7 +23,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
     private _sourceFilePath: string;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this._sourceFilePath = context.rootFolder.uri.fsPath === context.srcPath ? "." : path.relative(context.rootFolder.uri.fsPath, context.srcPath);
+        this._sourceFilePath = context.rootFolder.uri.fsPath === context.srcPath ? '.' : path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
         context.registryName = nonNullValue(context.registry?.name);
