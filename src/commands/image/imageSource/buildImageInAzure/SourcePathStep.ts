@@ -11,7 +11,7 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 
 export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const srcPath: string | undefined = (await context.ui.showQuickPick(await this.getPicks(context), {
+        const srcPath: string | undefined = (await context.ui.showQuickPick(this.getPicks(context), {
             placeHolder: localize('sourceDirectoryPick', 'Choose your source code directory'),
             suppressPersistence: true
         })).data;
@@ -33,7 +33,7 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
         return !context.srcPath;
     }
 
-    private async getPicks(context: BuildImageInAzureImageSourceContext): Promise<IAzureQuickPickItem<string | undefined>[]> {
+    private getPicks(context: BuildImageInAzureImageSourceContext): IAzureQuickPickItem<string | undefined>[] {
         const rootPath: string = context.rootFolder.uri.fsPath;
         const directories: string[] = path.relative(rootPath, path.dirname(context.dockerfilePath)).split(path.sep);
         const picks: IAzureQuickPickItem<string | undefined>[] = [{ label: '.' + path.sep, description: 'root', data: rootPath }];
