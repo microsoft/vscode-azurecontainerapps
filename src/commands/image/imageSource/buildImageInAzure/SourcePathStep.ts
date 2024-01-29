@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import { browseItem } from '../../../../constants';
 import { localize } from '../../../../utils/localize';
@@ -11,11 +11,12 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 
 export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        await context.ui.showQuickPick([browseItem], {
-            placeHolder: localize('sourceDirectoryPick', 'Choose your source code directory')
-        });
+        const srcPath: string | undefined = (await context.ui.showQuickPick(await this.getPicks(context), {
+            placeHolder: localize('sourceDirectoryPick', 'Choose your source code directory'),
+            suppressPersistence: true
+        })).data;
 
-        context.srcPath = (await context.ui.showOpenDialog({
+        context.srcPath = srcPath ?? (await context.ui.showOpenDialog({
             defaultUri: context.rootFolder?.uri,
             canSelectFiles: false,
             canSelectFolders: true
@@ -30,6 +31,22 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
 
     public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.srcPath;
+    }
+
+    private async getPicks(context: BuildImageInAzureImageSourceContext): Promise<IAzureQuickPickItem<string | undefined>[]> {
+        const rootPath: string = context.rootFolder.uri.fsPath;
+        const relativePathArgs: string[] = path.relative(rootPath, path.dirname(context.dockerfilePath)).split(path.sep);
+        const picks: IAzureQuickPickItem<string | undefined>[] = [{ label: './', description: 'root', data: rootPath }];
+
+        let p: string = '';
+        for (const pathArg of relativePathArgs) {
+            p += path.sep + pathArg;
+            picks.push({ label: '.' + p, data: rootPath + p });
+        }
+
+        (picks.at(-1) as IAzureQuickPickItem).description = 'dockerfile';
+        picks.push(browseItem);
+        return picks;
     }
 
     private hasRootDockerfile(context: BuildImageInAzureImageSourceContext): boolean {
