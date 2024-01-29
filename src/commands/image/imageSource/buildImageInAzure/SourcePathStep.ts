@@ -36,7 +36,7 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
     private async getPicks(context: BuildImageInAzureImageSourceContext): Promise<IAzureQuickPickItem<string | undefined>[]> {
         const rootPath: string = context.rootFolder.uri.fsPath;
         const relativePathArgs: string[] = path.relative(rootPath, path.dirname(context.dockerfilePath)).split(path.sep);
-        const picks: IAzureQuickPickItem<string | undefined>[] = [{ label: './', description: 'root', data: rootPath }];
+        const picks: IAzureQuickPickItem<string | undefined>[] = [{ label: '.' + path.sep, description: 'root', data: rootPath }];
 
         let p: string = '';
         for (const pathArg of relativePathArgs) {
