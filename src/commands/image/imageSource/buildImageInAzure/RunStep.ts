@@ -26,7 +26,7 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
                 isPushEnabled: true,
                 sourceLocation: context.uploadedSourceLocation,
                 platform: { os: context.os },
-                dockerFilePath: path.basename(context.dockerfilePath) /* Assume the dockerfile is always in the root of the source */
+                dockerFilePath: path.relative(context.srcPath, context.dockerfilePath)
             };
 
             const retries = 3;
