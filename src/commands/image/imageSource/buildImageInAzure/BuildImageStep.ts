@@ -8,6 +8,7 @@ import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/v
 import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { ThemeColor, ThemeIcon, window, type MessageItem, type Progress } from "vscode";
+import { ext } from "../../../../extensionVariables";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { delay } from "../../../../utils/delay";
@@ -16,8 +17,12 @@ import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
+const RETRY_LIMIT = 5;
+const DELAY_BETWEEN_RUN_REQUESTS_MS = 1000;
+
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
+    private acrRunCount: number = 0;
     protected acrBuildError: AcrBuildResults;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -29,73 +34,88 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
             platform: { os: context.os },
             dockerFilePath: path.relative(context.srcPath, context.dockerfilePath)
         };
+
         progress.report({ message: localize('buildingImage', 'Building image...') });
+        ext.outputChannel.appendLog(localize('buildingImageLog', 'Building image...'));
 
-        const retryLimit: number = 5;
-        const delayTimeMs: number = 1000;
-        let r: number = 1;
+        let acrRunId: string | undefined;
         while (true) {
-            // Schedule the ACR run
-            try {
-                if (r > 1) {
-                    // add output log message and progress report update...
-                } else if (r === retryLimit) {
-                    throw new Error('retry limit exceeded');
-                }
+            if (this.acrRunCount > 0) {
+                await delay(DELAY_BETWEEN_RUN_REQUESTS_MS);
 
-                await delay(delayTimeMs);
-                await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest);
-                r += 1;
+                progress.report(({ message: localize('buildingImageRetry', 'Building image (Attempt {0}/{1})...', this.acrRunCount + 1, RETRY_LIMIT) }));
+                ext.outputChannel.appendLog(localize('buildingImageRetryLog', 'Building image (Attempt {0}/{1})...', this.acrRunCount + 1, RETRY_LIMIT));
+            }
+
+            // Schedule the ACR build image run
+            try {
+                acrRunId = (await context.client.registries.beginScheduleRunAndWait(context.resourceGroupName, context.registryName, runRequest)).runId;
+                this.acrRunCount++;
             } catch (e) {
-                // Delete the tar file and exit the process
-                if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
-                    await AzExtFsExtra.deleteResource(context.tarFilePath);
-                }
+                // No known benefits to enforcing retries at this stage-- only check for retries if we can interpret specific actions from the build logs
+                await this.removeTarFile(context);
                 throw e;
             }
 
             // Poll ACR for the final run output
-            const run: AcrRun | undefined = await buildImageInAzure(context);
-            const outputImages = run?.outputImages;
-            context.telemetry.properties.outputImagesCount = outputImages?.length?.toString();
+            const finishedRun: AcrRun | undefined = await buildImageInAzure(context, nonNullValue(acrRunId));
 
-            if (outputImages) {
-                const image = outputImages[0];
+            const image = finishedRun?.outputImages?.[0];
+            if (image) {
                 context.image = `${image.registry}/${image.repository}:${image.tag}`;
-                break;
+                return;
             } else {
-                const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValueAndProp(run, 'runId'))).logLink;
-                const response: AzExtPipelineResponse = await sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined);
-                const content: string = nonNullProp(response, 'bodyAsText');
-
-                // Inspect content to see if the error is due to url issue
-                if (content === 'placeholder') {
-                    continue;
-                }
-
-                this.acrBuildError = {
-                    name: nonNullValueAndProp(run, 'name'),
-                    runId: nonNullValueAndProp(run, 'id'),
-                    content
-                };
-
-                const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
-                const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
-
-                void window.showErrorMessage(errorMessage, viewLogsButton).then(async result => {
-                    if (result === viewLogsButton) {
-                        await openAcrBuildLogs(context, this.acrBuildError);
-                    }
-                });
-
-                context.errorHandling.suppressDisplay = true;
-                throw new Error(errorMessage);
+                await this.handleFailedAcrRunAndThrowIfNecessary(context, nonNullValue(finishedRun));
             }
         }
     }
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.image;
+    }
+
+    /**
+     * @throws Should throw an error based on the failed ACR run unless a retry condition is met
+     */
+    private async handleFailedAcrRunAndThrowIfNecessary(context: BuildImageInAzureImageSourceContext, run: AcrRun): Promise<void> {
+        const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValueAndProp(run, 'runId'))).logLink;
+        const response: AzExtPipelineResponse = await sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined);
+        const content: string = nonNullProp(response, 'bodyAsText');
+
+        if (this.acrRunCount < RETRY_LIMIT) {
+            const failedToDownload: RegExp = /(.*)failed(.*)download(.*)/i; // Retry if the download wasn't ready
+            // Todo: Remove later, test case...
+            // const failedToDownload: RegExp = /(.*)finish(.*)download(.*)/i;
+            if (failedToDownload.test(content)) {
+                return;
+            }
+        }
+
+        await this.removeTarFile(context);
+
+        this.acrBuildError = {
+            name: nonNullValueAndProp(run, 'name'),
+            runId: nonNullValueAndProp(run, 'id'),
+            content
+        };
+
+        const viewLogsButton: MessageItem = { title: localize('viewLogs', 'View Logs') };
+        const errorMessage = localize('noImagesBuilt', 'Failed to build image. View logs for more details.');
+
+        void window.showErrorMessage(errorMessage, viewLogsButton).then(async result => {
+            if (result === viewLogsButton) {
+                await openAcrBuildLogs(context, this.acrBuildError);
+            }
+        });
+
+        context.errorHandling.suppressDisplay = true;
+        throw new Error(errorMessage);
+    }
+
+    private async removeTarFile(context: BuildImageInAzureImageSourceContext): Promise<void> {
+        if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
+            await AzExtFsExtra.deleteResource(context.tarFilePath);
+        }
     }
 
     protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
