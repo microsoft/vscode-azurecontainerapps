@@ -49,7 +49,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
 
         ext.outputChannel.appendLog(`Created tarFile: ${context.tarFilePath}`);
         ext.outputChannel.appendLog(`Tar file size: `);
-        await executeCli(`command ls -lh ${context.tarFilePath}`);
+        await executeCli(`ls -lh ${context.tarFilePath}`);
 
         ext.outputChannel.appendLog(`Tar contents: `);
         await executeCli(`tar -tvzf ${context.tarFilePath}`);

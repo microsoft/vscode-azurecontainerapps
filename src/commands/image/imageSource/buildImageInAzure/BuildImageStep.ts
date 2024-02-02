@@ -17,8 +17,8 @@ import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
-const RETRY_LIMIT = 10;
-const INITIAL_DELAY_BETWEEN_RUNS_MS = 2500;  // Exponential backoff will be applied
+const RETRY_LIMIT = 5;
+const INITIAL_DELAY_BETWEEN_RUNS_MS = 1000;  // Exponential backoff will be applied
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
@@ -30,7 +30,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
             type: 'DockerBuildRequest',
             imageNames: [context.imageName],
             isPushEnabled: true,
-            sourceLocation: context.uploadedSourceLocation.relativePath,
+            sourceLocation: context.uploadedSourceLocation.uploadUrl,
             platform: { os: context.os },
             dockerFilePath: path.relative(context.srcPath, context.dockerfilePath)
         };
