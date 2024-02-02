@@ -13,6 +13,7 @@ import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../..
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { delay } from "../../../../utils/delay";
 import { localize } from "../../../../utils/localize";
+import { settingUtils } from "../../../../utils/settingUtils";
 import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
@@ -66,6 +67,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
             const image = finishedRun?.outputImages?.[0];
             if (image) {
                 context.image = `${image.registry}/${image.repository}:${image.tag}`;
+                await this.removeTarFile(context);
                 return;
             } else {
                 await this.handleFailedAcrRunAndThrowIfNecessary(context, nonNullValue(finishedRun));
@@ -116,7 +118,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     private async removeTarFile(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
+        if (await AzExtFsExtra.pathExists(context.tarFilePath) && await settingUtils.getSetting('automaticallyDeleteTarFile')) {
             await AzExtFsExtra.deleteResource(context.tarFilePath);
         }
     }
