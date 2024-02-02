@@ -30,7 +30,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
             type: 'DockerBuildRequest',
             imageNames: [context.imageName],
             isPushEnabled: true,
-            sourceLocation: context.uploadedSourceLocation.uploadUrl,
+            sourceLocation: context.uploadedSourceLocation.relativePath,
             platform: { os: context.os },
             dockerFilePath: path.relative(context.srcPath, context.dockerfilePath)
         };
