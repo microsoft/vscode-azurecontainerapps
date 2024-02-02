@@ -48,11 +48,12 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
 
         ext.outputChannel.appendLog(`Created tarFile: ${context.tarFilePath}`);
-        ext.outputChannel.appendLog(`Tar file size: `);
+        ext.outputChannel.appendLog(`Stats: `);
         await executeCli(`ls -lh ${context.tarFilePath}`);
+        await executeCli(`dir /-C /Q ${context.tarFilePath}`);
 
-        ext.outputChannel.appendLog(`Tar contents: `);
-        await executeCli(`tar -tvzf ${context.tarFilePath}`);
+        // ext.outputChannel.appendLog(`Tar contents: `);
+        // await executeCli(`tar -tvzf ${context.tarFilePath}`);
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
