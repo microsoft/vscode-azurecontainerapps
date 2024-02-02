@@ -21,7 +21,6 @@ export interface ContainerRegistryTelemetryProps {
 
 export interface BuildImageInAzureTelemetryProps extends Pick<AzdTelemetryProps, 'isAzdWorkspaceProject'>, Pick<WorkspaceFileTelemetryProps, 'dockerfileCount'> {
     imageBaseOs?: AcrBuildSupportedOS;
-    outputImagesCount?: string;  // Number of images generated from the run
     sourceDepth?: string;  // Number of folders deep the source is from the root of the workspace
     // isAzdWorkspaceProject
     // dockerfileCount
