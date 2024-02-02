@@ -18,7 +18,7 @@ import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureIma
 import { buildImageInAzure } from "./buildImageInAzure";
 
 const RETRY_LIMIT = 5;
-const DELAY_BETWEEN_RUN_REQUESTS_MS = 1000;
+const DELAY_BETWEEN_RUN_REQUESTS_MS = 5000;
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
