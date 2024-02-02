@@ -18,7 +18,7 @@ import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureIma
 import { buildImageInAzure } from "./buildImageInAzure";
 
 const RETRY_LIMIT = 10;
-const DELAY_BETWEEN_RUN_REQUESTS_MS = 20000;
+const INITIAL_DELAY_BETWEEN_RUNS_MS = 1000;  // Exponential backoff will be applied
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
@@ -44,7 +44,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
         let acrRunId: string | undefined;
         while (true) {
             if (this.acrRunCount > 0) {
-                await delay(DELAY_BETWEEN_RUN_REQUESTS_MS);
+                await delay(INITIAL_DELAY_BETWEEN_RUNS_MS * 2 ** this.acrRunCount);
 
                 progress.report(({ message: localize('buildingImageRetry', 'Building image (Attempt {0}/{1})...', this.acrRunCount + 1, RETRY_LIMIT) }));
                 ext.outputChannel.appendLog(localize('buildingImageRetryLog', 'Building image (Attempt {0}/{1})...', this.acrRunCount + 1, RETRY_LIMIT));
