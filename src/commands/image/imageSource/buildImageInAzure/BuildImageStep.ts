@@ -17,8 +17,8 @@ import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
-const RETRY_LIMIT = 5;
-const DELAY_BETWEEN_RUN_REQUESTS_MS = 5000;
+const RETRY_LIMIT = 10;
+const DELAY_BETWEEN_RUN_REQUESTS_MS = 20000;
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
@@ -30,10 +30,13 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
             type: 'DockerBuildRequest',
             imageNames: [context.imageName],
             isPushEnabled: true,
-            sourceLocation: context.uploadedSourceLocation,
+            sourceLocation: context.uploadedSourceLocation.relativePath,
             platform: { os: context.os },
             dockerFilePath: path.relative(context.srcPath, context.dockerfilePath)
         };
+
+        ext.outputChannel.appendLog('ACR Docker build request: ');
+        ext.outputChannel.appendLog(JSON.stringify(runRequest));
 
         progress.report({ message: localize('buildingImage', 'Building image...') });
         ext.outputChannel.appendLog(localize('buildingImageLog', 'Building image...'));

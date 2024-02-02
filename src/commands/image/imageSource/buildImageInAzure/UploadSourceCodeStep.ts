@@ -3,10 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type TransferProgressEvent } from '@azure/core-rest-pipeline';
+import { type BlockBlobParallelUploadOptions } from '@azure/storage-blob';
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import { type Progress } from 'vscode';
+import { ext } from '../../../../extensionVariables';
 import { fse } from '../../../../node/fs-extra';
 import { tar } from '../../../../node/tar';
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
@@ -14,6 +17,7 @@ import { createActivityChildContext } from '../../../../utils/activity/activityU
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
+import { executeCli } from './executeCli';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
@@ -36,17 +40,40 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
+        // Remove tarFile if it already exists
+        if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
+            await AzExtFsExtra.deleteResource(context.tarFilePath);
+        }
+
         tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
+
+        ext.outputChannel.appendLog(`Created tarFile: ${context.tarFilePath}`);
+        ext.outputChannel.appendLog(`Tar file size: `);
+        await executeCli(`command ls -lh ${context.tarFilePath}`);
+
+        ext.outputChannel.appendLog(`Tar contents: `);
+        await executeCli(`tar -tvzf ${context.tarFilePath}`);
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
-        const relativePath: string = nonNullValue(sourceUploadLocation.relativePath);
 
         const storageBlob = await import('@azure/storage-blob');
         const blobClient = new storageBlob.BlockBlobClient(uploadUrl);
-        await blobClient.uploadFile(context.tarFilePath);
 
-        context.uploadedSourceLocation = relativePath;
+        ext.outputChannel.appendLog('Beginning upload.');
+
+        const uploadOptions: BlockBlobParallelUploadOptions = {
+            onProgress: (p: TransferProgressEvent) => {
+                ext.outputChannel.appendLog('Bytes uploaded: ' + p.loadedBytes.toString());
+            }
+        };
+        const response = await blobClient.uploadFile(context.tarFilePath, uploadOptions);
+
+        ext.outputChannel.appendLog('Source upload location: ');
+        ext.outputChannel.appendLog(JSON.stringify(sourceUploadLocation));
+        ext.outputChannel.appendLog(`Server upload response status: ${response._response.status}`);
+
+        context.uploadedSourceLocation = sourceUploadLocation;
     }
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
