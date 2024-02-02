@@ -18,7 +18,7 @@ import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureIma
 import { buildImageInAzure } from "./buildImageInAzure";
 
 const RETRY_LIMIT = 10;
-const INITIAL_DELAY_BETWEEN_RUNS_MS = 1000;  // Exponential backoff will be applied
+const INITIAL_DELAY_BETWEEN_RUNS_MS = 2500;  // Exponential backoff will be applied
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 450;
