@@ -75,7 +75,7 @@ export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAz
     }
 
     /**
-     * @throws Should throw an error based on the failed ACR run unless a retry condition is met
+     * @throws Should handle/convert the failed ACR run into a thrown error unless a valid retry condition is met
      */
     private async handleFailedAcrRunAndThrowIfNecessary(context: BuildImageInAzureImageSourceContext, run: AcrRun): Promise<void> {
         const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValueAndProp(run, 'runId'))).logLink;
