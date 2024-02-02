@@ -53,7 +53,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         await executeCli(`dir /-C /Q ${context.tarFilePath}`);
 
         // ext.outputChannel.appendLog(`Tar contents: `);
-        // await executeCli(`tar -tvzf ${context.tarFilePath}`);
+        // await executeCli(`tar -tvzf ${context.tarFilePath}`, true);
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
