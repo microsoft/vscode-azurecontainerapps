@@ -14,7 +14,7 @@ import { createContainerRegistryManagementClient } from '../../../../utils/azure
 import { localize } from '../../../../utils/localize';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
-const vcsIgnoreList = ['.DS_Store', '.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
+const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
 export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 430;
@@ -35,11 +35,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
-        if (await AzExtFsExtra.pathExists(context.tarFilePath)) {
-            await AzExtFsExtra.deleteResource(context.tarFilePath);
-        }
-
-        await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(context.rootFolder.uri.fsPath, i.fsPath)));
+        await tar.c({ cwd: source, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
