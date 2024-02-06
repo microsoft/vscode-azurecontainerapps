@@ -19,24 +19,22 @@ const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgign
 
 export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
     public priority: number = 430;
+    /** Relative path of src folder from rootFolder and what gets deployed */
     private _sourceFilePath: string;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        /* relative path of src folder from rootFolder and what gets deployed */
-        this._sourceFilePath = path.dirname(path.relative(context.rootFolder.uri.path, context.dockerfilePath));
+        this._sourceFilePath = context.rootFolder.uri.fsPath === context.srcPath ? '.' : path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
         context.registryName = nonNullValue(context.registry?.name);
         context.resourceGroupName = getResourceGroupFromId(nonNullValue(context.registry?.id));
         context.client = await createContainerRegistryManagementClient(context);
 
-        const uploading: string = localize('uploadingSourceCode', 'Uploading source code...', this._sourceFilePath);
-        progress.report({ message: uploading });
+        progress.report({ message: localize('uploadingSourceCode', 'Uploading source code...') });
+
         const source: string = path.join(context.rootFolder.uri.fsPath, this._sourceFilePath);
         let items = await AzExtFsExtra.readDirectory(source);
-        items = items.filter(i => {
-            return !vcsIgnoreList.includes(i.name)
-        });
+        items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
         tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
 
