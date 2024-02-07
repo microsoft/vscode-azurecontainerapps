@@ -35,7 +35,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
-        await tar.c({ cwd: source, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
+        await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
