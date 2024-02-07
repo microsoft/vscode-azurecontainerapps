@@ -41,8 +41,17 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<ContainerAppsItem[]> {
-        const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
+        const result = await callWithTelemetryAndErrorHandling('managedEnvironmentItem.getChildren', async (context: IActionContext) => {
+            context.valuesToMask.push(
+                this.subscription.subscriptionId,
+                this.subscription.name,
+                this.subscription.tenantId,
+                this.managedEnvironment.id,
+                this.managedEnvironment.name);
+
             const containerApps = await ContainerAppItem.List(context, this.subscription, this.id);
+            context.valuesToMask.push(...containerApps.map(ca => ca.name), ...containerApps.map(ca => ca.id));
+
             return containerApps
                 .map(ca => new ContainerAppItem(this.subscription, ca))
                 .sort((a, b) => treeUtils.sortById(a, b));
