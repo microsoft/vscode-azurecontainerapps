@@ -84,7 +84,9 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
+        const result = await callWithTelemetryAndErrorHandling('containerAppItem.getChildren', async (context: IActionContext) => {
+            context.valuesToMask.push(this.containerApp.name);
+
             const children: TreeElementBase[] = [];
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
 
