@@ -6,9 +6,8 @@
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
+import * as tar from 'tar';
 import { type Progress } from 'vscode';
-import { fse } from '../../../../node/fs-extra';
-import { tar } from '../../../../node/tar';
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
 import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
@@ -36,7 +35,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
-        tar.c({ cwd: source }, items.map(i => i.name)).pipe(fse.createWriteStream(context.tarFilePath));
+        await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
