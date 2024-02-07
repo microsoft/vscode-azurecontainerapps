@@ -44,8 +44,8 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         const result = await callWithTelemetryAndErrorHandling('managedEnvironmentItem.getChildren', async (context: IActionContext) => {
             context.valuesToMask.push(
                 this.subscription.subscriptionId,
-                this.subscription.name,
                 this.subscription.tenantId,
+                this.subscription.name,
                 this.managedEnvironment.id,
                 this.managedEnvironment.name);
 
