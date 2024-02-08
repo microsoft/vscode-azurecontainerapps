@@ -5,9 +5,12 @@
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { randomUUID } from 'crypto';
+import { tmpdir } from 'os';
 import * as path from 'path';
 import * as tar from 'tar';
 import { type Progress } from 'vscode';
+import { ext } from '../../../../extensionVariables';
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
 import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
@@ -16,12 +19,14 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
-export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
+export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
     public priority: number = 430;
+    /** Path to a directory containing a custom Dockerfile that we sometimes build and upload for the user */
+    private _customDockerfileDirPath?: string;
     /** Relative path of src folder from rootFolder and what gets deployed */
     private _sourceFilePath: string;
 
-    protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this._sourceFilePath = context.rootFolder.uri.fsPath === context.srcPath ? '.' : path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
@@ -35,7 +40,21 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
-        await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
+        await this.buildCustomDockerfileIfNecessary(context);
+        if (this._customDockerfileDirPath) {
+            // Create an uncompressed tarball with the base project
+            const tempTarFilePath: string = context.tarFilePath.replace(/\.tar\.gz$/, '.tar');
+            await tar.c({ cwd: source, file: tempTarFilePath }, items.map(i => path.relative(source, i.fsPath)));
+
+            // Append/Overwrite the original Dockerfile with the custom one that was made
+            await tar.r({ cwd: this._customDockerfileDirPath, file: tempTarFilePath }, [path.relative(source, context.dockerfilePath)]);
+
+            // Create the final compressed version and delete the temporary file
+            await tar.c({ gzip: true, file: context.tarFilePath }, [`@${tempTarFilePath}`]);
+            await AzExtFsExtra.deleteResource(tempTarFilePath);
+        } else {
+            await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
+        }
 
         const sourceUploadLocation = await context.client.registries.getBuildSourceUploadUrl(context.resourceGroupName, context.registryName);
         const uploadUrl: string = nonNullValue(sourceUploadLocation.uploadUrl);
@@ -48,11 +67,36 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         context.uploadedSourceLocation = relativePath;
     }
 
-    public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.uploadedSourceLocation;
     }
 
-    protected createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+    /**
+     * Checks and creates a custom Dockerfile if necessary to be used in place of the original
+     * @populates this._customDockerfileDirPath
+     */
+    private async buildCustomDockerfileIfNecessary(context: T): Promise<void> {
+        // Build a custom Dockerfile if it has ACR's unsupported `--platform` flag
+        // See: https://github.com/microsoft/vscode-azurecontainerapps/issues/598
+        const platformRegex: RegExp = /^(FROM.*)\s--platform=\S+(.*)$/gm;
+        let dockerfileContent: string = await AzExtFsExtra.readFile(context.dockerfilePath);
+
+        if (!platformRegex.test(dockerfileContent)) {
+            return;
+        }
+
+        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a --platform flag in the Dockerfile. This flag is not supported in ACR. Attemping to use a custom Dockerfile with the --platform flag removed.'));
+        dockerfileContent = dockerfileContent.replace(platformRegex, '$1$2');
+
+        const customDockerfileDirPath: string = path.join(tmpdir(), randomUUID());
+        const dockerfileRelativePath: string = path.relative(context.srcPath, context.dockerfilePath);
+        const customDockerfilePath = path.join(customDockerfileDirPath, dockerfileRelativePath);
+        await AzExtFsExtra.writeFile(customDockerfilePath, dockerfileContent);
+
+        this._customDockerfileDirPath = customDockerfileDirPath;
+    }
+
+    protected createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
@@ -63,7 +107,7 @@ export class UploadSourceCodeStep extends ExecuteActivityOutputStepBase<BuildIma
         };
     }
 
-    protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+    protected createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStepFailItem', activityFailContext]),
