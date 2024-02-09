@@ -43,14 +43,16 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         await this.buildCustomDockerfileIfNecessary(context);
         if (this._customDockerfileDirPath) {
             // Create an uncompressed tarball with the base project
-            const tempTarFilePath: string = context.tarFilePath.replace(/\.tar\.gz$/, '.tar');
+            const tempTarFilePath: string = context.tarFilePath.replace(/\.tar\.gz/, '.tar');
             await tar.c({ cwd: source, file: tempTarFilePath }, items.map(i => path.relative(source, i.fsPath)));
 
             // Append/Overwrite the original Dockerfile with the custom one that was made
             await tar.r({ cwd: this._customDockerfileDirPath, file: tempTarFilePath }, [path.relative(source, context.dockerfilePath)]);
 
-            // Create the final compressed version and delete the temporary file
-            await tar.c({ gzip: true, file: context.tarFilePath }, [`@${tempTarFilePath}`]);
+            // Create the final compressed version and delete the temp file
+            // Note: Noticed some hanging issues when using the async version to add existing tar archives;
+            // however, the issues seem to disappear when utilizing the sync version
+            tar.c({ cwd: tmpdir(), gzip: true, sync: true, file: context.tarFilePath }, [`@${path.basename(tempTarFilePath)}`]);
             await AzExtFsExtra.deleteResource(tempTarFilePath);
         } else {
             await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
@@ -85,7 +87,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
             return;
         }
 
-        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a --platform flag in the Dockerfile. This flag is not supported in ACR. Attemping to use a custom Dockerfile with the --platform flag removed.'));
+        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a --platform flag in the Dockerfile. This flag is not supported in ACR. Attemping to provide a Dockerfile with the --platform flag removed.'));
         dockerfileContent = dockerfileContent.replace(platformRegex, '$1$2');
 
         const customDockerfileDirPath: string = path.join(tmpdir(), randomUUID());
