@@ -87,7 +87,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
             return;
         }
 
-        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a --platform flag in the Dockerfile. This flag is not supported in ACR. Attemping to provide a Dockerfile with the --platform flag removed.'));
+        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a --platform flag in the Dockerfile. This flag is not supported in ACR. Attempting to provide a Dockerfile with the --platform flag removed.'));
         dockerfileContent = dockerfileContent.replace(platformRegex, '$1$2');
 
         const customDockerfileDirPath: string = path.join(tmpdir(), randomUUID());
