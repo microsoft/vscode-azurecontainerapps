@@ -60,7 +60,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
                 await AzExtFsExtra.deleteResource(this._customDockerfileDirPath, { recursive: true });
             } catch {
                 // Swallow error, don't halt the deploy process just because we couldn't delete the temp files, provide a warning instead
-                ext.outputChannel.appendLog(localize('errorDeletingTempFiles', 'Warning: Could not remove some of the following temporary files: "{0}", "{1}", try removing these manually later.', tempTarFilePath, this._customDockerfileDirPath));
+                ext.outputChannel.appendLog(localize('errorDeletingTempFiles', 'Warning: Could not remove some of the following temporary files: "{0}", "{1}". Try removing these manually at a later time.', tempTarFilePath, this._customDockerfileDirPath));
             }
         } else {
             await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
