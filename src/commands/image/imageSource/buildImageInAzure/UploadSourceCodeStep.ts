@@ -49,11 +49,19 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
             // Append/Overwrite the original Dockerfile with the custom one that was made
             await tar.r({ cwd: this._customDockerfileDirPath, file: tempTarFilePath }, [path.relative(source, context.dockerfilePath)]);
 
-            // Create the final compressed version and delete the temp file
+            // Create the final compressed version
             // Note: Noticed some hanging issues when using the async version to add existing tar archives;
             // however, the issues seem to disappear when utilizing the sync version
             tar.c({ cwd: tmpdir(), gzip: true, sync: true, file: context.tarFilePath }, [`@${path.basename(tempTarFilePath)}`]);
-            await AzExtFsExtra.deleteResource(tempTarFilePath);
+
+            try {
+                // Remove temporarily created resources
+                await AzExtFsExtra.deleteResource(tempTarFilePath);
+                await AzExtFsExtra.deleteResource(this._customDockerfileDirPath);
+            } catch {
+                // Swallow error, don't halt the deploy process just because we couldn't delete the temp files, provide a warning instead
+                ext.outputChannel.appendLog(localize('errorDeletingTempFiles', 'Warning: Could not remove some of the following temporary files: "{0}", "{1}", try removing these manually later.', tempTarFilePath, this._customDockerfileDirPath));
+            }
         } else {
             await tar.c({ cwd: source, gzip: true, file: context.tarFilePath }, items.map(i => path.relative(source, i.fsPath)));
         }
