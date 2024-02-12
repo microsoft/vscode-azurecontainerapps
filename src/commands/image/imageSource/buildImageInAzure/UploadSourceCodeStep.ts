@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue, type AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import { randomUUID } from 'crypto';
 import { tmpdir } from 'os';
 import * as path from 'path';
 import * as tar from 'tar';
-import { type Progress } from 'vscode';
+import { ThemeColor, ThemeIcon, type Progress } from 'vscode';
 import { ext } from '../../../../extensionVariables';
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
 import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
@@ -57,7 +57,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
             try {
                 // Remove temporarily created resources
                 await AzExtFsExtra.deleteResource(tempTarFilePath);
-                await AzExtFsExtra.deleteResource(this._customDockerfileDirPath);
+                await AzExtFsExtra.deleteResource(this._customDockerfileDirPath, { recursive: true });
             } catch {
                 // Swallow error, don't halt the deploy process just because we couldn't delete the temp files, provide a warning instead
                 ext.outputChannel.appendLog(localize('errorDeletingTempFiles', 'Warning: Could not remove some of the following temporary files: "{0}", "{1}", try removing these manually later.', tempTarFilePath, this._customDockerfileDirPath));
@@ -95,7 +95,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
             return;
         }
 
-        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a --platform flag in the Dockerfile. This flag is not supported in ACR. Attempting to provide a Dockerfile with the --platform flag removed.'));
+        ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a "--platform" flag in the Dockerfile. This flag is not supported in ACR. Attempting to provide a Dockerfile with the "--platform" flag removed.'));
         dockerfileContent = dockerfileContent.replace(platformRegex, '$1$2');
 
         const customDockerfileDirPath: string = path.join(tmpdir(), randomUUID());
@@ -107,11 +107,24 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
     }
 
     protected createSuccessOutput(context: T): ExecuteActivityOutput {
+        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
+        if (this._customDockerfileDirPath) {
+            loadMoreChildrenImpl = () => {
+                const removePlatformSuccessItem = new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(['removePlatformSuccessItem']),
+                    label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
+                    iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
+                });
+                return Promise.resolve([removePlatformSuccessItem]);
+            };
+        }
+
         return {
-            item: new GenericTreeItem(undefined, {
+            item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
-                iconPath: activitySuccessIcon
+                iconPath: activitySuccessIcon,
+                loadMoreChildrenImpl
             }),
             message: localize('uploadedSourceCodeSuccess', 'Uploaded source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
         };
