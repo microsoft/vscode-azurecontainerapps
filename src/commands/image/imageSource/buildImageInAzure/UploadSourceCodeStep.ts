@@ -110,12 +110,12 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
         if (this._customDockerfileDirPath) {
             loadMoreChildrenImpl = () => {
-                const removePlatformSuccessItem = new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['removePlatformSuccessItem']),
+                const removePlatformFlagItem = new GenericTreeItem(undefined, {
+                    contextValue: createActivityChildContext(['removePlatformFlagItem']),
                     label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
                     iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
                 });
-                return Promise.resolve([removePlatformSuccessItem]);
+                return Promise.resolve([removePlatformFlagItem]);
             };
         }
 
