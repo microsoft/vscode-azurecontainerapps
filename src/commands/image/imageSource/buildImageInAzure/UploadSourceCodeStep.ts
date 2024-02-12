@@ -87,7 +87,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
      */
     private async buildCustomDockerfileIfNecessary(context: T): Promise<void> {
         // Build a custom Dockerfile if it has ACR's unsupported `--platform` flag
-        // See: https://github.com/microsoft/vscode-azurecontainerapps/issues/598
+        // See: https://github.com/Azure/acr/issues/697
         const platformRegex: RegExp = /^(FROM.*)\s--platform=\S+(.*)$/gm;
         let dockerfileContent: string = await AzExtFsExtra.readFile(context.dockerfilePath);
 
