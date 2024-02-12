@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue, type AzExtTreeItem } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
 import { randomUUID } from 'crypto';
 import { tmpdir } from 'os';
 import * as path from 'path';
@@ -107,25 +107,29 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
     }
 
     protected createSuccessOutput(context: T): ExecuteActivityOutput {
-        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
+        const baseTreeItemOptions = {
+            contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
+            label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
+            iconPath: activitySuccessIcon,
+        };
+
+        let parentTreeItem: GenericParentTreeItem | undefined;
         if (this._customDockerfileDirPath) {
-            loadMoreChildrenImpl = () => {
-                const removePlatformFlagItem = new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['removePlatformFlagItem']),
-                    label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
-                    iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
-                });
-                return Promise.resolve([removePlatformFlagItem]);
-            };
+            parentTreeItem = new GenericParentTreeItem(undefined, {
+                ...baseTreeItemOptions,
+                loadMoreChildrenImpl: () => {
+                    const removePlatformFlagItem = new GenericTreeItem(undefined, {
+                        contextValue: createActivityChildContext(['removePlatformFlagItem']),
+                        label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
+                        iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
+                    });
+                    return Promise.resolve([removePlatformFlagItem]);
+                }
+            });
         }
 
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
-                label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
-                iconPath: activitySuccessIcon,
-                loadMoreChildrenImpl
-            }),
+            item: parentTreeItem ?? new GenericTreeItem(undefined, { ...baseTreeItemOptions }),
             message: localize('uploadedSourceCodeSuccess', 'Uploaded source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
         };
     }
