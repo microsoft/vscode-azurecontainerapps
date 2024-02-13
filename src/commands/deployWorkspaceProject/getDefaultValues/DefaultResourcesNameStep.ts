@@ -66,18 +66,15 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             (!context.containerApp && !context.newContainerAppName);
     }
 
-    private validateInput(name: string | undefined): string | undefined {
-        name ??= '';
-
+    private validateInput(name: string = ''): string | undefined {
         // No symbols are allowed for ACR - we will strip out any offending characters from the base name, but still need to ensure this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-z0-9]+/g, '');
         if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
             return localize('invalidLength', 'The alphanumeric portion of the name must be least 5 characters but no more than 20 characters.');
         }
 
-        const symbols: string = '-';
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(name, symbols, false /** canSymbolsRepeat */)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols);
+        if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
+            return localize('invalidNameFormat', `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`);
         }
 
         return undefined;
