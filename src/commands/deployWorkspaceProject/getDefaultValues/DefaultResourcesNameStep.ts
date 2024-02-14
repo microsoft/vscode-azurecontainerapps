@@ -67,6 +67,8 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     }
 
     private validateInput(name: string = ''): string | undefined {
+        name = name.trim();
+
         // No symbols are allowed for ACR - we will strip out any offending characters from the base name, but still need to ensure this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-z0-9]+/g, '');
         if (!validateUtils.isValidLength(nameWithoutSymbols, 5, 20)) {
