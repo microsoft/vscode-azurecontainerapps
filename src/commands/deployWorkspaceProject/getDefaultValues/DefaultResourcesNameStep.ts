@@ -75,11 +75,9 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             return localize('invalidLength', 'The alphanumeric portion of the name must be least 5 characters but no more than 20 characters.');
         }
 
-        if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
-            return localize('invalidNameFormat', `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`);
-        }
-
-        return undefined;
+        // Container app names currently have the strictest name formatting logic at the time of writing this
+        // Todo: https://github.com/microsoft/vscode-azurecontainerapps/issues/603
+        return ContainerAppNameStep.validateInput(name);
     }
 
     protected async validateNameAvailability(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
