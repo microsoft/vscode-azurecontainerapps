@@ -17,7 +17,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerA
         const prompt: string = localize('containerAppNamePrompt', 'Enter a container app name.');
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt,
-            validateInput: this.validateInput,
+            validateInput: ContainerAppNameStep.validateInput,
             asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();
 
@@ -28,7 +28,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerA
         return !context.containerApp && !context.newContainerAppName;
     }
 
-    private validateInput(name: string | undefined): string | undefined {
+    public static validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
         const { minLength, maxLength } = { minLength: 1, maxLength: 32 };

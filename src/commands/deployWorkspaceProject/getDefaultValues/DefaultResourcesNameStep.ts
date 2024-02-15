@@ -66,8 +66,8 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             (!context.containerApp && !context.newContainerAppName);
     }
 
-    private validateInput(name: string | undefined): string | undefined {
-        name ??= '';
+    private validateInput(name: string = ''): string | undefined {
+        name = name.trim();
 
         // No symbols are allowed for ACR - we will strip out any offending characters from the base name, but still need to ensure this version has an appropriate length
         const nameWithoutSymbols: string = name.replace(/[^a-z0-9]+/g, '');
@@ -75,12 +75,9 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             return localize('invalidLength', 'The alphanumeric portion of the name must be least 5 characters but no more than 20 characters.');
         }
 
-        const symbols: string = '-';
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(name, symbols, false /** canSymbolsRepeat */)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(symbols);
-        }
-
-        return undefined;
+        // Container app names currently have the strictest name formatting logic at the time of writing this
+        // Todo: https://github.com/microsoft/vscode-azurecontainerapps/issues/603
+        return ContainerAppNameStep.validateInput(name);
     }
 
     protected async validateNameAvailability(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
