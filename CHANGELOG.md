@@ -1,5 +1,26 @@
 # Change Log
 
+## 0.6.2 - 2024-02-20
+
+This patch includes improvements to image building stability.  We have made improvements to the way we bundle/upload project files and also automatically detect and filter unsupported ACR Dockerfile `--platform` flags.  For any ACR build error logs that are returned, we now provide a dedicated location for them to reside in the activity log, where they are more easily accessed.
+
+## Added
+* Add support for choosing a source directory when deploying a workspace project.  [#586](https://github.com/microsoft/vscode-azurecontainerapps/pull/586)
+* Image building through ACR does not currently accept `--platform` flag syntax.  Improve deploy experience by detecting and removing `--platform` flags from the Dockerfile automatically [#601](https://github.com/microsoft/vscode-azurecontainerapps/pull/601)
+* Support workload profiles environments [#580](https://github.com/microsoft/vscode-azurecontainerapps/issues/580)
+* Add an entry-point to view ACR build image error logs in the activity log [#576](https://github.com/microsoft/vscode-azurecontainerapps/pull/576)
+* Add retries for `Build Image in Azure` [#577](https://github.com/microsoft/vscode-azurecontainerapps/pull/577)
+* Add JSON validation support for editing container app envelopes [#569](https://github.com/microsoft/vscode-azurecontainerapps/issues/569)
+* Ask to enable admin user when deploying an image through the Docker extension entry-point [#573](https://github.com/microsoft/vscode-azurecontainerapps/pull/573)
+
+## Fixed
+* Update the TAR build logic [#594](https://github.com/microsoft/vscode-azurecontainerapps/pull/594)
+* Deploying from a folder with an invalid name fails [#602](https://github.com/microsoft/vscode-azurecontainerapps/pull/602)
+* An extra input box pops up when executing `Disconnect from Repo` command [#574](https://github.com/microsoft/vscode-azurecontainerapps/pull/574)
+
+## Engineering
+* Create an API for the `deployWorkspaceProject` command [#578](https://github.com/microsoft/vscode-azurecontainerapps/pull/578)
+
 ## 0.6.1 - 2023-11-07
 
 ### Added
