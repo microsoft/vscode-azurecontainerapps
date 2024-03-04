@@ -11,9 +11,11 @@ import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { settingUtils } from "../../../utils/settingUtils";
-import { deployWorkspaceProjectV1Prefix, type DeployWorkspaceProjectSettingsV1 } from "./DeployWorkspaceProjectSettingsV1";
+import { type DeployWorkspaceProjectSettingsV1 } from "./DeployWorkspaceProjectSettingsV1";
 
 export namespace dwpSettingUtilsV1 {
+    const deployWorkspaceProjectV1Prefix: string = 'deployWorkspaceProject';
+
     export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettingsV1> {
         const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 

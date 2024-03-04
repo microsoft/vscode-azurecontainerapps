@@ -8,5 +8,3 @@ export interface DeployWorkspaceProjectSettingsV1 {
     containerAppName?: string;
     containerRegistryName?: string;
 }
-
-export const deployWorkspaceProjectV1Prefix: string = 'deployWorkspaceProject';

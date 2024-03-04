@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -28,8 +28,6 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         item = undefined;
     }
 
-    /** TODO: Refactor getDefaultContextValues into wizard steps */
-    // Show loading indicator while we configure default values
     let defaultContextValues: Partial<DeployWorkspaceProjectContext> | undefined;
     await window.withProgress({
         location: ProgressLocation.Notification,
@@ -37,41 +35,6 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         title: localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
     }, async () => {
         defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
-    });
-
-    /** Example Start: No tree item */
-    const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [
-        // Root folder step (Matt)
-        // Docker file path step (Matt)
-        // Confirm v1 to v2 settings conversion (Megan)
-        // Prompt for settings configuration (Matt)
-    ];
-
-    const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectContext>[] = [
-        // Convert v1 to v2 settings (Megan)
-        // Load settings into context (Matt)
-        // Shallow validation (Megan?)
-        // Deep validation (Matt?)
-        // ACR defaulting logic (Megan?)
-    ];
-    /** End: No Tree Item */
-
-    /** Example Start: Tree Item */
-    const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [
-        // Root folder step (same as above)
-        // Docker file path step (same as above)
-    ];
-
-    const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectContext>[] = [
-        // Load tree items settings into context (Matt)
-    ];
-    /** End: Tree Item */
-
-    const wizard: AzureWizard<DeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
-        title: localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
-        promptSteps,
-        executeSteps,
-        showLoadingPrompt: true
     });
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {

@@ -4,7 +4,7 @@
 
 ### Changed
 
-* Removed the `ignoreExistingDeploySettings` flag.
+* Removed ability to set option `ignoreExistingDeploySettings`. This now happens automatically by default.
 
 ## 0.0.1
 * Initial release
