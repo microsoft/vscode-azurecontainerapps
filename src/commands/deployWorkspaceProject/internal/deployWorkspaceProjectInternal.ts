@@ -5,27 +5,23 @@
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { ProgressLocation, window } from "vscode";
-import { appProvider, managedEnvironmentsId } from "../../constants";
-import { ext } from "../../extensionVariables";
-import { type ContainerAppItem } from "../../tree/ContainerAppItem";
-import { type ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { createActivityChildContext, createActivityContext } from "../../utils/activity/activityUtils";
-import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
-import { localize } from "../../utils/localize";
-import { type IContainerAppContext } from "../IContainerAppContext";
-import { ContainerAppCreateStep } from "../createContainerApp/ContainerAppCreateStep";
-import { LogAnalyticsCreateStep } from "../createManagedEnvironment/LogAnalyticsCreateStep";
-import { ManagedEnvironmentCreateStep } from "../createManagedEnvironment/ManagedEnvironmentCreateStep";
-import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
-import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
-import { IngressPromptStep } from "../ingress/IngressPromptStep";
+import { appProvider, managedEnvironmentsId } from "../../../constants";
+import { ext } from "../../../extensionVariables";
+import { createActivityChildContext, createActivityContext } from "../../../utils/activity/activityUtils";
+import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
+import { localize } from "../../../utils/localize";
+import { type IContainerAppContext } from "../../IContainerAppContext";
+import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
+import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
+import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
+import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
+import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
+import { IngressPromptStep } from "../../ingress/IngressPromptStep";
+import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
+import { DefaultResourcesNameStep } from "../getDefaultValues/DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
-import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
-import { DefaultResourcesNameStep } from "./getDefaultValues/DefaultResourcesNameStep";
-import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 
 export type DeployWorkspaceProjectInternalContext = IContainerAppContext & Partial<DeployWorkspaceProjectContext>;
 
@@ -43,10 +39,6 @@ export interface DeployWorkspaceProjectInternalOptions {
      */
     suppressContainerAppCreation?: boolean;
     /**
-     * Suppress loading progress notification
-     */
-    suppressProgress?: boolean;
-    /**
      * Suppress the default wizard [prompting] title
      */
     suppressWizardTitle?: boolean;
@@ -54,7 +46,6 @@ export interface DeployWorkspaceProjectInternalOptions {
 
 export async function deployWorkspaceProjectInternal(
     context: DeployWorkspaceProjectInternalContext,
-    item: ContainerAppItem | ManagedEnvironmentItem | undefined,
     options: DeployWorkspaceProjectInternalOptions
 ): Promise<DeployWorkspaceProjectContext> {
 
@@ -70,22 +61,9 @@ export async function deployWorkspaceProjectInternal(
         activityContext.activityChildren = [];
     }
 
-    // Show loading indicator while we configure default values
-    let defaultContextValues: Partial<DeployWorkspaceProjectContext> | undefined;
-    await window.withProgress({
-        location: ProgressLocation.Notification,
-        cancellable: false,
-        title: options.suppressProgress ?
-            undefined :
-            localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
-    }, async () => {
-        defaultContextValues = await getDefaultContextValues(context, item);
-    });
-
     const wizardContext: DeployWorkspaceProjectContext = {
         ...context,
         ...activityContext,
-        ...defaultContextValues,
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [

@@ -10,13 +10,13 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
-import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/deployWorkspaceProjectInternal";
 import { getDeployWorkspaceProjectResults, type DeployWorkspaceProjectResults } from "../deployWorkspaceProject/getDeployWorkspaceProjectResults";
+import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/internal/deployWorkspaceProjectInternal";
 import type * as api from "./vscode-azurecontainerapps.api";
 
 export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
     return await callWithTelemetryAndErrorHandling('containerApps.api.deployWorkspaceProject', async (context: IActionContext): Promise<DeployWorkspaceProjectResults> => {
-        const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, ignoreExistingDeploySettings, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
+        const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
 
         const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
             selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
@@ -34,15 +34,13 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             rootFolder,
             srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
             dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
-            ignoreExistingDeploySettings,
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
         });
 
-        const deployWorkspaceProjectResultContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, undefined, {
+        const deployWorkspaceProjectResultContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
             suppressActivity: true,
             suppressConfirmation,
             suppressContainerAppCreation,
-            suppressProgress: true,
             suppressWizardTitle: true,
         });
 

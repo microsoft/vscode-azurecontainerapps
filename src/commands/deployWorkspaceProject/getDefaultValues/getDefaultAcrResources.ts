@@ -3,15 +3,15 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import  { type Registry } from "@azure/arm-containerregistry";
+import { type Registry } from "@azure/arm-containerregistry";
 import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import  { type ContainerAppItem } from "../../../tree/ContainerAppItem";
-import  { type ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
+import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { type ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { localize } from "../../../utils/localize";
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
-import  { type DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
 import { triggerSettingsOverride } from "./getDefaultContextValues";
 
 interface DefaultAcrResources {
@@ -21,7 +21,7 @@ interface DefaultAcrResources {
 
 export async function getDefaultAcrResources(
     context: ISubscriptionActionContext,
-    settings: DeployWorkspaceProjectSettings,
+    settings: DeployWorkspaceProjectSettingsV1,
     item: ContainerAppItem | ManagedEnvironmentItem | undefined
 ): Promise<DefaultAcrResources> {
     const noMatchingResource = { registry: undefined, imageName: undefined };

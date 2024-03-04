@@ -5,12 +5,13 @@
 
 import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { relativeSettingsFilePath } from "../../constants";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
-import { localize } from "../../utils/localize";
-import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { setDeployWorkspaceProjectSettings, type DeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
+import { relativeSettingsFilePath } from "../../../constants";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
+import { localize } from "../../../utils/localize";
+import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
+import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
+import { dwpSettingUtilsV1 } from "../settings/dwpSettingUtilsV1";
 
 const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
 
@@ -24,13 +25,13 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
 
         progress.report({ message: localize('saving', 'Saving configuration...') });
 
-        const settings: DeployWorkspaceProjectSettings = {
+        const settings: DeployWorkspaceProjectSettingsV1 = {
             containerAppResourceGroupName: nonNullValueAndProp(context.resourceGroup, 'name'),
             containerAppName: nonNullValueAndProp(context.containerApp, 'name'),
             containerRegistryName: nonNullValueAndProp(context.registry, 'name')
         };
 
-        await setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settings);
+        await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settings);
     }
 
     public shouldExecute(context: DeployWorkspaceProjectContext): boolean {

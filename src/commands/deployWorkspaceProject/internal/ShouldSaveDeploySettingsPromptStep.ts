@@ -4,13 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../utils/localize";
-import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { getDeployWorkspaceProjectSettings, hasNoDeployWorkspaceProjectSettings, type DeployWorkspaceProjectSettings } from "./deployWorkspaceProjectSettings";
+import { localize } from "../../../utils/localize";
+import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
+import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
+import { dwpSettingUtilsV1 } from "../settings/dwpSettingUtilsV1";
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
     public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
-        const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
+        const settings: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
 
         if (
             context.registry && settings?.containerRegistryName === context.registry.name &&
@@ -22,7 +23,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
 
         context.telemetry.properties.noNewSettings = 'false';
 
-        const saveOrOverwrite: string = hasNoDeployWorkspaceProjectSettings(settings) ? localize('save', 'save') : localize('overwrite', 'overwrite');
+        const saveOrOverwrite: string = dwpSettingUtilsV1.hasNoDeployWorkspaceProjectSettings(settings) ? localize('save', 'save') : localize('overwrite', 'overwrite');
         const saveItem = { title: localize('saveItem', 'Save') };
         const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save') };
 

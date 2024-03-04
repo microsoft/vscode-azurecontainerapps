@@ -9,7 +9,7 @@ import type * as api from "./vscode-azurecontainerapps.api";
 
 export function getAzureContainerAppsApiProvider(): apiUtils.AzureExtensionApiProvider {
     return createApiProvider([<api.AzureContainerAppsExtensionApi>{
-        apiVersion: '0.0.1',
+        apiVersion: '0.0.2',
         deployWorkspaceProject: deployWorkspaceProjectApi
     }]);
 }

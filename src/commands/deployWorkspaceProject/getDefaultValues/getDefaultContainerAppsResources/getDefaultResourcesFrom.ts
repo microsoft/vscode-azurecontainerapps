@@ -10,7 +10,7 @@ import { ContainerAppItem, type ContainerAppModel } from "../../../../tree/Conta
 import { ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
-import { type DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
+import { type DeployWorkspaceProjectSettingsV1 } from "../../settings/DeployWorkspaceProjectSettingsV1";
 import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./getResourceHelpers";
 
@@ -20,7 +20,7 @@ const noMatchingResources = {
     containerApp: undefined
 };
 
-export async function getContainerAppResourcesFromSettings(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettings): Promise<DefaultContainerAppsResources> {
+export async function getContainerAppResourcesFromSettings(context: ISubscriptionActionContext, settings: DeployWorkspaceProjectSettingsV1): Promise<DefaultContainerAppsResources> {
     if (!settings.containerAppResourceGroupName || !settings.containerAppName) {
         return noMatchingResources;
     }

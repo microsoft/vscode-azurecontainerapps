@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.0.2
+
+### Changed
+
+* Removed the `ignoreExistingDeploySettings` flag.
+
 ## 0.0.1
 * Initial release
 
