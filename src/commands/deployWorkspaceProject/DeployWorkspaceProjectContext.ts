@@ -22,7 +22,6 @@ export type DeployWorkspaceProjectContext =
     Partial<ExecuteActivityContext> &
     DeployWorkspaceProjectTelemetryProps &
     {
-        ignoreExistingDeploySettings?: boolean;
         shouldSaveDeploySettings?: boolean;
     };
 
