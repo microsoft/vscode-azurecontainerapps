@@ -39,19 +39,17 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
     let deploymentConfigurationModel: DeploymentConfigurationModel;
     if (item) {
         // Todo:
-        deploymentConfigurationModel = await getTreeItemDeploymentConfigurationModel(containerAppContext);
+        deploymentConfigurationModel = await getTreeItemDeploymentConfigurationModel({ ...containerAppContext });
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
         // foo()
 
         // Todo:
-        deploymentConfigurationModel = await promptForWorkspaceDeploymentConfigurationModel(containerAppContext);
+        deploymentConfigurationModel = await promptForWorkspaceDeploymentConfigurationModel({ ...containerAppContext });
     }
 
-    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
+    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
         ...deploymentConfigurationModel,
-        ...subscriptionContext,
-        subscription
     });
 
     const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
