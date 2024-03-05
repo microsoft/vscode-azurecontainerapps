@@ -8,7 +8,7 @@ import { type ResourceGroup } from "@azure/arm-resources";
 import { type WorkspaceFolder } from "vscode";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 
-export interface DeploymentConfigurationModel {
+export interface DeploymentConfiguration {
     rootFolder?: WorkspaceFolder;
     dockerfilePath?: string;
     srcPath?: string;

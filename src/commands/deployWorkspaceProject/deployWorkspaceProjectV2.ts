@@ -16,9 +16,9 @@ import { type IContainerAppContext } from "../IContainerAppContext";
 import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { type DeploymentConfigurationModel } from "./configurationModel/DeploymentConfigurationModel";
-import { getTreeItemDeploymentConfigurationModel } from "./configurationModel/getTreeItemDeploymentConfigurationModel";
-import { promptForWorkspaceDeploymentConfigurationModel } from "./configurationModel/promptForWorkspaceDeploymentConfigurationModel";
+import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
+import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
+import { promptForWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/promptForWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
 
@@ -36,19 +36,19 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
         item = undefined;
     }
 
-    let deploymentConfigurationModel: DeploymentConfigurationModel;
+    let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
         // Todo: Monorepo core logic (tree item path) (https://github.com/microsoft/vscode-azurecontainerapps/issues/613)
-        deploymentConfigurationModel = await getTreeItemDeploymentConfigurationModel({ ...containerAppContext });
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext });
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
 
         // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
-        deploymentConfigurationModel = await promptForWorkspaceDeploymentConfigurationModel({ ...containerAppContext });
+        deploymentConfiguration = await promptForWorkspaceDeploymentConfiguration({ ...containerAppContext });
     }
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
-        ...deploymentConfigurationModel,
+        ...deploymentConfiguration,
     });
 
     const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
