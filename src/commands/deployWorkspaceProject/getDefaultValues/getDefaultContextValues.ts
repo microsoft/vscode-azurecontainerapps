@@ -16,7 +16,8 @@ import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
 import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
 import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { displayDeployWorkspaceProjectSettingsOutput, getDeployWorkspaceProjectSettings, setDeployWorkspaceProjectSettingsTelemetry, type DeployWorkspaceProjectSettings } from "../deployWorkspaceProjectSettings";
+import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
+import { dwpSettingUtilsV1 } from "../settings/dwpSettingUtilsV1";
 import { getDefaultAcrResources } from "./getDefaultAcrResources";
 import { getDefaultContainerAppsResources } from "./getDefaultContainerAppsResources/getDefaultContainerAppsResources";
 import { getWorkspaceProjectRootFolder } from "./getWorkspaceProjectRootFolder";
@@ -28,8 +29,8 @@ export async function getDefaultContextValues(
     const rootFolder: WorkspaceFolder = context.rootFolder ?? await getWorkspaceProjectRootFolder(context);
     const dockerfilePath: string = context.dockerfilePath ?? nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
 
-    const settings: DeployWorkspaceProjectSettings = await getDeployWorkspaceProjectSettings(rootFolder);
-    setDeployWorkspaceProjectSettingsTelemetry(context, settings);
+    const settings: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(rootFolder);
+    dwpSettingUtilsV1.setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
     if (!context.ignoreExistingDeploySettings) {
         // Logic to display local workspace settings related outputs
@@ -41,7 +42,7 @@ export async function getDefaultContextValues(
         } else {
             // No settings conflict
             context.telemetry.properties.settingsOverride = 'none';
-            displayDeployWorkspaceProjectSettingsOutput(settings);
+            dwpSettingUtilsV1.displayDeployWorkspaceProjectSettingsOutput(settings);
         }
     }
 
@@ -60,7 +61,7 @@ export async function getDefaultContextValues(
 /**
  * Determines if deploying from the given tree item will cause us to have to override the user's workspace deployment settings
  */
-export function triggerSettingsOverride(settings: DeployWorkspaceProjectSettings, item: ContainerAppItem | ManagedEnvironmentItem | undefined): boolean {
+export function triggerSettingsOverride(settings: DeployWorkspaceProjectSettingsV1, item: ContainerAppItem | ManagedEnvironmentItem | undefined): boolean {
     if (!item || (!settings.containerAppName && !settings.containerAppResourceGroupName)) {
         return false;
     } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
