@@ -38,13 +38,12 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
 
     let deploymentConfigurationModel: DeploymentConfigurationModel;
     if (item) {
-        // Todo:
+        // Todo: Monorepo core logic (tree item path) (https://github.com/microsoft/vscode-azurecontainerapps/issues/613)
         deploymentConfigurationModel = await getTreeItemDeploymentConfigurationModel({ ...containerAppContext });
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
-        // foo()
 
-        // Todo:
+        // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
         deploymentConfigurationModel = await promptForWorkspaceDeploymentConfigurationModel({ ...containerAppContext });
     }
 
