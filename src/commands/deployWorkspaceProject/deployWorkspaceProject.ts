@@ -5,7 +5,7 @@
 
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { window } from "vscode";
+import { ProgressLocation, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
@@ -15,28 +15,39 @@ import { localize } from "../../utils/localize";
 import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
+import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
+    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
         item = undefined;
     }
 
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
-    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+    // Show loading indicator while we configure default values
+    let defaultContextValues: Partial<DeployWorkspaceProjectContext> | undefined;
+    await window.withProgress({
+        location: ProgressLocation.Notification,
+        cancellable: false,
+        title: localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
+    }, async () => {
+        defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
+    });
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
+        ...defaultContextValues,
         ...subscriptionContext,
         subscription
     });
 
-    const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, item, {
+    const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,
-        suppressProgress: false,
         suppressWizardTitle: false
     });
 

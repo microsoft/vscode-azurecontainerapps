@@ -1,5 +1,11 @@
 # Change Log
 
+### 0.0.2
+
+### Changed
+
+* Removed ability to set option `ignoreExistingDeploySettings`. This will now happen automatically by default.
+
 ## 0.0.1
 * Initial release
 
