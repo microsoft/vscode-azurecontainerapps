@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPic
 import { UIKind, env, workspace } from "vscode";
 import { ImageSource, type ImageSourceValues } from "../../../constants";
 import { localize } from "../../../utils/localize";
+import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
@@ -23,7 +24,20 @@ import { ContainerRegistryImageConfigureStep } from "./containerRegistry/Contain
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
 import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
+export interface ImageSourceListStepOptions {
+    /**
+     * Automatically insert a `ContainerAppNameStep` prompt with order determined by the chosen image source workflow
+     * @internal This option gives us an easy way to check that the rootFolder exists right at the start of the workspace project flow,
+     * rather than having to force a restart later on in the process
+     */
+    addContainerAppNameStep?: boolean;
+}
+
 export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContext> {
+    constructor(private readonly options?: ImageSourceListStepOptions) {
+        super();
+    }
+
     public async prompt(context: ImageSourceContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('containerRegistryLabel', 'Container Registry'),
@@ -68,12 +82,22 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:
+                if (this.options?.addContainerAppNameStep) {
+                    promptSteps.push(new ContainerAppNameStep());
+                }
+
                 promptSteps.push(new ContainerRegistryListStep());
                 executeSteps.push(new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new RootFolderStep(), new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
+                promptSteps.push(new RootFolderStep());
+
+                if (this.options?.addContainerAppNameStep) {
+                    promptSteps.push(new ContainerAppNameStep());
+                }
+
+                promptSteps.push(new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
                 executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;

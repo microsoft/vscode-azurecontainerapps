@@ -17,7 +17,6 @@ import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
-import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
@@ -41,8 +40,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     const title: string = localize('createContainerApp', 'Create container app');
 
     const promptSteps: AzureWizardPromptStep<CreateContainerAppContext>[] = [
-        new ContainerAppNameStep(),
-        new ImageSourceListStep(),
+        new ImageSourceListStep({ addContainerAppNameStep: true }),
         new IngressPromptStep(),
     ];
 
