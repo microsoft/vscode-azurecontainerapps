@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPic
 import { UIKind, env, workspace } from "vscode";
 import { ImageSource, type ImageSourceValues } from "../../../constants";
 import { localize } from "../../../utils/localize";
+import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
@@ -71,10 +72,11 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
             case ImageSource.ContainerRegistry:
                 if (!context.containerApp) {
                     promptSteps.push(new ContainerAppNameStep());
+                    executeSteps.push(new ContainerAppCreateStep());
                 }
 
                 promptSteps.push(new ContainerRegistryListStep());
-                executeSteps.push(new ContainerRegistryImageConfigureStep());
+                executeSteps.unshift(new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
@@ -82,10 +84,11 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
 
                 if (!context.containerApp) {
                     promptSteps.push(new ContainerAppNameStep());
+                    executeSteps.push(new ContainerAppCreateStep());
                 }
 
                 promptSteps.push(new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
-                executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
+                executeSteps.unshift(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
             default:
