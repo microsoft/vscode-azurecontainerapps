@@ -40,7 +40,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     const title: string = localize('createContainerApp', 'Create container app');
 
     const promptSteps: AzureWizardPromptStep<CreateContainerAppContext>[] = [
-        new ImageSourceListStep({ addContainerAppNameStep: true }),
+        new ImageSourceListStep(),
         new IngressPromptStep(),
     ];
 

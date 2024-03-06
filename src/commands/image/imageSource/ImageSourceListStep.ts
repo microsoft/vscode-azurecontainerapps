@@ -24,20 +24,7 @@ import { ContainerRegistryImageConfigureStep } from "./containerRegistry/Contain
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
 import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
-export interface ImageSourceListStepOptions {
-    /**
-     * Automatically insert a `ContainerAppNameStep` prompt with order determined by the chosen image source workflow
-     * @internal This option gives us an easy way to check that the rootFolder exists right at the start of the workspace project flow,
-     * rather than having to force a restart later on in the process
-     */
-    addContainerAppNameStep?: boolean;
-}
-
 export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContext> {
-    constructor(private readonly options?: ImageSourceListStepOptions) {
-        super();
-    }
-
     public async prompt(context: ImageSourceContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('containerRegistryLabel', 'Container Registry'),
@@ -82,7 +69,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:
-                if (this.options?.addContainerAppNameStep) {
+                if (!context.containerApp) {
                     promptSteps.push(new ContainerAppNameStep());
                 }
 
@@ -93,7 +80,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
             case ImageSource.RemoteAcrBuild:
                 promptSteps.push(new RootFolderStep());
 
-                if (this.options?.addContainerAppNameStep) {
+                if (!context.containerApp) {
                     promptSteps.push(new ContainerAppNameStep());
                 }
 
