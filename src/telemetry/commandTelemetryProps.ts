@@ -23,7 +23,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps,
     revisionMode?: KnownActiveRevisionsMode;
 
     // getDefaultContextValues
-    hasWorkspaceProjectOpen?: 'true' | 'false';
     workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
     settingsOverride?: 'none' | 'triggered' | 'accepted';
     promptedForEnvironment?: 'true' | "false";
