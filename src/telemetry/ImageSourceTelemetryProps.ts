@@ -19,10 +19,12 @@ export interface ContainerRegistryTelemetryProps {
     hasRegistrySecrets?: 'true' | 'false';  // Helps us identify private third party registries
 }
 
-export interface BuildImageInAzureTelemetryProps extends Pick<AzdTelemetryProps, 'isAzdWorkspaceProject'>, Pick<WorkspaceFileTelemetryProps, 'dockerfileCount'> {
+export interface BuildImageInAzureTelemetryProps extends AzdTelemetryProps, Pick<WorkspaceFileTelemetryProps, 'dockerfileCount'> {
     imageBaseOs?: AcrBuildSupportedOS;
     outputImagesCount?: string;  // Number of images generated from the run
     sourceDepth?: string;  // Number of folders deep the source is from the root of the workspace
+    hasWorkspaceProjectOpen?: 'true' | 'false';
+    // isAzdExtensionInstalled
     // isAzdWorkspaceProject
     // dockerfileCount
 }

@@ -4,36 +4,35 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
-import { isAzdWorkspaceProject } from '../../../../utils/azdUtils';
+import { commands, type WorkspaceFolder } from 'vscode';
+import { browseItem } from '../../../../constants';
+import { addAzdTelemetryToContext } from '../../../../utils/azdUtils';
 import { localize } from '../../../../utils/localize';
+import { getRootWorkspaceFolder } from '../../../../utils/workspaceUtils';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        context.rootFolder = await getRootWorkSpaceFolder();
+        const prompt: string = localize('selectRootWorkspace', 'Select a project with a Dockerfile');
+        const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(prompt);
 
-        if (await isAzdWorkspaceProject(context.rootFolder)) {
-            context.telemetry.properties.isAzdWorkspaceProject = 'true';
+        if (!rootFolder) {
+            context.telemetry.properties.hasWorkspaceProjectOpen = 'false';
+
+            await context.ui.showQuickPick([browseItem], { placeHolder: prompt });
+            await commands.executeCommand('vscode.openFolder');
+
+            // Silently throw an exception to exit the command while VS Code reloads the new workspace
+            throw new UserCancelledError();
         }
+
+        context.telemetry.properties.hasWorkspaceProjectOpen = 'true';
+        await addAzdTelemetryToContext(context, rootFolder);
+
+        context.rootFolder = rootFolder;
     }
 
     public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.rootFolder;
-    }
-}
-
-async function getRootWorkSpaceFolder(): Promise<vscode.WorkspaceFolder> {
-    if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-        throw new Error(localize('noOpenFolder', 'No folder is open. Please open a folder and try again.'));
-    } else if (vscode.workspace.workspaceFolders.length === 1) {
-        return vscode.workspace.workspaceFolders[0];
-    } else {
-        const placeHolder: string = localize('selectRootWorkspace', 'Select the folder containing your Dockerfile');
-        const folder = await vscode.window.showWorkspaceFolderPick({ placeHolder });
-        if (!folder) {
-            throw new UserCancelledError('selectRootWorkspace');
-        }
-        return folder;
     }
 }
