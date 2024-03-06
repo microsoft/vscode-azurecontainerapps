@@ -11,13 +11,15 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 
 // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
 export async function promptForWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
+    const wizardContext: WorkspaceDeploymentConfigurationContext = context;
+
     const promptSteps: AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext>[] = [
         new RootFolderStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext>[] = [];
 
-    const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(context, {
+    const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
         promptSteps,
         executeSteps,
     });
@@ -25,5 +27,7 @@ export async function promptForWorkspaceDeploymentConfiguration(context: IContai
     await wizard.prompt();
     await wizard.execute();
 
-    return {};  // Placeholder
+    return {
+        rootFolder: wizardContext.rootFolder,
+    };
 }
