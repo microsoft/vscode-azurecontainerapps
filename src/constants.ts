@@ -50,15 +50,11 @@ export enum ImageSource {
     /*
      * Uses the default hello-world image with preset configurations
      */
-    QuickStartImage = 'quickStartImage',
+    QuickstartImage = 'quickstartImage',
     /*
      * Use an image stored in ACR or a third party registry
      */
     ContainerRegistry = 'containerRegistry',
-    /*
-     * Build the image from your project locally using Docker (reqs. Dockerfile)
-     */
-    LocalDockerBuild = 'localDockerBuild',
     /*
      * Build the image from your project remotely using ACR (reqs. Dockerfile)
      */

@@ -5,7 +5,7 @@
 
 import { type EnvironmentVar, type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
 import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { type ImageSource, type ImageSourceValues } from "../../../constants";
+import { type ImageSourceValues } from "../../../constants";
 import { type ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type IContainerAppContext } from "../../IContainerAppContext";
@@ -13,7 +13,6 @@ import { type IContainerAppContext } from "../../IContainerAppContext";
 export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteActivityContext {
     // ImageSourceListStep
     imageSource?: ImageSourceValues;
-    buildType?: ImageSource.LocalDockerBuild | ImageSource.RemoteAcrBuild;
     showQuickStartImage?: boolean;
 
     // Base image attributes used as a precursor for either creating or updating a container app

@@ -10,30 +10,45 @@ import { localize } from "../../../utils/localize";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
-import { BuildFromProjectListStep } from "./buildImageInAzure/BuildFromProjectListStep";
+import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
+import { DockerFileItemStep } from "./buildImageInAzure/DockerFileItemStep";
+import { ImageNameStep } from "./buildImageInAzure/ImageNameStep";
+import { OSPickStep } from "./buildImageInAzure/OSPickStep";
+import { RootFolderStep } from "./buildImageInAzure/RootFolderStep";
+import { RunStep } from "./buildImageInAzure/RunStep";
+import { SourcePathStep } from "./buildImageInAzure/SourcePathStep";
+import { TarFileStep } from "./buildImageInAzure/TarFileStep";
+import { UploadSourceCodeStep } from "./buildImageInAzure/UploadSourceCodeStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
+import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
 export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContext> {
     public async prompt(context: ImageSourceContext): Promise<void> {
         const imageSourceLabels: string[] = [
-            localize('containerRegistry', 'Use image from registry'),
-            localize('quickStartImage', 'Use quickstart image'),
-            localize('buildFromProject', 'Build from project remotely using Azure Container Registry'),
+            localize('containerRegistryLabel', 'Container Registry'),
+            localize('quickstartImageLabel', 'Quickstart'),
+            localize('workspaceProjectLabel', 'Workspace Project'),
+        ];
+
+        const imageSourceDetails: string[] = [
+            localize('containerRegistryDescription', 'Use an image from Azure Container Registry or other third party container registry'),
+            localize('quickstartImageDescription', 'Use our default starter image to quickly get a sample app up and running'),
+            localize('workspaceProjectDescription', 'Build an image starting from a local workspace project with Dockerfile'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
         const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
-            { label: imageSourceLabels[0], data: ImageSource.ContainerRegistry, suppressPersistence: true }
+            { label: imageSourceLabels[0], detail: imageSourceDetails[0], data: ImageSource.ContainerRegistry, suppressPersistence: true }
         ];
 
         if (context.showQuickStartImage) {
-            picks.unshift({ label: imageSourceLabels[1], data: ImageSource.QuickStartImage, suppressPersistence: true });
+            picks.unshift({ label: imageSourceLabels[1], detail: imageSourceDetails[1], data: ImageSource.QuickstartImage, suppressPersistence: true });
         }
 
         const isVirtualWorkspace = workspace.workspaceFolders && workspace.workspaceFolders.every(f => f.uri.scheme !== 'file');
         if (env.uiKind === UIKind.Desktop && !isVirtualWorkspace) {
-            picks.push({ label: imageSourceLabels[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true })
+            picks.push({ label: imageSourceLabels[2], detail: imageSourceDetails[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true })
         }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;
@@ -48,9 +63,9 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
         const executeSteps: AzureWizardExecuteStep<ImageSourceContext>[] = [];
 
         switch (context.imageSource) {
-            case ImageSource.QuickStartImage:
+            case ImageSource.QuickstartImage:
                 setQuickStartImage(context);
-                context.telemetry.properties.imageSource = ImageSource.QuickStartImage;
+                context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:
                 promptSteps.push(new ContainerRegistryListStep());
@@ -58,8 +73,8 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new BuildFromProjectListStep());
-                executeSteps.push(new ContainerRegistryImageConfigureStep());
+                promptSteps.push(new RootFolderStep(), new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
+                executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
             default:
