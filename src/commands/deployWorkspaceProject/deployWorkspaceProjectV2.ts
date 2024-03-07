@@ -17,8 +17,8 @@ import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainer
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
-import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
-import { promptForWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/promptForWorkspaceDeploymentConfiguration";
+import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/tree/getTreeItemDeploymentConfiguration";
+import { promptForWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/promptForWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
 

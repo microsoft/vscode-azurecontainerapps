@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { type IContainerAppContext } from "../../IContainerAppContext";
-import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
-import { type DeploymentConfiguration } from "./DeploymentConfiguration";
+import { type IContainerAppContext } from "../../../IContainerAppContext";
+import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
+import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613

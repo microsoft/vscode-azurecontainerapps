@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type WorkspaceFolder } from "vscode";
-import { type IContainerAppContext } from "../../IContainerAppContext";
+import { type IContainerAppContext } from "../../../IContainerAppContext";
 
 export interface WorkspaceDeploymentConfigurationContext extends IContainerAppContext {
     rootFolder?: WorkspaceFolder;
