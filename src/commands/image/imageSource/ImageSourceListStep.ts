@@ -7,8 +7,6 @@ import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPic
 import { UIKind, env, workspace } from "vscode";
 import { ImageSource, type ImageSourceValues } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
-import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
@@ -70,25 +68,13 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:
-                if (!context.containerApp) {
-                    promptSteps.push(new ContainerAppNameStep());
-                    executeSteps.push(new ContainerAppCreateStep());
-                }
-
                 promptSteps.push(new ContainerRegistryListStep());
-                executeSteps.unshift(new ContainerRegistryImageConfigureStep());
+                executeSteps.push(new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new RootFolderStep());
-
-                if (!context.containerApp) {
-                    promptSteps.push(new ContainerAppNameStep());
-                    executeSteps.push(new ContainerAppCreateStep());
-                }
-
-                promptSteps.push(new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
-                executeSteps.unshift(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
+                promptSteps.push(new RootFolderStep(), new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
+                executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
             default:
