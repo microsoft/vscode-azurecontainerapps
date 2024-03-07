@@ -9,7 +9,7 @@ import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppItem, type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { type ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
 import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
-import { type DeployWorkspaceProjectSettings } from "../../deployWorkspaceProjectSettings";
+import { type DeployWorkspaceProjectSettingsV1 } from "../../settings/DeployWorkspaceProjectSettingsV1";
 import { getContainerAppResourcesFromItem, getContainerAppResourcesFromSettings } from "./getDefaultResourcesFrom";
 import { promptForEnvironmentResources } from "./promptForEnvironmentResources";
 
@@ -21,7 +21,7 @@ export interface DefaultContainerAppsResources {
 
 export async function getDefaultContainerAppsResources(
     context: ISubscriptionActionContext & Partial<DeployWorkspaceProjectContext>,
-    settings: DeployWorkspaceProjectSettings,
+    settings: DeployWorkspaceProjectSettingsV1,
     item?: ContainerAppItem | ManagedEnvironmentItem
 ): Promise<DefaultContainerAppsResources> {
     context.telemetry.properties.promptedForEnvironment = 'false';  // Initialize the default value
