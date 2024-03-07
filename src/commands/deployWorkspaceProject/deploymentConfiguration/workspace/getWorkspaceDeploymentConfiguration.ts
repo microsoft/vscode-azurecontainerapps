@@ -7,6 +7,7 @@ import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep } 
 import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
+import { DeploymentConfigurationPromptStep } from "./DeploymentConfigurationPromptStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
@@ -14,7 +15,8 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     const wizardContext: WorkspaceDeploymentConfigurationContext = context;
 
     const promptSteps: AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext>[] = [
-        new RootFolderStep()
+        new RootFolderStep(),
+        new DeploymentConfigurationPromptStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext>[] = [];
