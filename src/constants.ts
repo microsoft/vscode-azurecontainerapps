@@ -61,8 +61,6 @@ export enum ImageSource {
     RemoteAcrBuild = 'remoteAcrBuild'
 }
 
-export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
-
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';

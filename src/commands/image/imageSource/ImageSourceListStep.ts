@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { UIKind, env, workspace } from "vscode";
-import { ImageSource, type ImageSourceValues } from "../../../constants";
+import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
@@ -38,7 +38,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
-        const picks: IAzureQuickPickItem<ImageSourceValues | undefined>[] = [
+        const picks: IAzureQuickPickItem<ImageSource | undefined>[] = [
             { label: imageSourceLabels[0], detail: imageSourceDetails[0], data: ImageSource.ContainerRegistry, suppressPersistence: true }
         ];
 
