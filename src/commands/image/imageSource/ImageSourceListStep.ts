@@ -32,9 +32,9 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
         ];
 
         const imageSourceDetails: string[] = [
-            localize('containerRegistryDescription', 'Use an image from Azure Container Registry or other third party container registry'),
-            localize('quickstartImageDescription', 'Use our default starter image to quickly get a sample app up and running'),
-            localize('workspaceProjectDescription', 'Build an image starting from a local workspace project with Dockerfile'),
+            localize('containerRegistryDetails', 'Use an image from Azure Container Registry or other third party container registry'),
+            localize('quickstartImageDetails', 'Use our default starter image to quickly get a sample app up and running'),
+            localize('workspaceProjectDetails', 'Build an image starting from a local workspace project with Dockerfile'),
         ];
 
         const placeHolder: string = localize('imageBuildSourcePrompt', 'Select an image source for the container app');
