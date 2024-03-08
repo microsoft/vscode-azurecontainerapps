@@ -18,6 +18,7 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
         context.deploymentConfigurationSettings = (await context.ui.showQuickPick(this.getPicks(deploymentConfigurations), {
             placeHolder: localize('chooseDeployConfigurationSetting', 'Select an app configuration to deploy'),
+            suppressPersistence: true,
         })).data;
     }
 
@@ -42,14 +43,14 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
         const picks: IAzureQuickPickItem<DeploymentConfigurationSettings | undefined>[] = deploymentConfigurations.map(deploymentConfiguration => {
             return {
                 label: deploymentConfiguration.label ?? localize('unnamedApp', 'Unnamed app'),
-                description: deploymentConfiguration.containerApp,
-                detail: deploymentConfiguration.description,
+                // Show the container app name as the description by default, unless the label has the same name
+                description: deploymentConfiguration.label === deploymentConfiguration.containerApp ? undefined : deploymentConfiguration.containerApp,
                 data: deploymentConfiguration
             };
         });
 
         picks.push({
-            label: localize('createDeploymentConfiguration', '$(plus) Create and deploy a new app configuration'),
+            label: localize('createDeploymentConfiguration', '$(plus) Create and deploy new app configuration'),
             data: undefined
         });
 
