@@ -9,7 +9,7 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class DeploymentConfigurationPromptStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
+export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
     public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!deploymentConfigurations?.length) {
