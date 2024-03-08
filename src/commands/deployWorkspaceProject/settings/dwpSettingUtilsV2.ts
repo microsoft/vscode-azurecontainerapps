@@ -10,7 +10,6 @@ import { type DeploymentConfigurationSettings } from "./DeployWorkspaceProjectSe
 export namespace dwpSettingUtilsV2 {
     export async function getWorkspaceDeploymentConfigurations(rootFolder: WorkspaceFolder): Promise<DeploymentConfigurationSettings[] | undefined> {
         const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
-        const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = settingUtils.getWorkspaceSetting('deploymentConfigurations', settingsPath);
-        return deploymentConfigurations;
+        return settingUtils.getWorkspaceSetting('deploymentConfigurations', settingsPath);
     }
 }
