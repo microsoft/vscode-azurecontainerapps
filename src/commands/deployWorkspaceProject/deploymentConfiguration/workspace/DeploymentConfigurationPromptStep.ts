@@ -3,15 +3,56 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { localize } from "../../../../utils/localize";
+import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationPromptStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
-    public async prompt(_: WorkspaceDeploymentConfigurationContext): Promise<void> {
-        //
+    public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
+        const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
+        if (!deploymentConfigurations?.length) {
+            return;
+        }
+
+        context.deploymentConfigurationSettings = (await context.ui.showQuickPick(this.getPicks(deploymentConfigurations), {
+            placeHolder: localize('chooseDeployConfigurationSetting', 'Select an app configuration to deploy'),
+        })).data;
     }
 
-    public shouldPrompt(_: WorkspaceDeploymentConfigurationContext): boolean {
-        return true;
+    public shouldPrompt(context: WorkspaceDeploymentConfigurationContext): boolean {
+        return !context.deploymentConfigurationSettings;
+    }
+
+    public async getSubWizard(context: WorkspaceDeploymentConfigurationContext): Promise<IWizardOptions<WorkspaceDeploymentConfigurationContext> | undefined> {
+        if (!context.deploymentConfigurationSettings) {
+            return undefined;
+        }
+
+        return {
+            executeSteps: [
+                // Todo: Shallow (local fs) validation step(s)
+                // Todo: Deep (Azure resource) validation step(s)
+            ]
+        };
+    }
+
+    private getPicks(deploymentConfigurations: DeploymentConfigurationSettings[]): IAzureQuickPickItem<DeploymentConfigurationSettings | undefined>[] {
+        const picks: IAzureQuickPickItem<DeploymentConfigurationSettings | undefined>[] = deploymentConfigurations.map(deploymentConfiguration => {
+            return {
+                label: deploymentConfiguration.label ?? localize('unnamedApp', 'Unnamed app'),
+                description: deploymentConfiguration.containerApp,
+                detail: deploymentConfiguration.description,
+                data: deploymentConfiguration
+            };
+        });
+
+        picks.push({
+            label: localize('createDeploymentConfiguration', '$(plus) Create and deploy a new app configuration'),
+            data: undefined
+        });
+
+        return picks;
     }
 }
