@@ -310,7 +310,7 @@
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i && viewItem =~ /revisionMode:single/i",
                     "group": "1@2"
                 },
                 {
@@ -320,32 +320,32 @@
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i && viewItem =~ /revisionMode:single/i && viewItem =~ /unsavedChanges:true/i",
                     "group": "inline@1"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i && viewItem =~ /revisionMode:single/i && viewItem =~ /unsavedChanges:true/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.discardRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i && viewItem =~ /revisionMode:single/i && viewItem =~ /unsavedChanges:true/i",
                     "group": "inline@2"
                 },
                 {
                     "command": "containerApps.discardRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i && viewItem =~ /revisionMode:single/ && viewItem =~ /unsavedChanges:true/i",
                     "group": "3@2"
                 },
                 {
                     "command": "containerApps.updateImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/ && viewItem =~ /revisionMode:single/i",
                     "group": "4@1"
                 },
                 {
                     "command": "containerApps.editContainerApp",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/ && viewItem =~ /revisionMode:single/i",
                     "group": "4@2"
                 },
                 {
@@ -375,12 +375,12 @@
                 },
                 {
                     "command": "containerApps.createRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionsItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false/ && viewItem =~ /revisionsItem/i",
                     "group": "inline@1"
                 },
                 {
                     "command": "containerApps.createRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionsItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false/ && viewItem =~ /revisionsItem/i",
                     "group": "1@1"
                 },
                 {
@@ -390,32 +390,32 @@
                 },
                 {
                     "command": "containerApps.activateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:inactive/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem/ && viewItem =~ /revisionState:inactive/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem/ && viewItem =~ /revisionState:active/i",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.deactivateRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem/ && viewItem =~ /revisionState:active/i",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.updateImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false/ && viewItem =~ /revisionItem/i",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/ && viewItem =~ /unsavedChanges:true/i",
                     "group": "inline@1"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/ && viewItem =~ /unsavedChanges:true/i",
                     "group": "1@1"
                 },
                 {
@@ -490,12 +490,12 @@
                 },
                 {
                     "command": "containerApps.openGitHubRepo",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true(.*)containerAppsActionsItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true/ && viewItem =~ /containerAppsActionsItem/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.disconnectRepo",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true(.*)containerAppsActionsItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true/ && viewItem =~ /containerAppsActionsItem/i",
                     "group": "1@2"
                 }
             ],
