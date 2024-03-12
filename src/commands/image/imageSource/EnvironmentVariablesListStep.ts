@@ -39,7 +39,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
     }
 
     public shouldPrompt(context: EnvironmentVariablesContext): boolean {
-        return context.imageSource !== ImageSource.QuickStartImage && context.environmentVariables === undefined;
+        return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
     private async selectEnvironmentSettings(context: EnvironmentVariablesContext): Promise<DotenvParseOutput | undefined> {
