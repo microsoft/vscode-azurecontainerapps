@@ -31,5 +31,11 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
 
     return {
         rootFolder: wizardContext.rootFolder,
+        dockerfilePath: wizardContext.dockerfilePath,
+        srcPath: wizardContext.srcPath,
+        envPath: wizardContext.envPath,
+        resourceGroup: wizardContext.resourceGroup,
+        containerApp: wizardContext.containerApp,
+        containerRegistry: wizardContext.containerRegistry
     };
 }
