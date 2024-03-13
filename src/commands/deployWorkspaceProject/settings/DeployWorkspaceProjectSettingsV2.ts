@@ -8,6 +8,7 @@ export interface DeployWorkspaceProjectSettingsV2 {
 }
 
 export interface DeploymentConfigurationSettings {
+    id?: string;
     label?: string;
     type?: string;
     dockerfilePath?: string;
