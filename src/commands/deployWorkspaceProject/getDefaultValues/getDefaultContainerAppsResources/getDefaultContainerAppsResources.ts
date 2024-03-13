@@ -32,11 +32,9 @@ export async function getDefaultContainerAppsResources(
     }
 
     // Otherwise try to obtain container app resources using any saved workspace settings
-    if (!context.ignoreExistingDeploySettings) {
-        const { resourceGroup, managedEnvironment, containerApp } = await getContainerAppResourcesFromSettings(context, settings);
-        if (resourceGroup && managedEnvironment && containerApp) {
-            return { resourceGroup, managedEnvironment, containerApp };
-        }
+    const { resourceGroup, managedEnvironment, containerApp } = await getContainerAppResourcesFromSettings(context, settings);
+    if (resourceGroup && managedEnvironment && containerApp) {
+        return { resourceGroup, managedEnvironment, containerApp };
     }
 
     // Otherwise prompt the user for managed environment resources to use

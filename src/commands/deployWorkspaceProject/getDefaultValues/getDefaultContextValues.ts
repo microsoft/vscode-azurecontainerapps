@@ -32,18 +32,16 @@ export async function getDefaultContextValues(
     const settings: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(rootFolder);
     dwpSettingUtilsV1.setDeployWorkspaceProjectSettingsTelemetry(context, settings);
 
-    if (!context.ignoreExistingDeploySettings) {
-        // Logic to display local workspace settings related outputs
-        if (triggerSettingsOverride(settings, item)) {
-            // Tree item & settings conflict
-            context.telemetry.properties.settingsOverride = 'triggered';
-            await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
-            context.telemetry.properties.settingsOverride = 'accepted';
-        } else {
-            // No settings conflict
-            context.telemetry.properties.settingsOverride = 'none';
-            dwpSettingUtilsV1.displayDeployWorkspaceProjectSettingsOutput(settings);
-        }
+    // Logic to display local workspace settings related outputs
+    if (triggerSettingsOverride(settings, item)) {
+        // Tree item & settings conflict
+        context.telemetry.properties.settingsOverride = 'triggered';
+        await displaySettingsOverrideWarning(context, item as ContainerAppItem | ManagedEnvironmentItem);
+        context.telemetry.properties.settingsOverride = 'accepted';
+    } else {
+        // No settings conflict
+        context.telemetry.properties.settingsOverride = 'none';
+        dwpSettingUtilsV1.displayDeployWorkspaceProjectSettingsOutput(settings);
     }
 
     return {
