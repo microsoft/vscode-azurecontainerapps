@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface DeployWorkspaceProjectSettingsV2 {
-    deploymentConfigurations?: DeploymentConfigurationSetting[];
+    deploymentConfigurations?: DeploymentConfigurationSettings[];
 }
 
-export interface DeploymentConfigurationSetting {
+export interface DeploymentConfigurationSettings {
     label?: string;
     type?: string;
     dockerfilePath?: string;
