@@ -16,7 +16,7 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
             return;
         }
 
-        const pick: IAzureQuickPickItem<(DeploymentConfigurationSettings & { configurationIdx?: number }) | undefined> = await context.ui.showQuickPick(this.getPicks(deploymentConfigurations), {
+        const pick = await context.ui.showQuickPick(this.getPicks(deploymentConfigurations), {
             placeHolder: localize('chooseDeployConfigurationSetting', 'Select an app configuration to deploy'),
             suppressPersistence: true,
         });
