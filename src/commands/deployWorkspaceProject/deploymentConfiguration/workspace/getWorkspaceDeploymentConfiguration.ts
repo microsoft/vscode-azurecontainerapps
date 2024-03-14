@@ -30,7 +30,7 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     await wizard.execute();
 
     return {
-        configurationId: wizardContext.deploymentConfigurationSettings?.id,
+        configurationIdx: wizardContext.configurationIdx,
         rootFolder: wizardContext.rootFolder,
         dockerfilePath: wizardContext.dockerfilePath,
         srcPath: wizardContext.srcPath,

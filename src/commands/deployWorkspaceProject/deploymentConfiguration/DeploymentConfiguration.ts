@@ -9,7 +9,7 @@ import { type WorkspaceFolder } from "vscode";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 
 export interface DeploymentConfiguration {
-    configurationId?: string;
+    configurationIdx?: number;
     rootFolder?: WorkspaceFolder;
     dockerfilePath?: string;
     srcPath?: string;
