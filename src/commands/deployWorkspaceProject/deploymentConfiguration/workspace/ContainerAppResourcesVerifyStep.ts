@@ -17,7 +17,7 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
-    public priority: number = 100;  /** Todo: Figure out a good priority level */
+    public priority: number = 200;  /** Todo: Figure out a good priority level */
 
     protected _resourceGroup?: ResourceGroup;
     protected _containerApp?: ContainerAppModel;
@@ -53,9 +53,10 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                 contextValue: createActivityChildContext(['containerAppResourcesVerifyStepSuccessItem', activitySuccessContext]),
                 label: localize('verifyContainerAppResources', 'Verify container app resources for configuration "{0}"', context.deploymentConfigurationSettings?.label),
                 iconPath: activitySuccessIcon,
+
                 loadMoreChildrenImpl: () => Promise.resolve([
-                    this.createChildOutputTreeItem(localize('verifyResourceGroup', 'Verify resource group "{0}"', this._resourceGroup?.name), true /** isSuccessItem */),
-                    this.createChildOutputTreeItem(localize('verifyContainerApp', 'Verify container app "{0}"', this._containerApp?.name), true),
+                    this.createChildOutputTreeItem(localize('verifyResourceGroupSuccess', 'Verify resource group "{0}"', this._resourceGroup?.name), true /** isSuccessItem */),
+                    this.createChildOutputTreeItem(localize('verifyContainerAppSuccess', 'Verify container app "{0}"', this._containerApp?.name), true),
                 ])
             }),
             message: localize('verifiedContainerAppResources',
@@ -73,24 +74,15 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                 contextValue: createActivityChildContext(['containerAppResourcesVerifyStepFailItem', activityFailContext]),
                 label: localize('verifyContainerAppResources', 'Verify container app resources'),
                 iconPath: activityFailIcon,
-                loadMoreChildrenImpl: () => {
-                    const treeItems: AzExtTreeItem[] = [];
-                    if (this._resourceGroup) {
-                        treeItems.push(this.createChildOutputTreeItem(localize('verifyResourceGroupSuccess', 'Verify resource group "{0}"', this._resourceGroup?.name), true /** isSuccessItem */));
-                    } else {
-                        treeItems.push(this.createChildOutputTreeItem(localize('verifyResourceGroupFail', 'Verify resource group "{0}"', context.deploymentConfigurationSettings?.resourceGroup), false));
-                        return Promise.resolve(treeItems);
-                    }
 
-                    if (this._containerApp) {
-                        treeItems.push(this.createChildOutputTreeItem(localize('verifyContainerAppSuccess', 'Verify container app "{0}"', this._containerApp?.name), true));
-                    } else {
-                        treeItems.push(this.createChildOutputTreeItem(localize('verifyContainerAppFail', 'Verify container app "{0}"', context.deploymentConfigurationSettings?.containerApp), false));
-                        return Promise.resolve(treeItems);
-                    }
-
-                    return Promise.resolve(treeItems);
-                }
+                loadMoreChildrenImpl: () => Promise.resolve([
+                    this._resourceGroup ?
+                        this.createChildOutputTreeItem(localize('verifyResourceGroupSuccess', 'Verify resource group "{0}"', this._resourceGroup?.name), true /** isSuccessItem */) :
+                        this.createChildOutputTreeItem(localize('verifyResourceGroupFail', 'Verify resource group "{0}"', context.deploymentConfigurationSettings?.resourceGroup), false),
+                    this._containerApp ?
+                        this.createChildOutputTreeItem(localize('verifyContainerAppSuccess', 'Verify container app "{0}"', this._containerApp?.name), true) :
+                        this.createChildOutputTreeItem(localize('verifyContainerAppFail', 'Verify container app "{0}"', context.deploymentConfigurationSettings?.containerApp), false),
+                ])
             }),
             message: localize('createContainerAppFail', 'Failed to verify container app resources for configuration "{0}".  You will be prompted to create new resources to proceed.')
         };
