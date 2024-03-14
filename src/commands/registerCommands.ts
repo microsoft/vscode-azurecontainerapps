@@ -10,7 +10,6 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
-import { deployWorkspaceProjectV2 } from './deployWorkspaceProject/deployWorkspaceProjectV2';
 import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -58,7 +57,7 @@ export function registerCommands(): void {
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProjectV2);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProjectToContainerApp', deployWorkspaceProject);
 
     // github
