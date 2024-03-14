@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerApp, type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type ContainerApp, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
-import { ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from "../../../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
@@ -20,9 +19,8 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 100;  /** Todo: Figure out a good priority level */
 
-    protected resourceGroup?: ResourceGroup;
-    protected managedEnvironment?: ManagedEnvironment;
-    protected containerApp?: ContainerAppModel;
+    protected _resourceGroup?: ResourceGroup;
+    protected _containerApp?: ContainerAppModel;
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
@@ -33,25 +31,16 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
             return;
         }
 
-        try {
-            const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
-            const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-            this.resourceGroup = resourceGroups.find(rg => rg.name === settings.resourceGroup);
+        const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+        this._resourceGroup = resourceGroups.find(rg => rg.name === settings.resourceGroup);
 
-            const containerApp: ContainerApp = await client.containerApps.get(settings.resourceGroup, settings.containerApp);
-            this.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
+        const containerApp: ContainerApp = await client.containerApps.get(settings.resourceGroup, settings.containerApp);
+        this._containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
 
-            const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-            this.managedEnvironment = managedEnvironments.find(env => env.id === containerApp.managedEnvironmentId);
-
-            context.resourceGroup = this.resourceGroup;
-            context.containerApp = this.containerApp;
-            context.managedEnvironment = this.managedEnvironment;
-        } catch {
-            // Swallow error and provide a notifcation to the user
-            ext.outputChannel.appendLog(localize('verifyFailed', 'Unable to verify some container app resources matching the selected deployment configuration. You will be prompted to create new ones.'));
-        }
+        context.resourceGroup = this._resourceGroup;
+        context.containerApp = this._containerApp;
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
@@ -65,12 +54,16 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                 label: localize('verifyContainerAppResources', 'Verify container app resources for configuration "{0}"', context.deploymentConfigurationSettings?.label),
                 iconPath: activitySuccessIcon,
                 loadMoreChildrenImpl: () => Promise.resolve([
-                    this.createChildOutputTreeItem(localize('verifyResourceGroup', 'Verify resource group "{0}"', this.resourceGroup?.name), true /** isSuccessItem */),
-                    this.createChildOutputTreeItem(localize('verifyContainerApp', 'Verify container app "{0}"', this.containerApp?.name), true),
-                    this.createChildOutputTreeItem(localize('verifyManagedEnvironment', 'Verify managed environment "{0}"', this.managedEnvironment?.name), true),
+                    this.createChildOutputTreeItem(localize('verifyResourceGroup', 'Verify resource group "{0}"', this._resourceGroup?.name), true /** isSuccessItem */),
+                    this.createChildOutputTreeItem(localize('verifyContainerApp', 'Verify container app "{0}"', this._containerApp?.name), true),
                 ])
             }),
-            message: localize('verifiedContainerAppResources', 'Verified container app resources for configuration "{0}"', context.deploymentConfigurationSettings?.label)
+            message: localize('verifiedContainerAppResources',
+                'Successfully verified resource group "{0}", container app "{1}", and managed environment "{2}" for configuration "{3}"',
+                this._resourceGroup?.name,
+                this._containerApp?.name,
+                context.deploymentConfigurationSettings?.label
+            ),
         };
     }
 
@@ -82,20 +75,35 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                 iconPath: activityFailIcon,
                 loadMoreChildrenImpl: () => {
                     const treeItems: AzExtTreeItem[] = [];
+                    if (this._resourceGroup) {
+                        treeItems.push(this.createChildOutputTreeItem(localize('verifyResourceGroupSuccess', 'Verify resource group "{0}"', this._resourceGroup?.name), true /** isSuccessItem */));
+                    } else {
+                        treeItems.push(this.createChildOutputTreeItem(localize('verifyResourceGroupFail', 'Verify resource group "{0}"', context.deploymentConfigurationSettings?.resourceGroup), false));
+                        return Promise.resolve(treeItems);
+                    }
+
+                    if (this._containerApp) {
+                        treeItems.push(this.createChildOutputTreeItem(localize('verifyContainerAppSuccess', 'Verify container app "{0}"', this._containerApp?.name), true));
+                    } else {
+                        treeItems.push(this.createChildOutputTreeItem(localize('verifyContainerAppFail', 'Verify container app "{0}"', context.deploymentConfigurationSettings?.containerApp), false));
+                        return Promise.resolve(treeItems);
+                    }
+
+                    return Promise.resolve(treeItems);
                 }
             }),
-            message: localize('createContainerAppFail', 'Failed to create container app "{0}".', context.newContainerAppName)
+            message: localize('createContainerAppFail', 'Failed to verify container app resources for configuration "{0}".  You will be prompted to create new resources to proceed.')
         };
     }
 
     protected createChildOutputTreeItem(label: string, isSuccessItem: boolean): AzExtTreeItem {
         return new GenericTreeItem(undefined, {
+            label,
+            iconPath: isSuccessItem ? activitySuccessIcon : activityFailIcon,
             contextValue: createActivityChildContext([
                 `containerAppResourcesVerifyStep${isSuccessItem ? 'Success' : 'Fail'}ChildItem`,
                 isSuccessItem ? activitySuccessContext : activityFailContext
             ]),
-            label,
-            iconPath: isSuccessItem ? activitySuccessIcon : activityFailIcon
         });
     }
 }

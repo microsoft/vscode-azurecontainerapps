@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { createActivityContext } from "../../../../utils/activity/activityUtils";
+import { localize } from "../../../../utils/localize";
 import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
@@ -12,7 +14,10 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 
 // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
-    const wizardContext: WorkspaceDeploymentConfigurationContext = context;
+    const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
+        ...await createActivityContext(),
+        activityChildren: []
+    });
 
     const promptSteps: AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext>[] = [
         new RootFolderStep(),
@@ -22,11 +27,17 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     const executeSteps: AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext>[] = [];
 
     const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
+        title: localize('loadWorkspaceSettingsTitle', 'Load workspace deployment configuration'),
         promptSteps,
         executeSteps,
     });
 
     await wizard.prompt();
+
+    if (wizardContext.deploymentConfigurationSettings) {
+        wizardContext.activityTitle = localize('loadWorkspaceSettingsActivityTitle', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label);
+    }
+
     await wizard.execute();
 
     return {

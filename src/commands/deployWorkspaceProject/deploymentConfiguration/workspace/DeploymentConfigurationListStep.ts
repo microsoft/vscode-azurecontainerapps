@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWiz
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep.1";
+import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
