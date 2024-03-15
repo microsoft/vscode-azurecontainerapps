@@ -45,7 +45,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppResourcesVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyContainerAppResources', 'Verify container app resources for configuration "{0}"', context.deploymentConfigurationSettings?.label),
+                label: localize('verifyContainerAppResources', 'Verify container app resources'),
                 iconPath: activitySuccessIcon,
 
                 loadMoreChildrenImpl: () => Promise.resolve([
@@ -54,7 +54,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                 ])
             }),
             message: localize('verifiedContainerAppResources',
-                'Successfully verified resource group "{0}" and container app "{1}" for configuration "{3}"',
+                'Successfully verified resource group "{0}" and container app "{1}" for configuration "{2}"',
                 context.resourceGroup?.name,
                 context.containerApp?.name,
                 context.deploymentConfigurationSettings?.label
@@ -78,7 +78,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                         this.createChildOutputTreeItem(localize('verifyContainerAppFail', 'Verify container app "{0}"', context.deploymentConfigurationSettings?.containerApp), false),
                 ])
             }),
-            message: localize('createContainerAppFail', 'Failed to verify container app resources for configuration "{0}".  You will be prompted to create new resources to proceed.', context.deploymentConfigurationSettings?.label)
+            message: localize('createContainerAppFail', 'Failed to verify some container app resources for configuration "{0}".  You will be prompted to create new resource(s) to proceed.', context.deploymentConfigurationSettings?.label)
         };
     }
 
