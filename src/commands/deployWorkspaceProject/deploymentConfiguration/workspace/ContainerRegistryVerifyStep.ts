@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Registry } from "@azure/arm-containerregistry";
-import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, type AzExtTreeItem } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
@@ -30,58 +30,36 @@ export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<W
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings;
+        return !!context.deploymentConfigurationSettings && !context.containerRegistry;
     }
 
     protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppResourcesVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyContainerAppResources', 'Verify container app resources'),
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerRegistryVerifyStepSuccessItem', activitySuccessContext]),
+                label: localize('verifyContainerRegistry', 'Verify container registry "{0}"', context.containerRegistry?.name),
                 iconPath: activitySuccessIcon,
-
-                loadMoreChildrenImpl: () => Promise.resolve([
-                    this.createChildOutputTreeItem(localize('verifyResourceGroupSuccess', 'Verify resource group "{0}"', context.resourceGroup?.name), true /** isSuccessItem */),
-                    this.createChildOutputTreeItem(localize('verifyContainerAppSuccess', 'Verify container app "{0}"', context.containerApp?.name), true),
-                ])
             }),
-            message: localize('verifiedContainerAppResources',
-                'Successfully verified resource group "{0}" and container app "{1}" for configuration "{2}"',
-                context.resourceGroup?.name,
-                context.containerApp?.name,
+            message: localize('verifyContainerRegistrySuccess',
+                'Successfully verified container registry "{0}" for configuration "{1}".',
+                context.containerRegistry?.name,
                 context.deploymentConfigurationSettings?.label
-            ),
+            )
         };
     }
 
     protected createFailOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppResourcesVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyContainerAppResources', 'Verify container app resources'),
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerRegistryVerifyStepFailItem', activityFailContext]),
+                label: localize('verifyContainerRegistry', 'Verify container registry "{0}"', context.containerRegistry?.name),
                 iconPath: activityFailIcon,
-
-                loadMoreChildrenImpl: () => Promise.resolve([
-                    context.resourceGroup ?
-                        this.createChildOutputTreeItem(localize('verifyResourceGroupSuccess', 'Verify resource group "{0}"', context.resourceGroup.name), true /** isSuccessItem */) :
-                        this.createChildOutputTreeItem(localize('verifyResourceGroupFail', 'Verify resource group "{0}"', context.deploymentConfigurationSettings?.resourceGroup), false),
-                    context.containerApp ?
-                        this.createChildOutputTreeItem(localize('verifyContainerAppSuccess', 'Verify container app "{0}"', context.containerApp.name), true) :
-                        this.createChildOutputTreeItem(localize('verifyContainerAppFail', 'Verify container app "{0}"', context.deploymentConfigurationSettings?.containerApp), false),
-                ])
             }),
-            message: localize('createContainerAppFail', 'Failed to verify some container app resources for configuration "{0}".  You will be prompted to create new resource(s) to proceed.', context.deploymentConfigurationSettings?.label)
+            message: localize('verifyContainerRegistryFail',
+                'Failed to verify container registry "{0}" for configuration "{1}". If we cannot find another resource to leverage, you will be prompted to create a new resource to proceed.',
+                context.deploymentConfigurationSettings?.containerRegistry,
+                context.deploymentConfigurationSettings?.label
+            )
         };
-    }
-
-    protected createChildOutputTreeItem(label: string, isSuccessItem: boolean): AzExtTreeItem {
-        return new GenericTreeItem(undefined, {
-            label,
-            iconPath: isSuccessItem ? activitySuccessIcon : activityFailIcon,
-            contextValue: createActivityChildContext([
-                `containerAppResourcesVerifyStep${isSuccessItem ? 'Success' : 'Fail'}ChildItem`,
-                isSuccessItem ? activitySuccessContext : activityFailContext
-            ]),
-        });
     }
 }
