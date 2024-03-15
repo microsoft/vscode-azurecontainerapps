@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { type IContainerAppContext } from "../../../IContainerAppContext";
@@ -19,17 +19,13 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
         activityChildren: []
     });
 
-    const promptSteps: AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext>[] = [
-        new RootFolderStep(),
-        new DeploymentConfigurationListStep()
-    ];
-
-    const executeSteps: AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext>[] = [];
-
     const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
         title: localize('loadWorkspaceSettingsTitle', 'Load workspace deployment configuration'),
-        promptSteps,
-        executeSteps,
+        promptSteps: [
+            new RootFolderStep(),
+            new DeploymentConfigurationListStep()
+        ],
+        executeSteps: [],
     });
 
     await wizard.prompt();
