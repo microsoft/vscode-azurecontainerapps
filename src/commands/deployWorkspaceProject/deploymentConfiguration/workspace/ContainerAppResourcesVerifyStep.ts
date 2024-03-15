@@ -38,14 +38,14 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings && (!context.resourceGroup || !context.containerApp);
+        return !!context.deploymentConfigurationSettings?.resourceGroup && !!context.deploymentConfigurationSettings?.containerApp;
     }
 
     protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppResourcesVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyContainerAppResources', 'Verify container app resources'),
+                label: localize('verifyContainerAppResources', 'Verify container app "{0}" resources', context.containerApp?.name),
                 iconPath: activitySuccessIcon,
 
                 loadMoreChildrenImpl: () => Promise.resolve([
@@ -66,7 +66,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerAppResourcesVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyContainerAppResources', 'Verify container app resources'),
+                label: localize('verifyContainerAppResources', 'Verify container app "{0}" resources', context.deploymentConfigurationSettings?.containerApp),
                 iconPath: activityFailIcon,
 
                 loadMoreChildrenImpl: () => Promise.resolve([
