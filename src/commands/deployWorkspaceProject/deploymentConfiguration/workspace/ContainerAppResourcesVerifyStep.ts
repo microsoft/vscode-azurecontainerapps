@@ -60,7 +60,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                 ])
             }),
             message: localize('verifiedContainerAppResources',
-                'Successfully verified resource group "{0}", container app "{1}", and managed environment "{2}" for configuration "{3}"',
+                'Successfully verified resource group "{0}" and container app "{1}" for configuration "{3}"',
                 this._resourceGroup?.name,
                 this._containerApp?.name,
                 context.deploymentConfigurationSettings?.label
@@ -84,7 +84,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
                         this.createChildOutputTreeItem(localize('verifyContainerAppFail', 'Verify container app "{0}"', context.deploymentConfigurationSettings?.containerApp), false),
                 ])
             }),
-            message: localize('createContainerAppFail', 'Failed to verify container app resources for configuration "{0}".  You will be prompted to create new resources to proceed.')
+            message: localize('createContainerAppFail', 'Failed to verify container app resources for configuration "{0}".  You will be prompted to create new resources to proceed.', context.deploymentConfigurationSettings?.label)
         };
     }
 
