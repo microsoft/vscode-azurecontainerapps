@@ -56,7 +56,7 @@ export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<W
                 iconPath: activityFailIcon,
             }),
             message: localize('verifyContainerRegistryFail',
-                'Failed to verify container registry "{0}" for configuration "{1}". If we cannot find another resource to leverage, you will be prompted to create a new resource to proceed.',
+                'Failed to verify container registry "{0}" for configuration "{1}".',
                 context.deploymentConfigurationSettings?.containerRegistry,
                 context.deploymentConfigurationSettings?.label
             )
