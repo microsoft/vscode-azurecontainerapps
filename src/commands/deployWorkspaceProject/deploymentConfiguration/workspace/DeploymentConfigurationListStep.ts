@@ -7,7 +7,6 @@ import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWiz
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
@@ -17,10 +16,13 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
             return;
         }
 
-        context.deploymentConfigurationSettings = (await context.ui.showQuickPick(this.getPicks(deploymentConfigurations), {
+        const pick = await context.ui.showQuickPick(this.getPicks(deploymentConfigurations), {
             placeHolder: localize('chooseDeployConfigurationSetting', 'Select an app configuration to deploy'),
             suppressPersistence: true,
-        })).data;
+        });
+
+        context.deploymentConfigurationSettings = pick.data;
+        context.configurationIdx = pick.data?.configurationIdx;
     }
 
     public shouldPrompt(context: WorkspaceDeploymentConfigurationContext): boolean {
@@ -35,20 +37,18 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
         return {
             executeSteps: [
                 // Todo: Shallow (local fs) validation step(s)
-                // Todo: environment variables parse step?
-                new ContainerAppResourcesVerifyStep(),
-                // Todo: ACR Verify step
+                // Todo: Deep (Azure resource) validation step(s)
             ]
         };
     }
 
-    private getPicks(deploymentConfigurations: DeploymentConfigurationSettings[]): IAzureQuickPickItem<DeploymentConfigurationSettings | undefined>[] {
-        const picks: IAzureQuickPickItem<DeploymentConfigurationSettings | undefined>[] = deploymentConfigurations.map(deploymentConfiguration => {
+    private getPicks(deploymentConfigurations: DeploymentConfigurationSettings[]): IAzureQuickPickItem<(DeploymentConfigurationSettings & { configurationIdx?: number }) | undefined>[] {
+        const picks: IAzureQuickPickItem<DeploymentConfigurationSettings | undefined>[] = deploymentConfigurations.map((deploymentConfiguration, i) => {
             return {
                 label: deploymentConfiguration.label ?? localize('unnamedApp', 'Unnamed app'),
                 // Show the container app name as the description by default, unless the label has the same name
                 description: deploymentConfiguration.label === deploymentConfiguration.containerApp ? undefined : deploymentConfiguration.containerApp,
-                data: deploymentConfiguration
+                data: { ...deploymentConfiguration, configurationIdx: i }
             };
         });
 
