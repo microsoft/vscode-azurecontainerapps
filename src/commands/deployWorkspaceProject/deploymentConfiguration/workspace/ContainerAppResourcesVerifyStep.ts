@@ -21,7 +21,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
-        progress.report({ message: localize('validatingContainerAppResources', 'Verifying container app resources...') });
+        progress.report({ message: localize('verifyingContainerAppResources', 'Verifying container app resources...') });
 
         const settings: DeploymentConfigurationSettings | undefined = context.deploymentConfigurationSettings;
         if (!settings?.resourceGroup || !settings?.containerApp) {
