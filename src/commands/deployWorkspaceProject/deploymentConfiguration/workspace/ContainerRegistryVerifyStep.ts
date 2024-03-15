@@ -27,6 +27,10 @@ export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<W
 
         const registries: Registry[] = await AcrListStep.getRegistries(context);
         context.containerRegistry = registries.find(r => r.name === settings.containerRegistry);
+
+        if (!context.containerRegistry) {
+            throw new Error(localize('registryNotFound', 'Container registry "{0}" not found.', settings.containerRegistry));
+        }
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
@@ -52,7 +56,7 @@ export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<W
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyContainerRegistry', 'Verify container registry "{0}"', context.containerRegistry?.name),
+                label: localize('verifyContainerRegistry', 'Verify container registry "{0}"', context.deploymentConfigurationSettings?.containerRegistry),
                 iconPath: activityFailIcon,
             }),
             message: localize('verifyContainerRegistryFail',
