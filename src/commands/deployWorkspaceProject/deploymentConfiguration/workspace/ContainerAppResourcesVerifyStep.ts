@@ -38,7 +38,7 @@ export class ContainerAppResourcesVerifyStep extends ExecuteActivityOutputStepBa
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings;
+        return !!context.deploymentConfigurationSettings && (!context.resourceGroup || !context.containerApp);
     }
 
     protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
