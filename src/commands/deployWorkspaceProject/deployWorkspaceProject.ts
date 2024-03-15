@@ -20,13 +20,13 @@ import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectRes
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
-    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
         item = undefined;
     }
+
+    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
     // Show loading indicator while we configure default values
     let defaultContextValues: Partial<DeployWorkspaceProjectContext> | undefined;
