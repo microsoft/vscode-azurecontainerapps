@@ -24,17 +24,17 @@ import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalCont
 
 // Todo: Replace existing deployWorkspaceProject command once completed, and get rid of the V2 in the name
 export async function deployWorkspaceProjectV2(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    // If an incompatible tree item is passed, treat it as if no item was passed
+    if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        item = undefined;
+    }
+
+    const subscription: AzureSubscription = item?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const containerAppContext: IContainerAppContext = Object.assign(context, {
         ...subscriptionContext,
         subscription
     });
-
-    // If an incompatible tree item is passed, treat it as if no item was passed
-    if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
-        item = undefined;
-    }
 
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
