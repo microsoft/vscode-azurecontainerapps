@@ -38,8 +38,7 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
 
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
-        // Todo: Monorepo core logic (tree item path) (https://github.com/microsoft/vscode-azurecontainerapps/issues/613)
-        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext });
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
 
