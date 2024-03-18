@@ -41,6 +41,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             suppressActivity: true,
             suppressConfirmation,
             suppressContainerAppCreation,
+            suppressProgress: true,
             suppressWizardTitle: true,
         });
 

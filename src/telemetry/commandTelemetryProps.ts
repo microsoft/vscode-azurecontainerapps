@@ -22,12 +22,6 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, Ov
 export interface DeployWorkspaceProjectTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps, IngressTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
-    // getDefaultContextValues
-    workspaceSettingsState?: 'none' | 'partial' | 'all';  // What level of workspace project settings did we detect on init?
-    settingsOverride?: 'none' | 'triggered' | 'accepted';
-    promptedForEnvironment?: 'true' | "false";
-    promptDefaultNameReason?: 'invalid' | 'unavailable';
-
     // Resources
     existingResourceGroup?: 'true' | 'false';
     existingEnvironment?: 'true' | 'false';

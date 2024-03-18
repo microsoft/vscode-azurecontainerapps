@@ -9,7 +9,12 @@ import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microso
 import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
-import { type DefaultContainerAppsResources } from "./getDefaultContainerAppsResources";
+
+interface DefaultContainerAppsResources {
+    resourceGroup?: ResourceGroup;
+    managedEnvironment?: ManagedEnvironment;
+    containerApp?: ContainerAppModel;
+}
 
 export async function getResourcesFromContainerAppHelper(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<DefaultContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);

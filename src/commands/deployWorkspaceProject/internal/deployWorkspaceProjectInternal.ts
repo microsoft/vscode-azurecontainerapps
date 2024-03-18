@@ -5,6 +5,7 @@
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext, createActivityContext } from "../../../utils/activity/activityUtils";
@@ -18,10 +19,11 @@ import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpda
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DefaultResourcesNameStep } from "../getDefaultValues/DefaultResourcesNameStep";
+import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
+import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
 
 export type DeployWorkspaceProjectInternalContext = IContainerAppContext & Partial<DeployWorkspaceProjectContext>;
 
@@ -38,6 +40,10 @@ export interface DeployWorkspaceProjectInternalOptions {
      * Suppress the creation of a container app (last potential resource creation step in the process)
      */
     suppressContainerAppCreation?: boolean;
+    /**
+     * Suppress loading progress notification
+     */
+    suppressProgress?: boolean;
     /**
      * Suppress the default wizard [prompting] title
      */
@@ -61,9 +67,22 @@ export async function deployWorkspaceProjectInternal(
         activityContext.activityChildren = [];
     }
 
+    // Show loading indicator while we configure starting values
+    let startingConfiguration: Partial<DeployWorkspaceProjectContext> | undefined;
+    await window.withProgress({
+        location: ProgressLocation.Notification,
+        cancellable: false,
+        title: options.suppressProgress ?
+            undefined :
+            localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
+    }, async () => {
+        startingConfiguration = await getStartingConfiguration({ ...context });
+    });
+
     const wizardContext: DeployWorkspaceProjectContext = {
         ...context,
-        ...activityContext
+        ...activityContext,
+        ...startingConfiguration
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [
