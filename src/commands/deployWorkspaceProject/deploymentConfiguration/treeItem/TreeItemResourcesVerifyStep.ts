@@ -27,12 +27,10 @@ export class TreeItemResourcesVerifyStep extends AzureWizardExecuteStep<TreeItem
             const containerApp: ContainerAppModel = this.treeItem.containerApp;
             context.resourceGroup = resourceGroups.find(rg => rg.name === containerApp.resourceGroup);
             context.containerApp = containerApp;
-            return;
         } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(this.treeItem)) {
             const managedEnvironment: ManagedEnvironment = this.treeItem.managedEnvironment;
             context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
-            context.managedEnvironment = this.treeItem.managedEnvironment;
-            return;
+            context.managedEnvironment = managedEnvironment;
         } else {
             const incompatibleMessage: string = localize('incompatibleTreeItem', 'An incompatible tree item was provided to Azure Container Apps for project deployment.');
             ext.outputChannel.appendLog(localize('incompatibleMessageLog', 'Error: {0}', incompatibleMessage));
