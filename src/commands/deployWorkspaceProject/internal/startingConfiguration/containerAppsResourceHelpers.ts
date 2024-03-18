@@ -10,13 +10,13 @@ import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-
 import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 
-interface DefaultContainerAppsResources {
+interface ContainerAppsResources {
     resourceGroup?: ResourceGroup;
     managedEnvironment?: ManagedEnvironment;
     containerApp?: ContainerAppModel;
 }
 
-export async function getResourcesFromContainerAppHelper(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<DefaultContainerAppsResources> {
+export async function getResourcesFromContainerAppHelper(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<ContainerAppsResources> {
     const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
     const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
@@ -32,7 +32,7 @@ export async function getResourcesFromContainerAppHelper(context: ISubscriptionA
     };
 }
 
-export async function getResourcesFromManagedEnvironmentHelper(context: ISubscriptionActionContext, managedEnvironment: ManagedEnvironment): Promise<DefaultContainerAppsResources> {
+export async function getResourcesFromManagedEnvironmentHelper(context: ISubscriptionActionContext, managedEnvironment: ManagedEnvironment): Promise<ContainerAppsResources> {
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
     const resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
 

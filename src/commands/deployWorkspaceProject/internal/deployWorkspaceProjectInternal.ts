@@ -74,7 +74,7 @@ export async function deployWorkspaceProjectInternal(
         cancellable: false,
         title: options.suppressProgress ?
             undefined :
-            localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
+            localize('loadingWorkspaceTitle', 'Loading workspace project starting configurations...')
     }, async () => {
         startingConfiguration = await getStartingConfiguration({ ...context });
     });

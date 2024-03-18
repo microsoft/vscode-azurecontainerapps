@@ -13,7 +13,7 @@ import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/Roo
 import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
 import { type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProjectInternal";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
-import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppResourceHelpers";
+import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectContext>> {
     await tryAddMissingAzureResourcesToContext(context);
