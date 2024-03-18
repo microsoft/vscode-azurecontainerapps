@@ -62,7 +62,7 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
     }
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
-        return !context.managedEnvironment;
+        return !context.containerApp && !context.managedEnvironment;
     }
 
     protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {

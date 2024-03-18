@@ -6,15 +6,12 @@
 import { type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type Workspace } from '@azure/arm-operationalinsights';
 import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { type ExecuteActivityContext, type ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
-import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { type ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
+import { type IContainerAppContext } from "../IContainerAppContext";
 
-export interface IManagedEnvironmentContext extends ISubscriptionActionContext, IResourceGroupWizardContext, ExecuteActivityContext {
-    subscription: AzureSubscription;
-
+export interface IManagedEnvironmentContext extends IContainerAppContext, IResourceGroupWizardContext, ExecuteActivityContext {
     newManagedEnvironmentName?: string;
     logAnalyticsWorkspace?: Workspace;
 
-    // created when the wizard is done executing
     managedEnvironment?: ManagedEnvironment;
 }
