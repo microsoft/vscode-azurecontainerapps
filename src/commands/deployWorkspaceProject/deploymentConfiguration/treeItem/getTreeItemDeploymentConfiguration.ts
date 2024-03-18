@@ -18,10 +18,7 @@ export async function getTreeItemDeploymentConfiguration(context: IContainerAppC
 
     const wizard: AzureWizard<TreeItemDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
         promptSteps: [new RootFolderStep()],
-        executeSteps: [
-            new TreeItemResourcesVerifyStep(item),
-            // Todo: Potentially add an ACR defaulting step that checks for an ACR to leverage within any existing resource group
-        ],
+        executeSteps: [new TreeItemResourcesVerifyStep(item)],
     });
 
     await wizard.prompt();
