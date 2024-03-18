@@ -23,10 +23,14 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
             new RootFolderStep(),
             new DockerFileItemStep(),
             new DwpManagedEnvironmentListStep()
+        ],
+        executeSteps: [
+            // Todo: Add ACR defaulting step
         ]
     });
 
     await wizard.prompt();
+    await wizard.execute();
 
     return {
         rootFolder: context.rootFolder,
@@ -47,16 +51,10 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
         return;
     } else if (context.containerApp) {
         const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
-        if (!context.resourceGroup) {
-            context.resourceGroup = resources.resourceGroup;
-        }
-        if (!context.managedEnvironment) {
-            context.managedEnvironment = resources.managedEnvironment;
-        }
+        context.resourceGroup ??= resources.resourceGroup;
+        context.managedEnvironment ??= resources.managedEnvironment;
     } else if (context.managedEnvironment) {
         const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
-        if (!context.resourceGroup) {
-            context.resourceGroup = resources.resourceGroup;
-        }
+        context.resourceGroup ??= resources.resourceGroup;
     }
 }
