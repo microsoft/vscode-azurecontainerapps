@@ -17,7 +17,7 @@ import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainer
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
-import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/treeItem/getTreeItemDeploymentConfiguration";
+import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
@@ -38,7 +38,7 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
 
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
-        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration(item);
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
 
