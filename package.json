@@ -252,6 +252,11 @@
                 "command": "containerApps.openAcrBuildLogs",
                 "title": "%containerApps.openAcrBuildLogs%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.addWorkspaceProject",
+                "title": "%containerApps.walkthrough.addWorkspaceProject%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -519,6 +524,10 @@
                 {
                     "command": "containerApps.openAcrBuildLogs",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.addWorkspaceProject",
+                    "when": "never"
                 }
             ]
         },
@@ -565,6 +574,26 @@
                         "default": true
                     }
                 }
+            }
+        ],
+        "walkthroughs": [
+            {
+                "id": "containerApps.walkthrough.gettingStarted",
+                "title": "%containerApps.walkthrough.gettingStarted.title%",
+                "description": "%containerApps.walkthrough.gettingStarted.description%",
+                "steps": [
+                    {
+                        "id": "containerApps.walkthrough.addWorkspaceProject",
+                        "title": "%containerApps.walkthrough.addWorkspaceProject.title%",
+                        "description": "%containerApps.walkthrough.addWorkspaceProject.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.addWorkspaceProject"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/add-workspace-project.md"
+                        }
+                    }
+                ]
             }
         ],
         "jsonValidation": [
