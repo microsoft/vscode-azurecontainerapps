@@ -8,7 +8,7 @@ import { dockerFilePick, dockerfileGlobPattern } from "../../../../constants";
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
-export class DockerFileItemStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
+export class DockerfileItemStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
         context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
     }

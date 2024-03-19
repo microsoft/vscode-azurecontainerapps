@@ -7,7 +7,7 @@ import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
 import { EnvironmentVariablesListStep } from "../../../image/imageSource/EnvironmentVariablesListStep";
-import { DockerFileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerFileItemStep";
+import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
@@ -20,7 +20,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
     const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(context, {
         promptSteps: [
             new RootFolderStep(),
-            new DockerFileItemStep(),
+            new DockerfileItemStep(),
             // new DwpManagedEnvironmentListStep()
         ],
         executeSteps: [
