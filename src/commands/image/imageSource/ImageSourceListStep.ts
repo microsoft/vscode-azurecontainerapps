@@ -11,6 +11,7 @@ import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage"
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
+import { DockerfileItemStep } from "./buildImageInAzure/DockerfileItemStep";
 import { ImageNameStep } from "./buildImageInAzure/ImageNameStep";
 import { OSPickStep } from "./buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "./buildImageInAzure/RootFolderStep";
@@ -18,7 +19,6 @@ import { RunStep } from "./buildImageInAzure/RunStep";
 import { SourcePathStep } from "./buildImageInAzure/SourcePathStep";
 import { TarFileStep } from "./buildImageInAzure/TarFileStep";
 import { UploadSourceCodeStep } from "./buildImageInAzure/UploadSourceCodeStep";
-import { DockerfileItemStep } from "./buildImageInAzure/dfStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
 import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
