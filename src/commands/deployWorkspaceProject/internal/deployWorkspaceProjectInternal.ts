@@ -19,7 +19,7 @@ import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpda
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DefaultResourcesNameStep } from "../getDefaultValues/DefaultResourcesNameStep";
+import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
