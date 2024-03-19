@@ -40,8 +40,8 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     private validateInput(context: DeployWorkspaceProjectInternalContext, name: string = ''): string | undefined {
         name = name.trim();
 
-        // ** Sorted from most to least strict naming rules, with priority being most strict character length since that usually gets checked first **
-        // ** This sorting should help to minimize showing conflicting validate input error messages which could be potentially confusing for users **
+        // ** Sorted from _most_ to _least_ strict naming rules, with priority being most strict character length since that usually gets checked first **
+        // ** This sorting should help to minimize the possibility of conflicting validate input error messages which could be confusing for users **
 
         if (!context.managedEnvironment && !context.newManagedEnvironmentName) {
             const result = ManagedEnvironmentNameStep.validateInput(name);

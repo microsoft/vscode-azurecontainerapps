@@ -5,17 +5,20 @@
 
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ProgressLocation, window } from "vscode";
+import { window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
 import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../../utils/localize";
+import { type IContainerAppContext } from "../IContainerAppContext";
 import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
-import { getDefaultContextValues } from "./getDefaultValues/getDefaultContextValues";
+import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
+import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
+import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
 
@@ -25,23 +28,25 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         item = undefined;
     }
 
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscription: AzureSubscription = item?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
-    // Show loading indicator while we configure default values
-    let defaultContextValues: Partial<DeployWorkspaceProjectContext> | undefined;
-    await window.withProgress({
-        location: ProgressLocation.Notification,
-        cancellable: false,
-        title: localize('loadingWorkspaceTitle', 'Loading workspace project deployment configurations...')
-    }, async () => {
-        defaultContextValues = await getDefaultContextValues({ ...context, ...subscriptionContext }, item);
-    });
-
-    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
-        ...defaultContextValues,
+    const containerAppContext: IContainerAppContext = Object.assign(context, {
         ...subscriptionContext,
         subscription
+    });
+
+    let deploymentConfiguration: DeploymentConfiguration;
+    if (item) {
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration(item);
+    } else {
+        // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
+
+        // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
+        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
+    }
+
+    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
+        ...deploymentConfiguration,
     });
 
     const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
