@@ -41,16 +41,3 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [], // Todo: revisit this
     };
 }
-
-// async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-//     if (!context.containerApp && !context.managedEnvironment) {
-//         return;
-//     } else if (context.containerApp) {
-//         const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
-//         context.resourceGroup ??= resources.resourceGroup;
-//         context.managedEnvironment ??= resources.managedEnvironment;
-//     } else if (context.managedEnvironment) {
-//         const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
-//         context.resourceGroup ??= resources.resourceGroup;
-//     }
-// }
