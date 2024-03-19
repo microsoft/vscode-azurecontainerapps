@@ -33,8 +33,8 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
         return (!context.resourceGroup && !context.newResourceGroupName) ||
             (!context.managedEnvironment && !context.newManagedEnvironmentName) ||
-            (!context.registry && !context.newRegistryName) ||
-            (!context.containerApp && !context.newContainerAppName);
+            (!context.containerApp && !context.newContainerAppName) ||
+            (!context.registry);
     }
 
     private validateInput(context: DeployWorkspaceProjectInternalContext, name: string = ''): string | undefined {
