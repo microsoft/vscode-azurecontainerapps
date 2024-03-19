@@ -54,6 +54,7 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,
+        suppressProgress: false,
         suppressWizardTitle: false
     });
 
