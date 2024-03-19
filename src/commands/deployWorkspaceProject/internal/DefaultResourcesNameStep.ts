@@ -34,7 +34,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         return (!context.resourceGroup && !context.newResourceGroupName) ||
             (!context.managedEnvironment && !context.newManagedEnvironmentName) ||
             (!context.containerApp && !context.newContainerAppName) ||
-            (!context.registry);
+            !context.registry;
     }
 
     private validateInput(context: DeployWorkspaceProjectInternalContext, name: string = ''): string | undefined {
