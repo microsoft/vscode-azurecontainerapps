@@ -10,9 +10,10 @@ import { EnvironmentVariablesListStep } from "../../../image/imageSource/Environ
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
 import { type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProjectInternal";
+import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectContext>> {
-    // await tryAddMissingAzureResourcesToContext(context);
+    await tryAddMissingAzureResourcesToContext(context);
 
     const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(context, {
         promptSteps: [
@@ -40,4 +41,17 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         os: AcrBuildSupportedOS.Linux,
         environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [], // Todo: revisit this
     };
+}
+
+async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+    if (!context.containerApp && !context.managedEnvironment) {
+        return;
+    } else if (context.containerApp) {
+        const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
+        context.resourceGroup ??= resources.resourceGroup;
+        context.managedEnvironment ??= resources.managedEnvironment;
+    } else if (context.managedEnvironment) {
+        const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
+        context.resourceGroup ??= resources.resourceGroup;
+    }
 }
