@@ -10,8 +10,10 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getWorkspaceFolderFromPath } from "../../utils/workspaceUtils";
+import { type DeployWorkspaceProjectContext } from "../deployWorkspaceProject/DeployWorkspaceProjectContext";
 import { getDeployWorkspaceProjectResults, type DeployWorkspaceProjectResults } from "../deployWorkspaceProject/getDeployWorkspaceProjectResults";
-import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/internal/deployWorkspaceProjectInternal";
+import { type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/internal/DeployWorkspaceProjectInternalContext";
+import { deployWorkspaceProjectInternal } from "../deployWorkspaceProject/internal/deployWorkspaceProjectInternal";
 import type * as api from "./vscode-azurecontainerapps.api";
 
 export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
@@ -37,7 +39,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
         });
 
-        const deployWorkspaceProjectResultContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+        const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
             suppressActivity: true,
             suppressConfirmation,
             suppressContainerAppCreation,
@@ -45,7 +47,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             suppressWizardTitle: true,
         });
 
-        return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
+        return await getDeployWorkspaceProjectResults(deployWorkspaceProjectContext);
     }) ?? {};
 }
 

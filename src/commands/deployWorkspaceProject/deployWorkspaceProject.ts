@@ -8,7 +8,7 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
-import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/commandTelemetryProps";
+import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/deployWorkspaceProjectTelemetryProps";
 import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../../utils/localize";
@@ -20,7 +20,8 @@ import { type DeploymentConfiguration } from "./deploymentConfiguration/Deployme
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
-import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
+import { type DeployWorkspaceProjectInternalContext } from "./internal/DeployWorkspaceProjectInternalContext";
+import { deployWorkspaceProjectInternal } from "./internal/deployWorkspaceProjectInternal";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -49,7 +50,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         ...deploymentConfiguration,
     });
 
-    const deployWorkspaceProjectResultContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+    const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,
@@ -57,8 +58,8 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         suppressWizardTitle: false
     });
 
-    displayNotification(deployWorkspaceProjectResultContext);
-    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectResultContext);
+    displayNotification(deployWorkspaceProjectContext);
+    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectContext);
 }
 
 function displayNotification(context: DeployWorkspaceProjectContext): void {

@@ -7,7 +7,7 @@ import { type ContainerRegistryManagementClient, type RegistryNameStatus } from 
 import { AzureWizardPromptStep, randomUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { type DeployWorkspaceProjectContext } from "../../../../../deployWorkspaceProject/DeployWorkspaceProjectContext";
+import { type DeployWorkspaceProjectInternalContext } from "../../../../../deployWorkspaceProject/internal/DeployWorkspaceProjectInternalContext";
 import { type CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
@@ -53,7 +53,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         }
     }
 
-    public static async tryGenerateRelatedName(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
+    public static async tryGenerateRelatedName(context: DeployWorkspaceProjectInternalContext, name: string): Promise<string | undefined> {
         let registryAvailable: boolean = false;
         let generatedName: string = '';
 

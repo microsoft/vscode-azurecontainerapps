@@ -12,7 +12,7 @@ import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameS
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
-import { type DeployWorkspaceProjectInternalContext } from "./deployWorkspaceProjectInternal";
+import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
 export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {

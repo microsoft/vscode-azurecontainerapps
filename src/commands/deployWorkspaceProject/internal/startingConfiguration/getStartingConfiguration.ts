@@ -10,12 +10,11 @@ import { EnvironmentVariablesListStep } from "../../../image/imageSource/Environ
 import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
-import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
-import { type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProjectInternal";
+import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
-export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectContext>> {
+export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
     const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(context, {
