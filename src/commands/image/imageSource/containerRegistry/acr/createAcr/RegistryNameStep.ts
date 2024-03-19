@@ -14,7 +14,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     public async prompt(context: CreateAcrContext): Promise<void> {
         context.newRegistryName = await context.ui.showInputBox({
             prompt: localize('registryName', 'Enter a name for the new registry'),
-            validateInput: this.validateInput,
+            validateInput: RegistryNameStep.validateInput,
             asyncValidationTask: (value: string): Promise<string | undefined> => this.validateNameAvalability(context, value)
         });
     }
@@ -23,7 +23,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         return !context.newRegistryName;
     }
 
-    private validateInput(name: string | undefined): string | undefined {
+    public static validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
         const { minLength, maxLength } = { minLength: 5, maxLength: 50 };
