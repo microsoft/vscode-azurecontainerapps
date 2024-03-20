@@ -18,5 +18,5 @@ export interface DeploymentConfiguration {
     resourceGroup?: ResourceGroup;
     managedEnvironment?: ManagedEnvironment;
     containerApp?: ContainerAppModel;
-    containerRegistry?: Registry;
+    registry?: Registry;
 }

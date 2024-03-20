@@ -44,6 +44,6 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
         envPath: wizardContext.envPath,
         resourceGroup: wizardContext.resourceGroup,
         containerApp: wizardContext.containerApp,
-        containerRegistry: wizardContext.containerRegistry
+        registry: wizardContext.registry
     };
 }
