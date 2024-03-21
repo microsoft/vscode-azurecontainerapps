@@ -34,7 +34,7 @@ export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<W
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings?.containerRegistry;
+        return !!context.deploymentConfigurationSettings?.containerRegistry && !context.registry;
     }
 
     protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
