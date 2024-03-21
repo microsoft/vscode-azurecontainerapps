@@ -14,7 +14,7 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class TryUseExistingWorkspaceContainerRegistryStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+export class TryFindContainerRegistryFromWorkspaceSettingsStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 220;  /** Todo: Figure out a good priority level */
     protected configurationLabel?: string;
 
