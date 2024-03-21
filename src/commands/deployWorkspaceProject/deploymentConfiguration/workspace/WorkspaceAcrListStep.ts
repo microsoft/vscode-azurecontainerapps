@@ -15,9 +15,7 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 
 export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
     public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
-        const deploymentConfigurations: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder')) ?? [];
-
-        context.registry = (await context.ui.showQuickPick(this.getPicks(context, deploymentConfigurations), {
+        context.registry = (await context.ui.showQuickPick(this.getPicks(context), {
             placeHolder: localize('selectContainerRegistry', 'Select an Azure Container Registry'),
             suppressPersistence: true,
         })).data;
@@ -27,7 +25,8 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
         return !context.deploymentConfigurationSettings?.containerRegistry;
     }
 
-    private async getPicks(context: WorkspaceDeploymentConfigurationContext, deploymentConfigurations: DeploymentConfigurationSettings[]): Promise<IAzureQuickPickItem<Registry | undefined>[]> {
+    private async getPicks(context: WorkspaceDeploymentConfigurationContext): Promise<IAzureQuickPickItem<Registry | undefined>[]> {
+        const deploymentConfigurations: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder')) ?? [];
         const registries: Registry[] = await AcrListStep.getRegistries(context);
 
         const configurationRegistries: Set<string> = new Set();
@@ -35,48 +34,69 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
             configurationRegistries.add(config.containerRegistry || 'Unnamed app');
         }
 
-        const configurationItems: IAzureQuickPickItem<Registry>[] = [];
-        const otherItems: IAzureQuickPickItem<Registry>[] = [];
-
-        for (const registry of registries) {
-            const registryName: string = nonNullProp(registry, 'name');
-            const parsedId: ParsedAzureResourceId = parseAzureResourceId(nonNullProp(registry, 'id'));
-            const registryItem: IAzureQuickPickItem<Registry> = {
-                label: registryName,
-                description: `Resource group: "${parsedId.resourceGroup}"`,
-                data: registry
-            };
-
-            if (configurationRegistries.has(registryName)) {
-                configurationItems.push(registryItem);
-            } else {
-                otherItems.push(registryItem);
-            }
-        }
-
-        const createPick: IAzureQuickPickItem<undefined> = {
-            label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
-            data: undefined
-        };
-
-        const picks: IAzureQuickPickItem<Registry | undefined>[] = [
-            // Deployment configuration registries
+        const deploymentConfigurationItems: IAzureQuickPickItem<Registry | undefined>[] = [
             {
                 label: localize('deploymentConfigurations', 'Deployment Configurations'),
                 kind: QuickPickItemKind.Separator,
                 data: undefined  // Separator picks aren't selectable
-            },
-            ...configurationItems,
+            }
+        ];
 
-            // Other registries
+        const resourceGroupItems: Map<string, IAzureQuickPickItem<Registry | undefined>[]> = new Map();
+
+        for (const registry of registries) {
+            const registryName: string = nonNullProp(registry, 'name');
+            const parsedId: ParsedAzureResourceId = parseAzureResourceId(nonNullProp(registry, 'id'));
+
+            const registryItem: IAzureQuickPickItem<Registry> = {
+                label: registryName,
+                data: registry
+            };
+
+            if (configurationRegistries.has(registryName)) {
+                deploymentConfigurationItems.push(registryItem);
+            }
+
+            const items: IAzureQuickPickItem<Registry | undefined>[] = resourceGroupItems.get(parsedId.resourceGroup) ?? [
+                {
+                    label: parsedId.resourceGroup,
+                    kind: QuickPickItemKind.Separator,
+                    data: undefined  // Separator picks aren't selectable
+                }
+            ];
+            resourceGroupItems.set(parsedId.resourceGroup, items.concat(registryItem));
+        }
+
+        const createPicks: IAzureQuickPickItem<undefined>[] = [
             {
-                label: localize('other', 'Other'),
+                label: localize('create', 'Create'),
                 kind: QuickPickItemKind.Separator,
-                data: undefined  // Separator picks aren't selectable
+                data: undefined
             },
-            ...otherItems,
+            {
+                label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
+                data: undefined
+            }
+        ];
 
-            createPick
+        const picks: IAzureQuickPickItem<Registry | undefined>[] = [
+            ...deploymentConfigurationItems,
+            ...resourceGroupItems.get(context.deploymentConfigurationSettings?.resourceGroup ?? '') ?? [],  // If there's a deployment resource group, sort those ACRs on top
+            ...Array.from(resourceGroupItems.keys())
+                .reduce<IAzureQuickPickItem<Registry | undefined>[]>((accItems, key) => {
+                    if (key === context.deploymentConfigurationSettings?.resourceGroup) {
+                        // Skip this resource group since we already sorted it to the top
+                        return accItems;
+                    }
+
+                    const items = resourceGroupItems.get(key);
+                    if (!items) {
+                        return accItems;
+                    }
+
+                    return accItems.concat(items);
+                }, []),
+            ...createPicks
         ];
 
         return picks;
