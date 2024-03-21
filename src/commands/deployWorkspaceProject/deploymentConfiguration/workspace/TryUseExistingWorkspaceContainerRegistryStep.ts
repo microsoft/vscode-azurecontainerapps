@@ -16,7 +16,6 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 
 export class TryUseExistingWorkspaceContainerRegistryStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 220;  /** Todo: Figure out a good priority level */
-
     protected configurationLabel?: string;
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -63,11 +62,11 @@ export class TryUseExistingWorkspaceContainerRegistryStep extends ExecuteActivit
     protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['tryUseExistingWorkspaceAcrStepSuccessItem', activitySuccessContext]),
-                label: localize('useExistingWorkspaceAcrSuccessLabel', 'Use available container registry "{0}" from configuration "{1}"', context.registry?.name, this.configurationLabel),
+                contextValue: createActivityChildContext(['tryUseExistingWorkspaceContainerRegistryStepSuccessItem', activitySuccessContext]),
+                label: localize('tryUseExistingWorkspaceContainerRegistrySuccessLabel', 'Use available container registry "{0}" from configuration "{1}"', context.registry?.name, this.configurationLabel),
                 iconPath: activitySuccessIcon,
             }),
-            message: localize('useExistingWorkspaceAcrSuccess', 'Using an available container registry "{0}" from configuration "{1}".', context.registry?.name, this.configurationLabel)
+            message: localize('tryUseExistingWorkspaceContainerRegistrySuccess', 'Using an available container registry "{0}" from configuration "{1}".', context.registry?.name, this.configurationLabel)
         };
     }
 
