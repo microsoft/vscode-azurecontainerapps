@@ -14,8 +14,10 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class TryUseExistingWorkspaceRegistryStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+export class TryUseExistingWorkspaceContainerRegistryStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 220;  /** Todo: Figure out a good priority level */
+
+    protected configurationLabel?: string;
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
@@ -26,6 +28,7 @@ export class TryUseExistingWorkspaceRegistryStep extends ExecuteActivityOutputSt
         }
 
         progress.report({ message: localize('searchingRegistries', 'Searching for available registry...') });
+
         const registries: Registry[] = await AcrListStep.getRegistries(context);
         const registryMap: Map<string, Registry> = new Map();
 
@@ -33,17 +36,17 @@ export class TryUseExistingWorkspaceRegistryStep extends ExecuteActivityOutputSt
             if (!registry.name) {
                 continue;
             }
-
             registryMap.set(registry.name, registry);
         }
 
-        for (const setting of settings) {
+        for (const [i, setting] of settings.entries()) {
             if (!setting.containerRegistry) {
                 continue;
             }
 
             if (registryMap.has(setting.containerRegistry)) {
                 context.registry = registryMap.get(setting.containerRegistry);
+                this.configurationLabel = settings[i].label || 'Unnamed app';
                 break;
             }
         }
@@ -61,10 +64,10 @@ export class TryUseExistingWorkspaceRegistryStep extends ExecuteActivityOutputSt
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['tryUseExistingWorkspaceAcrStepSuccessItem', activitySuccessContext]),
-                label: localize('useExistingWorkspaceAcrSuccessLabel', 'Use an existing workspace container registry "{0}"', context.registry?.name),
+                label: localize('useExistingWorkspaceAcrSuccessLabel', 'Use available container registry "{0}" from configuration "{1}"', context.registry?.name, this.configurationLabel),
                 iconPath: activitySuccessIcon,
             }),
-            message: localize('useExistingWorkspaceAcrSuccess', 'Searched workspace settings and found container registry "{0}" to leverage.', context.registry?.name)
+            message: localize('useExistingWorkspaceAcrSuccess', 'Using an available container registry "{0}" from configuration "{1}".', context.registry?.name, this.configurationLabel)
         };
     }
 
