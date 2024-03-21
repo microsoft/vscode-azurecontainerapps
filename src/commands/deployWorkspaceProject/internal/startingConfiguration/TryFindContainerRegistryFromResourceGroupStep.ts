@@ -12,12 +12,7 @@ import { localize } from "../../../../utils/localize";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
-/**
- * Azure Wizard execute step which finds and returns the first available Azure Container Registry within the provided resource group
- * @requires context.resourceGroup
- * @populates context.registry
- */
-export class TryFindContainerRegistryInResourceGroupStep extends AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext> {
+export class TryFindContainerRegistryFromResourceGroupStep extends AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext> {
     public priority: number = 200;  /** Todo: Figure out a good priority level */
 
     public async execute(context: DeployWorkspaceProjectInternalContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -29,7 +24,9 @@ export class TryFindContainerRegistryInResourceGroupStep extends AzureWizardExec
             return resourceGroupName === context.resourceGroup?.name;
         });
 
-        ext.outputChannel.appendLog(localize());
+        if (context.registry) {
+            ext.outputChannel.appendLog(localize('foundContainerRegistry', 'Found an available container registry "{0}" to use from resource group "{1}".', context.registry.name, context.resourceGroup?.name));
+        }
     }
 
     public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {

@@ -12,7 +12,7 @@ import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzur
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
-import { TryFindContainerRegistryInResourceGroupStep } from "./TryUseExistingResourceGroupsContainerRegistryStep";
+import { TryFindContainerRegistryFromResourceGroupStep } from "./TryFindContainerRegistryFromResourceGroupStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
@@ -25,7 +25,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
             new DwpManagedEnvironmentListStep()
         ],
         executeSteps: [
-            new TryFindContainerRegistryInResourceGroupStep()
+            new TryFindContainerRegistryFromResourceGroupStep()
         ]
     });
 
