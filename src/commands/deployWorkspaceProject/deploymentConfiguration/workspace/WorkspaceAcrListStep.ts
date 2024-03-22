@@ -31,7 +31,10 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
 
         const configurationRegistries: Set<string> = new Set();
         for (const config of deploymentConfigurations) {
-            configurationRegistries.add(config.containerRegistry || 'Unnamed app');
+            if (!config.containerRegistry) {
+                continue;
+            }
+            configurationRegistries.add(config.containerRegistry);
         }
 
         const deploymentConfigurationItems: IAzureQuickPickItem<Registry | undefined>[] = [
