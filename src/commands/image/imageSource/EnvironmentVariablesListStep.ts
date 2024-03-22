@@ -47,7 +47,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
     public async configureBeforePrompt(context: EnvironmentVariablesContext): Promise<void> {
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
-            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
         }
 
         if (context.envPath) {
@@ -134,7 +134,6 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
                     iconPath: activitySuccessIcon
                 })
             );
-
             ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration.'));
         }
     }
