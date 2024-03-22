@@ -48,6 +48,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,
+        suppressProgress: false,
         suppressWizardTitle: false
     });
 
