@@ -29,24 +29,15 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
         const deploymentConfigurations: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder')) ?? [];
         const registries: Registry[] = await AcrListStep.getRegistries(context);
 
-        const configurationRegistries: Set<string> = new Set();
-        for (const config of deploymentConfigurations) {
+        const configurationRegistries: Map<string, number> = new Map();
+        for (const [i, config] of deploymentConfigurations.entries()) {
             if (!config.containerRegistry) {
                 continue;
             }
-            configurationRegistries.add(config.containerRegistry);
+            configurationRegistries.set(config.containerRegistry, i);
         }
 
-        const deploymentConfigurationItems: IAzureQuickPickItem<Registry | undefined>[] = [
-            {
-                label: localize('deploymentConfigurations', 'Deployment Configurations'),
-                kind: QuickPickItemKind.Separator,
-                data: undefined  // Separator picks aren't selectable
-            }
-        ];
-
         const resourceGroupItems: Map<string, IAzureQuickPickItem<Registry | undefined>[]> = new Map();
-
         for (const registry of registries) {
             const registryName: string = nonNullProp(registry, 'name');
             const parsedId: ParsedAzureResourceId = parseAzureResourceId(nonNullProp(registry, 'id'));
@@ -57,7 +48,8 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
             };
 
             if (configurationRegistries.has(registryName)) {
-                deploymentConfigurationItems.push(registryItem);
+                const i: number | undefined = configurationRegistries.get(registryName);
+                registryItem.description = i ? `${deploymentConfigurations[i].label} $(gear)` : undefined;
             }
 
             const items: IAzureQuickPickItem<Registry | undefined>[] = resourceGroupItems.get(parsedId.resourceGroup) ?? [
@@ -70,20 +62,13 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
             resourceGroupItems.set(parsedId.resourceGroup, items.concat(registryItem));
         }
 
-        const createPicks: IAzureQuickPickItem<undefined>[] = [
-            {
-                label: localize('create', 'Create'),
-                kind: QuickPickItemKind.Separator,
-                data: undefined
-            },
-            {
-                label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
-                data: undefined
-            }
-        ];
+        const createPick: IAzureQuickPickItem<undefined> = {
+            label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
+            data: undefined
+        };
 
         const picks: IAzureQuickPickItem<Registry | undefined>[] = [
-            ...deploymentConfigurationItems,
+            createPick,
             ...resourceGroupItems.get(context.deploymentConfigurationSettings?.resourceGroup ?? '') ?? [],  // If there's a deployment resource group, sort those ACRs on top
             ...Array.from(resourceGroupItems.keys())
                 .reduce<IAzureQuickPickItem<Registry | undefined>[]>((accItems, key) => {
@@ -99,7 +84,6 @@ export class WorkspaceAcrListStep extends AzureWizardPromptStep<WorkspaceDeploym
 
                     return accItems.concat(items);
                 }, []),
-            ...createPicks
         ];
 
         return picks;
