@@ -8,6 +8,7 @@ import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
+import { ContainerRegistryVerifyStep } from "./ContainerRegistryVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
@@ -38,8 +39,8 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
         return {
             executeSteps: [
                 // Todo: Shallow (local fs) validation step(s)
-                // Todo: Deep (Azure resource) validation step(s)
-                new ContainerAppResourcesVerifyStep()
+                new ContainerAppResourcesVerifyStep(),
+                new ContainerRegistryVerifyStep()
             ]
         };
     }
