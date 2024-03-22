@@ -17,29 +17,28 @@ import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainer
 import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
-import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/treeItem/getTreeItemDeploymentConfiguration";
+import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
 
 // Todo: Replace existing deployWorkspaceProject command once completed, and get rid of the V2 in the name
 export async function deployWorkspaceProjectV2(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    // If an incompatible tree item is passed, treat it as if no item was passed
+    if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        item = undefined;
+    }
+
+    const subscription: AzureSubscription = item?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const containerAppContext: IContainerAppContext = Object.assign(context, {
         ...subscriptionContext,
         subscription
     });
 
-    // If an incompatible tree item is passed, treat it as if no item was passed
-    if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
-        item = undefined;
-    }
-
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
-        // Todo: Monorepo core logic (tree item path) (https://github.com/microsoft/vscode-azurecontainerapps/issues/613)
-        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext });
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration(item);
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
 
