@@ -17,6 +17,10 @@ interface SelectWorkspaceFileOptions extends OpenDialogOptions {
      */
     allowSkip?: boolean;
     /**
+     * Optional label for the 'skipForNow' option; will default to 'Skip for now' if not provided
+     */
+    skipLabel?: string;
+    /**
      * If searching through the workspace file path returns only one matching result, automatically return its path without additional prompting
      */
     autoSelectIfOne?: boolean;
@@ -68,9 +72,10 @@ export async function selectWorkspaceFile(
 
         quickPicks.push(browseItem);
 
+        const label = options.skipLabel ?? localize('skipForNow', '$(clock) Skip for now');
         if (options.allowSkip) {
             quickPicks.push({
-                label: localize('skipForNow', '$(clock) Skip for now'),
+                label,
                 description: '',
                 data: skipForNow
             });
