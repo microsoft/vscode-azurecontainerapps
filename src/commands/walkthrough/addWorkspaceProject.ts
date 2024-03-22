@@ -9,7 +9,7 @@ import { localize } from "../../utils/localize";
 
 export async function addWorkspaceProjectWalkthrough(context: IActionContext): Promise<void> {
     if (workspace.workspaceFolders?.length) {
-        const warning: string = localize('workspaceWarning', 'Detected existing workspace content. This tutorial requires that you start from an empty workspace.\n\nPress continue to reset your current workspace.');
+        const warning: string = localize('workspaceWarning', 'This tutorial requires that you start from an empty workspace.\n\nPress continue to reset your current workspace.');
 
         const items: MessageItem[] = [{ title: localize('continue', 'Continue') }];
         await context.ui.showWarningMessage(warning, { modal: true, stepName: 'addWorkspaceProject.emptyWorkspace' }, ...items);
