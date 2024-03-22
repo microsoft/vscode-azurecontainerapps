@@ -86,13 +86,13 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
             { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true, skipLabel }, allEnvFilesGlobPattern);
 
         if (!envFileFsPath) {
-            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
+            this._setEnvironmentVariableOption = existingData ? SetEnvironmentVariableOption.UseExisting : SetEnvironmentVariableOption.SkipForNow;
             return existingData;
         }
 
-        const data = await AzExtFsExtra.readFile(envFileFsPath);
-        this._setEnvironmentVariableOption = data ? SetEnvironmentVariableOption.ProvideFile : SetEnvironmentVariableOption.SkipForNow;
+        this._setEnvironmentVariableOption = SetEnvironmentVariableOption.ProvideFile;
 
+        const data = await AzExtFsExtra.readFile(envFileFsPath);
         return parse(data);
     }
 
