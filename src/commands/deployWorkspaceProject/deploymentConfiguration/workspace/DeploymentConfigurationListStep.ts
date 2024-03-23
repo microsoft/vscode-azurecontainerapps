@@ -9,6 +9,7 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
 import { ContainerRegistryVerifyStep } from "./ContainerRegistryVerifyStep";
+import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
@@ -38,7 +39,7 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
         return {
             executeSteps: [
-                // Todo: Shallow (local fs) validation step(s)
+                new FilePathsVerifyStep(),
                 new ContainerAppResourcesVerifyStep(),
                 new ContainerRegistryVerifyStep()
             ]
