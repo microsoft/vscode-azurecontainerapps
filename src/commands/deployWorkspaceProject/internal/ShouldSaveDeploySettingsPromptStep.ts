@@ -4,6 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import * as path from "path";
+import { type WorkspaceFolder } from "vscode";
 import { localize } from "../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
@@ -20,14 +22,17 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if (context.configurationIdx !== undefined) {
-            const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
+            const rootFolder: WorkspaceFolder = nonNullProp(context, 'rootFolder');
+            const rootPath: string = rootFolder.uri.fsPath;
+
+            const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder);
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
             const hasNewSettings: boolean =
                 setting?.type !== 'AcrDockerBuildRequest' ||
-                (context.dockerfilePath && setting?.dockerfilePath !== context.dockerfilePath) ||
-                (context.envPath && setting?.envPath !== context.envPath) ||
-                (context.srcPath && setting?.srcPath !== context.srcPath) ||
+                (context.dockerfilePath && convertRelativeToAbsolutePath(rootPath, setting?.dockerfilePath) !== context.dockerfilePath) ||
+                (context.envPath && convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath) ||
+                (context.srcPath && convertRelativeToAbsolutePath(rootPath, setting?.srcPath) !== context.srcPath) ||
                 (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name) ||
                 (!!context.containerApp && setting?.containerApp !== context.containerApp.name) ||
                 (!!context.registry && setting?.containerRegistry !== context.registry.name);
@@ -58,4 +63,12 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
         return context.shouldSaveDeploySettings === undefined;
     }
+}
+
+function convertRelativeToAbsolutePath(rootPath: string, relativePath: string | undefined): string | undefined {
+    if (!relativePath) {
+        return undefined;
+    }
+
+    return path.join(rootPath, relativePath);
 }
