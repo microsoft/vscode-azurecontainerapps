@@ -20,7 +20,6 @@ export enum SetEnvironmentVariableOption {
     NoDotEnv = 'noDotEnv',
     SkipForNow = 'skipForNow',
     ProvideFile = 'provideFile',
-    EnvPath = 'envPath',
     UseExisting = 'useExisting'
 }
 
@@ -32,11 +31,15 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
 
     public async prompt(context: EnvironmentVariablesContext): Promise<void> {
-        const envData: DotenvParseOutput | undefined = await this.selectEnvironmentSettings(context);
-        if (!envData) {
-            context.environmentVariables = [];
+        // since we only allow one container, we can assume that we want the first container's env settings
+        const existingData = context.containerApp?.template?.containers?.[0].env;
+        context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
+
+        if (!context.envPath && existingData) {
+            context.environmentVariables = existingData;
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
         } else {
-            context.environmentVariables = Object.keys(envData).map(name => { return { name, value: envData[name] } });
+            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
         }
 
         if (this._setEnvironmentVariableOption) {
@@ -50,50 +53,35 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
         }
 
-        if (context.envPath) {
-            context.telemetry.properties.environmentVariableFileCount = undefined;
-            context.environmentVariables = await EnvironmentVariablesListStep.getEnvironmentVariablesFromEnvPath(context.envPath);
-            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.EnvPath;
-        }
-
         if (this._setEnvironmentVariableOption) {
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
-    }
-
-    public static async getEnvironmentVariablesFromEnvPath(envPath: string): Promise<EnvironmentVar[]> {
-        if (!await AzExtFsExtra.pathExists(envPath)) {
-            return [];
-        }
-
-        const data: string = await AzExtFsExtra.readFile(envPath);
-        const envData: DotenvParseOutput = parse(data);
-
-        return Object.keys(envData).map(name => { return { name, value: envData[name] } });
     }
 
     public shouldPrompt(context: EnvironmentVariablesContext): boolean {
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
-    private async selectEnvironmentSettings(context: EnvironmentVariablesContext): Promise<DotenvParseOutput | undefined> {
+    private async promptForEnvPath(context: EnvironmentVariablesContext, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
-        // since we only allow one container, we can assume that we want the first container's env settings
-        const existingData: DotenvParseOutput | undefined = context.containerApp?.template?.containers?.[0].env as DotenvParseOutput | undefined;
-        const skipLabel: string | undefined = existingData ? localize('useExisting', 'Use existing configuration') : undefined;
+        const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
-        const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
+        return await selectWorkspaceFile(context, placeHolder,
             { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true, skipLabel }, allEnvFilesGlobPattern);
+    }
 
-        if (!envFileFsPath) {
-            this._setEnvironmentVariableOption = existingData ? SetEnvironmentVariableOption.UseExisting : SetEnvironmentVariableOption.SkipForNow;
-            return existingData;
+    private async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
+        if (!envPath || !await AzExtFsExtra.pathExists(envPath)) {
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.SkipForNow;
+            return [];
         }
 
         this._setEnvironmentVariableOption = SetEnvironmentVariableOption.ProvideFile;
 
-        const data = await AzExtFsExtra.readFile(envFileFsPath);
-        return parse(data);
+        const data: string = await AzExtFsExtra.readFile(envPath);
+        const envData: DotenvParseOutput = parse(data);
+
+        return Object.keys(envData).map(name => { return { name, value: envData[name] } });
     }
 
     public static async workspaceHasEnvFile(): Promise<boolean> {
