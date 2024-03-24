@@ -41,7 +41,11 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         newRegistrySku: KnownSkuName.Basic,
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
-        environmentVariables: await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [], // Todo: revisit this
+        envPath: context.envPath,
+        environmentVariables:
+            context.envPath ?
+                undefined /** No need to set anything if there's an envPath, the step will handle parsing the data for us */ :
+                await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [] /** The equivalent of "skipForNow" */,
     };
 }
 
