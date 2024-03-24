@@ -50,5 +50,15 @@
     "containerApps.openAcrBuildLogs": "Open Azure Container Registry Build Logs",
     "containerApps.deployWorkspaceProject.containerAppName": "When deploying from a local workspace project, the name of the target container app to deploy to.",
     "containerApps.deployWorkspaceProject.containerAppResourceGroupName": "When deploying from a local workspace project, the name of the target container app's resource group.",
-    "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images."
+    "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images.",
+    "containerApps.deploymentConfiguration": "A saved deployment configuration used for quickly redeploying a workspace project to a container app.",
+    "containerApps.deploymentConfiguration.label": "The label to show when displaying the configuration. Personalize this to best suit your needs.",
+    "containerApps.deploymentConfiguration.type": "Indicates the deployment strategy that this configuration should use.",
+    "containerApps.deploymentConfiguration.dockerfilePath": "The relative path from your project's root directory to the Dockerfile.",
+    "containerApps.deploymentConfiguration.srcPath": "The relative path from your project's root directory to the deployment folder.",
+    "containerApps.deploymentConfiguration.envPath": "The relative path from your project's root directory to the environment variables file (.env).",
+    "containerApps.deploymentConfiguration.resourceGroup": "The name of the target container app's resource group.",
+    "containerApps.deploymentConfiguration.containerApp": "The name of the target container app.",
+    "containerApps.deploymentConfiguration.containerRegistry": "The name of the container registry to use for storing and building images.",
+    "containerApps.deploymentConfigurations": "A list of saved deployment configurations used for quickly redeploying a workspace project to a container app."
 }
