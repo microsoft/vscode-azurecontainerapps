@@ -30,14 +30,14 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
             label: context.configurationIdx && deploymentConfigurations?.[context.configurationIdx].label || context.containerApp?.name,
             type: 'AcrDockerBuildRequest',
             dockerfilePath: path.relative(rootFolder.uri.fsPath, nonNullProp(context, 'dockerfilePath')),
-            srcPath: path.relative(rootFolder.uri.fsPath, context.srcPath || rootFolder.uri.fsPath),
+            srcPath: path.relative(rootFolder.uri.fsPath, context.srcPath || rootFolder.uri.fsPath) || ".",
             envPath: path.relative(rootFolder.uri.fsPath, nonNullProp(context, 'envPath')),
             resourceGroup: context.resourceGroup?.name,
             containerApp: context.containerApp?.name,
             containerRegistry: context.registry?.name,
         };
 
-        if (context.configurationIdx) {
+        if (context.configurationIdx !== undefined) {
             deploymentConfigurations[context.configurationIdx] = deploymentConfiguration;
         } else {
             deploymentConfigurations.push(deploymentConfiguration);
