@@ -32,7 +32,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
                 (!!context.containerApp && setting?.containerApp !== context.containerApp.name) ||
                 (!!context.registry && setting?.containerRegistry !== context.registry.name);
 
-            if (hasNewSettings) {
+            if (!hasNewSettings) {
                 context.telemetry.properties.hasNewSettings = 'false';
                 return;
             }
