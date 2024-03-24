@@ -43,7 +43,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
             deploymentConfigurations.push(deploymentConfiguration);
         }
 
-        await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'), deploymentConfigurations);
+        await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(rootFolder, deploymentConfigurations);
     }
 
     public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {
