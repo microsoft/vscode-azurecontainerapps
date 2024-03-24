@@ -27,6 +27,11 @@ type EnvironmentVariablesContext = ImageSourceBaseContext & SetTelemetryProps<Te
 
 const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
+// Use existing
+// No Dot Env
+// Select dot env new app
+// Select with env path
+
 export class EnvironmentVariablesListStep extends AzureWizardPromptStep<EnvironmentVariablesContext> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
 
