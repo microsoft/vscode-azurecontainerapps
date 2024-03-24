@@ -16,6 +16,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
             const hasNewSettings: boolean =
+                setting?.type !== 'AcrDockerBuildRequest' ||
                 (context.dockerfilePath && setting?.dockerfilePath !== context.dockerfilePath) ||
                 (context.envPath && setting?.envPath !== context.envPath) ||
                 (context.srcPath && setting?.srcPath !== context.srcPath) ||
@@ -24,12 +25,12 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
                 (!!context.registry && setting?.containerRegistry !== context.registry.name);
 
             if (hasNewSettings) {
-                context.telemetry.properties.noNewSettings = 'true';
+                context.telemetry.properties.hasNewSettings = 'false';
                 return;
             }
         }
 
-        context.telemetry.properties.noNewSettings = 'false';
+        context.telemetry.properties.hasNewSettings = 'true';
 
         const saveOrOverwrite: string = context.configurationIdx ? localize('overwrite', 'overwrite') : localize('save', 'save');
         const saveItem = { title: localize('saveItem', 'Save') };
