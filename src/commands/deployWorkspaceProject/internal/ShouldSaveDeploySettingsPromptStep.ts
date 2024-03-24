@@ -19,7 +19,7 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-        if (context.configurationIdx) {
+        if (context.configurationIdx !== undefined) {
             const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
