@@ -44,7 +44,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         envPath: context.envPath,
         environmentVariables:
             context.envPath ?
-                undefined /** No need to set anything if there's an envPath, the step will automatically parse the data for us */ :
+                undefined /** No need to set anything if there's an envPath, the step will handle parsing the data for us */ :
                 await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [],
     };
 }
