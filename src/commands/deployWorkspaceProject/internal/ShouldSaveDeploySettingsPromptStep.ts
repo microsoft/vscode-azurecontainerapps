@@ -9,6 +9,14 @@ import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspac
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
+// 1. No settings, should prompt
+// Has settings
+// 2. They are same, shouldn't prompt
+
+// They are different, should prompt
+// 3. different file path
+// 4. different resource
+
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if (context.configurationIdx) {
