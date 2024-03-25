@@ -10,7 +10,7 @@ import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeploymentConfigurationSettings } from "../DeployWorkspaceProjectSettingsV2";
 
 export class ConvertSettingsStep extends AzureWizardExecuteStep<IActionContext> {
-    public priority: number = 100; //Todo: revisit this priority
+    public priority: number = 50;
 
     public async execute(context: DeployWorkspaceProjectContext): Promise<void> {
         const settingsPathV1: string = settingUtils.getDefaultRootWorkspaceSettingsPath(nonNullProp(context, 'rootFolder'));
