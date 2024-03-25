@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
-import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { ResourceGroupListStep, getResourceGroupFromId, parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
@@ -54,9 +54,12 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
                 data: undefined
             },
             ...managedEnvironments.map(env => {
+                const environmentName: string = nonNullProp(env, 'name');
+                const resourceGroupName: string = parseAzureResourceId(nonNullProp(env, 'id')).resourceGroup;
+
                 return {
-                    label: nonNullProp(env, 'name'),
-                    description: '',
+                    label: environmentName,
+                    description: environmentName === resourceGroupName ? undefined : resourceGroupName,
                     data: env
                 };
             })
