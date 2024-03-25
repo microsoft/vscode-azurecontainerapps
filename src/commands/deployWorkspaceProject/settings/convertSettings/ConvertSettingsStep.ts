@@ -18,7 +18,7 @@ export class ConvertSettingsStep extends AzureWizardExecuteStep<IActionContext> 
         const settingsV2: DeploymentConfigurationSettings = {};
 
         settingsV2.label = '';
-        settingsV2.type = '';
+        settingsV2.type = 'AcrDockerBuildRequest';
         settingsV2.dockerfilePath = '';
         settingsV2.srcPath = '';
         settingsV2.envPath = '';
