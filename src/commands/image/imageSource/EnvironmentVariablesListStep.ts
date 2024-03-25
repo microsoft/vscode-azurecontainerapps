@@ -44,11 +44,15 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
 
     private async selectEnvironmentSettings(context: EnvironmentVariablesContext): Promise<DotenvParseOutput | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
+        // since we only allow one container, we can assume that we want the first container's env settings
+        const existingData: DotenvParseOutput | undefined = context.containerApp?.template?.containers?.[0].env as DotenvParseOutput | undefined;
+        const skipLabel: string | undefined = existingData ? localize('useExisting', 'Use existing configuration') : undefined;
+
         const envFileFsPath: string | undefined = await selectWorkspaceFile(context, placeHolder,
-            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true }, allEnvFilesGlobPattern);
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true, skipLabel }, allEnvFilesGlobPattern);
 
         if (!envFileFsPath) {
-            return undefined;
+            return existingData;
         }
 
         const data = await AzExtFsExtra.readFile(envFileFsPath);
