@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from "@microsoft/vscode-azext-utils";
+import { UserCancelledError, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { commands, workspace, type MessageItem } from "vscode";
 import { localize } from "../../utils/localize";
 
@@ -15,6 +15,7 @@ export async function addWorkspaceProjectWalkthrough(context: IActionContext): P
         await context.ui.showWarningMessage(warning, { modal: true, stepName: 'addWorkspaceProject.emptyWorkspace' }, ...items);
 
         workspace.updateWorkspaceFolders(0, workspace.workspaceFolders.length);
+        throw new UserCancelledError();
     }
 
     await commands.executeCommand('git.clone');
