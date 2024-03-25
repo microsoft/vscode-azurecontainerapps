@@ -21,6 +21,7 @@ import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/tr
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { deployWorkspaceProjectInternal, type DeployWorkspaceProjectInternalContext } from "./internal/deployWorkspaceProjectInternal";
+import { convertSettingsSchema } from "./settings/convertSettings/convertSettingsSchema";
 
 // Todo: Replace existing deployWorkspaceProject command once completed, and get rid of the V2 in the name
 export async function deployWorkspaceProjectV2(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
@@ -41,8 +42,7 @@ export async function deployWorkspaceProjectV2(context: IActionContext & Partial
         // Todo: Monorepo core logic (tree item path) (https://github.com/microsoft/vscode-azurecontainerapps/issues/613)
         deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext });
     } else {
-        // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
-
+        await convertSettingsSchema(containerAppContext);
         // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
         deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
     }

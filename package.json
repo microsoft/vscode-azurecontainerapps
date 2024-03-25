@@ -546,6 +546,11 @@
                         "description": "%containerApps.enableOutputTimestamps%",
                         "default": true
                     },
+                    "containerApps.deploymentConfigurations": {
+                        "scope": "machine-overridable",
+                        "type": "array",
+                        "description": "%containerApps.deploymentConfigurations%"
+                    },
                     "containerApps.deleteConfirmation": {
                         "type": "string",
                         "enum": [
