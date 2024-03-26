@@ -20,7 +20,7 @@ export type DeployWorkspaceProjectInternalBaseContext =
     Partial<CreateContainerAppBaseContext> &
     Partial<CreateAcrContext> &
     Partial<BuildImageInAzureImageSourceBaseContext> &
-    Partial<DeploymentConfiguration> &
+    Pick<DeploymentConfiguration, 'configurationIdx'> &
     Partial<ExecuteActivityContext> &
     {
         shouldSaveDeploySettings?: boolean;

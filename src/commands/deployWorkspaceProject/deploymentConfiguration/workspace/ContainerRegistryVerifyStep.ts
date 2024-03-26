@@ -13,12 +13,14 @@ import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/Ac
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
+export const containerRegistryVerifyMessage: string = localize('verifyingContainerRegistry', 'Verifying container registry...');
+
 export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 210;  /** Todo: Figure out a good priority level */
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
-        progress.report({ message: localize('verifyingContainerRegistry', 'Verifying container registry...') });
+        progress.report({ message: containerRegistryVerifyMessage });
 
         const settings: DeploymentConfigurationSettings | undefined = context.deploymentConfigurationSettings;
         if (!settings?.containerRegistry) {

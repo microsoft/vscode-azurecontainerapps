@@ -10,10 +10,9 @@ import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListStep";
-import { WorkspaceAcrListStep } from "./WorkspaceAcrListStep";
+import { TryUseExistingWorkspaceRegistryStep } from "./TryUseExistingWorkspaceRegistryStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-// Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
         ...await createActivityContext(),
@@ -26,7 +25,9 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
         promptSteps: [
             new RootFolderStep(),
             new DeploymentConfigurationListStep(),
-            new WorkspaceAcrListStep()
+        ],
+        executeSteps: [
+            new TryUseExistingWorkspaceRegistryStep()
         ]
     });
 
