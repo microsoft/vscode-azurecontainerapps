@@ -20,6 +20,7 @@ export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteAct
     registries?: RegistryCredentials[];
     secrets?: Secret[];
 
+    envPath?: string;
     environmentVariables?: EnvironmentVar[];
 }
 

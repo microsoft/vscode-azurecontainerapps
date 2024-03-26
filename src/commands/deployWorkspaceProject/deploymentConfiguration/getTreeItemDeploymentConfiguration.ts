@@ -10,6 +10,7 @@ import { localize } from "../../../utils/localize";
 import { type DeploymentConfiguration } from "./DeploymentConfiguration";
 
 export async function getTreeItemDeploymentConfiguration(item: ContainerAppItem | ManagedEnvironmentItem): Promise<DeploymentConfiguration> {
+    // Todo: Search and add container registry
     if (ContainerAppItem.isContainerAppItem(item)) {
         return { containerApp: item.containerApp };
     } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
