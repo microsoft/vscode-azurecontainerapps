@@ -5,12 +5,12 @@
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
 import { dwpSettingUtilsV1 } from "../settings/dwpSettingUtilsV1";
+import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
-export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
-    public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
+export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
+    public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const settings: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
 
         if (
@@ -38,7 +38,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
         context.telemetry.properties.shouldSaveDeploySettings = context.shouldSaveDeploySettings ? 'true' : 'false';
     }
 
-    public shouldPrompt(context: DeployWorkspaceProjectContext): boolean {
+    public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
         return context.shouldSaveDeploySettings === undefined;
     }
 }

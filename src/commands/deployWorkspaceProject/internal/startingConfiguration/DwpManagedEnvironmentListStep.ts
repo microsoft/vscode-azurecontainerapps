@@ -9,7 +9,7 @@ import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microso
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
-import { type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProjectInternal";
+import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
 export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {

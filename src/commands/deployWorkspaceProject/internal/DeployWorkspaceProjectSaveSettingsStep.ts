@@ -9,16 +9,16 @@ import { relativeSettingsFilePath } from "../../../constants";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
-import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
 import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
 import { dwpSettingUtilsV1 } from "../settings/dwpSettingUtilsV1";
+import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
 const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
 
-export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutputStepBase<DeployWorkspaceProjectContext> {
+export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutputStepBase<DeployWorkspaceProjectInternalContext> {
     public priority: number = 1480;
 
-    protected async executeCore(context: DeployWorkspaceProjectContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: DeployWorkspaceProjectInternalContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         // Even if this step fails, there's no need to show the whole activity as failed.
         // Swallow the error and just show the activity failed item and output log message instead.
         this.options.shouldSwallowError = true;
@@ -34,11 +34,11 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settings);
     }
 
-    public shouldExecute(context: DeployWorkspaceProjectContext): boolean {
+    public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {
         return !!context.shouldSaveDeploySettings;
     }
 
-    protected createSuccessOutput(context: DeployWorkspaceProjectContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
         context.telemetry.properties.didSaveSettings = 'true';
 
         return {
@@ -51,7 +51,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         };
     }
 
-    protected createFailOutput(context: DeployWorkspaceProjectContext): ExecuteActivityOutput {
+    protected createFailOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
         context.telemetry.properties.didSaveSettings = 'false';
 
         return {
