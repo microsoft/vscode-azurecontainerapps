@@ -3,32 +3,23 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { type IContainerAppContext } from "../../../IContainerAppContext";
-import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
-import { type DeployWorkspaceProjectInternalOptions } from "../../internal/deployWorkspaceProjectInternal";
+import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
+import { type ConvertSettingsContext } from "./ConvertSettingsContext";
 import { ConvertSettingsStep } from "./ConvertSettingsStep";
 import { DetectV1SettingsStep } from "./DetectV1SettingsStep";
 
-export async function convertSettingsSchema(context: IContainerAppContext, options?: DeployWorkspaceProjectInternalOptions) {
-    let activityContext: Partial<ExecuteActivityContext>;
-
-    if (options?.suppressActivity) {
-        activityContext = { suppressNotification: true };
-    } else {
-        activityContext = await createActivityContext();
-        activityContext.activityChildren = [];
-    }
-
-    const wizardContext: DeployWorkspaceProjectContext = {
+export async function convertSettingsSchema(context: IContainerAppContext) {
+    const wizardContext: ConvertSettingsContext = {
         ...context,
-        ...activityContext
+        ...await createActivityContext(),
     };
 
-    const wizard: AzureWizard<DeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ConvertSettingsContext> = new AzureWizard(wizardContext, {
         title: 'Convert settings schema',
-        promptSteps: [new DetectV1SettingsStep()],
+        promptSteps: [new RootFolderStep(), new DetectV1SettingsStep()],
         executeSteps: [new ConvertSettingsStep()]
     });
 

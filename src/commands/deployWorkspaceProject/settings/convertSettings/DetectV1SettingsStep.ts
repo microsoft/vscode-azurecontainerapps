@@ -7,10 +7,10 @@ import { AzExtFsExtra, AzureWizardPromptStep, DialogResponses, nonNullProp } fro
 import type * as vscode from 'vscode';
 import { localize } from "../../../../utils/localize";
 import { settingUtils } from "../../../../utils/settingUtils";
-import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
+import { type ConvertSettingsContext } from "./ConvertSettingsContext";
 
-export class DetectV1SettingsStep extends AzureWizardPromptStep<DeployWorkspaceProjectContext> {
-    public async prompt(context: DeployWorkspaceProjectContext): Promise<void> {
+export class DetectV1SettingsStep extends AzureWizardPromptStep<ConvertSettingsContext> {
+    public async prompt(context: ConvertSettingsContext): Promise<void> {
         const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(nonNullProp(context, 'rootFolder'));
         const settingsContents: string = await AzExtFsExtra.readFile(settingsPath);
 

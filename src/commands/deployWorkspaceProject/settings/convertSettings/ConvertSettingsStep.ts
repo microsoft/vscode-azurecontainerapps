@@ -5,14 +5,14 @@
 
 import { AzExtFsExtra, AzureWizardExecuteStep, nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { settingUtils } from "../../../../utils/settingUtils";
-import { type DeployWorkspaceProjectContext } from "../../DeployWorkspaceProjectContext";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeploymentConfigurationSettings } from "../DeployWorkspaceProjectSettingsV2";
+import { type ConvertSettingsContext } from "./ConvertSettingsContext";
 
 export class ConvertSettingsStep extends AzureWizardExecuteStep<IActionContext> {
     public priority: number = 50;
 
-    public async execute(context: DeployWorkspaceProjectContext): Promise<void> {
+    public async execute(context: ConvertSettingsContext): Promise<void> {
         const settingsPathV1: string = settingUtils.getDefaultRootWorkspaceSettingsPath(nonNullProp(context, 'rootFolder'));
         const settingsContentsV2: string = await AzExtFsExtra.readFile(settingsPathV1);
         const settingsV2: DeploymentConfigurationSettings = {};
@@ -40,7 +40,7 @@ export class ConvertSettingsStep extends AzureWizardExecuteStep<IActionContext> 
         await dwpSettingUtilsV2.setDeployWorkspaceProjectSettingsV2('deploymentConfigurations', nonNullProp(context, 'rootFolder'), [settingsV2]);
     }
 
-    public shouldExecute(context: DeployWorkspaceProjectContext): boolean {
+    public shouldExecute(context: ConvertSettingsContext): boolean {
         return !!context.shouldConvertSettings;
     }
 }

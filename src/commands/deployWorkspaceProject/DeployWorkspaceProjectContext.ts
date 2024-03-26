@@ -23,7 +23,6 @@ export type DeployWorkspaceProjectContext =
     DeployWorkspaceProjectTelemetryProps &
     {
         shouldSaveDeploySettings?: boolean;
-        shouldConvertSettings?: boolean;
     };
 
 type DeployWorkspaceProjectTelemetryProps = SetTelemetryProps<TelemetryProps>;
