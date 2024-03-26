@@ -13,7 +13,6 @@ import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListSt
 import { WorkspaceAcrListStep } from "./WorkspaceAcrListStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-// Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
         ...await createActivityContext(),
