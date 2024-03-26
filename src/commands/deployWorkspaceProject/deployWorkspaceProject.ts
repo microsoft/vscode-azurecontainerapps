@@ -42,7 +42,6 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
 
-        // Todo: Monorepo core logic (workspace settings path) https://github.com/microsoft/vscode-azurecontainerapps/issues/613
         deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
     }
 
