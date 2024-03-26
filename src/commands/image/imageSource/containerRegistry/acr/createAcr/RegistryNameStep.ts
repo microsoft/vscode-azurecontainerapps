@@ -3,18 +3,17 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerRegistryManagementClient, type RegistryNameStatus } from "@azure/arm-containerregistry";
+import { type ContainerRegistryManagementClient, type Registry, type RegistryNameStatus } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, randomUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
-import { type DeployWorkspaceProjectContext } from "../../../../../deployWorkspaceProject/DeployWorkspaceProjectContext";
 import { type CreateAcrContext } from "./CreateAcrContext";
 
 export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     public async prompt(context: CreateAcrContext): Promise<void> {
         context.newRegistryName = await context.ui.showInputBox({
             prompt: localize('registryName', 'Enter a name for the new registry'),
-            validateInput: this.validateInput,
+            validateInput: RegistryNameStep.validateInput,
             asyncValidationTask: (value: string): Promise<string | undefined> => this.validateNameAvalability(context, value)
         });
     }
@@ -23,7 +22,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         return !context.newRegistryName;
     }
 
-    private validateInput(name: string | undefined): string | undefined {
+    public static validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
         const { minLength, maxLength } = { minLength: 5, maxLength: 50 };
@@ -53,7 +52,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
         }
     }
 
-    public static async tryGenerateRelatedName(context: DeployWorkspaceProjectContext, name: string): Promise<string | undefined> {
+    public static async tryGenerateRelatedName(context: ISubscriptionActionContext & { registry?: Registry }, name: string): Promise<string | undefined> {
         let registryAvailable: boolean = false;
         let generatedName: string = '';
 

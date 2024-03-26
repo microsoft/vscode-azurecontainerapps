@@ -11,7 +11,7 @@ import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage"
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
-import { DockerFileItemStep } from "./buildImageInAzure/DockerFileItemStep";
+import { DockerfileItemStep } from "./buildImageInAzure/DockerfileItemStep";
 import { ImageNameStep } from "./buildImageInAzure/ImageNameStep";
 import { OSPickStep } from "./buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "./buildImageInAzure/RootFolderStep";
@@ -73,7 +73,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new RootFolderStep(), new DockerFileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
+                promptSteps.push(new RootFolderStep(), new DockerfileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
                 executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
