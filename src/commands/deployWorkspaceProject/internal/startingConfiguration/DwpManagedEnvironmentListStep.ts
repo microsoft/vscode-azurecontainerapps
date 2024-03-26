@@ -50,13 +50,11 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
         return [
             {
                 label: localize('newManagedEnvironment', '$(plus) Create new container apps environment'),
-                description: '',
                 data: undefined
             },
             ...managedEnvironments.map(env => {
                 return {
                     label: nonNullProp(env, 'name'),
-                    description: '',
                     data: env
                 };
             })
