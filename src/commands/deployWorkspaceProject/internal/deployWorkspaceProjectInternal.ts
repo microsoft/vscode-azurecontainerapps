@@ -5,25 +5,24 @@
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityChildContext, createActivityContext } from "../../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
-import { type IContainerAppContext } from "../../IContainerAppContext";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
-import { type DeployWorkspaceProjectContext } from "../DeployWorkspaceProjectContext";
-import { DefaultResourcesNameStep } from "../getDefaultValues/DefaultResourcesNameStep";
+import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
+import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
-
-export type DeployWorkspaceProjectInternalContext = IContainerAppContext & Partial<DeployWorkspaceProjectContext>;
+import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
 
 export interface DeployWorkspaceProjectInternalOptions {
     /**
@@ -39,6 +38,10 @@ export interface DeployWorkspaceProjectInternalOptions {
      */
     suppressContainerAppCreation?: boolean;
     /**
+     * Suppress loading progress notification
+     */
+    suppressProgress?: boolean;
+    /**
      * Suppress the default wizard [prompting] title
      */
     suppressWizardTitle?: boolean;
@@ -47,7 +50,7 @@ export interface DeployWorkspaceProjectInternalOptions {
 export async function deployWorkspaceProjectInternal(
     context: DeployWorkspaceProjectInternalContext,
     options: DeployWorkspaceProjectInternalOptions
-): Promise<DeployWorkspaceProjectContext> {
+): Promise<DeployWorkspaceProjectInternalContext> {
 
     ext.outputChannel.appendLog(
         wrapWithDashFormatting(localize('initCommandExecution', 'Initializing deploy workspace project'))
@@ -61,17 +64,30 @@ export async function deployWorkspaceProjectInternal(
         activityContext.activityChildren = [];
     }
 
-    const wizardContext: DeployWorkspaceProjectContext = {
+    // Show loading indicator while we configure starting values
+    let startingConfiguration: Partial<DeployWorkspaceProjectInternalContext> | undefined;
+    await window.withProgress({
+        location: ProgressLocation.Notification,
+        cancellable: false,
+        title: options.suppressProgress ?
+            undefined :
+            localize('loadingWorkspaceTitle', 'Loading workspace project starting configurations...')
+    }, async () => {
+        startingConfiguration = await getStartingConfiguration({ ...context });
+    });
+
+    const wizardContext: DeployWorkspaceProjectInternalContext = {
         ...context,
-        ...activityContext
+        ...activityContext,
+        ...startingConfiguration
     };
 
-    const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectContext>[] = [
+    const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new DefaultResourcesNameStep()
     ];
 
-    const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectContext>[] = [
+    const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [
         new DeployWorkspaceProjectSaveSettingsStep()
     ];
 
@@ -179,7 +195,7 @@ export async function deployWorkspaceProjectInternal(
     );
 
     // Verify providers
-    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectContext>());
+    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
 
     // Location
     if (LocationListStep.hasLocation(wizardContext)) {
@@ -194,7 +210,7 @@ export async function deployWorkspaceProjectInternal(
     // Save deploy settings
     promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
 
-    const wizard: AzureWizard<DeployWorkspaceProjectContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(wizardContext, {
         title: options.suppressWizardTitle ?
             undefined :
             localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
