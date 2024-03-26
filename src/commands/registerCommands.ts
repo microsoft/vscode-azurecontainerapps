@@ -39,6 +39,7 @@ import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScale
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
+import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
 
 export function registerCommands(): void {
     // managed environments
@@ -103,4 +104,7 @@ export function registerCommands(): void {
     // registries
     registerCommand('containerApps.createAcr', createAcr);
     registerCommand('containerApps.openAcrBuildLogs', openAcrBuildLogs);
+
+    // walkthrough
+    registerCommand('containerApps.walkthrough.addWorkspaceProject', addWorkspaceProjectWalkthrough);
 }
