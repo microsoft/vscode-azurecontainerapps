@@ -40,12 +40,6 @@ export enum ScaleRuleTypes {
     Queue = "Azure queue"
 }
 
-export enum SetEnvironmentVariableOption {
-    NoDotEnv = 'noDotEnv',
-    SkipForNow = 'skipForNow',
-    ProvideFile = 'provideFile'
-}
-
 export enum ImageSource {
     /*
      * Uses the default hello-world image with preset configurations

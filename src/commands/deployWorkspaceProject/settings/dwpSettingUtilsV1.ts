@@ -3,12 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ConfigurationTarget, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { settingUtils } from "../../../utils/settingUtils";
 import { type DeployWorkspaceProjectSettingsV1 } from "./DeployWorkspaceProjectSettingsV1";
@@ -37,16 +34,6 @@ export namespace dwpSettingUtilsV1 {
         const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
         for (const key of Object.keys(settings)) {
             await settingUtils.updateWorkspaceSetting(`${deployWorkspaceProjectPrefix}.${key}`, settings[key], settingsPath, ConfigurationTarget.WorkspaceFolder);
-        }
-    }
-
-    export function setDeployWorkspaceProjectSettingsTelemetry(context: IActionContext & SetTelemetryProps<TelemetryProps>, settings: DeployWorkspaceProjectSettingsV1): void {
-        if (hasAllDeployWorkspaceProjectSettings(settings)) {
-            context.telemetry.properties.workspaceSettingsState = 'all';
-        } else if (hasAtLeastOneDeployWorkspaceProjectSetting(settings)) {
-            context.telemetry.properties.workspaceSettingsState = 'partial';
-        } else {
-            context.telemetry.properties.workspaceSettingsState = 'none';
         }
     }
 
