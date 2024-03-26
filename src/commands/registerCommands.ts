@@ -41,6 +41,7 @@ import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
 import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
 import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
+import { cleanUpResourcesWalkthrough } from './walkthrough/cleanUpResources';
 import { deployWorkspaceProjectWalkthrough } from './walkthrough/deployWorkspaceProject';
 
 export function registerCommands(): void {
@@ -111,4 +112,5 @@ export function registerCommands(): void {
     registerCommand('containerApps.walkthrough.addWorkspaceProject', addWorkspaceProjectWalkthrough);
     registerCommand('containerApps.walkthrough.azureSignIn', azureSignInWalkthrough);
     registerCommand('containerApps.walkthrough.deployWorkspaceProject', deployWorkspaceProjectWalkthrough);
+    registerCommand('containerApps.walkthrough.cleanUpResources', cleanUpResourcesWalkthrough);
 }

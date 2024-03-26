@@ -267,6 +267,11 @@
                 "command": "containerApps.walkthrough.deployWorkspaceProject",
                 "title": "%containerApps.walkthrough.deployWorkspaceProject%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.cleanUpResources",
+                "title": "%containerApps.walkthrough.cleanUpResources%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -546,6 +551,10 @@
                 {
                     "command": "containerApps.walkthrough.deployWorkspaceProject",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.cleanUpResources",
+                    "when": "never"
                 }
             ]
         },
@@ -686,6 +695,17 @@
                         ],
                         "media": {
                             "markdown": "resources/walkthrough/explore-details.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.cleanUpResources",
+                        "title": "%containerApps.walkthrough.cleanUpResources.title%",
+                        "description": "%containerApps.walkthrough.cleanUpResources.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.cleanUpResources"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/clean-up-resources.md"
                         }
                     }
                 ]
