@@ -526,6 +526,50 @@
             {
                 "title": "Azure Container Apps",
                 "properties": {
+                    "containerApps.deploymentConfigurations": {
+                        "scope": "machine-overridable",
+                        "type": "array",
+                        "description": "%containerApps.deploymentConfigurations%",
+                        "items": {
+                            "description": "%containerApps.deploymentConfiguration%",
+                            "type": "object",
+                            "properties": {
+                                "label": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.label%"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.type%",
+                                    "default": "AcrDockerBuildRequest"
+                                },
+                                "dockerfilePath": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.dockerfilePath%"
+                                },
+                                "srcPath": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.srcPath%"
+                                },
+                                "envPath": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.envPath%"
+                                },
+                                "resourceGroup": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.resourceGroup%"
+                                },
+                                "containerApp": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.containerApp%"
+                                },
+                                "containerRegistry": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.containerRegistry%"
+                                }
+                            }
+                        }
+                    },
                     "containerApps.deployWorkspaceProject.containerRegistryName": {
                         "scope": "machine-overridable",
                         "type": "string",
