@@ -254,6 +254,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.walkthrough.gettingStarted.internal",
+                "title": "%containerApps.walkthrough.gettingStarted.internal%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.walkthrough.addWorkspaceProject",
                 "title": "%containerApps.walkthrough.addWorkspaceProject%",
                 "category": "Azure Container Apps"
@@ -289,6 +294,10 @@
                 {
                     "command": "containerApps.deployWorkspaceProject",
                     "group": "1_deploy@1"
+                },
+                {
+                    "command": "containerApps.walkthrough.gettingStarted.internal",
+                    "group": "1_deploy@2"
                 },
                 {
                     "command": "containerApps.createContainerApp",
