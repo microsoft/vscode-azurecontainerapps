@@ -5,25 +5,34 @@
 
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { type DeployWorkspaceProjectSettingsV1 } from "../settings/DeployWorkspaceProjectSettingsV1";
-import { dwpSettingUtilsV1 } from "../settings/dwpSettingUtilsV1";
+import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
 export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-        const settings: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
+        if (context.configurationIdx !== undefined) {
+            const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
+            const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
-        if (
-            context.registry && settings?.containerRegistryName === context.registry.name &&
-            context.containerApp && settings?.containerAppName === context.containerApp.name
-        ) {
-            context.telemetry.properties.noNewSettings = 'true';
-            return;
+            const hasNewSettings: boolean =
+                setting?.type !== 'AcrDockerBuildRequest' ||
+                (context.dockerfilePath && setting?.dockerfilePath !== context.dockerfilePath) ||
+                (context.envPath && setting?.envPath !== context.envPath) ||
+                (context.srcPath && setting?.srcPath !== context.srcPath) ||
+                (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name) ||
+                (!!context.containerApp && setting?.containerApp !== context.containerApp.name) ||
+                (!!context.registry && setting?.containerRegistry !== context.registry.name);
+
+            if (!hasNewSettings) {
+                context.telemetry.properties.hasNewSettings = 'false';
+                return;
+            }
         }
 
-        context.telemetry.properties.noNewSettings = 'false';
+        context.telemetry.properties.hasNewSettings = 'true';
 
-        const saveOrOverwrite: string = dwpSettingUtilsV1.hasNoDeployWorkspaceProjectSettings(settings) ? localize('save', 'save') : localize('overwrite', 'overwrite');
+        const saveOrOverwrite: string = context.configurationIdx ? localize('overwrite', 'overwrite') : localize('save', 'save');
         const saveItem = { title: localize('saveItem', 'Save') };
         const dontSaveItem = { title: localize('dontSaveItem', 'Don\'t Save') };
 
