@@ -7,6 +7,4 @@
 | Provide the source code directory | Select: <b>./src</b> |
 | Select a location | Select an Azure region close to you. |
 | Save deployment configuration | Select: <b>Save</b> |
-| <i>On completion<i>: | <details><summary>View Activity Log: </summary><img src="./images/dwp-activity-log.png"></details> <details><summary>View Deployment: </summary><img src="./images/dwp-popup.png"></details> <details><summary>View Azure Resources Tree: </summary><img src="./images/dwp-resource-tree.png"></details> |
-
-<!-- Todo: Add <details><summary>View Save Configuration: </summary><img src="./images/dwp-activity-log.png"></details> -->
+| <i>On completion<i>: | <details><summary>View Save Configuration: </summary><p>`.vscode/settings.json`:</p><img src="./images/dwp-saved-settings.png"></details> <details><summary>View Activity Log: </summary><img src="./images/dwp-activity-log.png"></details> <details><summary>View Deployment: </summary><img src="./images/dwp-popup.png"></details> <details><summary>View Azure Resources Tree: </summary><img src="./images/dwp-resource-tree.png"></details> |
