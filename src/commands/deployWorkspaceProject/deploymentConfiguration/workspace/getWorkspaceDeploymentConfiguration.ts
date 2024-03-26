@@ -10,7 +10,7 @@ import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListStep";
-import { WorkspaceAcrListStep } from "./WorkspaceAcrListStep";
+import { TryUseExistingWorkspaceRegistryStep } from "./TryUseExistingWorkspaceRegistryStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
@@ -25,7 +25,9 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
         promptSteps: [
             new RootFolderStep(),
             new DeploymentConfigurationListStep(),
-            new WorkspaceAcrListStep()
+        ],
+        executeSteps: [
+            new TryUseExistingWorkspaceRegistryStep()
         ]
     });
 
