@@ -257,6 +257,11 @@
                 "command": "containerApps.walkthrough.addWorkspaceProject",
                 "title": "%containerApps.walkthrough.addWorkspaceProject%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.azureSignIn",
+                "title": "%containerApps.walkthrough.azureSignIn%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -528,6 +533,10 @@
                 {
                     "command": "containerApps.walkthrough.addWorkspaceProject",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.azureSignIn",
+                    "when": "never"
                 }
             ]
         },
@@ -635,6 +644,17 @@
                         ],
                         "media": {
                             "markdown": "resources/walkthrough/add-workspace-project.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.azureSignIn",
+                        "title": "%containerApps.walkthrough.azureSignIn.title%",
+                        "description": "%containerApps.walkthrough.azureSignIn.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.azureSignIn"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/empty.md"
                         }
                     }
                 ]

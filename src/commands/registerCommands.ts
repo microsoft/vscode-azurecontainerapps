@@ -40,6 +40,7 @@ import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
 import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
+import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
 
 export function registerCommands(): void {
     // managed environments
@@ -107,4 +108,5 @@ export function registerCommands(): void {
 
     // walkthrough
     registerCommand('containerApps.walkthrough.addWorkspaceProject', addWorkspaceProjectWalkthrough);
+    registerCommand('containerApps.walkthrough.azureSignIn', azureSignInWalkthrough);
 }

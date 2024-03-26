@@ -64,5 +64,7 @@
     "containerApps.walkthrough.gettingStarted.title": "Getting Started with Azure Container Apps",
     "containerApps.walkthrough.gettingStarted.description": "Learn to deploy a containerized application to Azure Container Apps using a sample GitHub repository.",
     "containerApps.walkthrough.addWorkspaceProject.title": "Add a workspace project",
-    "containerApps.walkthrough.addWorkspaceProject.description": "Starting from an empty workspace, use the button below to clone a sample project from GitHub.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Clone Repository](command:containerApps.walkthrough.addWorkspaceProject)"
+    "containerApps.walkthrough.addWorkspaceProject.description": "Starting from an empty workspace, use the button below to clone a sample project from GitHub.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Clone Repository](command:containerApps.walkthrough.addWorkspaceProject)",
+    "containerApps.walkthrough.azureSignIn.title": "Sign in to Azure",
+    "containerApps.walkthrough.azureSignIn.description": "Sign in using the button below.\nYou may be directed to authenticate using your browser. Return to Visual Studio Code once completed.\n[Sign in to Azure](command:containerApps.walkthrough.azureSignIn)"
 }
