@@ -16,11 +16,12 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
         ...await createActivityContext(),
+        activityTitle: localize('loadWorkspaceSettingsActivityTitle', 'Load workspace deployment configuration'),
         activityChildren: []
     });
 
     const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
-        title: localize('loadWorkspaceSettingsTitle', 'Load workspace deployment configuration'),
+        title: localize('selectWorkspaceSettingsTitle', 'Select workspace deployment configuration'),
         promptSteps: [
             new RootFolderStep(),
             new DeploymentConfigurationListStep(),
