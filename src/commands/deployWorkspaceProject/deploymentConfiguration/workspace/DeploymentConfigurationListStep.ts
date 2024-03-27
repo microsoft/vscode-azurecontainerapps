@@ -9,7 +9,9 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
 import { ContainerRegistryVerifyStep } from "./ContainerRegistryVerifyStep";
-import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
+import { DockerfilePathVerifyStep } from "./DockerfilePathVerifyStep";
+import { EnvfilePathVerifyStep } from "./EnvFilePathVerifyStep";
+import { SrcPathVerifyStep } from "./SrcFilePathVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
@@ -39,7 +41,9 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
         return {
             executeSteps: [
-                new FilePathsVerifyStep(),
+                new DockerfilePathVerifyStep(context.dockerfilePath, context.deploymentConfigurationSettings.dockerfilePath),
+                new EnvfilePathVerifyStep(context.envPath, context.deploymentConfigurationSettings.envPath),
+                new SrcPathVerifyStep(context.srcPath, context.deploymentConfigurationSettings.srcPath),
                 new ContainerAppResourcesVerifyStep(),
                 new ContainerRegistryVerifyStep()
             ]
