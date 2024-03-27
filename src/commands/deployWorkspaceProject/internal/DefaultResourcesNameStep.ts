@@ -15,6 +15,13 @@ import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
 export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
+    public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+        if (context.registry && context.containerApp) {
+            // This ensures image naming even when all other resources have already been created
+            context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp.name);
+        }
+    }
+
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const resourceName: string = (await context.ui.showInputBox({
             prompt: localize('resourceBaseNamePrompt', 'Enter a name for the new container app resource(s).'),

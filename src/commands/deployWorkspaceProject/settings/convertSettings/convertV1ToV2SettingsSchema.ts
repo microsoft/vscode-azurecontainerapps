@@ -11,7 +11,7 @@ import { type ConvertSettingsContext } from "./ConvertSettingsContext";
 import { ConvertSettingsStep } from "./ConvertSettingsStep";
 import { DetectV1SettingsStep } from "./DetectV1SettingsStep";
 
-export async function convertSettingsSchema(context: IContainerAppContext) {
+export async function convertV1ToV2SettingsSchema(context: IContainerAppContext) {
     const wizardContext: ConvertSettingsContext = {
         ...context,
         ...await createActivityContext(),

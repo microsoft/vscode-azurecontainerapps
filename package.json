@@ -252,6 +252,16 @@
                 "command": "containerApps.openAcrBuildLogs",
                 "title": "%containerApps.openAcrBuildLogs%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.addWorkspaceProject",
+                "title": "%containerApps.walkthrough.addWorkspaceProject%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.walkthrough.azureSignIn",
+                "title": "%containerApps.walkthrough.azureSignIn%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -519,6 +529,14 @@
                 {
                     "command": "containerApps.openAcrBuildLogs",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.addWorkspaceProject",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.walkthrough.azureSignIn",
+                    "when": "never"
                 }
             ]
         },
@@ -526,6 +544,50 @@
             {
                 "title": "Azure Container Apps",
                 "properties": {
+                    "containerApps.deploymentConfigurations": {
+                        "scope": "machine-overridable",
+                        "type": "array",
+                        "description": "%containerApps.deploymentConfigurations%",
+                        "items": {
+                            "description": "%containerApps.deploymentConfiguration%",
+                            "type": "object",
+                            "properties": {
+                                "label": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.label%"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.type%",
+                                    "default": "AcrDockerBuildRequest"
+                                },
+                                "dockerfilePath": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.dockerfilePath%"
+                                },
+                                "srcPath": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.srcPath%"
+                                },
+                                "envPath": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.envPath%"
+                                },
+                                "resourceGroup": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.resourceGroup%"
+                                },
+                                "containerApp": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.containerApp%"
+                                },
+                                "containerRegistry": {
+                                    "type": "string",
+                                    "description": "%containerApps.deploymentConfiguration.containerRegistry%"
+                                }
+                            }
+                        }
+                    },
                     "containerApps.deployWorkspaceProject.containerRegistryName": {
                         "scope": "machine-overridable",
                         "type": "string",
@@ -570,6 +632,37 @@
                         "default": true
                     }
                 }
+            }
+        ],
+        "walkthroughs": [
+            {
+                "id": "containerApps.walkthrough.gettingStarted",
+                "title": "%containerApps.walkthrough.gettingStarted.title%",
+                "description": "%containerApps.walkthrough.gettingStarted.description%",
+                "steps": [
+                    {
+                        "id": "containerApps.walkthrough.addWorkspaceProject",
+                        "title": "%containerApps.walkthrough.addWorkspaceProject.title%",
+                        "description": "%containerApps.walkthrough.addWorkspaceProject.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.addWorkspaceProject"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/add-workspace-project.md"
+                        }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.azureSignIn",
+                        "title": "%containerApps.walkthrough.azureSignIn.title%",
+                        "description": "%containerApps.walkthrough.azureSignIn.description%",
+                        "completionEvents": [
+                            "onCommand:containerApps.walkthrough.azureSignIn"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/empty.md"
+                        }
+                    }
+                ]
             }
         ],
         "jsonValidation": [

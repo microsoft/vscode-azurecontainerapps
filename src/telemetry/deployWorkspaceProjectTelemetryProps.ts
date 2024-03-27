@@ -24,7 +24,7 @@ export interface DeployWorkspaceProjectInternalTelemetryProps extends AzdTelemet
     existingLocation?: 'true' | 'false';
 
     // Save settings
-    noNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
+    hasNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     didSaveSettings?: 'true' | 'false';  // DeployWorkspaceProjectSaveSettingsStep - we swallow errors here, so log the outcome just in case
 }

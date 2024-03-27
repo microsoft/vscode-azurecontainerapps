@@ -50,5 +50,21 @@
     "containerApps.openAcrBuildLogs": "Open Azure Container Registry Build Logs",
     "containerApps.deployWorkspaceProject.containerAppName": "When deploying from a local workspace project, the name of the target container app to deploy to.",
     "containerApps.deployWorkspaceProject.containerAppResourceGroupName": "When deploying from a local workspace project, the name of the target container app's resource group.",
-    "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images."
+    "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images.",
+    "containerApps.deploymentConfiguration": "A saved deployment configuration used for quickly redeploying a workspace project to a container app.",
+    "containerApps.deploymentConfiguration.label": "The label used when displaying or referencing the configuration. Personalize this to best suit your needs.",
+    "containerApps.deploymentConfiguration.type": "The deployment strategy type for this configuration.",
+    "containerApps.deploymentConfiguration.dockerfilePath": "The relative path from the project's root directory to the Dockerfile.",
+    "containerApps.deploymentConfiguration.srcPath": "The relative path from the project's root directory to the deployment folder.",
+    "containerApps.deploymentConfiguration.envPath": "The relative path from the project's root directory to the environment variables file (.env).",
+    "containerApps.deploymentConfiguration.resourceGroup": "The name of the target container app's resource group.",
+    "containerApps.deploymentConfiguration.containerApp": "The name of the target container app.",
+    "containerApps.deploymentConfiguration.containerRegistry": "The name of the container registry to use for storing and building images.",
+    "containerApps.deploymentConfigurations": "A list of saved deployment configurations used for quickly redeploying a workspace project to a container app.",
+    "containerApps.walkthrough.gettingStarted.title": "Getting Started with Azure Container Apps",
+    "containerApps.walkthrough.gettingStarted.description": "Learn to deploy a containerized application to Azure Container Apps using a sample GitHub repository.",
+    "containerApps.walkthrough.addWorkspaceProject.title": "Add a workspace project",
+    "containerApps.walkthrough.addWorkspaceProject.description": "Starting from an empty workspace, use the button below to clone a sample project from GitHub.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Clone Repository](command:containerApps.walkthrough.addWorkspaceProject)",
+    "containerApps.walkthrough.azureSignIn.title": "Sign in to Azure",
+    "containerApps.walkthrough.azureSignIn.description": "Sign in using the button below.\nYou may be directed to authenticate using your browser. Return to Visual Studio Code once completed.\n[Sign in to Azure](command:containerApps.walkthrough.azureSignIn)"
 }
