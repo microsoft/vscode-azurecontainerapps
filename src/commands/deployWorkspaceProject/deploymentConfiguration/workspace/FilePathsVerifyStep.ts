@@ -53,6 +53,10 @@ export class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<Workspace
     }
 
     protected createSuccessOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
+        if (!this.configPath || this.configPath === '') {
+            return {};
+        }
+
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['filePathVerifyStepSuccessItem', activitySuccessContext]),
