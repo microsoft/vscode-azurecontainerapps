@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
@@ -11,16 +11,19 @@ import { createActivityChildContext } from "../../../../utils/activity/activityU
 import { localize } from "../../../../utils/localize";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export abstract class FilePathsVerifyBaseStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+export class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     private contextPath: string | undefined;
     private configPath: string | undefined;
     private fileType: string | undefined;
 
-    public constructor(contextPath?: string, configPath?: string, fileType?: string) {
+    priority: number;
+
+    public constructor(fileType: string, priority: number, contextPath?: string, configPath?: string,) {
         super();
         this.contextPath = contextPath;
         this.configPath = configPath;
         this.fileType = fileType;
+        this.priority = priority;
     }
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -45,7 +48,7 @@ export abstract class FilePathsVerifyBaseStep extends ExecuteActivityOutputStepB
         if (await AzExtFsExtra.pathExists(path)) {
             return true;
         } else {
-            return false;
+            throw new Error(localize('fileNotFound', 'File not found: {0}', this.configPath));
         }
     }
 
@@ -53,21 +56,21 @@ export abstract class FilePathsVerifyBaseStep extends ExecuteActivityOutputStepB
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['filePathVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyPath', 'Verify "{0}" path', this.fileType),
+                label: localize('verifyPath', 'Verify {0} path', this.fileType),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('verifyPathSuccess', 'Verified "{0}" path.', this.fileType)
+            message: localize('verifyPathSuccess', 'Verified {0} path.', this.fileType)
         };
     }
 
     protected createFailOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
-            item: new GenericParentTreeItem(undefined, {
+            item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['filePathVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyPath', 'Verify "{0}" path', this.fileType),
+                label: localize('verifyPath', 'Verify {0} path', this.fileType),
                 iconPath: activityFailIcon
             }),
-            message: localize('verifyPathFail', 'Failed to verify "{0}" path.', this.fileType)
+            message: localize('verifyPathFail', 'Failed to verify {0} path.', this.fileType)
         };
     }
 }
