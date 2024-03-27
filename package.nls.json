@@ -48,6 +48,7 @@
     "containerApps.stopStreamingLogs": "Stop Streaming Logs...",
     "containerApps.createAcr": "Create Azure Container Registry...",
     "containerApps.openAcrBuildLogs": "Open Azure Container Registry Build Logs",
+    "containerApps.askAgent": "Ask @azure",
     "containerApps.deployWorkspaceProject.containerAppName": "When deploying from a local workspace project, the name of the target container app to deploy to.",
     "containerApps.deployWorkspaceProject.containerAppResourceGroupName": "When deploying from a local workspace project, the name of the target container app's resource group.",
     "containerApps.deployWorkspaceProject.containerRegistryName": "When deploying from a local workspace project, the name of the Azure Container Registry to use for storing and building images.",
