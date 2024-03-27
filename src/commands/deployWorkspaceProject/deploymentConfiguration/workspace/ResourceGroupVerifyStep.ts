@@ -14,7 +14,7 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class ResourceGroupVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
-    public priority: number = 180;  /** Todo: Figure out a good priority level */
+    public priority: number = 200;  /** Todo: Figure out a good priority level */
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
