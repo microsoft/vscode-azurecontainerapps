@@ -27,6 +27,10 @@ export class ResourceGroupVerifyStep extends ExecuteActivityOutputStepBase<Works
 
         const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
         context.resourceGroup = resourceGroups.find(rg => rg.name === settings.resourceGroup);
+
+        if (!context.resourceGroup) {
+            throw new Error(localize('noResourceGroupError', 'No matching resource group found.'));
+        }
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {

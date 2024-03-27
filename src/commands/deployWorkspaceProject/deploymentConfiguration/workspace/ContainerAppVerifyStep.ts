@@ -30,6 +30,10 @@ export class ContainerAppVerifyStep extends ExecuteActivityOutputStepBase<Worksp
 
         const containerApp: ContainerApp = await client.containerApps.get(nonNullValueAndProp(context.resourceGroup, 'name'), settings.containerApp);
         context.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
+
+        if (!context.containerApp) {
+            throw new Error(localize('noContainerAppError', 'No matching container app found.'));
+        }
     }
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
