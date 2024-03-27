@@ -32,6 +32,6 @@ export async function getTreeItemDeploymentConfiguration(context: IContainerAppC
 
         // If it's a container app item, safe to assume it's a re-deployment, so don't re-prompt to save
         // If it's anything else, it's a first-time deployment, so it makes sense to ask to save
-        shouldSaveDeploySettings: !ContainerAppItem.isContainerAppItem(item)
+        shouldSaveDeploySettings: ContainerAppItem.isContainerAppItem(item) ? false : undefined
     };
 }
