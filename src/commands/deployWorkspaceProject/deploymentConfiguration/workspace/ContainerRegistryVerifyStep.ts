@@ -31,7 +31,7 @@ export class ContainerRegistryVerifyStep extends ExecuteActivityOutputStepBase<W
         context.registry = registries.find(r => r.name === settings.containerRegistry);
 
         if (!context.registry) {
-            throw new Error(localize('registryNotFound', 'Container registry "{0}" not found.', settings.containerRegistry));
+            throw new Error(localize('noContainerRegistryError', 'No matching container registry found.'));
         }
     }
 
