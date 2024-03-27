@@ -39,7 +39,9 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
         return {
             executeSteps: [
-                new FilePathsVerifyStep(),
+                new FilePathsVerifyStep('Dockerfile', 100, context.dockerfilePath, context.deploymentConfigurationSettings.dockerfilePath,), /** Todo: Figure out a good priority level */
+                new FilePathsVerifyStep('.env file', 110, context.envPath, context.deploymentConfigurationSettings.envPath,), /** Todo: Figure out a good priority level */
+                new FilePathsVerifyStep('src', 120, context.srcPath, context.deploymentConfigurationSettings.srcPath,), /** Todo: Figure out a good priority level */
                 new ContainerAppResourcesVerifyStep(),
                 new ContainerRegistryVerifyStep()
             ]
