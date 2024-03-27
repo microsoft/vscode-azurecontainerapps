@@ -38,7 +38,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
-        deploymentConfiguration = await getTreeItemDeploymentConfiguration(item);
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
         // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
 

@@ -3,21 +3,35 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ext } from "../../../extensionVariables";
+import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
-import { localize } from "../../../utils/localize";
+import { type IContainerAppContext } from "../../IContainerAppContext";
+import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "./DeploymentConfiguration";
+import { TryUseExistingWorkspaceRegistryStep } from "./workspace/TryUseExistingWorkspaceRegistryStep";
 
-export async function getTreeItemDeploymentConfiguration(item: ContainerAppItem | ManagedEnvironmentItem): Promise<DeploymentConfiguration> {
-    // Todo: Search and add container registry
-    if (ContainerAppItem.isContainerAppItem(item)) {
-        return { containerApp: item.containerApp };
-    } else if (ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
-        return { managedEnvironment: item.managedEnvironment };
-    } else {
-        const incompatibleMessage: string = localize('incompatibleTreeItem', 'An incompatible tree item was provided to Azure Container Apps for project deployment.');
-        ext.outputChannel.appendLog(localize('incompatibleMessageLog', 'Error: {0}', incompatibleMessage));
-        throw new Error(incompatibleMessage);
-    }
+type TreeItemDeploymentConfigurationContext = IContainerAppContext & DeploymentConfiguration;
+
+export async function getTreeItemDeploymentConfiguration(context: IContainerAppContext, item: ContainerAppItem | ManagedEnvironmentItem): Promise<DeploymentConfiguration> {
+    const wizardContext: TreeItemDeploymentConfigurationContext = context;
+
+    const wizard: AzureWizard<TreeItemDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
+        promptSteps: [new RootFolderStep()],
+        executeSteps: [new TryUseExistingWorkspaceRegistryStep()]
+    });
+
+    await wizard.prompt();
+    await wizard.execute();
+
+    return {
+        rootFolder: wizardContext.rootFolder,
+        managedEnvironment: ManagedEnvironmentItem.isManagedEnvironmentItem(item) ? (item as ManagedEnvironmentItem).managedEnvironment : undefined,
+        containerApp: ContainerAppItem.isContainerAppItem(item) ? (item as ContainerAppItem).containerApp : undefined,
+        registry: wizardContext.registry,
+
+        // If it's a container app item, safe to assume it's a re-deployment, so don't re-prompt to save
+        // If it's anything else, it's a first-time deployment, so it makes sense to ask to save
+        shouldSaveDeploySettings: !ContainerAppItem.isContainerAppItem(item)
+    };
 }
