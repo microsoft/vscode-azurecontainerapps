@@ -346,26 +346,10 @@ function getZodGetContainerAppLogsQuerySchema() {
 }
 
 async function getQueryResultMarkdownTableSummary(args: SkillCommandArgs, table: Table, resultRows: LogsTable["rows"]): Promise<string | undefined> {
-    const copilotResponse = await args.agent.getResponseAsStringLanguageModelInteraction(
-        `The user is going to give you a table schema, and rows that were queried from the table. These rows contain information about errors the user is interested in. Create a markdown table representation of these rows to help the user see the error information contained in the rows. The table should only have columns which are helpful for the purpose of identifying and troubleshooting errors. Only return the table itself, do not include any other messages to the user.`,
+    return await args.agent.getResponseAsStringLanguageModelInteraction(
+        `The user is going to give you a table schema, rows that were queried from the table, and a question/information that the user wants answered given information contained in the rows. Create a markdown table representation of these rows to help the user see the answer to their question/the information they are interested in. The table should only have columns which are helpful for the purpose of answering the question/finding the information. Only return the markdown table in your response. Do not include anything else in your response.`,
         { ...args.agentRequest, userPrompt: JSON.stringify({ tableSchema: table.schema, resultRows: resultRows }) },
     );
-    if (copilotResponse !== undefined) {
-        const containerAppLogsGetMarkdownTableFromQueryResult = await args.agent.getTypeChatTranslation(
-            { "ContainerAppLogsGetMarkdownTableFromQueryResult": getZodContainerAppLogsGetMarkdownTableFromQueryResultSchema() },
-            "ContainerAppLogsGetMarkdownTableFromQueryResult",
-            { ...args.agentRequest, userPrompt: copilotResponse }
-        );
-        return containerAppLogsGetMarkdownTableFromQueryResult?.maybeMarkdownTable;
-    }
-    return undefined;
-}
-
-function getZodContainerAppLogsGetMarkdownTableFromQueryResultSchema() {
-    const ContainerAppLogsGetMarkdownTableFromQueryResultSchema = z.object({
-        maybeMarkdownTable: z.string().optional(),
-    });
-    return ContainerAppLogsGetMarkdownTableFromQueryResultSchema;
 }
 
 async function getQueryResultQuestionAnswerSummary(args: SkillCommandArgs, table: Table, resultRows: LogsTable["rows"], userQuestion: string): Promise<string | undefined> {
