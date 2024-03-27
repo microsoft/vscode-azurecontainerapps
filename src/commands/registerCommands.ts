@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
-import { askAgent, getAgentCommands, poc } from '../agent/agentIntegration';
+import { askAgent, getAgentCommands } from '../agent/agentIntegration';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
@@ -120,5 +120,4 @@ export function registerCommands(): void {
     // Azure Agent integration
     registerCommand('containerApps.getAgentCommands', getAgentCommands);
     registerCommandWithTreeNodeUnwrapping('containerApps.askAgent', askAgent);
-    registerCommand('containerApps.agentPocSkill', poc);
 }

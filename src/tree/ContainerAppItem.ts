@@ -46,6 +46,10 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         return this._containerApp;
     }
 
+    public get resourceGroupName(): string {
+        return this.resourceGroup;
+    }
+
     constructor(public readonly subscription: AzureSubscription, private _containerApp: ContainerAppModel) {
         this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;

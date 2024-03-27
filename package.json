@@ -789,11 +789,10 @@
     "dependencies": {
         "@azure/arm-appcontainers": "^2.0.0",
         "@azure/arm-containerregistry": "^10.0.0",
-        "@azure/arm-operationalinsights": "^9.0.0",
+        "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/core-rest-pipeline": "1.10.3",
-        "@azure/monitor-query": "^1.1.1",
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureauth": "^2.3.0",
         "@microsoft/vscode-azext-azureutils": "^2.0.3",
@@ -808,10 +807,9 @@
         "p-retry": "^4.6.2",
         "semver": "^7.5.2",
         "tar": "^6.2.0",
-        "vscode-azure-agent-api": "https://github.com/microsoft/vscode-azure-agent/releases/download/api-v1.0.0-beta.9/vscode-azure-agent-api-1.0.0-beta.9.tgz",
+        "vscode-azure-agent-api": "file:./src/agent/vscode-azure-agent-api-1.0.0-beta.12.tgz",
         "vscode-nls": "^4.1.1",
-        "vscode-uri": "^3.0.2",
-        "zod": "^3.22.4"
+        "vscode-uri": "^3.0.2"
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
