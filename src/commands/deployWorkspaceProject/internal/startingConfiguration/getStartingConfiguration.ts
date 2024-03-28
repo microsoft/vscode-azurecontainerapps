@@ -12,6 +12,7 @@ import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzur
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
+import { TryUseExistingRegistryStep } from "./TryUseExistingRegistryStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
@@ -24,7 +25,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
             new DwpManagedEnvironmentListStep()
         ],
         executeSteps: [
-            // Todo: Add ACR defaulting step
+            new TryUseExistingRegistryStep()
         ]
     });
 
