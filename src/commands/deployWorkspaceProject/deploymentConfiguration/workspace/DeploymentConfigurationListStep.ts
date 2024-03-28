@@ -7,9 +7,10 @@ import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWiz
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
+import { ContainerAppVerifyStep } from "./ContainerAppVerifyStep";
 import { ContainerRegistryVerifyStep } from "./ContainerRegistryVerifyStep";
 import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
+import { ResourceGroupVerifyStep } from "./ResourceGroupVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
@@ -40,7 +41,8 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
         return {
             executeSteps: [
                 new FilePathsVerifyStep(),
-                new ContainerAppResourcesVerifyStep(),
+                new ResourceGroupVerifyStep(),
+                new ContainerAppVerifyStep(),
                 new ContainerRegistryVerifyStep()
             ]
         };

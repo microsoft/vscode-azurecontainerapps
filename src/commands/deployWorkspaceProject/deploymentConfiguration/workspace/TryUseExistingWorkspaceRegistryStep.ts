@@ -11,7 +11,6 @@ import { localize } from "../../../../utils/localize";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { containerRegistryVerifyMessage } from "./ContainerRegistryVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class TryUseExistingWorkspaceRegistryStep extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
@@ -24,8 +23,8 @@ export class TryUseExistingWorkspaceRegistryStep extends AzureWizardExecuteStep<
         }
 
         if (context.deploymentConfigurationSettings) {
-            // In the case where we were already verifying, it looks a little smoother if we keep the execution looking like a continuation of that step
-            progress.report({ message: containerRegistryVerifyMessage });
+            // In the case where we were already verifying, it looks a little smoother if we keep the execution looking like a continuation of the previous step
+            progress.report({ message: localize(`verifyingContainerRegistry`, 'Verifying container registry') });
         } else {
             progress.report({ message: localize('searchingAvailableRegistries', 'Searching available registries...') });
         }
