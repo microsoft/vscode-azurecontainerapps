@@ -38,6 +38,9 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
             return undefined;
         }
 
+        // We mainly want to show activity children if there are deployment settings to verify
+        context.activityChildren ??= [];
+
         return {
             executeSteps: [
                 new FilePathsVerifyStep(),
