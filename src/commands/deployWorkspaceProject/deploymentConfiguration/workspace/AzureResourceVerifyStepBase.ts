@@ -30,7 +30,8 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         await this.verifyResource(context);
 
         if (!context?.[this.contextKey]) {
-            // Since we specified for the error to be swallowed, we shouldn't ever see it directly
+            // Throwing this error helps to trigger the failed output state
+            // However, since we specified for the error to be swallowed, we shouldn't ever see it directly
             throw new Error('Could not find the specified resource type.');
         }
     }
