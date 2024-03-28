@@ -3,45 +3,51 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { settingUtils } from "../../../../utils/settingUtils";
+import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
+import { type DeployWorkspaceProjectSettingsV1 } from "../DeployWorkspaceProjectSettingsV1";
 import { type DeploymentConfigurationSettings } from "../DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV1 } from "../dwpSettingUtilsV1";
 import { type ConvertSettingsContext } from "./ConvertSettingsContext";
 
 export class ConvertSettingsStep extends AzureWizardExecuteStep<ConvertSettingsContext> {
     public priority: number = 50;
 
     public async execute(context: ConvertSettingsContext): Promise<void> {
-        const settingsPathV1: string = settingUtils.getDefaultRootWorkspaceSettingsPath(nonNullProp(context, 'rootFolder'));
-        const settingsContentsV1: string = await AzExtFsExtra.readFile(settingsPathV1);
-        const settingsV2: DeploymentConfigurationSettings = {};
+        const settingsContentsV1: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
+        if (settingsContentsV1.containerAppResourceGroupName || settingsContentsV1.containerAppName || settingsContentsV1.containerRegistryName) {
+            const settingsV2: DeploymentConfigurationSettings = {
+                "label": '',
+                "type": 'AcrDockerBuildRequest',
+                "dockerfilePath": '',
+                "srcPath": '',
+                "envPath": '',
+            };
 
-        settingsV2.label = '';
-        settingsV2.type = 'AcrDockerBuildRequest';
-        settingsV2.dockerfilePath = '';
-        settingsV2.srcPath = '';
-        settingsV2.envPath = '';
-        if (settingsContentsV1.includes('containerAppResourceGroupName')) {
-            settingsV2.resourceGroup = settingsContentsV1.split('containerAppResourceGroupName": ')[1].split(/,|}/)[0].replace(/"|\r\n|\r|\n/g, '')
-            await dwpSettingUtilsV2.setDeployWorkspaceProjectSettingsV2('deployWorkspaceProject.containerAppResourceGroupName', nonNullProp(context, 'rootFolder'), undefined);
+            const settingsV1ToRemove: DeployWorkspaceProjectSettingsV1 = {
+                "containerAppResourceGroupName": undefined,
+                "containerAppName": undefined,
+                "containerRegistryName": undefined
+            };
+
+            if (settingsContentsV1.containerAppResourceGroupName) {
+                settingsV2.resourceGroup = settingsContentsV1.containerAppResourceGroupName;
+            }
+
+            if (settingsContentsV1.containerAppName) {
+                settingsV2.containerApp = settingsContentsV1.containerAppName;
+            }
+
+            if (settingsContentsV1.containerRegistryName) {
+                settingsV2.containerRegistry = settingsContentsV1.containerRegistryName;
+            }
+
+            await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settingsV1ToRemove)
+            await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'), [settingsV2]);
         }
-
-        if (settingsContentsV1.includes('containerAppName')) {
-            settingsV2.containerApp = settingsContentsV1.split('containerAppName": ')[1].split(/,|}/)[0].replace(/"|\r\n|\r|\n/g, '')
-            await dwpSettingUtilsV2.setDeployWorkspaceProjectSettingsV2('deployWorkspaceProject.containerAppName', nonNullProp(context, 'rootFolder'), undefined);
-        }
-
-        if (settingsContentsV1.includes('containerRegistryName')) {
-            settingsV2.containerRegistry = settingsContentsV1.split('containerRegistryName": ')[1].split(/,|}/)[0].replace(/"|\r\n|\r|\n/g, '')
-            await dwpSettingUtilsV2.setDeployWorkspaceProjectSettingsV2('deployWorkspaceProject.containerRegistryName', nonNullProp(context, 'rootFolder'), undefined);
-        }
-
-        await dwpSettingUtilsV2.setDeployWorkspaceProjectSettingsV2('deploymentConfigurations', nonNullProp(context, 'rootFolder'), [settingsV2]);
     }
 
-    public shouldExecute(context: ConvertSettingsContext): boolean {
-        return !!context.shouldConvertSettings;
+    public shouldExecute(): boolean {
+        return true;
     }
 }
-

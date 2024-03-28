@@ -3,10 +3,9 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type WorkspaceFolder } from "vscode";
 
-export interface ConvertSettingsContext extends IActionContext, ExecuteActivityContext {
-    shouldConvertSettings?: boolean;
+export interface ConvertSettingsContext extends IActionContext {
     rootFolder?: WorkspaceFolder;
 }
