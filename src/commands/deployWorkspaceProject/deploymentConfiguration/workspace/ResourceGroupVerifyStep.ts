@@ -20,5 +20,3 @@ export class ResourceGroupVerifyStep extends AzureResourceVerifyStepBase {
         context.resourceGroup = resourceGroups.find(rg => rg.name === context.deploymentConfigurationSettings?.resourceGroup);
     }
 }
-
-
