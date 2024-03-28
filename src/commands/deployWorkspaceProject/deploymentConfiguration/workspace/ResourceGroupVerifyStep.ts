@@ -5,69 +5,20 @@
 
 import { type ResourceGroup } from "@azure/arm-resources";
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
-import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
-import { localize } from "../../../../utils/localize";
-import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
+import { AzureResourceVerifyStepBase } from "./AzureResourceVerifyStepBase";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class ResourceGroupVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+export class ResourceGroupVerifyStep extends AzureResourceVerifyStepBase {
     public priority: number = 200;  /** Todo: Figure out a good priority level */
 
-    protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.options.shouldSwallowError = true;
-        progress.report({ message: localize('verifyingResourceGroup', 'Verifying resource group...') });
+    protected resourceType = 'resource group' as const;
+    protected deploymentSettingsKey: string = 'resourceGroup';
+    protected contextKey: string = 'resourceGroup';
 
-        const settings: DeploymentConfigurationSettings | undefined = context.deploymentConfigurationSettings;
-        if (!settings?.resourceGroup) {
-            return;
-        }
-
+    protected async verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-        context.resourceGroup = resourceGroups.find(rg => rg.name === settings.resourceGroup);
-
-        if (!context.resourceGroup) {
-            throw new Error(localize('noResourceGroupError', 'No matching resource group found.'));
-        }
-    }
-
-    public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings?.resourceGroup && !context.resourceGroup;
-    }
-
-    protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
-        if (!context.resourceGroup) {
-            return {};
-        }
-
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['resourceGroupVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyResourceGroup', 'Verify resource group "{0}"', context.resourceGroup?.name),
-                iconPath: activitySuccessIcon,
-            }),
-            message: localize('verifyResourceGroupSuccess',
-                'Successfully verified resource group "{0}" from configuration "{1}".',
-                context.resourceGroup?.name,
-                context.deploymentConfigurationSettings?.label
-            ),
-        };
-    }
-
-    protected createFailOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['ResourceGroupVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyResourceGroup', 'Verify resource group "{0}"', context.deploymentConfigurationSettings?.resourceGroup),
-                iconPath: activityFailIcon,
-            }),
-            message: localize('verifyResourceGroupFail',
-                'Failed to verify resource group "{0}" from configuration "{1}".',
-                context.deploymentConfigurationSettings?.resourceGroup,
-                context.deploymentConfigurationSettings?.label
-            )
-        };
+        context.resourceGroup = resourceGroups.find(rg => rg.name === context.deploymentConfigurationSettings?.resourceGroup);
     }
 }
+
+

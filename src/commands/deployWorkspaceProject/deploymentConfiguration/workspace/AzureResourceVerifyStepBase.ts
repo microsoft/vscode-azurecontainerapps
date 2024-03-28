@@ -12,7 +12,7 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
-    public abstract priority: number;  /** Todo: Figure out a good priority level */
+    public abstract priority: number;
 
     protected abstract resourceType: 'resource group' | 'container app' | 'container registry';
     protected abstract deploymentSettingsKey: string;
@@ -29,7 +29,7 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
 
         await this.verifyResource(context);
 
-        if (!context?.[this.resourceType]) {
+        if (!context?.[this.contextKey]) {
             // We shouldn't ever see this error directly
             throw new Error('Could not find the specified resource type.');
         }
