@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
@@ -11,19 +11,14 @@ import { createActivityChildContext } from "../../../../utils/activity/activityU
 import { localize } from "../../../../utils/localize";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
-    private contextPath: string | undefined;
+export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+    abstract key: string;
+    abstract fileType: string;
+
     private configPath: string | undefined;
-    private fileType: string | undefined;
 
-    priority: number;
-
-    public constructor(fileType: string, priority: number, contextPath?: string, configPath?: string,) {
+    public constructor() {
         super();
-        this.contextPath = contextPath;
-        this.configPath = configPath;
-        this.fileType = fileType;
-        this.priority = priority;
     }
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -32,16 +27,14 @@ export class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<Workspace
 
         const rootPath: string = nonNullProp(context, 'rootFolder').uri.fsPath;
 
-        if (!this.contextPath && this.configPath) {
+        this.configPath = nonNullValueAndProp(context.deploymentConfigurationSettings, this.key as keyof typeof context.deploymentConfigurationSettings)
+
+        if (!context[this.key] && this.configPath) {
             const fullPath = path.join(rootPath, this.configPath);
             if (await this.verifyFilePath(fullPath)) {
-                this.contextPath = fullPath;
+                context[this.key] = fullPath;
             }
         }
-    }
-
-    public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings;
     }
 
     public async verifyFilePath(path: string): Promise<boolean> {

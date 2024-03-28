@@ -9,7 +9,9 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { ContainerAppResourcesVerifyStep } from "./ContainerAppResourcesVerifyStep";
 import { ContainerRegistryVerifyStep } from "./ContainerRegistryVerifyStep";
-import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
+import { DockerfileValidateStep } from "./DockerfileValidateStep";
+import { EnvValidateStep } from "./EnvValidateStep";
+import { SrcValidateStep } from "./SrcValidateStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
@@ -39,9 +41,9 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
         return {
             executeSteps: [
-                new FilePathsVerifyStep('Dockerfile', 100, context.dockerfilePath, context.deploymentConfigurationSettings.dockerfilePath,), /** Todo: Figure out a good priority level */
-                new FilePathsVerifyStep('.env file', 110, context.envPath, context.deploymentConfigurationSettings.envPath,), /** Todo: Figure out a good priority level */
-                new FilePathsVerifyStep('src', 120, context.srcPath, context.deploymentConfigurationSettings.srcPath,), /** Todo: Figure out a good priority level */
+                new DockerfileValidateStep(),
+                new SrcValidateStep(),
+                new EnvValidateStep(),
                 new ContainerAppResourcesVerifyStep(),
                 new ContainerRegistryVerifyStep()
             ]
