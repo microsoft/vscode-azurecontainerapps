@@ -6,12 +6,12 @@
 import { type Registry } from "@azure/arm-containerregistry";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from "../../../../extensionVariables";
-import { localize } from "../../../../utils/localize";
-import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
-import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
-import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { ext } from "../../../../../extensionVariables";
+import { localize } from "../../../../../utils/localize";
+import { AcrListStep } from "../../../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../../../settings/dwpSettingUtilsV2";
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
 export class TryUseExistingWorkspaceRegistryStep extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 220;  /** Todo: Figure out a good priority level */

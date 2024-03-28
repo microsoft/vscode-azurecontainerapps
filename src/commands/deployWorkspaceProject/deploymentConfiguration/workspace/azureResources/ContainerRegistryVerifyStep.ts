@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Registry } from "@azure/arm-containerregistry";
-import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { AcrListStep } from "../../../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { AzureResourceVerifyStepBase } from "./AzureResourceVerifyStepBase";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class ContainerRegistryVerifyStep extends AzureResourceVerifyStepBase {
     public priority: number = 210;  /** Todo: Figure out a good priority level */
 
     protected resourceType = 'container registry' as const;
-    protected deploymentSettingsKey: string = 'containerRegistry';
-    protected contextKey: string = 'registry';
+    protected deploymentSettingsKey = 'containerRegistry' as const;
+    protected contextKey = 'registry' as const;
 
     protected async verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
