@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
@@ -13,6 +13,11 @@ import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/Manag
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
+
+const resourceGroupSuffix: string = '-rg';
+const managedEnvironmentSuffix: string = '-env';
+const logAnalyticsSuffix: string = '-log';
+export const containerAppSuffix: string = '-ca';
 
 export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
@@ -31,10 +36,22 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         ext.outputChannel.appendLog(localize('usingResourceName', 'User provided the new resource name "{0}" as the default for resource creation.', resourceName))
 
-        !context.resourceGroup && (context.newResourceGroupName = resourceName);
-        !context.managedEnvironment && (context.newManagedEnvironmentName = resourceName);
-        !context.containerApp && (context.newContainerAppName = resourceName);
-        context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp?.name || resourceName);
+        const suffixNamesAvailable: boolean = await this.checkSuffixNamesAvailable(context, resourceName);
+
+        if (!context.managedEnvironment) {
+            context.newManagedEnvironmentName = suffixNamesAvailable ? resourceName + managedEnvironmentSuffix : resourceName;
+            context.newLogAnalyticsWorkspaceName = suffixNamesAvailable ? resourceName + logAnalyticsSuffix : resourceName;
+        }
+
+        if (!context.containerApp) {
+            context.newContainerAppName = suffixNamesAvailable ? resourceName + containerAppSuffix : resourceName;
+        }
+
+        if (!context.resourceGroup) {
+            context.newResourceGroupName = suffixNamesAvailable ? resourceName + resourceGroupSuffix : resourceName;
+        }
+
+        context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp?.name || nonNullProp(context, 'newContainerAppName'));
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
@@ -118,5 +135,17 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
             return undefined;
         });
+    }
+
+    private async checkSuffixNamesAvailable(context: DeployWorkspaceProjectInternalContext, resourceName: string): Promise<boolean> {
+        const newResourceGroupName: string = resourceName + resourceGroupSuffix;
+        const newManagedEnvironmentName: string = resourceName + managedEnvironmentSuffix;
+        const newLogAnalyticsWorkspaceName: string = resourceName + logAnalyticsSuffix;
+        const newContainerAppName: string = resourceName + containerAppSuffix;
+
+        return (!!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, newResourceGroupName)) &&
+            (!!context.managedEnvironment || (!ManagedEnvironmentNameStep.validateInput(newLogAnalyticsWorkspaceName) && await ManagedEnvironmentNameStep.isNameAvailable(context, newResourceGroupName, newLogAnalyticsWorkspaceName))) &&
+            (!!context.managedEnvironment || (!ManagedEnvironmentNameStep.validateInput(newManagedEnvironmentName) && await ManagedEnvironmentNameStep.isNameAvailable(context, newResourceGroupName, newManagedEnvironmentName))) &&
+            (!!context.containerApp || (!ContainerAppNameStep.validateInput(newContainerAppName) && await ContainerAppNameStep.isNameAvailable(context, newResourceGroupName, newContainerAppName)));
     }
 }

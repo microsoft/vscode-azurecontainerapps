@@ -19,7 +19,7 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
     protected async executeCore(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);
         const resourceGroup = nonNullProp(context, 'resourceGroup');
-        const workspaceName = nonNullProp(context, 'newManagedEnvironmentName');
+        const workspaceName = context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName');
 
         const creating: string = localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...');
         progress.report({ message: creating });
@@ -36,10 +36,10 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
+                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('createLogAnalyticsWorkspaceSuccess', 'Created log analytics workspace "{0}".', context.newManagedEnvironmentName)
+            message: localize('createLogAnalyticsWorkspaceSuccess', 'Created log analytics workspace "{0}".', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName)
         };
     }
 
@@ -47,10 +47,10 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['logAnalyticsCreateStepFailItem', activityFailContext]),
-                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newManagedEnvironmentName),
+                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
                 iconPath: activityFailIcon
             }),
-            message: localize('createLogAnalyticsWorkspaceFail', 'Failed to create log analytics workspace "{0}".', context.newManagedEnvironmentName)
+            message: localize('createLogAnalyticsWorkspaceFail', 'Failed to create log analytics workspace "{0}".', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName)
         };
     }
 }
