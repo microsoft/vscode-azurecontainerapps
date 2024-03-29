@@ -30,6 +30,10 @@ export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWor
 
             if (!registry) {
                 registry = r;
+
+                if (!context.resourceGroup) {
+                    break;
+                }
             }
         }
 
