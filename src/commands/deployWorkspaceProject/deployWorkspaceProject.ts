@@ -19,6 +19,7 @@ import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectCont
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
+import { formatSectionHeader } from "./formatSectionHeader";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { type DeployWorkspaceProjectInternalContext } from "./internal/DeployWorkspaceProjectInternalContext";
 import { deployWorkspaceProjectInternal } from "./internal/deployWorkspaceProjectInternal";
@@ -35,6 +36,10 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         ...subscriptionContext,
         subscription
     });
+
+    ext.outputChannel.appendLog(
+        formatSectionHeader(localize('preparingDeploymentConfiguration', 'Preparing workspace deployment configuration'))
+    );
 
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
