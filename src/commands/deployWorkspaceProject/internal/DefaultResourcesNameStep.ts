@@ -34,7 +34,7 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
             asyncValidationTask: (name: string) => this.validateNameAvailability(context, name)
         })).trim();
 
-        ext.outputChannel.appendLog(localize('usingResourceName', 'User provided the new resource name "{0}" as the default for resource creation.', resourceName))
+        ext.outputChannel.appendLog(localize('usingResourceName', 'User provided the new resource name "{0}" as the base for resource creation.', resourceName))
 
         const suffixNamesAvailable: boolean = await this.checkSuffixNamesAvailable(context, resourceName);
 
