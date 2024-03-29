@@ -20,7 +20,7 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
-        progress.report({ message: localize(`verifyingAzureResources`, 'Verifying Azure resources...') });
+        progress.report({ message: localize(`verifyingResourceType`, 'Verifying {0}...', this.resourceType) });
 
         const settings: DeploymentConfigurationSettings | undefined = context.deploymentConfigurationSettings;
         if (!settings?.[this.deploymentSettingsKey]) {
