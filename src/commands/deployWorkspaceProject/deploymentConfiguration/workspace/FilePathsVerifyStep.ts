@@ -10,12 +10,11 @@ import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../..
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
-import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;
-    abstract contextKey: keyof DeploymentConfiguration;
+    abstract contextKey: keyof Pick<WorkspaceDeploymentConfigurationContext, 'srcPath' | 'envPath' | 'dockerfilePath'>;
     abstract fileType: string;
 
     private configPath: string | undefined;
