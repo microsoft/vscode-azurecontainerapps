@@ -41,8 +41,8 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     if (item) {
         deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
-        await convertV1ToV2SettingsSchema(containerAppContext);
-        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
+        const { rootFolder } = await convertV1ToV2SettingsSchema({ ...containerAppContext });
+        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext, rootFolder });
     }
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
