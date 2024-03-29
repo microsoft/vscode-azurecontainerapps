@@ -3,50 +3,73 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
+import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
-    public priority: number = 190;  /** Todo: Figure out a good priority level */
+export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+    abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;
+    abstract contextKey: keyof Pick<WorkspaceDeploymentConfigurationContext, 'srcPath' | 'envPath' | 'dockerfilePath'>;
+    abstract fileType: string;
 
-    // Todo: Add logic to verify that the file paths actually exist, if they don't, leave the corresponding context value as undefined
+    private configPath: string | undefined;
+
+    public constructor() {
+        super();
+    }
+
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;
-        progress.report({ message: localize('verifyingFilePaths', 'Verifying file paths...') });
+        progress.report({ message: localize('verifyingFilePaths', `Verifying file paths...`) });
 
         const rootPath: string = nonNullProp(context, 'rootFolder').uri.fsPath;
 
-        const configDockerfilePath = context.deploymentConfigurationSettings?.dockerfilePath;
-        if (!context.dockerfilePath && configDockerfilePath) {
-            context.dockerfilePath = path.join(rootPath, configDockerfilePath);
-        }
+        this.configPath = nonNullValueAndProp(context.deploymentConfigurationSettings, this.deploymentSettingskey);
 
-        const configEnvPath = context.deploymentConfigurationSettings?.envPath;
-        if (!context.envPath && configEnvPath) {
-            context.envPath = path.join(rootPath, configEnvPath);
-        }
-
-        const configSrcPath = context.deploymentConfigurationSettings?.srcPath;
-        if (!context.srcPath && configSrcPath) {
-            context.srcPath = path.join(rootPath, configSrcPath);
+        if (!context[this.contextKey] && this.configPath) {
+            const fullPath = path.join(rootPath, this.configPath);
+            if (await this.verifyFilePath(fullPath)) {
+                context[this.contextKey] = fullPath;
+            }
         }
     }
 
-    public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings;
+    public async verifyFilePath(path: string): Promise<boolean> {
+        if (await AzExtFsExtra.pathExists(path)) {
+            return true;
+        } else {
+            throw new Error(localize('fileNotFound', 'File not found: {0}', this.configPath));
+        }
     }
 
     protected createSuccessOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
-        // Todo: Finish this, if necessary
-        return {};
+        if (!this.configPath || this.configPath === '') {
+            return {};
+        }
+
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['filePathVerifyStepSuccessItem', activitySuccessContext]),
+                label: localize('verifyPath', 'Verify {0} path', this.fileType),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('verifyPathSuccess', 'Verified {0} path.', this.fileType)
+        };
     }
 
     protected createFailOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
-        // Todo: Finish this, if necessary
-        return {};
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['filePathVerifyStepFailItem', activityFailContext]),
+                label: localize('verifyPath', 'Verify {0} path', this.fileType),
+                iconPath: activityFailIcon
+            }),
+            message: localize('verifyPathFail', 'Failed to verify {0} path.', this.fileType)
+        };
     }
 }

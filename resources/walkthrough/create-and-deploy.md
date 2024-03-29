@@ -1,7 +1,7 @@
 | Prompt | Value |
 |--------|-------|
 | Select subscription | Select the Azure subscription you want to use. |
-| Select a container apps environment | Select: <b>Create new container apps environment</b>. You’re only asked this question if you have existing container apps environments. |
+| Select a container apps environment | Select: <b>Create new container apps environment</b>. You will only be asked this question if you have existing container apps environments. |
 | Confirm resources to create | Select: <b>Continue</b> |
 | Enter a name for the new container apps resource(s) | Enter: <b>my-container-app</b> |
 | Provide a source code directory for upload | Select: <b>./src</b> |
