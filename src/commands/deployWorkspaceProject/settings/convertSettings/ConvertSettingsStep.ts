@@ -16,35 +16,37 @@ export class ConvertSettingsStep extends AzureWizardExecuteStep<ConvertSettingsC
     public async execute(context: ConvertSettingsContext): Promise<void> {
         const settingsContentsV1: DeployWorkspaceProjectSettingsV1 = await dwpSettingUtilsV1.getDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'));
         if (settingsContentsV1.containerAppResourceGroupName || settingsContentsV1.containerAppName || settingsContentsV1.containerRegistryName) {
-            const settingsV2: DeploymentConfigurationSettings = {
-                "label": '',
-                "type": 'AcrDockerBuildRequest',
-                "dockerfilePath": '',
-                "srcPath": '',
-                "envPath": '',
-            };
-
-            const settingsV1ToRemove: DeployWorkspaceProjectSettingsV1 = {
-                "containerAppResourceGroupName": undefined,
-                "containerAppName": undefined,
-                "containerRegistryName": undefined
-            };
-
-            if (settingsContentsV1.containerAppResourceGroupName) {
-                settingsV2.resourceGroup = settingsContentsV1.containerAppResourceGroupName;
-            }
-
-            if (settingsContentsV1.containerAppName) {
-                settingsV2.containerApp = settingsContentsV1.containerAppName;
-            }
-
-            if (settingsContentsV1.containerRegistryName) {
-                settingsV2.containerRegistry = settingsContentsV1.containerRegistryName;
-            }
-
-            await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settingsV1ToRemove)
-            await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'), [settingsV2]);
+            return;
         }
+
+        const settingsV2: DeploymentConfigurationSettings = {
+            "label": '',
+            "type": 'AcrDockerBuildRequest',
+            "dockerfilePath": '',
+            "srcPath": '',
+            "envPath": '',
+        };
+
+        const settingsV1ToRemove: DeployWorkspaceProjectSettingsV1 = {
+            "containerAppResourceGroupName": undefined,
+            "containerAppName": undefined,
+            "containerRegistryName": undefined
+        };
+
+        if (settingsContentsV1.containerAppResourceGroupName) {
+            settingsV2.resourceGroup = settingsContentsV1.containerAppResourceGroupName;
+        }
+
+        if (settingsContentsV1.containerAppName) {
+            settingsV2.containerApp = settingsContentsV1.containerAppName;
+        }
+
+        if (settingsContentsV1.containerRegistryName) {
+            settingsV2.containerRegistry = settingsContentsV1.containerRegistryName;
+        }
+
+        await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settingsV1ToRemove)
+        await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'), [settingsV2]);
     }
 
     public shouldExecute(): boolean {
