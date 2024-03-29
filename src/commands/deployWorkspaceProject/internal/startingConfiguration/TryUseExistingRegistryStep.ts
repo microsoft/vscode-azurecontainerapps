@@ -34,7 +34,7 @@ export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWor
         }
 
         // Prioritize trying to find a registry in the same resource group
-        // Otherwise, just find the first available registry
+        // Otherwise, just use the first available registry
         context.registry = registryInSameResourceGroup || registry;
     }
 
