@@ -23,6 +23,7 @@ import { formatSectionHeader } from "./formatSectionHeader";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { type DeployWorkspaceProjectInternalContext } from "./internal/DeployWorkspaceProjectInternalContext";
 import { deployWorkspaceProjectInternal } from "./internal/deployWorkspaceProjectInternal";
+import { convertV1ToV2SettingsSchema } from "./settings/convertSettings/convertV1ToV2SettingsSchema";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -45,8 +46,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     if (item) {
         deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
-        // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
-
+        await convertV1ToV2SettingsSchema(containerAppContext);
         deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
     }
 
