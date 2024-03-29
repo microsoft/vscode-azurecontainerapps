@@ -38,6 +38,12 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         const suffixNamesAvailable: boolean = await this.checkSuffixNamesAvailable(context, resourceName);
 
+        if (suffixNamesAvailable) {
+            ext.outputChannel.appendLog(localize('suffixNamesAvailable', `Verified that the provided names with attached resource suffixes (e.g. ${resourceName + '-rg'}, ${resourceName + '-ca'}, etc.) are also available. Automatically attaching a suffix to each resource name.`));
+        } else {
+            ext.outputChannel.appendLog(localize('suffixNamesUnavailable', `Unable to verify provided name with attached resource suffixes (e.g. ${resourceName + '-rg'}, ${resourceName + '-ca'}, etc.). Defaulting all resources to the original name provided.`));
+        }
+
         if (!context.managedEnvironment) {
             context.newManagedEnvironmentName = suffixNamesAvailable ? resourceName + managedEnvironmentSuffix : resourceName;
             context.newLogAnalyticsWorkspaceName = suffixNamesAvailable ? resourceName + logAnalyticsSuffix : resourceName;
