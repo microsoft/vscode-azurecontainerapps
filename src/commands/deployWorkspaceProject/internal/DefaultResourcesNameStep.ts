@@ -36,21 +36,12 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
 
         ext.outputChannel.appendLog(localize('usingResourceName', 'User provided the new resource name "{0}" as the base for resource creation.', resourceName))
 
-        const suffixNamesAvailable: boolean = await this.checkSuffixNamesAvailable(context, resourceName);
+        const { resourceGroupName, logAnalyticsWorkspaceName, managedEnvironmentName, containerAppName } = await this.getResourceNames(context, resourceName);
 
-        if (!context.managedEnvironment) {
-            context.newManagedEnvironmentName = suffixNamesAvailable ? resourceName + managedEnvironmentSuffix : resourceName;
-            context.newLogAnalyticsWorkspaceName = suffixNamesAvailable ? resourceName + logAnalyticsSuffix : resourceName;
-        }
-
-        if (!context.containerApp) {
-            context.newContainerAppName = suffixNamesAvailable ? resourceName + containerAppSuffix : resourceName;
-        }
-
-        if (!context.resourceGroup) {
-            context.newResourceGroupName = suffixNamesAvailable ? resourceName + resourceGroupSuffix : resourceName;
-        }
-
+        !context.resourceGroup && (context.newResourceGroupName = resourceGroupName);
+        !context.managedEnvironment && (context.newLogAnalyticsWorkspaceName = logAnalyticsWorkspaceName);
+        !context.managedEnvironment && (context.newManagedEnvironmentName = managedEnvironmentName);
+        !context.containerApp && (context.newContainerAppName = containerAppName);
         context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp?.name || nonNullProp(context, 'newContainerAppName'));
     }
 
@@ -137,15 +128,29 @@ export class DefaultResourcesNameStep extends AzureWizardPromptStep<DeployWorksp
         });
     }
 
-    private async checkSuffixNamesAvailable(context: DeployWorkspaceProjectInternalContext, resourceName: string): Promise<boolean> {
-        const newResourceGroupName: string = resourceName + resourceGroupSuffix;
-        const newManagedEnvironmentName: string = resourceName + managedEnvironmentSuffix;
-        const newLogAnalyticsWorkspaceName: string = resourceName + logAnalyticsSuffix;
-        const newContainerAppName: string = resourceName + containerAppSuffix;
+    private async getResourceNames(context: DeployWorkspaceProjectInternalContext, resourceBaseName: string): Promise<{
+        resourceGroupName: string;
+        logAnalyticsWorkspaceName: string;
+        managedEnvironmentName: string;
+        containerAppName: string;
+    }> {
+        const candidateResourceGroupName: string = resourceBaseName + resourceGroupSuffix;
+        const candidateEnvironmentName: string = resourceBaseName + managedEnvironmentSuffix;
+        const candidateLogAnalyticsName: string = resourceBaseName + logAnalyticsSuffix;
+        const candidateContainerAppName: string = resourceBaseName + containerAppSuffix;
 
-        return (!!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, newResourceGroupName)) &&
-            (!!context.managedEnvironment || (!ManagedEnvironmentNameStep.validateInput(newLogAnalyticsWorkspaceName) && await ManagedEnvironmentNameStep.isNameAvailable(context, newResourceGroupName, newLogAnalyticsWorkspaceName))) &&
-            (!!context.managedEnvironment || (!ManagedEnvironmentNameStep.validateInput(newManagedEnvironmentName) && await ManagedEnvironmentNameStep.isNameAvailable(context, newResourceGroupName, newManagedEnvironmentName))) &&
-            (!!context.containerApp || (!ContainerAppNameStep.validateInput(newContainerAppName) && await ContainerAppNameStep.isNameAvailable(context, newResourceGroupName, newContainerAppName)));
+        const isCandidateResourceGroupAvailable: boolean = !ContainerAppNameStep.validateInput(candidateResourceGroupName) && await ResourceGroupListStep.isNameAvailable(context, candidateResourceGroupName);
+        const resourceGroupName: string = isCandidateResourceGroupAvailable ? candidateResourceGroupName : resourceBaseName;
+
+        const isCandidateLogAnalyticsNameAvailable: boolean = !ManagedEnvironmentNameStep.validateInput(candidateLogAnalyticsName) && await ManagedEnvironmentNameStep.isNameAvailable(context, resourceGroupName, candidateLogAnalyticsName);
+        const isCandidateEnvironmentNameAvailable: boolean = !ManagedEnvironmentNameStep.validateInput(candidateEnvironmentName) && await ManagedEnvironmentNameStep.isNameAvailable(context, resourceGroupName, candidateEnvironmentName);
+        const isCandidateContainerAppNameAvailable: boolean = !ContainerAppNameStep.validateInput(candidateContainerAppName) && await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, candidateContainerAppName);
+
+        return {
+            resourceGroupName,
+            logAnalyticsWorkspaceName: isCandidateLogAnalyticsNameAvailable ? candidateLogAnalyticsName : resourceBaseName,
+            managedEnvironmentName: isCandidateEnvironmentNameAvailable ? candidateEnvironmentName : resourceBaseName,
+            containerAppName: isCandidateContainerAppNameAvailable ? candidateContainerAppName : resourceBaseName,
+        };
     }
 }
