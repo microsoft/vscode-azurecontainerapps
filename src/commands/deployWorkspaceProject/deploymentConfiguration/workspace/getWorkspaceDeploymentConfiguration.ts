@@ -10,18 +10,16 @@ import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListStep";
-import { TryUseExistingWorkspaceRegistryStep } from "./TryUseExistingWorkspaceRegistryStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { TryUseExistingWorkspaceRegistryStep } from "./azureResources/TryUseExistingWorkspaceRegistryStep";
 
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
         ...await createActivityContext(),
-        activityTitle: localize('loadWorkspaceSettingsActivityTitle', 'Load workspace deployment configuration'),
-        activityChildren: []
     });
 
     const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
-        title: localize('selectWorkspaceSettingsTitle', 'Select workspace deployment configuration'),
+        title: localize('selectWorkspaceDeploymentConfigurationTitle', 'Select a workspace deployment configuration'),
         promptSteps: [
             new RootFolderStep(),
             new DeploymentConfigurationListStep(),
@@ -34,7 +32,9 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     await wizard.prompt();
 
     if (wizardContext.deploymentConfigurationSettings) {
-        wizardContext.activityTitle = localize('loadWorkspaceSettingsActivityTitle', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label);
+        wizardContext.activityTitle = localize('loadWorkspaceDeploymentActivityTitle', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label);
+    } else {
+        wizardContext.activityTitle = localize('prepareWorkspaceDeploymentActivityTitle', 'Prepare new workspace deployment configuration');
     }
 
     await wizard.execute();
