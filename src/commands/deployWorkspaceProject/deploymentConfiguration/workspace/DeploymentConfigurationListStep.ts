@@ -7,7 +7,9 @@ import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWiz
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
+import { DockerfileValidateStep } from "./DockerfileValidateStep";
+import { EnvValidateStep } from "./EnvValidateStep";
+import { SrcValidateStep } from "./SrcValidateStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 import { ContainerAppVerifyStep } from "./azureResources/ContainerAppVerifyStep";
 import { ContainerRegistryVerifyStep } from "./azureResources/ContainerRegistryVerifyStep";
@@ -43,7 +45,9 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
         return {
             executeSteps: [
-                new FilePathsVerifyStep(),
+                new DockerfileValidateStep(),
+                new SrcValidateStep(),
+                new EnvValidateStep(),
                 new ResourceGroupVerifyStep(),
                 new ContainerAppVerifyStep(),
                 new ContainerRegistryVerifyStep()
