@@ -50,14 +50,13 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['azureResourceVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyResource', 'Verify {0} "{1}"', this.resourceType, context.deploymentConfigurationSettings?.[this.deploymentSettingsKey] as string),
+                label: localize('verifyResource', 'Verify {0}', this.resourceType),
                 iconPath: activitySuccessIcon,
             }),
             message: localize('verifiedResource',
-                'Successfully verified {0} "{1}" from configuration "{2}".',
+                'Successfully verified {0} "{1}".',
                 this.resourceType,
                 context.deploymentConfigurationSettings?.[this.deploymentSettingsKey] as string,
-                context.deploymentConfigurationSettings?.label
             ),
         };
     }
@@ -66,14 +65,13 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['azureResourceVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyResource', 'Verify {0} "{1}"', this.resourceType, context.deploymentConfigurationSettings?.[this.deploymentSettingsKey] as string),
+                label: localize('verifyResource', 'Verify {0}', this.resourceType),
                 iconPath: activityFailIcon,
             }),
             message: localize('verifyContainerAppFail',
-                'Failed to verify {0} "{1}" from configuration "{2}".',
+                'Failed to verify {0} "{1}".',
                 this.resourceType,
                 context.deploymentConfigurationSettings?.[this.deploymentSettingsKey] as string,
-                context.deploymentConfigurationSettings?.label
             )
         };
     }

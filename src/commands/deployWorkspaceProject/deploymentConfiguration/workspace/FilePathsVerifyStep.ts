@@ -58,7 +58,7 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
                 label: localize('verifyPath', 'Verify {0} path', this.fileType),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('verifyPathSuccess', 'Verified {0} path.', this.fileType)
+            message: localize('verifyPathSuccess', 'Successfully verified {0} path "{1}".', this.fileType, this.configPath)
         };
     }
 
@@ -69,7 +69,7 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
                 label: localize('verifyPath', 'Verify {0} path', this.fileType),
                 iconPath: activityFailIcon
             }),
-            message: localize('verifyPathFail', 'Failed to verify {0} path.', this.fileType)
+            message: localize('verifyPathFail', 'Failed to verify {0} path "{1}".', this.fileType, this.configPath)
         };
     }
 }

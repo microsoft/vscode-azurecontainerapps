@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { window } from "vscode";
@@ -44,6 +45,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
 
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
+        ext.outputChannel.appendLog(localize('treeItemConfiguration', 'Loading deployment configuration from user provided tree item "{0}".', parseAzureResourceId(item.id).resourceName));
         deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
         await convertV1ToV2SettingsSchema(containerAppContext);
