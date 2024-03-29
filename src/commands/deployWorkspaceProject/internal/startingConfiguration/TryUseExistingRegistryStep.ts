@@ -15,7 +15,7 @@ export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWor
     public async execute(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
 
-        let resourceGroupRegistry: Registry | undefined;
+        let registryInSameResourceGroup: Registry | undefined;
         let registry: Registry | undefined;
 
         for (const r of registries) {
@@ -24,7 +24,7 @@ export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWor
             }
 
             if (parseAzureResourceId(r.id).resourceGroup === context.resourceGroup?.name) {
-                resourceGroupRegistry = r;
+                registryInSameResourceGroup = r;
                 break;
             }
 
@@ -33,7 +33,9 @@ export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWor
             }
         }
 
-        context.registry = resourceGroupRegistry || registry;
+        // Prioritize trying to find a registry in the same resource group
+        // Otherwise, just find the first available registry
+        context.registry = registryInSameResourceGroup || registry;
     }
 
     public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {
