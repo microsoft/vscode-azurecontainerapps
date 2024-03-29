@@ -9,7 +9,8 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 export class SrcValidateStep extends FilePathsVerifyStep {
     priority: number = 110;
 
-    key = 'srcPath';
+    deploymentSettingskey = 'srcPath' as const;
+    contextKey = 'srcPath' as const;
     fileType = 'src';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {

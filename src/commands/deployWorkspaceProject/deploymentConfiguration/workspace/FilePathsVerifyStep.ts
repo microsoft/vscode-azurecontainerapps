@@ -9,10 +9,13 @@ import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
+import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
+import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
-    abstract key: string;
+    abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;
+    abstract contextKey: keyof DeploymentConfiguration;
     abstract fileType: string;
 
     private configPath: string | undefined;
@@ -27,12 +30,12 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
 
         const rootPath: string = nonNullProp(context, 'rootFolder').uri.fsPath;
 
-        this.configPath = nonNullValueAndProp(context.deploymentConfigurationSettings, this.key as keyof typeof context.deploymentConfigurationSettings)
+        this.configPath = nonNullValueAndProp(context.deploymentConfigurationSettings, this.deploymentSettingskey);
 
-        if (!context[this.key] && this.configPath) {
+        if (!context[this.contextKey] && this.configPath) {
             const fullPath = path.join(rootPath, this.configPath);
-            if (await this.verifyFilePath(fullPath)) {
-                context[this.key] = fullPath;
+            if (await this.verifyFilePath(fullPath) && typeof context[this.contextKey] === 'string') {
+                context[this.contextKey] = fullPath;
             }
         }
     }

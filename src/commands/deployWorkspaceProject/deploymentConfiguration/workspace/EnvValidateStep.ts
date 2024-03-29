@@ -9,7 +9,8 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 export class EnvValidateStep extends FilePathsVerifyStep {
     priority: number = 120;
 
-    key = 'envPath';
+    deploymentSettingskey = 'envPath' as const;
+    contextKey = 'envPath' as const;
     fileType = '.env file';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {

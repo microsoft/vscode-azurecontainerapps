@@ -9,7 +9,8 @@ import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploym
 export class DockerfileValidateStep extends FilePathsVerifyStep {
     priority: number = 100;
 
-    key = 'dockerfilePath';
+    deploymentSettingskey = 'dockerfilePath' as const;
+    contextKey = 'dockerfilePath' as const;
     fileType = 'dockerfile';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
