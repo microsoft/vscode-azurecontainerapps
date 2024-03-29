@@ -6,13 +6,17 @@
 import { type Registry } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectInternalTelemetryProps as TelemetryProps } from "../../../../telemetry/deployWorkspaceProjectTelemetryProps";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
-export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext> {
+type TryUseExistingRegistryContext = DeployWorkspaceProjectInternalContext & SetTelemetryProps<TelemetryProps>;
+
+export class TryUseExistingRegistryStep<T extends TryUseExistingRegistryContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 200;  /** Todo: Figure out a good priority level */
 
-    public async execute(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
 
         let registryInSameResourceGroup: Registry | undefined;
@@ -40,9 +44,10 @@ export class TryUseExistingRegistryStep extends AzureWizardExecuteStep<DeployWor
         // Prioritize trying to find a registry in the same resource group
         // Otherwise, just use the first available registry
         context.registry = registryInSameResourceGroup || registry;
+        context.telemetry.properties.defaultedRegistryInternal = context.registry ? 'true' : 'false';
     }
 
-    public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.registry;
     }
 }

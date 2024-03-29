@@ -10,11 +10,15 @@ import { type IngressTelemetryProps } from "./IngressTelemetryProps";
 import { type OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-// Todo: Add more telemetry points to this later
-export type DeployWorkspaceProjectTelemetryProps = DeployWorkspaceProjectInternalTelemetryProps;
+export interface DeployWorkspaceProjectTelemetryProps extends DeployWorkspaceProjectInternalTelemetryProps {
+    choseExistingWorkspaceConfiguration?: 'true' | 'false';
+    defaultedRegistry?: 'true' | 'false';
+}
 
 export interface DeployWorkspaceProjectInternalTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps, IngressTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
+
+    defaultedRegistryInternal?: 'true' | 'false';
 
     // Resources
     existingResourceGroup?: 'true' | 'false';
