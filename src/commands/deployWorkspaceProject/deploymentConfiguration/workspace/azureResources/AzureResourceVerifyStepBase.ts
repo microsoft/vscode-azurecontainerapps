@@ -5,18 +5,18 @@
 
 import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
-import { localize } from "../../../../utils/localize";
-import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../../../utils/activity/activityUtils";
+import { localize } from "../../../../../utils/localize";
+import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
 export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     public abstract priority: number;
 
     protected abstract resourceType: 'resource group' | 'container app' | 'container registry';
-    protected abstract deploymentSettingsKey: string;
-    protected abstract contextKey: string;
+    protected abstract deploymentSettingsKey: keyof DeploymentConfigurationSettings;
+    protected abstract contextKey: keyof WorkspaceDeploymentConfigurationContext;
 
     protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.shouldSwallowError = true;

@@ -7,11 +7,11 @@ import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWiz
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { ContainerAppVerifyStep } from "./ContainerAppVerifyStep";
-import { ContainerRegistryVerifyStep } from "./ContainerRegistryVerifyStep";
 import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
-import { ResourceGroupVerifyStep } from "./ResourceGroupVerifyStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { ContainerAppVerifyStep } from "./azureResources/ContainerAppVerifyStep";
+import { ContainerRegistryVerifyStep } from "./azureResources/ContainerRegistryVerifyStep";
+import { ResourceGroupVerifyStep } from "./azureResources/ResourceGroupVerifyStep";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
     public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {

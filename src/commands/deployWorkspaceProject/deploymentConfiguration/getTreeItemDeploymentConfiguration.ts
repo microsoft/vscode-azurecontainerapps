@@ -9,7 +9,7 @@ import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { type IContainerAppContext } from "../../IContainerAppContext";
 import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "./DeploymentConfiguration";
-import { TryUseExistingWorkspaceRegistryStep } from "./workspace/TryUseExistingWorkspaceRegistryStep";
+import { TryUseExistingWorkspaceRegistryStep } from "./workspace/azureResources/TryUseExistingWorkspaceRegistryStep";
 
 type TreeItemDeploymentConfigurationContext = IContainerAppContext & DeploymentConfiguration;
 

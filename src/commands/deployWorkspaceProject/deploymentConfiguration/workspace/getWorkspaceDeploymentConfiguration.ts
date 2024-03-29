@@ -10,8 +10,8 @@ import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListStep";
-import { TryUseExistingWorkspaceRegistryStep } from "./TryUseExistingWorkspaceRegistryStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { TryUseExistingWorkspaceRegistryStep } from "./azureResources/TryUseExistingWorkspaceRegistryStep";
 
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
