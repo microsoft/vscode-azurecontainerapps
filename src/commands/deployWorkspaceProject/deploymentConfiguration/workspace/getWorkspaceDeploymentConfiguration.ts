@@ -33,7 +33,9 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     await wizard.prompt();
 
     if (wizardContext.deploymentConfigurationSettings) {
-        wizardContext.activityTitle = localize('loadWorkspaceDeploymentActivityTitle', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label);
+        wizardContext.activityTitle = wizardContext.deploymentConfigurationSettings.label ?
+            localize('loadWorkspaceDeploymentActivityTitleOne', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label) :
+            localize('loadWorkspaceDeploymentActivityTitleTwo', 'Load workspace deployment configuration');
     } else {
         wizardContext.activityTitle = localize('prepareWorkspaceDeploymentActivityTitle', 'Prepare new workspace deployment configuration');
     }
