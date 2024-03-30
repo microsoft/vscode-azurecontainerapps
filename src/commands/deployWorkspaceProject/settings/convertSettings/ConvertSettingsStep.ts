@@ -47,8 +47,8 @@ export class ConvertSettingsStep extends AzureWizardExecuteStep<ConvertSettingsC
             settingsV2.containerRegistry = settingsContentsV1.containerRegistryName;
         }
 
-        await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settingsV1ToRemove)
         await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'), [settingsV2]);
+        await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settingsV1ToRemove);
     }
 
     public shouldExecute(): boolean {
