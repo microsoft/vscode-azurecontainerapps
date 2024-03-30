@@ -46,7 +46,6 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
             ext.outputChannel.appendLog(localize('choseExistingConfiguration', 'User chose to load existing workspace deployment configuration "{0}".', context.deploymentConfigurationSettings.label));
         } else {
             ext.outputChannel.appendLog(localize('choseExistingConfiguration', 'User chose to load existing workspace deployment configuration.'));
-
         }
 
         // We mainly want to show activity children if there are deployment settings to verify
