@@ -55,7 +55,7 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['filePathVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyPath', 'Verify {0} path', this.fileType),
+                label: this.fileType.charAt(0).toUpperCase() + this.fileType.slice(1) + ' ' + localize('path', 'path'),
                 iconPath: activitySuccessIcon
             }),
             message: localize('verifyPathSuccess', 'Successfully verified {0} path "{1}".', this.fileType, this.configPath)
@@ -66,7 +66,7 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['filePathVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyPath', 'Verify {0} path', this.fileType),
+                label: this.fileType.charAt(0).toUpperCase() + this.fileType.slice(1) + ' ' + localize('path', 'path'),
                 iconPath: activityFailIcon
             }),
             message: localize('verifyPathFail', 'Failed to verify {0} path "{1}".', this.fileType, this.configPath)

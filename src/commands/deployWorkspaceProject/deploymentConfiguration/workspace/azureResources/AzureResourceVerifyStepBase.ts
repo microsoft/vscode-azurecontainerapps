@@ -50,7 +50,7 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['azureResourceVerifyStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyResource', 'Verify {0}', this.resourceType),
+                label: this.resourceType.charAt(0).toUpperCase() + this.resourceType.slice(1),
                 iconPath: activitySuccessIcon,
             }),
             message: localize('verifiedResource',
@@ -65,7 +65,7 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['azureResourceVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyResource', 'Verify {0}', this.resourceType),
+                label: this.resourceType.charAt(0).toUpperCase() + this.resourceType.slice(1),
                 iconPath: activityFailIcon,
             }),
             message: localize('verifyContainerAppFail',

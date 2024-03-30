@@ -40,7 +40,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     ext.outputChannel.appendLog(
-        formatSectionHeader(localize('preparingDeploymentConfiguration', 'Preparing workspace deployment configuration'))
+        formatSectionHeader(localize('prepareDeploymentConfiguration', 'Prepare workspace deployment configuration'))
     );
 
     let deploymentConfiguration: DeploymentConfiguration;

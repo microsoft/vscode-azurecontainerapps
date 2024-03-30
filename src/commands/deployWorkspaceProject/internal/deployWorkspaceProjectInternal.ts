@@ -54,7 +54,7 @@ export async function deployWorkspaceProjectInternal(
 ): Promise<DeployWorkspaceProjectInternalContext> {
 
     ext.outputChannel.appendLog(
-        formatSectionHeader(localize('initCommandExecution', 'Initializing deploy workspace project'))
+        formatSectionHeader(localize('initCommandExecution', 'Initialize deploy workspace project'))
     );
 
     let activityContext: Partial<ExecuteActivityContext>;
@@ -227,7 +227,7 @@ export async function deployWorkspaceProjectInternal(
     }
 
     ext.outputChannel.appendLog(
-        formatSectionHeader(localize('beginCommandExecution', 'Deploying workspace project'))
+        formatSectionHeader(localize('beginCommandExecution', 'Deploy workspace project'))
     );
 
     await wizard.execute();
