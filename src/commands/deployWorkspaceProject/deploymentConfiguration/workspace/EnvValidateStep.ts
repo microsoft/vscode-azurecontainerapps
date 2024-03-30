@@ -11,7 +11,7 @@ export class EnvValidateStep extends FilePathsVerifyStep {
 
     deploymentSettingskey = 'envPath' as const;
     contextKey = 'envPath' as const;
-    fileType = '.env file';
+    fileType = 'environment variables';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
         return !context.envPath;

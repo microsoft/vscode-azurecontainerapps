@@ -4,6 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../../extensionVariables";
+import { localize } from "../../../../utils/localize";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectSettingsV1 } from "../DeployWorkspaceProjectSettingsV1";
 import { type DeploymentConfigurationSettings } from "../DeployWorkspaceProjectSettingsV2";
@@ -49,6 +51,8 @@ export class ConvertSettingsStep extends AzureWizardExecuteStep<ConvertSettingsC
 
         await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'), [settingsV2]);
         await dwpSettingUtilsV1.setDeployWorkspaceProjectSettings(nonNullProp(context, 'rootFolder'), settingsV1ToRemove);
+
+        ext.outputChannel.appendLog(localize('convertedSettings', 'Detected deprecated deployment settings. Automatically converting settings to the latest workspace deployment schema.'));
     }
 
     public shouldExecute(): boolean {
