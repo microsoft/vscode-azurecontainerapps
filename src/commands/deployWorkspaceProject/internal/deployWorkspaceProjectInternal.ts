@@ -17,6 +17,7 @@ import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/Man
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
+import { formatSectionHeader } from "../formatSectionHeader";
 import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
@@ -53,7 +54,7 @@ export async function deployWorkspaceProjectInternal(
 ): Promise<DeployWorkspaceProjectInternalContext> {
 
     ext.outputChannel.appendLog(
-        wrapWithDashFormatting(localize('initCommandExecution', 'Initializing deploy workspace project'))
+        formatSectionHeader(localize('initCommandExecution', 'Initialize deploy workspace project'))
     );
 
     let activityContext: Partial<ExecuteActivityContext>;
@@ -226,7 +227,7 @@ export async function deployWorkspaceProjectInternal(
     }
 
     ext.outputChannel.appendLog(
-        wrapWithDashFormatting(localize('beginCommandExecution', 'Deploying workspace project'))
+        formatSectionHeader(localize('beginCommandExecution', 'Deploy workspace project'))
     );
 
     await wizard.execute();
@@ -234,18 +235,10 @@ export async function deployWorkspaceProjectInternal(
     wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
 
     ext.outputChannel.appendLog(
-        wrapWithDashFormatting(localize('finishCommandExecution', 'Finished deploying workspace project'))
+        formatSectionHeader(localize('finishCommandExecution', 'Finished deploying workspace project'))
     );
 
     ext.branchDataProvider.refresh();
 
     return wizardContext;
-}
-
-/**
- * Wrap a string with dashes to make key text more easily visible
- * @example "--------hello-world--------"
- */
-function wrapWithDashFormatting(text: string): string {
-    return `--------${text}--------`;
 }
