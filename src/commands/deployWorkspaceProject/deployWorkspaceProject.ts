@@ -48,8 +48,8 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         ext.outputChannel.appendLog(localize('treeItemConfiguration', 'Loading deployment configuration from user provided tree item "{0}".', parseAzureResourceId(item.id).resourceName));
         deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
-        await convertV1ToV2SettingsSchema(containerAppContext);
-        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
+        const { rootFolder } = await convertV1ToV2SettingsSchema({ ...containerAppContext });
+        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext, rootFolder });
     }
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {

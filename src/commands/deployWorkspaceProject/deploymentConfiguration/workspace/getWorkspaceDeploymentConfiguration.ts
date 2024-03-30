@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard } from "@microsoft/vscode-azext-utils";
+import { type WorkspaceFolder } from "vscode";
 import { createActivityContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { type IContainerAppContext } from "../../../IContainerAppContext";
@@ -13,7 +14,7 @@ import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListSt
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 import { TryUseExistingWorkspaceRegistryStep } from "./azureResources/TryUseExistingWorkspaceRegistryStep";
 
-export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext): Promise<DeploymentConfiguration> {
+export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext & { rootFolder?: WorkspaceFolder }): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
         ...await createActivityContext(),
     });
@@ -32,7 +33,9 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     await wizard.prompt();
 
     if (wizardContext.deploymentConfigurationSettings) {
-        wizardContext.activityTitle = localize('loadWorkspaceDeploymentActivityTitle', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label);
+        wizardContext.activityTitle = wizardContext.deploymentConfigurationSettings.label ?
+            localize('loadWorkspaceDeploymentActivityTitleOne', 'Load workspace deployment configuration "{0}"', wizardContext.deploymentConfigurationSettings.label) :
+            localize('loadWorkspaceDeploymentActivityTitleTwo', 'Load workspace deployment configuration');
     } else {
         wizardContext.activityTitle = localize('prepareWorkspaceDeploymentActivityTitle', 'Prepare new workspace deployment configuration');
     }
