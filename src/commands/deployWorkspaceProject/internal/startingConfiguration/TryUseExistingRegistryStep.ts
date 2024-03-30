@@ -6,8 +6,10 @@
 import { type Registry } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../../extensionVariables";
 import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectInternalTelemetryProps as TelemetryProps } from "../../../../telemetry/deployWorkspaceProjectTelemetryProps";
+import { localize } from "../../../../utils/localize";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
@@ -39,6 +41,12 @@ export class TryUseExistingRegistryStep<T extends TryUseExistingRegistryContext>
                     break;
                 }
             }
+        }
+
+        if (registryInSameResourceGroup) {
+            ext.outputChannel.appendLog(localize('resourceGroupRegistry', 'Found an available registry "{0}" in the provided resource group "{1}".', registryInSameResourceGroup.name, context.resourceGroup?.name));
+        } else if (registry) {
+            ext.outputChannel.appendLog(localize('firstRegistry', 'Found an available registry "{0}" in the provided subscription.', registry.name));
         }
 
         // Prioritize trying to find a registry in the same resource group

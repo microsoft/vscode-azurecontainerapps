@@ -9,10 +9,8 @@ import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/Roo
 import { type ConvertSettingsContext } from "./ConvertSettingsContext";
 import { ConvertSettingsStep } from "./ConvertSettingsStep";
 
-export async function convertV1ToV2SettingsSchema(context: IContainerAppContext) {
-    const wizardContext: ConvertSettingsContext = {
-        ...context
-    };
+export async function convertV1ToV2SettingsSchema(context: IContainerAppContext): Promise<ConvertSettingsContext> {
+    const wizardContext: ConvertSettingsContext = context;
 
     const wizard: AzureWizard<ConvertSettingsContext> = new AzureWizard(wizardContext, {
         promptSteps: [new RootFolderStep()],
@@ -21,4 +19,6 @@ export async function convertV1ToV2SettingsSchema(context: IContainerAppContext)
 
     await wizard.prompt();
     await wizard.execute();
+
+    return context;
 }

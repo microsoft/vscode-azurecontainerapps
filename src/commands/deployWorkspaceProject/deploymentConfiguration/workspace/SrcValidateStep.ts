@@ -11,7 +11,7 @@ export class SrcValidateStep extends FilePathsVerifyStep {
 
     deploymentSettingskey = 'srcPath' as const;
     contextKey = 'srcPath' as const;
-    fileType = 'src';
+    fileType = 'source code';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
         return !context.srcPath;

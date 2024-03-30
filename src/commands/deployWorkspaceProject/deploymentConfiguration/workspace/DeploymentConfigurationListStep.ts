@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../../extensionVariables";
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
@@ -37,7 +38,14 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
 
     public async getSubWizard(context: WorkspaceDeploymentConfigurationContext): Promise<IWizardOptions<WorkspaceDeploymentConfigurationContext> | undefined> {
         if (!context.deploymentConfigurationSettings) {
+            ext.outputChannel.appendLog(localize('createNewAppConfiguration', 'User chose to create a new app configuration.'));
             return undefined;
+        }
+
+        if (context.deploymentConfigurationSettings.label) {
+            ext.outputChannel.appendLog(localize('choseExistingConfiguration', 'User chose to load existing workspace deployment configuration "{0}".', context.deploymentConfigurationSettings.label));
+        } else {
+            ext.outputChannel.appendLog(localize('choseExistingConfiguration', 'User chose to load existing workspace deployment configuration.'));
         }
 
         // We mainly want to show activity children if there are deployment settings to verify
