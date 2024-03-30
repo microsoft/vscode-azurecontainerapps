@@ -676,6 +676,17 @@
                         "media": {
                             "markdown": "resources/walkthrough/create-and-deploy.md"
                         }
+                    },
+                    {
+                        "id": "containerApps.walkthrough.exploreDetails",
+                        "title": "%containerApps.walkthrough.exploreDetails.title%",
+                        "description": "%containerApps.walkthrough.exploreDetails.description%",
+                        "completionEvents": [
+                            "onStepSelected"
+                        ],
+                        "media": {
+                            "markdown": "resources/walkthrough/explore-details.md"
+                        }
                     }
                 ]
             }

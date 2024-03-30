@@ -68,5 +68,7 @@
     "containerApps.walkthrough.azureSignIn.title": "Sign in to Azure",
     "containerApps.walkthrough.azureSignIn.description": "Sign in using the button below.\nYou may be directed to authenticate using your browser. Return to Visual Studio Code once completed.\n[Sign in to Azure](command:containerApps.walkthrough.azureSignIn)",
     "containerApps.walkthrough.deployWorkspaceProject.title": "Create and deploy",
-    "containerApps.walkthrough.deployWorkspaceProject.description": "Create the container app resources necessary to host the application by using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)"
+    "containerApps.walkthrough.deployWorkspaceProject.description": "Create the container app resources necessary to host the application by using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Deploy Project from Workspace](command:containerApps.walkthrough.deployWorkspaceProject)",
+    "containerApps.walkthrough.exploreDetails.title": "Explore details",
+    "containerApps.walkthrough.exploreDetails.description": "Let's explore what we've accomplished so far.\nIn this walkthrough, the commands were provided to you directly in each step.  In practice, most of these commands will need to be accessed via the Azure Resources and Workspace pane.\nUse the provided table to review and discover the real location of each command."
 }
