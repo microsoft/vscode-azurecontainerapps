@@ -6,26 +6,29 @@
 import { type Registry } from "@azure/arm-containerregistry";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from "../../../../extensionVariables";
-import { localize } from "../../../../utils/localize";
-import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
-import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
-import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { containerRegistryVerifyMessage } from "./ContainerRegistryVerifyStep";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { ext } from "../../../../../extensionVariables";
+import { type SetTelemetryProps } from "../../../../../telemetry/SetTelemetryProps";
+import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../../telemetry/deployWorkspaceProjectTelemetryProps";
+import { localize } from "../../../../../utils/localize";
+import { AcrListStep } from "../../../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../../../settings/dwpSettingUtilsV2";
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
-export class TryUseExistingWorkspaceRegistryStep extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
+type TryUseExistingWorkspaceRegistryContext = WorkspaceDeploymentConfigurationContext & SetTelemetryProps<TelemetryProps>;
+
+export class TryUseExistingWorkspaceRegistryStep<T extends TryUseExistingWorkspaceRegistryContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 220;  /** Todo: Figure out a good priority level */
 
-    public async execute(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!settings?.length) {
             return;
         }
 
         if (context.deploymentConfigurationSettings) {
-            // In the case where we were already verifying, it looks a little smoother if we keep the execution looking like a continuation of that step
-            progress.report({ message: containerRegistryVerifyMessage });
+            // In the case where we were already verifying, it looks a little smoother if we keep the execution looking like a continuation of the previous step
+            progress.report({ message: localize(`verifyingContainerRegistry`, 'Verifying container registry') });
         } else {
             progress.report({ message: localize('searchingAvailableRegistries', 'Searching available registries...') });
         }
@@ -48,13 +51,16 @@ export class TryUseExistingWorkspaceRegistryStep extends AzureWizardExecuteStep<
 
             if (registryMap.has(setting.containerRegistry)) {
                 context.registry = registryMap.get(setting.containerRegistry);
+                context.telemetry.properties.defaultedRegistry = 'true';
                 ext.outputChannel.appendLog(localize('useExistingWorkspaceAcrSuccess', 'Searched workspace settings and found an existing container registry "{0}" to leverage.', context.registry?.name));
                 break;
             }
         }
+
+        context.telemetry.properties.defaultedRegistry = 'false';
     }
 
-    public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.registry;
     }
 }
