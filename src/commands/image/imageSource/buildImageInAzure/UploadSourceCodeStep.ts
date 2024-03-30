@@ -92,9 +92,11 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         let dockerfileContent: string = await AzExtFsExtra.readFile(context.dockerfilePath);
 
         if (!platformRegex.test(dockerfileContent)) {
+            context.telemetry.properties.buildCustomDockerfile = 'false';
             return;
         }
 
+        context.telemetry.properties.buildCustomDockerfile = 'true';
         ext.outputChannel.appendLog(localize('removePlatformFlag', 'Detected a "--platform" flag in the Dockerfile. This flag is not supported in ACR. Attempting to provide a Dockerfile with the "--platform" flag removed.'));
         dockerfileContent = dockerfileContent.replace(platformRegex, '$1$2');
 
