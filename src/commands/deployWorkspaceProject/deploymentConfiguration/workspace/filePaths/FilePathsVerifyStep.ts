@@ -6,11 +6,11 @@
 import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
-import { localize } from "../../../../utils/localize";
-import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../../../utils/activity/activityUtils";
+import { localize } from "../../../../../utils/localize";
+import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
 export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
     abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;

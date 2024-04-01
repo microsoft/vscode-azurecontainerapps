@@ -3,8 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export class SrcValidateStep extends FilePathsVerifyStep {
     priority: number = 110;
