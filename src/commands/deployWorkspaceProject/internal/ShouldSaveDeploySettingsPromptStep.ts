@@ -21,6 +21,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
             const hasNewSettings: boolean =
+                !setting?.label ||
                 setting?.type !== 'AcrDockerBuildRequest' ||
                 (context.dockerfilePath && convertRelativeToAbsolutePath(rootPath, setting?.dockerfilePath) !== context.dockerfilePath) ||
                 (context.envPath && convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath) ||

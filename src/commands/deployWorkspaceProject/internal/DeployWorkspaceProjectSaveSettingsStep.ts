@@ -27,8 +27,9 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         const rootFolder: WorkspaceFolder = nonNullProp(context, 'rootFolder');
         const deploymentConfigurations: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
 
+        const configurationLabel: string | undefined = context.configurationIdx !== undefined ? deploymentConfigurations?.[context.configurationIdx].label : undefined;
         const deploymentConfiguration: DeploymentConfigurationSettings = {
-            label: context.configurationIdx !== undefined && deploymentConfigurations?.[context.configurationIdx].label || removeCaSuffixIfExists(nonNullValueAndProp(context.containerApp, 'name')),
+            label: configurationLabel || removeCaSuffixIfExists(nonNullValueAndProp(context.containerApp, 'name')),
             type: 'AcrDockerBuildRequest',
             dockerfilePath: path.relative(rootFolder.uri.fsPath, nonNullProp(context, 'dockerfilePath')),
             srcPath: path.relative(rootFolder.uri.fsPath, context.srcPath || rootFolder.uri.fsPath) || ".",
