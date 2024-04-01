@@ -8,13 +8,13 @@ import { ext } from "../../../../extensionVariables";
 import { localize } from "../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { DockerfileValidateStep } from "./DockerfileValidateStep";
-import { EnvValidateStep } from "./EnvValidateStep";
-import { SrcValidateStep } from "./SrcValidateStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 import { ContainerAppVerifyStep } from "./azureResources/ContainerAppVerifyStep";
 import { ContainerRegistryVerifyStep } from "./azureResources/ContainerRegistryVerifyStep";
 import { ResourceGroupVerifyStep } from "./azureResources/ResourceGroupVerifyStep";
+import { DockerfileValidateStep } from "./filePaths/DockerfileValidateStep";
+import { EnvValidateStep } from "./filePaths/EnvValidateStep";
+import { SrcValidateStep } from "./filePaths/SrcValidateStep";
 
 export class DeploymentConfigurationListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
     public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {

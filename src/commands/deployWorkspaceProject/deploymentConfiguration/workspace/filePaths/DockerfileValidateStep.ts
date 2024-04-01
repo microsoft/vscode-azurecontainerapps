@@ -3,17 +3,17 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
-import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
-export class EnvValidateStep extends FilePathsVerifyStep {
-    priority: number = 120;
+export class DockerfileValidateStep extends FilePathsVerifyStep {
+    priority: number = 100;
 
-    deploymentSettingskey = 'envPath' as const;
-    contextKey = 'envPath' as const;
-    fileType = 'environment variables';
+    deploymentSettingskey = 'dockerfilePath' as const;
+    contextKey = 'dockerfilePath' as const;
+    fileType = 'dockerfile';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !context.envPath;
+        return !context.dockerfilePath
     }
 }
