@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, Ingress } from "@azure/arm-appcontainers";
+import { type ContainerApp, type Ingress } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { IngressConstants } from "../../constants";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppsItem, type TreeElementBase } from "../ContainerAppsBranchDataProvider";
 
 const label: string = localize('ingress', 'Ingress');
 

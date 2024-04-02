@@ -6,15 +6,16 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, IActionContext, registerUIExtensionVariables, TreeElementStateManager } from '@microsoft/vscode-azext-utils';
+import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
 import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
+import { getAzureContainerAppsApiProvider } from './commands/api/getAzureContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 
-export async function activate(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<void> {
+export async function activate(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<apiUtils.AzureExtensionApiProvider> {
     // the entry point for vscode.dev is this activate, not main.js, so we need to instantiate perfStats here
     // the perf stats don't matter for vscode because there is no main file to load-- we may need to see if we can track the download time
     perfStats ||= { loadStartTime: Date.now(), loadEndTime: Date.now() };
@@ -41,6 +42,8 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
         ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
     });
+
+    return getAzureContainerAppsApiProvider();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

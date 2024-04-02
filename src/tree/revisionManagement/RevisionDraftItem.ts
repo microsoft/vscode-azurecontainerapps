@@ -3,27 +3,27 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision, Template } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient, type KnownActiveRevisionsMode, type Revision, type Template } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, TreeElementBase, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, type IActionContext, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
+import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
-import type { ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionItem, type RevisionsItemModel } from "./RevisionItem";
 
 // For tree items that depend on the container app's revision draft template
 export interface RevisionsDraftModel {
-    hasUnsavedChanges: () => boolean | Promise<boolean>;
+    hasUnsavedChanges(): boolean | Promise<boolean>;
 }
 
 export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {
-    static readonly idSuffix: string = 'revisionDraft';
+    static readonly idSuffix: string = '/revisionDraft';
     static readonly contextValue: string = 'revisionDraftItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
 
@@ -31,7 +31,7 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
     revisionsMode: KnownActiveRevisionsMode;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
-        this.id = `${this.containerApp.id}/${RevisionDraftItem.idSuffix}`;
+        this.id = RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
         this.revisionsMode = containerApp.revisionsMode;
     }
 
@@ -52,8 +52,18 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
         return createContextValue(values);
     }
 
+    static getRevisionDraftItemId(containerAppId: string): string {
+        return `${containerAppId}/${RevisionDraftItem.idSuffix}`;
+    }
+
+    static isRevisionDraftItem(item: unknown): item is RevisionDraftItem {
+        return typeof item === 'object' &&
+            (item as RevisionDraftItem).id === 'string' &&
+            (item as RevisionDraftItem).id.split('/').at(-1) === RevisionDraftItem.idSuffix;
+    }
+
     static hasDescendant(item: RevisionsItemModel): boolean {
-        if (item instanceof RevisionDraftItem) {
+        if (RevisionDraftItem.isRevisionDraftItem(item)) {
             return false;
         }
 

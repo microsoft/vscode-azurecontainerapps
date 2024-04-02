@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Workspace } from '@azure/arm-operationalinsights';
+import { type Workspace } from '@azure/arm-operationalinsights';
 import { uiUtils } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardPromptStep, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from '../../utils/localize';
 import { nonNullProp } from '../../utils/nonNull';
-import { IManagedEnvironmentContext } from './IManagedEnvironmentContext';
+import { type IManagedEnvironmentContext } from './IManagedEnvironmentContext';
 
 export class LogAnalyticsListStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
     public async prompt(context: IManagedEnvironmentContext): Promise<void> {

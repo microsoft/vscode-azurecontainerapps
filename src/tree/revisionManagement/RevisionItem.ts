@@ -3,17 +3,18 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, Revision } from "@azure/arm-appcontainers";
-import { TreeItemIconPath, createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, type Revision } from "@azure/arm-appcontainers";
+import { createContextValue, nonNullProp, type TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { treeUtils } from "../../utils/treeUtils";
 import type { ContainerAppModel } from "../ContainerAppItem";
 import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { ContainersItem } from "../containers/ContainersItem";
 import { ScaleItem } from "../scaling/ScaleItem";
+import { RevisionDraftDescendantBase } from "./RevisionDraftDescendantBase";
 
 export interface RevisionsItemModel extends ContainerAppsItem {
     revision: Revision;
@@ -40,8 +41,10 @@ export class RevisionItem implements RevisionsItemModel {
         // Enable more granular tree item filtering by revision name
         values.push(nonNullProp(this.revision, 'name'));
 
+        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
         values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+
         return createContextValue(values);
     }
 
@@ -68,6 +71,7 @@ export class RevisionItem implements RevisionsItemModel {
         return [
             new ScaleItem(subscription, containerApp, revision),
             new ContainersItem(subscription, containerApp, revision),
+            RevisionDraftDescendantBase.createTreeItem(ScaleItem, subscription, containerApp, revision)
         ];
     }
 
@@ -87,10 +91,6 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     private get iconPath(): TreeItemIconPath {
-        if (this.revisionsMode === KnownActiveRevisionsMode.Single) {
-            return treeUtils.getIconPath('active-revision');
-        }
-
         let id: string;
         let colorId: string;
 

@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, parseError } from "@microsoft/vscode-azext-utils";
-import { Progress, window } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { IDeleteContainerAppWizardContext } from "./IDeleteContainerAppWizardContext";
+import { type IDeleteContainerAppWizardContext } from "./IDeleteContainerAppWizardContext";
 
 export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteContainerAppWizardContext> {
     public priority: number = 100;
@@ -19,13 +19,14 @@ export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteCo
         const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, context.subscription]);
 
         for (const containerAppName of containerAppNames) {
-            const deleting: string = localize('deletingContainerApp', 'Deleting Container App "{0}"...', containerAppName);
-            const deleteSucceeded: string = localize('deletedContainerApp', 'Successfully deleted Container App "{0}".', containerAppName);
-
             try {
-                ext.outputChannel.appendLog(deleting);
+                const deleting: string = localize('deletingContainerApp', 'Deleting container app "{0}"...', containerAppName);
+                const deleted: string = localize('deletedContainerApp', 'Deleted container app "{0}".', containerAppName);
+
                 progress.report({ message: deleting });
                 await webClient.containerApps.beginDeleteAndWait(context.resourceGroupName, containerAppName);
+
+                ext.outputChannel.appendLog(deleted);
             } catch (error) {
                 const pError = parseError(error);
                 // a 204 indicates a success, but sdk is catching it as an exception
@@ -34,10 +35,6 @@ export class DeleteAllContainerAppsStep extends AzureWizardExecuteStep<IDeleteCo
                     throw error;
                 }
             }
-            if (!context.suppressNotification) {
-                void window.showInformationMessage(deleteSucceeded);
-            }
-            ext.outputChannel.appendLog(deleteSucceeded);
         }
     }
 

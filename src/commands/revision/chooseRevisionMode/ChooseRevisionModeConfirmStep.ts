@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
+import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export class ChooseRevisionModeConfirmStep extends AzureWizardPromptStep<IChooseRevisionModeContext> {
     public async prompt(context: IChooseRevisionModeContext): Promise<void> {

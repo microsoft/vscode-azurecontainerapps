@@ -3,17 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Ingress } from "@azure/arm-appcontainers";
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Ingress } from "@azure/arm-appcontainers";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { type Progress } from "vscode";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
-import type { IngressContext } from "../IngressContext";
-import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
+import { updateContainerApp } from "../../updateContainerApp";
+import { type IngressBaseContext } from "../IngressContext";
 
-export class EnableIngressStep extends IngressUpdateBaseStep<IngressContext> {
-    public priority: number = 290;
+export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBaseContext> {
+    public priority: number = 750;
 
-    public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('enablingIngress', 'Enabling ingress...') });
+
         const containerApp = nonNullProp(context, 'containerApp');
         const ingress: Ingress = {
             targetPort: context.targetPort,
@@ -28,14 +32,32 @@ export class EnableIngressStep extends IngressUpdateBaseStep<IngressContext> {
             ],
         }
 
-        const working: string = localize('enablingIngress', 'Enabling ingress...');
-        const workCompleted: string = localize('enableCompleted', 'Enabled ingress on port {0} for container app "{1}"', context.targetPort, containerApp.name)
-
-        context.activityTitle = localize('enableIngress', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, containerApp.name);
-        await this.updateIngressSettings(context, progress, { ingress, working, workCompleted });
+        await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
     }
 
-    public shouldExecute(context: IngressContext): boolean {
-        return context.enableIngress === true;
+    public shouldExecute(context: IngressBaseContext): boolean {
+        return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
+    }
+
+    protected createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['enableIngressStepSuccessItem', activitySuccessContext]),
+                label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('enableCompleted', 'Enabled ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
+        };
+    }
+
+    protected createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return {
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['enableIngressStepFailItem', activityFailContext]),
+                label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
+                iconPath: activityFailIcon
+            }),
+            message: localize('enableIngressFailed', 'Failed to enable ingress on port {0} for container app "{1}".', context.targetPort, context.containerApp?.name)
+        };
     }
 }

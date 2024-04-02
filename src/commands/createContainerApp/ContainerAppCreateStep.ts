@@ -3,23 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerAppsAPIClient, Ingress, KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
-import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
+import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { getContainerNameForImage } from "../deployImage/imageSource/containerRegistry/getContainerNameForImage";
-import { ICreateContainerAppContext } from "./ICreateContainerAppContext";
+import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
+import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContainerAppContext> {
-    public priority: number = 250;
+export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppContext> {
+    public priority: number = 620;
 
-    public async execute(context: ICreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+
+        const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
+        const containerAppName: string = nonNullProp(context, 'newContainerAppName');
 
         const ingress: Ingress | undefined = context.enableIngress ? {
             targetPort: context.targetPort,
@@ -34,13 +38,12 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
             ],
         } : undefined;
 
-        const creating: string = localize('creatingContainerApp', 'Creating new container app "{0}"...', context.newContainerAppName);
+        const creating: string = localize('creatingContainerApp', 'Creating container app...');
         progress.report({ message: creating });
-        ext.outputChannel.appendLog(creating);
 
-        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(nonNullProp(context, 'newResourceGroupName'), nonNullProp(context, 'newContainerAppName'), {
+        context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
-            managedEnvironmentId: context.managedEnvironmentId,
+            managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
             configuration: {
                 ingress,
                 secrets: context.secrets,
@@ -59,7 +62,29 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ICreateContai
         }));
     }
 
-    public shouldExecute(): boolean {
-        return true;
+    public shouldExecute(context: CreateContainerAppContext): boolean {
+        return !context.containerApp;
+    }
+
+    protected createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppCreateStepSuccessItem', activitySuccessContext]),
+                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('createContainerAppSuccess', 'Created container app "{0}".', context.newContainerAppName)
+        };
+    }
+
+    protected createFailOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+        return {
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['containerAppCreateStepFailItem', activityFailContext]),
+                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+                iconPath: activityFailIcon
+            }),
+            message: localize('createContainerAppFail', 'Failed to create container app "{0}".', context.newContainerAppName)
+        };
     }
 }

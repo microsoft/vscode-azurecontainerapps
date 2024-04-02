@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { Secret } from "@azure/arm-appcontainers";
+import { type Secret } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
 import { validateUtils } from "../../../utils/validateUtils";
-import type { ISecretContext } from "../ISecretContext";
+import { type ISecretContext } from "../ISecretContext";
 
 export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
     public async prompt(context: ISecretContext): Promise<void> {
@@ -29,9 +29,8 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
             return validateUtils.getInvalidLengthMessage();
         }
 
-        const allowedSymbols: string = '-.';
-        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value, allowedSymbols)) {
-            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage(allowedSymbols);
+        if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value)) {
+            return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage();
         }
 
         const secrets: Secret[] = context.containerApp?.configuration?.secrets ?? [];

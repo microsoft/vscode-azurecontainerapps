@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { ContainerAppsAPIClient, Replica } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, IAzureQuickPickItem, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppsAPIClient, type Replica } from "@azure/arm-appcontainers";
+import { AzureWizardPromptStep, createSubscriptionContext, nonNullProp, nonNullValue, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as dayjs from 'dayjs';
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { IStreamLogsContext } from "./IStreamLogsContext";
+import { type IStreamLogsContext } from "./IStreamLogsContext";
 
 export class ReplicaListStep extends AzureWizardPromptStep<IStreamLogsContext> {
     public async prompt(context: IStreamLogsContext): Promise<void> {

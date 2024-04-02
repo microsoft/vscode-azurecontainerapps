@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AbortController } from '@azure/abort-controller';
-import { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
-import { ServiceClient } from '@azure/core-client';
+import { type ContainerAppsAPIClient } from '@azure/arm-appcontainers';
+import { type ServiceClient } from '@azure/core-client';
 import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
 import { createGenericClient } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullValue, parseError } from "@microsoft/vscode-azext-utils";
@@ -13,7 +13,7 @@ import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from '../../utils/localize';
-import { IStreamLogsContext } from './IStreamLogsContext';
+import { type IStreamLogsContext } from './IStreamLogsContext';
 
 export interface ILogStream extends vscode.Disposable {
     isConnected: boolean;

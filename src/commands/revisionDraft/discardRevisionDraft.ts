@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import type { IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import type { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { delay } from "../../utils/delay";
 import { localize } from "../../utils/localize";
@@ -22,7 +22,7 @@ export async function discardRevisionDraft(context: IActionContext, node?: Conta
         ext.revisionDraftFileSystem.discardRevisionDraft(containerAppsItem);
     } else {
         await ext.state.showDeleting(
-            `${containerAppsItem.containerApp.id}/${RevisionDraftItem.idSuffix}`,
+            RevisionDraftItem.getRevisionDraftItemId(containerAppsItem.containerApp.id),
             async () => {
                 // Add a short delay to display the deleting message
                 await delay(5);

@@ -3,18 +3,25 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { Template } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
+import { parseAzureResourceId, type ParsedAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Disposable, Event, EventEmitter, FileChangeEvent, FileChangeType, FileStat, FileSystemProvider, FileType, TextDocument, Uri, window, workspace } from "vscode";
+import { Disposable, EventEmitter, FileChangeType, FileType, commands, window, workspace, type Event, type FileChangeEvent, type FileStat, type FileSystemProvider, type TextDocument, type Uri } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import type { ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
-import type { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
-import type { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
+import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
+import { type ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
+import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
+import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
+
+interface WriteFileOptions {
+    readonly create?: boolean;  // Existing FileSystemProvider option
+    readonly overwrite?: boolean;  // Existing FileSystemProvider option
+    isCommandEntrypoint?: boolean;
+}
 
 export class RevisionDraftFile implements FileStat {
     type: FileType = FileType.File;
@@ -24,7 +31,10 @@ export class RevisionDraftFile implements FileStat {
 
     contents: Uint8Array;
 
-    constructor(contents: Uint8Array, readonly containerAppId: string, readonly baseRevisionName: string) {
+    commandUpdatesCount: number = 0;  // Updates via revision draft commands
+    directUpdatesCount: number = 0;  // Direct updates via 'editContainerApp' & 'editDraft'
+
+    constructor(contents: Uint8Array, readonly containerApp: ContainerAppModel, readonly baseRevisionName: string) {
         this.contents = contents;
         this.size = contents.byteLength;
         this.ctime = Date.now();
@@ -50,36 +60,36 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return this.emitter.event;
     }
 
-    // Create
-    createRevisionDraft(item: ContainerAppItem | RevisionItem | RevisionDraftItem): void {
+    createRevisionDraft(item: ContainerAppItem | RevisionsItemModel): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (this.draftStore.has(uri.path)) {
             return;
         }
 
+        // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
         let file: RevisionDraftFile | undefined;
-        if (item instanceof ContainerAppItem) {
-            /**
-             * Sometimes there are micro-differences present between the latest revision template and the container app template.
-             * They end up being essentially equivalent, but not so equivalent as to always pass a deep copy test (which is how we detect unsaved changes).
-             *
-             * Since only container app template data is shown in single revision mode, and since revision data is not directly present on
-             * the container app tree item without further changes, it is easier to just use the container app template
-             * as the primary source of truth when in single revision mode.
-             */
+        if (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
-            file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
+            file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
+            // A trick to help the draft item appear properly when the parent isn't already expanded (covers the command palette entrypoints)
+            void ext.state.showCreatingChild(
+                RevisionsItem.getRevisionsItemId(item.containerApp.id),
+                localize('creatingDraft', 'Creating draft...'),
+                () => Promise.resolve());
+
             const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4));
-            file = new RevisionDraftFile(revisionContent, item.containerApp.id, nonNullValueAndProp(item.revision, 'name'));
+            file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }
+
+        // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
+        void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
 
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Created, uri });
     }
 
-    // Read
-    parseRevisionDraft<T extends ContainerAppsItem>(item: T): Template | undefined {
+    parseRevisionDraft(item: ContainerAppsItem): Template | undefined {
         const uri: URI = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             return undefined;
@@ -93,12 +103,12 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         return contents ? Buffer.from(contents) : Buffer.from('');
     }
 
-    doesContainerAppsItemHaveRevisionDraft<T extends ContainerAppsItem>(item: T): boolean {
+    doesContainerAppsItemHaveRevisionDraft(item: ContainerAppsItem): boolean {
         const uri: Uri = this.buildUriFromItem(item);
         return this.draftStore.has(uri.path);
     }
 
-    getRevisionDraftFile<T extends ContainerAppsItem>(item: T): RevisionDraftFile | undefined {
+    getRevisionDraftFile(item: ContainerAppsItem): RevisionDraftFile | undefined {
         const uri: Uri = this.buildUriFromItem(item);
         return this.draftStore.get(uri.path);
     }
@@ -118,8 +128,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
     }
 
-    // Update
-    async editRevisionDraft(item: ContainerAppItem | RevisionItem | RevisionDraftItem): Promise<void> {
+    async editRevisionDraft(item: ContainerAppItem | RevisionsItemModel): Promise<void> {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);
@@ -129,10 +138,16 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         await window.showTextDocument(textDoc);
     }
 
-    writeFile(uri: Uri, contents: Uint8Array): void {
+    writeFile(uri: Uri, contents: Uint8Array, options?: WriteFileOptions): void {
         const file: RevisionDraftFile | undefined = this.draftStore.get(uri.path);
-        if (!file || file.contents === contents) {
+        if (!file || (Buffer.from(file.contents).equals(Buffer.from(contents)))) {
             return;
+        }
+
+        if (options?.isCommandEntrypoint) {
+            file.commandUpdatesCount++;
+        } else {
+            file.directUpdatesCount++;
         }
 
         file.contents = contents;
@@ -142,12 +157,22 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.draftStore.set(uri.path, file);
         this.fireSoon({ type: FileChangeType.Changed, uri });
 
-        // Any new changes to the draft file can cause the states of a container app's children to change (e.g. displaying "Unsaved changes")
-        ext.state.notifyChildrenChanged(file.containerAppId);
+        // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
+        void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
+        ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
-    // Delete
-    discardRevisionDraft<T extends ContainerAppsItem>(item: T): void {
+    updateRevisionDraftWithTemplate(item: ContainerAppItem | RevisionsItemModel, template: Template): void {
+        const uri: Uri = this.buildUriFromItem(item);
+        if (!this.draftStore.has(uri.path)) {
+            this.createRevisionDraft(item);
+        }
+
+        const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
+        this.writeFile(uri, newContent, { isCommandEntrypoint: true });
+    }
+
+    discardRevisionDraft(item: ContainerAppsItem): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             return;
@@ -161,9 +186,11 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         this.fireSoon({ type: FileChangeType.Deleted, uri });
     }
 
-    // Helper
-    private buildUriFromItem<T extends ContainerAppsItem>(item: T): Uri {
-        return URI.parse(`${RevisionDraftFileSystem.scheme}:/${item.containerApp.name}.json`);
+    private buildUriFromItem(item: ContainerAppsItem): Uri {
+        // Container app names are not globally unique, so we need to produce a unique ID for lookup
+        const parsedResourceId: ParsedAzureResourceId = parseAzureResourceId(item.containerApp.id);
+        const shortenedContainerAppId: string = `${parsedResourceId.subscriptionId?.slice(0, 5)}.../resourceGroups/${parsedResourceId.resourceGroup}/containerApps/${parsedResourceId.resourceName}`;
+        return URI.parse(`${RevisionDraftFileSystem.scheme}:/${shortenedContainerAppId}.containerapp-template.json`);
     }
 
     // Adapted from: https://github.com/microsoft/vscode-extension-samples/blob/master/fsprovider-sample/src/fileSystemProvider.ts

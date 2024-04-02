@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp } from '@azure/arm-appcontainers';
-import { IActionContext, openUrl } from '@microsoft/vscode-azext-utils';
-import { ContainerAppItem, isIngressEnabled } from '../tree/ContainerAppItem';
+import { type ContainerApp } from '@azure/arm-appcontainers';
+import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { isIngressEnabled, type ContainerAppItem } from '../tree/ContainerAppItem';
 import { localize } from '../utils/localize';
 import { pickContainerApp } from '../utils/pickItem/pickContainerApp';
 

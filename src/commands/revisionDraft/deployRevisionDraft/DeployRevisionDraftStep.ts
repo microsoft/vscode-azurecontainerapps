@@ -5,28 +5,37 @@
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import { ContainerAppItem, ContainerAppModel, getContainerEnvelopeWithSecrets } from "../../../tree/ContainerAppItem";
+import { ContainerAppItem, getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
-import type { IDeployRevisionDraftContext } from "./IDeployRevisionDraftContext";
+import { updateContainerApp } from "../../updateContainerApp";
+import { type DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 
-export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevisionDraftContext> {
-    public priority: number = 260;
+export class DeployRevisionDraftStep extends AzureWizardExecuteStep<DeployRevisionDraftContext> {
+    public priority: number = 1450;
 
-    public async execute(context: IDeployRevisionDraftContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: DeployRevisionDraftContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
         containerAppEnvelope.template = nonNullProp(context, 'template');
 
-        const creatingRevision: string = localize('creatingRevision', 'Creating revision...');
-        progress.report({ message: creatingRevision });
+        let updating: string | undefined;
+        let description: string | undefined;
+        if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Single) {
+            updating = localize('creatingRevision', 'Updating container app...');
+            description = localize('updating', 'Updating...');
+        } else {
+            updating = localize('creatingRevision', 'Creating revision...');
+            description = updating;
+        }
 
-        const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : `${containerApp.id}/${RevisionDraftItem.idSuffix}`;
+        progress.report({ message: updating });
 
-        await ext.state.runWithTemporaryDescription(id, creatingRevision, async () => {
+        const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
+
+        await ext.state.runWithTemporaryDescription(id, description, async () => {
             await updateContainerApp(context, context.subscription, containerAppEnvelope);
             const updatedContainerApp = await ContainerAppItem.Get(context, context.subscription, containerApp.resourceGroup, containerApp.name);
 
@@ -37,7 +46,7 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<IDeployRevis
         });
     }
 
-    public shouldExecute(context: IDeployRevisionDraftContext): boolean {
+    public shouldExecute(context: DeployRevisionDraftContext): boolean {
         return !!context.template;
     }
 }

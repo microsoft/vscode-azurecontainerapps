@@ -4,19 +4,19 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import type { ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../../utils/updateContainerApp";
-import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
+import { updateContainerApp } from "../../updateContainerApp";
+import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export class ChangeRevisionModeStep extends AzureWizardExecuteStep<IChooseRevisionModeContext> {
     public priority: number = 200;
 
     public async execute(context: IChooseRevisionModeContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
-        context.activityTitle = localize('changeRevisionTitle', 'Change container app "{0}" to {1} revision mode.', containerApp.name, context.newRevisionMode?.toLowerCase());
+        context.activityTitle = localize('changeRevisionTitle', 'Change container app "{0}" to {1} revision mode', containerApp.name, context.newRevisionMode?.toLowerCase());
 
         const changing: string = localize('changingRevision', 'Changing revision mode...');
         progress.report({ message: changing });

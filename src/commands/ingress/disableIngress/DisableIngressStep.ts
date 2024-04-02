@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
-import type { IngressContext } from "../IngressContext";
-import { IngressUpdateBaseStep } from "../IngressUpdateBaseStep";
+import { type IngressBaseContext } from "../IngressContext";
+import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 import { isIngressEnabled } from "../isIngressEnabled";
 
-export class DisableIngressStep extends IngressUpdateBaseStep<IngressContext> {
-    public priority: number = 270;
+export class DisableIngressStep extends IngressUpdateStepBase<IngressBaseContext> {
+    public priority: number = 750;
 
-    public async execute(context: IngressContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp = nonNullProp(context, 'containerApp');
 
         const working: string = localize('disablingIngress', 'Disabling ingress...');
@@ -22,7 +22,7 @@ export class DisableIngressStep extends IngressUpdateBaseStep<IngressContext> {
         await this.updateIngressSettings(context, progress, { ingress: null, working, workCompleted });
     }
 
-    public shouldExecute(context: IngressContext): boolean {
+    public shouldExecute(context: IngressBaseContext): boolean {
         return context.enableIngress === false && isIngressEnabled(context);
     }
 }

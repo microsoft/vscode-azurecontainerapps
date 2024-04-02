@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { QuickPickItem } from "vscode";
+import { type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { type QuickPickItem } from "vscode";
 import { localize } from "./utils/localize";
 
 export const managedEnvironmentsId = 'managedEnvironments';
 export const containerAppsId = 'containerApps';
 export const appProvider: string = 'Microsoft.App';
 export const webProvider: string = 'Microsoft.Web';
+export const registryProvider: string = 'Microsoft.ContainerRegistry';
+export const operationalInsightsProvider: string = 'Microsoft.OperationalInsights';
 
 export const containerAppsWebProvider: string = `${webProvider}/${containerAppsId}`;
 export const managedEnvironmentsAppProvider: string = `${appProvider}/${managedEnvironmentsId}`;
@@ -42,22 +44,16 @@ export enum ImageSource {
     /*
      * Uses the default hello-world image with preset configurations
      */
-    QuickStartImage = 'quickStartImage',
+    QuickstartImage = 'quickstartImage',
     /*
      * Use an image stored in ACR or a third party registry
      */
     ContainerRegistry = 'containerRegistry',
     /*
-     * Build the image from your project locally using Docker (reqs. Dockerfile)
-     */
-    LocalDockerBuild = 'localDockerBuild',
-    /*
      * Build the image from your project remotely using ACR (reqs. Dockerfile)
      */
     RemoteAcrBuild = 'remoteAcrBuild'
 }
-
-export type ImageSourceValues = typeof ImageSource[keyof typeof ImageSource];
 
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
@@ -66,14 +62,32 @@ export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-he
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 
+export const browseItem: IAzureQuickPickItem<undefined> = { label: `$(file-directory) ${localize('browse', 'Browse...')}`, description: '', data: undefined };
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
+
+export const noMatchingResources = 'noMatchingResources';
+export const noMatchingResourcesQp: IAzureQuickPickItem<typeof noMatchingResources> = {
+    label: localize('noMatchingResources', 'No matching resources found.'),
+    description: '',
+    data: noMatchingResources
+};
+
 export type QuickPicksCache = { cache: QuickPickItem[], next: string | null };
 
+export const vscodeFolder: string = '.vscode';
+export const settingsFile: string = 'settings.json';
+export const relativeSettingsFilePath: string = `${vscodeFolder}/${settingsFile}`;
+
 // Originally from the Docker extension: https://github.com/microsoft/vscode-docker/blob/main/src/constants.ts
-export const DOCKERFILE_GLOB_PATTERN = '**/{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+export const dockerfileGlobPattern = '{*.[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE],[dD][oO][cC][kK][eE][rR][fF][iI][lL][eE].*}';
+export const envFileGlobPattern = '*.{env,env.*}';
+export const dockerFilePick = localize('dockerFilePick', 'Choose a Dockerfile from your source code directory.')
 
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
+
+export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
+export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
 
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';

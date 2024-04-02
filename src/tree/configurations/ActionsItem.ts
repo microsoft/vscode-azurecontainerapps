@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { SourceControl } from "@azure/arm-appcontainers";
-import { ActionsItemBase, ConnectToGitHubCommand, GitHubSourceControl } from "@microsoft/vscode-azext-github";
-import { IActionContext, callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { type SourceControl } from "@azure/arm-appcontainers";
+import { ActionsItemBase, type ConnectToGitHubCommand, type GitHubSourceControl } from "@microsoft/vscode-azext-github";
+import { callWithTelemetryAndErrorHandling, nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { getContainerAppSourceControl } from "../../commands/gitHub/connectToGitHub/getContainerAppSourceControl";
-import type { ContainerAppModel } from "../ContainerAppItem";
-import type { ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppsItem } from "../ContainerAppsBranchDataProvider";
 
 export class ActionsItem extends ActionsItemBase implements ContainerAppsItem {
     constructor(

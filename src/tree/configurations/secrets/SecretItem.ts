@@ -3,10 +3,10 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import type { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ThemeIcon, TreeItem } from "vscode";
-import type { ContainerAppModel } from "../../ContainerAppItem";
-import type { ContainerAppsItem } from "../../ContainerAppsBranchDataProvider";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { ThemeIcon, type TreeItem } from "vscode";
+import { type ContainerAppModel } from "../../ContainerAppItem";
+import { type ContainerAppsItem } from "../../ContainerAppsBranchDataProvider";
 import { SecretsItem } from "./SecretsItem";
 
 export class SecretItem implements ContainerAppsItem {

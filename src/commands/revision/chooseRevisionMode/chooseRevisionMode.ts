@@ -3,23 +3,23 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createSubscriptionContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
-import type { RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
-import { createActivityContext } from "../../../utils/activityUtils";
+import { type RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
+import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { ChangeRevisionModeStep } from "./ChangeRevisionModeStep";
 import { ChooseRevisionModeConfirmStep } from "./ChooseRevisionModeConfirmStep";
 import { ChooseRevisionModeStep } from "./ChooseRevisionModeStep";
-import type { IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
+import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export async function chooseRevisionMode(context: IActionContext, item?: ContainerAppItem | RevisionsItem): Promise<void> {
     item ??= await pickContainerApp(context);
 
     let hasRevisionDraft: boolean | undefined;
-    if (item instanceof ContainerAppItem) {
+    if (ContainerAppItem.isContainerAppItem(item)) {
         // A revision draft can exist but may be identical to the source, distinguishing the difference in single revisions mode
         // improves the user experience by allowing us to skip the confirm step, silently discarding drafts instead
         hasRevisionDraft = item.hasUnsavedChanges();

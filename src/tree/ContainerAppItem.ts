@@ -3,25 +3,25 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContainerApp, ContainerAppsAPIClient, KnownActiveRevisionsMode, Revision } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ContainerApp, type ContainerAppsAPIClient, type Revision, type Template } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, DeleteConfirmationStep, IActionContext, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription, ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { AzureWizard, DeleteConfirmationStep, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
-import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import { TreeItemCollapsibleState, type TreeItem, type Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
-import { IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
+import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
-import { createActivityContext } from "../utils/activityUtils";
+import { createActivityContext } from "../utils/activity/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
-import type { ContainerAppsItem, TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { type ContainerAppsItem, type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
-import { RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
+import { type RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
 import { RevisionItem } from "./revisionManagement/RevisionItem";
 import { RevisionsItem } from "./revisionManagement/RevisionsItem";
 
@@ -61,8 +61,13 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 
     private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];
+
+        // Enable more granular tree item filtering by container app name
+        values.push(nonNullValueAndProp(this.containerApp, 'name'));
+
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
+
         return createContextValue(values);
     }
 
@@ -79,7 +84,14 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        const result = await callWithTelemetryAndErrorHandling('getChildren', async (context) => {
+        const result = await callWithTelemetryAndErrorHandling('containerAppItem.getChildren', async (context: IActionContext) => {
+            context.valuesToMask.push(
+                this.subscription.subscriptionId,
+                this.subscription.tenantId,
+                this.subscription.name,
+                this.containerApp.id,
+                this.containerApp.name);
+
             const children: TreeElementBase[] = [];
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
 
@@ -109,6 +121,12 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         }
     }
 
+    static isContainerAppItem(item: unknown): item is ContainerAppItem {
+        return typeof item === 'object' &&
+            typeof (item as ContainerAppItem).contextValue === 'string' &&
+            ContainerAppItem.contextValueRegExp.test((item as ContainerAppItem).contextValue);
+    }
+
     static async List(context: IActionContext, subscription: AzureSubscription, managedEnvironmentId: string): Promise<ContainerAppModel[]> {
         const subContext = createSubscriptionContext(subscription);
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);
@@ -136,7 +154,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 
     async delete(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
         const confirmMessage: string = localize('confirmDeleteContainerApp', 'Are you sure you want to delete container app "{0}"?', this.name);
-        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete Container App "{0}"', this.name);
+        const deleteContainerApp: string = localize('deleteContainerApp', 'Delete container app "{0}"', this.name);
 
         const wizardContext: IDeleteContainerAppWizardContext = {
             activityTitle: deleteContainerApp,
@@ -144,7 +162,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             subscription: createSubscriptionContext(this.subscription),
             resourceGroupName: this.resourceGroup,
             ...context,
-            ...(await createActivityContext())
+            ...await createActivityContext()
         };
 
         const wizard: AzureWizard<IDeleteContainerAppWizardContext> = new AzureWizard(wizardContext, {
@@ -163,8 +181,8 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     hasUnsavedChanges(): boolean {
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
-        if (!this.containerApp.template || !draftTemplate) {
+        const draftTemplate: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+        if (!draftTemplate) {
             return false;
         }
 
