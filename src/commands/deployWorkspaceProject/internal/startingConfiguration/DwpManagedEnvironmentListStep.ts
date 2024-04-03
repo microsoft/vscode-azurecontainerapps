@@ -22,7 +22,7 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
         }
 
 
-        const managedEnvironment: ManagedEnvironment | undefined = (await context.ui.showQuickPick(picks, { placeHolder })).data;
+        const managedEnvironment: ManagedEnvironment | undefined = (await context.ui.showQuickPick(picks, { suppressPersistence: true, placeHolder })).data;
         if (!managedEnvironment) {
             // User is choosing to create a new managed environment
             return;
