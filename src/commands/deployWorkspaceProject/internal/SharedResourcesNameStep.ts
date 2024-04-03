@@ -16,7 +16,7 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if (context.managedEnvironment && !context.registry) {
-            // If we already have the primary shared resource but still need to build a registry, see if we can generate a new name automatically without prompting
+            // See if we can generate a new name automatically without prompting
             context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, nonNullValueAndProp(context.managedEnvironment, 'name'));
         }
     }
