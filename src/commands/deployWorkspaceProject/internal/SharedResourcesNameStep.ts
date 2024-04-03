@@ -12,7 +12,7 @@ import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/Manag
 import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
-/** Used to name any of the app environment's shared resources: `resource group`, `managed environment`, `container registry` */
+/** Names any app environment shared resources: `resource group`, `managed environment`, `container registry` */
 export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if (context.managedEnvironment && !context.registry) {
