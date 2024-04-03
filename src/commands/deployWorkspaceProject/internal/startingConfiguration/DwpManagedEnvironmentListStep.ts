@@ -26,10 +26,9 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
 
         await this.setRecommendedPicks(context, picks);
         const pick = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
-        // (recently used) can be in the description of the pick
-        context.telemetry.properties.usedRecommendedEnv = pick.description?.includes(recommendedPickDescription) ? 'true' : 'false';
+        context.telemetry.properties.usedRecommendedEnv = pick.description === recommendedPickDescription ? 'true' : 'false';
         context.telemetry.properties.recommendedEnvCount =
-            String(picks.reduce((count, p) => count + (p.description?.includes(recommendedPickDescription) ? 1 : 0), 0));
+            String(picks.reduce((count, p) => count + (p.description === recommendedPickDescription ? 1 : 0), 0));
 
         const managedEnvironment: ManagedEnvironment | undefined = pick.data;
         if (!managedEnvironment) {
