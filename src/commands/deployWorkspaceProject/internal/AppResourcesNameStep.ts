@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
@@ -13,9 +13,9 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 /** Used to name any of the following app resources: `container app`, `image name` */
 export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-        if (context.containerApp) {
+        if (context.newContainerAppName || context.containerApp) {
             // This ensures image naming even when all other resources have already been created
-            context.imageName = ImageNameStep.getTimestampedImageName(context.containerApp.name);
+            context.imageName = ImageNameStep.getTimestampedImageName(context.newContainerAppName || nonNullValueAndProp(context.containerApp, 'name'));
         }
     }
 
