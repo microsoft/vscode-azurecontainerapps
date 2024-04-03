@@ -76,7 +76,6 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
     }
 
     private async setRecommendedPicks(context: DeployWorkspaceProjectInternalContext, picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[]): Promise<void> {
-        const recommendedEnvCount = 0;
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!deploymentConfigurations?.length) {
             return;
@@ -115,7 +114,5 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
                 return 0;
             }
         });
-
-        context.telemetry.properties.recommendedManagedEnvironmentCount = String(recommendedEnvCount);
     }
 }
