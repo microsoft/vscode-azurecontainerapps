@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
@@ -14,14 +14,27 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 
 /** Used to name any of the following shared resources: `resource group`, `managed environment`, `container registry` */
 export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
+    public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+        if (context.managedEnvironment && !context.registry) {
+            // If we already have the primary shared resource but still need to build a registry, see if we can generate a new name automatically without prompting
+            context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, nonNullValueAndProp(context.managedEnvironment, 'name'));
+        }
+    }
+
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const resourceName: string = (await context.ui.showInputBox({
-            prompt: localize('managedEnvironmentNamePrompt', 'Enter a name for the new container apps environment.'),
+            prompt: !context.resourceGroup || !context.managedEnvironment ?
+                localize('environmentNamePrompt', 'Enter a name for the new container app environment.') :
+                localize('registryPrompt', 'Enter a name for the new container registry.'),
             validateInput: (name: string) => this.validateInput(context, name),
             asyncValidationTask: (name: string) => this.validateNameAvailability(context, name)
         })).trim();
 
-        ext.outputChannel.appendLog(localize('usingResourceName', 'User provided the resource name "{0}" for the container apps environment.', resourceName));
+        ext.outputChannel.appendLog(
+            !context.resourceGroup || !context.managedEnvironment ?
+                localize('usingEnvironmentName', 'User provided the resource name "{0}" for the container app environment.', resourceName) :
+                localize('usingRegistryName', 'User provided the resource name "{0}" for the container registry.', resourceName)
+        );
 
         !context.resourceGroup && (context.newResourceGroupName = resourceName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceName);
@@ -30,7 +43,7 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
         return (!context.resourceGroup && !context.newResourceGroupName) ||
             (!context.managedEnvironment && !context.newManagedEnvironmentName) ||
-            !context.registry;
+            (!context.registry && !context.newRegistryName);
     }
 
     private validateInput(context: DeployWorkspaceProjectInternalContext, name: string = ''): string | undefined {
