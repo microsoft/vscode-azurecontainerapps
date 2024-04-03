@@ -4,6 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface DeployWorkspaceProjectSettingsV2 {
+    sharedResourceGroup?: string;
+    sharedEnvironment?: string;
+    sharedRegistry?: string;
     deploymentConfigurations?: DeploymentConfigurationSettings[];
 }
 
@@ -13,7 +16,5 @@ export interface DeploymentConfigurationSettings {
     dockerfilePath?: string;
     srcPath?: string;
     envPath?: string;
-    resourceGroup?: string;
     containerApp?: string;
-    containerRegistry?: string;
 }

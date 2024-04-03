@@ -27,9 +27,6 @@ export namespace dwpSettingUtilsV1 {
         };
     }
 
-    /**
-     * @throws Throws an error if the workspace configuration cannot be found in the default settings path
-     */
     export async function setDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder, settings: DeployWorkspaceProjectSettingsV1): Promise<void> {
         const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
         for (const key of Object.keys(settings)) {
