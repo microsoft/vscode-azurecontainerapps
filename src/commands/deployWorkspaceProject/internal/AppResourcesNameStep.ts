@@ -10,7 +10,7 @@ import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameS
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
-/** Used to name any of the following app resources: `container app`, `image name` */
+/** Used to name any of the resources related to the name of the app: `container app`, `image name` */
 export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if (context.newContainerAppName || context.containerApp) {
