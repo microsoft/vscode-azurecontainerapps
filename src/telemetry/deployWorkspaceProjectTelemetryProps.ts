@@ -31,6 +31,10 @@ export interface DeployWorkspaceProjectInternalTelemetryProps extends AzdTelemet
     hasNewSettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     shouldSaveDeploySettings?: 'true' | 'false';  // ShouldSaveDeploySettingsPromptStep
     didSaveSettings?: 'true' | 'false';  // DeployWorkspaceProjectSaveSettingsStep - we swallow errors here, so log the outcome just in case
+
+    // Recommended Managed Environment
+    recommendedEnvCount?: string; // number casted to string
+    usedRecommendedEnv?: 'true' | 'false';
 }
 
 export interface DeployWorkspaceProjectNotificationTelemetryProps {
