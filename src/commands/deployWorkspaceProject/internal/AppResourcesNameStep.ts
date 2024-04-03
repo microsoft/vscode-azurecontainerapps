@@ -21,7 +21,7 @@ export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceP
 
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         context.newContainerAppName = (await context.ui.showInputBox({
-            prompt: localize('containerAppNamePrompt', 'Enter a name for the new container app.'),
+            prompt: localize('containerAppNamePrompt', 'Enter a name for the new container app'),
             validateInput: (name: string) => ContainerAppNameStep.validateInput(name),
             asyncValidationTask: async (name: string) => {
                 const resourceGroupName: string = context.resourceGroup?.name || nonNullProp(context, 'newResourceGroupName');
@@ -31,7 +31,7 @@ export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceP
         })).trim();
 
         context.imageName = ImageNameStep.getTimestampedImageName(context.newContainerAppName);
-        ext.outputChannel.appendLog(localize('usingContainerAppName', 'User provided the name "{0}" for the container app.', context.newContainerAppName));
+        ext.outputChannel.appendLog(localize('usingContainerAppName', 'User provided the name "{0}" for the new container app.', context.newContainerAppName));
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
