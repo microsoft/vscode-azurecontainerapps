@@ -24,6 +24,7 @@ export interface BuildImageInAzureTelemetryProps extends AzdTelemetryProps, Pick
     imageBaseOs?: AcrBuildSupportedOS;
     outputImagesCount?: string;  // Number of images generated from the run
     sourceDepth?: string;  // Number of folders deep the source is from the root of the workspace
+    buildCustomDockerfile?: 'true' | 'false';  // --platform error
     hasWorkspaceProjectOpen?: 'true' | 'false';
     // isAzdExtensionInstalled
     // isAzdWorkspaceProject

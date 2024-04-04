@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
@@ -12,6 +12,7 @@ import { createActivityChildContext } from "../../../utils/activity/activityUtil
 import { localize } from "../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
+import { containerAppSuffix } from "./DefaultResourcesNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
 const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
@@ -26,8 +27,9 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         const rootFolder: WorkspaceFolder = nonNullProp(context, 'rootFolder');
         const deploymentConfigurations: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
 
+        const configurationLabel: string | undefined = context.configurationIdx !== undefined ? deploymentConfigurations?.[context.configurationIdx].label : undefined;
         const deploymentConfiguration: DeploymentConfigurationSettings = {
-            label: context.configurationIdx !== undefined && deploymentConfigurations?.[context.configurationIdx].label || context.containerApp?.name,
+            label: configurationLabel || removeCaSuffixIfExists(nonNullValueAndProp(context.containerApp, 'name')),
             type: 'AcrDockerBuildRequest',
             dockerfilePath: path.relative(rootFolder.uri.fsPath, nonNullProp(context, 'dockerfilePath')),
             srcPath: path.relative(rootFolder.uri.fsPath, context.srcPath || rootFolder.uri.fsPath) || ".",
@@ -75,4 +77,8 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
             message: localize('savedSettingsFail', 'Failed to save deployment settings to workspace "{0}".', relativeSettingsFilePath)
         };
     }
+}
+
+function removeCaSuffixIfExists(caName: string): string {
+    return caName.endsWith(containerAppSuffix) ? caName.slice(0, -containerAppSuffix.length) : caName;
 }

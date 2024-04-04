@@ -296,12 +296,12 @@
                     "group": "1_deploy@1"
                 },
                 {
-                    "command": "containerApps.walkthrough.gettingStarted.internal",
-                    "group": "1_deploy@2"
-                },
-                {
                     "command": "containerApps.createContainerApp",
                     "group": "2_create@1"
+                },
+                {
+                    "command": "containerApps.walkthrough.gettingStarted.internal",
+                    "group": "3_walkthrough@1"
                 }
             ],
             "view/title": [

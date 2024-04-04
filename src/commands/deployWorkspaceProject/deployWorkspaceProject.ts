@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { window } from "vscode";
@@ -19,9 +20,11 @@ import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectCont
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
+import { formatSectionHeader } from "./formatSectionHeader";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { type DeployWorkspaceProjectInternalContext } from "./internal/DeployWorkspaceProjectInternalContext";
 import { deployWorkspaceProjectInternal } from "./internal/deployWorkspaceProjectInternal";
+import { convertV1ToV2SettingsSchema } from "./settings/convertSettings/convertV1ToV2SettingsSchema";
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -36,14 +39,20 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         subscription
     });
 
+    ext.outputChannel.appendLog(
+        formatSectionHeader(localize('prepareDeploymentConfiguration', 'Prepare workspace deployment configuration'))
+    );
+
     let deploymentConfiguration: DeploymentConfiguration;
     if (item) {
-        deploymentConfiguration = await getTreeItemDeploymentConfiguration(item);
+        ext.outputChannel.appendLog(localize('treeItemConfiguration', 'Loading deployment configuration from user provided tree item "{0}".', parseAzureResourceId(item.id).resourceName));
+        deploymentConfiguration = await getTreeItemDeploymentConfiguration({ ...containerAppContext }, item);
     } else {
-        // Todo: Conditionally call v1 to v2 settings conversion (https://github.com/microsoft/vscode-azurecontainerapps/issues/612)
-
-        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext });
+        const { rootFolder } = await convertV1ToV2SettingsSchema({ ...containerAppContext });
+        deploymentConfiguration = await getWorkspaceDeploymentConfiguration({ ...containerAppContext, rootFolder });
     }
+
+    context.telemetry.properties.choseExistingWorkspaceConfiguration = deploymentConfiguration.configurationIdx !== undefined ? 'true' : 'false';
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
         ...deploymentConfiguration,
