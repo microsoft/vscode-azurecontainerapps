@@ -26,9 +26,9 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
 
         await this.setRecommendedPicks(context, picks);
         const pick = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
-        context.telemetry.properties.usedRecommendedEnv = pick.description === recommendedPickDescription ? 'true' : 'false';
+        context.telemetry.properties.usedRecommendedEnv = isRecommendedPick(pick) ? 'true' : 'false';
         context.telemetry.properties.recommendedEnvCount =
-            String(picks.reduce((count, p) => count + (p.description === recommendedPickDescription ? 1 : 0), 0));
+            String(picks.reduce((count, pick) => count + (isRecommendedPick(pick) ? 1 : 0), 0));
 
         const managedEnvironment: ManagedEnvironment | undefined = pick.data;
         if (!managedEnvironment) {
@@ -97,18 +97,11 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
             }
         }
 
-        const recommendedPick = (pick: IAzureQuickPickItem<ManagedEnvironment | undefined>): boolean => {
-            if (pick.description === recommendedPickDescription) {
-                return true;
-            }
-
-            return false;
-        };
         // sort the picks by recommendation
         picks.sort((a, b) => {
-            if (recommendedPick(a)) {
+            if (isRecommendedPick(a)) {
                 return -1;
-            } else if (recommendedPick(b)) {
+            } else if (isRecommendedPick(b)) {
                 return 1;
             } else {
                 return 0;
@@ -116,3 +109,5 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
         });
     }
 }
+
+const isRecommendedPick = (pick: IAzureQuickPickItem<ManagedEnvironment | undefined>): boolean => pick.description === recommendedPickDescription;
