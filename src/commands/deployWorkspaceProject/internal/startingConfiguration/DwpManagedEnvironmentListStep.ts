@@ -9,8 +9,11 @@ import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microso
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
+import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
+const recommendedPickDescription: string = localize('recommended', '(Recommended)');
 export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const placeHolder: string = localize('selectManagedEnvironment', 'Select a container apps environment');
@@ -21,8 +24,13 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
             return;
         }
 
+        await this.setRecommendedPicks(context, picks);
+        const pick = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
+        context.telemetry.properties.usedRecommendedEnv = isRecommendedPick(pick) ? 'true' : 'false';
+        context.telemetry.properties.recommendedEnvCount =
+            String(picks.reduce((count, pick) => count + (isRecommendedPick(pick) ? 1 : 0), 0));
 
-        const managedEnvironment: ManagedEnvironment | undefined = (await context.ui.showQuickPick(picks, { suppressPersistence: true, placeHolder })).data;
+        const managedEnvironment: ManagedEnvironment | undefined = pick.data;
         if (!managedEnvironment) {
             // User is choosing to create a new managed environment
             return;
@@ -66,4 +74,40 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
         context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
         context.managedEnvironment = managedEnvironment;
     }
+
+    private async setRecommendedPicks(context: DeployWorkspaceProjectInternalContext, picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[]): Promise<void> {
+        const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
+        if (!deploymentConfigurations?.length) {
+            return;
+        }
+
+        const client = await createContainerAppsAPIClient(context);
+        for (const config of deploymentConfigurations) {
+            try {
+                if (config.resourceGroup && config.containerApp) {
+                    const containerApp = await client.containerApps.get(config.resourceGroup, config.containerApp);
+                    const recommendedPick = picks.find(p => p.data?.id === containerApp.managedEnvironmentId);
+                    if (recommendedPick) {
+                        recommendedPick.description = recommendedPickDescription;
+                    }
+                }
+            }
+            catch (these_hands) {
+                // ignore the error and continue
+            }
+        }
+
+        // sort the picks by recommendation
+        picks.sort((a, b) => {
+            if (isRecommendedPick(a)) {
+                return -1;
+            } else if (isRecommendedPick(b)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+    }
 }
+
+const isRecommendedPick = (pick: IAzureQuickPickItem<ManagedEnvironment | undefined>): boolean => pick.description === recommendedPickDescription;
