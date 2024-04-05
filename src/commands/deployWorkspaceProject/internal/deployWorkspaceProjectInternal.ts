@@ -18,10 +18,11 @@ import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpda
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { formatSectionHeader } from "../formatSectionHeader";
-import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
+import { AppResourcesNameStep } from "./AppResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
+import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
 
@@ -85,7 +86,8 @@ export async function deployWorkspaceProjectInternal(
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
-        new DefaultResourcesNameStep()
+        new SharedResourcesNameStep(),
+        new AppResourcesNameStep()
     ];
 
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [
