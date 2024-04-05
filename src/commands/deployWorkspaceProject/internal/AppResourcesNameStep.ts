@@ -14,11 +14,20 @@ import { sanitizeResourceName } from "./sanitizeResourceName";
 
 /** Names the resources unique to the individual app: `container app`, `image name` */
 export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
+    public constructor(private readonly suppressContainerAppCreation: boolean) {
+        super();
+    }
+
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-        if (context.newContainerAppName || context.containerApp) {
-            // This ensures image naming even when all other resources have already been created
-            context.imageName = ImageNameStep.getTimestampedImageName(context.newContainerAppName || nonNullValueAndProp(context.containerApp, 'name'));
-        }
+        // Configure the image name even if the rest of the resources have already been built
+        context.imageName = ImageNameStep.getTimestampedImageName(
+            context.newContainerAppName ||
+            context.containerApp?.name ||
+            context.newManagedEnvironmentName ||
+            context.managedEnvironment?.name ||
+            context.newResourceGroupName ||
+            nonNullValueAndProp(context.resourceGroup, 'name')
+        );
     }
 
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
@@ -38,6 +47,6 @@ export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceP
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
-        return !context.containerApp && !context.newContainerAppName;
+        return !context.containerApp && !context.newContainerAppName && this.suppressContainerAppCreation;
     }
 }

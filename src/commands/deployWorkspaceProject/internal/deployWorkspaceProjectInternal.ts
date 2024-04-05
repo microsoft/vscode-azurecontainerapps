@@ -87,7 +87,7 @@ export async function deployWorkspaceProjectInternal(
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new SharedResourcesNameStep(),
-        new AppResourcesNameStep()
+        new AppResourcesNameStep(!!options.suppressContainerAppCreation)
     ];
 
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [
