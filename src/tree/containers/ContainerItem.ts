@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Container, type Revision } from "@azure/arm-appcontainers";
-import { TreeElementBase, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { treeUtils } from "../../utils/treeUtils";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { nonNullProp, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
 import { ImagesItem } from "./ImagesItem";
 
 export class ContainerItem implements RevisionsItemModel {
@@ -26,14 +26,21 @@ export class ContainerItem implements RevisionsItemModel {
     getTreeItem(): TreeItem {
         return {
             id: this.id,
-            label: this.container.name,
-            iconPath: treeUtils.getIconPath('containers'),
-            contextValue: 'containerItem',
+            label: `${this.container.name}`,
+            contextValue: 'containerItemName',
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
 
     getChildren(): TreeElementBase[] {
-        return [new ImagesItem(this.subscription, this.containerApp, this.revision, this.id, this.container)];
+        return [
+            new ImagesItem(this.subscription, this.containerApp, this.revision, this.id, this.container),
+            new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.container)
+        ];
+    }
+
+    viewProperties: ViewPropertiesModel = {
+        data: this.container,
+        label: nonNullProp(this.container, 'name'),
     }
 }

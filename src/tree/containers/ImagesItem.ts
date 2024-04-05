@@ -3,11 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { Container, Revision } from "@azure/arm-appcontainers";
-import { AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { TreeItem } from "vscode";
-import { ContainerAppModel } from "../ContainerAppItem";
-import { RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { type Container, type Revision } from "@azure/arm-appcontainers";
+import { createGenericElement, nonNullProp, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { localize } from "../../utils/localize";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 
 export class ImagesItem implements RevisionsItemModel {
     static readonly contextValue: string = 'imageItem';
@@ -24,8 +26,32 @@ export class ImagesItem implements RevisionsItemModel {
     getTreeItem(): TreeItem {
         return {
             id: this.id,
+            iconPath: new ThemeIcon('window'),
             contextValue: 'containerItemImage',
-            description: `${this.container.image}`,
+            label: localize('image', 'Image'),
+            collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
+    }
+
+    getChildren(): TreeElementBase[] {
+        const loginServer = this.container.image?.split('/')[0];
+        const imageAndTag = this.container.image?.substring(nonNullValue(loginServer?.length) + 1, this.container.image?.length);
+        return [
+            createGenericElement({
+                label: localize('containerImage', 'Name:'),
+                contextValue: 'containerItemImageName',
+                description: `${imageAndTag}`,
+            }),
+            createGenericElement({
+                label: localize('containerImageRegiste', 'Registry:'),
+                contextValue: 'containerImageRegistry',
+                description: `${loginServer}`,
+            })
+        ];
+    }
+
+    viewProperties: ViewPropertiesModel = {
+        data: this.container,
+        label: nonNullProp(this.container, 'name'),
     }
 }

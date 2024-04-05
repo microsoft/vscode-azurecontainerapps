@@ -10,8 +10,9 @@ import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "
 import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import type { ContainerAppModel } from "../ContainerAppItem";
-import type { ContainerAppsItem, TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { type ContainerAppModel } from "../ContainerAppItem";
+import { type ContainerAppsItem, type TreeElementBase } from "../ContainerAppsBranchDataProvider";
+
 import { ContainersItem } from "../containers/ContainersItem";
 import { ScaleItem } from "../scaling/ScaleItem";
 import { RevisionDraftDescendantBase } from "./RevisionDraftDescendantBase";
@@ -69,8 +70,7 @@ export class RevisionItem implements RevisionsItemModel {
 
     static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
         return [
-            new ScaleItem(subscription, containerApp, revision),
-            new ContainersItem(subscription, containerApp, revision),
+            RevisionDraftDescendantBase.createTreeItem(ContainersItem, subscription, containerApp, revision),
             RevisionDraftDescendantBase.createTreeItem(ScaleItem, subscription, containerApp, revision)
         ];
     }
