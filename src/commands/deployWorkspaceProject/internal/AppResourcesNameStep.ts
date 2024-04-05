@@ -47,6 +47,6 @@ export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceP
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
-        return !context.containerApp && !context.newContainerAppName && this.suppressContainerAppCreation;
+        return !context.containerApp && !context.newContainerAppName && !this.suppressContainerAppCreation;
     }
 }
