@@ -13,16 +13,13 @@ import { localize } from "../../../../utils/localize";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
-type TryUseExistingRegistryContext = DeployWorkspaceProjectInternalContext & SetTelemetryProps<TelemetryProps>;
+type TryUseExistingResourceGroupRegistryContext = DeployWorkspaceProjectInternalContext & SetTelemetryProps<TelemetryProps>;
 
-export class TryUseExistingRegistryStep<T extends TryUseExistingRegistryContext> extends AzureWizardExecuteStep<T> {
+export class TryUseExistingResourceGroupRegistryStep<T extends TryUseExistingResourceGroupRegistryContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 200;  /** Todo: Figure out a good priority level */
 
     public async execute(context: T): Promise<void> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
-
-        let registryInSameResourceGroup: Registry | undefined;
-        let registry: Registry | undefined;
 
         for (const r of registries) {
             if (!r.id) {
@@ -30,32 +27,19 @@ export class TryUseExistingRegistryStep<T extends TryUseExistingRegistryContext>
             }
 
             if (parseAzureResourceId(r.id).resourceGroup === context.resourceGroup?.name) {
-                registryInSameResourceGroup = r;
+                context.registry = r;
                 break;
             }
-
-            if (!registry) {
-                registry = r;
-
-                if (!context.resourceGroup) {
-                    break;
-                }
-            }
         }
 
-        if (registryInSameResourceGroup) {
-            ext.outputChannel.appendLog(localize('resourceGroupRegistry', 'Found an available registry "{0}" in the provided resource group "{1}".', registryInSameResourceGroup.name, context.resourceGroup?.name));
-        } else if (registry) {
-            ext.outputChannel.appendLog(localize('firstRegistry', 'Found an available registry "{0}" in the provided subscription.', registry.name));
-        }
-
-        // Prioritize trying to find a registry in the same resource group
-        // Otherwise, just use the first available registry
-        context.registry = registryInSameResourceGroup || registry;
         context.telemetry.properties.defaultedRegistryInternal = context.registry ? 'true' : 'false';
+
+        if (context.registry) {
+            ext.outputChannel.appendLog(localize('usingResourceGroupRegistry', 'Automatically using container registry "{0}" from resource group "{1}" provided.', context.registry.name, context.resourceGroup?.name));
+        }
     }
 
     public shouldExecute(context: T): boolean {
-        return !context.registry;
+        return !context.registry && !!context.resourceGroup;
     }
 }
