@@ -4,11 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import * as path from "path";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
+import { sanitizeResourceName } from "./sanitizeResourceName";
 
 /** Names the resources unique to the individual app: `container app`, `image name` */
 export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
@@ -22,6 +24,7 @@ export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceP
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt: localize('containerAppNamePrompt', 'Enter a name for the new container app'),
+            value: sanitizeResourceName(context.dockerfilePath?.split(path.sep).at(-2) ?? ''),
             validateInput: (name: string) => ContainerAppNameStep.validateInput(name),
             asyncValidationTask: async (name: string) => {
                 const resourceGroupName: string = context.resourceGroup?.name || nonNullProp(context, 'newResourceGroupName');
