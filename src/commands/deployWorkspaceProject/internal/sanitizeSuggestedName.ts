@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 /**
- * Takes a name and sanitizes it such that it can be used to create a container app resource and pass input validation
+ * Takes a name and sanitizes it such that it can be used to create an ACA resource and pass common input validation
  */
-export function sanitizeSuggestedName(name: string): string {
+export function sanitizeResourceName(name: string): string {
     // Only alphanumeric characters or hyphens
     let sanitizedName: string = name.toLowerCase().replace(/[^a-z0-9-]+/g, '');
 
