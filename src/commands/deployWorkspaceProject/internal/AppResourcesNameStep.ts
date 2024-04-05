@@ -10,6 +10,7 @@ import { localize } from "../../../utils/localize";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
+import { sanitizeSuggestedName } from "./sanitizeSuggestedName";
 
 /** Names the resources unique to the individual app: `container app`, `image name` */
 export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
@@ -23,7 +24,7 @@ export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceP
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt: localize('containerAppNamePrompt', 'Enter a name for the new container app'),
-            value: context.dockerfilePath?.split(path.sep).at(-2)?.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase(),
+            value: sanitizeSuggestedName(context.dockerfilePath?.split(path.sep).at(-2) ?? ''),
             validateInput: (name: string) => ContainerAppNameStep.validateInput(name),
             asyncValidationTask: async (name: string) => {
                 const resourceGroupName: string = context.resourceGroup?.name || nonNullProp(context, 'newResourceGroupName');

@@ -11,6 +11,7 @@ import { localize } from "../../../utils/localize";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
+import { sanitizeSuggestedName } from "./sanitizeSuggestedName";
 
 /** Names any app environment shared resources: `resource group`, `managed environment`, `container registry` */
 export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
@@ -29,7 +30,7 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const resourceName: string = (await context.ui.showInputBox({
             prompt: localize('sharedNamePrompt', 'Enter a name for the container app environment'),
-            value: context.rootFolder?.name.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase(),
+            value: sanitizeSuggestedName(context.rootFolder?.name ?? ''),
             validateInput: (name: string) => this.validateInput(context, name),
             asyncValidationTask: (name: string) => this.validateNameAvailability(context, name)
         })).trim();
