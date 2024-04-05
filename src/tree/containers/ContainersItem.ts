@@ -9,6 +9,7 @@ import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vsc
 import * as deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
+import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -29,7 +30,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
         super(subscription, containerApp, revision);
         this.id = `${containerApp.id}/containers`;
         this.containers = nonNullValue(revision.template?.containers);
-        this.label = this.containers.length === 1 ? 'Container' : 'Containers';
+        this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
     }
 
     getChildren(): TreeElementBase[] {
@@ -54,12 +55,12 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.label = this.containers.length === 1 ? 'Container' : 'Containers';
+        this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
         this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
     }
 
     protected setDraftProperties(): void {
-        this.label = this.containers.length === 1 ? 'Container*' : 'Containers*';
+        this.label = this.containers.length === 1 ? localize('container*', 'Container*') : localize('containers*', 'Containers*');
         this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
     }
 

@@ -26,9 +26,9 @@ export class ImagesItem implements RevisionsItemModel {
     getTreeItem(): TreeItem {
         return {
             id: this.id,
+            label: localize('image', 'Image'),
             iconPath: new ThemeIcon('window'),
             contextValue: 'containerItemImage',
-            label: localize('image', 'Image'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }

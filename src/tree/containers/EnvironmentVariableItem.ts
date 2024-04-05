@@ -8,6 +8,7 @@ import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
+import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 
@@ -30,7 +31,7 @@ export class EnvironmentVariableItem implements RevisionsItemModel {
             iconPath: new ThemeIcon('symbol-constant'),
             command: {
                 command: 'containerapps.toggleEnvironmentVariableVisibility',
-                title: 'Toggle Environment Variable Visibility',
+                title: localize('commandtitle', 'Toggle Environment Variable Visibility'),
                 arguments: [this, this._hideValue,]
             }
         }
