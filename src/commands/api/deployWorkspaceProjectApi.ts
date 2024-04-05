@@ -34,7 +34,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             ...subscriptionContext,
             subscription,
             resourceGroup,
-            newManagedEnvironmentName: await verifyNewManagedEnvironmentName({ ...context, ...subscriptionContext }, resourceGroup?.name, resourceGroup?.name),
+            newManagedEnvironmentName: await tryGetNewManagedEnvironmentName({ ...context, ...subscriptionContext }, resourceGroup?.name, resourceGroup?.name),
             rootFolder,
             srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
             dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
@@ -53,7 +53,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
     }) ?? {};
 }
 
-async function verifyNewManagedEnvironmentName(context: ISubscriptionActionContext, resourceGroupName?: string, newEnvironmentName?: string): Promise<string | undefined> {
+async function tryGetNewManagedEnvironmentName(context: ISubscriptionActionContext, resourceGroupName?: string, newEnvironmentName?: string): Promise<string | undefined> {
     if (!resourceGroupName || !newEnvironmentName) {
         return undefined;
     }
