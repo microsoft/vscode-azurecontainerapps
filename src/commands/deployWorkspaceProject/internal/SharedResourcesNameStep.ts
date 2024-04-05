@@ -29,6 +29,7 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const resourceName: string = (await context.ui.showInputBox({
             prompt: localize('sharedNamePrompt', 'Enter a name for the container app environment'),
+            value: context.rootFolder?.name,
             validateInput: (name: string) => this.validateInput(context, name),
             asyncValidationTask: (name: string) => this.validateNameAvailability(context, name)
         })).trim();
