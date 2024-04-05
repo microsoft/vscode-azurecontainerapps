@@ -10,7 +10,7 @@ import { localize } from "../../../utils/localize";
 import { ContainerAppNameStep } from "../../createContainerApp/ContainerAppNameStep";
 import { ImageNameStep } from "../../image/imageSource/buildImageInAzure/ImageNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
-import { sanitizeResourceName } from "./sanitizeSuggestedName";
+import { sanitizeResourceName } from "./sanitizeResourceName";
 
 /** Names the resources unique to the individual app: `container app`, `image name` */
 export class AppResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {

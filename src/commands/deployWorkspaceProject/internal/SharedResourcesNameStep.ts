@@ -11,7 +11,7 @@ import { localize } from "../../../utils/localize";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
-import { sanitizeResourceName } from "./sanitizeSuggestedName";
+import { sanitizeResourceName } from "./sanitizeResourceName";
 
 /** Names any app environment shared resources: `resource group`, `managed environment`, `container registry` */
 export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
