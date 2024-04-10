@@ -18,6 +18,8 @@ For more information please consult our [README](https://github.com/microsoft/vs
     * [[610]](https://github.com/microsoft/vscode-azurecontainerapps/issues/610) Decouple settings validation and parsing logic from the core deployment
     * [[613]](https://github.com/microsoft/vscode-azurecontainerapps/issues/613) Monorepo core logic and deployment configuration settings validation
     * [[634]](https://github.com/microsoft/vscode-azurecontainerapps/pull/634) Remove auto-naming of resources based on the workspace name and always prompts for a name
+    * [[668]](https://github.com/microsoft/vscode-azurecontainerapps/pull/668) Prompt for a separate name when creating a new managed environment
+    * [[669]](https://github.com/microsoft/vscode-azurecontainerapps/pull/669) Find previously deployed to managed environment and recommend them
     * [[638]](https://github.com/microsoft/vscode-azurecontainerapps/pull/638) Leverage existing ACRs automatically if previous apps exist in saved deployment settings
     * [[641]](https://github.com/microsoft/vscode-azurecontainerapps/pull/641) Add support for taking a saved `envPath` and converting it to environment variables
 
