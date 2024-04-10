@@ -15,7 +15,7 @@ Use the Azure Containers extension to quickly create and deploy containerized ap
 
 We've introduced a command `Deploy Project from Workspace...` to simplify the process of deploying a local workspace project to a new container app!  By analyzing your project directory, we automatically detect any Dockerfiles and generate all the necessary Azure resources required for creating a containerized application (monorepo support now included!).
 
-To get started, please follow our onboarding walkthrough. You can open the walkthrough using either of the following methods:
+Please follow our onboarding walkthrough to get started. You can access the walkthrough using either of the following methods:
 * Click the workspace container apps icon and run `Open Walkthrough`
 
     <img height="200px" src="resources/readme/getting-started-walkthrough.png">
