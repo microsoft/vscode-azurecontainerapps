@@ -1,12 +1,12 @@
 # Change Log
 
-### 0.0.2
+### 1.0.1
 
 ### Changed
 
 * [[615]](https://github.com/microsoft/vscode-azurecontainerapps/pull/615) Removed ability to set option `ignoreExistingDeploySettings`. This will now happen automatically by default.
 
-## 0.0.1
+## 1.0.0
 * Initial release
 
 ### Added
