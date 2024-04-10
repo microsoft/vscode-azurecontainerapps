@@ -13,13 +13,19 @@ Use the Azure Containers extension to quickly create and deploy containerized ap
 
 ## Create your first container app
 
-We've introduced a new command `Deploy Project from Workspace...` to simplify the process of deploying a local workspace project to a container app!  By analyzing your project directory, we automatically detect any Dockerfiles and generate all the necessary Azure resources required for creating a containerized application (monorepo support coming soon).
+We've introduced a new command `Deploy Project from Workspace...` to simplify the process of deploying a local workspace project to a new container app!  By analyzing your project directory, we automatically detect any Dockerfiles and generate all the necessary Azure resources required for creating a containerized application (monorepo support now included!).
 
-Please follow this great onboarding [tutorial](https://aka.ms/container-apps/vscode) to get started!
+To get started, please follow our onboarding walkthrough. You can open the walkthrough using either of the following methods:
+* Click the workspace container apps icon and run `Open Walkthrough`
 
-You can re-run the command with your saved workspace settings to quickly re-deploy your project to the same Azure resources.
+    <img height="200px" src="resources/readme/getting-started-walkthrough.png">
 
-__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands offer the flexibility to quickly target project deployment to existing resources.
+* Open through the command palette `F1 > Azure Container Apps: Open Walkthrough`
+
+
+You can re-run the command with your saved workspace settings to quickly re-deploy your project to any previously saved Azure resources.
+
+__Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands offer the flexibility to quickly target project deployment to existing resources should you so choose.
 
 ## Edit and deploy your app
 
