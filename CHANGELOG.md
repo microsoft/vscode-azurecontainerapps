@@ -24,7 +24,7 @@ For more information please consult our [README](https://github.com/microsoft/vs
     * [[641]](https://github.com/microsoft/vscode-azurecontainerapps/pull/641) Add support for taking a saved `envPath` and converting it to environment variables
 
 ## Changed
-* [[335]](https://github.com/microsoft/vscode-azurecontainerapps/issues/335) Give more context when displaying image source selection options while creating a Container App
+* [[335]](https://github.com/microsoft/vscode-azurecontainerapps/issues/335) Give more context when displaying image source selection options while creating a container app
 * [[627]](https://github.com/microsoft/vscode-azurecontainerapps/pull/627) Use existing env variables when updating container app if "skipped"
 
 ## 0.6.2 - 2024-02-20
