@@ -5,7 +5,6 @@
 This update comes with some major changes to the `Deploy Project from Workspace...` family of commands. We have now expanded support for monorepos by enabling the deployment and saving of multiple app configurations within the same workspace project.  New settings configurations can now be found under `containerApps.deploymentConfigurations`.  Any older settings will be migrated automatically to the new schema.
 
 We have also included a new getting started walkthrough which steps through first time deployment using the Azure Container Apps extension.
-<br/>
 
 For more information please consult our [README](https://github.com/microsoft/vscode-azurecontainerapps#readme).
 
