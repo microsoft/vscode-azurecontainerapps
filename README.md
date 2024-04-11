@@ -18,7 +18,7 @@ Use the `Deploy Project from Workspace...` command to simplify the process of de
 Please follow our onboarding walkthrough to get started. You can access the walkthrough using either of the following methods:
 * Click the workspace container apps icon and run `Open Walkthrough`
 
-    <img height="200px" src="resources/readme/getting-started-walkthrough.png">
+    <img height="250px" src="resources/readme/getting-started-walkthrough.png">
 
 * Open through the command palette `F1 > Azure Container Apps: Open Walkthrough`
 
