@@ -22,7 +22,6 @@ Please follow our onboarding walkthrough to get started. You can access the walk
 
 * Open through the command palette `F1 > Azure Container Apps: Open Walkthrough`
 
-
 You can re-run the command with your saved workspace settings to quickly re-deploy your project to any previously saved Azure resources.
 
 __Note__: We also have entry-points on the container apps environment item (`Create Container App from Workspace`) and the container app item (`Deploy Workspace to Container App`).  These commands offer an alternative way to quickly target project deployment to existing resources.
