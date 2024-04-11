@@ -12,14 +12,12 @@ For more information please consult our [README](https://github.com/microsoft/vs
 ### Added
 * [[59]](https://github.com/microsoft/vscode-azurecontainerapps/issues/39) Add a getting started walkthrough
 * [[607]](https://github.com/microsoft/vscode-azurecontainerapps/issues/607) Expand support for monorepos and deploying multiple app configurations within the same workspace project
-* [[669]](https://github.com/microsoft/vscode-azurecontainerapps/pull/669) Find previously deployed to managed environments in workspace project and recommend them
-* [[638]](https://github.com/microsoft/vscode-azurecontainerapps/pull/638) Leverage existing ACRs automatically if previous apps exist in saved deployment settings
-* [[641]](https://github.com/microsoft/vscode-azurecontainerapps/pull/641) Add support for taking a saved `envPath` and converting it to environment variables
 
 ### Changed
 * [[335]](https://github.com/microsoft/vscode-azurecontainerapps/issues/335) Give more context when displaying image source selection options while creating a container app
 * [[634]](https://github.com/microsoft/vscode-azurecontainerapps/pull/634) Remove auto-naming of resources based on the workspace name and always prompts for new app names
 * [[668]](https://github.com/microsoft/vscode-azurecontainerapps/pull/668) Prompt for a separate name when choosing to create a new managed environment
+* [[641]](https://github.com/microsoft/vscode-azurecontainerapps/pull/641) Add support for taking a saved `envPath` and converting it to environment variables
 
 ### Fixed
 * [[627]](https://github.com/microsoft/vscode-azurecontainerapps/pull/627) Use existing env variables when updating container app if "skipped"
