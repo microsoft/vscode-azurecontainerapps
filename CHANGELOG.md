@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.7.0 - 2024-04-11
+## 0.7.0 - 2024-04-15
 
 This update comes with some major changes to the `Deploy Project from Workspace...` family of commands. We have now expanded support for monorepos by enabling the deployment and saving of multiple app configurations within the same workspace project.  New settings configurations can now be found under `containerApps.deploymentConfigurations`.  Any older settings will be migrated automatically to the new schema.
 
@@ -15,6 +15,7 @@ For more information please consult our [README](https://github.com/microsoft/vs
 ### Changed
 * [[335]](https://github.com/microsoft/vscode-azurecontainerapps/issues/335) Give more context when displaying image source selection options while creating a container app
 * [[634]](https://github.com/microsoft/vscode-azurecontainerapps/pull/634) Remove auto-naming of resources based on the workspace name and always prompts for new app names
+* [[669]](https://github.com/microsoft/vscode-azurecontainerapps/pull/669) Recommend previously deployed to managed environments
 * [[668]](https://github.com/microsoft/vscode-azurecontainerapps/pull/668) Prompt for a separate name when choosing to create a new managed environment
 * [[641]](https://github.com/microsoft/vscode-azurecontainerapps/pull/641) Add support for taking a saved `envPath` and converting it to environment variables
 
