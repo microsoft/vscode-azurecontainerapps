@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.7.0 - 2024-04-15
+## 0.7.0 - 2024-04-17
 
 This update comes with some major changes to the `Deploy Project from Workspace...` family of commands. We have now expanded support for monorepos by enabling the deployment and saving of multiple app configurations within the same workspace project.  New settings configurations can now be found under `containerApps.deploymentConfigurations`.  Any older settings will be migrated automatically to the new schema.
 
