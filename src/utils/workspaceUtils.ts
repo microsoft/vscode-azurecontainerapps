@@ -43,11 +43,11 @@ export async function selectWorkspaceFile(
         throw new Error(localize('couldNotDetermineWorkspaceFolder', 'Could not determine which workspace folder to search through.'));
     }
 
-    const relativePattern: RelativePattern = new RelativePattern(
+    const pattern: RelativePattern = new RelativePattern(
         context.rootFolder ?? workspace.workspaceFolders[0],
         globPattern ?? '**/*'
     );
-    const files = await workspace.findFiles(relativePattern);
+    const files: Uri[] = await workspace.findFiles(pattern);
 
     // If dockerfile(s), log the count
     if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
@@ -67,7 +67,7 @@ export async function selectWorkspaceFile(
     quickPicks.push(...files.map((uri: Uri) => {
         return {
             label: basename(uri.path),
-            description: relative(relativePattern.baseUri.path, uri.path),
+            description: relative(pattern.baseUri.path, uri.path),
             data: uri.fsPath
         };
     }));
