@@ -7,24 +7,34 @@ import { workspace } from "vscode";
 import { getWorkspaceFolderUri } from "../testUtils";
 
 interface TestCase {
-    projectName: string;
+    folderName: string;
 }
 
 const testCases: TestCase[] = [
     {
-        projectName: 'monorepo-basic'
+        folderName: 'monorepo-basic'
     }
 ];
 
 suite('deployWorkspaceProject', async () => {
     for (const testCase of testCases) {
-        test(testCase.projectName, async () => {
-            const workspaceFolderUri = getWorkspaceFolderUri(testCase.projectName);
+        test(testCase.folderName, async () => {
+            const workspaceFolderUri = getWorkspaceFolderUri(testCase.folderName);
             const workspaceFolder = workspace.getWorkspaceFolder(workspaceFolderUri);
 
-            if (workspaceFolder) {
-                // Run tests...
+            if (!workspaceFolder) {
+                return;
             }
+
+            // Run tests...
+            // Figure out order of prompts/answers
+            // Deploy
+            // Check
+            // Some sort of testoutput.json
+
+
+            // Brainstorm what to actually test for...
+            //
         });
     }
 });
