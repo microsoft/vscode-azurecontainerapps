@@ -2,7 +2,7 @@
     "folders": [
         {
             "name": "monorepo-basic",
-            "path": "testProjects/monorepo-basic"
+            "path": "testProject/monorepo-basic"
         }
     ]
 }

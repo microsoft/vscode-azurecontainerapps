@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import { workspace } from "vscode";
+import { deployWorkspaceProject } from '../../extension.bundle';
 import { getWorkspaceFolderUri } from "../testUtils";
 
 interface TestCase {
@@ -26,15 +28,30 @@ suite('deployWorkspaceProject', async () => {
                 return;
             }
 
-            // Run tests...
-            // Figure out order of prompts/answers
-            // Deploy
-            // Check
-            // Some sort of testoutput.json
+            await runWithTestActionContext('deployWorkspaceProject', async context => {
+                await context.ui.runWithInputs([
+                    'app1/Dockerfile',  // dockerfile
+                    new RegExp('Create new container apps environment', 'i'), // create new cae
+                    'Continue', // confirm
+                    'my-test-env', // name of env
+                    'app1',  // name of CA resources
+                    './app1',  // src code directory
+                    'app1/.env.example',  // environment var file
+                    'East US',  // resource location
+                    'Save'  // save files
+                ], async () => {
+                    const result = await deployWorkspaceProject(context);
+                    console.log(result);
 
 
-            // Brainstorm what to actually test for...
-            //
+                    // Multiple Dockerfiles
+                    // Single Dockerfiles
+                    // Multiple environment variables
+                    // Single environment variables?
+                    // Skip for now environment variables
+                    // Use again
+                });
+            });
         });
     }
 });

@@ -19,7 +19,6 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
         if ((context.resourceGroup || context.managedEnvironment) && !context.registry) {
             // Generate a new name automatically without prompting
             context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, context.managedEnvironment?.name || nonNullValueAndProp(context.resourceGroup, 'name'));
-
             if (!context.newRegistryName) {
                 // Extremely unlikely that this code block would ever trigger
                 throw new Error(localize('failedToGenerateName', 'Failed to generate an available container registry name.'));
@@ -39,6 +38,10 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
 
         !context.resourceGroup && (context.newResourceGroupName = resourceName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceName);
+
+        // This line of code below is usually only applicable during testing.
+        // This is because `newRegistryName` normally gets set during `validateInput` which gets bypassed during tests but not during normal execution.
+        !context.registry && (context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, resourceName));
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {

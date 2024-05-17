@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from "vscode";
 
-export function getWorkspaceFolderUri(testFolderName: string): Uri {
+export function getWorkspaceFolderUri(folderName: string): Uri {
     let workspaceFolderUri: Uri | undefined;
 
     const workspaceFolders: readonly WorkspaceFolder[] | undefined = workspace.workspaceFolders;
@@ -10,13 +10,13 @@ export function getWorkspaceFolderUri(testFolderName: string): Uri {
         throw new Error("No workspace is open");
     } else {
         for (const workspaceFolder of workspaceFolders) {
-            if (workspaceFolder.name === testFolderName) {
+            if (workspaceFolder.name === folderName) {
                 workspaceFolderUri = workspaceFolder.uri;
-                assert.strictEqual(path.basename(workspaceFolderUri.fsPath), testFolderName, "Opened against an unexpected workspace.");
+                assert.strictEqual(path.basename(workspaceFolderUri.fsPath), folderName, "Opened against an unexpected workspace.");
                 return workspaceFolderUri;
             }
         }
     }
 
-    throw new Error(`Unable to find workspace folder"${testFolderName}""`);
+    throw new Error(`Unable to find workspace folder"${folderName}""`);
 }
