@@ -29,7 +29,7 @@ export function getMonoRepoBasicTestConfigurations(): DeployWorkspaceProjectTest
             expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
             expectedDotVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateDotVSCodeSettings(sharedResourceName, acrResourceName, 'app1')
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
                 ]
             }
         }
@@ -50,7 +50,7 @@ function generateExpectedResults(sharedResourceName: string, acrResourceName: st
     };
 }
 
-function generateDotVSCodeSettings(sharedResourceName: string, acrResourceName: string, appName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
+function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
     return {
         label: appName,
         type: 'AcrDockerBuildRequest',
