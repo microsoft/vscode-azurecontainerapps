@@ -5,10 +5,10 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import { type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from "../../../extension.bundle";
-import { type DeployWorkspaceProjectTestConfigurations } from "./DeployWorkspaceProjectTestConfigurations";
-import { type StringOrRegExpProps } from "./StringOrRegExpProps";
+import { type StringOrRegExpProps } from "../../StringOrRegExpProps";
+import { type DeployWorkspaceProjectTestCases } from "./DeployWorkspaceProjectTestCases";
 
-export function getMonoRepoBasicTestConfigurations(): DeployWorkspaceProjectTestConfigurations {
+export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
     const sharedResourceName: string = 'monorepo-basic' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 

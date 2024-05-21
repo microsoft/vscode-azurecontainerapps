@@ -4,54 +4,27 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
-import * as assert from 'assert';
 import { workspace } from 'vscode';
 import { deployWorkspaceProject, dwpSettingUtilsV2, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../extension.bundle';
-import { getWorkspaceFolderUri } from '../testUtils';
-import { type DeployWorkspaceProjectTestConfigurations } from './config/DeployWorkspaceProjectTestConfigurations';
-import { getMonoRepoBasicTestConfigurations } from './config/monoRepoBasicTestConfigurations';
-
-interface TestCase {
-    label: string;
-    folderName: string;
-    testConfigurations: DeployWorkspaceProjectTestConfigurations;
-}
-
-const testCases: TestCase[] = [
-    {
-        label: 'monorepo-basic',
-        folderName: 'monorepo-basic',
-        testConfigurations: getMonoRepoBasicTestConfigurations()
-    }
-];
+import { assertFlexibleDeepEqual, getWorkspaceFolderUri } from '../testUtils';
+import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', async () => {
-    for (const testCase of testCases) {
-        suite(testCase.label, async () => {
-            const workspaceFolderUri = getWorkspaceFolderUri(testCase.folderName);
+    for (const scenario of testScenarios) {
+        suite(scenario.label, async () => {
+            const workspaceFolderUri = getWorkspaceFolderUri(scenario.folderName);
             const rootFolder = workspace.getWorkspaceFolder(workspaceFolderUri);
 
             if (!rootFolder) {
                 return;
             }
 
-            for (const testConfig of testCase.testConfigurations) {
-                test(testConfig.label, async () => {
+            for (const testCase of scenario.testCases) {
+                test(testCase.label, async () => {
                     await runWithTestActionContext('deployWorkspaceProject', async context => {
-                        await context.ui.runWithInputs(testConfig.inputs, async () => {
+                        await context.ui.runWithInputs(testCase.inputs, async () => {
                             const results: DeployWorkspaceProjectResults = await deployWorkspaceProject(context);
-
-                            // Verify test results match the expected results
-                            for (const key in testConfig.expectedResults) {
-                                const result: string | undefined = results[key];
-                                const expectedResult: string | RegExp | undefined = testConfig.expectedResults[key];
-
-                                if (result && expectedResult instanceof RegExp) {
-                                    assert.match(result, expectedResult, 'DeployWorkspaceProjectResults mismatch.');
-                                } else {
-                                    assert.equal(result, expectedResult, 'DeployWorkspaceProjectResults mismatch.');
-                                }
-                            }
+                            assertFlexibleDeepEqual(results as Partial<Record<string, string>>, testCase.expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProjectResults mismatch.');
 
                             // Verify any legacy (v1) settings (.vscode)
                             // Todo: Add any additional logic once we figure out what the test cases for this might look like (tests would be related to v1-to-v2 settings conversion)
@@ -59,19 +32,9 @@ suite('deployWorkspaceProject', async () => {
                             // Verify any current (v2) settings (.vscode)
                             const deploymentConfigurationsV2: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
 
-                            for (const [i, expectedDeploymentConfiguration] of (testConfig.expectedDotVSCodeSettings?.deploymentConfigurations ?? []).entries()) {
-                                const deploymentConfiguration: DeploymentConfigurationSettings = deploymentConfigurationsV2[i];
-
-                                for (const key in expectedDeploymentConfiguration) {
-                                    const result: string | undefined = deploymentConfiguration[key];
-                                    const expectedResult: string | RegExp | undefined = expectedDeploymentConfiguration[key];
-
-                                    if (result && expectedResult instanceof RegExp) {
-                                        assert.match(result, expectedResult, 'DeployWorkspaceProject workspace settings (v2) mismatch.');
-                                    } else {
-                                        assert.equal(result, expectedResult, 'DeployWorkspaceProject workspace settings (v2) mismatch.');
-                                    }
-                                }
+                            for (const [i, expectedDeploymentConfiguration] of (testCase.expectedDotVSCodeSettings?.deploymentConfigurations ?? []).entries()) {
+                                const deploymentConfiguration: DeploymentConfigurationSettings = deploymentConfigurationsV2[i] ?? {};
+                                assertFlexibleDeepEqual(deploymentConfiguration as Partial<Record<string, string>>, expectedDeploymentConfiguration, 'DeployWorkspaceProject workspace settings (v2) mismatch.');
                             }
                         });
                     });

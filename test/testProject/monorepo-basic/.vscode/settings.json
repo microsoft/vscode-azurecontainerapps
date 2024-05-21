@@ -6,9 +6,9 @@
             "dockerfilePath": "app1/Dockerfile",
             "srcPath": "app1",
             "envPath": "app1/.env.example",
-            "resourceGroup": "monorepo-basic5c99",
+            "resourceGroup": "monorepo-basic7405",
             "containerApp": "app1",
-            "containerRegistry": "monorepobasic5c993ed777"
+            "containerRegistry": "monorepobasic74058cb68b"
         }
     ]
 }
