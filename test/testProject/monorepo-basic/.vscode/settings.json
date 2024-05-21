@@ -1,0 +1,14 @@
+{
+    "containerApps.deploymentConfigurations": [
+        {
+            "label": "app1",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "app1/Dockerfile",
+            "srcPath": "app1",
+            "envPath": "app1/.env.example",
+            "resourceGroup": "monorepo-basic5c99",
+            "containerApp": "app1",
+            "containerRegistry": "monorepobasic5c993ed777"
+        }
+    ]
+}
