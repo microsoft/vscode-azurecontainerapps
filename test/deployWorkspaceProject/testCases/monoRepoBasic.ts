@@ -27,7 +27,7 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'Save'
             ],
             expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
-            expectedDotVSCodeSettings: {
+            expectedVSCodeWorkspaceSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
                 ]
@@ -45,11 +45,8 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'app2/.env.example',
                 'Save'
             ],
-            expectedResults: {
-                ...generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
-                logAnalyticsWorkspaceId: undefined
-            },
-            expectedDotVSCodeSettings: {
+            expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
+            expectedVSCodeWorkspaceSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
@@ -68,11 +65,8 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'app3/.env.example',
                 'Save'
             ],
-            expectedResults: {
-                ...generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
-                logAnalyticsWorkspaceId: undefined
-            },
-            expectedDotVSCodeSettings: {
+            expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
+            expectedVSCodeWorkspaceSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
@@ -86,11 +80,8 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'app1',
                 'Continue'
             ],
-            expectedResults: {
-                ...generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
-                logAnalyticsWorkspaceId: undefined
-            },
-            expectedDotVSCodeSettings: {
+            expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
+            expectedVSCodeWorkspaceSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
@@ -103,15 +94,15 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
 
 function generateExpectedResults(sharedResourceName: string, acrResourceName: string, appName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
     return {
-        containerAppId: new RegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.App/containerApps/${appName}`, 'i'),
+        containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appName}`, 'i'),
         imageName: new RegExp(appName, 'i'),
-        logAnalyticsWorkspaceId: new RegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.OperationalInsights/workspaces/${sharedResourceName}`, 'i'),
-        managedEnvironmentId: new RegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.App/managedEnvironments/${sharedResourceName}`, 'i'),
-        registryId: new RegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.ContainerRegistry/registries/${acrResourceName}.{6}`, 'i'),
-        registryLoginServer: new RegExp(`${acrResourceName}.{6}.azurecr.io`, 'i'),
+        logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
+        managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
+        registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),
+        registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
         registryPassword: new RegExp('.*'),
         registryUsername: new RegExp(`${acrResourceName}.{6}`, 'i'),
-        resourceGroupId: new RegExp(`/resourceGroups/${sharedResourceName}`, 'i')
+        resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
     };
 }
 
@@ -126,4 +117,10 @@ function generateExpectedDeploymentConfiguration(sharedResourceName: string, acr
         containerApp: appName,
         containerRegistry: new RegExp(`${acrResourceName}.{6}`, 'i'),
     };
+}
+
+export async function postTestAssertion(_: DeployWorkspaceProjectResults): Promise<void> {
+    // Check container app environment variables
+    // Check dockerfile ingress
+    // Check container image
 }

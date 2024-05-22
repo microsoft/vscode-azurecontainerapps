@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type DeployWorkspaceProjectResults, type DeployWorkspaceProjectSettingsV1, type DeploymentConfigurationSettings } from "../../../extension.bundle";
+import { type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../StringOrRegExpProps";
 
 export type DeployWorkspaceProjectTestCases = DeployWorkspaceProjectTestCase[];
@@ -24,12 +24,13 @@ export interface DeployWorkspaceProjectTestCase {
     /**
      * The expected `.vscode` settings that should be present in the workspace folder root after concluding the run
      */
-    expectedDotVSCodeSettings?: DotVSCodeWorkspaceSettings;
+    expectedVSCodeWorkspaceSettings?: VSCodeWorkspaceSettings;
+    /**
+     * A post test callback that can be used for further verifying created resources
+     */
+    postTestAssertion?: (results: DeployWorkspaceProjectResults) => void | Promise<void>;
 }
 
-export interface DotVSCodeWorkspaceSettings {
-    containerAppResourceGroupName?: StringOrRegExpProps<Pick<DeployWorkspaceProjectSettingsV1, 'containerAppResourceGroupName'>>;
-    containerAppName?: StringOrRegExpProps<Pick<DeployWorkspaceProjectSettingsV1, 'containerAppName'>>;
-    containerRegistryName?: StringOrRegExpProps<Pick<DeployWorkspaceProjectSettingsV1, 'containerRegistryName'>>;
+export interface VSCodeWorkspaceSettings {
     deploymentConfigurations?: StringOrRegExpProps<DeploymentConfigurationSettings>[];
 }

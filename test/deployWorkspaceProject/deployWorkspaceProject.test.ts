@@ -26,16 +26,13 @@ suite('deployWorkspaceProject', async () => {
                             const results: DeployWorkspaceProjectResults = await deployWorkspaceProject(context);
                             assertFlexibleDeepEqual(results as Partial<Record<string, string>>, testCase.expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProjectResults mismatch.');
 
-                            // Verify any legacy (v1) settings (.vscode)
-                            // Todo: Add any additional logic once we figure out what the test cases for this might look like (tests would be related to v1-to-v2 settings conversion)
-
-                            // Verify any current (v2) settings (.vscode)
                             const deploymentConfigurationsV2: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
-
-                            for (const [i, expectedDeploymentConfiguration] of (testCase.expectedDotVSCodeSettings?.deploymentConfigurations ?? []).entries()) {
+                            for (const [i, expectedDeploymentConfiguration] of (testCase.expectedVSCodeWorkspaceSettings?.deploymentConfigurations ?? []).entries()) {
                                 const deploymentConfiguration: DeploymentConfigurationSettings = deploymentConfigurationsV2[i] ?? {};
                                 assertFlexibleDeepEqual(deploymentConfiguration as Partial<Record<string, string>>, expectedDeploymentConfiguration, 'DeployWorkspaceProject workspace settings (v2) mismatch.');
                             }
+
+                            await testCase.postTestAssertion?.(results);
                         });
                     });
                 });
@@ -43,17 +40,3 @@ suite('deployWorkspaceProject', async () => {
         });
     }
 });
-
-// Questions .vscode settings and suite teardown?
-// What about suite setup?
-// Can we remove the ridiculous amounts of debug console flooding that makes it hard to read output
-// Discuss next steps before I am able to put up for PR?
-
-
-// Combinations**
-// Multiple Dockerfiles
-// Single Dockerfiles
-// Multiple environment variables
-// Single environment variables?
-// Skip for now environment variables
-// Use again
