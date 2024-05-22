@@ -14,7 +14,7 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
 
     return [
         {
-            label: "App 1",
+            label: "Deploy App 1",
             inputs: [
                 'app1/Dockerfile',
                 new RegExp('Create new container apps environment', 'i'),
@@ -30,6 +30,71 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
             expectedDotVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
+                ]
+            }
+        },
+        {
+            label: "Deploy App 2",
+            inputs: [
+                new RegExp('Create and deploy new app configuration', 'i'),
+                'app2/Dockerfile',
+                new RegExp('(Recommended)', 'i'), // Select a container app environment
+                'Continue',
+                'app2',
+                './app2',
+                'app2/.env.example',
+                'Save'
+            ],
+            expectedResults: {
+                ...generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
+                logAnalyticsWorkspaceId: undefined
+            },
+            expectedDotVSCodeSettings: {
+                deploymentConfigurations: [
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
+                ]
+            }
+        },
+        {
+            label: "Deploy App 3",
+            inputs: [
+                new RegExp('Create and deploy new app configuration', 'i'),
+                'app3/Dockerfile',
+                new RegExp('(Recommended)', 'i'), // Select a container app environment
+                'Continue',
+                'app3',
+                './app3',
+                'app3/.env.example',
+                'Save'
+            ],
+            expectedResults: {
+                ...generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
+                logAnalyticsWorkspaceId: undefined
+            },
+            expectedDotVSCodeSettings: {
+                deploymentConfigurations: [
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app3'),
+                ]
+            }
+        },
+        {
+            label: "Re-deploy App 1",
+            inputs: [
+                'app1',
+                'Continue'
+            ],
+            expectedResults: {
+                ...generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
+                logAnalyticsWorkspaceId: undefined
+            },
+            expectedDotVSCodeSettings: {
+                deploymentConfigurations: [
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
+                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app3'),
                 ]
             }
         }
