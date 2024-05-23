@@ -3,10 +3,14 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { randomUtils } from "@microsoft/vscode-azext-utils";
-import { type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from "../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../StringOrRegExpProps";
-import { type DeployWorkspaceProjectTestCases } from "./DeployWorkspaceProjectTestCases";
+import { type ContainerApp, type EnvironmentVar } from "@azure/arm-appcontainers";
+import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
+import { createSubscriptionContext, nonNullProp, randomUtils, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import * as assert from 'assert';
+import { createContainerAppsAPIClient, ext, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from "../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../typeUtils";
+import { type DeployWorkspaceProjectTestCases, type PostTestAssertion } from "./DeployWorkspaceProjectTestCases";
 
 export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
     const sharedResourceName: string = 'monorepo-basic' + randomUtils.getRandomHexString(4);
@@ -27,11 +31,12 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'Save'
             ],
             expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
-            expectedVSCodeWorkspaceSettings: {
+            expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
                 ]
-            }
+            },
+            postTestAssertion: generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] })
         },
         {
             label: "Deploy App 2",
@@ -46,12 +51,13 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'Save'
             ],
             expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
-            expectedVSCodeWorkspaceSettings: {
+            expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
                 ]
-            }
+            },
+            postTestAssertion: generatePostTestAssertion({ targetPort: 3001, env: [{ name: 'MESSAGE', value: 'container apps (app2)' }] })
         },
         {
             label: "Deploy App 3",
@@ -66,13 +72,14 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'Save'
             ],
             expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
-            expectedVSCodeWorkspaceSettings: {
+            expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app3'),
                 ]
-            }
+            },
+            postTestAssertion: generatePostTestAssertion({ targetPort: 3002, env: [{ name: 'MESSAGE', value: 'container apps (app3)' }] })
         },
         {
             label: "Re-deploy App 1",
@@ -81,13 +88,14 @@ export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
                 'Continue'
             ],
             expectedResults: generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
-            expectedVSCodeWorkspaceSettings: {
+            expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app2'),
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app3'),
                 ]
-            }
+            },
+            postTestAssertion: generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] })
         }
     ];
 }
@@ -119,8 +127,21 @@ function generateExpectedDeploymentConfiguration(sharedResourceName: string, acr
     };
 }
 
-export async function postTestAssertion(_: DeployWorkspaceProjectResults): Promise<void> {
-    // Check container app environment variables
-    // Check dockerfile ingress
-    // Check container image
+export function generatePostTestAssertion(expectedContainerAppSettings: { targetPort: number | undefined, env: EnvironmentVar[] | undefined }): PostTestAssertion {
+    return async function postTestAssertion(context: IActionContext, resources: DeployWorkspaceProjectResults, errMsg?: string): Promise<void> {
+        const parsedId = parseAzureResourceId(nonNullProp(resources, 'containerAppId'));
+
+        const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+            selectBySubscriptionId: parsedId.subscriptionId,
+            showLoadingPrompt: false
+        });
+        const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+
+        const client = await createContainerAppsAPIClient(Object.assign(context, subscriptionContext));
+        const containerApp: ContainerApp = await client.containerApps.get(parsedId.resourceGroup, parsedId.resourceName);
+
+        assert.strictEqual(containerApp.configuration?.ingress?.targetPort, expectedContainerAppSettings.targetPort, errMsg ? errMsg + ' (container app target port)' : undefined);
+        assert.strictEqual(containerApp.template?.containers?.[0].image, `${resources.registryLoginServer}/${resources.imageName}`, errMsg ? errMsg + ' (container app image name)' : undefined);
+        assert.deepStrictEqual(containerApp.template?.containers?.[0].env, expectedContainerAppSettings.env, errMsg ? errMsg + ' (container app environment variables)' : undefined);
+    }
 }

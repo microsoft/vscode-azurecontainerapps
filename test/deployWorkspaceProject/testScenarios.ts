@@ -14,7 +14,7 @@ interface TestScenario {
 
 export const testScenarios: TestScenario[] = [
     {
-        label: 'monorepo-basic',
+        label: 'monorepo-base-case',
         folderName: 'monorepo-basic',
         testCases: getMonoRepoBasicTestCases()
     }

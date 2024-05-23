@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from "../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../StringOrRegExpProps";
+import { type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings, type IActionContext } from "../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../typeUtils";
 
 export type DeployWorkspaceProjectTestCases = DeployWorkspaceProjectTestCase[];
 
@@ -18,19 +18,21 @@ export interface DeployWorkspaceProjectTestCase {
      */
     inputs: (string | RegExp)[];
     /**
-     * The expected results that should be returned after concluding the run
+     * The expected results that should be returned after executing the command
      */
     expectedResults?: StringOrRegExpProps<DeployWorkspaceProjectResults>;
     /**
-     * The expected `.vscode` settings that should be present in the workspace folder root after concluding the run
+     * The expected `.vscode` settings that should be present in the workspace folder root after executing the command
      */
-    expectedVSCodeWorkspaceSettings?: VSCodeWorkspaceSettings;
+    expectedVSCodeSettings?: VSCodeSettings;
     /**
-     * A post test callback that can be used for further verifying created resources
+     * A post test callback that can be used for further verifying any of the created resources before suite teardown
      */
-    postTestAssertion?: (results: DeployWorkspaceProjectResults) => void | Promise<void>;
+    postTestAssertion?: PostTestAssertion;
 }
 
-export interface VSCodeWorkspaceSettings {
+export type PostTestAssertion = (context: IActionContext, results: DeployWorkspaceProjectResults, errMsg?: string) => void | Promise<void>;
+
+export interface VSCodeSettings {
     deploymentConfigurations?: StringOrRegExpProps<DeploymentConfigurationSettings>[];
 }
