@@ -139,7 +139,6 @@ export function generatePostTestAssertion(expectedContainerAppSettings: { target
 
         const client = await createContainerAppsAPIClient(Object.assign(context, subscriptionContext));
         const containerApp: ContainerApp = await client.containerApps.get(parsedId.resourceGroup, parsedId.resourceName);
-
         assert.strictEqual(containerApp.configuration?.ingress?.targetPort, expectedContainerAppSettings.targetPort, errMsg ? errMsg + ' (container app target port)' : undefined);
         assert.strictEqual(containerApp.template?.containers?.[0].image, `${resources.registryLoginServer}/${resources.imageName}`, errMsg ? errMsg + ' (container app image name)' : undefined);
         assert.deepStrictEqual(containerApp.template?.containers?.[0].env, expectedContainerAppSettings.env, errMsg ? errMsg + ' (container app environment variables)' : undefined);
