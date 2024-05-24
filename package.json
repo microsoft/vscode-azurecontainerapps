@@ -743,7 +743,8 @@
         "lint-fix": "eslint --ext .ts . --fix",
         "pretest": "npm run webpack-prod",
         "test": "node ./dist/test/runTest.js",
-        "webpack": "tsc && gulp webpack-dev",
+        "webpack": "npm run build && gulp webpack-dev",
+        "webpack-prod": "npm run build && gulp webpack-prod",
         "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
         "prepare": "husky install"
     },
