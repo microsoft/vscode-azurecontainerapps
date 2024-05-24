@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from "vscode";
 
-export function assertFlexibleDeepEqual(results: Record<string, string | undefined>, expectedResults: Record<string, string | RegExp>, errMsg?: string): void {
+export function assertStringPropsMatch(results: Record<string, string | undefined>, expectedResults: Record<string, string | RegExp>, errMsg?: string): void {
     assert.strictEqual(Object.keys(results).length, Object.keys(expectedResults).length, errMsg);
 
     for (const key in expectedResults) {

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type DeployWorkspaceProjectTestCases } from "./testCases/DeployWorkspaceProjectTestCases";
-import { getMonoRepoBasicTestCases } from "./testCases/monoRepoBasic";
+import { getMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
 
 interface TestScenario {
     label: string;
@@ -14,7 +14,7 @@ interface TestScenario {
 
 export const testScenarios: TestScenario[] = [
     {
-        label: 'monorepo-base-case',
+        label: 'monorepo-basic',
         folderName: 'monorepo-basic',
         testCases: getMonoRepoBasicTestCases()
     }

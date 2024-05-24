@@ -26,7 +26,7 @@ export interface DeployWorkspaceProjectTestCase {
      */
     expectedVSCodeSettings?: VSCodeSettings;
     /**
-     * A post test callback that can be used for further verifying any of the created resources before suite teardown
+     * A post test callback that can be added for further verifying any of the created resources before final suite teardown
      */
     postTestAssertion?: PostTestAssertion;
 }
