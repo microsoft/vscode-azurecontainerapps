@@ -1,7 +1,8 @@
 {
     "folders": [
         {
-            "path": "./testProject/dockerfiles"
+            "name": "dockerfiles",
+            "path": "./testProjects/dockerfiles"
         }
     ]
 }
