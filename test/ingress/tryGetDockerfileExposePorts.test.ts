@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
-import * as path from "path";
+import { type Uri } from "vscode";
 import { AzExtFsExtra, PortRange, tryGetDockerfileExposePorts } from "../../extension.bundle";
+import { getWorkspaceFolderUri } from "../testUtils";
 
 /**
  * Expected port values for the ingress Dockerfile test samples
@@ -22,10 +23,10 @@ export const expectedSamplePorts: PortRange[][] = [
 
 suite('tryGetDockerfileExposePorts', async () => {
     test('Correctly detects all Dockerfile sample expose ports', async () => {
-        const dockerfileSamplesPath: string = path.join(__dirname, 'dockerfileSamples');
-        const dockerfileSamples = await AzExtFsExtra.readDirectory(dockerfileSamplesPath);
+        const dockerfilesPath: Uri = getWorkspaceFolderUri('dockerfiles');
+        const dockerfiles = await AzExtFsExtra.readDirectory(dockerfilesPath);
 
-        for (const [i, ds] of dockerfileSamples.entries()) {
+        for (const [i, ds] of dockerfiles.entries()) {
             const portRange: PortRange[] = await tryGetDockerfileExposePorts(ds.fsPath) ?? [];
 
             for (const [j, pr] of portRange.entries()) {
