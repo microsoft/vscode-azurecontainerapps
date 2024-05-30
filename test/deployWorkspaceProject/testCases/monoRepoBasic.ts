@@ -10,9 +10,9 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as assert from 'assert';
 import { createContainerAppsAPIClient, ext, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../typeUtils";
-import { type DeployWorkspaceProjectTestCases, type PostTestAssertion } from "./DeployWorkspaceProjectTestCases";
+import { type DeployWorkspaceProjectTestCase, type PostTestAssertion } from "./DeployWorkspaceProjectTestCase";
 
-export function getMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCases {
+export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase[] {
     const sharedResourceName: string = 'monorepo-basic' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
@@ -140,7 +140,7 @@ export function generatePostTestAssertion(expectedContainerAppSettings: { target
         const client = await createContainerAppsAPIClient(Object.assign(context, subscriptionContext));
         const containerApp: ContainerApp = await client.containerApps.get(parsedId.resourceGroup, parsedId.resourceName);
         assert.strictEqual(containerApp.configuration?.ingress?.targetPort, expectedContainerAppSettings.targetPort, errMsg ? errMsg + ' (container app target port)' : undefined);
-        assert.strictEqual(containerApp.template?.containers?.[0].image, `${resources.registryLoginServer}/${resources.imageName}`, errMsg ? errMsg + ' (container app image name)' : undefined);
-        assert.deepStrictEqual(containerApp.template?.containers?.[0].env, expectedContainerAppSettings.env, errMsg ? errMsg + ' (container app environment variables)' : undefined);
+        assert.strictEqual(containerApp.template?.containers?.[0].image, `${resources.registryLoginServer}/${resources.imageName}`, errMsg ? errMsg + ' (container image name)' : undefined);
+        assert.deepStrictEqual(containerApp.template?.containers?.[0].env, expectedContainerAppSettings.env, errMsg ? errMsg + ' (container environment variables)' : undefined);
     }
 }

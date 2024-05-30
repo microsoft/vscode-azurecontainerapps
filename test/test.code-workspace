@@ -3,6 +3,10 @@
         {
             "name": "monorepo-basic",
             "path": "testProject/monorepo-basic"
+        },
+        {
+            "name": "albumapi-javascript",
+            "path": "testProject/albumapi-javascript"
         }
     ]
 }

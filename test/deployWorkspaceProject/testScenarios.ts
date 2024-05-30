@@ -3,19 +3,24 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type DeployWorkspaceProjectTestCases } from "./testCases/DeployWorkspaceProjectTestCases";
-import { getMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
+import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
+import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScript";
 
 interface TestScenario {
     label: string;
     folderName: string;
-    testCases: DeployWorkspaceProjectTestCases;
+    testCases: DeployWorkspaceProjectTestCase[];
 }
 
 export const testScenarios: TestScenario[] = [
+    // {
+    //     label: 'monorepo-basic',
+    //     folderName: 'monorepo-basic',
+    //     testCases: generateMonoRepoBasicTestCases()
+    // },
     {
-        label: 'monorepo-basic',
-        folderName: 'monorepo-basic',
-        testCases: getMonoRepoBasicTestCases()
+        label: 'albumapi-javascript',
+        folderName: 'albumapi-javascript',
+        testCases: generateAlbumApiJavaScriptTestCases()
     }
 ];
