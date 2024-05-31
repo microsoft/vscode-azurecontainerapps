@@ -20,6 +20,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Deploy App 1",
             inputs: [
+                new RegExp('monorepo-basic', 'i'),
                 'app1/Dockerfile',
                 new RegExp('Create new container apps environment', 'i'),
                 'Continue',
@@ -41,6 +42,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Deploy App 2",
             inputs: [
+                new RegExp('monorepo-basic', 'i'),
                 new RegExp('Create and deploy new app configuration', 'i'),
                 'app2/Dockerfile',
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
@@ -62,6 +64,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Deploy App 3",
             inputs: [
+                new RegExp('monorepo-basic', 'i'),
                 new RegExp('Create and deploy new app configuration', 'i'),
                 'app3/Dockerfile',
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
@@ -84,6 +87,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Re-deploy App 1",
             inputs: [
+                new RegExp('monorepo-basic', 'i'),
                 'app1',
                 'Continue'
             ],
