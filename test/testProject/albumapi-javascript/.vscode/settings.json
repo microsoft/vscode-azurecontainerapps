@@ -1,0 +1,14 @@
+{
+    "containerApps.deploymentConfigurations": [
+        {
+            "label": "album-api",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "src/Dockerfile",
+            "srcPath": "src",
+            "envPath": "",
+            "resourceGroup": "album-api8103",
+            "containerApp": "album-api",
+            "containerRegistry": "albumapi8103686685"
+        }
+    ]
+}

@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
-import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScript";
+import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScriptTestCases";
+import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
 
 interface TestScenario {
     label: string;
@@ -13,11 +14,11 @@ interface TestScenario {
 }
 
 export const testScenarios: TestScenario[] = [
-    // {
-    //     label: 'monorepo-basic',
-    //     folderName: 'monorepo-basic',
-    //     testCases: generateMonoRepoBasicTestCases()
-    // },
+    {
+        label: 'monorepo-basic',
+        folderName: 'monorepo-basic',
+        testCases: generateMonoRepoBasicTestCases()
+    },
     {
         label: 'albumapi-javascript',
         folderName: 'albumapi-javascript',
