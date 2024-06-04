@@ -12,7 +12,6 @@ import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type ContainerAppsItem, type TreeElementBase } from "../ContainerAppsBranchDataProvider";
-
 import { ContainersItem } from "../containers/ContainersItem";
 import { ScaleItem } from "../scaling/ScaleItem";
 import { RevisionDraftDescendantBase } from "./RevisionDraftDescendantBase";

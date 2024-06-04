@@ -11,9 +11,9 @@ import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 
-export class ImagesItem implements RevisionsItemModel {
+export class ImageItem implements RevisionsItemModel {
     static readonly contextValue: string = 'imageItem';
-    static readonly contextValueRegExp: RegExp = new RegExp(ImagesItem.contextValue);
+    static readonly contextValueRegExp: RegExp = new RegExp(ImageItem.contextValue);
 
     constructor(
         readonly subscription: AzureSubscription,
@@ -28,7 +28,7 @@ export class ImagesItem implements RevisionsItemModel {
             id: this.id,
             label: localize('image', 'Image'),
             iconPath: new ThemeIcon('window'),
-            contextValue: 'containerItemImage',
+            contextValue: ImageItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
@@ -39,12 +39,12 @@ export class ImagesItem implements RevisionsItemModel {
         return [
             createGenericElement({
                 label: localize('containerImage', 'Name:'),
-                contextValue: 'containerItemImageName',
+                contextValue: 'containerImageNameItem',
                 description: `${imageAndTag}`,
             }),
             createGenericElement({
-                label: localize('containerImageRegiste', 'Registry:'),
-                contextValue: 'containerImageRegistry',
+                label: localize('containerImageRegistryItem', 'Registry:'),
+                contextValue: 'containerImageRegistryItem',
                 description: `${loginServer}`,
             })
         ];

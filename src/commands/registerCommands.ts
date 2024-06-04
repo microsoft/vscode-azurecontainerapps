@@ -62,6 +62,7 @@ export function registerCommands(): void {
         async (context: IActionContext, item: EnvironmentVariableItem) => {
             await item.toggleValueVisibility(context);
         });
+
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);

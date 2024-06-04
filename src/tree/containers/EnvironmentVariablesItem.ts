@@ -13,7 +13,7 @@ import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { EnvironmentVariableItem } from "./EnvironmentVariableItem";
 
 export class EnvironmentVariablesItem implements RevisionsItemModel {
-    static readonly contextValue: string = 'imageItem';
+    static readonly contextValue: string = 'environmentVariablesItem';
     static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariablesItem.contextValue);
 
     constructor(public readonly subscription: AzureSubscription,
@@ -29,6 +29,7 @@ export class EnvironmentVariablesItem implements RevisionsItemModel {
             id: this.id,
             label: localize('environmentVariables', 'Environment Variables'),
             iconPath: new ThemeIcon('settings'),
+            contextValue: EnvironmentVariablesItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         }
     }

@@ -17,7 +17,7 @@ import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraft
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { ContainerItem } from "./ContainerItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
-import { ImagesItem } from "./ImagesItem";
+import { ImageItem } from "./ImageItem";
 
 export class ContainersItem extends RevisionDraftDescendantBase {
     id: string;
@@ -35,7 +35,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
 
     getChildren(): TreeElementBase[] {
         if (this.containers.length === 1) {
-            return [new ImagesItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
+            return [new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
             new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0])];
         }
         return nonNullValue(this.containers?.map(container => new ContainerItem(this.subscription, this.containerApp, this.revision, container)));

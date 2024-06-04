@@ -10,7 +10,7 @@ import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
-import { ImagesItem } from "./ImagesItem";
+import { ImageItem } from "./ImageItem";
 
 export class ContainerItem implements RevisionsItemModel {
     id: string;
@@ -27,14 +27,14 @@ export class ContainerItem implements RevisionsItemModel {
         return {
             id: this.id,
             label: `${this.container.name}`,
-            contextValue: 'containerItemName',
+            contextValue: ContainerItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
 
     getChildren(): TreeElementBase[] {
         return [
-            new ImagesItem(this.subscription, this.containerApp, this.revision, this.id, this.container),
+            new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.container),
             new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.container)
         ];
     }
