@@ -6,8 +6,8 @@
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { deployWorkspaceProject, dwpSettingUtilsV2, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../extension.bundle';
-import { assertStringPropsMatch, getWorkspaceFolderUri } from '../testUtils';
+import { deployWorkspaceProject, dwpSettingUtilsV2, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../../extension.bundle';
+import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', async () => {
@@ -27,7 +27,7 @@ suite('deployWorkspaceProject', async () => {
                             const deploymentConfigurationsV2: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
                             for (const [i, expectedDeploymentConfiguration] of (testCase.expectedVSCodeSettings?.deploymentConfigurations ?? []).entries()) {
                                 const deploymentConfiguration: DeploymentConfigurationSettings = deploymentConfigurationsV2[i] ?? {};
-                                assertStringPropsMatch(deploymentConfiguration as Partial<Record<string, string>>, expectedDeploymentConfiguration, 'DeployWorkspaceProject ".vscode" settings mismatch.');
+                                assertStringPropsMatch(deploymentConfiguration as Partial<Record<string, string>>, expectedDeploymentConfiguration, 'DeployWorkspaceProject ".vscode" saved settings mismatch.');
                             }
 
                             await testCase.postTestAssertion?.(context, results, 'DeployWorkspaceProject resource settings mismatch.');
