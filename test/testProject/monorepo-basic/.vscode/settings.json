@@ -1,0 +1,34 @@
+{
+    "containerApps.deploymentConfigurations": [
+        {
+            "label": "app1",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "app1/Dockerfile",
+            "srcPath": "app1",
+            "envPath": "app1/.env.example",
+            "resourceGroup": "monorepo-basic8329",
+            "containerApp": "app1",
+            "containerRegistry": "monorepobasic8329b1f6cf"
+        },
+        {
+            "label": "app2",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "app2/Dockerfile",
+            "srcPath": "app2",
+            "envPath": "app2/.env.example",
+            "resourceGroup": "monorepo-basic8329",
+            "containerApp": "app2",
+            "containerRegistry": "monorepobasic8329b1f6cf"
+        },
+        {
+            "label": "app3",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "app3/Dockerfile",
+            "srcPath": "app3",
+            "envPath": "app3/.env.example",
+            "resourceGroup": "monorepo-basic8329",
+            "containerApp": "app3",
+            "containerRegistry": "monorepobasic8329b1f6cf"
+        }
+    ]
+}

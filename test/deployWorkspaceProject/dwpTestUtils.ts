@@ -12,10 +12,10 @@ import { type StringOrRegExpProps } from "../typeUtils";
 import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
 
 export namespace dwpTestUtils {
-    export function generateExpectedResults(sharedResourceName: string, acrResourceName: string, appName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
+    export function generateExpectedResults(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
         return {
-            containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appName}`, 'i'),
-            imageName: new RegExp(appName, 'i'),
+            containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
+            imageName: new RegExp(appResourceName, 'i'),
             logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
             registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),

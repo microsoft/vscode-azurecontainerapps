@@ -6,9 +6,9 @@
             "dockerfilePath": "src/Dockerfile",
             "srcPath": "src",
             "envPath": "",
-            "resourceGroup": "album-api8103",
+            "resourceGroup": "album-apidd02",
             "containerApp": "album-api",
-            "containerRegistry": "albumapi8103686685"
+            "containerRegistry": "albumapidd0257457a"
         }
     ]
 }
