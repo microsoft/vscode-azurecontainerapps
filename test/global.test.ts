@@ -29,7 +29,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 
 
     ext.outputChannel = new TestOutputChannel();
-    longRunningTestsEnabled = !!process.env.AzCode_EnableLongRunningTests;
+    longRunningTestsEnabled = Boolean(process.env.AzCode_EnableLongRunningTests);
 
     const envUseFederatedCred = process.env.AzCode_UseAzureFederatedCredentials;
 
