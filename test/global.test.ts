@@ -27,14 +27,17 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         context.ui = new TestUserInput(vscode);
     });
 
+    const envLongRunningTests = process.env.AzCode_EnableLongRunningTests;
+    const envUseFederatedCred = process.env.AzCode_UseAzureFederatedCredentials;
+
     ext.outputChannel = new TestOutputChannel();
     longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
 
-    console.log("azure federated credentials enabled: ", process.env.useAzureFederatedCredentials);
-    console.debug("azure federated credentials enabled: ", process.env.useAzureFederatedCredentials);
-    ext.outputChannel.appendLine("azure federated credentials enabled: " + String(process.env.useAzureFederatedCredentials));
+    console.log("azure federated credentials enabled: ", envUseFederatedCred);
+    console.debug("azure federated credentials enabled: ", envUseFederatedCred);
+    ext.outputChannel.appendLine("azure federated credentials enabled: " + String(envUseFederatedCred));
 
-    console.log("long running tests enabled: ", longRunningTestsEnabled);
-    console.debug("long running tests enabled: ", longRunningTestsEnabled);
-    ext.outputChannel.appendLine("long running tests enabled: " + String(longRunningTestsEnabled));
+    console.log("long running tests enabled: ", envLongRunningTests);
+    console.debug("long running tests enabled: ", envLongRunningTests);
+    ext.outputChannel.appendLine("long running tests enabled: " + String(envLongRunningTests));
 });
