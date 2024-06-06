@@ -5,8 +5,9 @@
 
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
-import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { deployWorkspaceProject, dwpSettingUtilsV2, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../../extension.bundle';
+import * as path from 'path';
+import { ConfigurationTarget, workspace, type Uri, type WorkspaceFolder } from 'vscode';
+import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV1, dwpSettingUtilsV2, settingUtils, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../../extension.bundle';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { testScenarios } from './testScenarios';
 
@@ -16,6 +17,27 @@ suite('deployWorkspaceProject', async () => {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
             const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
             assert.ok(rootFolder, 'Could not retrieve root workspace folder.');
+
+            suiteTeardown(async function removeWorkspaceSettings() {
+                const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
+                const settings: string[] = [
+                    dwpSettingUtilsV1.containerAppSetting,
+                    dwpSettingUtilsV1.containerAppResourceGroupSetting,
+                    dwpSettingUtilsV1.containerRegistrySetting,
+                    dwpSettingUtilsV2.deploymentConfigurationsSetting,
+                ];
+
+                for (const setting of settings) {
+                    // Todo: Verify if this is needed, but added just in case VS Code doesn't register changes to settings after deleting "settings.json"
+                    await settingUtils.updateWorkspaceSetting(setting, undefined, settingsPath, ConfigurationTarget.WorkspaceFolder);
+                    await settingUtils.updateGlobalSetting(setting, undefined);
+                }
+
+                const vscodeFolderPath: string = path.dirname(settingsPath);
+                if (await AzExtFsExtra.pathExists(vscodeFolderPath)) {
+                    AzExtFsExtra.deleteResource(vscodeFolderPath, { recursive: true });
+                }
+            });
 
             for (const testCase of scenario.testCases) {
                 test(testCase.label, async () => {

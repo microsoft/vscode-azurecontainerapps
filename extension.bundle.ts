@@ -31,6 +31,7 @@ export * from './src/commands/ingress/tryGetDockerfileExposePorts';
 export { activate, deactivate } from './src/extension';
 export * from './src/extensionVariables';
 export * from './src/utils/azureClients';
+export * from './src/utils/settingUtils';
 export * from './src/utils/validateUtils';
 
 // NOTE: The auto-fix action "source.organizeImports" does weird things with this file, but there doesn't seem to be a way to disable it on a per-file basis so we'll just let it happen

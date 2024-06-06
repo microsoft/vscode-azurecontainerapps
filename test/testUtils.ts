@@ -21,7 +21,7 @@ export function getWorkspaceFolderUri(folderName: string): Uri {
     let workspaceFolderUri: Uri | undefined;
 
     const workspaceFolders: readonly WorkspaceFolder[] | undefined = workspace.workspaceFolders;
-    if (!workspaceFolders || workspaceFolders.length === 0) {
+    if (!workspaceFolders?.length) {
         throw new Error('No workspace is open');
     } else {
         for (const workspaceFolder of workspaceFolders) {

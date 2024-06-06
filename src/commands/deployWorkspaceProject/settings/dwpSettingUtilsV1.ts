@@ -13,12 +13,16 @@ import { type DeployWorkspaceProjectSettingsV1 } from "./DeployWorkspaceProjectS
 export namespace dwpSettingUtilsV1 {
     const deployWorkspaceProjectPrefix: string = 'deployWorkspaceProject';
 
+    export const containerAppSetting: string = `${deployWorkspaceProjectPrefix}.containerAppName`;
+    export const containerAppResourceGroupSetting: string = `${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`;
+    export const containerRegistrySetting: string = `${deployWorkspaceProjectPrefix}.containerRegistryName`;
+
     export async function getDeployWorkspaceProjectSettings(rootFolder: WorkspaceFolder): Promise<DeployWorkspaceProjectSettingsV1> {
         const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
 
-        const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppName`, settingsPath);
-        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerAppResourceGroupName`, settingsPath);
-        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(`${deployWorkspaceProjectPrefix}.containerRegistryName`, settingsPath);
+        const containerAppName: string | undefined = settingUtils.getWorkspaceSetting(containerAppSetting, settingsPath);
+        const containerAppResourceGroupName: string | undefined = settingUtils.getWorkspaceSetting(containerAppResourceGroupSetting, settingsPath);
+        const containerRegistryName: string | undefined = settingUtils.getWorkspaceSetting(containerRegistrySetting, settingsPath);
 
         return {
             containerAppName,
