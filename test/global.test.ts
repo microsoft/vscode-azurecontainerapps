@@ -29,4 +29,8 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 
     ext.outputChannel = new TestOutputChannel();
     longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+
+    console.log("long running tests enabled: ", longRunningTestsEnabled);
+    console.debug("long running tests enabled: ", longRunningTestsEnabled);
+    ext.outputChannel.appendLine("long running tests enabled: " + String(longRunningTestsEnabled));
 });
