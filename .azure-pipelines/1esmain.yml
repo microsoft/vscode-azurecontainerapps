@@ -1,10 +1,8 @@
 parameters:
   - name: "enableLongRunningTests"
-    displayName: Enable Long Running Tests
     type: boolean
     default: false
   - name: "useAzureFederatedCredentials"
-    displayName: Use Azure Test Subscription
     type: boolean
     default: false
 
