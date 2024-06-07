@@ -7,11 +7,11 @@ trigger:
 pr: none
 
 parameters:
-  - name: enableLongRunningTests
+  - name: "enableLongRunningTests"
     displayName: Enable Long Running Tests
     type: boolean
     default: false
-  - name: useAzureFederatedCredentials
+  - name: "useAzureFederatedCredentials"
     displayName: Use Azure Test Subscription
     type: boolean
     default: false
