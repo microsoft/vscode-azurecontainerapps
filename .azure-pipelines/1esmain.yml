@@ -1,11 +1,3 @@
-# Trigger the build whenever `main` or `rel/*` is updated
-trigger:
-  - main
-  - rel/*
-
-# Disable PR trigger
-pr: none
-
 parameters:
   - name: "enableLongRunningTests"
     displayName: Enable Long Running Tests
@@ -15,6 +7,14 @@ parameters:
     displayName: Use Azure Test Subscription
     type: boolean
     default: false
+
+# Trigger the build whenever `main` or `rel/*` is updated
+trigger:
+  - main
+  - rel/*
+
+# Disable PR trigger
+pr: none
 
 # Scheduled nightly build of `main`
 schedules:
