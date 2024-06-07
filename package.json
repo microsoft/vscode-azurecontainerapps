@@ -782,7 +782,7 @@
         "@azure/arm-operationalinsights": "^8.0.1",
         "@azure/arm-resources": "^5.0.1",
         "@azure/container-registry": "1.0.0-beta.5",
-        "@azure/core-rest-pipeline": "1.10.3",
+        "@azure/core-rest-pipeline": "1.16.0",
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^2.0.3",
         "@microsoft/vscode-azext-github": "^1.0.0",
