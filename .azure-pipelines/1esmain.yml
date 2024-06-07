@@ -12,6 +12,7 @@ parameters:
     type: boolean
     default: false
   - name: useAzureFederatedCredentials
+    displayName: Use Azure Test Subscription
     type: boolean
     default: false
 
@@ -37,5 +38,5 @@ resources:
 extends:
   template: azure-pipelines/1esmain.yml@azExtTemplates
   parameters:
-    enableLongRunningTests: ${{ parameters.enableLongRunningTests }}
     useAzureFederatedCredentials: ${{ parameters.useAzureFederatedCredentials }}
+    enableLongRunningTests: ${{ parameters.enableLongRunningTests }}
