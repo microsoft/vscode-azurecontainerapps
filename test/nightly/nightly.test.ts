@@ -4,7 +4,7 @@ import { longRunningTestsEnabled } from '../global.test';
 suite('dummyTest', () => {
     suiteSetup(async function (this: Mocha.Context): Promise<void> {
         if (!longRunningTestsEnabled) {
-            this.skip();
+            this.skip()
         }
     });
 
