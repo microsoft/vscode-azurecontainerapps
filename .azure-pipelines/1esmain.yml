@@ -7,23 +7,10 @@ trigger:
 pr: none
 
 parameters:
-  - name: PackageToPublish
-    displayName: Package to Publish
-    type: string
-    values:
-      - microsoft-vscode-azext-azureappservice
-      - microsoft-vscode-azext-azureappsettings
-      - microsoft-vscode-azext-azureauth
-      - microsoft-vscode-azext-azureutils
-      - microsoft-vscode-azext-dev
-      - microsoft-eslint-config-azuretools
-      - microsoft-vscode-azext-github
-      - microsoft-vscode-azext-serviceconnector
-      - microsoft-vscode-azext-utils
-  - name: BranchToPublish
-    displayName: Branch to Publish
-    type: string
-    default: "refs/heads/main"
+  - name: enableLongRunningTests
+    displayName: Enable Long Running Tests
+    type: boolean
+    default: false
 
 # Scheduled nightly build of `main`
 schedules:
