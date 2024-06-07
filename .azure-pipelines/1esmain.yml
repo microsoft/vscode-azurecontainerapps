@@ -34,5 +34,5 @@ resources:
 extends:
   template: azure-pipelines/1esmain.yml@azExtTemplates
   parameters:
-    useAzureFederatedCredentials: ${{ parameters.useAzureFederatedCredentials }}
     enableLongRunningTests: ${{ parameters.enableLongRunningTests }}
+    # useAzureFederatedCredentials: ${{ parameters.useAzureFederatedCredentials }}
