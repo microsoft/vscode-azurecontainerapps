@@ -21,9 +21,22 @@ resources:
     - repository: azExtTemplates
       type: github
       name: microsoft/vscode-azuretools
-      ref: main
+      ref: mwf/delfino-plaza # Todo: Switch this back to main when ready to merge
       endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
+
+parameters:
+  - name: enableLongRunningTests
+    displayName: Enable Long Running Tests
+    type: boolean
+    default: false
+  - name: useAzureFederatedCredentials
+    displayName: Use Test Subscription
+    type: boolean
+    default: false
 
 # Use those templates
 extends:
   template: azure-pipelines/1esmain.yml@azExtTemplates
+  parameters:
+    useAzureFederatedCredentials: ${{ parameters.useAzureFederatedCredentials }}
+    enableLongRunningTests: ${{ parameters.enableLongRunningTests }}

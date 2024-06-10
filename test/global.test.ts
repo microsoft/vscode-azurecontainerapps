@@ -21,12 +21,15 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         await extension.activate();
     }
 
-
     registerOnActionStartHandler(context => {
         // Use `TestUserInput` by default so we get an error if an unexpected call to `context.ui` occurs, rather than timing out
         context.ui = new TestUserInput(vscode);
     });
 
     ext.outputChannel = new TestOutputChannel();
-    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+    longRunningTestsEnabled = /true/i.test(process.env.AzCode_EnableLongRunningTests ?? '');
+
+    const useAzureFederatedCredentials = /true/i.test(process.env.AzCode_UseAzureFederatedCredentials ?? '');
+    console.debug("enable long running tests: ", String(longRunningTestsEnabled));
+    console.debug("use azure federated credentials: ", String(useAzureFederatedCredentials));
 });
