@@ -27,7 +27,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     });
 
     ext.outputChannel = new TestOutputChannel();
-    longRunningTestsEnabled = /true/i.test(process.env.AzCode_UseAzureFederatedCredentials ?? '');
+    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
 
-    console.log("enable long running tests: ", String(longRunningTestsEnabled));
+    console.log('enable long running tests: ', longRunningTestsEnabled);
 });
