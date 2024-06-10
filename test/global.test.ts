@@ -30,6 +30,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     longRunningTestsEnabled = /true/i.test(process.env.AzCode_EnableLongRunningTests ?? '');
 
     const useAzureFederatedCredentials = /true/i.test(process.env.AzCode_UseAzureFederatedCredentials ?? '');
-    console.debug("enable long running tests: ", String(longRunningTestsEnabled));
-    console.debug("use azure federated credentials: ", String(useAzureFederatedCredentials));
+    console.log("enable long running tests: ", String(longRunningTestsEnabled));
+    console.log("use azure federated credentials: ", String(useAzureFederatedCredentials));
 });
