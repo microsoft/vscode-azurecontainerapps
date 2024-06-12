@@ -18,6 +18,17 @@
             "type": "npm",
             "script": "lint",
             "problemMatcher": "$eslint-stylish"
+        },
+        {
+            "label": "build-and-test",
+            "type": "shell",
+            "command": "npm run build && npm run test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Runs npm build and then npm test"
         }
     ]
 }
