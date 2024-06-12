@@ -12,6 +12,7 @@ import { assertStringPropsMatch, getWorkspaceFolderUri } from '../testUtils';
 import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', async () => {
+
     for (const scenario of testScenarios) {
         suite(scenario.label, async () => {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
