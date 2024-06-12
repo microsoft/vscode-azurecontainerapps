@@ -14,7 +14,6 @@ export let longRunningTestsEnabled: boolean;
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(1 * 60 * 1000);
 
-    await vscode.extensions.getExtension('ms-azuretools.vscode-azureresourcegroups')?.activate();
     const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurecontainerapps');
     if (!extension) {
         assert.fail('Failed to find extension.');

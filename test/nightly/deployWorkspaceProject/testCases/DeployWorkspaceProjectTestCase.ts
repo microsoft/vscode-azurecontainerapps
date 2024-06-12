@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings, type IActionContext } from "../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../typeUtils";
+import { type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IActionContext } from "../../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../../typeUtils";
 
 export interface DeployWorkspaceProjectTestCase {
     /**

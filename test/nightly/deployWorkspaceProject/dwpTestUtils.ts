@@ -8,8 +8,8 @@ import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as assert from "assert";
-import { createContainerAppsAPIClient, ext, type DeployWorkspaceProjectResults } from "../../extension.bundle";
-import { type StringOrRegExpProps } from "../typeUtils";
+import { createContainerAppsAPIClient, ext, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../typeUtils";
 import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
 
 export namespace dwpTestUtils {

@@ -7,12 +7,11 @@ import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../extension.bundle';
-import { assertStringPropsMatch, getWorkspaceFolderUri } from '../testUtils';
+import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
+import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', async () => {
-
     for (const scenario of testScenarios) {
         suite(scenario.label, async () => {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
