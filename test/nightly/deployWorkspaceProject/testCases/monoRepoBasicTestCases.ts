@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
+import * as path from "path";
 import { type DeploymentConfigurationSettings } from "../../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../../typeUtils";
 import { dwpTestUtils } from "../dwpTestUtils";
@@ -18,7 +19,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
             label: "Deploy App 1",
             inputs: [
                 new RegExp('monorepo-basic', 'i'),
-                new RegExp('app1/Dockerfile', 'i'),
+                path.join('app1', 'Dockerfile'),
                 new RegExp('Create new container apps environment', 'i'),
                 'Continue',
                 sharedResourceName,
