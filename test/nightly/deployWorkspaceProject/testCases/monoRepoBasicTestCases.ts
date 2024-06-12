@@ -18,7 +18,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
             label: "Deploy App 1",
             inputs: [
                 new RegExp('monorepo-basic', 'i'),
-                'app1/Dockerfile',
+                new RegExp('app1/Dockerfile', 'i'),
                 new RegExp('Create new container apps environment', 'i'),
                 'Continue',
                 sharedResourceName,
