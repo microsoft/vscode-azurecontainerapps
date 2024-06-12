@@ -22,7 +22,7 @@
         {
             "label": "build-and-test",
             "type": "shell",
-            "command": "npm run build && npm run test",
+            "command": "npm run build && npm run pretest && npm run test",
             "group": {
                 "kind": "build",
                 "isDefault": true

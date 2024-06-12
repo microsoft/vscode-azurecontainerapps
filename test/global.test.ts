@@ -27,5 +27,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     });
 
     ext.outputChannel = new TestOutputChannel();
-    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
+    // longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
+    longRunningTestsEnabled = true;
 });
