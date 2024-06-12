@@ -27,9 +27,7 @@ async function cleanReadme(): Promise<void> {
 }
 
 async function preTest(): Promise<void> {
-    const fromPath: string = path.join(__dirname, 'test', 'ingress', 'dockerfileSamples');
-    const toPath: string = path.join(__dirname, 'dist', 'test', 'ingress', 'dockerfileSamples');
-    fse.copySync(fromPath, toPath);
+    // Do nothing
 }
 
 exports['webpack-dev'] = gulp.series(prepareForWebpack, () => gulp_webpack('development'));
