@@ -11,7 +11,9 @@ import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, 
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { testScenarios } from './testScenarios';
 
-suite('deployWorkspaceProject', async () => {
+suite('deployWorkspaceProject', function (this: Mocha.Suite): void {
+    this.timeout(7 * 60 * 1000);
+
     for (const scenario of testScenarios) {
         suite(scenario.label, async () => {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
