@@ -38,16 +38,16 @@ export async function selectWorkspaceFile(
     globPattern?: string
 ): Promise<string | undefined> {
     if (!workspace.workspaceFolders?.length) {
-        throw new Error(localize('noWorkspaceOpen', 'A workspace must be open to search.'));
+        throw new Error(localize('noWorkspaceOpen', 'No workspace is open to search through.'));
     } else if (workspace.workspaceFolders.length > 1 && !context.rootFolder) {
-        throw new Error(localize('couldNotDetermineWorkspaceFolder', 'Could not determine which workspace folder to search.'));
+        throw new Error(localize('couldNotDetermineWorkspaceFolder', 'Could not determine which workspace folder to search through.'));
     }
 
-    const relativePattern: RelativePattern = new RelativePattern(
+    const pattern: RelativePattern = new RelativePattern(
         context.rootFolder ?? workspace.workspaceFolders[0],
         globPattern ?? '**/*'
     );
-    const files = await workspace.findFiles(relativePattern);
+    const files: Uri[] = await workspace.findFiles(pattern);
 
     // If dockerfile(s), log the count
     if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
@@ -67,7 +67,7 @@ export async function selectWorkspaceFile(
     quickPicks.push(...files.map((uri: Uri) => {
         return {
             label: basename(uri.path),
-            description: relative(relativePattern.baseUri.path, uri.path),
+            description: relative(pattern.baseUri.path, uri.path),
             data: uri.fsPath
         };
     }));
