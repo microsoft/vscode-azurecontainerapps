@@ -7,8 +7,8 @@ import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import * as path from 'path';
 import { ConfigurationTarget, workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV1, dwpSettingUtilsV2, settingUtils, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../../extension.bundle';
-import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
+import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV1, dwpSettingUtilsV2, settingUtils, type DeployWorkspaceProjectResults, type DeploymentConfigurationSettings } from '../../extension.bundle';
+import { assertStringPropsMatch, getWorkspaceFolderUri } from '../testUtils';
 import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', async () => {

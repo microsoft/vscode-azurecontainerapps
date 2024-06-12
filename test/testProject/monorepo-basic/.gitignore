@@ -1,0 +1,2 @@
+# Test project shouldn't start with a .vscode directory
+.vscode

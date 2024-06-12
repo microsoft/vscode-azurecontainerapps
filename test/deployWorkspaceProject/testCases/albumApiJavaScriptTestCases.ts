@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
-import { type DeploymentConfigurationSettings } from "../../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../../typeUtils";
+import { type DeploymentConfigurationSettings } from "../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../typeUtils";
 import { dwpTestUtils } from "../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
 
