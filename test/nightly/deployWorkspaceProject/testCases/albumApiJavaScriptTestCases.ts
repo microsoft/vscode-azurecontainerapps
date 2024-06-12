@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
+import * as path from "path";
 import { type DeploymentConfigurationSettings } from "../../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../../typeUtils";
 import { dwpTestUtils } from "../dwpTestUtils";
@@ -23,7 +24,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 'Continue',
                 sharedResourceName,
                 appResourceName,
-                './src',
+                `.${path.posix}src`,
                 'East US',
                 'Save'
             ],
@@ -57,7 +58,7 @@ function generateExpectedDeploymentConfiguration(sharedResourceName: string, acr
     return {
         label: appResourceName,
         type: 'AcrDockerBuildRequest',
-        dockerfilePath: 'src/Dockerfile',
+        dockerfilePath: path.join('src', 'Dockerfile'),
         srcPath: 'src',
         envPath: '',
         resourceGroup: sharedResourceName,

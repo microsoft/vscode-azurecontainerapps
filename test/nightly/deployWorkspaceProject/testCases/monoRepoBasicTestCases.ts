@@ -24,8 +24,8 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'Continue',
                 sharedResourceName,
                 'app1',
-                './app1',
-                'app1/.env.example',
+                `.${path.posix}app1`,
+                path.join('app1', '.env.example'),
                 'East US',
                 'Save'
             ],
@@ -42,12 +42,12 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
             inputs: [
                 new RegExp('monorepo-basic', 'i'),
                 new RegExp('Create and deploy new app configuration', 'i'),
-                'app2/Dockerfile',
+                path.join('app2', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
                 'Continue',
                 'app2',
-                './app2',
-                'app2/.env.example',
+                `.${path.posix}app2`,
+                path.join('app2', '.env.example'),
                 'Save'
             ],
             expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
@@ -64,12 +64,12 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
             inputs: [
                 new RegExp('monorepo-basic', 'i'),
                 new RegExp('Create and deploy new app configuration', 'i'),
-                'app3/Dockerfile',
+                path.join('app3', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
                 'Continue',
                 'app3',
-                './app3',
-                'app3/.env.example',
+                `.${path.posix}app3`,
+                path.join('app3', '.env.example'),
                 'Save'
             ],
             expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
@@ -106,9 +106,9 @@ function generateExpectedDeploymentConfiguration(sharedResourceName: string, acr
     return {
         label: appResourceName,
         type: 'AcrDockerBuildRequest',
-        dockerfilePath: `${appResourceName}/Dockerfile`,
+        dockerfilePath: path.join(appResourceName, 'Dockerfile'),
         srcPath: appResourceName,
-        envPath: `${appResourceName}/.env.example`,
+        envPath: path.join(appResourceName, '.env.example'),
         resourceGroup: sharedResourceName,
         containerApp: appResourceName,
         containerRegistry: new RegExp(`${acrResourceName}.{6}`, 'i'),
