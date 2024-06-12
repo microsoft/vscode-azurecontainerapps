@@ -15,12 +15,12 @@ interface TestScenario {
 
 export const testScenarios: TestScenario[] = [
     {
-        label: 'monorepo-basic',
+        label: 'monorepo',
         folderName: 'monorepo-basic',
         testCases: generateMonoRepoBasicTestCases()
     },
     {
-        label: 'albumapi-javascript',
+        label: 'albumapi-js',
         folderName: 'albumapi-javascript',
         testCases: generateAlbumApiJavaScriptTestCases()
     }
