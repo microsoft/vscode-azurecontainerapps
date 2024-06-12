@@ -24,7 +24,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 'Continue',
                 sharedResourceName,
                 appResourceName,
-                `.${path.posix}src`,
+                `.${path.sep}src`,
                 'East US',
                 'Save'
             ],

@@ -24,7 +24,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'Continue',
                 sharedResourceName,
                 'app1',
-                `.${path.posix}app1`,
+                `.${path.sep}app1`,
                 path.join('app1', '.env.example'),
                 'East US',
                 'Save'
@@ -46,7 +46,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
                 'Continue',
                 'app2',
-                `.${path.posix}app2`,
+                `.${path.sep}app2`,
                 path.join('app2', '.env.example'),
                 'Save'
             ],
@@ -68,7 +68,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
                 'Continue',
                 'app3',
-                `.${path.posix}app3`,
+                `.${path.sep}app3`,
                 path.join('app3', '.env.example'),
                 'Save'
             ],
