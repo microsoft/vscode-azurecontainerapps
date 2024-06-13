@@ -3,12 +3,14 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { parseAzureResourceGroupId } from '@microsoft/vscode-azext-azureutils';
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
 import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
+import { resourceGroupsToDelete } from '../global.nightly.test';
 import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', function () {
@@ -26,6 +28,11 @@ suite('deployWorkspaceProject', function () {
                     await runWithTestActionContext('deployWorkspaceProject', async context => {
                         await context.ui.runWithInputs(testCase.inputs, async () => {
                             const results: DeployWorkspaceProjectResults = await deployWorkspaceProject(context);
+                            if (results.resourceGroupId) {
+                                const resourceGroupName: string = parseAzureResourceGroupId(results.resourceGroupId).resourceGroup;
+                                resourceGroupsToDelete.push(resourceGroupName);
+                            }
+
                             assertStringPropsMatch(results as Partial<Record<string, string>>, testCase.expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProject results mismatch.');
 
                             const deploymentConfigurationsV2: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
