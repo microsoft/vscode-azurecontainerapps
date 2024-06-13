@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { UserCancelledError, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { basename } from "path";
-import { Uri, window, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
+import { Uri, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
 import { type SetTelemetryProps } from "../telemetry/SetTelemetryProps";
 import { type WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
@@ -91,17 +91,13 @@ export async function selectWorkspaceFile(
     }
 }
 
-export async function getRootWorkspaceFolder(placeHolder?: string): Promise<WorkspaceFolder | undefined> {
+export async function getRootWorkspaceFolder(context: IActionContext, placeHolder?: string): Promise<WorkspaceFolder | undefined> {
     if (!workspace.workspaceFolders?.length) {
         return undefined;
     } else if (workspace.workspaceFolders?.length === 1) {
         return workspace.workspaceFolders[0];
     } else {
-        const folder = await window.showWorkspaceFolderPick({ placeHolder: placeHolder ?? localize('selectRootWorkspace', 'Select a folder for your workspace') });
-        if (!folder) {
-            throw new UserCancelledError('selectRootWorkspace');
-        }
-        return folder;
+        return await context.ui.showWorkspaceFolderPick({ placeHolder });
     }
 }
 
