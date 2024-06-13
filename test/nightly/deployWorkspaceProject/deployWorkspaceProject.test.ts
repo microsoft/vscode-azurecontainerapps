@@ -11,31 +11,21 @@ import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, 
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { testScenarios } from './testScenarios';
 
-suite('deployWorkspaceProject', function (this: Mocha.Suite) {
+suite('deployWorkspaceProject', function () {
     for (const scenario of testScenarios) {
         suite(scenario.label, function () {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
             const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
             assert.ok(rootFolder, 'Could not retrieve root workspace folder.');
 
-            suiteSetup(async function () {
-                console.log('running suite setup for: ', workspaceFolderUri.fsPath)
-                const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
-                const vscodeFolderPath: string = path.dirname(settingsPath);
-                if (await AzExtFsExtra.pathExists(vscodeFolderPath)) {
-                    AzExtFsExtra.deleteResource(vscodeFolderPath, { recursive: true });
-                }
-            });
-
-            // add same reset logic for suiteTeardown
+            suiteSetup(getMethodCleanWorkspaceFolderSettings(rootFolder));
+            suiteTeardown(getMethodCleanWorkspaceFolderSettings(rootFolder));
 
             for (const testCase of scenario.testCases) {
                 test(testCase.label, async function () {
                     await runWithTestActionContext('deployWorkspaceProject', async context => {
                         await context.ui.runWithInputs(testCase.inputs, async () => {
-                            console.log("starting test for: ", testCase.label)
                             const results: DeployWorkspaceProjectResults = await deployWorkspaceProject(context);
-                            console.log("finished running: ", testCase.label)
                             assertStringPropsMatch(results as Partial<Record<string, string>>, testCase.expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProject results mismatch.');
 
                             const deploymentConfigurationsV2: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
@@ -52,3 +42,14 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
         });
     }
 });
+
+function getMethodCleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {
+    return async function cleanWorkspaceFolderSettings(): Promise<void> {
+        const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
+        const vscodeFolderPath: string = path.dirname(settingsPath);
+        if (await AzExtFsExtra.pathExists(vscodeFolderPath)) {
+            await AzExtFsExtra.deleteResource(vscodeFolderPath, { recursive: true });
+        }
+    }
+}
+
