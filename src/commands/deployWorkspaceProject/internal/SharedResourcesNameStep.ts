@@ -41,8 +41,8 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceName);
 
         // The line of code that follows is only applicable during testing.
-        // This is because `newRegistryName` normally gets populated during `validateInput`; however, this gets bypassed during the mocking for tests but not during normal execution.
-        !context.registry && (context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, resourceName));
+        // This is because `newRegistryName` normally gets populated during validation; however, this gets bypassed during test mocks but not during normal execution.
+        !context.registry && !context.newRegistryName && (context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, resourceName));
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
