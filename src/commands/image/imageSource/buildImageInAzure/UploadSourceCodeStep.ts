@@ -40,7 +40,11 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         let items = await AzExtFsExtra.readDirectory(source);
         items = items.filter(i => !vcsIgnoreList.includes(i.name));
 
+        console.log('source path: ', source)
+
         await this.buildCustomDockerfileIfNecessary(context);
+
+        console.log('custom dockerfile dir path: ', this._customDockerfileDirPath);
         if (this._customDockerfileDirPath) {
             // Create an uncompressed tarball with the base project
             const tempTarFilePath: string = context.tarFilePath.replace(/\.tar\.gz/, '.tar');
