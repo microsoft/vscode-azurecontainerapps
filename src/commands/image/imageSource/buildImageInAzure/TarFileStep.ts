@@ -5,7 +5,7 @@
 
 import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import * as os from 'os';
-import { URI, Utils } from "vscode-uri";
+import * as path from "path";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 const idPrecision = 6;
@@ -16,7 +16,7 @@ export class TarFileStep extends AzureWizardExecuteStep<BuildImageInAzureImageSo
     public async execute(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const id: number = Math.floor(Math.random() * Math.pow(10, idPrecision));
         const archive = `sourceArchive${id}.tar.gz`;
-        context.tarFilePath = Utils.joinPath(URI.parse(os.tmpdir()), archive).fsPath;
+        context.tarFilePath = path.join(os.tmpdir(), archive);
     }
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
