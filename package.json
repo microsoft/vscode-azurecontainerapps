@@ -741,7 +741,7 @@
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --ext .ts .",
         "lint-fix": "eslint --ext .ts . --fix",
-        "pretest": "",
+        "pretest": "npm run webpack-prod",
         "test": "node ./dist/test/runTest.js",
         "webpack": "npm run build && gulp webpack-dev",
         "webpack-prod": "npm run build && gulp webpack-prod",
