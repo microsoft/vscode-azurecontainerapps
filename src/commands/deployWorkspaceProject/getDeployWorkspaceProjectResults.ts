@@ -4,6 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryPassword } from "@azure/arm-containerregistry";
+import { type Workspace } from "@azure/arm-operationalinsights";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import type * as api from "../api/vscode-azurecontainerapps.api";
 import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
@@ -13,6 +16,8 @@ export type DeployWorkspaceProjectResults = api.DeployWorkspaceProjectResults;
 export async function getDeployWorkspaceProjectResults(context: DeployWorkspaceProjectContext): Promise<DeployWorkspaceProjectResults> {
     const registryCredentials: { username: string, password: RegistryPassword } | undefined = context.registry ?
         await listCredentialsFromRegistry(context, context.registry) : undefined;
+
+    context.logAnalyticsWorkspace ??= await tryGetLogAnalyticsWorkspace(context);
 
     return {
         resourceGroupId: context.resourceGroup?.id,
@@ -25,4 +30,17 @@ export async function getDeployWorkspaceProjectResults(context: DeployWorkspaceP
         registryPassword: registryCredentials?.password.value,
         imageName: context.imageName
     };
+}
+
+export async function tryGetLogAnalyticsWorkspace(context: DeployWorkspaceProjectContext): Promise<Workspace | undefined> {
+    const resourceGroupName = context.resourceGroup?.name;
+    const logAnalyticsCustomerId = context.managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
+
+    if (!resourceGroupName || !logAnalyticsCustomerId) {
+        return undefined;
+    }
+
+    const client = await createOperationalInsightsManagementClient(context);
+    const workspaces: Workspace[] = await uiUtils.listAllIterator(client.workspaces.listByResourceGroup(resourceGroupName));
+    return workspaces.find(w => w.customerId === logAnalyticsCustomerId);
 }
