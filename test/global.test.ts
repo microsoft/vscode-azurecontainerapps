@@ -19,6 +19,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         assert.fail('Failed to find extension.');
     } else {
         await extension.activate();
+        await vscode.extensions.getExtension('ms-azuretools.vscode-azureresourcegroups')?.activate();
     }
 
     registerOnActionStartHandler(context => {
