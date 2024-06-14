@@ -15,7 +15,7 @@ import { resourceGroupsToDelete } from '../global.nightly.test';
 import { testScenarios } from './testScenarios';
 
 suite('deployWorkspaceProject', function (this: Mocha.Suite) {
-    this.timeout(7 * 60 * 1000);
+    this.timeout(15 * 60 * 1000);
 
     suiteSetup(function (this: Mocha.Context) {
         if (!longRunningTestsEnabled) {
