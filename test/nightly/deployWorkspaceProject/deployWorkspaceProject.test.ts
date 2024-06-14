@@ -13,7 +13,9 @@ import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete } from '../global.nightly.test';
 import { testScenarios } from './testScenarios';
 
-suite('deployWorkspaceProject', function () {
+suite('deployWorkspaceProject', function (this: Mocha.Suite) {
+    this.timeout(7 * 60 * 1000);
+
     for (const scenario of testScenarios) {
         suite(scenario.label, function () {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
