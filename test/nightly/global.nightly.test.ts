@@ -22,7 +22,9 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 });
 
-suiteTeardown(async function (): Promise<void> {
+suiteTeardown(async function (this: Mocha.Context): Promise<void> {
+    this.timeout(10 * 60 * 1000)
+
     if (!longRunningTestsEnabled) {
         return;
     }
