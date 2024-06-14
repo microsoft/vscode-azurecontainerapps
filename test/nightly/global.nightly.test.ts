@@ -12,13 +12,12 @@ import * as vscode from 'vscode';
 import { ext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
 
-export const resourceGroupsToDelete: string[] = [];
+export const resourceGroupsToDelete = new Set<string>();
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     if (!longRunningTestsEnabled) {
         return;
     }
-
     this.timeout(2 * 60 * 1000);
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 });
@@ -28,25 +27,24 @@ suiteTeardown(async function (this: Mocha.Context): Promise<void> {
         return;
     }
 
-    // Account for the fact that it can take an extremely long time to delete managed environments
+    // Account for the fact that it can take an extremely long time to delete managed environment resources
     this.timeout(30 * 60 * 1000);
     await deleteResourceGroups();
 });
 
-// Todo: re-test this
 async function deleteResourceGroups(): Promise<void> {
     const context: TestActionContext = await createTestActionContext();
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const rgClient: ResourceManagementClient = createAzureClient([context, subscriptionContext], ResourceManagementClient);
 
-    await Promise.all(resourceGroupsToDelete.map(async resourceGroup => {
-        if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
-            console.log(`Started delete of resource group "${resourceGroup}"...`);
-            await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
-            console.log(`Successfully deleted resource group "${resourceGroup}".`);
-        } else {
-            console.log(`Ignoring resource group "${resourceGroup}" because it does not exist.`);
+    await Promise.all(Array.from(resourceGroupsToDelete).map(async resourceGroup => {
+        if (!(await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
+            return;
         }
+
+        console.log(`Deleting resource group "${resourceGroup}"...`);
+        await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
+        console.log(`Successfully deleted resource group "${resourceGroup}".`);
     }));
 }

@@ -39,7 +39,7 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
                             const results: DeployWorkspaceProjectResults = await deployWorkspaceProject(context);
                             if (results.resourceGroupId) {
                                 const resourceGroupName: string = parseAzureResourceGroupId(results.resourceGroupId).resourceGroup;
-                                resourceGroupsToDelete.push(resourceGroupName);
+                                resourceGroupsToDelete.add(resourceGroupName);
                             }
 
                             assertStringPropsMatch(results as Partial<Record<string, string>>, testCase.expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProject results mismatch.');
