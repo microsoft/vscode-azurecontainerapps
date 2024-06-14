@@ -22,16 +22,16 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 });
 
-// suiteTeardown(async function (this: Mocha.Context): Promise<void> {
-//     if (!longRunningTestsEnabled) {
-//         return;
-//     }
+suiteTeardown(async function (this: Mocha.Context): Promise<void> {
+    if (!longRunningTestsEnabled) {
+        return;
+    }
 
-//     await deleteResourceGroups();
-// });
+    await deleteResourceGroups();
+});
 
 // Todo: re-test this
-export async function deleteResourceGroups(): Promise<void> {
+async function deleteResourceGroups(): Promise<void> {
     const context: TestActionContext = await createTestActionContext();
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
