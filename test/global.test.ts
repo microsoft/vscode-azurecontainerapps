@@ -13,7 +13,7 @@ export const longRunningTestsEnabled: boolean = !/^(false|0)?$/i.test(process.en
 
 // Runs before all tests
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
-    this.timeout(1 * 60 * 1000);
+    this.timeout(2 * 60 * 1000);
 
     const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurecontainerapps');
     if (!extension) {
