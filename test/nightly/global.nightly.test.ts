@@ -15,10 +15,11 @@ import { longRunningTestsEnabled } from '../global.test';
 export const resourceGroupsToDelete: string[] = [];
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
+    this.timeout(2 * 60 * 1000);
+
     if (!longRunningTestsEnabled) {
         return;
     }
-
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 });
 
@@ -28,7 +29,6 @@ suiteTeardown(async function (this: Mocha.Context): Promise<void> {
     if (!longRunningTestsEnabled) {
         return;
     }
-
     await deleteResourceGroups();
 });
 
