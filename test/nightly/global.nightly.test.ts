@@ -32,12 +32,17 @@ suiteTeardown(async function (): Promise<void> {
 
 // Todo: re-test this
 async function deleteResourceGroups(): Promise<void> {
+    console.log("deleteResourceGroups...")
     const context: TestActionContext = await createTestActionContext();
+    console.log("acquiring subscription")
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    console.log("got subscription", subscription.subscriptionId)
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
+    console.log("created subscription context: ", subscriptionContext)
     const rgClient: ResourceManagementClient = createAzureClient([context, subscriptionContext], ResourceManagementClient);
+    console.log("created resource group client")
     await Promise.all(resourceGroupsToDelete.map(async resourceGroup => {
+        console.log("promise for resource group: ", resourceGroup)
         if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
             console.log(`Started delete of resource group "${resourceGroup}"...`);
             await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
