@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { createAzureClient, registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
+import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createTestActionContext, type TestActionContext } from '@microsoft/vscode-azext-dev';
-import { createSubscriptionContext, registerUIExtensionVariables, subscriptionExperience, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, subscriptionExperience, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { ext } from '../../extension.bundle';
@@ -15,20 +15,21 @@ import { longRunningTestsEnabled } from '../global.test';
 export const resourceGroupsToDelete: string[] = [];
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
-    this.timeout(2 * 60 * 1000);
-
     if (!longRunningTestsEnabled) {
         return;
     }
+
+    this.timeout(2 * 60 * 1000);
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
-    this.timeout(10 * 60 * 1000)
-
     if (!longRunningTestsEnabled) {
         return;
     }
+
+    // Account for the fact that it can take an extremely long time to delete managed environments
+    this.timeout(30 * 60 * 1000);
     await deleteResourceGroups();
 });
 
@@ -37,15 +38,9 @@ async function deleteResourceGroups(): Promise<void> {
     const context: TestActionContext = await createTestActionContext();
     const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
-    registerUIExtensionVariables(ext);
-    registerAzureUtilsExtensionVariables(ext);
-
     const rgClient: ResourceManagementClient = createAzureClient([context, subscriptionContext], ResourceManagementClient);
 
-    console.log("created resource group client")
     await Promise.all(resourceGroupsToDelete.map(async resourceGroup => {
-        console.log("promise for resource group: ", resourceGroup)
         if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
             console.log(`Started delete of resource group "${resourceGroup}"...`);
             await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
