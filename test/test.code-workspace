@@ -3,6 +3,10 @@
         {
             "name": "dockerfiles",
             "path": "./testProjects/dockerfiles"
+        },
+        {
+            "name": "monorepo-basic",
+            "path": "./testProjects/monorepo-basic"
         }
     ]
 }
