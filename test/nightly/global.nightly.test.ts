@@ -22,7 +22,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 });
 
-suiteTeardown(async function (this: Mocha.Context): Promise<void> {
+suiteTeardown(async function (): Promise<void> {
     if (!longRunningTestsEnabled) {
         return;
     }
@@ -41,7 +41,7 @@ async function deleteResourceGroups(): Promise<void> {
         if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
             console.log(`Started delete of resource group "${resourceGroup}"...`);
             await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
-            console.log(`Successfully started delete of resource group "${resourceGroup}".`);
+            console.log(`Successfully deleted resource group "${resourceGroup}".`);
         } else {
             console.log(`Ignoring resource group "${resourceGroup}" because it does not exist.`);
         }
