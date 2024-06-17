@@ -11,6 +11,7 @@ import { dwpTestUtils } from "../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
 
 export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase[] {
+    const folderName: string = 'monorepo-basic';
     const sharedResourceName: string = 'monorepo-basic' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
@@ -18,7 +19,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Deploy App 1",
             inputs: [
-                new RegExp('monorepo-basic', 'i'),
+                new RegExp(folderName, 'i'),
                 path.join('app1', 'Dockerfile'),
                 new RegExp('Create new container apps environment', 'i'),
                 'Continue',
@@ -40,7 +41,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Deploy App 2",
             inputs: [
-                new RegExp('monorepo-basic', 'i'),
+                new RegExp(folderName, 'i'),
                 new RegExp('Create and deploy new app configuration', 'i'),
                 path.join('app2', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
@@ -62,7 +63,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Deploy App 3",
             inputs: [
-                new RegExp('monorepo-basic', 'i'),
+                new RegExp(folderName, 'i'),
                 new RegExp('Create and deploy new app configuration', 'i'),
                 path.join('app3', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
@@ -85,7 +86,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
         {
             label: "Re-deploy App 1",
             inputs: [
-                new RegExp('monorepo-basic', 'i'),
+                new RegExp(folderName, 'i'),
                 'app1',
                 'Continue'
             ],
