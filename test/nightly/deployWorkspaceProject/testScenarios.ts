@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScriptTestCases";
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
-import { generateMsLearnJsTestCases } from "./testCases/msLearnJsTestCases";
 
 interface TestScenario {
     label: string;
@@ -20,8 +20,8 @@ export const testScenarios: TestScenario[] = [
         testCases: generateMonoRepoBasicTestCases()
     },
     {
-        label: 'mslearn-js',
-        folderName: 'mslearn-js',
-        testCases: generateMsLearnJsTestCases()
+        label: 'albumapi-js',
+        folderName: 'albumapi-js',
+        testCases: generateAlbumApiJavaScriptTestCases()
     }
 ];

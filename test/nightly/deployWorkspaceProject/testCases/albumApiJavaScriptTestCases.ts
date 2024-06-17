@@ -10,8 +10,8 @@ import { type StringOrRegExpProps } from "../../../typeUtils";
 import { dwpTestUtils } from "../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
 
-export function generateMsLearnJsTestCases(): DeployWorkspaceProjectTestCase[] {
-    const folderName: string = 'mslearn-js';
+export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTestCase[] {
+    const folderName: string = 'albumapi-js';
     const appResourceName: string = 'album-api';
     const sharedResourceName: string = appResourceName + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');

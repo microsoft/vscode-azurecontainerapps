@@ -9,8 +9,8 @@
             "path": "./testProjects/monorepo-basic"
         },
         {
-            "name": "mslearn-js",
-            "path": "./testProjects/mslearn-js"
+            "name": "albumapi-js",
+            "path": "./testProjects/containerapps-albumapi-javascript"
         },
     ]
 }
