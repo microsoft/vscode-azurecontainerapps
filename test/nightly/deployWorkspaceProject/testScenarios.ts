@@ -5,6 +5,7 @@
 
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
+import { generateMsLearnJsTestCases } from "./testCases/msLearnJsTestCases";
 
 interface TestScenario {
     label: string;
@@ -18,9 +19,9 @@ export const testScenarios: TestScenario[] = [
         folderName: 'monorepo-basic',
         testCases: generateMonoRepoBasicTestCases()
     },
-    // {
-    //     label: 'albumapi-javascript',
-    //     folderName: 'albumapi-javascript',
-    //     testCases: generateAlbumApiJavaScriptTestCases()
-    // }
+    {
+        label: 'mslearn-js',
+        folderName: 'mslearn-js',
+        testCases: generateMsLearnJsTestCases()
+    }
 ];
