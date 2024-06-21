@@ -12,14 +12,20 @@ import * as vscode from 'vscode';
 import { ext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
 
+export let subscriptionContext: ISubscriptionContext;
 export const resourceGroupsToDelete = new Set<string>();
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     if (!longRunningTestsEnabled) {
-        return;
+        this.skip();
     }
+
     this.timeout(2 * 60 * 1000);
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
+
+    const context: TestActionContext = await createTestActionContext();
+    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    subscriptionContext = createSubscriptionContext(subscription);
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
@@ -34,8 +40,6 @@ suiteTeardown(async function (this: Mocha.Context): Promise<void> {
 
 async function deleteResourceGroups(): Promise<void> {
     const context: TestActionContext = await createTestActionContext();
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
-    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const rgClient: ResourceManagementClient = createAzureClient([context, subscriptionContext], ResourceManagementClient);
 
     await Promise.all(Array.from(resourceGroupsToDelete).map(async resourceGroup => {
