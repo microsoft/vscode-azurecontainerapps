@@ -12,5 +12,9 @@
             "name": "albumapi-js",
             "path": "./testProjects/containerapps-albumapi-javascript"
         },
+        {
+            "name": "albumapi-csharp",
+            "path": "./testProjects/containerapps-albumapi-csharp"
+        }
     ]
 }
