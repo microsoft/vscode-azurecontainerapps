@@ -6,7 +6,7 @@
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createTestActionContext, type TestActionContext } from '@microsoft/vscode-azext-dev';
-import { createSubscriptionContext, subscriptionExperience, type ISubscriptionContext, } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, subscriptionExperience, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { ext } from '../../extension.bundle';
