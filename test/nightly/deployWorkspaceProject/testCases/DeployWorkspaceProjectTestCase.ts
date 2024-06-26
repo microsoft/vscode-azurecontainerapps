@@ -12,7 +12,7 @@ export interface DeployWorkspaceProjectTestCase {
      */
     label: string;
     /**
-     * The list of inputs that will be passed directly to `TestUserInput.runWithInputs()`
+     * The list of inputs that will be passed to the test UI
      */
     inputs: (string | RegExp)[];
     /**
