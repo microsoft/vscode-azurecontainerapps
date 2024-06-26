@@ -19,8 +19,8 @@ export function generateAlbumApiCsharpTestCases(): DeployWorkspaceProjectTestCas
     return [
         {
             label: 'Deploy App',
-            inputs: [ //need to check the inputs
-                new RegExp(folderName, 'i'), //not sure if this is needed
+            inputs: [
+                new RegExp(folderName, 'i'),
                 new RegExp('Create new container apps environment', 'i'),
                 'Continue',
                 sharedResourceName,

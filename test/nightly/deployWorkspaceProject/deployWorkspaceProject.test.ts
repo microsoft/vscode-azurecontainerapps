@@ -9,6 +9,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
 import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
+import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete } from '../global.nightly.test';
 import { testScenarios } from './testScenarios';
@@ -17,9 +18,9 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
     this.timeout(15 * 60 * 1000);
 
     suiteSetup(function (this: Mocha.Context) {
-        // if (!longRunningTestsEnabled) {
-        //     this.skip();
-        // }
+        if (!longRunningTestsEnabled) {
+            this.skip();
+        }
     });
 
     for (const scenario of testScenarios) {
