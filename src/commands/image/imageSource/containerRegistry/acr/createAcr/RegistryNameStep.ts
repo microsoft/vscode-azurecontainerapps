@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerRegistryManagementClient, type Registry, type RegistryNameStatus } from "@azure/arm-containerregistry";
+import { type ContainerRegistryManagementClient, type RegistryNameStatus } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, randomUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
@@ -53,9 +53,9 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     }
 
     /**
-     * @throws Throws an error if the function is unable to generate a valid registry name within the internally allotted timeout
+     * @throws Throws an error if the function is unable to generate a valid registry name within the allotted time
      */
-    public static async generateRelatedName(context: ISubscriptionActionContext & { registry?: Registry }, name: string): Promise<string> {
+    public static async generateRelatedName(context: ISubscriptionActionContext, name: string): Promise<string> {
         let registryAvailable: boolean = false;
         let generatedName: string = '';
 
@@ -69,7 +69,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
             }
 
             generatedName = generateRelatedName(name);
-            registryAvailable = !!context.registry || !!(await RegistryNameStep.isNameAvailable(context, generatedName)).nameAvailable;
+            registryAvailable = !!(await RegistryNameStep.isNameAvailable(context, generatedName)).nameAvailable;
         } while (!registryAvailable)
 
         if (!registryAvailable) {
