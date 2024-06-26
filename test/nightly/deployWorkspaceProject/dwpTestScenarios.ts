@@ -7,13 +7,13 @@ import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScr
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
 
-interface TestScenario {
+interface DeployWorkspaceProjectTestScenario {
     label: string;
     folderName: string;
     testCases: DeployWorkspaceProjectTestCase[];
 }
 
-export const testScenarios: TestScenario[] = [
+export const dwpTestScenarios: DeployWorkspaceProjectTestScenario[] = [
     {
         label: 'monorepo',
         folderName: 'monorepo-basic',

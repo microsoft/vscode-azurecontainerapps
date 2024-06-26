@@ -12,7 +12,7 @@ import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, 
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete } from '../global.nightly.test';
-import { testScenarios } from './testScenarios';
+import { dwpTestScenarios } from './dwpTestScenarios';
 
 suite('deployWorkspaceProject', function (this: Mocha.Suite) {
     this.timeout(15 * 60 * 1000);
@@ -23,7 +23,7 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
         }
     });
 
-    for (const scenario of testScenarios) {
+    for (const scenario of dwpTestScenarios) {
         suite(scenario.label, function () {
             const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
             const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
