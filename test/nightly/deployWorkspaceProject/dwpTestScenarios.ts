@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { generateAlbumApiGolangTestCases } from "./testCases/albumApiGolangTestCases";
 import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScriptTestCases";
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
@@ -15,13 +16,18 @@ interface DeployWorkspaceProjectTestScenario {
 
 export const dwpTestScenarios: DeployWorkspaceProjectTestScenario[] = [
     {
-        label: 'monorepo',
-        folderName: 'monorepo-basic',
-        testCases: generateMonoRepoBasicTestCases()
+        label: 'albumapi-go',
+        folderName: 'albumapi-go',
+        testCases: generateAlbumApiGolangTestCases()
     },
     {
         label: 'albumapi-js',
         folderName: 'albumapi-js',
         testCases: generateAlbumApiJavaScriptTestCases()
-    }
+    },
+    {
+        label: 'monorepo',
+        folderName: 'monorepo-basic',
+        testCases: generateMonoRepoBasicTestCases()
+    },
 ];
