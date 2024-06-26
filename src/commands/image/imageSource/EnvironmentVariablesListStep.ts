@@ -6,7 +6,7 @@
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
-import { workspace, type Uri } from "vscode";
+import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
@@ -84,8 +84,14 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         return Object.keys(envData).map(name => { return { name, value: envData[name] } });
     }
 
-    public static async workspaceHasEnvFile(): Promise<boolean> {
-        const envFileUris: Uri[] = await workspace.findFiles(allEnvFilesGlobPattern);
+    public static async workspaceHasEnvFile(rootFolder?: WorkspaceFolder): Promise<boolean> {
+        let envFileUris: Uri[];
+        if (rootFolder) {
+            const relativePattern: RelativePattern = new RelativePattern(rootFolder, allEnvFilesGlobPattern);
+            envFileUris = await workspace.findFiles(relativePattern);
+        } else {
+            envFileUris = await workspace.findFiles(allEnvFilesGlobPattern);
+        }
         return !!envFileUris.length;
     }
 

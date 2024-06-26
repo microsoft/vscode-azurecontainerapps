@@ -14,7 +14,7 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const prompt: string = localize('selectRootWorkspace', 'Select a project with a Dockerfile');
-        const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(prompt);
+        const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(context, prompt);
 
         if (!rootFolder) {
             context.telemetry.properties.hasWorkspaceProjectOpen = 'false';

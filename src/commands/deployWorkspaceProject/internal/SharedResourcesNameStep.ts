@@ -18,12 +18,7 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if ((context.resourceGroup || context.managedEnvironment) && !context.registry) {
             // Generate a new name automatically without prompting
-            context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, context.managedEnvironment?.name || nonNullValueAndProp(context.resourceGroup, 'name'));
-
-            if (!context.newRegistryName) {
-                // Extremely unlikely that this code block would ever trigger
-                throw new Error(localize('failedToGenerateName', 'Failed to generate an available container registry name.'));
-            }
+            context.newRegistryName = await RegistryNameStep.generateRelatedName(context, context.managedEnvironment?.name || nonNullValueAndProp(context.resourceGroup, 'name'));
         }
     }
 
@@ -39,6 +34,7 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
 
         !context.resourceGroup && (context.newResourceGroupName = resourceName);
         !context.managedEnvironment && (context.newManagedEnvironmentName = resourceName);
+        !context.registry && (context.newRegistryName = await RegistryNameStep.generateRelatedName(context, resourceName));
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
@@ -75,15 +71,6 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
             title: localize('verifyingAvailabilityTitle', 'Verifying resource name availability...')
         }, async () => {
             const resourceNameUnavailable: string = localize('resourceNameUnavailable', 'Resource name "{0}" is unavailable.', name);
-
-            if (context.registry) {
-                // Skip check, one already exists so don't need to worry about naming
-            } else {
-                context.newRegistryName = await RegistryNameStep.tryGenerateRelatedName(context, name);
-                if (!context.newRegistryName) {
-                    return localize('timeoutError', 'Timed out waiting for registry name to be generated. Please try another name.');
-                }
-            }
 
             const resourceGroupAvailable: boolean = !!context.resourceGroup || await ResourceGroupListStep.isNameAvailable(context, name);
             if (!resourceGroupAvailable) {
