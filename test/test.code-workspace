@@ -7,6 +7,10 @@
         {
             "name": "monorepo-basic",
             "path": "./testProjects/monorepo-basic"
-        }
+        },
+        // {
+        //     "name": "albumapi-javascript",
+        //     "path": "./testProjects/albumapi-javascript"
+        // },
     ]
 }
