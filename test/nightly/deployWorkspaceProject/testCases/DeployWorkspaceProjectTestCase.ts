@@ -28,7 +28,7 @@ export interface DeployWorkspaceProjectTestCase {
      */
     postTestAssertion?: PostTestAssertion;
     /**
-     * The name of the resource group to delete after long running tests have been concluded
+     * The name of the resource group to delete after long running tests have concluded
      */
     resourceGroupToDelete?: string;
 }
