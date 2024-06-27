@@ -13,14 +13,32 @@ import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTes
 export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'albumapi-js';
     const appResourceName: string = 'album-api';
-    const sharedResourceName: string = appResourceName + randomUtils.getRandomHexString(4);
+    const sharedResourceName: string = 'album-js' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
     return [
         {
+            label: 'Should fail to deploy app (bad Dockerfile)',
+            inputs: [
+                new RegExp(folderName, 'i'),
+                new RegExp('test_fail.Dockerfile', 'i'),
+                new RegExp('Create new container apps environment', 'i'),
+                'Continue',
+                sharedResourceName.slice(0, -1), // Isolate by using a different resource group name since we expect this case to fail
+                appResourceName,
+                `.${path.sep}src`,
+                'East US',
+                'Save'
+            ],
+            expectedResults: undefined,
+            expectedVSCodeSettings: undefined,
+            resourceGroupToDelete: sharedResourceName.slice(0, -1)
+        },
+        {
             label: 'Deploy App',
             inputs: [
                 new RegExp(folderName, 'i'),
+                'Dockerfile',
                 new RegExp('Create new container apps environment', 'i'),
                 'Continue',
                 sharedResourceName,
@@ -35,7 +53,8 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
-            postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined })
+            postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined }),
+            resourceGroupToDelete: sharedResourceName
         },
         {
             label: 'Re-deploy App',

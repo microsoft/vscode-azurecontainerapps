@@ -27,6 +27,10 @@ export interface DeployWorkspaceProjectTestCase {
      * A post test callback that can be added for further verifying any of the created resources before final suite teardown
      */
     postTestAssertion?: PostTestAssertion;
+    /**
+     * The name of the resource group to delete after long running tests have been concluded
+     */
+    resourceGroupToDelete?: string;
 }
 
 export type PostTestAssertion = (context: IActionContext, results: DeployWorkspaceProjectResults, errMsg?: string) => void | Promise<void>;
