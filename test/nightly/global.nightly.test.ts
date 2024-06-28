@@ -34,7 +34,7 @@ suiteTeardown(async function (this: Mocha.Context): Promise<void> {
     }
 
     // Account for the fact that it can take an extremely long time to delete managed environment resources
-    this.timeout(30 * 60 * 1000);
+    this.timeout(60 * 60 * 1000);
     await deleteResourceGroups();
 });
 

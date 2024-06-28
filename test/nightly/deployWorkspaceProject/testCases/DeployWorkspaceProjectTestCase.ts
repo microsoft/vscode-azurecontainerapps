@@ -20,6 +20,10 @@ export interface DeployWorkspaceProjectTestCase {
      */
     expectedResults?: StringOrRegExpProps<DeployWorkspaceProjectResults>;
     /**
+     * The expected message of the error that should be caught after executing the command
+     */
+    expectedErrMsg?: string | RegExp;
+    /**
      * The expected `.vscode` settings that should be present in the workspace folder root after executing the command
      */
     expectedVSCodeSettings?: VSCodeSettings;
@@ -27,6 +31,10 @@ export interface DeployWorkspaceProjectTestCase {
      * A post test callback that can be added for further verifying any of the created resources before final suite teardown
      */
     postTestAssertion?: PostTestAssertion;
+    /**
+     * The name of the resource group to delete after long running tests have concluded
+     */
+    resourceGroupToDelete?: string;
 }
 
 export type PostTestAssertion = (context: IActionContext, results: DeployWorkspaceProjectResults, errMsg?: string) => void | Promise<void>;

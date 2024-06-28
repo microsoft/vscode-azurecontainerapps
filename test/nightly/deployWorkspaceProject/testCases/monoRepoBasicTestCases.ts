@@ -36,7 +36,8 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
                 ]
             },
-            postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] })
+            postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] }),
+            resourceGroupToDelete: sharedResourceName
         },
         {
             label: "Deploy App 2",
@@ -81,7 +82,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app3'),
                 ]
             },
-            postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3002, env: [{ name: 'MESSAGE', value: 'container apps (app3)' }] })
+            postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3002, env: [{ name: 'MESSAGE', value: 'container apps (app3)' }] }),
         },
         {
             label: "Re-deploy App 1",

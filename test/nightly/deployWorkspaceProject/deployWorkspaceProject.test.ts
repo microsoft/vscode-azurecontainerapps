@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { parseAzureResourceGroupId } from '@microsoft/vscode-azext-azureutils';
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
+import { parseError, type IParsedError } from "@microsoft/vscode-azext-utils";
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
@@ -36,20 +36,44 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
                 test(testCase.label, async function () {
                     await runWithTestActionContext('deployWorkspaceProject', async context => {
                         await context.ui.runWithInputs(testCase.inputs, async () => {
-                            const results: DeployWorkspaceProjectResults = await deployWorkspaceProject(context);
-                            if (results.resourceGroupId) {
-                                const resourceGroupName: string = parseAzureResourceGroupId(results.resourceGroupId).resourceGroup;
-                                resourceGroupsToDelete.add(resourceGroupName);
+                            let results: DeployWorkspaceProjectResults;
+                            let perr: IParsedError | undefined;
+                            try {
+                                results = await deployWorkspaceProject(context);
+                            } catch (e) {
+                                results = {};
+
+                                perr = parseError(e);
+                                console.log(perr);
                             }
 
-                            assertStringPropsMatch(results as Partial<Record<string, string>>, testCase.expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProject results mismatch.');
+                            if (testCase.resourceGroupToDelete) {
+                                resourceGroupsToDelete.add(testCase.resourceGroupToDelete);
+                            }
 
+                            // Verify 'expectedErrMsg'
+                            if (perr || testCase.expectedErrMsg) {
+                                if (testCase.expectedErrMsg instanceof RegExp) {
+                                    assert.match(perr?.message ?? "", testCase.expectedErrMsg, 'DeployWorkspaceProject thrown and expected error message did not match.');
+                                } else {
+                                    assert.strictEqual(perr?.message ?? "", testCase.expectedErrMsg, 'DeployWorkspaceProject thrown and expected error message did not match.');
+                                }
+                            }
+
+                            // Verify 'expectedResults'
+                            assertStringPropsMatch(results as Partial<Record<string, string>>, (testCase.expectedResults ?? {}) as Record<string, string | RegExp>, 'DeployWorkspaceProject results mismatch.');
+
+                            // Verify 'expectedVSCodeSettings'
                             const deploymentConfigurationsV2: DeploymentConfigurationSettings[] = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder) ?? [];
-                            for (const [i, expectedDeploymentConfiguration] of (testCase.expectedVSCodeSettings?.deploymentConfigurations ?? []).entries()) {
+                            const expectedDeploymentConfigurations = testCase.expectedVSCodeSettings?.deploymentConfigurations ?? [];
+                            assert.strictEqual(deploymentConfigurationsV2.length, expectedDeploymentConfigurations.length, 'DeployWorkspaceProject ".vscode" saved settings mismatch.');
+
+                            for (const [i, expectedDeploymentConfiguration] of expectedDeploymentConfigurations.entries()) {
                                 const deploymentConfiguration: DeploymentConfigurationSettings = deploymentConfigurationsV2[i] ?? {};
                                 assertStringPropsMatch(deploymentConfiguration as Partial<Record<string, string>>, expectedDeploymentConfiguration, 'DeployWorkspaceProject ".vscode" saved settings mismatch.');
                             }
 
+                            // Verify 'postTestAssertion'
                             await testCase.postTestAssertion?.(context, results, 'DeployWorkspaceProject resource settings mismatch.');
                         });
                     });
