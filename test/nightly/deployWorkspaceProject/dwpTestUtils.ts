@@ -5,11 +5,11 @@
 
 import { type ContainerApp, type EnvironmentVar } from "@azure/arm-appcontainers";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import { createSubscriptionContext, nonNullProp, subscriptionExperience, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
+import { nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import { createContainerAppsAPIClient, ext, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
+import { createContainerAppsAPIClient, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../typeUtils";
+import { subscriptionContext } from "../global.nightly.test";
 import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
 
 export namespace dwpTestUtils {
@@ -30,15 +30,9 @@ export namespace dwpTestUtils {
     export function generatePostTestAssertion(expectedContainerAppSettings: { targetPort: number | undefined, env: EnvironmentVar[] | undefined }): PostTestAssertion {
         return async function postTestAssertion(context: IActionContext, resources: DeployWorkspaceProjectResults, errMsg?: string): Promise<void> {
             const parsedId = parseAzureResourceId(nonNullProp(resources, 'containerAppId'));
-
-            const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-                selectBySubscriptionId: parsedId.subscriptionId,
-                showLoadingPrompt: false
-            });
-            const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
             const client = await createContainerAppsAPIClient(Object.assign(context, subscriptionContext));
             const containerApp: ContainerApp = await client.containerApps.get(parsedId.resourceGroup, parsedId.resourceName);
+
             assert.strictEqual(containerApp.configuration?.ingress?.targetPort, expectedContainerAppSettings.targetPort, errMsg ? errMsg + ' (container app target port)' : undefined);
             assert.strictEqual(containerApp.template?.containers?.[0].image, `${resources.registryLoginServer}/${resources.imageName}`, errMsg ? errMsg + ' (container image name)' : undefined);
             assert.deepStrictEqual(containerApp.template?.containers?.[0].env, expectedContainerAppSettings.env, errMsg ? errMsg + ' (container environment variables)' : undefined);
