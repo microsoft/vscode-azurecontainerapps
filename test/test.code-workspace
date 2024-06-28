@@ -1,20 +1,20 @@
 {
     "folders": [
         {
-            "name": "dockerfiles",
-            "path": "./testProjects/dockerfiles"
-        },
-        {
-            "name": "monorepo-basic",
-            "path": "./testProjects/monorepo-basic"
+            "name": "albumapi-go",
+            "path": "./testProjects/containerapps-albumapi-go"
         },
         {
             "name": "albumapi-js",
             "path": "./testProjects/containerapps-albumapi-javascript"
         },
         {
-            "name": "albumapi-go",
-            "path": "./testProjects/containerapps-albumapi-go"
+            "name": "dockerfiles",
+            "path": "./testProjects/dockerfiles"
+        },
+        {
+            "name": "monorepo-basic",
+            "path": "./testProjects/monorepo-basic"
         },
     ]
 }
