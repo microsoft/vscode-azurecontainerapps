@@ -83,7 +83,6 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3002, env: [{ name: 'MESSAGE', value: 'container apps (app3)' }] }),
-            resourceGroupToDelete: sharedResourceName
         },
         {
             label: "Re-deploy App 1",
