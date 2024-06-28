@@ -44,7 +44,7 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
                                 results = {};
 
                                 perr = parseError(e);
-                                console.log(e);
+                                console.log(perr);
                             }
 
                             if (testCase.resourceGroupToDelete) {
