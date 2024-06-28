@@ -31,6 +31,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 'Save'
             ],
             expectedResults: undefined,
+            expectedErrMsg: new RegExp('Failed to build image', 'i'),
             expectedVSCodeSettings: undefined,
             resourceGroupToDelete: sharedResourceName.slice(0, -1)
         },

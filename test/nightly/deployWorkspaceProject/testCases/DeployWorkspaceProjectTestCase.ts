@@ -20,6 +20,10 @@ export interface DeployWorkspaceProjectTestCase {
      */
     expectedResults?: StringOrRegExpProps<DeployWorkspaceProjectResults>;
     /**
+     * The expected message of the error that should be caught after executing the command
+     */
+    expectedErrMsg?: string | RegExp;
+    /**
      * The expected `.vscode` settings that should be present in the workspace folder root after executing the command
      */
     expectedVSCodeSettings?: VSCodeSettings;
