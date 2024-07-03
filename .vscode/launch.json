@@ -92,7 +92,7 @@
                 "MOCHA_timeout": "0", // Disable time-outs
                 "DEBUGTELEMETRY": "v",
                 "NODE_DEBUG": "",
-                "AzCode_UseAzureFederatedCredentials": ""
+                "AzCode_EnableLongRunningTestsLocal": ""
             }
         },
         {
