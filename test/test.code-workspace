@@ -9,12 +9,16 @@
             "path": "./testProjects/containerapps-albumapi-javascript"
         },
         {
+            "name": "albumapi-csharp",
+            "path": "./testProjects/containerapps-albumapi-csharp"
+        },
+        {
             "name": "dockerfiles",
             "path": "./testProjects/dockerfiles"
         },
         {
             "name": "monorepo-basic",
             "path": "./testProjects/monorepo-basic"
-        },
+        }
     ]
 }
