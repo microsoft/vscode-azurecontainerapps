@@ -796,7 +796,7 @@
         "p-retry": "^4.6.2",
         "semver": "^7.5.2",
         "tar": "^6.2.1",
-        "vscode-nls": "^4.1.1",
+        "vscode-nls": "^5.2.0",
         "vscode-uri": "^3.0.2"
     },
     "extensionDependencies": [
