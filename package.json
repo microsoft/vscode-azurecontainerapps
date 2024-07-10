@@ -794,7 +794,7 @@
         "dotenv": "^16.4.5",
         "fs-extra": "^11.2.0",
         "p-retry": "^6.2.0",
-        "semver": "^7.5.2",
+        "semver": "^7.6.2",
         "tar": "^6.2.1",
         "vscode-nls": "^5.2.0",
         "vscode-uri": "^3.0.2"
