@@ -3,40 +3,30 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerApp } from "@azure/arm-appcontainers";
-import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { type IContainerAppContext } from "../IContainerAppContext";
-import { updateContainerApp } from "../updateContainerApp";
 
-const systemAssignedIdentityType: string = 'SystemAssigned';
+export class ContainerRegistryRbacEnableStep extends ExecuteActivityOutputStepBase<IContainerAppContext> {
+    public priority: number = 640; // Todo: Verify priority
 
-export class SystemAssignedIdentityCreateStep extends ExecuteActivityOutputStepBase<IContainerAppContext> {
-    public priority: number = 630;  // Todo: Verify priority
-
-    protected async executeCore(context: IContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const containerApp: ContainerApp = nonNullProp(context, 'containerApp');
-        progress.report({ message: localize('enablingIdentity', 'Enabling managed identity...') })
-
-        context.containerApp = await updateContainerApp(context, context.subscription, containerApp, {
-            identity: {
-                type: systemAssignedIdentityType,
-            }
-        });
+    protected async executeCore(_: IContainerAppContext, __: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        // Todo...
     }
 
-    public shouldExecute(context: IContainerAppContext): boolean {
-        return !!context.containerApp && context.containerApp.identity?.type !== systemAssignedIdentityType;
+    public shouldExecute(_: IContainerAppContext): boolean {
+        // Todo...
     }
 
+    // Todo....
     protected createSuccessOutput(context: IContainerAppContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['systemAssignedIdentityCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('enableIdentity', 'Enable system-assigned identity for container app "{0}"', context.containerApp?.name),
+                contextValue: createActivityChildContext(['containerRegistryRbacEnableStepSuccessItem', activitySuccessContext]),
+                label: localize('enable', 'Enable system-assigned identity for container app "{0}"', context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
             message: localize('systemAssignedIdentitySuccess', 'Successfully enabled system-assigned managed identity for container app "{0}".', context.containerApp?.name)
