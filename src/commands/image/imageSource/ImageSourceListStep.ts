@@ -7,7 +7,6 @@ import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPic
 import { UIKind, env, workspace } from "vscode";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
@@ -64,7 +63,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
 
         switch (context.imageSource) {
             case ImageSource.QuickstartImage:
-                setQuickStartImage(context);
+                // The container app create step automatically starts with the Microsoft quick start image as the base, so no further action is required
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:

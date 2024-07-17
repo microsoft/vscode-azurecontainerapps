@@ -16,9 +16,9 @@ import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
-import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { type CreateContainerAppContext } from "./CreateContainerAppContext";
+import { EmptyContainerAppCreateStep } from "./EmptyContainerAppCreateStep";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
 export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
@@ -48,7 +48,8 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     const executeSteps: AzureWizardExecuteStep<CreateContainerAppContext>[] = [
         getVerifyProvidersStep<CreateContainerAppContext>(),
-        new ContainerAppCreateStep(),
+        new EmptyContainerAppCreateStep(),
+        // Add update steps
     ];
 
     if (isAzdExtensionInstalled()) {
