@@ -35,7 +35,6 @@ export class ContainerRegistryEnableAcrPullStep extends ExecuteActivityOutputSte
             principalId: containerAppIdentity,
         };
 
-        progress.report({ message: localize('creatingRegistryPermission', 'Creating registry permission...') })
         await client.roleAssignments.create(
             registryId,
             crypto.randomUUID(),
@@ -62,10 +61,10 @@ export class ContainerRegistryEnableAcrPullStep extends ExecuteActivityOutputSte
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryEnableAcrPullStepSuccessItem', activitySuccessContext]),
-                label: localize('verifyAcrPull', 'Verify "{0}" on container registry "{1}" for container app "{2}"', 'acrPull', context.registry?.name, context.containerApp?.name),
+                label: localize('verifyAcrPull', 'Verify "{0}" permissions on container registry "{1}"', 'acrPull', context.registry?.name),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('verifyAcrPullSuccess', 'Successfully verified "{0}" on container registry "{1}" for container app "{2}"', 'acrPull', context.registry?.name, context.containerApp?.name)
+            message: localize('verifyAcrPullSuccess', 'Successfully verified "{0}" permissions on container registry "{1}" for container app "{2}"', 'acrPull', context.registry?.name, context.containerApp?.name)
         };
     }
 
@@ -73,10 +72,10 @@ export class ContainerRegistryEnableAcrPullStep extends ExecuteActivityOutputSte
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryEnableAcrPullFailItem', activityFailContext]),
-                label: localize('verifyAcrPull', 'Verify "{0}" on container registry "{1}" for container app "{2}"', 'acrPull', context.registry?.name, context.containerApp?.name),
+                label: localize('verifyAcrPull', 'Verify "{0}" permissions on container registry "{1}"', 'acrPull', context.registry?.name),
                 iconPath: activityFailIcon
             }),
-            message: localize('verifyAcrPullFail', 'Could not verify "{0}" on container registry "{1}" for container app "{2}"', 'acrPull', context.registry?.name, context.containerApp?.name)
+            message: localize('verifyAcrPullFail', 'Could not verify "{0}" permissions on container registry "{1}" for container app "{2}"', 'acrPull', context.registry?.name, context.containerApp?.name)
         };
     }
 }

@@ -11,7 +11,7 @@ import { ext } from "../../../extensionVariables";
 import { createActivityChildContext, createActivityContext } from "../../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
-import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
+import { EmptyContainerAppCreateStep } from "../../createContainerApp/EmptyContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
@@ -169,8 +169,6 @@ export async function deployWorkspaceProjectInternal(
 
         const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
 
-        executeSteps.push(new ContainerAppUpdateStep());
-
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['useExistingContainerAppInfoItem', activitySuccessContext]),
@@ -188,10 +186,11 @@ export async function deployWorkspaceProjectInternal(
         wizardContext.telemetry.properties.existingContainerApp = 'false';
 
         if (!options.suppressContainerAppCreation) {
-            executeSteps.push(new ContainerAppCreateStep());
+            executeSteps.push(new EmptyContainerAppCreateStep());
         }
     }
 
+    executeSteps.push(new ContainerAppUpdateStep());
     promptSteps.push(
         new ImageSourceListStep(),
         new IngressPromptStep(),
