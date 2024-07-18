@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { type AuthorizationManagementClient } from "@azure/arm-authorization";
 import { type ContainerRegistryManagementClient, type Registry } from '@azure/arm-containerregistry';
 import { type OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
@@ -33,4 +34,8 @@ export function createContainerRegistryClient(context: AzExtClientContext, regis
 
 export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
     return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
+}
+
+export async function createAuthorizationManagementClient(context: AzExtClientContext): Promise<AuthorizationManagementClient> {
+    return createAzureClient(context, ((await import('@azure/arm-authorization')).AuthorizationManagementClient));
 }

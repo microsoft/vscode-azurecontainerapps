@@ -15,7 +15,7 @@ import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
-    public priority: number = 480;
+    public priority: number = 500;
 
     protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
@@ -38,7 +38,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
         progress.report({ message: updating });
 
         await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
-            await updateContainerApp(context, context.subscription, containerAppEnvelope);
+            context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
             ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         });
     }

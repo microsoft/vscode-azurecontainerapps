@@ -24,10 +24,11 @@ const quickStart = {
 }
 
 /**
- * Create an empty base container app which holds the Microsoft quick start image
+ * Initialize an empty container app which holds the Microsoft quick start image.
+ * An empty container app is used as a precursor step for securely configuring connection to a container registry.
  */
 export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppContext> {
-    public priority: number = 620;
+    public priority: number = 300;
 
     protected async executeCore(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
@@ -47,7 +48,7 @@ export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<C
             ],
         } : undefined;
 
-        const creating: string = localize('creatingEmptyContainerApp', 'Creating empty container app...');
+        const creating: string = localize('initializingEmptyContainerApp', 'Initializing empty container app...');
         progress.report({ message: creating });
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await client.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
@@ -55,8 +56,6 @@ export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<C
             managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
             configuration: {
                 ingress,
-                secrets: context.secrets,
-                registries: context.registries,
                 activeRevisionsMode: KnownActiveRevisionsMode.Single,
             },
             template: {
@@ -64,7 +63,6 @@ export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<C
                     {
                         image: quickStart.image,
                         name: getContainerNameForImage(quickStart.image),
-                        env: context.environmentVariables
                     }
                 ]
             },
@@ -82,10 +80,10 @@ export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<C
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['emptyContainerAppCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('createEmptyContainerApp', 'Create empty container app "{0}"', context.newContainerAppName),
+                label: localize('initializeEmptyContainerApp', 'Initialize empty container app "{0}"', context.newContainerAppName),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('createEmptyContainerAppSuccess', 'Created empty container app "{0}".', context.newContainerAppName)
+            message: localize('initializeEmptyContainerAppSuccess', 'Initialized empty container app "{0}".', context.newContainerAppName)
         };
     }
 
@@ -93,10 +91,10 @@ export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<C
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['emptyContainerAppCreateStepFailItem', activityFailContext]),
-                label: localize('createEmptyContainerApp', 'Create empty container app "{0}"', context.newContainerAppName),
+                label: localize('initializeEmptyContainerApp', 'Initialize empty container app "{0}"', context.newContainerAppName),
                 iconPath: activityFailIcon
             }),
-            message: localize('createEmptyContainerAppFail', 'Failed to create empty container app "{0}".', context.newContainerAppName)
+            message: localize('initializeEmptyContainerAppFail', 'Failed to initialize empty container app "{0}".', context.newContainerAppName)
         };
     }
 }
