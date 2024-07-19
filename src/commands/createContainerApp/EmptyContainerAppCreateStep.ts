@@ -28,7 +28,7 @@ const quickStart = {
  * An empty container app is used as a precursor step for securely configuring connection to a container registry.
  */
 export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppContext> {
-    public priority: number = 300;
+    public priority: number = 420;
 
     protected async executeCore(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
@@ -65,9 +65,6 @@ export class EmptyContainerAppCreateStep extends ExecuteActivityOutputStepBase<C
                         name: getContainerNameForImage(quickStart.image),
                     }
                 ]
-            },
-            identity: {
-                type: 'SystemAssigned',
             },
         }));
     }

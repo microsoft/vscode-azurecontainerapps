@@ -14,8 +14,8 @@ import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
-export class ContainerAppUpdateStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
-    public priority: number = 500;
+export class ContainerAppDeployStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
+    public priority: number = 650;
 
     protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
@@ -34,10 +34,10 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
             name: getContainerNameForImage(nonNullProp(context, 'image')),
         });
 
-        const updating = localize('updatingContainerApp', 'Updating container app...', containerApp.name);
+        const updating = localize('deployingContainerApp', 'Deploying container app...', containerApp.name);
         progress.report({ message: updating });
 
-        await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
+        await ext.state.runWithTemporaryDescription(containerApp.id, localize('deploying', 'Deploying...'), async () => {
             context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
             ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         });
@@ -50,22 +50,22 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
     protected createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppUpdateStepSuccessItem', activitySuccessContext]),
-                label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
+                contextValue: createActivityChildContext(['containerAppDeployStepSuccessItem', activitySuccessContext]),
+                label: localize('deployContainerAppLabel', 'Deploy to container app "{0}"', context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name)
+            message: localize('deployContainerAppSuccess', 'Deployed to container app "{0}".', context.containerApp?.name)
         };
     }
 
     protected createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppUpdateStepFailItem', activityFailContext]),
-                label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
+                contextValue: createActivityChildContext(['containerAppDeployStepFailItem', activityFailContext]),
+                label: localize('deployContainerAppLabel', 'Deployed to container app "{0}"', context.containerApp?.name),
                 iconPath: activityFailIcon
             }),
-            message: localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name)
+            message: localize('deployContainerAppFail', 'Failed to deploy to container app "{0}".', context.containerApp?.name)
         };
     }
 }

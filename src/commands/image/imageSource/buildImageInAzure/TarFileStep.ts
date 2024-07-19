@@ -11,7 +11,7 @@ import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureIma
 const idPrecision = 6;
 
 export class TarFileStep extends AzureWizardExecuteStep<BuildImageInAzureImageSourceContext> {
-    public priority: number = 420;
+    public priority: number = 510;
 
     public async execute(context: BuildImageInAzureImageSourceContext): Promise<void> {
         const id: number = Math.floor(Math.random() * Math.pow(10, idPrecision));

@@ -17,7 +17,7 @@ import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryIma
 const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
 
 export class ContainerRegistryEnableAcrPullStep extends ExecuteActivityOutputStepBase<ContainerRegistryImageSourceContext> {
-    public priority: number = 490; // Todo: Verify priority
+    public priority: number = 560;
 
     protected async executeCore(context: ContainerRegistryImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const registryId: string = nonNullValueAndProp(context.registry, 'id');
@@ -25,7 +25,7 @@ export class ContainerRegistryEnableAcrPullStep extends ExecuteActivityOutputSte
         progress.report({ message: localize('verifyingRegistryPermissions', 'Verifying registry permissions...') });
 
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
-        if (await this.doesAcrPullAssignmentExist(client, registryId, containerAppIdentity)) {
+        if (await this.hasAcrPullAssignment(client, registryId, containerAppIdentity)) {
             return;
         }
 
@@ -42,7 +42,7 @@ export class ContainerRegistryEnableAcrPullStep extends ExecuteActivityOutputSte
         );
     }
 
-    private async doesAcrPullAssignmentExist(client: AuthorizationManagementClient, registryId: string, containerAppIdentity: string): Promise<boolean> {
+    private async hasAcrPullAssignment(client: AuthorizationManagementClient, registryId: string, containerAppIdentity: string): Promise<boolean> {
         const roleAssignments: RoleAssignment[] = await uiUtils.listAllIterator(client.roleAssignments.listForScope(
             registryId,
             {

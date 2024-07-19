@@ -15,7 +15,7 @@ import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureIma
 import { buildImageInAzure } from "./buildImageInAzure";
 
 export class BuildImageStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
-    public priority: number = 450;
+    public priority: number = 540;
     protected acrBuildError: AcrBuildResults;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext): Promise<void> {

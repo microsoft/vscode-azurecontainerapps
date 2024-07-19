@@ -14,9 +14,10 @@ import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
-import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
+import { ContainerAppDeployStep } from "../image/imageSource/ContainerAppDeployStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
+import { SystemAssignedIdentityEnableStep } from "../SystemAssignedIdentityEnableStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 import { EmptyContainerAppCreateStep } from "./EmptyContainerAppCreateStep";
@@ -50,7 +51,8 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     const executeSteps: AzureWizardExecuteStep<CreateContainerAppContext>[] = [
         getVerifyProvidersStep<CreateContainerAppContext>(),
         new EmptyContainerAppCreateStep(),
-        new ContainerAppUpdateStep(),
+        new SystemAssignedIdentityEnableStep(),
+        new ContainerAppDeployStep(),
     ];
 
     if (isAzdExtensionInstalled()) {

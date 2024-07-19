@@ -17,6 +17,7 @@ import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { SystemAssignedIdentityEnableStep } from "../../SystemAssignedIdentityEnableStep";
 import { type ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
@@ -62,6 +63,7 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
 
     const executeSteps: AzureWizardExecuteStep<UpdateImageContext>[] = [
         getVerifyProvidersStep<UpdateImageContext>(),
+        new SystemAssignedIdentityEnableStep(),
         new UpdateRegistryAndSecretsStep(),
         new UpdateImageDraftStep(item)
     ];

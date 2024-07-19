@@ -15,7 +15,7 @@ import { localize } from "../../../../utils/localize";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
-    public priority: number = 440;
+    public priority: number = 530;
 
     protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         // Need to keep the additional try wrapper here to execute finally, then we can catch any error that percolates up and display its output

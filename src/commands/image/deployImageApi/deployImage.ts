@@ -9,8 +9,9 @@ import { createActivityContext } from "../../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
+import { SystemAssignedIdentityEnableStep } from "../../SystemAssignedIdentityEnableStep";
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
-import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
+import { ContainerAppDeployStep } from "../imageSource/ContainerAppDeployStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { type ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import { RegistryEnableAdminUserStep } from "../imageSource/containerRegistry/acr/RegistryEnableAdminUserStep";
@@ -30,14 +31,16 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const promptSteps: AzureWizardPromptStep<DeployImageApiContext>[] = [
+        new ContainerAppOverwriteConfirmStep(),
+        // Todo: Remove admin user enable step in favor of managed identity
         new RegistryEnableAdminUserStep(),
         new ImageSourceListStep(),
-        new ContainerAppOverwriteConfirmStep(),
     ];
 
     const executeSteps: AzureWizardExecuteStep<DeployImageApiContext>[] = [
         getVerifyProvidersStep<DeployImageApiContext>(),
-        new ContainerAppUpdateStep()
+        new SystemAssignedIdentityEnableStep(),
+        new ContainerAppDeployStep(),
     ];
 
     const wizard: AzureWizard<DeployImageApiContext> = new AzureWizard(wizardContext, {

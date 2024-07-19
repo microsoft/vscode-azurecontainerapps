@@ -26,6 +26,8 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 sku: { name: nonNullProp(context, 'newRegistrySku') },
+                // Todo: Remove admin flag
+                // Do we need to add logic prompting to remove existing admin user enabled flags?
                 adminUserEnabled: true
             }
         );

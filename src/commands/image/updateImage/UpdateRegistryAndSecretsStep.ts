@@ -14,7 +14,7 @@ import { updateContainerApp } from "../../updateContainerApp";
 import { type UpdateImageContext } from "./updateImage";
 
 export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {
-    public priority: number = 480;
+    public priority: number = 570;
 
     public async execute(context: UpdateImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
@@ -37,7 +37,6 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
         containerAppEnvelope.configuration.registries = context.registries;
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
-
         ext.outputChannel.appendLog(localize('updatedSecrets', 'Updated container app "{0}" with new registry secrets.', containerApp.name));
     }
 
@@ -52,8 +51,8 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
     }
 
     private areRegistriesDeepEqual(originalRegistries: RegistryCredentials[] | undefined, newRegistries: RegistryCredentials[] | undefined): boolean {
-        originalRegistries?.sort((a, b) => sortAlphabeticallyByKey(a, b, 'passwordSecretRef'));
-        newRegistries?.sort((a, b) => sortAlphabeticallyByKey(a, b, 'passwordSecretRef'));
+        originalRegistries?.sort((a, b) => sortAlphabeticallyByKey(a, b, 'server'));
+        newRegistries?.sort((a, b) => sortAlphabeticallyByKey(a, b, 'server'));
         return deepEqual(originalRegistries, newRegistries);
     }
 }
