@@ -5,11 +5,11 @@
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
 import { browseContainerAppNode } from './browseContainerApp';
-import { createContainerApp } from './createContainerApp/createContainerApp';
+import { createContainerApp, createContainerAppCommandId } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
-import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
+import { deployWorkspaceProject, deployWorkspaceProjectCommandId } from './deployWorkspaceProject/deployWorkspaceProject';
 import { editContainerApp } from './editContainerApp';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -52,7 +52,7 @@ export function registerCommands(): void {
 
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
-    registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
+    registerCommandWithTreeNodeUnwrapping(createContainerAppCommandId, createContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerAppFromWorkspace', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
@@ -62,7 +62,7 @@ export function registerCommands(): void {
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
+    registerCommandWithTreeNodeUnwrapping(deployWorkspaceProjectCommandId, deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProjectToContainerApp', deployWorkspaceProject);
 
     // github

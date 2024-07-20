@@ -21,21 +21,26 @@ import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
-export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
+export const createContainerAppCommandId: string = 'containerApps.createContainerApp';
+
+export async function createContainerApp(context: IActionContext, item?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
     // If an incompatible tree item is passed, treat it as if no item was passed
-    if (node && !ManagedEnvironmentItem.isManagedEnvironmentItem(node)) {
-        node = undefined;
+    if (item && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+        item = undefined;
     }
 
-    node ??= await pickEnvironment(context);
+    item ??= await pickEnvironment(context);
 
     const wizardContext: CreateContainerAppContext = {
         ...context,
-        ...createSubscriptionContext(node.subscription),
+        ...createSubscriptionContext(item.subscription),
         ...await createActivityContext(),
-        subscription: node.subscription,
-        managedEnvironmentId: node.managedEnvironment.id,
-        alwaysPromptIngress: true
+        issuerCommandId: createContainerAppCommandId,
+        subscription: item.subscription,
+        managedEnvironmentItem: item,
+        managedEnvironmentId: item.managedEnvironment.id,
+        alwaysPromptIngress: true,
+        showQuickStartImage: true,
     };
 
     const title: string = localize('createContainerApp', 'Create container app');
@@ -56,11 +61,13 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     }
 
     // Use the same resource group and location as the parent resource (managed environment)
-    const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
+    const resourceGroupName: string = nonNullValueAndProp(item.resource, 'resourceGroup');
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
     wizardContext.resourceGroup = nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName));
 
-    await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
+    const locationName: string = nonNullProp(item.resource, 'location');
+    await LocationListStep.setLocation(wizardContext, locationName);
+    ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', locationName));
 
     const wizard: AzureWizard<CreateContainerAppContext> = new AzureWizard(wizardContext, {
         title,
@@ -69,14 +76,11 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         showLoadingPrompt: true
     });
 
-    // we want to add the quick start image _only_ for the create scenairo
-    wizardContext.showQuickStartImage = true;
-
     await wizard.prompt();
     const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
 
     await ext.state.showCreatingChild(
-        node.managedEnvironment.id,
+        item.managedEnvironment.id,
         localize('creating', 'Creating "{0}"...', newContainerAppName),
         async () => {
             wizardContext.activityTitle = localize('createNamedContainerApp', 'Create container app "{0}"', newContainerAppName);
@@ -88,5 +92,5 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         void showContainerAppNotification(createdContainerApp);
     }
 
-    return new ContainerAppItem(node.subscription, createdContainerApp);
+    return new ContainerAppItem(item.subscription, createdContainerApp);
 }

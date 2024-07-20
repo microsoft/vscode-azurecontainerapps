@@ -11,4 +11,6 @@ import { type ContainerAppModel } from "../tree/ContainerAppItem";
 export interface IContainerAppContext extends ISubscriptionActionContext {
     subscription: AzureSubscription;
     containerApp?: ContainerAppModel;
+
+    issuerCommandId?: string;
 }
