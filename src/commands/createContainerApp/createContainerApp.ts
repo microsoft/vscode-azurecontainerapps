@@ -64,9 +64,7 @@ export async function createContainerApp(context: IActionContext, item?: Managed
     const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
     wizardContext.resourceGroup = nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName));
 
-    const locationName: string = nonNullProp(item.resource, 'location');
-    await LocationListStep.setLocation(wizardContext, locationName);
-    ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', locationName));
+    await LocationListStep.setLocation(wizardContext, nonNullProp(item.resource, 'location'));
 
     const wizard: AzureWizard<CreateContainerAppContext> = new AzureWizard(wizardContext, {
         title,
