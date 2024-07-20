@@ -8,7 +8,6 @@ import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureu
 import { type ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
 import { type SetTelemetryProps } from '../../telemetry/SetTelemetryProps';
 import { type CreateContainerAppTelemetryProps as TelemetryProps } from '../../telemetry/commandTelemetryProps';
-import { type ManagedEnvironmentItem } from '../../tree/ManagedEnvironmentItem';
 import { type IContainerAppContext } from '../IContainerAppContext';
 import { type ImageSourceBaseContext } from '../image/imageSource/ImageSourceContext';
 import { type IngressBaseContext } from '../ingress/IngressContext';
@@ -18,8 +17,6 @@ export interface CreateContainerAppBaseContext extends IResourceGroupWizardConte
 
     managedEnvironmentId?: string;
     managedEnvironment?: ManagedEnvironment;
-
-    managedEnvironmentItem?: ManagedEnvironmentItem;
 }
 
 export type CreateContainerAppContext = CreateContainerAppBaseContext & SetTelemetryProps<TelemetryProps>;

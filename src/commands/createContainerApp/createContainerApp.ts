@@ -37,7 +37,6 @@ export async function createContainerApp(context: IActionContext, item?: Managed
         ...await createActivityContext(),
         issuerCommandId: createContainerAppCommandId,
         subscription: item.subscription,
-        managedEnvironmentItem: item,
         managedEnvironmentId: item.managedEnvironment.id,
         alwaysPromptIngress: true,
         showQuickStartImage: true,

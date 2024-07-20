@@ -3,14 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, callWithTelemetryAndErrorHandling, createSubscriptionContext, UserCancelledError, type AzureWizardExecuteStep, type IActionContext, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, UserCancelledError, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { env, UIKind, workspace } from "vscode";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
+import { deployWorkspaceProjectApi } from "../../api/deployWorkspaceProjectApi";
+import type * as api from "../../api/vscode-azurecontainerapps.api";
 import { type CreateContainerAppContext } from "../../createContainerApp/CreateContainerAppContext";
 import { createContainerAppCommandId } from "../../createContainerApp/createContainerApp";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
-import { deployWorkspaceProject } from "../../deployWorkspaceProject/deployWorkspaceProject";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
@@ -77,7 +78,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 break;
             case ImageSource.RemoteAcrBuild:
                 if (context.issuerCommandId === createContainerAppCommandId) {
-                    callDeployWorkspaceProject(context);
+                    await callDeployWorkspaceProjectApi(context);
                 }
                 promptSteps.push(new RootFolderStep(), new DockerfileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
                 executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
@@ -91,18 +92,14 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
     }
 }
 
-function callDeployWorkspaceProject(containerAppContext: CreateContainerAppContext): void {
-    void callWithTelemetryAndErrorHandling(`${createContainerAppCommandId}.deployWorkspaceProject`, (context: IActionContext) => {
-        void deployWorkspaceProject(
-            Object.assign(context,
-                {
-                    ...createSubscriptionContext(containerAppContext.subscription),
-                    subscription: containerAppContext.subscription,
-                    newContainerAppName: containerAppContext.newContainerAppName,
-                }
-            ),
-            containerAppContext.managedEnvironmentItem,
-        );
-    });
+async function callDeployWorkspaceProjectApi(context: CreateContainerAppContext): Promise<void> {
+    const apiOptions: api.DeployWorkspaceProjectOptionsContract = {
+        environmentId: context.managedEnvironmentId,
+        newContainerAppName: context.newContainerAppName,
+        suppressConfirmation: true,
+        suppressActivity: false,
+    };
+
+    void deployWorkspaceProjectApi(apiOptions);
     throw new UserCancelledError();
 }

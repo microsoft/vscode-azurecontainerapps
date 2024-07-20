@@ -11,6 +11,7 @@ export interface AzureContainerAppsExtensionApi {
 export interface DeployWorkspaceProjectOptionsContract {
     // Existing resources
     subscriptionId?: string;
+    environmentId?: string;
     resourceGroupId?: string;
 
     // Workspace deployment paths (absolute fs path)
@@ -18,10 +19,13 @@ export interface DeployWorkspaceProjectOptionsContract {
     srcPath?: string;
     dockerfilePath?: string;
 
+    newContainerAppName?: string;
+
     // Options
     suppressConfirmation?: boolean;  // Suppress any [resource] confirmation prompts
     suppressContainerAppCreation?: boolean;
     shouldSaveDeploySettings?: boolean;
+    suppressActivity?: boolean;  // Defaults to true
 }
 
 export interface DeployWorkspaceProjectResults {

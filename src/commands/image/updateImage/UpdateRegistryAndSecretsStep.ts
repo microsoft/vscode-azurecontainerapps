@@ -28,16 +28,13 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
             context.telemetry.properties.skippedRegistryCredentialUpdate = 'true';
             return;
         }
-
         context.telemetry.properties.skippedRegistryCredentialUpdate = 'false';
 
         progress.report({ message: localize('configuringSecrets', 'Configuring registry secrets...') });
-
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registries;
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
-
         ext.outputChannel.appendLog(localize('updatedSecrets', 'Updated container app "{0}" with new registry secrets.', containerApp.name));
     }
 
