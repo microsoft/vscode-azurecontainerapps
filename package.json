@@ -797,7 +797,7 @@
         "semver": "^7.6.2",
         "tar": "^7.4.0",
         "vscode-nls": "^5.2.0",
-        "vscode-uri": "^3.0.2"
+        "vscode-uri": "^3.0.8"
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
