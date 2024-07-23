@@ -11,7 +11,7 @@ import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activity/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
-import { type IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import { type CreateManagedEnvironmentContext } from "./CreateManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
@@ -19,7 +19,7 @@ import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
 export async function createManagedEnvironment(context: IActionContext, node?: { subscription: AzureSubscription }): Promise<void> {
     const subscription = node?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
 
-    const wizardContext: IManagedEnvironmentContext = {
+    const wizardContext: CreateManagedEnvironmentContext = {
         ...context,
         ...createSubscriptionContext(subscription),
         ...await createActivityContext(),
@@ -27,20 +27,21 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     };
 
     const title: string = localize('createManagedEnv', 'Create container apps environment');
-    const promptSteps: AzureWizardPromptStep<IManagedEnvironmentContext>[] = [];
-    const executeSteps: AzureWizardExecuteStep<IManagedEnvironmentContext>[] = [];
+    const promptSteps: AzureWizardPromptStep<CreateManagedEnvironmentContext>[] = [];
+    const executeSteps: AzureWizardExecuteStep<CreateManagedEnvironmentContext>[] = [];
 
     promptSteps.push(new ManagedEnvironmentNameStep());
     executeSteps.push(
-        getVerifyProvidersStep<IManagedEnvironmentContext>(),
+        getVerifyProvidersStep<CreateManagedEnvironmentContext>(),
         new ResourceGroupCreateStep(),
         new LogAnalyticsCreateStep(),
-        new ManagedEnvironmentCreateStep()
+        new ManagedEnvironmentCreateStep(),
     );
+
     LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
     LocationListStep.addStep(wizardContext, promptSteps);
 
-    const wizard: AzureWizard<IManagedEnvironmentContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<CreateManagedEnvironmentContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps,

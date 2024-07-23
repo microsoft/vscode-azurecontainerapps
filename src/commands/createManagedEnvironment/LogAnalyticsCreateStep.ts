@@ -11,12 +11,12 @@ import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
-import { type IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import { type CreateManagedEnvironmentContext } from "./CreateManagedEnvironmentContext";
 
-export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManagedEnvironmentContext> {
+export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<CreateManagedEnvironmentContext> {
     public priority: number = 220;
 
-    protected async executeCore(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: CreateManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);
         const resourceGroup = nonNullProp(context, 'resourceGroup');
         const workspaceName = context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName');
@@ -28,11 +28,11 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
             nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
     }
 
-    public shouldExecute(context: IManagedEnvironmentContext): boolean {
+    public shouldExecute(context: CreateManagedEnvironmentContext): boolean {
         return !context.logAnalyticsWorkspace;
     }
 
-    protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
@@ -43,7 +43,7 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<IManag
         };
     }
 
-    protected createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createFailOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['logAnalyticsCreateStepFailItem', activityFailContext]),

@@ -12,7 +12,7 @@ import { createContainerRegistryManagementClient } from "../../../../../utils/az
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
 import { type CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
-import { type IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
+import { type CreateManagedEnvironmentContext } from "../../../../createManagedEnvironment/CreateManagedEnvironmentContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
@@ -129,7 +129,7 @@ async function tryConfigureResourceGroupForRegistry(
     promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
-    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<IManagedEnvironmentContext> & CreateAcrContext;
+    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<CreateManagedEnvironmentContext> & CreateAcrContext;
     if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
         return;
     }

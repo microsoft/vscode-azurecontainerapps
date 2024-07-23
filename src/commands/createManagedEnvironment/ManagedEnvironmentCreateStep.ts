@@ -13,12 +13,12 @@ import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../..
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
-import { type IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import { type CreateManagedEnvironmentContext } from "./CreateManagedEnvironmentContext";
 
-export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<IManagedEnvironmentContext> {
+export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<CreateManagedEnvironmentContext> {
     public priority: number = 250;
 
-    protected async executeCore(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: CreateManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const opClient = await createOperationalInsightsManagementClient(context);
 
@@ -61,11 +61,11 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
         }
     }
 
-    public shouldExecute(context: IManagedEnvironmentContext): boolean {
+    public shouldExecute(context: CreateManagedEnvironmentContext): boolean {
         return !context.managedEnvironment;
     }
 
-    protected createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['managedEnvironmentCreateStepSuccessItem', activitySuccessContext]),
@@ -76,7 +76,7 @@ export class ManagedEnvironmentCreateStep extends ExecuteActivityOutputStepBase<
         };
     }
 
-    protected createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createFailOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['managedEnvironmentCreateStepFailItem', activityFailContext]),
