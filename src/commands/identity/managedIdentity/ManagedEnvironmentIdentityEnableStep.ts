@@ -7,14 +7,14 @@ import { KnownManagedServiceIdentityType, type ContainerAppsAPIClient, type Mana
 import { parseAzureResourceId, type ParsedAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericParentTreeItem, GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
-import { createContainerAppsAPIClient } from "../../utils/azureClients";
-import { localize } from "../../utils/localize";
-import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
+import { localize } from "../../../utils/localize";
+import { type ManagedEnvironmentContext } from "../../ManagedEnvironmentContext";
 
 export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputStepBase<ManagedEnvironmentContext> {
-    public priority: number = 260; // Todo: Verify the priority level is okay
+    public priority: number = 350; // Todo: Verify the priority level is okay
 
     protected async executeCore(context: ManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
@@ -33,7 +33,7 @@ export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputS
     }
 
     public shouldExecute(context: ManagedEnvironmentContext): boolean {
-        return !!context.managedEnvironment;
+        return !!context.managedEnvironment && !context.managedEnvironment.identity?.principalId;
     }
 
     protected createSuccessOutput(context: ManagedEnvironmentContext): ExecuteActivityOutput {

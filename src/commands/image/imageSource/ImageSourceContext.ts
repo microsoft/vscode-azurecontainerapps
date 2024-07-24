@@ -9,8 +9,9 @@ import { type ImageSource } from "../../../constants";
 import { type ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type IContainerAppContext } from "../../IContainerAppContext";
+import { type ManagedEnvironmentContext } from "../../ManagedEnvironmentContext";
 
-export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteActivityContext {
+export interface ImageSourceBaseContext extends ManagedEnvironmentContext, IContainerAppContext, ExecuteActivityContext {
     // ImageSourceListStep
     imageSource?: ImageSource;
     showQuickStartImage?: boolean;

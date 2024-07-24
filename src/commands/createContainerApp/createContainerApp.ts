@@ -34,7 +34,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         ...createSubscriptionContext(node.subscription),
         ...await createActivityContext(),
         subscription: node.subscription,
-        managedEnvironmentId: node.managedEnvironment.id,
+        managedEnvironment: node.managedEnvironment,
         alwaysPromptIngress: true
     };
 

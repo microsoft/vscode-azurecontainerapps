@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { type RegistryCredentials } from "@azure/arm-appcontainers";
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
@@ -13,9 +14,10 @@ import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
 import { type CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
 import { type CreateManagedEnvironmentContext } from "../../../../createManagedEnvironment/CreateManagedEnvironmentContext";
+import { ManagedEnvironmentIdentityEnableStep } from "../../../../identity/managedIdentity/ManagedEnvironmentIdentityEnableStep";
+import { ContainerRegistryAcrPullEnableStep } from "../../../../identity/roleAssignment/containerRegistry/ContainerRegistryAcrPullEnableStep";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
-import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
 import { type CreateAcrContext } from "./createAcr/CreateAcrContext";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
@@ -38,35 +40,37 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
     }
 
     public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
-        if (!context.registry) {
-            const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [
-                new RegistryNameStep(),
-                new SkuListStep()
-            ];
+        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [
+            new RegistryNameStep(),
+            new SkuListStep()
+        ];
 
-            const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [
-                new RegistryCreateStep()
-            ];
+        const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [
+            new RegistryCreateStep()
+        ];
 
-            await tryConfigureResourceGroupForRegistry(context, promptSteps);
+        await tryConfigureResourceGroupForRegistry(context, promptSteps);
 
-            if (context.resourceGroup) {
-                await LocationListStep.setLocation(context, context.resourceGroup.location);
-            } else {
-                LocationListStep.addStep(context, promptSteps);
-            }
-
-            return {
-                promptSteps,
-                executeSteps
-            };
+        if (context.resourceGroup) {
+            await LocationListStep.setLocation(context, context.resourceGroup.location);
+        } else {
+            LocationListStep.addStep(context, promptSteps);
         }
 
-        if (context.registry && !context.registry?.adminUserEnabled) {
-            return { promptSteps: [new RegistryEnableAdminUserStep()] }
+        const existingRegistryCredentials: RegistryCredentials | undefined = context.containerApp?.configuration?.registries?.find(r => r.server && r.server === context.registry?.loginServer);
+        if (existingRegistryCredentials?.identity) {
+            // The registry already has an established connection via identity, no further setup required
+        } else {
+            executeSteps.push(
+                new ManagedEnvironmentIdentityEnableStep(),
+                new ContainerRegistryAcrPullEnableStep()
+            );
         }
 
-        return undefined;
+        return {
+            promptSteps,
+            executeSteps
+        };
     }
 
     public async getPicks(context: ContainerRegistryImageSourceContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
