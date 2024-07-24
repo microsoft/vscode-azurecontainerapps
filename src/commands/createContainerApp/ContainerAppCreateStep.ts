@@ -47,7 +47,14 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
             configuration: {
                 ingress,
                 secrets: context.secrets,
-                registries: context.registries,
+                registries: [
+                    {
+                        "server": "mwfenv1da883c.azurecr.io",
+                        "username": "",
+                        "passwordSecretRef": "",
+                        "identity": "system"
+                    }
+                ],
                 activeRevisionsMode: KnownActiveRevisionsMode.Single,
             },
             template: {
@@ -57,8 +64,14 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
                         name: getContainerNameForImage(nonNullProp(context, 'image')),
                         env: context.environmentVariables
                     }
-                ]
-            }
+                ],
+            },
+            // Even when managed environment system assigned identity is enabled for acrPull, creation times out.
+            // Trying this to see if it helps trick the container app into creating...
+            // Verdict: It does not
+            // identity: {
+            //     type: "SystemAssigned"
+            // }
         }));
     }
 
