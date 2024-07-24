@@ -13,12 +13,13 @@ import { createAuthorizationManagementClient } from "../../../../utils/azureClie
 import { localize } from "../../../../utils/localize";
 import { type ContainerRegistryRoleAssignmentContext } from "./ContainerRegistryRoleAssignmentContext";
 
-const acrPullRoleId: string = 'f951dda-4ed3-4680-a7ca-43fe172d538d';
+const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
 
 export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputStepBase<ContainerRegistryRoleAssignmentContext> {
-    public priority: number = 640; // Todo: Verify priority
+    public priority: number = 370; // Todo: Verify priority
 
     protected async executeCore(context: ContainerRegistryRoleAssignmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        return
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
         const roleCreateParams: RoleAssignmentCreateParameters = {
             description: 'acr pull',

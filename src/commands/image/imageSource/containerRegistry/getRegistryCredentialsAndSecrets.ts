@@ -16,24 +16,29 @@ interface RegistryCredentialsAndSecrets {
 
 export async function getAcrCredentialsAndSecrets(context: ContainerRegistryImageSourceContext, containerAppSettings?: RegistryCredentialsAndSecrets): Promise<RegistryCredentialsAndSecrets> {
     const registry = nonNullProp(context, 'registry');
-    const { username, password } = await listCredentialsFromRegistry(context, registry);
-    const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`;
+    const { password } = await listCredentialsFromRegistry(context, registry);
+    const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`; // The old naming convention that was used before we migrated to using managed identities
 
-    // Remove duplicate registries
-    const registries: RegistryCredentials[] = containerAppSettings?.registries?.filter(r => r.server !== registry.loginServer) ?? [];
-    registries?.push(
-        {
-            identity: '', // The server populates an `undefined` identity as ''.  Use the same convention so we can do deep copy comparisons later.
-            server: registry.loginServer,
-            username: username,
-            passwordSecretRef: passwordName
-        }
-    );
+    let registries: RegistryCredentials[];
+    const existingRegistry: RegistryCredentials | undefined = containerAppSettings?.registries?.find(r => r.server && r.server === registry.loginServer);
 
-    // Remove duplicate secrets
+    if (existingRegistry?.identity) {
+        // If registry credential is already set up with a managed identity, leave as-is
+        registries = containerAppSettings?.registries as RegistryCredentials[];
+    } else {
+        registries = containerAppSettings?.registries?.filter(r => r.server !== registry.loginServer) ?? [];
+        registries?.push(
+            {
+                identity: 'system',
+                server: registry.loginServer,
+                username: '',
+                passwordSecretRef: ''
+            }
+        );
+    }
+
+    // Remove any associated secrets registry credentials (should use managed identity instead)
     const secrets: Secret[] = containerAppSettings?.secrets?.filter(s => s.name !== passwordName) ?? [];
-    secrets?.push({ name: passwordName, value: password.value });
-
     return { registries, secrets };
 }
 

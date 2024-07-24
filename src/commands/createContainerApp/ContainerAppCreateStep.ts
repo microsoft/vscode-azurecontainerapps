@@ -58,7 +58,10 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
                         env: context.environmentVariables
                     }
                 ]
-            }
+            },
+            // identity: {
+            //     type: KnownManagedServiceIdentityType.SystemAssigned,
+            // }
         }));
     }
 

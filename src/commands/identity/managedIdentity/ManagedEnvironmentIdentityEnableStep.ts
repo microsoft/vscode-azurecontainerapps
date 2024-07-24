@@ -14,7 +14,7 @@ import { localize } from "../../../utils/localize";
 import { type ManagedEnvironmentContext } from "../../ManagedEnvironmentContext";
 
 export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputStepBase<ManagedEnvironmentContext> {
-    public priority: number = 350; // Todo: Verify the priority level is okay
+    public priority: number = 360; // Todo: Verify the priority level is okay
 
     protected async executeCore(context: ManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);

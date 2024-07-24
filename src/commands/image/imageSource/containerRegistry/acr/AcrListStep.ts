@@ -40,21 +40,23 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
     }
 
     public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [
-            new RegistryNameStep(),
-            new SkuListStep()
-        ];
+        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [];
 
-        const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [
-            new RegistryCreateStep()
-        ];
+        if (!context.registry) {
+            promptSteps.push(
+                new RegistryNameStep(),
+                new SkuListStep()
+            );
+            executeSteps.push(new RegistryCreateStep());
 
-        await tryConfigureResourceGroupForRegistry(context, promptSteps);
+            await tryConfigureResourceGroupForRegistry(context, promptSteps);
 
-        if (context.resourceGroup) {
-            await LocationListStep.setLocation(context, context.resourceGroup.location);
-        } else {
-            LocationListStep.addStep(context, promptSteps);
+            if (context.resourceGroup) {
+                await LocationListStep.setLocation(context, context.resourceGroup.location);
+            } else {
+                LocationListStep.addStep(context, promptSteps);
+            }
         }
 
         const existingRegistryCredentials: RegistryCredentials | undefined = context.containerApp?.configuration?.registries?.find(r => r.server && r.server === context.registry?.loginServer);

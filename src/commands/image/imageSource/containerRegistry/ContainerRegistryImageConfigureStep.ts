@@ -15,9 +15,7 @@ import { getAcrCredentialsAndSecrets, getThirdPartyCredentialsAndSecrets } from 
 export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<ContainerRegistryImageSourceContext> {
     public priority: number = 470;
 
-    // Configures base image attributes
     public async execute(context: ContainerRegistryImageSourceContext): Promise<void> {
-        // Store any existing secrets and registries
         let secrets: Secret[] | undefined;
         let registries: RegistryCredentials[] | undefined;
 
