@@ -20,6 +20,15 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
+        context.registries = [
+            {
+                "server": "mwfenv1da883c.azurecr.io",
+                "username": "",
+                "passwordSecretRef": "",
+                "identity": "system-environment"
+            }
+        ];
+
         // If the credentials have not changed, we can skip this update
         if (
             this.areSecretsDeepEqual(containerAppEnvelope.configuration.secrets, context.secrets) &&
