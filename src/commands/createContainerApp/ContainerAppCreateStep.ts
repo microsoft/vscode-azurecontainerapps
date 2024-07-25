@@ -59,9 +59,6 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
                     }
                 ]
             },
-            // identity: {
-            //     type: KnownManagedServiceIdentityType.SystemAssigned,
-            // }
         }));
     }
 
