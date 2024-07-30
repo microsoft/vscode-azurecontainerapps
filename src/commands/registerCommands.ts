@@ -15,7 +15,6 @@ import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { deployImageApi } from './image/deployImageApi/deployImageApi';
-import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { openAcrBuildLogs } from './image/openAcrBuildLogs';
 import { updateImage } from './image/updateImage/updateImage';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
@@ -25,6 +24,7 @@ import { toggleIngressVisibility } from './ingress/toggleIngressVisibility/toggl
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
+import { createAcr } from './registries/createAcr/createAcr';
 import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';

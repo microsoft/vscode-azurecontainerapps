@@ -8,7 +8,8 @@ import { UIKind, env, workspace } from "vscode";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
-import { ManagedEnvironmentIdentityEnableStep } from "../../identity/managedIdentity/ManagedEnvironmentIdentityEnableStep";
+import { AcrListStep } from "../../registries/acr/AcrListStep";
+import { ManagedEnvironmentIdentityEnableStep } from "../../registries/credentials/identity/ManagedEnvironmentIdentityEnableStep";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
@@ -22,7 +23,6 @@ import { TarFileStep } from "./buildImageInAzure/TarFileStep";
 import { UploadSourceCodeStep } from "./buildImageInAzure/UploadSourceCodeStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
-import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
 export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContext> {
     public async prompt(context: ImageSourceContext): Promise<void> {

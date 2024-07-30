@@ -10,7 +10,7 @@ import { ext } from "../../../../../extensionVariables";
 import { type SetTelemetryProps } from "../../../../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectTelemetryProps as TelemetryProps } from "../../../../../telemetry/deployWorkspaceProjectTelemetryProps";
 import { localize } from "../../../../../utils/localize";
-import { AcrListStep } from "../../../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { AcrListStep } from "../../../../registries/acr/AcrListStep";
 import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../../settings/dwpSettingUtilsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";

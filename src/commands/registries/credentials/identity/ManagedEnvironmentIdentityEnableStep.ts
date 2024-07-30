@@ -7,11 +7,11 @@ import { KnownManagedServiceIdentityType, type ContainerAppsAPIClient, type Mana
 import { parseAzureResourceId, type ParsedAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericParentTreeItem, GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { createActivityChildContext } from "../../../utils/activity/activityUtils";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createContainerAppsAPIClient } from "../../../utils/azureClients";
-import { localize } from "../../../utils/localize";
-import { type ManagedEnvironmentContext } from "../../ManagedEnvironmentContext";
+import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
+import { localize } from "../../../../utils/localize";
+import { type ManagedEnvironmentContext } from "../../../ManagedEnvironmentContext";
 
 export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputStepBase<ManagedEnvironmentContext> {
     public priority: number = 360; // Todo: Verify the priority level is okay

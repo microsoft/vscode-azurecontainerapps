@@ -3,28 +3,32 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type RegistryCredentials } from "@azure/arm-appcontainers";
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { ImageSource, acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
-import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
-import { parseImageName } from "../../../../../utils/imageNameUtils";
-import { localize } from "../../../../../utils/localize";
-import { type CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
-import { type CreateManagedEnvironmentContext } from "../../../../createManagedEnvironment/CreateManagedEnvironmentContext";
-import { ManagedEnvironmentIdentityEnableStep } from "../../../../identity/managedIdentity/ManagedEnvironmentIdentityEnableStep";
-import { ContainerRegistryAcrPullEnableStep } from "../../../../identity/roleAssignment/containerRegistry/ContainerRegistryAcrPullEnableStep";
-import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
-import { getLatestContainerAppImage } from "../getLatestContainerImage";
-import { type CreateAcrContext } from "./createAcr/CreateAcrContext";
-import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
-import { RegistryNameStep } from "./createAcr/RegistryNameStep";
-import { SkuListStep } from "./createAcr/SkuListStep";
+import { acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../constants";
+import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
+import { parseImageName } from "../../../utils/imageNameUtils";
+import { localize } from "../../../utils/localize";
+import { type CreateContainerAppBaseContext } from "../../createContainerApp/CreateContainerAppContext";
+import { type CreateManagedEnvironmentContext } from "../../createManagedEnvironment/CreateManagedEnvironmentContext";
+import { getLatestContainerAppImage } from "../../image/imageSource/containerRegistry/getLatestContainerImage";
+import { type AcrContext } from "./AcrContext";
+import { RegistryCreateStep } from "./create/RegistryCreateStep";
+import { RegistryNameStep } from "./create/RegistryNameStep";
+import { SkuListStep } from "./create/SkuListStep";
 
-export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
-    public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
+export interface AcrListStepOptions {
+    suppressCreate?: boolean;
+}
+
+export class AcrListStep extends AzureWizardPromptStep<AcrContext> {
+    constructor(private readonly options?: AcrListStepOptions) {
+        super();
+    }
+
+    public async prompt(context: AcrContext): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
 
         let result: Registry | typeof noMatchingResources | undefined;
@@ -35,13 +39,13 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
         context.registry = result;
     }
 
-    public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
+    public shouldPrompt(context: AcrContext): boolean {
         return !context.registry && !context.newRegistryName;
     }
 
-    public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [];
+    public async getSubWizard(context: AcrContext): Promise<IWizardOptions<AcrContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<AcrContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<AcrContext>[] = [];
 
         if (!context.registry) {
             promptSteps.push(
@@ -59,23 +63,13 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
             }
         }
 
-        const existingRegistryCredentials: RegistryCredentials | undefined = context.containerApp?.configuration?.registries?.find(r => r.server && r.server === context.registry?.loginServer);
-        if (existingRegistryCredentials?.identity) {
-            // The registry already has an established connection via identity, no further setup required
-        } else {
-            executeSteps.push(
-                new ManagedEnvironmentIdentityEnableStep(),
-                new ContainerRegistryAcrPullEnableStep()
-            );
-        }
-
         return {
             promptSteps,
             executeSteps
         };
     }
 
-    public async getPicks(context: ContainerRegistryImageSourceContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
+    public async getPicks(context: AcrContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
         context.telemetry.properties.acrCount = String(registries.length);
 
@@ -100,17 +94,13 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
         }
 
         const picks: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[] = [];
-
-        // The why of `suppressCreate` in a nutshell: https://github.com/microsoft/vscode-azurecontainerapps/issues/78#issuecomment-1090686282
-        const suppressCreate: boolean = context.imageSource !== ImageSource.RemoteAcrBuild;
-        if (!suppressCreate) {
+        if (!this.options?.suppressCreate) {
             picks.push({
                 label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
                 description: '',
                 data: undefined
             });
         }
-
         if (!picks.length && !registries.length) {
             picks.push(noMatchingResourcesQp);
         }
@@ -119,7 +109,7 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
             registries.map((r) => {
                 return !!suggestedRegistry && r.loginServer === suggestedRegistry ?
                     { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${currentlyDeployed}`, suppressPersistence: true } :
-                    { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists || !suppressCreate };
+                    { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists || !this.options?.suppressCreate };
             })
         );
     }
@@ -131,11 +121,11 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
 }
 
 async function tryConfigureResourceGroupForRegistry(
-    context: ContainerRegistryImageSourceContext,
-    promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
+    context: AcrContext,
+    promptSteps: AzureWizardPromptStep<AcrContext>[],
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
-    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<CreateManagedEnvironmentContext> & CreateAcrContext;
+    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<CreateManagedEnvironmentContext> & AcrContext;
     if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
         return;
     }

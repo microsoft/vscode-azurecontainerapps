@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Registry } from "@azure/arm-containerregistry";
-import { AcrListStep } from "../../../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { AcrListStep } from "../../../../registries/acr/AcrListStep";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { AzureResourceVerifyStepBase } from "./AzureResourceVerifyStepBase";
 

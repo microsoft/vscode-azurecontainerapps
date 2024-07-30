@@ -11,15 +11,16 @@ import { createActivityChildContext } from "../../../../utils/activity/activityU
 import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createAuthorizationManagementClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
-import { type ContainerRegistryRoleAssignmentContext } from "./ContainerRegistryRoleAssignmentContext";
+import { type RegistryCredentialsContext } from "../RegistryCredentialsContext";
 
 const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
 
-export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputStepBase<ContainerRegistryRoleAssignmentContext> {
+export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputStepBase<RegistryCredentialsContext> {
     public priority: number = 370; // Todo: Verify priority
 
-    protected async executeCore(context: ContainerRegistryRoleAssignmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        return
+    protected async executeCore(context: RegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        // Add check to see if the role already exists
+
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
         const roleCreateParams: RoleAssignmentCreateParameters = {
             description: 'acr pull',
@@ -35,11 +36,11 @@ export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputSte
         );
     }
 
-    public shouldExecute(context: ContainerRegistryRoleAssignmentContext): boolean {
+    public shouldExecute(context: RegistryCredentialsContext): boolean {
         return !!context.registry && !!context.managedEnvironment?.identity?.principalId;
     }
 
-    protected createSuccessOutput(context: ContainerRegistryRoleAssignmentContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: RegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryAcrPullEnableStepSuccessItem', activitySuccessContext]),
@@ -50,7 +51,7 @@ export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputSte
         };
     }
 
-    protected createFailOutput(context: ContainerRegistryRoleAssignmentContext): ExecuteActivityOutput {
+    protected createFailOutput(context: RegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryAcrPullEnableStepFailItem', activityFailContext]),

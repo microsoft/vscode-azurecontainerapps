@@ -7,14 +7,14 @@ import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } 
 import { UIKind, env } from "vscode";
 import { acrDomain, dockerHubDomain, type SupportedRegistries } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
-import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
-import { RegistryImageInputStep } from "./RegistryImageInputStep";
-import { AcrListStep } from "./acr/AcrListStep";
+import { AcrListStep } from "../../../registries/acr/AcrListStep";
 import { AcrRepositoriesListStep } from "./acr/AcrRepositoriesListStep";
 import { AcrTagListStep } from "./acr/AcrTagListStep";
+import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { DockerHubContainerRepositoryListStep } from "./dockerHub/DockerHubContainerRepositoryListStep";
 import { DockerHubContainerTagListStep } from "./dockerHub/DockerHubContainerTagListStep";
 import { DockerHubNamespaceInputStep } from "./dockerHub/DockerHubNamespaceInputStep";
+import { RegistryImageInputStep } from "./RegistryImageInputStep";
 
 export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
     public hideStepCount: boolean = true;
@@ -46,7 +46,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
         switch (context.registryDomain) {
             case acrDomain:
-                promptSteps.push(new AcrListStep(), new AcrRepositoriesListStep(), new AcrTagListStep());
+                promptSteps.push(new AcrListStep({ suppressCreate: true }), new AcrRepositoriesListStep(), new AcrTagListStep());
                 break;
             case dockerHubDomain:
                 promptSteps.push(new DockerHubNamespaceInputStep(), new DockerHubContainerRepositoryListStep(), new DockerHubContainerTagListStep());

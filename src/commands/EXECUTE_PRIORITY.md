@@ -22,16 +22,24 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - RegistryCreateStep: 350
 
-### 3. Image
+### 3. Registries (Permissions)
 
 <b>Priority Range</b>: 400 - 490
+
+#### Steps
+
+- Add
+
+### 4. Image (NEW)
+
+<b>Priority Range</b>: 500 - 590
 
 #### General Steps
 ##### Build Image in Azure Steps
 
-- TarFileStep: 420
-- UploadSourceCodeStep: 430
-- RunStep: 440
+- TarFileStep: 520
+- UploadSourceCodeStep: 530
+- RunStep: 540
 - BuildImageStep: 450
 - ContainerRegistryImageConfigureStep: 470
 
@@ -43,14 +51,6 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - UpdateRegistryAndSecretsStep: 480
 - UpdateImageDraftStep: 490 (revision draft)
-
-### 4. Unallocated Space
-
-<b>Priority Range</b>: 500 - 590
-
-#### Steps
-
-Reserved
 
 ### 5. Container App
 
