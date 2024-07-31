@@ -22,7 +22,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         containerAppEnvelope.configuration.secrets = context.secrets;
-        containerAppEnvelope.configuration.registries = context.registries;
+        containerAppEnvelope.configuration.registries = context.registryCredentials;
 
         // We want to replace the old image
         containerAppEnvelope.template ||= {};

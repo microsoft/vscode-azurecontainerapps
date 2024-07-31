@@ -47,7 +47,7 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
             configuration: {
                 ingress,
                 secrets: context.secrets,
-                registries: context.registries,
+                registries: context.registryCredentials,
                 activeRevisionsMode: KnownActiveRevisionsMode.Single,
             },
             template: {

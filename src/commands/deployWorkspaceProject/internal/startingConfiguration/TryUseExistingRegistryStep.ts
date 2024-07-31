@@ -10,7 +10,7 @@ import { ext } from "../../../../extensionVariables";
 import { type SetTelemetryProps } from "../../../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectInternalTelemetryProps as TelemetryProps } from "../../../../telemetry/deployWorkspaceProjectTelemetryProps";
 import { localize } from "../../../../utils/localize";
-import { AcrListStep } from "../../../registries/acr/AcrListStep";
+import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
 type TryUseExistingResourceGroupRegistryContext = DeployWorkspaceProjectInternalContext & SetTelemetryProps<TelemetryProps>;

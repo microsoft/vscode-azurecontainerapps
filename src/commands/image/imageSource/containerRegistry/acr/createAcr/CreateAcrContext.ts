@@ -6,9 +6,8 @@
 import { type KnownSkuName, type Registry } from "@azure/arm-containerregistry";
 import { type IResourceGroupWizardContext } from "@microsoft/vscode-azext-azureutils";
 import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { type IContainerAppContext } from "../../IContainerAppContext";
 
-export interface AcrContext extends IResourceGroupWizardContext, IContainerAppContext, ExecuteActivityContext {
+export interface CreateAcrContext extends IResourceGroupWizardContext, ExecuteActivityContext {
     newRegistryName?: string;
     newRegistrySku?: KnownSkuName;
     registry?: Registry;

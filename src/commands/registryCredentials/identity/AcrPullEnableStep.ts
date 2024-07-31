@@ -7,18 +7,18 @@ import { type AuthorizationManagementClient, type RoleAssignmentCreateParameters
 import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as crypto from "crypto";
 import { type Progress } from "vscode";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createAuthorizationManagementClient } from "../../../../utils/azureClients";
-import { localize } from "../../../../utils/localize";
-import { type RegistryCredentialsContext } from "../RegistryCredentialsContext";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createAuthorizationManagementClient } from "../../../utils/azureClients";
+import { localize } from "../../../utils/localize";
+import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
 const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
 
-export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputStepBase<RegistryCredentialsContext> {
+export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIdentityRegistryCredentialsContext> {
     public priority: number = 370; // Todo: Verify priority
 
-    protected async executeCore(context: RegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         // Add check to see if the role already exists
 
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
@@ -36,11 +36,11 @@ export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputSte
         );
     }
 
-    public shouldExecute(context: RegistryCredentialsContext): boolean {
+    public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
         return !!context.registry && !!context.managedEnvironment?.identity?.principalId;
     }
 
-    protected createSuccessOutput(context: RegistryCredentialsContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryAcrPullEnableStepSuccessItem', activitySuccessContext]),
@@ -51,7 +51,7 @@ export class ContainerRegistryAcrPullEnableStep extends ExecuteActivityOutputSte
         };
     }
 
-    protected createFailOutput(context: RegistryCredentialsContext): ExecuteActivityOutput {
+    protected createFailOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryAcrPullEnableStepFailItem', activityFailContext]),

@@ -7,16 +7,16 @@ import { type ContainerRegistryManagementClient } from "@azure/arm-containerregi
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createContainerRegistryManagementClient } from "../../../../utils/azureClients";
-import { localize } from "../../../../utils/localize";
-import { type AcrContext } from "../AcrContext";
+import { createActivityChildContext } from "../../../../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
+import { localize } from "../../../../../../utils/localize";
+import { type CreateAcrContext } from "./CreateAcrContext";
 
-export class RegistryCreateStep extends ExecuteActivityOutputStepBase<AcrContext> {
+export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrContext> {
     public priority: number = 350;
 
-    protected async executeCore(context: AcrContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: CreateAcrContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('creatingRegistry', 'Creating registry...') });
 
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
@@ -31,11 +31,11 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<AcrContext
         );
     }
 
-    public shouldExecute(context: AcrContext): boolean {
+    public shouldExecute(context: CreateAcrContext): boolean {
         return !context.registry;
     }
 
-    protected createSuccessOutput(context: AcrContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: CreateAcrContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['registryCreateStepSuccessItem', activitySuccessContext]),
@@ -46,7 +46,7 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<AcrContext
         };
     }
 
-    protected createFailOutput(context: AcrContext): ExecuteActivityOutput {
+    protected createFailOutput(context: CreateAcrContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['registryCreateStepFailItem', activityFailContext]),

@@ -10,7 +10,7 @@ import { type IContainerAppContext } from "../../IContainerAppContext";
 import { type CreateContainerAppBaseContext } from "../../createContainerApp/CreateContainerAppContext";
 import { type CreateManagedEnvironmentContext } from "../../createManagedEnvironment/CreateManagedEnvironmentContext";
 import { type BuildImageInAzureImageSourceBaseContext } from "../../image/imageSource/buildImageInAzure/BuildImageInAzureImageSourceContext";
-import { type CreateAcrContext } from "../../registries/createAcr/CreateAcrContext";
+import { type CreateAcrContext } from "../../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 import { type DeploymentConfiguration } from "../deploymentConfiguration/DeploymentConfiguration";
 
 // Use intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by having to use the 'Partial' utility

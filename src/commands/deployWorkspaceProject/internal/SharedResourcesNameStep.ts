@@ -9,7 +9,7 @@ import { ProgressLocation, window } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
-import { RegistryNameStep } from "../../registries/createAcr/RegistryNameStep";
+import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryNameStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { sanitizeResourceName } from "./sanitizeResourceName";
 

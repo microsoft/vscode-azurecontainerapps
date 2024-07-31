@@ -7,16 +7,16 @@ import { KnownManagedServiceIdentityType, type ContainerAppsAPIClient, type Mana
 import { parseAzureResourceId, type ParsedAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericParentTreeItem, GenericTreeItem, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
-import { localize } from "../../../../utils/localize";
-import { type ManagedEnvironmentContext } from "../../../ManagedEnvironmentContext";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
+import { localize } from "../../../utils/localize";
+import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
-export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputStepBase<ManagedEnvironmentContext> {
+export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputStepBase<ManagedIdentityRegistryCredentialsContext> {
     public priority: number = 360; // Todo: Verify the priority level is okay
 
-    protected async executeCore(context: ManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    protected async executeCore(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const managedEnvironment: ManagedEnvironment = nonNullProp(context, 'managedEnvironment');
         const parsedResourceId: ParsedAzureResourceId = parseAzureResourceId(nonNullProp(managedEnvironment, 'id'));
@@ -32,11 +32,11 @@ export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputS
         );
     }
 
-    public shouldExecute(context: ManagedEnvironmentContext): boolean {
+    public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
         return !!context.managedEnvironment && !context.managedEnvironment.identity?.principalId;
     }
 
-    protected createSuccessOutput(context: ManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createSuccessOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['managedEnvironmentIdentityEnableStepSuccessItem', activitySuccessContext]),
@@ -47,7 +47,7 @@ export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputS
         };
     }
 
-    protected createFailOutput(context: ManagedEnvironmentContext): ExecuteActivityOutput {
+    protected createFailOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['managedEnvironmentIdentityEnableStepFailItem', activitySuccessContext]),

@@ -5,11 +5,11 @@
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { localize } from "../../../../utils/localize";
-import { type AcrContext } from "../AcrContext";
+import { localize } from "../../../../../../utils/localize";
+import { type CreateAcrContext } from "./CreateAcrContext";
 
-export class SkuListStep extends AzureWizardPromptStep<AcrContext> {
-    public async prompt(context: AcrContext): Promise<void> {
+export class SkuListStep extends AzureWizardPromptStep<CreateAcrContext> {
+    public async prompt(context: CreateAcrContext): Promise<void> {
         const placeHolder: string = localize("sku", "Select a SKU");
         const picks: IAzureQuickPickItem<KnownSkuName>[] = [
             { label: KnownSkuName.Basic, data: KnownSkuName.Basic },
@@ -23,7 +23,7 @@ export class SkuListStep extends AzureWizardPromptStep<AcrContext> {
         })).data;
     }
 
-    public shouldPrompt(context: AcrContext): boolean {
+    public shouldPrompt(context: CreateAcrContext): boolean {
         return !context.newRegistrySku;
     }
 }

@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } 
 import { UIKind, env } from "vscode";
 import { acrDomain, dockerHubDomain, type SupportedRegistries } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
-import { AcrListStep } from "../../../registries/acr/AcrListStep";
+import { AcrListStep } from "./acr/AcrListStep";
 import { AcrRepositoriesListStep } from "./acr/AcrRepositoriesListStep";
 import { AcrTagListStep } from "./acr/AcrTagListStep";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";

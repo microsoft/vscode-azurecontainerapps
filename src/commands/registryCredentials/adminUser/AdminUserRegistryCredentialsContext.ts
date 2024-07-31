@@ -4,17 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
-import { type RoleAssignment } from "@azure/arm-authorization";
 import { type IContainerAppContext } from "../../IContainerAppContext";
-import { type ManagedEnvironmentContext } from "../../ManagedEnvironmentContext";
-import { type AcrContext } from "../acr/AcrContext";
+import { type CreateAcrContext } from "../../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 
-export interface RegistryCredentialsContext extends AcrContext, ManagedEnvironmentContext, IContainerAppContext {
-    // Registry credentials
-    registryCredentials?: RegistryCredentials[];
-    secrets?: Secret[];
+export interface AdminUserRegistryCredentialsContext extends CreateAcrContext, IContainerAppContext {
+    registryName?: string;
+    username?: string;
+    secret?: string;
 
-    // Managed identity
-    principalId?: string;
-    registryRoleAssignment?: RoleAssignment;
+    newRegistrySecret?: Secret;
+    newRegistryCredential?: RegistryCredentials;
 }

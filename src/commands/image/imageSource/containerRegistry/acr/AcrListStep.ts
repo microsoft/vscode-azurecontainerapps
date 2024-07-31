@@ -7,28 +7,28 @@ import { type ContainerRegistryManagementClient, type Registry } from "@azure/ar
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../constants";
-import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
-import { parseImageName } from "../../../utils/imageNameUtils";
-import { localize } from "../../../utils/localize";
-import { type CreateContainerAppBaseContext } from "../../createContainerApp/CreateContainerAppContext";
-import { type CreateManagedEnvironmentContext } from "../../createManagedEnvironment/CreateManagedEnvironmentContext";
-import { getLatestContainerAppImage } from "../../image/imageSource/containerRegistry/getLatestContainerImage";
-import { type AcrContext } from "./AcrContext";
-import { RegistryCreateStep } from "./create/RegistryCreateStep";
-import { RegistryNameStep } from "./create/RegistryNameStep";
-import { SkuListStep } from "./create/SkuListStep";
+import { acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
+import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
+import { parseImageName } from "../../../../../utils/imageNameUtils";
+import { localize } from "../../../../../utils/localize";
+import { type CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
+import { type CreateManagedEnvironmentContext } from "../../../../createManagedEnvironment/CreateManagedEnvironmentContext";
+import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
+import { getLatestContainerAppImage } from "../getLatestContainerImage";
+import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
+import { RegistryNameStep } from "./createAcr/RegistryNameStep";
+import { SkuListStep } from "./createAcr/SkuListStep";
 
 export interface AcrListStepOptions {
     suppressCreate?: boolean;
 }
 
-export class AcrListStep extends AzureWizardPromptStep<AcrContext> {
+export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
     constructor(private readonly options?: AcrListStepOptions) {
         super();
     }
 
-    public async prompt(context: AcrContext): Promise<void> {
+    public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
 
         let result: Registry | typeof noMatchingResources | undefined;
@@ -39,13 +39,13 @@ export class AcrListStep extends AzureWizardPromptStep<AcrContext> {
         context.registry = result;
     }
 
-    public shouldPrompt(context: AcrContext): boolean {
+    public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return !context.registry && !context.newRegistryName;
     }
 
-    public async getSubWizard(context: AcrContext): Promise<IWizardOptions<AcrContext> | undefined> {
-        const promptSteps: AzureWizardPromptStep<AcrContext>[] = [];
-        const executeSteps: AzureWizardExecuteStep<AcrContext>[] = [];
+    public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [];
 
         if (!context.registry) {
             promptSteps.push(
@@ -69,7 +69,7 @@ export class AcrListStep extends AzureWizardPromptStep<AcrContext> {
         };
     }
 
-    public async getPicks(context: AcrContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
+    public async getPicks(context: ContainerRegistryImageSourceContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
         const registries: Registry[] = await AcrListStep.getRegistries(context);
         context.telemetry.properties.acrCount = String(registries.length);
 
@@ -121,11 +121,11 @@ export class AcrListStep extends AzureWizardPromptStep<AcrContext> {
 }
 
 async function tryConfigureResourceGroupForRegistry(
-    context: AcrContext,
-    promptSteps: AzureWizardPromptStep<AcrContext>[],
+    context: ContainerRegistryImageSourceContext,
+    promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
-    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<CreateManagedEnvironmentContext> & AcrContext;
+    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<CreateManagedEnvironmentContext> & ContainerRegistryImageSourceContext;
     if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
         return;
     }

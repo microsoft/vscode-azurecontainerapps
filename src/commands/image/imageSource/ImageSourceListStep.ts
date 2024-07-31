@@ -8,8 +8,8 @@ import { UIKind, env, workspace } from "vscode";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
-import { AcrListStep } from "../../registries/acr/AcrListStep";
-import { ManagedEnvironmentIdentityEnableStep } from "../../registries/credentials/identity/ManagedEnvironmentIdentityEnableStep";
+import { RegistryCredentialAddConfigurationListStep } from "../../registryCredentials/RegistryCredentialAddConfigurationListStep";
+import { ManagedEnvironmentIdentityEnableStep } from "../../registryCredentials/identity/ManagedEnvironmentIdentityEnableStep";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
@@ -23,6 +23,7 @@ import { TarFileStep } from "./buildImageInAzure/TarFileStep";
 import { UploadSourceCodeStep } from "./buildImageInAzure/UploadSourceCodeStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
+import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
 export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContext> {
     public async prompt(context: ImageSourceContext): Promise<void> {
@@ -69,12 +70,12 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:
-                promptSteps.push(new ContainerRegistryListStep());
+                promptSteps.push(new ContainerRegistryListStep(), new RegistryCredentialAddConfigurationListStep());
                 executeSteps.push(new ManagedEnvironmentIdentityEnableStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new RootFolderStep(), new DockerfileItemStep(), new SourcePathStep(), new AcrListStep(), new ImageNameStep(), new OSPickStep());
+                promptSteps.push(new RootFolderStep(), new DockerfileItemStep(), new SourcePathStep(), new AcrListStep(), new RegistryCredentialAddConfigurationListStep(), new ImageNameStep(), new OSPickStep());
                 executeSteps.push(new ManagedEnvironmentIdentityEnableStep(), new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep(), new ContainerRegistryImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
