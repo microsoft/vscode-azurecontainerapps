@@ -22,13 +22,21 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - RegistryCreateStep: 350
 
-### 3. Registries (Permissions)
+### 3. Registry Credentials
 
 <b>Priority Range</b>: 400 - 490
 
 #### Steps
+##### Admin User Registry Credential
+- ManagedEnvironmentIdentityEnableStep: 450
+- AcrPullEnableStep: 460
+- ManagedIdentityRegistryCredentialAddConfigurationStep: 470
 
-- Add
+##### Managed Identity Registry Credential
+- AdminUserRegistryCredentialAddConfigurationStep: 470
+
+##### Registry Credentials
+- RegistryCredentialsAndSecretsConfigurationStep: 480
 
 ### 4. Image (NEW)
 
@@ -40,17 +48,17 @@ When creating or updating resources, execute steps should occupy certain priorit
 - TarFileStep: 520
 - UploadSourceCodeStep: 530
 - RunStep: 540
-- BuildImageStep: 450
-- ContainerRegistryImageConfigureStep: 470
+- BuildImageStep: 550
+- ContainerRegistryImageConfigureStep: 570
 
 ##### Container Registry Steps
 
-- ContainerRegistryImageConfigureStep: 470
+- ContainerRegistryImageConfigureStep: 570
 
 #### `updateImage` Steps
 
-- UpdateRegistryAndSecretsStep: 480
-- UpdateImageDraftStep: 490 (revision draft)
+- UpdateRegistryAndSecretsStep: 580
+- UpdateImageDraftStep: 590 (revision draft)
 
 ### 5. Container App
 

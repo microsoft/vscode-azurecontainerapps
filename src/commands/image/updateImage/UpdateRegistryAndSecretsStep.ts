@@ -14,7 +14,7 @@ import { updateContainerApp } from "../../updateContainerApp";
 import { type UpdateImageContext } from "./updateImage";
 
 export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {
-    public priority: number = 480;
+    public priority: number = 580;
 
     public async execute(context: UpdateImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');

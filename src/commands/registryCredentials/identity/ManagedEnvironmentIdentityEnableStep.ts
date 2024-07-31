@@ -14,7 +14,7 @@ import { localize } from "../../../utils/localize";
 import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
 export class ManagedEnvironmentIdentityEnableStep extends ExecuteActivityOutputStepBase<ManagedIdentityRegistryCredentialsContext> {
-    public priority: number = 360; // Todo: Verify the priority level is okay
+    public priority: number = 450;
 
     protected async executeCore(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);

@@ -9,7 +9,7 @@ import { getContainerEnvelopeWithSecrets } from "../../tree/ContainerAppItem";
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
 export class RegistryCredentialsAndSecretsConfigurationStep extends AzureWizardExecuteStep<RegistryCredentialsContext> {
-    public priority: number = 470;
+    public priority: number = 480;
 
     public async execute(context: RegistryCredentialsContext): Promise<void> {
         let secrets: Secret[] = [];

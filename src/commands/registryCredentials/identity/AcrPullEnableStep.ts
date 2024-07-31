@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type AuthorizationManagementClient, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
+import { type AuthorizationManagementClient, type RoleAssignment, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as crypto from "crypto";
 import { type Progress } from "vscode";
@@ -16,12 +17,17 @@ import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentit
 const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
 
 export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIdentityRegistryCredentialsContext> {
-    public priority: number = 370; // Todo: Verify priority
+    public priority: number = 460; // Todo: Verify priority
 
     protected async executeCore(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        // Add check to see if the role already exists
-
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
+        const registryId: string = nonNullValueAndProp(context.registry, 'id');
+        const containerAppIdentity: string = nonNullValueAndProp(context.containerApp?.identity, 'principalId');
+
+        if (await this.hasAcrPullAssignment(client, registryId, containerAppIdentity)) {
+            return;
+        }
+
         const roleCreateParams: RoleAssignmentCreateParameters = {
             description: 'acr pull',
             roleDefinitionId: `/providers/Microsoft.Authorization/roleDefinitions/${acrPullRoleId}`,
@@ -38,6 +44,17 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
 
     public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
         return !!context.registry && !!context.managedEnvironment?.identity?.principalId;
+    }
+
+    private async hasAcrPullAssignment(client: AuthorizationManagementClient, registryId: string, containerAppIdentity: string): Promise<boolean> {
+        const roleAssignments: RoleAssignment[] = await uiUtils.listAllIterator(client.roleAssignments.listForScope(
+            registryId,
+            {
+                // $filter=principalId eq {id}
+                filter: `principalId eq '{${containerAppIdentity}}'`,
+            }
+        ));
+        return roleAssignments.some(r => !!r.roleDefinitionId?.endsWith(acrPullRoleId));
     }
 
     protected createSuccessOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {

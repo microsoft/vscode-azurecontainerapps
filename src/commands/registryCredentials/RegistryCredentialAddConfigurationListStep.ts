@@ -36,7 +36,7 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
         const promptSteps: AzureWizardPromptStep<RegistryCredentialsContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<RegistryCredentialsContext>[] = [];
 
-        const registryDomain = detectRegistryDomain(nonNullValueAndProp(context.registry, 'name'));
+        const registryDomain = detectRegistryDomain(nonNullValueAndProp(context.registry, 'loginServer'));
         switch (context.newRegistryCredentialType) {
             case RegistryCredentialType.SystemAssigned:
                 executeSteps.push(
@@ -61,11 +61,11 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
 
     public async getPicks(context: RegistryCredentialsContext): Promise<IAzureQuickPickItem<RegistryCredentialType>[]> {
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];
-        const registryDomain = detectRegistryDomain(nonNullValueAndProp(context.registry, 'name'));
+        const registryDomain = detectRegistryDomain(nonNullValueAndProp(context.registry, 'loginServer'));
 
         if (registryDomain === acrDomain && this.userCanSetRBACRoles()) {
             picks.push({
-                label: 'Managed identity',
+                label: 'Managed Identity',
                 description: '(recommended)',
                 detail: localize('systemIdentityDetails', 'Enable a system-assigned identity on the container apps environment and provide that identity "{0}" RBAC approval access to the container registry.', 'acrPull'),
                 data: RegistryCredentialType.SystemAssigned,
@@ -74,7 +74,7 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
 
         // Todo: Investigate... if you do not have RBAC role assignment access, can you still enable admin user?
         picks.push({
-            label: 'Admin username and password',
+            label: 'Admin Credentials',
             detail: localize('adminUserDetails', 'Enable admin user access on the container registry. Configure the container app to connect directly the admin username and password.'),
             data: RegistryCredentialType.AdminUser,
         });

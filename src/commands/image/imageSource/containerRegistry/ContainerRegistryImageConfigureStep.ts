@@ -9,7 +9,7 @@ import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryIma
 import { getLoginServer } from "./getLoginServer";
 
 export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<ContainerRegistryImageSourceContext> {
-    public priority: number = 470;
+    public priority: number = 570;
 
     public async execute(context: ContainerRegistryImageSourceContext): Promise<void> {
         context.image = `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
