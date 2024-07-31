@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type AuthorizationManagementClient, type RoleAssignment, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
+import { KnownPrincipalType, type AuthorizationManagementClient, type RoleAssignment, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as crypto from "crypto";
@@ -17,12 +17,12 @@ import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentit
 const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
 
 export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIdentityRegistryCredentialsContext> {
-    public priority: number = 460; // Todo: Verify priority
+    public priority: number = 460;
 
     protected async executeCore(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
         const registryId: string = nonNullValueAndProp(context.registry, 'id');
-        const containerAppIdentity: string = nonNullValueAndProp(context.containerApp?.identity, 'principalId');
+        const containerAppIdentity: string = nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId');
 
         if (await this.hasAcrPullAssignment(client, registryId, containerAppIdentity)) {
             return;
@@ -32,6 +32,7 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
             description: 'acr pull',
             roleDefinitionId: `/providers/Microsoft.Authorization/roleDefinitions/${acrPullRoleId}`,
             principalId: nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId'),
+            principalType: KnownPrincipalType.ServicePrincipal,
         };
 
         progress.report({ message: localize('updatingRegistryCredentials', 'Updating registry credentials...') })
