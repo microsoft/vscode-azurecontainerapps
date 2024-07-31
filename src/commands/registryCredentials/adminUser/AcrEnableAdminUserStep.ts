@@ -12,6 +12,7 @@ import { createContainerRegistryManagementClient } from "../../../utils/azureCli
 import { localize } from "../../../utils/localize";
 import { type AdminUserRegistryCredentialsContext } from "./AdminUserRegistryCredentialsContext";
 
+// Todo: Split this into a prompt and execute step, remove the automatic admin user enabling in the create acr logic
 export class AcrEnableAdminUserStep extends AzureWizardPromptStep<AdminUserRegistryCredentialsContext> {
     public async prompt(context: AdminUserRegistryCredentialsContext): Promise<void> {
         const message = localize('enableAdminUser', 'An admin user is required to continue. If enabled, you can use the registry name as username and admin user access key as password to docker login to your container registry.');
