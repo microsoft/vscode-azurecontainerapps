@@ -36,7 +36,7 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
         };
 
         progress.report({ message: localize('updatingRegistryCredentials', 'Updating registry credentials...') });
-        context.registryRoleAssignment = await client.roleAssignments.create(
+        await client.roleAssignments.create(
             nonNullValueAndProp(context.registry, 'id'),
             crypto.randomUUID(),
             roleCreateParams,
@@ -44,7 +44,7 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
     }
 
     public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
-        return !!context.registry && !!context.managedEnvironment?.identity?.principalId;
+        return !!context.registry;
     }
 
     private async hasAcrPullAssignment(client: AuthorizationManagementClient, registryId: string, managedEnvironmentIdentity: string): Promise<boolean> {
@@ -62,10 +62,10 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryAcrPullEnableStepSuccessItem', activitySuccessContext]),
-                label: localize('enableAcrPull', 'Grant "{0}" access to container environment "{1}" from registry "{2}"', 'acrPull', context.registry?.name, context.managedEnvironment?.name),
+                label: localize('enableAcrPull', 'Grant "{0}" access to container environment "{1}" resources', 'acrPull', context.managedEnvironment?.name),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('enableAcrPullSuccess', 'Successfully granted "{0}" access to container environment "{1}" from registry "{2}".', 'acrPull', context.registry?.name, context.managedEnvironment?.name),
+            message: localize('enableAcrPullSuccess', 'Successfully granted "{0}" access to container environment "{1}" resources.', 'acrPull', context.managedEnvironment?.name),
         };
     }
 
@@ -73,10 +73,10 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createActivityChildContext(['containerRegistryAcrPullEnableStepFailItem', activityFailContext]),
-                label: localize('enableAcrPull', 'Grant "{0}" access to container environment "{1}" from registry "{2}"', 'acrPull', context.registry?.name, context.managedEnvironment?.name),
+                label: localize('enableAcrPull', 'Grant "{0}" access to container environment "{1}" resources"', 'acrPull', context.managedEnvironment?.name),
                 iconPath: activityFailIcon
             }),
-            message: localize('enableAcrPullFail', 'Failed to grant "{0}" access to container environment "{1}" from registry "{2}".', 'acrPull', context.registry?.name, context.managedEnvironment?.name),
+            message: localize('enableAcrPullFail', 'Failed to grant "{0}" access to container environment "{1}" resources.', 'acrPull', context.managedEnvironment?.name),
         };
     }
 }

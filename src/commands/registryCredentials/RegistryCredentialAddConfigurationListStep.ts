@@ -7,9 +7,9 @@ import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type I
 import { acrDomain, type SupportedRegistries } from "../../constants";
 import { detectRegistryDomain } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
-import { AcrEnableAdminUserConfirmStep } from "./adminUser/AcrEnableAdminUserConfirmStep";
-import { AcrEnableAdminUserStep } from "./adminUser/AcrEnableAdminUserStep";
-import { AdminUserRegistryCredentialAddConfigurationStep } from "./adminUser/AdminUserRegistryCredentialAddConfigurationStep";
+import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
+import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
+import { DockerLoginRegistryCredentialAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialAddConfigurationStep";
 import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
 import { ManagedEnvironmentIdentityEnableStep } from "./identity/ManagedEnvironmentIdentityEnableStep";
 import { ManagedIdentityRegistryCredentialAddConfigurationStep } from "./identity/ManagedIdentityRegistryCredentialAddConfigurationStep";
@@ -18,19 +18,25 @@ import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
 export enum RegistryCredentialType {
     SystemAssigned,
-    AdminUser,
+    DockerLogin,
 }
 
 export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
+    private hasExistingRegistry?: boolean;
+
+    public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
+        this.hasExistingRegistry = !!context.containerApp?.configuration?.registries?.some(r => r.server && r.server === context.registry?.loginServer);
+    }
+
     public async prompt(context: RegistryCredentialsContext): Promise<void> {
         context.newRegistryCredentialType = (await context.ui.showQuickPick(this.getPicks(context), {
-            placeHolder: localize('selectCredentialType', 'Select a registry credential connection type'),
+            placeHolder: localize('selectCredentialType', 'Select a registry connection method'),
+            suppressPersistence: true,
         })).data;
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {
-        const hasExistingRegistry: boolean = !!context.containerApp?.configuration?.registries?.some(r => r.server && r.server === context.registry?.loginServer);
-        return !context.newRegistryCredentialType || hasExistingRegistry;
+        return !this.hasExistingRegistry && !context.newRegistryCredentialType;
     }
 
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {
@@ -46,11 +52,11 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
                     new ManagedIdentityRegistryCredentialAddConfigurationStep(registryDomain),
                 );
                 break;
-            case RegistryCredentialType.AdminUser:
+            case RegistryCredentialType.DockerLogin:
                 promptSteps.push(new AcrEnableAdminUserConfirmStep());
                 executeSteps.push(
                     new AcrEnableAdminUserStep(),
-                    new AdminUserRegistryCredentialAddConfigurationStep(registryDomain),
+                    new DockerLoginRegistryCredentialAddConfigurationStep(registryDomain),
                 );
                 break;
             default:
@@ -79,29 +85,23 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];
         const registryDomain = this.getRegistryDomain(context);
 
-        if (registryDomain === acrDomain && this.userCanSetRBACRoles()) {
+        if (registryDomain === acrDomain) {
             picks.push({
                 label: 'Managed Identity',
                 description: '(recommended)',
-                detail: localize('systemIdentityDetails', 'Enable a system-assigned identity on the container apps environment and provide that identity "{0}" RBAC approval access to the container registry.', 'acrPull'),
+                detail: localize('systemIdentityDetails', 'Setup "{0}" access for container environment resources via a system-assigned identity', 'acrPull'),
                 data: RegistryCredentialType.SystemAssigned,
             });
         }
 
-        // Todo: Investigate... if you do not have RBAC role assignment access, can you still enable admin user?
         picks.push({
-            label: 'Admin Credentials',
-            detail: localize('adminUserDetails', 'Enable admin user access on the container registry. Configure the container app to connect directly the admin username and password.'),
-            data: RegistryCredentialType.AdminUser,
+            label: 'Docker Login Credentials',
+            detail: localize('dockerLoginDetails', 'Setup docker login access to a registry via username and password.'),
+            data: RegistryCredentialType.DockerLogin,
         });
 
         // Todo: Should we add an info link (aka.ms)??
 
         return picks;
-    }
-
-    private userCanSetRBACRoles(): boolean {
-        // Todo: Investigate and add a real implementation for this method
-        return true;
     }
 }

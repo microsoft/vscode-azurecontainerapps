@@ -7,7 +7,7 @@ import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers"
 import { type IContainerAppContext } from "../../IContainerAppContext";
 import { type CreateAcrContext } from "../../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 
-export interface AdminUserRegistryCredentialsContext extends CreateAcrContext, IContainerAppContext {
+export interface DockerLoginRegistryCredentialsContext extends CreateAcrContext, IContainerAppContext {
     registryName?: string;
     username?: string;
     secret?: string;

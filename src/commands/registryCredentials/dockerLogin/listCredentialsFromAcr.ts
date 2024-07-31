@@ -9,7 +9,7 @@ import { nonNullProp, nonNullValue, nonNullValueAndProp, type ISubscriptionActio
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
 import { type RegistryCredentialsContext } from "../RegistryCredentialsContext";
 
-export async function listCredentialsFromRegistry(context: ISubscriptionActionContext & Partial<RegistryCredentialsContext>):
+export async function listCredentialsFromAcr(context: ISubscriptionActionContext & Partial<RegistryCredentialsContext>):
     Promise<{ username: string, password: RegistryPassword }> {
 
     const containerClient: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);

@@ -6,22 +6,22 @@
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, dockerHubRegistry, type SupportedRegistries } from "../../../constants";
-import { type AdminUserRegistryCredentialsContext } from "./AdminUserRegistryCredentialsContext";
-import { listCredentialsFromRegistry } from "./listCredentialsFromRegistry";
+import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
+import { listCredentialsFromAcr } from "./listCredentialsFromAcr";
 
 interface RegistryCredentialAndSecret {
     registryCredential: RegistryCredentials;
     secret: Secret;
 }
 
-export class AdminUserRegistryCredentialAddConfigurationStep extends AzureWizardExecuteStep<AdminUserRegistryCredentialsContext> {
+export class DockerLoginRegistryCredentialAddConfigurationStep extends AzureWizardExecuteStep<DockerLoginRegistryCredentialsContext> {
     public priority: number = 470;
 
     constructor(private readonly supportedRegistryDomain: SupportedRegistries | undefined) {
         super();
     }
 
-    public async execute(context: AdminUserRegistryCredentialsContext): Promise<void> {
+    public async execute(context: DockerLoginRegistryCredentialsContext): Promise<void> {
         if (this.supportedRegistryDomain === acrDomain) {
             // ACR
             const acrRegistryCredentialAndSecret: RegistryCredentialAndSecret = await this.getAcrCredentialAndSecret(context);
@@ -37,13 +37,13 @@ export class AdminUserRegistryCredentialAddConfigurationStep extends AzureWizard
         }
     }
 
-    public shouldExecute(context: AdminUserRegistryCredentialsContext): boolean {
+    public shouldExecute(context: DockerLoginRegistryCredentialsContext): boolean {
         return !context.newRegistryCredential || !context.newRegistrySecret;
     }
 
-    private async getAcrCredentialAndSecret(context: AdminUserRegistryCredentialsContext): Promise<RegistryCredentialAndSecret> {
+    private async getAcrCredentialAndSecret(context: DockerLoginRegistryCredentialsContext): Promise<RegistryCredentialAndSecret> {
         const registry = nonNullProp(context, 'registry');
-        const { username, password } = await listCredentialsFromRegistry(context);
+        const { username, password } = await listCredentialsFromAcr(context);
         const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`;
 
         return {
@@ -60,7 +60,7 @@ export class AdminUserRegistryCredentialAddConfigurationStep extends AzureWizard
         };
     }
 
-    private getThirdPartyRegistryCredentialAndSecret(context: AdminUserRegistryCredentialsContext): RegistryCredentialAndSecret {
+    private getThirdPartyRegistryCredentialAndSecret(context: DockerLoginRegistryCredentialsContext): RegistryCredentialAndSecret {
         // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
         const loginServer: string = (this.supportedRegistryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
         const passwordSecretRef: string = `${loginServer.replace(/[^a-z0-9-]+/g, '')}-${context.username}`;
