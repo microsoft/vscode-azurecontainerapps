@@ -27,12 +27,13 @@ When creating or updating resources, execute steps should occupy certain priorit
 <b>Priority Range</b>: 400 - 490
 
 #### Steps
-##### Admin User Registry Credential
+##### Managed Identity Registry Credential
 - ManagedEnvironmentIdentityEnableStep: 450
 - AcrPullEnableStep: 460
 - ManagedIdentityRegistryCredentialAddConfigurationStep: 470
 
-##### Managed Identity Registry Credential
+##### Admin User Registry Credential
+- AcrEnableAdminUserStep: 450
 - AdminUserRegistryCredentialAddConfigurationStep: 470
 
 ##### Registry Credentials

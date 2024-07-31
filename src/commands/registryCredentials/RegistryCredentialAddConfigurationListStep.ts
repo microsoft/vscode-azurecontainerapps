@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type I
 import { acrDomain, type SupportedRegistries } from "../../constants";
 import { detectRegistryDomain } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
+import { AcrEnableAdminUserConfirmStep } from "./adminUser/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./adminUser/AcrEnableAdminUserStep";
 import { AdminUserRegistryCredentialAddConfigurationStep } from "./adminUser/AdminUserRegistryCredentialAddConfigurationStep";
 import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
@@ -46,9 +47,13 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
                 );
                 break;
             case RegistryCredentialType.AdminUser:
-                promptSteps.push(new AcrEnableAdminUserStep());
-                executeSteps.push(new AdminUserRegistryCredentialAddConfigurationStep(registryDomain));
+                promptSteps.push(new AcrEnableAdminUserConfirmStep());
+                executeSteps.push(
+                    new AcrEnableAdminUserStep(),
+                    new AdminUserRegistryCredentialAddConfigurationStep(registryDomain),
+                );
                 break;
+            default:
         }
 
         // Todo: Add log outputs to tell the user when we skip adding a new credential because one already exists

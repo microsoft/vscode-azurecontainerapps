@@ -26,7 +26,6 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 sku: { name: nonNullProp(context, 'newRegistrySku') },
-                adminUserEnabled: true
             }
         );
     }

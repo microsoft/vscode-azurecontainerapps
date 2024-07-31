@@ -1,5 +1,3 @@
-
-
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +5,17 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { createActivityChildContext } from "../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { type AdminUserRegistryCredentialsContext } from "./AdminUserRegistryCredentialsContext";
 
-// Todo: Split this into a prompt and execute step, remove the automatic admin user enabling in the create acr logic
-export class AcrEnableAdminUserStep extends AzureWizardPromptStep<AdminUserRegistryCredentialsContext> {
-    public async prompt(context: AdminUserRegistryCredentialsContext): Promise<void> {
-        const message = localize('enableAdminUser', 'An admin user is required to continue. If enabled, you can use the registry name as username and admin user access key as password to docker login to your container registry.');
-        await context.ui.showWarningMessage(message, { modal: true }, { title: localize('enable', 'Enable') });
+export class AcrEnableAdminUserStep extends ExecuteActivityOutputStepBase<AdminUserRegistryCredentialsContext> {
+    public priority: number = 450;
 
+    public async executeCore(context: AdminUserRegistryCredentialsContext): Promise<void> {
         const registry = nonNullValue(context.registry);
         registry.adminUserEnabled = true;
 
@@ -29,7 +27,29 @@ export class AcrEnableAdminUserStep extends AzureWizardPromptStep<AdminUserRegis
         }
     }
 
-    public shouldPrompt(context: AdminUserRegistryCredentialsContext): boolean {
+    public shouldExecute(context: AdminUserRegistryCredentialsContext): boolean {
         return !!context.registry && !context.registry.adminUserEnabled;
+    }
+
+    protected createSuccessOutput(context: AdminUserRegistryCredentialsContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createActivityChildContext(['acrEnableAdminUserStepSuccessItem', activitySuccessContext]),
+                label: localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('enableAdminUserSuccess', 'Successfully enabled admin user setting for container registry "{0}".', context.registry?.name)
+        };
+    }
+
+    protected createFailOutput(context: AdminUserRegistryCredentialsContext): ExecuteActivityOutput {
+        return {
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createActivityChildContext(['acrEnableAdminUserStepFailItem', activitySuccessContext]),
+                label: localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name),
+                iconPath: activityFailIcon
+            }),
+            message: localize('enableAdminUserFail', 'Failed to enable admin user setting for container registry "{0}".', context.registry?.name)
+        };
     }
 }
