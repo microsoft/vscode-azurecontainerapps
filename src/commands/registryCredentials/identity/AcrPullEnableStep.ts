@@ -22,9 +22,9 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
     protected async executeCore(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
         const registryId: string = nonNullValueAndProp(context.registry, 'id');
-        const containerAppIdentity: string = nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId');
+        const managedEnvironmentIdentity: string = nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId');
 
-        if (await this.hasAcrPullAssignment(client, registryId, containerAppIdentity)) {
+        if (await this.hasAcrPullAssignment(client, registryId, managedEnvironmentIdentity)) {
             return;
         }
 
@@ -35,7 +35,7 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
             principalType: KnownPrincipalType.ServicePrincipal,
         };
 
-        progress.report({ message: localize('updatingRegistryCredentials', 'Updating registry credentials...') })
+        progress.report({ message: localize('updatingRegistryCredentials', 'Updating registry credentials...') });
         context.registryRoleAssignment = await client.roleAssignments.create(
             nonNullValueAndProp(context.registry, 'id'),
             crypto.randomUUID(),
@@ -47,12 +47,12 @@ export class AcrPullEnableStep extends ExecuteActivityOutputStepBase<ManagedIden
         return !!context.registry && !!context.managedEnvironment?.identity?.principalId;
     }
 
-    private async hasAcrPullAssignment(client: AuthorizationManagementClient, registryId: string, containerAppIdentity: string): Promise<boolean> {
+    private async hasAcrPullAssignment(client: AuthorizationManagementClient, registryId: string, managedEnvironmentIdentity: string): Promise<boolean> {
         const roleAssignments: RoleAssignment[] = await uiUtils.listAllIterator(client.roleAssignments.listForScope(
             registryId,
             {
                 // $filter=principalId eq {id}
-                filter: `principalId eq '{${containerAppIdentity}}'`,
+                filter: `principalId eq '{${managedEnvironmentIdentity}}'`,
             }
         ));
         return roleAssignments.some(r => !!r.roleDefinitionId?.endsWith(acrPullRoleId));
