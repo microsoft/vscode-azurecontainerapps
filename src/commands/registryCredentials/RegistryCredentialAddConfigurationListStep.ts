@@ -51,6 +51,8 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
                 break;
         }
 
+        // Todo: Add log outputs to tell the user when we skip adding a new credential because one already exists
+
         executeSteps.push(new RegistryCredentialsAndSecretsConfigurationStep());
 
         return {
