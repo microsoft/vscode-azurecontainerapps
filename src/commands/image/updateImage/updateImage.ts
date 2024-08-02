@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
@@ -12,6 +12,7 @@ import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/Con
 import { type RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { type RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
@@ -45,12 +46,14 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     }
 
     const { subscription, containerApp } = item;
+    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
     const wizardContext: UpdateImageContext = {
         ...context,
-        ...createSubscriptionContext(subscription),
+        ...subscriptionContext,
         ...await createActivityContext(),
         subscription,
+        managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp
     };
 

@@ -62,8 +62,6 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
             default:
         }
 
-        // Todo: Add log outputs to tell the user when we skip adding a new credential because one already exists
-
         executeSteps.push(new RegistryCredentialsAndSecretsConfigurationStep());
 
         return {
@@ -73,10 +71,10 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
     }
 
     private getRegistryDomain(context: RegistryCredentialsContext): SupportedRegistries | undefined {
-        if (context.registry || context.registryName) {
+        if (context.registry?.loginServer || context.registryName) {
             return detectRegistryDomain(context.registry?.loginServer || nonNullProp(context, 'registryName'));
         } else {
-            // If no registries exist, we must be creating a new one and it must be an ACR
+            // If no registries exist, we can assume we're creating a new ACR
             return acrDomain;
         }
     }
@@ -99,8 +97,6 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
             detail: localize('dockerLoginDetails', 'Setup docker login access to a registry via username and password.'),
             data: RegistryCredentialType.DockerLogin,
         });
-
-        // Todo: Should we add an info link (aka.ms)??
 
         return picks;
     }

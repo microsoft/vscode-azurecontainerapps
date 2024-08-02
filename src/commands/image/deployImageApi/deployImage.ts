@@ -3,12 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
-import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, createSubscriptionContext, nonNullValue, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activity/activityUtils";
-import { createContainerAppsAPIClient } from "../../../utils/azureClients";
+import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
@@ -56,10 +54,4 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     if (!wizardContext.suppressNotification) {
         void showContainerAppNotification(containerApp, true /** isUpdate */);
     }
-}
-
-async function getManagedEnvironmentFromContainerApp(context: ISubscriptionActionContext, containerApp: ContainerAppModel): Promise<ManagedEnvironment> {
-    const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-    const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    return nonNullValue(managedEnvironments.find(m => m.id === containerApp.managedEnvironmentId));
 }
