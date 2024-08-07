@@ -787,7 +787,7 @@
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^2.0.3",
         "@microsoft/vscode-azext-github": "^1.0.0",
-        "@microsoft/vscode-azext-utils": "^2.5.1",
+        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-2.5.2.tgz",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",

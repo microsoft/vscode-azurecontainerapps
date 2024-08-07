@@ -4,20 +4,18 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
-import { AzExtFsExtra, GenericParentTreeItem, activityFailContext, activityFailIcon } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, activityFailContext, activityFailIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as retry from 'p-retry';
 import * as path from 'path';
 import { type Progress } from "vscode";
 import { ext } from "../../../../extensionVariables";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../../utils/activity/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
-export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImageSourceContext> {
+export class RunStep extends AzureWizardExecuteStep<BuildImageInAzureImageSourceContext> {
     public priority: number = 440;
 
-    protected async executeCore(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: BuildImageInAzureImageSourceContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         // Need to keep the additional try wrapper here to execute finally, then we can catch any error that percolates up and display its output
         try {
             const runRequest: AcrDockerBuildRequest = {
@@ -54,15 +52,15 @@ export class RunStep extends ExecuteActivityOutputStepBase<BuildImageInAzureImag
         return !context.run;
     }
 
-    protected createSuccessOutput(): ExecuteActivityOutput {
+    public createSuccessOutput(): ExecuteActivityOutput {
         // Skip here, success will be output by the build image step
         return {};
     }
 
-    protected createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+    public createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['runStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['runStepFailItem', activityFailContext]),
                 label: localize('runLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
                 iconPath: activityFailIcon
             }),

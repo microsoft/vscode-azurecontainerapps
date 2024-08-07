@@ -9,7 +9,7 @@ import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, nonN
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
-import { createActivityContext } from "../../utils/activity/activityUtils";
+import { createActivityContext } from "../../utils/activityUtils";
 import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";

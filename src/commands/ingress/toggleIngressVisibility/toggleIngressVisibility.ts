@@ -9,7 +9,7 @@ import { IngressConstants } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type IngressEnabledItem } from "../../../tree/configurations/IngressItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { type IngressBaseContext } from "../IngressContext";
@@ -21,7 +21,7 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
     const wizardContext: IngressBaseContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         subscription,
         containerApp
     };

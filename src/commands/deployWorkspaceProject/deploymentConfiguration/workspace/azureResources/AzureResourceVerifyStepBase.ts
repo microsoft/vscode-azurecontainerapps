@@ -3,23 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../../../utils/activity/activityUtils";
 import { localize } from "../../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
-export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+export abstract class AzureResourceVerifyStepBase extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
     public abstract priority: number;
 
     protected abstract resourceType: 'resource group' | 'container app' | 'container registry';
     protected abstract deploymentSettingsKey: keyof DeploymentConfigurationSettings;
     protected abstract contextKey: keyof WorkspaceDeploymentConfigurationContext;
 
-    protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.options.shouldSwallowError = true;
+    public async execute(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        this.options.continueOnFail = true;
         progress.report({ message: localize(`verifyingResourceType`, 'Verifying {0}...', this.resourceType) });
 
         const settings: DeploymentConfigurationSettings | undefined = context.deploymentConfigurationSettings;
@@ -42,14 +40,14 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         return !!context.deploymentConfigurationSettings?.[this.deploymentSettingsKey] && !context?.[this.contextKey];
     }
 
-    protected createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         if (!context?.[this.contextKey]) {
             return {};
         }
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['azureResourceVerifyStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['azureResourceVerifyStepSuccessItem', activitySuccessContext]),
                 label: this.resourceType.charAt(0).toUpperCase() + this.resourceType.slice(1),
                 iconPath: activitySuccessIcon,
             }),
@@ -61,10 +59,10 @@ export abstract class AzureResourceVerifyStepBase extends ExecuteActivityOutputS
         };
     }
 
-    protected createFailOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
+    public createFailOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['azureResourceVerifyStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['azureResourceVerifyStepFailItem', activityFailContext]),
                 label: this.resourceType.charAt(0).toUpperCase() + this.resourceType.slice(1),
                 iconPath: activityFailIcon,
             }),

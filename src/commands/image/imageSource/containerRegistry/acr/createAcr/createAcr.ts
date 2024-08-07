@@ -7,7 +7,7 @@ import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-aze
 import { AzureWizard, createSubscriptionContext, nonNullValue, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../../../../extensionVariables";
-import { createActivityContext } from "../../../../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../../../../utils/localize";
 import { type CreateAcrContext } from "./CreateAcrContext";
@@ -21,7 +21,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     const wizardContext: CreateAcrContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext())
+        ...await createActivityContext(),
     };
 
     const title: string = localize('createAcr', "Create Azure Container Registry");

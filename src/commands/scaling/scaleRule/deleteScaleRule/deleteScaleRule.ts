@@ -7,7 +7,7 @@ import { type Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, DeleteConfirmationStep, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { type ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
-import { createActivityContext } from "../../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../../utils/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRule } from "../../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../../utils/revisionDraftUtils";

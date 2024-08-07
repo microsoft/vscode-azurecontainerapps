@@ -4,18 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Ingress } from "@azure/arm-appcontainers";
-import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type IngressBaseContext } from "../IngressContext";
 
-export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBaseContext> {
+export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext> {
     public priority: number = 750;
 
-    protected async executeCore(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('enablingIngress', 'Enabling ingress...') });
 
         const containerApp = nonNullProp(context, 'containerApp');
@@ -39,10 +37,10 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBase
         return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
     }
 
-    protected createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['enableIngressStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['enableIngressStepSuccessItem', activitySuccessContext]),
                 label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
@@ -50,10 +48,10 @@ export class EnableIngressStep extends ExecuteActivityOutputStepBase<IngressBase
         };
     }
 
-    protected createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
+    public createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['enableIngressStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['enableIngressStepFailItem', activityFailContext]),
                 label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
                 iconPath: activityFailIcon
             }),

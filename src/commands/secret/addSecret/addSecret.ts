@@ -6,7 +6,7 @@
 import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { type ISecretContext } from "../ISecretContext";
@@ -20,7 +20,7 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
     const wizardContext: ISecretContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         subscription,
         containerApp,
     };

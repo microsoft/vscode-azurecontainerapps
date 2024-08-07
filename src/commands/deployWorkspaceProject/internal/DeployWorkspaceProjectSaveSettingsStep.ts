@@ -3,12 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
@@ -16,11 +14,12 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 
 const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
 
-export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutputStepBase<DeployWorkspaceProjectInternalContext> {
+export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext> {
     public priority: number = 1480;
 
-    protected async executeCore(context: DeployWorkspaceProjectInternalContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.options.shouldSwallowError = true;
+
+    public async execute(context: DeployWorkspaceProjectInternalContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        this.options.continueOnFail = true;
         progress.report({ message: localize('saving', 'Saving configuration...') });
 
         const rootFolder: WorkspaceFolder = nonNullProp(context, 'rootFolder');
@@ -51,12 +50,12 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         return !!context.shouldSaveDeploySettings;
     }
 
-    protected createSuccessOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
         context.telemetry.properties.didSaveSettings = 'true';
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['dwpSaveSettingsStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['dwpSaveSettingsStepSuccessItem', activitySuccessContext]),
                 label: saveSettingsLabel,
                 iconPath: activitySuccessIcon
             }),
@@ -64,12 +63,12 @@ export class DeployWorkspaceProjectSaveSettingsStep extends ExecuteActivityOutpu
         };
     }
 
-    protected createFailOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
+    public createFailOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
         context.telemetry.properties.didSaveSettings = 'false';
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['dwpSaveSettingsStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['dwpSaveSettingsStepFailItem', activityFailContext]),
                 label: saveSettingsLabel,
                 iconPath: activityFailIcon
             }),

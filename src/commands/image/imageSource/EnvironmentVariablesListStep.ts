@@ -4,14 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import { type ImageSourceBaseContext } from "./ImageSourceContext";
@@ -105,7 +104,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         ) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
@@ -123,7 +122,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         } else {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createActivityChildContext(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
                     iconPath: activitySuccessIcon
                 })
