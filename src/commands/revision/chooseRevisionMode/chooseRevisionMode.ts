@@ -7,7 +7,7 @@ import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, ty
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { ChangeRevisionModeStep } from "./ChangeRevisionModeStep";
@@ -30,7 +30,7 @@ export async function chooseRevisionMode(context: IActionContext, item?: Contain
     const wizardContext: IChooseRevisionModeContext = {
         ...context,
         ...createSubscriptionContext(item.subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         containerApp: item.containerApp,
         subscription: item.subscription,
         hasRevisionDraft

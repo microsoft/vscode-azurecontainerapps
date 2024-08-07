@@ -6,7 +6,7 @@
 import { AzureWizard, createSubscriptionContext, type AzureWizardPromptStep, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../extensionVariables';
 import { type ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
-import { createActivityContext } from '../../../utils/activity/activityUtils';
+import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { type IngressBaseContext } from "../IngressContext";
@@ -18,7 +18,7 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
     const wizardContext: IngressBaseContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext()),
+        ...await createActivityContext(),
         subscription,
         containerApp,
         enableIngress: true

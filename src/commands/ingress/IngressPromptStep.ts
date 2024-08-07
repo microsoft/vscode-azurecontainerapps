@@ -3,9 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon, type AzureWizardExecuteStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type AzureWizardExecuteStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { localize } from "../../utils/localize";
 import { type IngressContext } from "./IngressContext";
 import { DisableIngressStep } from "./disableIngress/DisableIngressStep";
@@ -73,7 +72,7 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
     if (!context.containerApp) {
         context.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['ingressPromptStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['ingressPromptStepSuccessItem', activitySuccessContext]),
                 label: context.enableIngress ?
                     localize('ingressEnableLabel', 'Enable ingress on port {0} (from Dockerfile configuration)', context.targetPort) :
                     localize('ingressDisableLabel', 'Disable ingress (from Dockerfile configuration)'),

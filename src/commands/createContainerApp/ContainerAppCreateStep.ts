@@ -5,21 +5,19 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 
-export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<CreateContainerAppContext> {
+export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContainerAppContext> {
     public priority: number = 620;
 
-    protected async executeCore(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
@@ -66,10 +64,10 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
         return !context.containerApp;
     }
 
-    protected createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppCreateStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepSuccessItem', activitySuccessContext]),
                 label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
                 iconPath: activitySuccessIcon
             }),
@@ -77,10 +75,10 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
         };
     }
 
-    protected createFailOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+    public createFailOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppCreateStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepFailItem', activityFailContext]),
                 label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
                 iconPath: activityFailIcon
             }),
