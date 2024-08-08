@@ -25,7 +25,21 @@ export class RegistryCredentialAddConfigurationListStep extends AzureWizardPromp
     private hasExistingRegistry?: boolean;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
-        this.hasExistingRegistry = !!context.containerApp?.configuration?.registries?.some(r => r.server && r.server === context.registry?.loginServer);
+        this.hasExistingRegistry = !!context.containerApp?.configuration?.registries?.some(r => {
+            if (!r.server) {
+                return false;
+            }
+
+            const registryDomain: SupportedRegistries | undefined = this.getRegistryDomain(context);
+            if (registryDomain === acrDomain) {
+                return r.server === context.registry?.loginServer;
+            } else {
+                return r.server === DockerLoginRegistryCredentialAddConfigurationStep.getThirdPartyLoginServer(
+                    registryDomain,
+                    nonNullProp(context, 'registryName'),
+                );
+            }
+        })
     }
 
     public async prompt(context: RegistryCredentialsContext): Promise<void> {

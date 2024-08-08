@@ -62,7 +62,10 @@ export class DockerLoginRegistryCredentialAddConfigurationStep extends AzureWiza
 
     private getThirdPartyRegistryCredentialAndSecret(context: DockerLoginRegistryCredentialsContext): RegistryCredentialAndSecret {
         // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
-        const loginServer: string = (this.supportedRegistryDomain === dockerHubDomain) ? dockerHubRegistry : nonNullProp(context, 'registryName').toLowerCase();
+        const loginServer: string = DockerLoginRegistryCredentialAddConfigurationStep.getThirdPartyLoginServer(
+            this.supportedRegistryDomain as typeof dockerHubDomain | undefined,
+            nonNullProp(context, 'registryName'),
+        );
         const passwordSecretRef: string = `${loginServer.replace(/[^a-z0-9-]+/g, '')}-${context.username}`;
 
         return {
@@ -77,5 +80,9 @@ export class DockerLoginRegistryCredentialAddConfigurationStep extends AzureWiza
                 value: context.secret
             },
         };
+    }
+
+    public static getThirdPartyLoginServer(registryDomain: typeof dockerHubDomain | undefined, registryName: string): string {
+        return (registryDomain === dockerHubDomain) ? dockerHubRegistry : registryName.toLowerCase();
     }
 }
