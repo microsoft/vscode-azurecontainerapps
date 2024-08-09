@@ -7,7 +7,7 @@ import { type ContainerRegistryManagementClient, type Registry } from "@azure/ar
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { ImageSource, acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
+import { acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQp, quickStartImageName } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
@@ -15,13 +15,19 @@ import { type CreateContainerAppBaseContext } from "../../../../createContainerA
 import { type IManagedEnvironmentContext } from "../../../../createManagedEnvironment/IManagedEnvironmentContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
-import { RegistryEnableAdminUserStep } from "./RegistryEnableAdminUserStep";
-import { type CreateAcrContext } from "./createAcr/CreateAcrContext";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";
 
+export interface AcrListStepOptions {
+    suppressCreate?: boolean;
+}
+
 export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
+    constructor(private readonly options?: AcrListStepOptions) {
+        super();
+    }
+
     public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
 
@@ -38,15 +44,15 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
     }
 
     public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
+        const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
+        const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [];
+
         if (!context.registry) {
-            const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [
+            promptSteps.push(
                 new RegistryNameStep(),
                 new SkuListStep()
-            ];
-
-            const executeSteps: AzureWizardExecuteStep<ContainerRegistryImageSourceContext>[] = [
-                new RegistryCreateStep()
-            ];
+            );
+            executeSteps.push(new RegistryCreateStep());
 
             await tryConfigureResourceGroupForRegistry(context, promptSteps);
 
@@ -55,18 +61,12 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
             } else {
                 LocationListStep.addStep(context, promptSteps);
             }
-
-            return {
-                promptSteps,
-                executeSteps
-            };
         }
 
-        if (context.registry && !context.registry?.adminUserEnabled) {
-            return { promptSteps: [new RegistryEnableAdminUserStep()] }
-        }
-
-        return undefined;
+        return {
+            promptSteps,
+            executeSteps
+        };
     }
 
     public async getPicks(context: ContainerRegistryImageSourceContext): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
@@ -94,17 +94,13 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
         }
 
         const picks: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[] = [];
-
-        // The why of `suppressCreate` in a nutshell: https://github.com/microsoft/vscode-azurecontainerapps/issues/78#issuecomment-1090686282
-        const suppressCreate: boolean = context.imageSource !== ImageSource.RemoteAcrBuild;
-        if (!suppressCreate) {
+        if (!this.options?.suppressCreate) {
             picks.push({
                 label: localize('newContainerRegistry', '$(plus) Create new Azure Container Registry'),
                 description: '',
                 data: undefined
             });
         }
-
         if (!picks.length && !registries.length) {
             picks.push(noMatchingResourcesQp);
         }
@@ -113,7 +109,7 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
             registries.map((r) => {
                 return !!suggestedRegistry && r.loginServer === suggestedRegistry ?
                     { label: nonNullProp(r, 'name'), data: r, description: `${r.loginServer} ${currentlyDeployed}`, suppressPersistence: true } :
-                    { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists || !suppressCreate };
+                    { label: nonNullProp(r, 'name'), data: r, description: r.loginServer, suppressPersistence: srExists || !this.options?.suppressCreate };
             })
         );
     }
@@ -129,7 +125,7 @@ async function tryConfigureResourceGroupForRegistry(
     promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
-    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<IManagedEnvironmentContext> & CreateAcrContext;
+    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<IManagedEnvironmentContext> & ContainerRegistryImageSourceContext;
     if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
         return;
     }

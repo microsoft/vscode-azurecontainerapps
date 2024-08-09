@@ -14,7 +14,7 @@ import { updateContainerApp } from "../../updateContainerApp";
 import { type UpdateImageContext } from "./updateImage";
 
 export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {
-    public priority: number = 480;
+    public priority: number = 580;
 
     public async execute(context: UpdateImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
@@ -23,7 +23,7 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
         // If the credentials have not changed, we can skip this update
         if (
             this.areSecretsDeepEqual(containerAppEnvelope.configuration.secrets, context.secrets) &&
-            this.areRegistriesDeepEqual(containerAppEnvelope.configuration.registries, context.registries)
+            this.areRegistriesDeepEqual(containerAppEnvelope.configuration.registries, context.registryCredentials)
         ) {
             context.telemetry.properties.skippedRegistryCredentialUpdate = 'true';
             return;
@@ -34,7 +34,7 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
         progress.report({ message: localize('configuringSecrets', 'Configuring registry secrets...') });
 
         containerAppEnvelope.configuration.secrets = context.secrets;
-        containerAppEnvelope.configuration.registries = context.registries;
+        containerAppEnvelope.configuration.registries = context.registryCredentials;
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
 
@@ -42,7 +42,7 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
     }
 
     public shouldExecute(context: UpdateImageContext): boolean {
-        return !!context.registries && !!context.secrets;
+        return !!context.registryCredentials && !!context.secrets;
     }
 
     private areSecretsDeepEqual(originalSecrets: Secret[] | undefined, newSecrets: Secret[] | undefined): boolean {

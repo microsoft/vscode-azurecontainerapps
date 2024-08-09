@@ -7,8 +7,8 @@ import { type ContainerRegistryManagementClient } from "@azure/arm-containerregi
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createActivityChildContext } from "../../../../../../utils/activity/activityUtils";
+import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../../utils/activity/ExecuteActivityOutputStepBase";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
 import { type CreateAcrContext } from "./CreateAcrContext";
@@ -26,7 +26,6 @@ export class RegistryCreateStep extends ExecuteActivityOutputStepBase<CreateAcrC
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 sku: { name: nonNullProp(context, 'newRegistrySku') },
-                adminUserEnabled: true
             }
         );
     }

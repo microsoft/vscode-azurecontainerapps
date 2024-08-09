@@ -15,14 +15,14 @@ import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
-    public priority: number = 480;
+    public priority: number = 680;
 
     protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         containerAppEnvelope.configuration.secrets = context.secrets;
-        containerAppEnvelope.configuration.registries = context.registries;
+        containerAppEnvelope.configuration.registries = context.registryCredentials;
 
         // We want to replace the old image
         containerAppEnvelope.template ||= {};

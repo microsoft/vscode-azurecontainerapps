@@ -43,11 +43,11 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
-            managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
+            managedEnvironmentId: context.managedEnvironment?.id,
             configuration: {
                 ingress,
                 secrets: context.secrets,
-                registries: context.registries,
+                registries: context.registryCredentials,
                 activeRevisionsMode: KnownActiveRevisionsMode.Single,
             },
             template: {
@@ -58,7 +58,7 @@ export class ContainerAppCreateStep extends ExecuteActivityOutputStepBase<Create
                         env: context.environmentVariables
                     }
                 ]
-            }
+            },
         }));
     }
 

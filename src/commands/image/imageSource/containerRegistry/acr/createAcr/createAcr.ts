@@ -21,7 +21,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     const wizardContext: CreateAcrContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...(await createActivityContext())
+        ...await createActivityContext(),
     };
 
     const title: string = localize('createAcr', "Create Azure Container Registry");
@@ -38,7 +38,6 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     ];
 
     LocationListStep.addStep(wizardContext, promptSteps);
-
 
     const wizard: AzureWizard<CreateAcrContext> = new AzureWizard(wizardContext, {
         title,

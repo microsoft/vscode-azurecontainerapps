@@ -3,22 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type EnvironmentVar, type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
+import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { type ImageSource } from "../../../constants";
 import { type ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type IContainerAppContext } from "../../IContainerAppContext";
+import { type RegistryCredentialsContext } from "../../registryCredentials/RegistryCredentialsContext";
 
-export interface ImageSourceBaseContext extends IContainerAppContext, ExecuteActivityContext {
+export interface ImageSourceBaseContext extends RegistryCredentialsContext, IContainerAppContext, ExecuteActivityContext {
     // ImageSourceListStep
     imageSource?: ImageSource;
     showQuickStartImage?: boolean;
 
-    // Base image attributes used as a precursor for either creating or updating a container app
     image?: string;
-    registries?: RegistryCredentials[];
-    secrets?: Secret[];
 
     envPath?: string;
     environmentVariables?: EnvironmentVar[];
