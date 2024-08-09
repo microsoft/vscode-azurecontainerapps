@@ -8,7 +8,7 @@ import { type IContainerAppContext } from "../../IContainerAppContext";
 import { type CreateAcrContext } from "../../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 
 export interface DockerLoginRegistryCredentialsContext extends CreateAcrContext, IContainerAppContext {
-    // These values are often populated from the Docker extension via the deployImage API layer
+    // These values are often pre-populated from the Docker extension via the deployImage API layer
     registryName?: string;
     username?: string;
     secret?: string;
