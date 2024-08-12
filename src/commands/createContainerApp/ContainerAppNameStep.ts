@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { type CreateContainerAppContext } from './CreateContainerAppContext';
@@ -42,7 +42,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerA
     }
 
     private async validateNameAvailable(context: CreateContainerAppContext, name: string): Promise<string | undefined> {
-        const resourceGroupName: string = getResourceGroupFromId(nonNullProp(context, 'managedEnvironmentId'));
+        const resourceGroupName: string = getResourceGroupFromId(nonNullValueAndProp(context.managedEnvironment, 'id'));
         if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
         }

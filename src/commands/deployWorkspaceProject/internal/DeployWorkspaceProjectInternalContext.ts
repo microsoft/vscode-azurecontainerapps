@@ -8,7 +8,7 @@ import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectInternalTelemetryProps as TelemetryProps } from "../../../telemetry/deployWorkspaceProjectTelemetryProps";
 import { type IContainerAppContext } from "../../IContainerAppContext";
 import { type CreateContainerAppBaseContext } from "../../createContainerApp/CreateContainerAppContext";
-import { type IManagedEnvironmentContext } from "../../createManagedEnvironment/IManagedEnvironmentContext";
+import { type CreateManagedEnvironmentContext } from "../../createManagedEnvironment/CreateManagedEnvironmentContext";
 import { type BuildImageInAzureImageSourceBaseContext } from "../../image/imageSource/buildImageInAzure/BuildImageInAzureImageSourceContext";
 import { type CreateAcrContext } from "../../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
 import { type DeploymentConfiguration } from "../deploymentConfiguration/DeploymentConfiguration";
@@ -16,7 +16,7 @@ import { type DeploymentConfiguration } from "../deploymentConfiguration/Deploym
 // Use intersection typing instead of an interface here to bypass some minor (relatively trivial) type mismatch issues introduced by having to use the 'Partial' utility
 export type DeployWorkspaceProjectInternalBaseContext =
     IContainerAppContext &
-    Partial<IManagedEnvironmentContext> &
+    Partial<CreateManagedEnvironmentContext> &
     Partial<CreateContainerAppBaseContext> &
     Partial<CreateAcrContext> &
     Partial<BuildImageInAzureImageSourceBaseContext> &

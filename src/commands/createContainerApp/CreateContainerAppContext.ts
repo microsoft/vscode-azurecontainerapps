@@ -14,8 +14,6 @@ import { type IngressBaseContext } from '../ingress/IngressContext';
 
 export interface CreateContainerAppBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressBaseContext, IContainerAppContext, ExecuteActivityContext {
     newContainerAppName?: string;
-
-    managedEnvironmentId?: string;
     managedEnvironment?: ManagedEnvironment;
 }
 
