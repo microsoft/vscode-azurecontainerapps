@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type ManagedEnvironment } from '@azure/arm-appcontainers';
 import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 import { type ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
 import { type SetTelemetryProps } from '../../telemetry/SetTelemetryProps';
@@ -14,7 +13,6 @@ import { type IngressBaseContext } from '../ingress/IngressContext';
 
 export interface CreateContainerAppBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressBaseContext, IContainerAppContext, ExecuteActivityContext {
     newContainerAppName?: string;
-    managedEnvironment?: ManagedEnvironment;
 }
 
 export type CreateContainerAppContext = CreateContainerAppBaseContext & SetTelemetryProps<TelemetryProps>;

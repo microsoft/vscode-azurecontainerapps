@@ -7,7 +7,7 @@ import { type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
-export interface ManagedEnvironmentContext extends ISubscriptionActionContext {
+export interface RequiredManagedEnvironmentContext extends ISubscriptionActionContext {
     subscription: AzureSubscription;
-    managedEnvironment?: ManagedEnvironment;
+    managedEnvironment: ManagedEnvironment;
 }
