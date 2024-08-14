@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { managedEnvironmentsAppProvider } from "../../constants";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
@@ -61,6 +61,16 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
         return !context.managedEnvironment;
+    }
+
+    public createProgressOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['managedEnvironmentCreateStepSuccessItem', activitySuccessContext]),
+                label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {

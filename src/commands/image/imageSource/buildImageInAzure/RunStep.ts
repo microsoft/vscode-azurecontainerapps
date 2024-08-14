@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
-import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, activityFailContext, activityFailIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as retry from 'p-retry';
 import * as path from 'path';
 import { type Progress } from "vscode";
@@ -50,6 +50,16 @@ export class RunStep extends AzureWizardExecuteStep<BuildImageInAzureImageSource
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.run;
+    }
+
+    public createProgressOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+        return {
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['runStepFailItem', activityFailContext]),
+                label: localize('runLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(): ExecuteActivityOutput {

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Ingress } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
@@ -35,6 +35,16 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
 
     public shouldExecute(context: IngressBaseContext): boolean {
         return context.enableIngress === true && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
+    }
+
+    public createProgressOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['enableIngressStepSuccessItem', activitySuccessContext]),
+                label: localize('enableIngressLabel', 'Enable ingress on port {0} for container app "{1}"', context.targetPort, context.containerApp?.name),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
@@ -48,6 +48,16 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
 
     public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {
         return !!context.shouldSaveDeploySettings;
+    }
+
+    public createProgressOutput(): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['dwpSaveSettingsStepSuccessItem', activitySuccessContext]),
+                label: saveSettingsLabel,
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {

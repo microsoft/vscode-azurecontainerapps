@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullValue, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullValue, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
 import { randomUUID } from 'crypto';
 import { tmpdir } from 'os';
 import * as path from 'path';
@@ -104,6 +104,16 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         await AzExtFsExtra.writeFile(customDockerfilePath, dockerfileContent);
 
         this._customDockerfileDirPath = customDockerfileDirPath;
+    }
+
+    public createProgressOutput(context: T): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['uploadSourceCodeStepFailItem', activityFailContext]),
+                label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: T): ExecuteActivityOutput {

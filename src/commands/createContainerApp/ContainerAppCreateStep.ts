@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -62,6 +62,16 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContain
 
     public shouldExecute(context: CreateContainerAppContext): boolean {
         return !context.containerApp;
+    }
+
+    public createProgressOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepSuccessItem', activitySuccessContext]),
+                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -28,6 +28,16 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
 
     public shouldExecute(context: IManagedEnvironmentContext): boolean {
         return !context.logAnalyticsWorkspace;
+    }
+
+    public createProgressOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
+                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {

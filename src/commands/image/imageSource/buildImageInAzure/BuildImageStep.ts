@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
 import { acrDomain } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -53,6 +53,16 @@ export class BuildImageStep extends AzureWizardExecuteStep<BuildImageInAzureImag
 
     public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
         return !context.image;
+    }
+
+    public createProgressOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['buildImageStepSuccessItem', activitySuccessContext]),
+                label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
