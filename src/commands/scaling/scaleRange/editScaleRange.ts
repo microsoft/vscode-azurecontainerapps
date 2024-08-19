@@ -7,7 +7,7 @@ import { type Revision, type Scale } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type ScaleItem } from "../../../tree/scaling/ScaleItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScale } from "../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../utils/revisionDraftUtils";

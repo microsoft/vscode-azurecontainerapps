@@ -3,16 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../../../utils/activity/activityUtils";
 import { localize } from "../../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
-export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<WorkspaceDeploymentConfigurationContext> {
+export abstract class FilePathsVerifyStep extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
     abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;
     abstract contextKey: keyof Pick<WorkspaceDeploymentConfigurationContext, 'srcPath' | 'envPath' | 'dockerfilePath'>;
     abstract fileType: string;
@@ -23,8 +21,8 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
         super();
     }
 
-    protected async executeCore(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.options.shouldSwallowError = true;
+    public async execute(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        this.options.continueOnFail = true;
         progress.report({ message: localize('verifyingFilePaths', `Verifying file paths...`) });
 
         const rootPath: string = nonNullProp(context, 'rootFolder').uri.fsPath;
@@ -47,14 +45,14 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
         }
     }
 
-    protected createSuccessOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
+    public createSuccessOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         if (!this.configPath || this.configPath === '') {
             return {};
         }
 
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['filePathVerifyStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['filePathVerifyStepSuccessItem', activitySuccessContext]),
                 label: this.fileType.charAt(0).toUpperCase() + this.fileType.slice(1) + ' ' + localize('path', 'path'),
                 iconPath: activitySuccessIcon
             }),
@@ -62,10 +60,10 @@ export abstract class FilePathsVerifyStep extends ExecuteActivityOutputStepBase<
         };
     }
 
-    protected createFailOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
+    public createFailOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['filePathVerifyStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['filePathVerifyStepFailItem', activityFailContext]),
                 label: this.fileType.charAt(0).toUpperCase() + this.fileType.slice(1) + ' ' + localize('path', 'path'),
                 iconPath: activityFailIcon
             }),
