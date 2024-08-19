@@ -5,7 +5,7 @@
 
 import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { type WorkspaceFolder } from "vscode";
-import { createActivityContext } from "../../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../../utils/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
