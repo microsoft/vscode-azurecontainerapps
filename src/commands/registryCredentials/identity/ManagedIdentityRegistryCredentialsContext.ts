@@ -6,8 +6,8 @@
 import { type RegistryCredentials } from "@azure/arm-appcontainers";
 import { type IContainerAppContext } from "../../IContainerAppContext";
 import { type CreateAcrContext } from "../../image/imageSource/containerRegistry/acr/createAcr/CreateAcrContext";
-import { type RequiredManagedEnvironmentContext } from "../../ManagedEnvironmentContext";
+import { type ManagedEnvironmentRequiredContext } from "../../ManagedEnvironmentContext";
 
-export interface ManagedIdentityRegistryCredentialsContext extends CreateAcrContext, RequiredManagedEnvironmentContext, IContainerAppContext {
+export interface ManagedIdentityRegistryCredentialsContext extends CreateAcrContext, ManagedEnvironmentRequiredContext, IContainerAppContext {
     newRegistryCredential?: RegistryCredentials;
 }
