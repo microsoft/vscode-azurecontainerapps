@@ -1,10 +1,6 @@
 {
     "folders": [
         {
-            "name": "albumapi-go",
-            "path": "./testProjects/containerapps-albumapi-go"
-        },
-        {
             "name": "albumapi-js",
             "path": "./testProjects/containerapps-albumapi-javascript"
         },
