@@ -78,6 +78,9 @@ export async function deployWorkspaceProjectInternal(
         startingConfiguration = await getStartingConfiguration({ ...context });
     });
 
+    console.log("starting configuration rootFolder uri:", startingConfiguration?.rootFolder?.uri)
+    console.log("starting configuration dockerfilePath:", startingConfiguration?.dockerfilePath)
+
     const wizardContext: DeployWorkspaceProjectInternalContext = {
         ...context,
         ...activityContext,
@@ -222,6 +225,7 @@ export async function deployWorkspaceProjectInternal(
         showLoadingPrompt: true
     });
 
+    console.log("prompting....")
     await wizard.prompt();
 
     if (!options.suppressActivity) {

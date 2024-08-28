@@ -58,6 +58,9 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
         ...deploymentConfiguration,
     });
 
+    console.log("deploymentConfiguration rootFolder uri:", deploymentConfiguration.rootFolder?.uri)
+    console.log("deploymentConfiguration dockerfilePath:", deploymentConfiguration.dockerfilePath)
+
     const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
         suppressActivity: false,
         suppressConfirmation: false,

@@ -15,6 +15,8 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
     }
 
     protected async promptCore(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+        console.log("confirm step start...")
+
         const resourcesToCreate: string[] = [];
         if (!context.resourceGroup) {
             resourcesToCreate.push('resource group');
@@ -60,6 +62,7 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
         );
 
         ext.outputChannel.appendLog(outputMessage);
+        console.log("confirm step end...")
     }
 
     public shouldPrompt(): boolean {
