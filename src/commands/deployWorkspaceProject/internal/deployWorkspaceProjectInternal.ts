@@ -222,7 +222,7 @@ export async function deployWorkspaceProjectInternal(
             localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
-        showLoadingPrompt: true
+        showLoadingPrompt: false
     });
 
     console.log("prompting....")
