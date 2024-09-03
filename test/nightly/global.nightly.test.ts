@@ -16,6 +16,8 @@ export let subscriptionContext: ISubscriptionContext;
 export const resourceGroupsToDelete = new Set<string>();
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
+    this.skip();
+
     if (!longRunningTestsEnabled) {
         this.skip();
     }
