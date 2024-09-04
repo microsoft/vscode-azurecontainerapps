@@ -6,7 +6,6 @@
 * [[684]](https://github.com/microsoft/vscode-azurecontainerapps/issues/684) Improve Dockerfile path descriptions
 * [[685]](https://github.com/microsoft/vscode-azurecontainerapps/pull/685) Improve multiroot workspace support when running create and deploy commands
 
-
 ### Fixed
 * [[734]](https://github.com/microsoft/vscode-azurecontainerapps/pull/734) Update scaling range validation to match the portal
 * [[735]](https://github.com/microsoft/vscode-azurecontainerapps/pull/735) Remove potential for duplicate message after creating a container app
