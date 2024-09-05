@@ -13,7 +13,7 @@ import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureIma
 import { buildImageInAzure } from "./buildImageInAzure";
 
 export class BuildImageStep extends AzureWizardExecuteStep<BuildImageInAzureImageSourceContext> {
-    public priority: number = 450;
+    public priority: number = 550;
     protected acrBuildError: AcrBuildResults;
 
     public async execute(context: BuildImageInAzureImageSourceContext): Promise<void> {

@@ -18,7 +18,7 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
 export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardExecuteStep<T> {
-    public priority: number = 430;
+    public priority: number = 530;
     /** Path to a directory containing a custom Dockerfile that we sometimes build and upload for the user */
     private _customDockerfileDirPath?: string;
     /** Relative path of src folder from rootFolder and what gets deployed */

@@ -24,7 +24,6 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext>
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 sku: { name: nonNullProp(context, 'newRegistrySku') },
-                adminUserEnabled: true
             }
         );
     }

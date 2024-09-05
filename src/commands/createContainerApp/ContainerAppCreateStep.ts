@@ -45,7 +45,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContain
             configuration: {
                 ingress,
                 secrets: context.secrets,
-                registries: context.registries,
+                registries: context.registryCredentials,
                 activeRevisionsMode: KnownActiveRevisionsMode.Single,
             },
             template: {
@@ -56,7 +56,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContain
                         env: context.environmentVariables
                     }
                 ]
-            }
+            },
         }));
     }
 
