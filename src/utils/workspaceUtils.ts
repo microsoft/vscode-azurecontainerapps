@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { nonNullValue, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { basename, relative } from "path";
 import { RelativePattern, Uri, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
@@ -37,40 +37,38 @@ export async function selectWorkspaceFile(
     options: SelectWorkspaceFileOptions,
     globPattern?: string
 ): Promise<string | undefined> {
-    if (!workspace.workspaceFolders?.length) {
-        throw new Error(localize('noWorkspaceOpen', 'No workspace is open to search through.'));
-    } else if (workspace.workspaceFolders.length > 1 && !context.rootFolder) {
-        throw new Error(localize('couldNotDetermineWorkspaceFolder', 'Could not determine which workspace folder to search through.'));
-    }
-
-    const pattern: RelativePattern = new RelativePattern(
-        context.rootFolder ?? workspace.workspaceFolders[0],
-        globPattern ?? '**/*'
-    );
-    const files: Uri[] = await workspace.findFiles(pattern);
-
-    // If dockerfile(s), log the count
-    if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
-        context.telemetry.properties.dockerfileCount = String(files.length);
-    }
-
-    // If environment variable file(s), log the count
-    if (globPattern === envFileGlobPattern || globPattern === `**/${envFileGlobPattern}`) {
-        context.telemetry.properties.environmentVariableFileCount = String(files.length);
-    }
-
-    if (options.autoSelectIfOne && files.length === 1) {
-        return files[0].fsPath;
-    }
-
     const quickPicks: IAzureQuickPickItem<string | undefined>[] = [];
-    quickPicks.push(...files.map((uri: Uri) => {
-        return {
-            label: basename(uri.path),
-            description: relative(pattern.baseUri.path, uri.path),
-            data: uri.fsPath
-        };
-    }));
+
+    if (context.rootFolder || workspace.workspaceFolders?.length === 1) {
+        const pattern: RelativePattern = new RelativePattern(
+            context.rootFolder ?? nonNullValue(workspace.workspaceFolders?.[0]),
+            globPattern ?? '**/*'
+        );
+        const files: Uri[] = await workspace.findFiles(pattern);
+
+        // If dockerfile(s), log the count
+        if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
+            context.telemetry.properties.dockerfileCount = String(files.length);
+        }
+
+        // If environment variable file(s), log the count
+        if (globPattern === envFileGlobPattern || globPattern === `**/${envFileGlobPattern}`) {
+            context.telemetry.properties.environmentVariableFileCount = String(files.length);
+        }
+
+        if (options.autoSelectIfOne && files.length === 1) {
+            return files[0].fsPath;
+        }
+
+        quickPicks.push(...files.map((uri: Uri) => {
+            return {
+                label: basename(uri.path),
+                description: relative(pattern.baseUri.path, uri.path),
+                data: uri.fsPath
+            };
+        }));
+    }
+
     quickPicks.push(browseItem);
 
     const skipForNow: string = 'skipForNow';

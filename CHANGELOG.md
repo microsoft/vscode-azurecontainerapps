@@ -1,5 +1,20 @@
 # Change Log
 
+## 0.7.1 - 2024-09-04
+
+### Changed
+* [[684]](https://github.com/microsoft/vscode-azurecontainerapps/issues/684) Improve Dockerfile path descriptions
+* [[685]](https://github.com/microsoft/vscode-azurecontainerapps/pull/685) Improve multiroot workspace support when running create and deploy commands
+
+### Fixed
+* [[734]](https://github.com/microsoft/vscode-azurecontainerapps/pull/734) Update scaling range validation to match the portal
+* [[735]](https://github.com/microsoft/vscode-azurecontainerapps/pull/735) Remove potential for duplicate message after creating a container app
+
+### Engineering
+* [[697]](https://github.com/microsoft/vscode-azurecontainerapps/issues/697) Add projects and test cases for `deployWorkspaceProject`
+* [[728]](https://github.com/microsoft/vscode-azurecontainerapps/pull/728) [[736]](https://github.com/microsoft/vscode-azurecontainerapps/pull/736) Update release pipeline to support signing
+* [[729]](https://github.com/microsoft/vscode-azurecontainerapps/pull/729) Upgrade packages for various improvements to telemetry reporting
+
 ## 0.7.0 - 2024-04-17
 
 This update comes with some major changes to the `Deploy Project from Workspace...` family of commands. We have now expanded support for monorepos by enabling the deployment and saving of multiple app configurations within the same workspace project.  New settings configurations can now be found under `containerApps.deploymentConfigurations`.  Any older settings will be migrated automatically to the new schema.
