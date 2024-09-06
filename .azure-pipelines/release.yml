@@ -4,6 +4,9 @@ parameters:
   - name: publishVersion
     displayName: Version to publish
     type: string
+  - name: dryRun
+    type: boolean
+    default: false
 
 resources:
   pipelines:
@@ -28,4 +31,5 @@ extends:
     pipelineID: $(resources.pipeline.build.pipelineID)
     runID: $(resources.pipeline.build.runID)
     publishVersion: ${{ parameters.publishVersion }}
+    dryRun: ${{ parameters.dryRun }}
     environmentName: AzCodeDeploy
