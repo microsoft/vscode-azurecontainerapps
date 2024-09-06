@@ -1,9 +1,6 @@
 trigger: none # Only run this pipeline when manually triggered
 
 parameters:
-  - name: extensionName
-    displayName: Extension name
-    type: string
   - name: publishVersion
     displayName: Version to publish
     type: string
@@ -15,7 +12,7 @@ parameters:
 resources:
   pipelines:
     - pipeline: build # identifier to use in pipeline resource variables
-      source: \Azure Tools\VSCode\Extensions\${{ parameters.extensionName }} # name of the pipeline that produces the artifacts
+      source: \Azure Tools\VSCode\Extensions\vscode-azurecontainerapps # name of the pipeline that produces the artifacts
   repositories:
     - repository: azExtTemplates
       type: github
@@ -32,7 +29,6 @@ variables:
 extends:
   template: azure-pipelines/release-extension.yml@azExtTemplates
   parameters:
-    extensionName: ${{ parameters.extensionName }}
     pipelineID: $(resources.pipeline.build.pipelineID)
     runID: $(resources.pipeline.build.runID)
     publishVersion: ${{ parameters.publishVersion }}
