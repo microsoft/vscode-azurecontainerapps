@@ -1,5 +1,10 @@
 trigger: none # Only run this pipeline when manually triggered
 
+parameters:
+  - name: publishVersion
+    displayName: Version to publish
+    type: string
+
 resources:
   pipelines:
     - pipeline: build # identifier to use in pipeline resource variables
@@ -8,7 +13,7 @@ resources:
     - repository: azExtTemplates
       type: github
       name: microsoft/vscode-azuretools
-      ref: main
+      ref: alex/release-testing
       endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
 
 variables:
