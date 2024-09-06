@@ -15,7 +15,7 @@ parameters:
 resources:
   pipelines:
     - pipeline: build # identifier to use in pipeline resource variables
-      source: \Azure Tools\VSCode\Extensions\$(parameters.extensionName) # name of the pipeline that produces the artifacts
+      source: \Azure Tools\VSCode\Extensions\${{ parameters.extensionName }} # name of the pipeline that produces the artifacts
   repositories:
     - repository: azExtTemplates
       type: github
