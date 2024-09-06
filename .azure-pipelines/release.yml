@@ -1,7 +1,8 @@
 trigger: none # Only run this pipeline when manually triggered
 
 parameters:
-  - name: Extension name
+  - name: extensionName
+    displayName: Extension name
     type: string
   - name: publishVersion
     displayName: Version to publish
