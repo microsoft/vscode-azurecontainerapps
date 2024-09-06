@@ -31,7 +31,7 @@ variables:
 extends:
   template: azure-pipelines/release-extension.yml@azExtTemplates
   parameters:
-    repositoryName: vscode-azurecontainerapps
+    extensionName: ${{ parameters.extensionName }}
     pipelineID: $(resources.pipeline.build.pipelineID)
     runID: $(resources.pipeline.build.runID)
     publishVersion: ${{ parameters.publishVersion }}
