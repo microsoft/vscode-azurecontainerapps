@@ -27,3 +27,4 @@ extends:
   parameters:
     pipelineID: $(resources.pipeline.build.pipelineID)
     runID: $(resources.pipeline.build.runID)
+    publishVersion: $(publishVersion)
