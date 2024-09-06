@@ -5,6 +5,7 @@ parameters:
     displayName: Version to publish
     type: string
   - name: dryRun
+    displayName: Dry run
     type: boolean
     default: false
 
