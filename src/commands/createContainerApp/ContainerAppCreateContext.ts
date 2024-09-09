@@ -11,8 +11,8 @@ import { type IContainerAppContext } from '../IContainerAppContext';
 import { type ImageSourceBaseContext } from '../image/imageSource/ImageSourceContext';
 import { type IngressBaseContext } from '../ingress/IngressContext';
 
-export interface CreateContainerAppBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressBaseContext, IContainerAppContext, ExecuteActivityContext {
+export interface ContainerAppCreateBaseContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressBaseContext, IContainerAppContext, ExecuteActivityContext {
     newContainerAppName?: string;
 }
 
-export type CreateContainerAppContext = CreateContainerAppBaseContext & SetTelemetryProps<TelemetryProps>;
+export type ContainerAppCreateContext = ContainerAppCreateBaseContext & SetTelemetryProps<TelemetryProps>;

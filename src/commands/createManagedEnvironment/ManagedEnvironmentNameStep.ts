@@ -7,10 +7,10 @@ import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { type CreateManagedEnvironmentContext } from './CreateManagedEnvironmentContext';
+import { type ManagedEnvironmentCreateContext } from './ManagedEnvironmentCreateContext';
 
-export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<CreateManagedEnvironmentContext> {
-    public async prompt(context: CreateManagedEnvironmentContext): Promise<void> {
+export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<ManagedEnvironmentCreateContext> {
+    public async prompt(context: ManagedEnvironmentCreateContext): Promise<void> {
         const prompt: string = localize('containerAppNamePrompt', 'Enter a container apps environment name.');
         context.newManagedEnvironmentName = (await context.ui.showInputBox({
             prompt,
@@ -21,7 +21,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<CreateMana
         context.valuesToMask.push(context.newManagedEnvironmentName);
     }
 
-    public shouldPrompt(context: CreateManagedEnvironmentContext): boolean {
+    public shouldPrompt(context: ManagedEnvironmentCreateContext): boolean {
         return !context.managedEnvironment && !context.newManagedEnvironmentName;
     }
 
@@ -38,7 +38,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<CreateMana
         return undefined;
     }
 
-    private async validateNameAvailable(context: CreateManagedEnvironmentContext, name: string): Promise<string | undefined> {
+    private async validateNameAvailable(context: ManagedEnvironmentCreateContext, name: string): Promise<string | undefined> {
         if (!context.resourceGroup) {
             // If a new resource group will house the managed environment, we can skip the name check
             return undefined;

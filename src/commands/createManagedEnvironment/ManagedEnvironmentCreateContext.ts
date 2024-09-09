@@ -9,7 +9,7 @@ import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureu
 import { type ExecuteActivityContext, type ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
-export interface CreateManagedEnvironmentContext extends ISubscriptionActionContext, IResourceGroupWizardContext, ExecuteActivityContext {
+export interface ManagedEnvironmentCreateContext extends ISubscriptionActionContext, IResourceGroupWizardContext, ExecuteActivityContext {
     subscription: AzureSubscription;
 
     newManagedEnvironmentName?: string;

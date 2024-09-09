@@ -11,8 +11,8 @@ import { acrDomain, currentlyDeployed, noMatchingResources, noMatchingResourcesQ
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { type CreateContainerAppBaseContext } from "../../../../createContainerApp/CreateContainerAppContext";
-import { type CreateManagedEnvironmentContext } from "../../../../createManagedEnvironment/CreateManagedEnvironmentContext";
+import { type ContainerAppCreateBaseContext } from "../../../../createContainerApp/ContainerAppCreateContext";
+import { type ManagedEnvironmentCreateContext } from "../../../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { type CreateAcrContext } from "./createAcr/CreateAcrContext";
@@ -126,7 +126,7 @@ async function tryConfigureResourceGroupForRegistry(
     promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
 ): Promise<void> {
     // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
-    const resourceCreationContext = context as Partial<CreateContainerAppBaseContext> & Partial<CreateManagedEnvironmentContext> & CreateAcrContext;
+    const resourceCreationContext = context as Partial<ContainerAppCreateBaseContext> & Partial<ManagedEnvironmentCreateContext> & CreateAcrContext;
     if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
         return;
     }

@@ -16,9 +16,9 @@ import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
+import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
-import { type CreateContainerAppContext } from "./CreateContainerAppContext";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
 export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
@@ -29,7 +29,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     node ??= await pickEnvironment(context);
 
-    const wizardContext: CreateContainerAppContext = {
+    const wizardContext: ContainerAppCreateContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
         ...await createActivityContext(),
@@ -40,14 +40,14 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     const title: string = localize('createContainerApp', 'Create container app');
 
-    const promptSteps: AzureWizardPromptStep<CreateContainerAppContext>[] = [
+    const promptSteps: AzureWizardPromptStep<ContainerAppCreateContext>[] = [
         new ContainerAppNameStep(),
         new ImageSourceListStep(),
         new IngressPromptStep(),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<CreateContainerAppContext>[] = [
-        getVerifyProvidersStep<CreateContainerAppContext>(),
+    const executeSteps: AzureWizardExecuteStep<ContainerAppCreateContext>[] = [
+        getVerifyProvidersStep<ContainerAppCreateContext>(),
         new ContainerAppCreateStep(),
     ];
 
@@ -62,7 +62,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
 
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
-    const wizard: AzureWizard<CreateContainerAppContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ContainerAppCreateContext> = new AzureWizard(wizardContext, {
         title,
         promptSteps,
         executeSteps,
