@@ -8,7 +8,7 @@ import { AzureWizard, createSubscriptionContext, nonNullProp, subscriptionExperi
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { appProvider, managedEnvironmentsId } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { createActivityContext } from "../../utils/activity/activityUtils";
+import { createActivityContext } from "../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { type CreateManagedEnvironmentContext } from "./CreateManagedEnvironmentContext";

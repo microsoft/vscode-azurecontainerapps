@@ -7,7 +7,7 @@ import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, ty
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { ChangeRevisionModeStep } from "./ChangeRevisionModeStep";

@@ -11,7 +11,7 @@ import { type UpdateImageTelemetryProps as TelemetryProps } from "../../../telem
 import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { type RevisionItem } from "../../../tree/revisionManagement/RevisionItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";

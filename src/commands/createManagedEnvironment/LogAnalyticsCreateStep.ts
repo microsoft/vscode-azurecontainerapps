@@ -4,19 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../utils/activity/activityUtils";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { type CreateManagedEnvironmentContext } from "./CreateManagedEnvironmentContext";
 
-export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<CreateManagedEnvironmentContext> {
+export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<CreateManagedEnvironmentContext> {
     public priority: number = 220;
 
-    protected async executeCore(context: CreateManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: CreateManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);
         const resourceGroup = nonNullProp(context, 'resourceGroup');
         const workspaceName = context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName');
@@ -32,10 +30,10 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<Create
         return !context.logAnalyticsWorkspace;
     }
 
-    protected createSuccessOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
                 label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
                 iconPath: activitySuccessIcon
             }),
@@ -43,10 +41,10 @@ export class LogAnalyticsCreateStep extends ExecuteActivityOutputStepBase<Create
         };
     }
 
-    protected createFailOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
+    public createFailOutput(context: CreateManagedEnvironmentContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['logAnalyticsCreateStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepFailItem', activityFailContext]),
                 label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
                 iconPath: activityFailIcon
             }),

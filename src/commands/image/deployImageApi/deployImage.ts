@@ -5,7 +5,7 @@
 
 import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";

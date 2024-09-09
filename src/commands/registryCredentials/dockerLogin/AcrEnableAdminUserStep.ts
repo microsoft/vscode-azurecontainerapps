@@ -5,17 +5,15 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { activityFailIcon, activitySuccessContext, activitySuccessIcon, GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import { createActivityChildContext } from "../../../utils/activity/activityUtils";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
+import { activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
 
-export class AcrEnableAdminUserStep extends ExecuteActivityOutputStepBase<DockerLoginRegistryCredentialsContext> {
+export class AcrEnableAdminUserStep extends AzureWizardExecuteStep<DockerLoginRegistryCredentialsContext> {
     public priority: number = 450;
 
-    public async executeCore(context: DockerLoginRegistryCredentialsContext): Promise<void> {
+    public async execute(context: DockerLoginRegistryCredentialsContext): Promise<void> {
         const registry = nonNullValue(context.registry);
         registry.adminUserEnabled = true;
 
@@ -31,10 +29,10 @@ export class AcrEnableAdminUserStep extends ExecuteActivityOutputStepBase<Docker
         return !!context.registry && !context.registry.adminUserEnabled;
     }
 
-    protected createSuccessOutput(context: DockerLoginRegistryCredentialsContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: DockerLoginRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['acrEnableAdminUserStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['acrEnableAdminUserStepSuccessItem', activitySuccessContext]),
                 label: localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name),
                 iconPath: activitySuccessIcon
             }),
@@ -42,10 +40,10 @@ export class AcrEnableAdminUserStep extends ExecuteActivityOutputStepBase<Docker
         };
     }
 
-    protected createFailOutput(context: DockerLoginRegistryCredentialsContext): ExecuteActivityOutput {
+    public createFailOutput(context: DockerLoginRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['acrEnableAdminUserStepFailItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['acrEnableAdminUserStepFailItem', activitySuccessContext]),
                 label: localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name),
                 iconPath: activityFailIcon
             }),
