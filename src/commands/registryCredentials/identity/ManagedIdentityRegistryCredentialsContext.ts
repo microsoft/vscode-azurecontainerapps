@@ -9,5 +9,6 @@ import { type CreateAcrContext } from "../../image/imageSource/containerRegistry
 import { type ManagedEnvironmentRequiredContext } from "../../ManagedEnvironmentContext";
 
 export interface ManagedIdentityRegistryCredentialsContext extends CreateAcrContext, ManagedEnvironmentRequiredContext, IContainerAppContext {
+    hasAcrPullRole?: boolean;
     newRegistryCredential?: RegistryCredentials;
 }

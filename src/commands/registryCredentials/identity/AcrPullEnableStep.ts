@@ -3,31 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { KnownPrincipalType, type AuthorizationManagementClient, type RoleAssignment, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
-import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { KnownPrincipalType, type AuthorizationManagementClient, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
 import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as crypto from "crypto";
 import { type Progress } from "vscode";
 import { createAuthorizationManagementClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
+import { acrPullRoleId } from "./AcrPullVerifyStep";
 import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
-const acrPullRoleId: string = '7f951dda-4ed3-4680-a7ca-43fe172d538d';
-
 export class AcrPullEnableStep extends AzureWizardExecuteStep<ManagedIdentityRegistryCredentialsContext> {
-    public priority: number = 460;
-
-    // Add a configureBeforeExecute
+    public priority: number = 461;
 
     public async execute(context: ManagedIdentityRegistryCredentialsContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
-        const registryId: string = nonNullValueAndProp(context.registry, 'id');
-        const managedEnvironmentIdentity: string = nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId');
-
-        if (await this.hasAcrPullAssignment(client, registryId, managedEnvironmentIdentity)) {
-            return;
-        }
-
         const roleCreateParams: RoleAssignmentCreateParameters = {
             description: 'acr pull',
             roleDefinitionId: `/providers/Microsoft.Authorization/roleDefinitions/${acrPullRoleId}`,
@@ -35,7 +24,7 @@ export class AcrPullEnableStep extends AzureWizardExecuteStep<ManagedIdentityReg
             principalType: KnownPrincipalType.ServicePrincipal,
         };
 
-        progress.report({ message: localize('updatingRegistryCredentials', 'Updating registry credentials...') });
+        progress.report({ message: localize('addingAcrPull', 'Adding ACR pull role...') });
         await client.roleAssignments.create(
             nonNullValueAndProp(context.registry, 'id'),
             crypto.randomUUID(),
@@ -44,18 +33,7 @@ export class AcrPullEnableStep extends AzureWizardExecuteStep<ManagedIdentityReg
     }
 
     public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
-        return !!context.registry;
-    }
-
-    private async hasAcrPullAssignment(client: AuthorizationManagementClient, registryId: string, managedEnvironmentIdentity: string): Promise<boolean> {
-        const roleAssignments: RoleAssignment[] = await uiUtils.listAllIterator(client.roleAssignments.listForScope(
-            registryId,
-            {
-                // $filter=principalId eq {id}
-                filter: `principalId eq '{${managedEnvironmentIdentity}}'`,
-            }
-        ));
-        return roleAssignments.some(r => !!r.roleDefinitionId?.endsWith(acrPullRoleId));
+        return !!context.registry && !context.hasAcrPullRole;
     }
 
     public createSuccessOutput(): ExecuteActivityOutput {
