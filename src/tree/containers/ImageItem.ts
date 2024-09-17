@@ -8,6 +8,7 @@ import { createGenericElement, nonNullProp, nonNullValue, type TreeElementBase }
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 
@@ -21,7 +22,7 @@ export class ImageItem implements RevisionsItemModel {
         readonly revision: Revision,
         readonly containerId: string,
         readonly container: Container) { }
-    id: string = `${this.containerId}/image`
+    id: string = `${this.parentResource.id}/image`
 
     getTreeItem(): TreeItem {
         return {
@@ -38,16 +39,22 @@ export class ImageItem implements RevisionsItemModel {
         const imageAndTag = this.container.image?.substring(nonNullValue(loginServer?.length) + 1, this.container.image?.length);
         return [
             createGenericElement({
+                id: `${this.id}/imageName`,
                 label: localize('containerImage', 'Name:'),
                 contextValue: 'containerImageNameItem',
                 description: `${imageAndTag}`,
             }),
             createGenericElement({
+                id: `${this.id}/imageRegistry`,
                 label: localize('containerImageRegistryItem', 'Registry:'),
                 contextValue: 'containerImageRegistryItem',
                 description: `${loginServer}`,
             })
         ];
+    }
+
+    private get parentResource(): ContainerAppModel | Revision {
+        return getParentResource(this.containerApp, this.revision);
     }
 
     viewProperties: ViewPropertiesModel = {

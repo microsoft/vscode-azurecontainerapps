@@ -28,7 +28,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
         public readonly containerApp: ContainerAppModel,
         public readonly revision: Revision,) {
         super(subscription, containerApp, revision);
-        this.id = `${containerApp.id}/containers`;
+        this.id = `${this.parentResource.id}/containers`;
         this.containers = nonNullValue(revision.template?.containers);
         this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
     }

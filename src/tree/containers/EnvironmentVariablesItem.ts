@@ -8,6 +8,7 @@ import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { EnvironmentVariableItem } from "./EnvironmentVariableItem";
@@ -22,7 +23,7 @@ export class EnvironmentVariablesItem implements RevisionsItemModel {
         readonly containerId: string,
         readonly container: Container) {
     }
-    id: string = `${this.containerId}/environmentVariables`
+    id: string = `${this.parentResource.id}/environmentVariables`;
 
     getTreeItem(): TreeItem {
         return {
@@ -39,5 +40,9 @@ export class EnvironmentVariablesItem implements RevisionsItemModel {
             return;
         }
         return this.container.env?.map(env => new EnvironmentVariableItem(this.subscription, this.containerApp, this.revision, this.id, this.container, env));
+    }
+
+    private get parentResource(): ContainerAppModel | Revision {
+        return getParentResource(this.containerApp, this.revision);
     }
 }

@@ -9,6 +9,7 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 
@@ -22,7 +23,7 @@ export class EnvironmentVariableItem implements RevisionsItemModel {
         readonly envVariable: EnvironmentVar) {
         this._hideValue = true;
     }
-    id: string = `${this.containerId}/environmentVariables/${this.envVariable.name}`
+    id: string = `${this.parentResource.id}${this.envVariable.name}`
 
     getTreeItem(): TreeItem {
         return {
@@ -40,5 +41,9 @@ export class EnvironmentVariableItem implements RevisionsItemModel {
     public async toggleValueVisibility(_: IActionContext): Promise<void> {
         this._hideValue = !this._hideValue;
         ext.branchDataProvider.refresh(this);
+    }
+
+    private get parentResource(): ContainerAppModel | Revision {
+        return getParentResource(this.containerApp, this.revision);
     }
 }

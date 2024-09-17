@@ -7,6 +7,7 @@ import { type Container, type Revision } from "@azure/arm-appcontainers";
 import { nonNullProp, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
@@ -19,7 +20,7 @@ export class ContainerItem implements RevisionsItemModel {
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerItem.contextValue);
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision, readonly container: Container) {
-        this.id = `containerItem-${this.container.name}-${this.revision.name}`;
+        this.id = `${this.parentResource.id}/${container.name}`;
         this.label = nonNullValue(this.container.name);
     }
 
@@ -37,6 +38,10 @@ export class ContainerItem implements RevisionsItemModel {
             new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.container),
             new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.container)
         ];
+    }
+
+    private get parentResource(): ContainerAppModel | Revision {
+        return getParentResource(this.containerApp, this.revision);
     }
 
     viewProperties: ViewPropertiesModel = {
