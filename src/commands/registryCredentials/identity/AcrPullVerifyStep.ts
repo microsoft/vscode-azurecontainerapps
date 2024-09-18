@@ -42,10 +42,10 @@ export class AcrPullVerifyStep extends AzureWizardExecuteStep<ManagedIdentityReg
             return {
                 item: new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['containerRegistryAcrPullVerifyStepSuccessItem', activitySuccessContext]),
-                    label: localize('verifyAcrPull', 'Verify "{0}" access for container environment identity', 'acrPull'),
+                    label: localize('verifyAcrPull', 'Verify "{0}" access on container registry "{1}"', 'acrPull', context.registry?.name),
                     iconPath: activitySuccessIcon
                 }),
-                message: localize('verifyAcrPullSuccess', 'Successfully verified "{0}" access for container environment identity.', 'acrPull'),
+                message: localize('verifyAcrPullSuccess', 'Successfully verified "{0}" access on container registry "{1}".', 'acrPull', context.registry?.name),
             };
         } else {
             // 'AcrPullEnableStep' will cover showing this output
@@ -53,14 +53,14 @@ export class AcrPullVerifyStep extends AzureWizardExecuteStep<ManagedIdentityReg
         }
     }
 
-    public createFailOutput(): ExecuteActivityOutput {
+    public createFailOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['containerRegistryAcrPullVerifyStepFailItem', activityFailContext]),
-                label: localize('verifyAcrPull', 'Verify "{0}" access for container environment identity"', 'acrPull'),
+                label: localize('verifyAcrPull', 'Verify "{0}" access on container registry "{1}"', 'acrPull', context.registry?.name),
                 iconPath: activityFailIcon
             }),
-            message: localize('verifyAcrPullFail', 'Failed to verify "{0}" access for container environment identity.', 'acrPull'),
+            message: localize('verifyAcrPullFail', 'Failed to verify "{0}" access on container registry "{1}".', 'acrPull', context.registry?.name),
         };
     }
 }

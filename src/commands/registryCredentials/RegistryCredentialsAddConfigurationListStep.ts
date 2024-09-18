@@ -11,8 +11,9 @@ import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserC
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
 import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
+import { AcrPullVerifyStep } from "./identity/AcrPullVerifyStep";
 import { ManagedEnvironmentIdentityEnableStep } from "./identity/ManagedEnvironmentIdentityEnableStep";
-import { ManagedIdentityRegistryCredentialAddConfigurationStep } from "./identity/ManagedIdentityRegistryCredentialAddConfigurationStep";
+import { ManagedIdentityRegistryCredentialsAddConfigurationStep } from "./identity/ManagedIdentityRegistryCredentialsAddConfigurationStep";
 import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCredentialsAndSecretsConfigurationStep";
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
@@ -62,8 +63,9 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             case RegistryCredentialType.SystemAssigned:
                 executeSteps.push(
                     new ManagedEnvironmentIdentityEnableStep(),
+                    new AcrPullVerifyStep(),
                     new AcrPullEnableStep(),
-                    new ManagedIdentityRegistryCredentialAddConfigurationStep(registryDomain),
+                    new ManagedIdentityRegistryCredentialsAddConfigurationStep(registryDomain),
                 );
                 break;
             case RegistryCredentialType.DockerLogin:

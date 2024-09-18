@@ -8,7 +8,7 @@ import { acrDomain, type SupportedRegistries } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
-export class ManagedIdentityRegistryCredentialAddConfigurationStep extends AzureWizardExecuteStep<ManagedIdentityRegistryCredentialsContext> {
+export class ManagedIdentityRegistryCredentialsAddConfigurationStep extends AzureWizardExecuteStep<ManagedIdentityRegistryCredentialsContext> {
     public priority: number = 470;
 
     constructor(private readonly supportedRegistryDomain: SupportedRegistries | undefined) {
