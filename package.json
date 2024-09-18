@@ -566,10 +566,6 @@
                 {
                     "command": "containerApps.walkthrough.cleanUpResources",
                     "when": "never"
-                },
-                {
-                    "command": "azureFunctions.toggleAppSettingVisibility",
-                    "when": "never"
                 }
             ]
         },

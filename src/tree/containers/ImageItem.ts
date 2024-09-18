@@ -15,6 +15,8 @@ import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
 export class ImageItem implements RevisionsItemModel {
     static readonly contextValue: string = 'imageItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ImageItem.contextValue);
+    readonly loginServer = this.container.image?.split('/')[0];
+    readonly imageAndTag = this.container.image?.substring(nonNullValue(this.loginServer?.length) + 1, this.container.image?.length);
 
     constructor(
         readonly subscription: AzureSubscription,
@@ -22,7 +24,7 @@ export class ImageItem implements RevisionsItemModel {
         readonly revision: Revision,
         readonly containerId: string,
         readonly container: Container) { }
-    id: string = `${this.parentResource.id}/image`
+    id: string = `${this.parentResource.id}/image/${this.imageAndTag}`
 
     getTreeItem(): TreeItem {
         return {
@@ -35,20 +37,18 @@ export class ImageItem implements RevisionsItemModel {
     }
 
     getChildren(): TreeElementBase[] {
-        const loginServer = this.container.image?.split('/')[0];
-        const imageAndTag = this.container.image?.substring(nonNullValue(loginServer?.length) + 1, this.container.image?.length);
         return [
             createGenericElement({
                 id: `${this.id}/imageName`,
                 label: localize('containerImage', 'Name:'),
                 contextValue: 'containerImageNameItem',
-                description: `${imageAndTag}`,
+                description: `${this.imageAndTag}`,
             }),
             createGenericElement({
                 id: `${this.id}/imageRegistry`,
                 label: localize('containerImageRegistryItem', 'Registry:'),
                 contextValue: 'containerImageRegistryItem',
-                description: `${loginServer}`,
+                description: `${this.loginServer}`,
             })
         ];
     }
