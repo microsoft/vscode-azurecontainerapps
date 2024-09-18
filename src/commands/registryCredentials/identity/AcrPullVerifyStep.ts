@@ -48,7 +48,7 @@ export class AcrPullVerifyStep extends AzureWizardExecuteStep<ManagedIdentityReg
                 message: localize('verifyAcrPullSuccess', 'Successfully verified "{0}" access on container registry "{1}".', 'acrPull', context.registry?.name),
             };
         } else {
-            // 'AcrPullEnableStep' will cover showing this output
+            // Let 'AcrPullEnableStep' cover showing this output
             return {};
         }
     }
