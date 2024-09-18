@@ -23,7 +23,7 @@ export class EnvironmentVariableItem implements RevisionsItemModel {
         readonly envVariable: EnvironmentVar) {
         this._hideValue = true;
     }
-    id: string = `${this.parentResource.id}${this.envVariable.name}`
+    id: string = `${this.parentResource.id}/${this.container.image}/${this.envVariable.name}`
 
     getTreeItem(): TreeItem {
         return {

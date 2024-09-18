@@ -23,7 +23,7 @@ export class EnvironmentVariablesItem implements RevisionsItemModel {
         readonly containerId: string,
         readonly container: Container) {
     }
-    id: string = `${this.parentResource.id}/environmentVariables`;
+    id: string = `${this.parentResource.id}/environmentVariables/${this.container.image}`;
 
     getTreeItem(): TreeItem {
         return {
