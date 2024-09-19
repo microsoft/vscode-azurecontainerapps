@@ -44,6 +44,7 @@ export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImage
             picks.push({ label: '.' + p, data: rootPath + p });
         }
 
+        picks.reverse();
         picks.push(browseItem);
         return picks;
     }

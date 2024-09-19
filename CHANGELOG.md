@@ -1,10 +1,47 @@
 # Change Log
 
+## 0.7.1 - 2024-09-04
+
+### Changed
+* [[684]](https://github.com/microsoft/vscode-azurecontainerapps/issues/684) Improve Dockerfile path descriptions
+* [[685]](https://github.com/microsoft/vscode-azurecontainerapps/pull/685) Improve multiroot workspace support when running create and deploy commands
+
+### Fixed
+* [[734]](https://github.com/microsoft/vscode-azurecontainerapps/pull/734) Update scaling range validation to match the portal
+* [[735]](https://github.com/microsoft/vscode-azurecontainerapps/pull/735) Remove potential for duplicate message after creating a container app
+
+### Engineering
+* [[697]](https://github.com/microsoft/vscode-azurecontainerapps/issues/697) Add projects and test cases for `deployWorkspaceProject`
+* [[728]](https://github.com/microsoft/vscode-azurecontainerapps/pull/728) [[736]](https://github.com/microsoft/vscode-azurecontainerapps/pull/736) Update release pipeline to support signing
+* [[729]](https://github.com/microsoft/vscode-azurecontainerapps/pull/729) Upgrade packages for various improvements to telemetry reporting
+
+## 0.7.0 - 2024-04-17
+
+This update comes with some major changes to the `Deploy Project from Workspace...` family of commands. We have now expanded support for monorepos by enabling the deployment and saving of multiple app configurations within the same workspace project.  New settings configurations can now be found under `containerApps.deploymentConfigurations`.  Any older settings will be migrated automatically to the new schema.
+
+We have also included a new getting started walkthrough which steps through first time deployment using the Azure Container Apps extension.
+
+For more information please consult our [README](https://github.com/microsoft/vscode-azurecontainerapps#readme).
+
+### Added
+* [[59]](https://github.com/microsoft/vscode-azurecontainerapps/issues/39) Add a getting started walkthrough
+* [[607]](https://github.com/microsoft/vscode-azurecontainerapps/issues/607) Expand support for monorepos and deploying multiple app configurations within the same workspace project
+
+### Changed
+* [[335]](https://github.com/microsoft/vscode-azurecontainerapps/issues/335) Give more context when displaying image source selection options while creating a container app
+* [[634]](https://github.com/microsoft/vscode-azurecontainerapps/pull/634) Remove auto-naming of resources based on the workspace name and always prompts for new app names
+* [[669]](https://github.com/microsoft/vscode-azurecontainerapps/pull/669) Recommend previously deployed to managed environments
+* [[668]](https://github.com/microsoft/vscode-azurecontainerapps/pull/668) Prompt for a separate name when choosing to create a new managed environment
+* [[641]](https://github.com/microsoft/vscode-azurecontainerapps/pull/641) Add support for taking a saved `envPath` and converting it to environment variables
+
+### Fixed
+* [[627]](https://github.com/microsoft/vscode-azurecontainerapps/pull/627) Use existing env variables when updating container app if "skipped"
+
 ## 0.6.2 - 2024-02-20
 
 This patch includes improvements to image building stability.  We have made improvements to the way we bundle/upload project files and also automatically detect and filter unsupported ACR Dockerfile `--platform` flags.  For any ACR build error logs that are returned, we now provide a dedicated location for them to reside in the activity log, where they are more easily accessed.
 
-## Added
+### Added
 * [[586]](https://github.com/microsoft/vscode-azurecontainerapps/pull/586) Add support for choosing a source directory when deploying a workspace project
 * [[601]](https://github.com/microsoft/vscode-azurecontainerapps/pull/601) Image building through ACR does not currently accept `--platform` flag syntax.  Improve deploy experience by detecting and removing `--platform` flags from the Dockerfile automatically
 * [[580]](https://github.com/microsoft/vscode-azurecontainerapps/issues/580) Support workload profiles environments
@@ -13,12 +50,12 @@ This patch includes improvements to image building stability.  We have made impr
 * [[569]](https://github.com/microsoft/vscode-azurecontainerapps/issues/569) Add JSON validation support for editing container app envelopes
 * [[573]](https://github.com/microsoft/vscode-azurecontainerapps/pull/573) Ask to enable admin user when deploying an image through the Docker extension entry-point
 
-## Fixed
+### Fixed
 * [[594]](https://github.com/microsoft/vscode-azurecontainerapps/pull/594) Update the TAR build logic
 * [[602]](https://github.com/microsoft/vscode-azurecontainerapps/pull/602) Deploying from a folder with an invalid name fails
 * [[574]](https://github.com/microsoft/vscode-azurecontainerapps/pull/574) An extra input box pops up when executing `Disconnect from Repo` command
 
-## Engineering
+### Engineering
 * [[578]](https://github.com/microsoft/vscode-azurecontainerapps/pull/578) Create an API for the `deployWorkspaceProject` command
 
 ## 0.6.1 - 2023-11-07

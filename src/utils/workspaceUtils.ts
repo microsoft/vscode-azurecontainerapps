@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { UserCancelledError, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { basename } from "path";
-import { Uri, window, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
+import { nonNullValue, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { basename, relative } from "path";
+import { RelativePattern, Uri, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
 import { type SetTelemetryProps } from "../telemetry/SetTelemetryProps";
 import { type WorkspaceFileTelemetryProps as TelemetryProps } from "../telemetry/WorkspaceFileTelemetryProps";
@@ -32,21 +32,19 @@ interface SelectWorkspaceFileOptions extends OpenDialogOptions {
  * @returns Returns a string representing the workspace file path chosen.  A return of undefined is only possible when the `allowSkip` option is set to true.
  */
 export async function selectWorkspaceFile(
-    context: IActionContext & SetTelemetryProps<TelemetryProps>,
+    context: IActionContext & SetTelemetryProps<TelemetryProps> & { rootFolder?: WorkspaceFolder },
     placeHolder: string,
     options: SelectWorkspaceFileOptions,
     globPattern?: string
 ): Promise<string | undefined> {
-    let input: IAzureQuickPickItem<string | undefined> | undefined;
     const quickPicks: IAzureQuickPickItem<string | undefined>[] = [];
-    const skipForNow: string = 'skipForNow';
 
-    if (workspace.workspaceFolders?.length === 1) {
-        // if there's a fileExtension, then only populate the quickPick menu with that, otherwise show the current folders in the workspace
-        const files = globPattern ? await workspace.findFiles(globPattern) : await workspace.findFiles('**/*');
-
-        context.telemetry.properties.dockerfileCount = '0';
-        context.telemetry.properties.environmentVariableFileCount = '0';
+    if (context.rootFolder || workspace.workspaceFolders?.length === 1) {
+        const pattern: RelativePattern = new RelativePattern(
+            context.rootFolder ?? nonNullValue(workspace.workspaceFolders?.[0]),
+            globPattern ?? '**/*'
+        );
+        const files: Uri[] = await workspace.findFiles(pattern);
 
         // If dockerfile(s), log the count
         if (globPattern === dockerfileGlobPattern || globPattern === `**/${dockerfileGlobPattern}`) {
@@ -65,43 +63,38 @@ export async function selectWorkspaceFile(
         quickPicks.push(...files.map((uri: Uri) => {
             return {
                 label: basename(uri.path),
-                description: uri.path,
+                description: relative(pattern.baseUri.path, uri.path),
                 data: uri.fsPath
             };
         }));
-
-        quickPicks.push(browseItem);
-
-        const label = options.skipLabel ?? localize('skipForNow', '$(clock) Skip for now');
-        if (options.allowSkip) {
-            quickPicks.push({
-                label,
-                description: '',
-                data: skipForNow
-            });
-        }
-
-        input = await context.ui.showQuickPick(quickPicks, { placeHolder });
     }
 
-    if (input?.data === skipForNow) {
+    quickPicks.push(browseItem);
+
+    const skipForNow: string = 'skipForNow';
+    if (options.allowSkip) {
+        quickPicks.push({
+            label: options.skipLabel ?? localize('skipForNow', '$(clock) Skip for now'),
+            description: '',
+            data: skipForNow
+        });
+    }
+
+    const input: string | undefined = (await context.ui.showQuickPick(quickPicks, { placeHolder })).data;
+    if (input === skipForNow) {
         return undefined;
     } else {
-        return input?.data || (await context.ui.showOpenDialog(options))[0].fsPath;
+        return input || (await context.ui.showOpenDialog(options))[0].fsPath;
     }
 }
 
-export async function getRootWorkspaceFolder(placeHolder?: string): Promise<WorkspaceFolder | undefined> {
+export async function getRootWorkspaceFolder(context: IActionContext, placeHolder?: string): Promise<WorkspaceFolder | undefined> {
     if (!workspace.workspaceFolders?.length) {
         return undefined;
     } else if (workspace.workspaceFolders?.length === 1) {
         return workspace.workspaceFolders[0];
     } else {
-        const folder = await window.showWorkspaceFolderPick({ placeHolder: placeHolder ?? localize('selectRootWorkspace', 'Select a folder for your workspace') });
-        if (!folder) {
-            throw new UserCancelledError('selectRootWorkspace');
-        }
-        return folder;
+        return await context.ui.showWorkspaceFolderPick({ placeHolder });
     }
 }
 

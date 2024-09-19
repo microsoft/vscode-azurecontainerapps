@@ -8,7 +8,7 @@ import { AzureWizard, createSubscriptionContext, nonNullValue, type AzureWizardE
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
-import { createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";

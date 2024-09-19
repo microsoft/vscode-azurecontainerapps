@@ -12,7 +12,7 @@ import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzur
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
-import { TryUseExistingRegistryStep } from "./TryUseExistingRegistryStep";
+import { TryUseExistingResourceGroupRegistryStep } from "./TryUseExistingRegistryStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
@@ -25,7 +25,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
             new DwpManagedEnvironmentListStep()
         ],
         executeSteps: [
-            new TryUseExistingRegistryStep()
+            new TryUseExistingResourceGroupRegistryStep()
         ]
     });
 
@@ -46,7 +46,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         environmentVariables:
             context.envPath ?
                 undefined /** No need to set anything if there's an envPath, the step will handle parsing the data for us */ :
-                await EnvironmentVariablesListStep.workspaceHasEnvFile() ? undefined : [] /** The equivalent of "skipForNow" */,
+                await EnvironmentVariablesListStep.workspaceHasEnvFile(context.rootFolder) ? undefined : [] /** The equivalent of "skipForNow" */,
     };
 }
 

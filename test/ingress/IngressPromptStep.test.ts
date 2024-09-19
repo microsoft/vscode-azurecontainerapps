@@ -5,16 +5,17 @@
 
 import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import * as path from "path";
+import { type Uri } from "vscode";
 import { tryConfigureIngressUsingDockerfile, type IngressContext } from "../../extension.bundle";
+import { getWorkspaceFolderUri } from "../testUtils";
 import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
 import { type MockIngressContext } from "./MockIngressContext";
 import { expectedSamplePorts } from "./tryGetDockerfileExposePorts.test";
 
 suite('IngressPromptStep', async () => {
     test('tryConfigureIngressUsingDockerfile', async () => {
-        const dockerfileSamplesPath: string = path.join(__dirname, 'dockerfileSamples');
-        const dockerfileSamples = await AzExtFsExtra.readDirectory(dockerfileSamplesPath);
+        const dockerfilesPath: Uri = getWorkspaceFolderUri('dockerfiles');
+        const dockerfiles = await AzExtFsExtra.readDirectory(dockerfilesPath);
 
         const expectedResult: MockIngressContext[] = [
             { enableIngress: true, enableExternal: true, dockerfileExposePorts: expectedSamplePorts[0], targetPort: 443 },
@@ -26,7 +27,7 @@ suite('IngressPromptStep', async () => {
             { enableIngress: false, enableExternal: false, dockerfileExposePorts: undefined, targetPort: undefined }, // no expose
         ];
 
-        for (const [i, ds] of dockerfileSamples.entries()) {
+        for (const [i, ds] of dockerfiles.entries()) {
             const context: MockIngressContext = {
                 dockerfilePath: i === 1 ? undefined : ds.fsPath,
                 alwaysPromptIngress: i === 3

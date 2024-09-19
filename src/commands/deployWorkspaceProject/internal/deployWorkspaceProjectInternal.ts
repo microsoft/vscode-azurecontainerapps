@@ -4,11 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, createUniversallyUniqueContextValue, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { createActivityChildContext, createActivityContext } from "../../../utils/activity/activityUtils";
+import { createActivityContext } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
@@ -18,10 +18,11 @@ import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpda
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { formatSectionHeader } from "../formatSectionHeader";
-import { DefaultResourcesNameStep } from "./DefaultResourcesNameStep";
+import { AppResourcesNameStep } from "./AppResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
+import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
 
@@ -85,7 +86,8 @@ export async function deployWorkspaceProjectInternal(
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
-        new DefaultResourcesNameStep()
+        new SharedResourcesNameStep(),
+        new AppResourcesNameStep(!!options.suppressContainerAppCreation)
     ];
 
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [
@@ -100,7 +102,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingResourceGroupInfoItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activitySuccessContext]),
                 label: localize('useResourceGroup', 'Using resource group "{0}"', resourceGroupName),
                 iconPath: activityInfoIcon
             })
@@ -121,7 +123,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingManagedEnvironmentInfoItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['useExistingManagedEnvironmentInfoItem', activitySuccessContext]),
                 label: localize('useManagedEnvironment', 'Using container apps environment "{0}"', managedEnvironmentName),
                 iconPath: activityInfoIcon
             })
@@ -149,7 +151,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingAcrInfoItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['useExistingAcrInfoItem', activitySuccessContext]),
                 label: localize('useAcr', 'Using container registry "{0}"', registryName),
                 iconPath: activityInfoIcon
             })
@@ -171,7 +173,7 @@ export async function deployWorkspaceProjectInternal(
 
         wizardContext.activityChildren?.push(
             new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['useExistingContainerAppInfoItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activitySuccessContext]),
                 label: localize('useContainerApp', 'Using container app "{0}"', containerAppName),
                 iconPath: activityInfoIcon
             })

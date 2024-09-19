@@ -3,26 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from "../../../utils/activity/ExecuteActivityOutputStepBase";
-import { createActivityChildContext } from "../../../utils/activity/activityUtils";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
-export class ContainerAppUpdateStep<T extends ImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
-    public priority: number = 480;
+export class ContainerAppUpdateStep<T extends ImageSourceContext> extends AzureWizardExecuteStep<T> {
+    public priority: number = 650;
 
-    protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         containerAppEnvelope.configuration.secrets = context.secrets;
-        containerAppEnvelope.configuration.registries = context.registries;
+        containerAppEnvelope.configuration.registries = context.registryCredentials;
 
         // We want to replace the old image
         containerAppEnvelope.template ||= {};
@@ -47,10 +45,10 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
         return !!context.containerApp;
     }
 
-    protected createSuccessOutput(context: T): ExecuteActivityOutput {
+    public createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppUpdateStepSuccessItem', activitySuccessContext]),
+                contextValue: createUniversallyUniqueContextValue(['containerAppUpdateStepSuccessItem', activitySuccessContext]),
                 label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
@@ -58,10 +56,10 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends Execut
         };
     }
 
-    protected createFailOutput(context: T): ExecuteActivityOutput {
+    public createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['containerAppUpdateStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['containerAppUpdateStepFailItem', activityFailContext]),
                 label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
                 iconPath: activityFailIcon
             }),

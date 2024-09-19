@@ -44,6 +44,7 @@ import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProjec
 import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
 import { cleanUpResourcesWalkthrough } from './walkthrough/cleanUpResources';
 import { deployWorkspaceProjectWalkthrough } from './walkthrough/deployWorkspaceProject';
+import { gettingStartedInternalWalkthrough } from './walkthrough/gettingStartedInternal';
 
 export function registerCommands(): void {
     // managed environments
@@ -114,6 +115,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.openAcrBuildLogs', openAcrBuildLogs);
 
     // walkthrough
+    registerCommand('containerApps.walkthrough.gettingStarted.internal', gettingStartedInternalWalkthrough);
     registerCommand('containerApps.walkthrough.addWorkspaceProject', addWorkspaceProjectWalkthrough);
     registerCommand('containerApps.walkthrough.azureSignIn', azureSignInWalkthrough);
     registerCommand('containerApps.walkthrough.deployWorkspaceProject', deployWorkspaceProjectWalkthrough);

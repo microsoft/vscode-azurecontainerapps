@@ -4,29 +4,27 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullValue, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
 import { randomUUID } from 'crypto';
 import { tmpdir } from 'os';
 import * as path from 'path';
 import * as tar from 'tar';
 import { ThemeColor, ThemeIcon, type Progress } from 'vscode';
 import { ext } from '../../../../extensionVariables';
-import { ExecuteActivityOutputStepBase, type ExecuteActivityOutput } from '../../../../utils/activity/ExecuteActivityOutputStepBase';
-import { createActivityChildContext } from '../../../../utils/activity/activityUtils';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
 
-export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext> extends ExecuteActivityOutputStepBase<T> {
-    public priority: number = 430;
+export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardExecuteStep<T> {
+    public priority: number = 530;
     /** Path to a directory containing a custom Dockerfile that we sometimes build and upload for the user */
     private _customDockerfileDirPath?: string;
     /** Relative path of src folder from rootFolder and what gets deployed */
     private _sourceFilePath: string;
 
-    protected async executeCore(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this._sourceFilePath = context.rootFolder.uri.fsPath === context.srcPath ? '.' : path.relative(context.rootFolder.uri.fsPath, context.srcPath);
         context.telemetry.properties.sourceDepth = this._sourceFilePath === '.' ? '0' : String(this._sourceFilePath.split(path.sep).length);
 
@@ -108,9 +106,9 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         this._customDockerfileDirPath = customDockerfileDirPath;
     }
 
-    protected createSuccessOutput(context: T): ExecuteActivityOutput {
+    public createSuccessOutput(context: T): ExecuteActivityOutput {
         const baseTreeItemOptions = {
-            contextValue: createActivityChildContext(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
+            contextValue: createUniversallyUniqueContextValue(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
             label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
             iconPath: activitySuccessIcon,
         };
@@ -121,7 +119,7 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
                 ...baseTreeItemOptions,
                 loadMoreChildrenImpl: () => {
                     const removePlatformFlagItem = new GenericTreeItem(undefined, {
-                        contextValue: createActivityChildContext(['removePlatformFlagItem']),
+                        contextValue: createUniversallyUniqueContextValue(['removePlatformFlagItem']),
                         label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
                         iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
                     });
@@ -136,10 +134,10 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         };
     }
 
-    protected createFailOutput(context: T): ExecuteActivityOutput {
+    public createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createActivityChildContext(['uploadSourceCodeStepFailItem', activityFailContext]),
+                contextValue: createUniversallyUniqueContextValue(['uploadSourceCodeStepFailItem', activityFailContext]),
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
                 iconPath: activityFailIcon
             }),
