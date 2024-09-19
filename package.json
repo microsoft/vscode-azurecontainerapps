@@ -277,6 +277,12 @@
                 "command": "containerApps.walkthrough.cleanUpResources",
                 "title": "%containerApps.walkthrough.cleanUpResources%",
                 "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerapps.toggleEnvironmentVariableVisibility",
+                "title": "%containerapps.toggleEnvironmentVariableVisibility%",
+                "category": "Azure Container Apps",
+                "icon": "$(eye)"
             }
         ],
         "submenus": [
@@ -526,6 +532,11 @@
                     "command": "containerApps.disconnectRepo",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /actionsConnected:true(.*)containerAppsActionsItem/i",
                     "group": "1@2"
+                },
+                {
+                    "command": "containerapps.toggleEnvironmentVariableVisibility",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
+                    "group": "inline"
                 }
             ],
             "commandPalette": [
