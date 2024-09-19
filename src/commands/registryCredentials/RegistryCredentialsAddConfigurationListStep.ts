@@ -5,11 +5,11 @@
 
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../constants";
-import { detectRegistryDomain } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
+import { getRegistryDomain } from "./getRegistryDomain";
 import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
 import { AcrPullVerifyStep } from "./identity/AcrPullVerifyStep";
 import { ManagedEnvironmentIdentityEnableStep } from "./identity/ManagedEnvironmentIdentityEnableStep";
@@ -31,7 +31,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 return false;
             }
 
-            const registryDomain: SupportedRegistries | undefined = this.getRegistryDomain(context);
+            const registryDomain: SupportedRegistries | undefined = getRegistryDomain(context);
             if (registryDomain === acrDomain) {
                 return r.server === context.registry?.loginServer;
             } else {
@@ -58,7 +58,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         const promptSteps: AzureWizardPromptStep<RegistryCredentialsContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<RegistryCredentialsContext>[] = [];
 
-        const registryDomain: SupportedRegistries | undefined = this.getRegistryDomain(context);
+        const registryDomain: SupportedRegistries | undefined = getRegistryDomain(context);
         switch (context.newRegistryCredentialType) {
             case RegistryCredentialType.SystemAssigned:
                 executeSteps.push(
@@ -86,18 +86,11 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         };
     }
 
-    private getRegistryDomain(context: RegistryCredentialsContext): SupportedRegistries | undefined {
-        if (context.registry?.loginServer || context.registryName) {
-            return detectRegistryDomain(context.registry?.loginServer || nonNullProp(context, 'registryName'));
-        } else {
-            // If no registries exist, we can assume we're creating a new ACR
-            return acrDomain;
-        }
-    }
+
 
     public async getPicks(context: RegistryCredentialsContext): Promise<IAzureQuickPickItem<RegistryCredentialType>[]> {
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];
-        const registryDomain = this.getRegistryDomain(context);
+        const registryDomain = getRegistryDomain(context);
 
         if (registryDomain === acrDomain) {
             picks.push({
