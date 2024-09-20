@@ -18,7 +18,6 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         const client = createContainerRegistryClient(context, nonNullValue(context.registry));
         const repositoryNames: string[] = await uiUtils.listAllIterator(client.listRepositoryNames());
 
-        // Try to suggest a repository only when deploying to a Container App
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
@@ -43,7 +42,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
             return [noMatchingResourcesQp];
         }
 
-        // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
+        // Prefer 'suppressPersistence: true' to avoid the possibility of a double parenthesis appearing in the description
         return repositoryNames.map((rn) => {
             return !!suggestedRepository && rn === suggestedRepository ?
                 { label: rn, description: currentlyDeployed, suppressPersistence: true } :

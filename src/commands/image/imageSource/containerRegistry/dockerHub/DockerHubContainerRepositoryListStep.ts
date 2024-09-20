@@ -5,7 +5,7 @@
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
-import { currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, quickStartImageName, type QuickPicksCache } from "../../../../../constants";
+import { currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
@@ -20,18 +20,15 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
             return [noMatchingResourcesQp];
         }
 
-        // Try to suggest a repository only when the user is deploying to a Container App
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
-            const { registryDomain, repositoryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
-
-            // If the image is not the default quickstart image, then we can try to suggest a repository based on the latest Container App image
-            if (registryDomain === dockerHubDomain && imageNameReference !== quickStartImageName) {
+            const { registryDomain, namespace, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            if (registryDomain === dockerHubDomain && context.dockerHubNamespace === namespace) {
                 suggestedRepository = repositoryName;
             }
 
-            // Does the suggested repositoryName exist in the list of pulled repositories?  If so, move it to the front of the list
+            // Move suggested repository to the front of the list
             const srIndex: number = response.results.findIndex((r) => !!suggestedRepository && r.name === suggestedRepository);
             srExists = srIndex !== -1;
             if (srExists) {
