@@ -93,7 +93,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
                 this.containerApp.name);
 
             if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
-                throw new Error(localize('provisioningError', 'The container app "{0}" and its related children cannot be accessed until the app is successfully provisioned.', this._containerApp.name));
+                throw new Error(localize('provisioningError', 'The container app "{0}" and its children cannot be accessed until the app is successfully provisioned.', this._containerApp.name));
             }
 
             const children: TreeElementBase[] = [];
