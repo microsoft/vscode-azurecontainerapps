@@ -5,7 +5,8 @@
 
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { ImageSource } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
@@ -35,24 +36,11 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         ...await createActivityContext(),
         subscription: node.subscription,
         managedEnvironment: node.managedEnvironment,
-        alwaysPromptIngress: true
+        imageSource: ImageSource.QuickstartImage,
     };
 
-    const title: string = localize('createContainerApp', 'Create container app');
-
-    const promptSteps: AzureWizardPromptStep<ContainerAppCreateContext>[] = [
-        new ContainerAppNameStep(),
-        new ImageSourceListStep(),
-        new IngressPromptStep(),
-    ];
-
-    const executeSteps: AzureWizardExecuteStep<ContainerAppCreateContext>[] = [
-        getVerifyProvidersStep<ContainerAppCreateContext>(),
-        new ContainerAppCreateStep(),
-    ];
-
     if (isAzdExtensionInstalled()) {
-        context.telemetry.properties.isAzdWorkspaceProject = 'true';
+        wizardContext.telemetry.properties.isAzdWorkspaceProject = 'true';
     }
 
     // Use the same resource group and location as the parent resource (managed environment)
@@ -63,25 +51,29 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
 
     const wizard: AzureWizard<ContainerAppCreateContext> = new AzureWizard(wizardContext, {
-        title,
-        promptSteps,
-        executeSteps,
+        title: localize('createContainerApp', 'Create container app'),
+        promptSteps: [
+            new ContainerAppNameStep(),
+            new ImageSourceListStep(),
+            new IngressPromptStep(),
+        ],
+        executeSteps: [
+            getVerifyProvidersStep<ContainerAppCreateContext>(),
+            new ContainerAppCreateStep(),
+        ],
         showLoadingPrompt: true
     });
-
-    // we want to add the quick start image _only_ for the create scenairo
-    wizardContext.showQuickStartImage = true;
-
     await wizard.prompt();
-    const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
 
+    const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
     await ext.state.showCreatingChild(
         node.managedEnvironment.id,
         localize('creating', 'Creating "{0}"...', newContainerAppName),
         async () => {
             wizardContext.activityTitle = localize('createNamedContainerApp', 'Create container app "{0}"', newContainerAppName);
             await wizard.execute();
-        });
+        }
+    );
 
     const createdContainerApp = nonNullProp(wizardContext, 'containerApp');
     if (!wizardContext.suppressNotification) {
