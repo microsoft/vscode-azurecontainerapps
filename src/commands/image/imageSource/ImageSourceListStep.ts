@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPic
 import { UIKind, env, workspace } from "vscode";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { setQuickStartImage } from "../../createContainerApp/setQuickStartImage";
+import { QuickStartImageConfigureStep } from "../../createContainerApp/QuickStartImageConfigureStep";
 import { RegistryCredentialsAddConfigurationListStep } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
@@ -65,7 +65,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
 
         switch (context.imageSource) {
             case ImageSource.QuickstartImage:
-                setQuickStartImage(context);
+                executeSteps.push(new QuickStartImageConfigureStep());
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:

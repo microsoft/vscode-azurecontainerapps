@@ -16,7 +16,6 @@ import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
-import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
@@ -33,7 +32,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     const wizardContext: ContainerAppCreateContext = {
         ...context,
         ...createSubscriptionContext(node.subscription),
-        ...await createActivityContext(),
+        ...await createActivityContext(true),
         subscription: node.subscription,
         managedEnvironment: node.managedEnvironment,
         imageSource: ImageSource.QuickstartImage,
@@ -55,7 +54,6 @@ export async function createContainerApp(context: IActionContext, node?: Managed
         promptSteps: [
             new ContainerAppNameStep(),
             new ImageSourceListStep(),
-            new IngressPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppCreateContext>(),
