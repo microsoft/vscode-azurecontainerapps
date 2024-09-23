@@ -12,6 +12,7 @@ import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type ContainerAppsItem, type TreeElementBase } from "../ContainerAppsBranchDataProvider";
+import { ContainersItem } from "../containers/ContainersItem";
 import { ScaleItem } from "../scaling/ScaleItem";
 import { RevisionDraftDescendantBase } from "./RevisionDraftDescendantBase";
 
@@ -68,6 +69,7 @@ export class RevisionItem implements RevisionsItemModel {
 
     static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
         return [
+            RevisionDraftDescendantBase.createTreeItem(ContainersItem, subscription, containerApp, revision),
             RevisionDraftDescendantBase.createTreeItem(ScaleItem, subscription, containerApp, revision)
         ];
     }
