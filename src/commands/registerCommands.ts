@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand } from '@microsoft/vscode-azext-utils';
+import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
@@ -58,6 +59,10 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.updateImage', updateImage);
+    registerCommandWithTreeNodeUnwrapping('containerapps.toggleEnvironmentVariableVisibility',
+        async (context: IActionContext, item: EnvironmentVariableItem) => {
+            await item.toggleValueVisibility(context);
+        });
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
