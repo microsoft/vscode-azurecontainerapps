@@ -120,4 +120,10 @@ export class RevisionItem implements RevisionsItemModel {
 
         return new ThemeIcon(id, colorId ? new ThemeColor(colorId) : undefined);
     }
+
+    static isRevisionItem(item: unknown): item is RevisionItem {
+        return typeof item === 'object' &&
+            typeof (item as RevisionItem).contextValue === 'string' &&
+            RevisionItem.contextValueRegExp.test((item as RevisionItem).contextValue);
+    }
 }

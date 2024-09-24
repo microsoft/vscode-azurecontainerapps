@@ -11,12 +11,12 @@ import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import { type UpdateImageContext } from "./updateImage";
+import { type ImageUpdateContext } from "./updateImage";
 
-export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {
+export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<ImageUpdateContext> {
     public priority: number = 580;
 
-    public async execute(context: UpdateImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: ImageUpdateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -41,7 +41,7 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
         ext.outputChannel.appendLog(localize('updatedSecrets', 'Updated container app "{0}" with new registry secrets.', containerApp.name));
     }
 
-    public shouldExecute(context: UpdateImageContext): boolean {
+    public shouldExecute(context: ImageUpdateContext): boolean {
         return !!context.registryCredentials && !!context.secrets;
     }
 

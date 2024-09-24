@@ -13,9 +13,9 @@ import { localize } from "../../../utils/localize";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
-import { type UpdateImageContext } from "./updateImage";
+import { type ImageUpdateContext } from "./updateImage";
 
-export class UpdateImageDraftStep<T extends UpdateImageContext> extends RevisionDraftUpdateBaseStep<T> {
+export class UpdateImageDraftStep<T extends ImageUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {

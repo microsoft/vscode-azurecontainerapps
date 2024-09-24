@@ -3,15 +3,28 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { ActivityOutputType } from "@microsoft/vscode-azext-utils";
 import { parseImageName } from "../../../../utils/imageNameUtils";
+import { localize } from "../../../../utils/localize";
+import { AzureWizardActivityOutputExecuteStep } from "../../../AzureWizardActivityOutputExecuteStep";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLoginServer } from "./getLoginServer";
 
-export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<ContainerRegistryImageSourceContext> {
+export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImageSourceContext> extends AzureWizardActivityOutputExecuteStep<T> {
     public priority: number = 570;
+    public stepName: string = 'containerRegistryImageConfigureStep';
+    protected getSuccessString = (context: T) => localize('successOutput', 'Configured container registry image "{0}".', context.image);
+    protected getFailString = (context: T) => localize('failOutput', 'Failed to configure container registry image "{0}".', context.image);
+    protected getTreeItemLabelString = (context: T) => localize('treeItemLabel', 'Configure image "{0}"', context.image);
 
-    public async execute(context: ContainerRegistryImageSourceContext): Promise<void> {
+    constructor(showActivityOutput?: boolean) {
+        super();
+        if (!showActivityOutput) {
+            this.options.suppressActivityOutput = ActivityOutputType.All;
+        }
+    }
+
+    public async execute(context: T): Promise<void> {
         context.image = `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
 
         const { registryName, registryDomain } = parseImageName(context.image);
@@ -19,7 +32,7 @@ export class ContainerRegistryImageConfigureStep extends AzureWizardExecuteStep<
         context.telemetry.properties.registryDomain = registryDomain ?? 'other';
     }
 
-    public shouldExecute(context: ContainerRegistryImageSourceContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.image;
     }
 }

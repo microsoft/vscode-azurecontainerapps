@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { createContextValue, nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -24,19 +24,21 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     label: string;
     private containers: Container[] = [];
 
-    constructor(public readonly subscription: AzureSubscription,
-        public readonly containerApp: ContainerAppModel,
-        public readonly revision: Revision,) {
+    static readonly contextValue: string = 'containersItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ContainersItem.contextValue);
+
+    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/containers`;
-        this.containers = nonNullValue(revision.template?.containers);
-        this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
+        this.id = `${this.parentResource.id}/${this.parentResource.template?.containers?.length === 1 ? 'container' : 'containers'}`;
+        this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
     }
 
     getChildren(): TreeElementBase[] {
         if (this.containers.length === 1) {
-            return [new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
-            new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0])];
+            return [
+                new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
+                new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
+            ];
         }
         return nonNullValue(this.containers?.map(container => new ContainerItem(this.subscription, this.containerApp, this.revision, container)));
     }
@@ -46,8 +48,20 @@ export class ContainersItem extends RevisionDraftDescendantBase {
             id: this.id,
             label: this.label,
             iconPath: treeUtils.getIconPath('containers'),
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         }
+    }
+
+    private get contextValue(): string {
+        const values: string[] = [ContainersItem.contextValue];
+        if (this.containers.length === 1) {
+            values.push(ContainerItem.contextValue);
+        }
+
+        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        return createContextValue(values);
     }
 
     private get parentResource(): ContainerAppModel | Revision {
@@ -55,12 +69,12 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
+        this.label = this.containers.length === 1 ? 'Container' : 'Containers';
         this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
     }
 
     protected setDraftProperties(): void {
-        this.label = this.containers.length === 1 ? localize('container*', 'Container*') : localize('containers*', 'Containers*');
+        this.label = this.containers.length === 1 ? 'Container*' : 'Containers*';
         this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
     }
 
@@ -69,6 +83,12 @@ export class ContainersItem extends RevisionDraftDescendantBase {
         getData: async () => {
             return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers)
         }
+    }
+
+    static isContainersItem(item: unknown): item is ContainersItem {
+        return typeof item === 'object' &&
+            typeof (item as ContainersItem).contextValue === 'string' &&
+            ContainersItem.contextValueRegExp.test((item as ContainersItem).contextValue);
     }
 
     hasUnsavedChanges(): boolean {

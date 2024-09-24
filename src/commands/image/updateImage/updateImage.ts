@@ -23,7 +23,8 @@ import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
 import { UpdateRegistryAndSecretsStep } from "./UpdateRegistryAndSecretsStep";
 
-export type UpdateImageContext = ImageSourceBaseContext & ExecuteActivityContext & SetTelemetryProps<TelemetryProps>;
+export type ImageUpdateBaseContext = ImageSourceBaseContext & ExecuteActivityContext;
+export type ImageUpdateContext = ImageUpdateBaseContext & SetTelemetryProps<TelemetryProps>;
 
 /**
  * An ACA exclusive command that updates the container app or revision's container image via revision draft.
@@ -48,7 +49,7 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
     const { subscription, containerApp } = item;
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
-    const wizardContext: UpdateImageContext = {
+    const wizardContext: ImageUpdateContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(),
@@ -59,19 +60,19 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
 
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const promptSteps: AzureWizardPromptStep<UpdateImageContext>[] = [
+    const promptSteps: AzureWizardPromptStep<ImageUpdateContext>[] = [
         new ImageSourceListStep(),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<UpdateImageContext>[] = [
-        getVerifyProvidersStep<UpdateImageContext>(),
+    const executeSteps: AzureWizardExecuteStep<ImageUpdateContext>[] = [
+        getVerifyProvidersStep<ImageUpdateContext>(),
         new UpdateRegistryAndSecretsStep(),
         new UpdateImageDraftStep(item)
     ];
 
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizard: AzureWizard<UpdateImageContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ImageUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
         promptSteps,
         executeSteps,

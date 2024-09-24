@@ -3,23 +3,27 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type Container, type Revision } from "@azure/arm-appcontainers";
-import { nonNullProp, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
+import { createContextValue, nonNullProp, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
-import { type RevisionsItemModel } from "../revisionManagement/RevisionItem";
+import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
 import { ImageItem } from "./ImageItem";
 
-export class ContainerItem implements RevisionsItemModel {
+export class ContainerItem extends RevisionDraftDescendantBase {
     id: string;
     label: string;
+
     static readonly contextValue: string = 'containerItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerItem.contextValue);
 
-    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision, readonly container: Container) {
+    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, readonly container: Container) {
+        super(subscription, containerApp, revision);
         this.id = `${this.parentResource.id}/${container.name}`;
         this.label = nonNullValue(this.container.name);
     }
@@ -28,7 +32,7 @@ export class ContainerItem implements RevisionsItemModel {
         return {
             id: this.id,
             label: `${this.container.name}`,
-            contextValue: ContainerItem.contextValue,
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
@@ -44,8 +48,29 @@ export class ContainerItem implements RevisionsItemModel {
         return getParentResource(this.containerApp, this.revision);
     }
 
+    private get contextValue(): string {
+        const values: string[] = [ContainerItem.contextValue];
+        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        return createContextValue(values);
+    }
+
     viewProperties: ViewPropertiesModel = {
         data: this.container,
         label: nonNullProp(this.container, 'name'),
     }
+
+    hasUnsavedChanges(): boolean {
+        // Needs implementation
+        return false;
+    }
+
+    protected setProperties(): void {
+        // Needs implementation
+    }
+
+    protected setDraftProperties(): void {
+        // Needs implementation
+    }
 }
+

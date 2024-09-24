@@ -6,6 +6,7 @@
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { browseContainerAppNode } from './browseContainerApp';
+import { updateContainer } from './containers/updateContainer';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -58,11 +59,14 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
-    registerCommandWithTreeNodeUnwrapping('containerApps.updateImage', updateImage);
     registerCommandWithTreeNodeUnwrapping('containerapps.toggleEnvironmentVariableVisibility',
         async (context: IActionContext, item: EnvironmentVariableItem) => {
             await item.toggleValueVisibility(context);
         });
+
+    // containers
+    registerCommandWithTreeNodeUnwrapping('containerApps.updateContainer', updateContainer);
+    registerCommandWithTreeNodeUnwrapping('containerApps.updateImage', updateImage);
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);

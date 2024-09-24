@@ -61,6 +61,7 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - UpdateRegistryAndSecretsStep: 580
 - UpdateImageDraftStep: 590 (revision draft)
+- ContainerUpdateDraftStep: 590 (revision draft)
 
 ### 5. Container App
 
