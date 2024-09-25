@@ -48,7 +48,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
     getChildren(): TreeElementBase[] {
         return [
             RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, this.container),
-            new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.container)
+            RevisionDraftDescendantBase.createTreeItem(EnvironmentVariablesItem, this.subscription, this.containerApp, this.revision, this.container),
         ];
     }
 
