@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
 import { currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
@@ -24,7 +25,11 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         let srExists: boolean = false;
         if (context.containerApp) {
             const { registryDomain, namespace, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
-            if (registryDomain === dockerHubDomain && context.dockerHubNamespace === namespace) {
+            if (
+                context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
+                registryDomain === dockerHubDomain &&
+                context.dockerHubNamespace === namespace
+            ) {
                 suggestedRepository = repositoryName;
             }
 

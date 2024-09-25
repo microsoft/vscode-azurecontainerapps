@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
@@ -43,7 +44,7 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
         let suggestedNamespace: string | undefined;
         if (context.containerApp) {
             const { registryDomain, namespace } = parseImageName(getLatestContainerAppImage(context.containerApp));
-            if (registryDomain === dockerHubDomain) {
+            if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === dockerHubDomain) {
                 suggestedNamespace = namespace;
             }
         }

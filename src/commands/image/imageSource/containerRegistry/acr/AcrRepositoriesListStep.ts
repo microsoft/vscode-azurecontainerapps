@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
@@ -23,6 +24,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         if (context.containerApp) {
             const { registryDomain, registryName, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
             if (
+                context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
                 registryDomain === acrDomain &&
                 registryName && context.registry?.loginServer?.includes(registryName)
             ) {
