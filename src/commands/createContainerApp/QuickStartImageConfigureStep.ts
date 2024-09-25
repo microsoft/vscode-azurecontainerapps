@@ -14,7 +14,7 @@ export class QuickStartImageConfigureStep<T extends ContainerAppCreateContext & 
     public stepName: string = 'quickStartImageConfigureStep';
     protected getSuccessString = () => localize('quickStartImageSuccess', 'Successfully configured quick start image.');
     protected getFailString = () => localize('quickStartImageFail', 'Failed to configure quick start image.');
-    protected getTreeItemLabelString = () => localize('quickStartImageLabel', 'Configure quick start image');
+    protected getTreeItemLabel = () => localize('quickStartImageLabel', 'Configure quick start image');
 
     public async execute(context: T): Promise<void> {
         context.image = quickStartImageName;

@@ -22,7 +22,7 @@ export abstract class AzureWizardActivityOutputExecuteStep<T extends IActionCont
      * Optional; define this if you want a special, custom label to be assigned to each tree item
      * that is different than the required success or fail strings
      */
-    protected getTreeItemLabelString?(context: T): string;
+    protected getTreeItemLabel?(context: T): string;
 
     public createSuccessOutput(context: T): ExecuteActivityOutput {
         const success: string = this.getSuccessString(context);
@@ -30,7 +30,7 @@ export abstract class AzureWizardActivityOutputExecuteStep<T extends IActionCont
         return createExecuteActivityOutput(context, {
             activityStatus: 'Success',
             stepName: this.stepName,
-            treeItemLabel: this.getTreeItemLabelString ? this.getTreeItemLabelString(context) : success,
+            treeItemLabel: this.getTreeItemLabel ? this.getTreeItemLabel(context) : success,
             outputLogMessage: success,
         });
     }
@@ -41,7 +41,7 @@ export abstract class AzureWizardActivityOutputExecuteStep<T extends IActionCont
         return createExecuteActivityOutput(context, {
             activityStatus: 'Progress',
             stepName: this.stepName,
-            treeItemLabel: this.getTreeItemLabelString ? this.getTreeItemLabelString(context) : nonNullValue(progress),
+            treeItemLabel: this.getTreeItemLabel ? this.getTreeItemLabel(context) : nonNullValue(progress),
             outputLogMessage: progress,
         });
     }
@@ -52,7 +52,7 @@ export abstract class AzureWizardActivityOutputExecuteStep<T extends IActionCont
         return createExecuteActivityOutput(context, {
             activityStatus: 'Fail',
             stepName: this.stepName,
-            treeItemLabel: this.getTreeItemLabelString ? this.getTreeItemLabelString(context) : fail,
+            treeItemLabel: this.getTreeItemLabel ? this.getTreeItemLabel(context) : fail,
             outputLogMessage: fail,
         });
     }

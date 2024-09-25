@@ -20,7 +20,7 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
     public stepName: string = 'containerAppCreateStep';
     protected getSuccessString = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}"', context.newContainerAppName);
     protected getFailString = (context: T) => localize('createContainerAppFail', 'Failed to create container app "{0}"', context.newContainerAppName);
-    protected getTreeItemLabelString = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
+    protected getTreeItemLabel = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
