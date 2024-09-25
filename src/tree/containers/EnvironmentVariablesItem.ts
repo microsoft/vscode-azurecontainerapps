@@ -68,6 +68,6 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
         const currentContainer: Container | undefined = currentContainers.find(c => c.name === this.container.name || c.image === this.container.image);
 
-        return !currentContainer?.env || !deepEqual(this.container.env, currentContainer.env);
+        return !currentContainer || !deepEqual(this.container.env, currentContainer.env);
     }
 }
