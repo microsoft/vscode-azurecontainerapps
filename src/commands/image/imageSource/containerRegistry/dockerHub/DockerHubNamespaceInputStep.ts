@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
-import { dockerHubDomain, quickStartImageName } from "../../../../../constants";
+import { dockerHubDomain } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
@@ -40,13 +41,10 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
     }
 
     private getSuggestedNamespace(context: ContainerRegistryImageSourceContext): string {
-        // Try to suggest a namespace only when the user is deploying to a Container App
         let suggestedNamespace: string | undefined;
         if (context.containerApp) {
-            const { registryDomain, namespace, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
-
-            // If the image is not the default quickstart image, then we can try to suggest a namespace based on the latest Container App image
-            if (registryDomain === dockerHubDomain && imageNameReference !== quickStartImageName) {
+            const { registryDomain, namespace } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === dockerHubDomain) {
                 suggestedNamespace = namespace;
             }
         }

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
@@ -81,7 +82,11 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
             const { registryDomain, registryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
 
             // If the image is not the default quickstart image, then we can try to suggest a registry based on the latest Container App image
-            if (registryDomain === acrDomain && imageNameReference !== quickStartImageName) {
+            if (
+                context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
+                registryDomain === acrDomain &&
+                imageNameReference !== quickStartImageName
+            ) {
                 suggestedRegistry = registryName;
             }
 
