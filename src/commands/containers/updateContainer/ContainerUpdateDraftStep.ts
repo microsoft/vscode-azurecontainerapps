@@ -6,13 +6,13 @@
 import { type Container, type Revision } from "@azure/arm-appcontainers";
 import { activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from "../../extensionVariables";
-import { type ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
-import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
-import { localize } from "../../utils/localize";
-import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
-import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
-import { RevisionDraftUpdateBaseStep } from "../revisionDraft/RevisionDraftUpdateBaseStep";
+import { ext } from "../../../extensionVariables";
+import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
+import { localize } from "../../../utils/localize";
+import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { getContainerNameForImage } from "../../image/imageSource/containerRegistry/getContainerNameForImage";
+import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import { type ContainerUpdateContext } from "./ContainerUpdateContext";
 
 export class ContainerUpdateDraftStep<T extends ContainerUpdateContext> extends RevisionDraftUpdateBaseStep<T> {

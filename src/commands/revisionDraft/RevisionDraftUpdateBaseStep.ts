@@ -44,8 +44,7 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
         let template: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this.baseItem);
         if (!template) {
             // Make deep copies so we don't accidentally modify the cached values
-            const test = nonNullValueAndProp(getParentResourceFromItem(this.baseItem), 'template');
-            template = JSON.parse(JSON.stringify(test)) as Template;
+            template = JSON.parse(JSON.stringify(nonNullValueAndProp(getParentResourceFromItem(this.baseItem), 'template'))) as Template;
         }
         return template;
     }

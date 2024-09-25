@@ -6,7 +6,8 @@
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { browseContainerAppNode } from './browseContainerApp';
-import { updateContainer } from './containers/updateContainer';
+import { updateContainer } from './containers/updateContainer/updateContainer';
+import { updateContainerImage } from './containers/updateContainerImage/updateContainerImage';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -19,7 +20,6 @@ import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { deployImageApi } from './image/deployImageApi/deployImageApi';
 import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { openAcrBuildLogs } from './image/openAcrBuildLogs';
-import { updateImage } from './image/updateImage/updateImage';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress/enableIngress';
@@ -66,7 +66,8 @@ export function registerCommands(): void {
 
     // containers
     registerCommandWithTreeNodeUnwrapping('containerApps.updateContainer', updateContainer);
-    registerCommandWithTreeNodeUnwrapping('containerApps.updateImage', updateImage);
+    registerCommandWithTreeNodeUnwrapping('containerApps.updateContainerImage', updateContainerImage);
+    // Todo: Update environment variables
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);

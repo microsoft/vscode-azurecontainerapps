@@ -5,17 +5,17 @@
 
 import { type Container, type Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type ContainerAppModel } from "../../tree/ContainerAppItem";
-import { type ContainerItem } from "../../tree/containers/ContainerItem";
-import { ContainersItem } from "../../tree/containers/ContainersItem";
-import { createActivityContext } from "../../utils/activityUtils";
-import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
-import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
-import { localize } from "../../utils/localize";
-import { pickContainer } from "../../utils/pickItem/pickContainer";
-import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
-import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
-import { UpdateRegistryAndSecretsStep } from "../image/updateImage/UpdateRegistryAndSecretsStep";
+import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type ContainerItem } from "../../../tree/containers/ContainerItem";
+import { ContainersItem } from "../../../tree/containers/ContainersItem";
+import { createActivityContext } from "../../../utils/activityUtils";
+import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
+import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
+import { localize } from "../../../utils/localize";
+import { pickContainer } from "../../../utils/pickItem/pickContainer";
+import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
+import { RegistryAndSecretsUpdateStep } from "../updateContainerImage/RegistryAndSecretsUpdateStep";
 import { type ContainerUpdateContext } from "./ContainerUpdateContext";
 import { ContainerUpdateDraftStep } from "./ContainerUpdateDraftStep";
 
@@ -28,7 +28,7 @@ export async function updateContainer(context: IActionContext, node?: Containers
 
     let container: Container | undefined;
     if (ContainersItem.isContainersItem(item)) {
-        // The 'updateContainer' command should only show up on a 'ContainersItem' if it only has one container, else the command would show up on the 'ContainerItem'
+        // The 'updateContainer' command should only show up on a 'ContainersItem' when it only has one container, else the command would show up on the 'ContainerItem'
         container = parentResource.template?.containers?.[0];
     } else {
         container = item.container;
@@ -57,7 +57,7 @@ export async function updateContainer(context: IActionContext, node?: Containers
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerUpdateContext>(),
-            new UpdateRegistryAndSecretsStep(),
+            new RegistryAndSecretsUpdateStep(),
             new ContainerUpdateDraftStep(item),
         ],
         showLoadingPrompt: true,

@@ -86,8 +86,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.updateImage",
-                "title": "%containerApps.updateImage%",
+                "command": "containerApps.updateContainerImage",
+                "title": "%containerApps.updateContainerImage%",
                 "category": "Azure Container Apps"
             },
             {

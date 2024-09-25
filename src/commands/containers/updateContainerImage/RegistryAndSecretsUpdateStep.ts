@@ -11,9 +11,9 @@ import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
-import { type ImageUpdateContext } from "./updateImage";
+import { type ImageUpdateContext } from "./updateContainerImage";
 
-export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<ImageUpdateContext> {
+export class RegistryAndSecretsUpdateStep extends AzureWizardExecuteStep<ImageUpdateContext> {
     public priority: number = 580;
 
     public async execute(context: ImageUpdateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

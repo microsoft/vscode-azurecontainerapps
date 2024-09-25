@@ -11,11 +11,11 @@ import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/Con
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { getContainerNameForImage } from "../../image/imageSource/containerRegistry/getContainerNameForImage";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import { getContainerNameForImage } from "../imageSource/containerRegistry/getContainerNameForImage";
-import { type ImageUpdateContext } from "./updateImage";
+import { type ImageUpdateContext } from "./updateContainerImage";
 
-export class UpdateImageDraftStep<T extends ImageUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
+export class ContainerImageUpdateDraftStep<T extends ImageUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
