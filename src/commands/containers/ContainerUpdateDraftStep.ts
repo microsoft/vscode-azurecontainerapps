@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type Revision } from "@azure/arm-appcontainers";
+import { type Container, type Revision } from "@azure/arm-appcontainers";
 import { activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -26,11 +26,11 @@ export class ContainerUpdateDraftStep<T extends ContainerUpdateContext> extends 
         progress.report({ message: localize('updatingContainer', 'Updating container (draft)...') });
 
         this.revisionDraftTemplate.containers ??= [];
-        this.revisionDraftTemplate.containers[context.containersIdx] = {
-            env: context.environmentVariables,
-            image: context.image,
-            name: getContainerNameForImage(nonNullProp(context, 'image')),
-        };
+
+        const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
+        container.name = getContainerNameForImage(nonNullProp(context, 'image'));
+        container.image = context.image;
+        container.env = context.environmentVariables;
 
         await this.updateRevisionDraftWithTemplate(context);
 

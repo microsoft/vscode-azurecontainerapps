@@ -4,14 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { createContextValue, nonNullProp, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { createContextValue, nonNullProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import * as deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
+import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
 import { ImageItem } from "./ImageItem";
 
@@ -22,16 +24,22 @@ export class ContainerItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'containerItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerItem.contextValue);
 
-    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, readonly container: Container) {
+    constructor(
+        subscription: AzureSubscription,
+        containerApp: ContainerAppModel,
+        revision: Revision,
+
+        // Used as the basis for the view; can reflect either the original or the draft changes
+        readonly container: Container,
+    ) {
         super(subscription, containerApp, revision);
         this.id = `${this.parentResource.id}/${container.name}`;
-        this.label = nonNullValue(this.container.name);
     }
 
     getTreeItem(): TreeItem {
         return {
             id: this.id,
-            label: `${this.container.name}`,
+            label: this.label,
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
@@ -39,7 +47,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
 
     getChildren(): TreeElementBase[] {
         return [
-            new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.container),
+            RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, this.container),
             new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.container)
         ];
     }
@@ -60,17 +68,24 @@ export class ContainerItem extends RevisionDraftDescendantBase {
         label: nonNullProp(this.container, 'name'),
     }
 
-    hasUnsavedChanges(): boolean {
-        // Needs implementation
-        return false;
-    }
-
     protected setProperties(): void {
-        // Needs implementation
+        this.label = this.container.name ?? '';
     }
 
     protected setDraftProperties(): void {
-        // Needs implementation
+        this.label = `${this.container.name}*`;
+    }
+
+    hasUnsavedChanges(): boolean {
+        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
+            return false;
+        }
+
+        const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
+        const currentContainer: Container | undefined = currentContainers.find(c => c.name === this.container.name || c.image === this.container.image);
+
+        return !currentContainer || !deepEqual(this.container, currentContainer);
     }
 }
 

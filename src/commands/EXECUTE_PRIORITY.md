@@ -51,7 +51,6 @@ When creating or updating resources, execute steps should occupy certain priorit
 - UploadSourceCodeStep: 530
 - RunStep: 540
 - BuildImageStep: 550
-- ContainerRegistryImageConfigureStep: 570
 
 ##### Container Registry Steps
 

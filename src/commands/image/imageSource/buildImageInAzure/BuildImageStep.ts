@@ -7,6 +7,7 @@ import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/v
 import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
 import { acrDomain } from "../../../../constants";
+import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
 import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
@@ -26,6 +27,10 @@ export class BuildImageStep extends AzureWizardExecuteStep<BuildImageInAzureImag
         if (outputImages) {
             const image = outputImages[0];
             context.image = `${image.registry}/${image.repository}:${image.tag}`;
+
+            const { registryName, registryDomain } = parseImageName(context.image);
+            context.telemetry.properties.registryName = registryName;
+            context.telemetry.properties.registryDomain = registryDomain ?? 'other';
         } else {
             const logSasUrl = (await context.client.runs.getLogSasUrl(context.resourceGroupName, context.registryName, nonNullValue(context.run.runId))).logLink;
             const response: AzExtPipelineResponse = await sendRequestWithTimeout(context, { method: 'GET', url: nonNullValue(logSasUrl) }, 2500, undefined);

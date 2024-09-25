@@ -51,7 +51,7 @@ export async function updateContainer(context: IActionContext, node?: Containers
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const wizard: AzureWizard<ContainerUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('updateContainer', 'Update container for "{0}" (draft)', parentResource.name),
+        title: localize('updateContainer', 'Update "{0}" container (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep(),
         ],

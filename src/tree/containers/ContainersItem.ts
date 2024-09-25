@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { createContextValue, nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { createContextValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
@@ -22,6 +22,8 @@ import { ImageItem } from "./ImageItem";
 export class ContainersItem extends RevisionDraftDescendantBase {
     id: string;
     label: string;
+
+    // Used as the basis for the view; can reflect either the original or the draft changes
     private containers: Container[] = [];
 
     static readonly contextValue: string = 'containersItem';
@@ -30,17 +32,16 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
         super(subscription, containerApp, revision);
         this.id = `${this.parentResource.id}/${this.parentResource.template?.containers?.length === 1 ? 'container' : 'containers'}`;
-        this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
     }
 
     getChildren(): TreeElementBase[] {
         if (this.containers.length === 1) {
             return [
-                new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
+                RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, this.containers[0]),
                 new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
             ];
         }
-        return nonNullValue(this.containers?.map(container => new ContainerItem(this.subscription, this.containerApp, this.revision, container)));
+        return this.containers?.map(container => RevisionDraftDescendantBase.createTreeItem(ContainerItem, this.subscription, this.containerApp, this.revision, container)) ?? [];
     }
 
     getTreeItem(): TreeItem {
@@ -69,13 +70,13 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.label = this.containers.length === 1 ? 'Container' : 'Containers';
         this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
+        this.label = this.containers.length === 1 ? 'Container' : 'Containers';
     }
 
     protected setDraftProperties(): void {
-        this.label = this.containers.length === 1 ? 'Container*' : 'Containers*';
         this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
+        this.label = this.containers.length === 1 ? 'Container*' : 'Containers*';
     }
 
     viewProperties: ViewPropertiesModel = {
