@@ -8,7 +8,7 @@ import { createContextValue, nonNullProp, type TreeElementBase } from "@microsof
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { draftItemDescendantFalseContextValue, draftItemDescendantTrueContextValue, revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -58,7 +58,14 @@ export class ContainerItem extends RevisionDraftDescendantBase {
 
     private get contextValue(): string {
         const values: string[] = [ContainerItem.contextValue];
-        values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
+
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+            values.push(revisionDraftTrueContextValue);
+        } else {
+            values.push(revisionDraftFalseContextValue);
+        }
+
+        values.push(RevisionDraftItem.hasDescendant(this) ? draftItemDescendantTrueContextValue : draftItemDescendantFalseContextValue);
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         return createContextValue(values);
     }

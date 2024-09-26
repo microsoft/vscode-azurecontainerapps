@@ -86,8 +86,14 @@ export const dockerFilePick = localize('dockerFilePick', 'Choose a Dockerfile fr
 export const revisionModeSingleContextValue: string = 'revisionMode:single';
 export const revisionModeMultipleContextValue: string = 'revisionMode:multiple';
 
+// Indicates whether a revision draft node exists while in multiple revisions mode
 export const revisionDraftTrueContextValue: string = 'revisionDraft:true';
 export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
 
+// Indicates whether a tree item is a descendant of the revision draft node in multiple revisions mode
+export const draftItemDescendantTrueContextValue: string = 'draftItemDescendant:true';
+export const draftItemDescendantFalseContextValue: string = 'draftItemDescendant:false';
+
+// Indicates whether we are in a draft state in single revisions mode
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
