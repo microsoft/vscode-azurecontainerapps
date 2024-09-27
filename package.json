@@ -91,6 +91,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.updateEnvironmentVariables",
+                "title": "%containerApps.updateEnvironmentVariables%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deployImageApi",
                 "title": "%containerApps.deployImageApi%",
                 "category": "Azure Container Apps"
@@ -481,6 +486,16 @@
                 {
                     "command": "containerApps.updateContainerImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem(.*)revisionDraft:false(.*)revisionMode:multiple/i || viewItem =~ /draftItemDescendant:true(.*)imageItem(.*)revisionDraft:true(.*)revisionMode:multiple/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.updateEnvironmentVariables",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem(.*)revisionMode:single/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.updateEnvironmentVariables",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem(.*)revisionDraft:false(.*)revisionMode:multiple/i || viewItem =~ /draftItemDescendant:true(.*)environmentVariablesItem(.*)revisionDraft:true(.*)revisionMode:multiple/i",
                     "group": "1@1"
                 },
                 {

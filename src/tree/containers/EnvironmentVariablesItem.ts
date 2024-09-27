@@ -4,10 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { createContextValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { draftItemDescendantFalseContextValue, draftItemDescendantTrueContextValue, revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -39,13 +41,27 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
             id: this.id,
             label: this.label,
             iconPath: new ThemeIcon('settings'),
-            contextValue: EnvironmentVariablesItem.contextValue,
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         }
     }
 
     getChildren(): TreeElementBase[] {
         return this.container.env?.map(env => new EnvironmentVariableItem(this.subscription, this.containerApp, this.revision, this.id, this.container, env)) ?? [];
+    }
+
+    private get contextValue(): string {
+        const values: string[] = [EnvironmentVariablesItem.contextValue];
+
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+            values.push(revisionDraftTrueContextValue);
+        } else {
+            values.push(revisionDraftFalseContextValue);
+        }
+
+        values.push(RevisionDraftItem.hasDescendant(this) ? draftItemDescendantTrueContextValue : draftItemDescendantFalseContextValue);
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        return createContextValue(values);
     }
 
     private get parentResource(): ContainerAppModel | Revision {

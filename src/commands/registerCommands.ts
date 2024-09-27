@@ -41,6 +41,7 @@ import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
 import { updateContainer } from './updateContainer/updateContainer';
 import { updateContainerImage } from './updateContainer/updateContainerImage/updateContainerImage';
+import { updateEnvironmentVariables } from './updateContainer/updateEnvironmentVariables/updateEnvironmentVariables';
 import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
 import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
 import { cleanUpResourcesWalkthrough } from './walkthrough/cleanUpResources';
@@ -67,7 +68,7 @@ export function registerCommands(): void {
     // containers
     registerCommandWithTreeNodeUnwrapping('containerApps.updateContainer', updateContainer);
     registerCommandWithTreeNodeUnwrapping('containerApps.updateContainerImage', updateContainerImage);
-    // Todo: Update environment variables
+    registerCommandWithTreeNodeUnwrapping('containerApps.updateEnvironmentVariables', updateEnvironmentVariables);
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
