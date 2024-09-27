@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullValueAndProp, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window, type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -50,7 +50,8 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     }
 
     /**
-     * An informational deploy pop-up to show after executing a revision draft command
+     * A deployment quick pick to show after executing a revision draft command
+     * (Used to be an informational deployment pop-up)
      */
     private async showRevisionDraftDeployPopup(context: T): Promise<void> {
         if (!await settingUtils.getGlobalSetting('showDraftCommandDeployPopup')) {
@@ -60,34 +61,35 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
         const yes: string = localize('yes', 'Yes');
         const no: string = localize('no', 'No');
         const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
-
         const message: string = localize('message', 'Deploy changes now?');
-        const buttonMessages: string[] = [yes, no, dontShowAgain];
 
-        void window.showInformationMessage(message, ...buttonMessages).then(async (result: string | undefined) => {
-            if (result === yes) {
-                const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
-                    location: ProgressLocation.Notification,
-                    cancellable: false,
-                    title: localize('preparingForDeployment', 'Preparing for deployment...')
-                }, async () => {
-                    const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, this.baseItem.containerApp, { showLoadingPrompt: false });
+        const picks: IAzureQuickPickItem<string>[] = [
+            { label: yes, data: yes },
+            { label: no, data: no },
+            { label: dontShowAgain, data: dontShowAgain },
+        ];
+        const result: string = (await context.ui.showQuickPick(picks, { placeHolder: message })).data;
 
-                    if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-                        return containerAppItem;
-                    } else {
-                        return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
-                    }
-                });
+        if (result === yes) {
+            const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
+                location: ProgressLocation.Notification,
+                cancellable: false,
+                title: localize('preparingForDeployment', 'Preparing for deployment...')
+            }, async () => {
+                const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, this.baseItem.containerApp, { showLoadingPrompt: false });
 
-                // Pass the deploy command a fresh context
-                await callWithTelemetryAndErrorHandling('revisionDraftUpdateBaseStep.deploy',
-                    async (context: IActionContext) => await deployRevisionDraft(context, item));
-            } else if (result === dontShowAgain) {
-                await settingUtils.updateGlobalSetting('showDraftCommandDeployPopup', false);
-            } else {
-                // Do nothing
-            }
-        });
+                if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+                    return containerAppItem;
+                } else {
+                    return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
+                }
+            });
+
+            // Pass the deploy command a fresh context
+            await callWithTelemetryAndErrorHandling('revisionDraftUpdateBaseStep.deploy',
+                async (context: IActionContext) => await deployRevisionDraft(context, item));
+        } else if (result === dontShowAgain) {
+            await settingUtils.updateGlobalSetting('showDraftCommandDeployPopup', false);
+        }
     }
 }
