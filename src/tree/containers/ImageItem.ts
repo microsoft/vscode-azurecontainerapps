@@ -4,9 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { createGenericElement, nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { createContextValue, createGenericElement, nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { draftItemDescendantFalseContextValue, draftItemDescendantTrueContextValue, revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -24,6 +26,7 @@ export class ImageItem extends RevisionDraftDescendantBase {
         subscription: AzureSubscription,
         containerApp: ContainerAppModel,
         revision: Revision,
+        readonly containersIdx: number,
 
         // Used as the basis for the view; can reflect either the original or the draft changes
         readonly container: Container,
@@ -39,12 +42,26 @@ export class ImageItem extends RevisionDraftDescendantBase {
         label: this.container.name ?? '',
     }
 
+    private get contextValue(): string {
+        const values: string[] = [ImageItem.contextValue];
+
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+            values.push(revisionDraftTrueContextValue);
+        } else {
+            values.push(revisionDraftFalseContextValue);
+        }
+
+        values.push(RevisionDraftItem.hasDescendant(this) ? draftItemDescendantTrueContextValue : draftItemDescendantFalseContextValue);
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
+        return createContextValue(values);
+    }
+
     getTreeItem(): TreeItem {
         return {
             id: this.id,
             label: this.label,
             iconPath: new ThemeIcon('window'),
-            contextValue: ImageItem.contextValue,
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
         }
     }
@@ -85,8 +102,8 @@ export class ImageItem extends RevisionDraftDescendantBase {
         }
 
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container | undefined = currentContainers.find(c => c.name === this.container.name || c.image === this.container.image);
+        const currentContainer: Container = currentContainers[this.containersIdx];
 
-        return !currentContainer?.image || this.container.image !== currentContainer.image;
+        return this.container.image !== currentContainer.image;
     }
 }

@@ -6,8 +6,6 @@
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { browseContainerAppNode } from './browseContainerApp';
-import { updateContainer } from './containers/updateContainer/updateContainer';
-import { updateContainerImage } from './containers/updateContainerImage/updateContainerImage';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -41,6 +39,8 @@ import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScale
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
+import { updateContainer } from './updateContainer/updateContainer';
+import { updateContainerImage } from './updateContainer/updateContainerImage/updateContainerImage';
 import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
 import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
 import { cleanUpResourcesWalkthrough } from './walkthrough/cleanUpResources';

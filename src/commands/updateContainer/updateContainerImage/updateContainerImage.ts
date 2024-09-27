@@ -4,9 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { type UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
+import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type ImageItem } from "../../../tree/containers/ImageItem";
 import { createActivityContext } from "../../../utils/activityUtils";
@@ -15,37 +13,39 @@ import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickImage } from "../../../utils/pickItem/pickImage";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
-import { type ImageSourceBaseContext } from "../../image/imageSource/ImageSourceContext";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
+import { type ContainerUpdateContext } from "../ContainerUpdateContext";
+import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
 import { ContainerImageUpdateDraftStep } from "./ContainerImageUpdateDraftStep";
-import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
 
-export type ImageUpdateBaseContext = ImageSourceBaseContext & ExecuteActivityContext;
-export type ImageUpdateContext = ImageUpdateBaseContext & SetTelemetryProps<TelemetryProps>;
+export type ContainerImageUpdateContext = ContainerUpdateContext;
 
+// Updates only the 'image' portion of the container profile
 export async function updateContainerImage(context: IActionContext, node?: ImageItem): Promise<void> {
     const item: ImageItem = node ?? await pickImage(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-    const wizardContext: ImageUpdateContext = {
+    const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
+
+    const wizardContext: ContainerImageUpdateContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(true),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
+        containersIdx: item.containersIdx,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
-    const wizard: AzureWizard<ImageUpdateContext> = new AzureWizard(wizardContext, {
+    const wizard: AzureWizard<ContainerImageUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
         promptSteps: [
-            new ImageSourceListStep(),
+            new ImageSourceListStep({ suppressEnvPrompt: true }),
         ],
         executeSteps: [
-            getVerifyProvidersStep<ImageUpdateContext>(),
+            getVerifyProvidersStep<ContainerImageUpdateContext>(),
             new RegistryAndSecretsUpdateStep(),
             new ContainerImageUpdateDraftStep(item),
         ],

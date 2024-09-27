@@ -474,6 +474,16 @@
                     "group": "1@1"
                 },
                 {
+                    "command": "containerApps.updateContainerImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem(.*)revisionMode:single/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.updateContainerImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem(.*)revisionDraft:false(.*)revisionMode:multiple/i || viewItem =~ /draftItemDescendant:true(.*)imageItem(.*)revisionDraft:true(.*)revisionMode:multiple/i",
+                    "group": "1@1"
+                },
+                {
                     "command": "containerApps.editScaleRange",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /scaleItem/i",
                     "group": "1@1"

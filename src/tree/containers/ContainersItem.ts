@@ -37,11 +37,11 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     getChildren(): TreeElementBase[] {
         if (this.containers.length === 1) {
             return [
-                RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, this.containers[0]),
-                RevisionDraftDescendantBase.createTreeItem(EnvironmentVariablesItem, this.subscription, this.containerApp, this.revision, this.containers[0]),
+                RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, 0, this.containers[0]),
+                RevisionDraftDescendantBase.createTreeItem(EnvironmentVariablesItem, this.subscription, this.containerApp, this.revision, 0, this.containers[0]),
             ];
         }
-        return this.containers?.map(container => RevisionDraftDescendantBase.createTreeItem(ContainerItem, this.subscription, this.containerApp, this.revision, container)) ?? [];
+        return this.containers?.map((container, idx) => RevisionDraftDescendantBase.createTreeItem(ContainerItem, this.subscription, this.containerApp, this.revision, idx, container)) ?? [];
     }
 
     getTreeItem(): TreeItem {

@@ -94,6 +94,5 @@ export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
 export const draftItemDescendantTrueContextValue: string = 'draftItemDescendant:true';
 export const draftItemDescendantFalseContextValue: string = 'draftItemDescendant:false';
 
-// Indicates whether we are in a draft state in single revisions mode
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';

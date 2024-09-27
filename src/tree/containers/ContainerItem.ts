@@ -28,6 +28,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
         subscription: AzureSubscription,
         containerApp: ContainerAppModel,
         revision: Revision,
+        readonly containersIdx: number,
 
         // Used as the basis for the view; can reflect either the original or the draft changes
         readonly container: Container,
@@ -47,8 +48,8 @@ export class ContainerItem extends RevisionDraftDescendantBase {
 
     getChildren(): TreeElementBase[] {
         return [
-            RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, this.container),
-            RevisionDraftDescendantBase.createTreeItem(EnvironmentVariablesItem, this.subscription, this.containerApp, this.revision, this.container),
+            RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, this.containersIdx, this.container),
+            RevisionDraftDescendantBase.createTreeItem(EnvironmentVariablesItem, this.subscription, this.containerApp, this.revision, this.containersIdx, this.container),
         ];
     }
 
@@ -90,7 +91,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
         }
 
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container | undefined = currentContainers.find(c => c.name === this.container.name || c.image === this.container.image);
+        const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
         return !currentContainer || !deepEqual(this.container, currentContainer);
     }

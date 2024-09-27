@@ -3,22 +3,23 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type Container, type Revision } from "@azure/arm-appcontainers";
+import { type Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { type ContainerItem } from "../../../tree/containers/ContainerItem";
-import { ContainersItem } from "../../../tree/containers/ContainersItem";
-import { createActivityContext } from "../../../utils/activityUtils";
-import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
-import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
-import { localize } from "../../../utils/localize";
-import { pickContainer } from "../../../utils/pickItem/pickContainer";
-import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
-import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
-import { RegistryAndSecretsUpdateStep } from "../updateContainerImage/RegistryAndSecretsUpdateStep";
+import { type ContainerAppModel } from "../../tree/ContainerAppItem";
+import { type ContainerItem } from "../../tree/containers/ContainerItem";
+import { ContainersItem } from "../../tree/containers/ContainersItem";
+import { createActivityContext } from "../../utils/activityUtils";
+import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
+import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
+import { localize } from "../../utils/localize";
+import { pickContainer } from "../../utils/pickItem/pickContainer";
+import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
+import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerUpdateContext } from "./ContainerUpdateContext";
 import { ContainerUpdateDraftStep } from "./ContainerUpdateDraftStep";
+import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
 
+// Updates both the 'image' and 'environmentVariables' portion of the container profile
 export async function updateContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
     const item: ContainerItem | ContainersItem = node ?? await pickContainer(context, { autoSelectDraft: true });
     const { containerApp, subscription } = item;
@@ -26,17 +27,12 @@ export async function updateContainer(context: IActionContext, node?: Containers
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    let container: Container | undefined;
+    let containersIdx: number;
     if (ContainersItem.isContainersItem(item)) {
         // The 'updateContainer' command should only show up on a 'ContainersItem' when it only has one container, else the command would show up on the 'ContainerItem'
-        container = parentResource.template?.containers?.[0];
+        containersIdx = 0;
     } else {
-        container = item.container;
-    }
-
-    const containersIdx: number = parentResource.template?.containers?.findIndex(c => c.image === container?.image) ?? -1;
-    if (containersIdx === -1) {
-        throw new Error(localize('couldNotFindContainer', 'Internal error: Could not locate the specified container for updating.'));
+        containersIdx = item.containersIdx;
     }
 
     const wizardContext: ContainerUpdateContext = {
@@ -51,7 +47,7 @@ export async function updateContainer(context: IActionContext, node?: Containers
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const wizard: AzureWizard<ContainerUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('updateContainer', 'Update "{0}" container (draft)', parentResource.name),
+        title: localize('updateContainer', 'Update container for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep(),
         ],

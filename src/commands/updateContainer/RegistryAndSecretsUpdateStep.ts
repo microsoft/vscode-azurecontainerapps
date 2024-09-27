@@ -7,16 +7,16 @@ import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers"
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import { type Progress } from "vscode";
-import { ext } from "../../../extensionVariables";
-import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../updateContainerApp";
-import { type ImageUpdateContext } from "./updateContainerImage";
+import { ext } from "../../extensionVariables";
+import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../tree/ContainerAppItem";
+import { localize } from "../../utils/localize";
+import { updateContainerApp } from "../updateContainerApp";
+import { type ContainerUpdateContext } from "./ContainerUpdateContext";
 
-export class RegistryAndSecretsUpdateStep extends AzureWizardExecuteStep<ImageUpdateContext> {
+export class RegistryAndSecretsUpdateStep<T extends ContainerUpdateContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 580;
 
-    public async execute(context: ImageUpdateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -38,7 +38,7 @@ export class RegistryAndSecretsUpdateStep extends AzureWizardExecuteStep<ImageUp
         ext.outputChannel.appendLog(localize('updatedSecrets', 'Updated container app "{0}" with new registry secrets.', containerApp.name));
     }
 
-    public shouldExecute(context: ImageUpdateContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !!context.registryCredentials && !!context.secrets;
     }
 
