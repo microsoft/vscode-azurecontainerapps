@@ -9,12 +9,12 @@ import { type Progress } from "vscode";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
-import { type IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
-export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
+export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<ManagedEnvironmentCreateContext> {
     public priority: number = 220;
 
-    public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: ManagedEnvironmentCreateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const opClient = await createOperationalInsightsManagementClient(context);
         const resourceGroup = nonNullProp(context, 'resourceGroup');
         const workspaceName = context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName');
@@ -26,11 +26,11 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
             nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
     }
 
-    public shouldExecute(context: IManagedEnvironmentContext): boolean {
+    public shouldExecute(context: ManagedEnvironmentCreateContext): boolean {
         return !context.logAnalyticsWorkspace;
     }
 
-    public createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
@@ -41,7 +41,7 @@ export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<IManagedEnvir
         };
     }
 
-    public createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    public createFailOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepFailItem', activityFailContext]),

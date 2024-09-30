@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
 import { validateUtils } from "../../../../utils/validateUtils";
-import { type CreateContainerAppContext } from "../../../createContainerApp/CreateContainerAppContext";
+import { type ContainerAppCreateContext } from "../../../createContainerApp/ContainerAppCreateContext";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
 const maxImageNameLength: number = 46;
@@ -16,7 +16,7 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
         const suggestedImageName = ImageNameStep.getTimestampedImageName(
             context.containerApp?.name ||
             // Step is also technically reachable from the `createContainerApp` entry point
-            nonNullProp((context as CreateContainerAppContext), 'newContainerAppName')
+            nonNullProp((context as ContainerAppCreateContext), 'newContainerAppName')
         );
 
         context.imageName = (await context.ui.showInputBox({
