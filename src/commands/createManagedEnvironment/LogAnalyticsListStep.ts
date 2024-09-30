@@ -9,19 +9,19 @@ import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vsco
 import { createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from '../../utils/localize';
 import { nonNullProp } from '../../utils/nonNull';
-import { type IManagedEnvironmentContext } from './IManagedEnvironmentContext';
+import { type ManagedEnvironmentCreateContext } from './ManagedEnvironmentCreateContext';
 
-export class LogAnalyticsListStep extends AzureWizardPromptStep<IManagedEnvironmentContext> {
-    public async prompt(context: IManagedEnvironmentContext): Promise<void> {
+export class LogAnalyticsListStep extends AzureWizardPromptStep<ManagedEnvironmentCreateContext> {
+    public async prompt(context: ManagedEnvironmentCreateContext): Promise<void> {
         const placeHolder: string = localize('selectLogAnalytics', 'Select Log Analytics workspace. Your Log Analytics workspace will contain all your application logs.');
         context.logAnalyticsWorkspace = (await context.ui.showQuickPick(this.getQuickPicks(context), { placeHolder })).data;
     }
 
-    public shouldPrompt(context: IManagedEnvironmentContext): boolean {
+    public shouldPrompt(context: ManagedEnvironmentCreateContext): boolean {
         return !context.logAnalyticsWorkspace;
     }
 
-    private async getQuickPicks(context: IManagedEnvironmentContext): Promise<IAzureQuickPickItem<Workspace | undefined>[]> {
+    private async getQuickPicks(context: ManagedEnvironmentCreateContext): Promise<IAzureQuickPickItem<Workspace | undefined>[]> {
         const picks: IAzureQuickPickItem<Workspace | undefined>[] = [];
 
         picks.push({

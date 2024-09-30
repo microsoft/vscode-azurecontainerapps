@@ -5,15 +5,15 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
-import { type CreateContainerAppContext } from './CreateContainerAppContext';
+import { type ContainerAppCreateContext } from './ContainerAppCreateContext';
 
-export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerAppContext> {
+export class ContainerAppNameStep extends AzureWizardPromptStep<ContainerAppCreateContext> {
     public hideStepCount: boolean = true;
 
-    public async prompt(context: CreateContainerAppContext): Promise<void> {
+    public async prompt(context: ContainerAppCreateContext): Promise<void> {
         const prompt: string = localize('containerAppNamePrompt', 'Enter a container app name.');
         context.newContainerAppName = (await context.ui.showInputBox({
             prompt,
@@ -24,7 +24,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerA
         context.valuesToMask.push(context.newContainerAppName);
     }
 
-    public shouldPrompt(context: CreateContainerAppContext): boolean {
+    public shouldPrompt(context: ContainerAppCreateContext): boolean {
         return !context.containerApp && !context.newContainerAppName;
     }
 
@@ -41,8 +41,8 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<CreateContainerA
         return undefined;
     }
 
-    private async validateNameAvailable(context: CreateContainerAppContext, name: string): Promise<string | undefined> {
-        const resourceGroupName: string = getResourceGroupFromId(nonNullProp(context, 'managedEnvironmentId'));
+    private async validateNameAvailable(context: ContainerAppCreateContext, name: string): Promise<string | undefined> {
+        const resourceGroupName: string = getResourceGroupFromId(nonNullValueAndProp(context.managedEnvironment, 'id'));
         if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
         }

@@ -9,7 +9,7 @@ import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistr
 
 export class AcrEnableAdminUserConfirmStep extends AzureWizardPromptStep<DockerLoginRegistryCredentialsContext> {
     public async prompt(context: DockerLoginRegistryCredentialsContext): Promise<void> {
-        const message = localize('enableAdminUser', 'Admin user login is required to continue. If enabled, it will allow docker login access to your Azure Container Registry using its username and password.');
+        const message = localize('enableAdminUser', 'Admin user login is required to continue. If enabled, it will allow docker login access to your ACR using the registry\'s username and password.');
         await context.ui.showWarningMessage(message, { modal: true }, { title: localize('enable', 'Enable') });
     }
 

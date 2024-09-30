@@ -12,12 +12,12 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
-import { type CreateContainerAppContext } from "./CreateContainerAppContext";
+import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContainerAppContext> {
+export class ContainerAppCreateStep extends AzureWizardExecuteStep<ContainerAppCreateContext> {
     public priority: number = 620;
 
-    public async execute(context: CreateContainerAppContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: ContainerAppCreateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
@@ -41,7 +41,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContain
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
-            managedEnvironmentId: context.managedEnvironmentId || context.managedEnvironment?.id,
+            managedEnvironmentId: context.managedEnvironment?.id,
             configuration: {
                 ingress,
                 secrets: context.secrets,
@@ -60,11 +60,11 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContain
         }));
     }
 
-    public shouldExecute(context: CreateContainerAppContext): boolean {
+    public shouldExecute(context: ContainerAppCreateContext): boolean {
         return !context.containerApp;
     }
 
-    public createSuccessOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: ContainerAppCreateContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepSuccessItem', activitySuccessContext]),
@@ -75,7 +75,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<CreateContain
         };
     }
 
-    public createFailOutput(context: CreateContainerAppContext): ExecuteActivityOutput {
+    public createFailOutput(context: ContainerAppCreateContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepFailItem', activityFailContext]),

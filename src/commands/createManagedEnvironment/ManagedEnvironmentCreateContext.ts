@@ -9,13 +9,13 @@ import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureu
 import { type ExecuteActivityContext, type ISubscriptionActionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
-export interface IManagedEnvironmentContext extends ISubscriptionActionContext, IResourceGroupWizardContext, ExecuteActivityContext {
+export interface ManagedEnvironmentCreateContext extends ISubscriptionActionContext, IResourceGroupWizardContext, ExecuteActivityContext {
     subscription: AzureSubscription;
 
     newManagedEnvironmentName?: string;
     newLogAnalyticsWorkspaceName?: string;  // This isn't normally populated by a name step, but we still allow this to be prepopulated
-    logAnalyticsWorkspace?: Workspace;
 
     // created when the wizard is done executing
+    logAnalyticsWorkspace?: Workspace;
     managedEnvironment?: ManagedEnvironment;
 }

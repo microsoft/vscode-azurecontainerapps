@@ -3,9 +3,10 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activityUtils";
+import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
@@ -18,13 +19,15 @@ import { type DeployImageApiContext } from "./deployImageApi";
 
 export async function deployImage(context: IActionContext & Partial<ContainerRegistryImageSourceContext>, node: ContainerAppItem): Promise<void> {
     const { subscription, containerApp } = node;
+    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
     const wizardContext: DeployImageApiContext = {
         ...context,
-        ...createSubscriptionContext(subscription),
+        ...subscriptionContext,
         ...await createActivityContext(),
         subscription,
-        containerApp
+        managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
+        containerApp,
     };
 
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;

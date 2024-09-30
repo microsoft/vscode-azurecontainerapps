@@ -11,12 +11,12 @@ import { managedEnvironmentsAppProvider } from "../../constants";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
-import { type IManagedEnvironmentContext } from "./IManagedEnvironmentContext";
+import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
-export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManagedEnvironmentContext> {
+export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<ManagedEnvironmentCreateContext> {
     public priority: number = 250;
 
-    public async execute(context: IManagedEnvironmentContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: ManagedEnvironmentCreateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const opClient = await createOperationalInsightsManagementClient(context);
 
@@ -59,11 +59,11 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         }
     }
 
-    public shouldExecute(context: IManagedEnvironmentContext): boolean {
+    public shouldExecute(context: ManagedEnvironmentCreateContext): boolean {
         return !context.managedEnvironment;
     }
 
-    public createSuccessOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['managedEnvironmentCreateStepSuccessItem', activitySuccessContext]),
@@ -74,7 +74,7 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<IManage
         };
     }
 
-    public createFailOutput(context: IManagedEnvironmentContext): ExecuteActivityOutput {
+    public createFailOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['managedEnvironmentCreateStepFailItem', activityFailContext]),
