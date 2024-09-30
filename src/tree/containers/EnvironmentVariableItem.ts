@@ -27,7 +27,8 @@ export class EnvironmentVariableItem implements RevisionsItemModel {
 
     getTreeItem(): TreeItem {
         return {
-            label: this._hideValue ? `${this.envVariable.name}=Hidden value. Click to view.` : `${this.envVariable.name}=${this.envVariable.value}`,
+            label: this._hideValue ? localize('viewHidden', '{0}=Hidden value. Click to view.', this.envVariable.name) : `${this.envVariable.name}=${this.envOutput}`,
+            description: this.envVariable.secretRef && !this._hideValue ? localize('secretRef', 'Secret reference') : undefined,
             contextValue: 'environmentVariableItem',
             iconPath: new ThemeIcon('symbol-constant'),
             command: {
@@ -45,5 +46,9 @@ export class EnvironmentVariableItem implements RevisionsItemModel {
 
     private get parentResource(): ContainerAppModel | Revision {
         return getParentResource(this.containerApp, this.revision);
+    }
+
+    private get envOutput(): string {
+        return this.envVariable.value ?? this.envVariable.secretRef ?? '';
     }
 }
