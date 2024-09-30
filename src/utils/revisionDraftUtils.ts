@@ -32,7 +32,7 @@ export function getParentResourceFromItem(item: ContainerAppItem | RevisionsItem
 
 /**
  * Checks to see whether a given container app template item is in an editable state
- * (Template item here refers to any tree item descendant of the following - see 'RevisionItem.getTemplateChildren')
+ * (Template item here refers to any tree item descendant of the RevisionItem - see 'RevisionItem.getTemplateChildren')
  * (The name template originates from the container app envelope's 'template' set of properties which happen to also be tied to each revision)
  */
 export function isTemplateItemEditable(item: RevisionsItemModel): boolean {
