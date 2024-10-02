@@ -13,13 +13,10 @@ import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
-import { EnvironmentVariablesListStep } from "../../image/imageSource/EnvironmentVariablesListStep";
-import { type ContainerUpdateContext } from "../ContainerUpdateContext";
+import { EnvFileListStep } from "../../image/imageSource/EnvFileListStep";
+import { type EnvironmentVariablesUpdateContext } from "./EnvironmentVariablesUpdateContext";
 import { EnvironmentVariablesUpdateDraftStep } from "./EnvironmentVariablesUpdateDraftStep";
 
-export type EnvironmentVariablesUpdateContext = ContainerUpdateContext;
-
-// Updates only the 'environmentVariables' portion of the container profile
 export async function updateEnvironmentVariables(context: IActionContext, node?: EnvironmentVariablesItem): Promise<void> {
     const item: EnvironmentVariablesItem = node ?? await pickEnvironmentVariables(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
@@ -41,7 +38,7 @@ export async function updateEnvironmentVariables(context: IActionContext, node?:
     const wizard: AzureWizard<EnvironmentVariablesUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('updateEnvironmentVariables', 'Update environment variables for "{0}" (draft)', parentResource.name),
         promptSteps: [
-            new EnvironmentVariablesListStep(),
+            new EnvFileListStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariablesUpdateContext>(),

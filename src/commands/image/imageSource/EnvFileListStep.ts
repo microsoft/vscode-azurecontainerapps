@@ -22,14 +22,14 @@ export enum SetEnvironmentVariableOption {
     UseExisting = 'useExisting'
 }
 
-type EnvironmentVariablesContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
+type EnvFileListContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
 
 const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<EnvironmentVariablesContext> {
+export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
 
-    public async prompt(context: EnvironmentVariablesContext): Promise<void> {
+    public async prompt(context: T): Promise<void> {
         // since we only allow one container, we can assume that we want the first container's env settings
         const existingData = context.containerApp?.template?.containers?.[0].env;
         context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
@@ -46,7 +46,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         }
     }
 
-    public async configureBeforePrompt(context: EnvironmentVariablesContext): Promise<void> {
+    public async configureBeforePrompt(context: T): Promise<void> {
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
@@ -57,11 +57,11 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         }
     }
 
-    public shouldPrompt(context: EnvironmentVariablesContext): boolean {
+    public shouldPrompt(context: T): boolean {
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
-    private async promptForEnvPath(context: EnvironmentVariablesContext, showHasExistingData?: boolean): Promise<string | undefined> {
+    private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
@@ -95,7 +95,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
     }
 
     // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
-    private outputLogs(context: EnvironmentVariablesContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+    private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
         if (

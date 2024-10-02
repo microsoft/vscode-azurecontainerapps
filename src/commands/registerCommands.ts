@@ -12,6 +12,8 @@ import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
 import { editContainerApp } from './editContainerApp';
+import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
+import { updateEnvironmentVariables } from './environmentVariables/updateEnvironmentVariables/updateEnvironmentVariables';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
@@ -41,7 +43,6 @@ import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
 import { updateContainer } from './updateContainer/updateContainer';
 import { updateContainerImage } from './updateContainer/updateContainerImage/updateContainerImage';
-import { updateEnvironmentVariables } from './updateContainer/updateEnvironmentVariables/updateEnvironmentVariables';
 import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
 import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
 import { cleanUpResourcesWalkthrough } from './walkthrough/cleanUpResources';
@@ -68,6 +69,9 @@ export function registerCommands(): void {
     // containers
     registerCommandWithTreeNodeUnwrapping('containerApps.updateContainer', updateContainer);
     registerCommandWithTreeNodeUnwrapping('containerApps.updateContainerImage', updateContainerImage);
+
+    // environment variables
+    registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.updateEnvironmentVariables', updateEnvironmentVariables);
 
     // deploy
