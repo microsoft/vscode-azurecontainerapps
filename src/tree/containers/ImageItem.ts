@@ -19,9 +19,6 @@ export class ImageItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'imageItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ImageItem.contextValue);
 
-    readonly loginServer = this.container.image?.split('/')[0];
-    readonly imageAndTag = this.container.image?.substring(nonNullValue(this.loginServer?.length) + 1, this.container.image?.length);
-
     constructor(
         subscription: AzureSubscription,
         containerApp: ContainerAppModel,
@@ -34,12 +31,23 @@ export class ImageItem extends RevisionDraftDescendantBase {
         super(subscription, containerApp, revision);
     }
 
-    id: string = `${this.parentResource.id}/image/${this.imageAndTag}`
+    id: string = `${this.parentResource.id}/image/${this.container.image}`;
     label: string;
 
     viewProperties: ViewPropertiesModel = {
         data: nonNullValueAndProp(this.container, 'image'),
         label: this.container.name ?? '',
+    }
+
+    private getImageName(image?: string): string {
+        const loginServer: string = this.getLoginServer(image);
+        if (!loginServer) return '';
+
+        return image?.substring(nonNullValue(loginServer.length) + 1, image?.length) ?? '';
+    }
+
+    private getLoginServer(image?: string): string {
+        return image?.split('/')[0] ?? '';
     }
 
     private get contextValue(): string {
@@ -67,18 +75,20 @@ export class ImageItem extends RevisionDraftDescendantBase {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
+        const { imageNameItem: isImageNameUnsaved, imageRegistryItem: isImageRegistryUnsaved } = this.doChildrenHaveUnsavedChanges();
+
         return [
             createGenericElement({
                 id: `${this.id}/imageName`,
-                label: localize('imageName', 'Name:'),
+                label: isImageNameUnsaved ? localize('imageNameDraft', 'Name*:') : localize('imageName', 'Name:'),
                 contextValue: 'containerImageNameItem',
-                description: `${this.imageAndTag}`,
+                description: `${this.getImageName(this.container.image)}`,
             }),
             createGenericElement({
                 id: `${this.id}/imageRegistry`,
-                label: localize('imageRegistry', 'Registry:'),
+                label: isImageRegistryUnsaved ? localize('imageRegistryDraft', 'Registry*:') : localize('imageRegistry', 'Registry:'),
                 contextValue: 'containerImageRegistryItem',
-                description: `${this.loginServer}`,
+                description: `${this.getLoginServer(this.container.image)}`,
             })
         ];
     }
@@ -93,6 +103,21 @@ export class ImageItem extends RevisionDraftDescendantBase {
 
     protected setDraftProperties(): void {
         this.label = 'Image*';
+    }
+
+    private doChildrenHaveUnsavedChanges(): { imageNameItem: boolean, imageRegistryItem: boolean } {
+        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
+            return { imageNameItem: false, imageRegistryItem: false };
+        }
+
+        const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
+        const currentContainer: Container = currentContainers[this.containersIdx];
+
+        return {
+            imageNameItem: this.getImageName(currentContainer.image) !== this.getImageName(this.container.image),
+            imageRegistryItem: this.getLoginServer(currentContainer.image) !== this.getLoginServer(this.container.image),
+        };
     }
 
     hasUnsavedChanges(): boolean {
