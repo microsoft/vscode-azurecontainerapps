@@ -9,9 +9,9 @@ import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import { type EnvironmentVariableAddContext } from "./EnvironmentVariableAddContext";
+import { type EnvironmentVariableDeleteContext } from "./EnvironmentVariableDeleteContext";
 
-export class EnvironmentVariableUpdateDraftStep<T extends EnvironmentVariableAddContext> extends RevisionDraftUpdateBaseStep<T> {
+export class EnvironmentVariableDeleteDraftStep<T extends EnvironmentVariableDeleteContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
@@ -19,21 +19,16 @@ export class EnvironmentVariableUpdateDraftStep<T extends EnvironmentVariableAdd
     }
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        progress.report({ message: localize('addingEnv', 'Adding environment variable (draft)...') });
+        progress.report({ message: localize('addingEnv', 'Deleting environment variable (draft)...') });
         this.revisionDraftTemplate.containers ??= [];
 
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
-        container.env ??= [];
-        container.env.push({
-            name: context.newEnvironmentVariableName,
-            value: context.newEnvironmentVariableManualInput ?? '', // The server doesn't accept this value to be undefined
-            secretRef: context.secretName,
-        });
+        container.env = container.env?.filter(env => env.name !== context.environmentVariable.name) ?? [];
 
         await this.updateRevisionDraftWithTemplate(context);
     }
 
     public shouldExecute(context: T): boolean {
-        return context.containersIdx !== undefined && !!context.newEnvironmentVariableName;
+        return context.containersIdx !== undefined && !!context.environmentVariable;
     }
 }

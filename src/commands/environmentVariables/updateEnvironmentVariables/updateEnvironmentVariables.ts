@@ -38,13 +38,12 @@ export async function updateEnvironmentVariables(context: IActionContext, node?:
     const wizard: AzureWizard<EnvironmentVariablesUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('updateEnvironmentVariables', 'Update environment variables for "{0}" (draft)', parentResource.name),
         promptSteps: [
-            new EnvFileListStep(),
+            new EnvFileListStep({ suppressSkipPick: true }),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariablesUpdateContext>(),
             new EnvironmentVariablesUpdateDraftStep(item),
         ],
-        showLoadingPrompt: true,
     });
 
     await wizard.prompt();

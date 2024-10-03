@@ -13,7 +13,11 @@ import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import { type ImageSourceBaseContext } from "./ImageSourceContext";
+import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
+
+export interface EnvFileListStepOptions {
+    suppressSkipPick?: boolean;
+}
 
 export enum SetEnvironmentVariableOption {
     NoDotEnv = 'noDotEnv',
@@ -22,16 +26,19 @@ export enum SetEnvironmentVariableOption {
     UseExisting = 'useExisting'
 }
 
-type EnvFileListContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
+type EnvFileListContext = EnvironmentVariablesContext & SetTelemetryProps<TelemetryProps>;
 
 const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
 export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
 
+    constructor(public readonly options?: EnvFileListStepOptions) {
+        super();
+    }
+
     public async prompt(context: T): Promise<void> {
-        // since we only allow one container, we can assume that we want the first container's env settings
-        const existingData = context.containerApp?.template?.containers?.[0].env;
+        const existingData = context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
         context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
 
         if (!context.envPath && existingData) {
@@ -66,7 +73,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
         return await selectWorkspaceFile(context, placeHolder,
-            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true, skipLabel }, allEnvFilesGlobPattern);
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: !this.options?.suppressSkipPick, skipLabel }, allEnvFilesGlobPattern);
     }
 
     private async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
@@ -94,7 +101,6 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         return !!envFileUris.length;
     }
 
-    // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
     private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
@@ -115,8 +121,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
             const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
-                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ') +
-                'If you would like to update your environment variables later, try re-running the container app update or deploy command.'
+                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ')
             );
             ext.outputChannel.appendLog(logMessage);
         } else {
