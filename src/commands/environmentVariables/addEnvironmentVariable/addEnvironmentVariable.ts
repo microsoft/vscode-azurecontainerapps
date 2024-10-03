@@ -38,7 +38,7 @@ export async function addEnvironmentVariable(context: IActionContext, node?: Env
     const wizard: AzureWizard<EnvironmentVariableAddContext> = new AzureWizard(wizardContext, {
         title: localize('updateEnvironmentVariables', 'Add environment variable to "{0}" (draft)', parentResource.name),
         promptSteps: [
-            new EnvironmentVariableNameStep(),
+            new EnvironmentVariableNameStep(item),
             new EnvironmentVariableTypeListStep(),
         ],
         executeSteps: [

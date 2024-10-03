@@ -13,6 +13,7 @@
     "containerApps.updateContainerImage": "Update Container Image...",
     "containerApps.addEnvironmentVariable": "Add Environment Variable...",
     "containerApps.updateEnvironmentVariables": "Update Environment Variables...",
+    "containerApps.toggleEnvironmentVariableVisibility": "Switch Environment Variable Visibility...",
     "containerApps.deployImageApi": "Deploy Image to Container App (API)...",
     "containerApps.deployWorkspaceProject": "Deploy Project from Workspace...",
     "containerApps.deployWorkspaceProjectApi": "Deploy Project from Workspace (API)...",

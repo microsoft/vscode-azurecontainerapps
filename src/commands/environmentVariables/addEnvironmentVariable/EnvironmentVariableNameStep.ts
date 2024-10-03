@@ -5,10 +5,17 @@
 
 import { type Container, type EnvironmentVar } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, validationUtils } from "@microsoft/vscode-azext-utils";
+import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
+import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { type EnvironmentVariableAddContext } from "./EnvironmentVariableAddContext";
 
 export class EnvironmentVariableNameStep<T extends EnvironmentVariableAddContext> extends AzureWizardPromptStep<T> {
+    constructor(readonly baseItem: ContainerAppItem | RevisionsItemModel) {
+        super();
+    }
+
     public async prompt(context: T): Promise<void> {
         context.newEnvironmentVariableName = (await context.ui.showInputBox({
             prompt: localize('envNamePrompt', 'Enter a name for the environment variable'),
@@ -32,14 +39,11 @@ export class EnvironmentVariableNameStep<T extends EnvironmentVariableAddContext
             return localize('invalidEnvName', 'Name contains invalid character. Regex used for validation is "{0}".', String(rule));
         }
 
-        // Check for duplicate name
-        if (context.containerApp && context.containersIdx) {
-            const container: Container | undefined = context.containerApp?.template?.containers?.[context.containersIdx];
-            const envs: EnvironmentVar[] = container?.env ?? [];
+        const container: Container | undefined = getParentResourceFromItem(this.baseItem).template?.containers?.[context.containersIdx];
+        const envs: EnvironmentVar[] = container?.env ?? [];
 
-            if (envs.some(env => env.name === value)) {
-                return localize('duplicateEnv', 'Environment variable with name "{0}" already exists for this container.', value);
-            }
+        if (envs.some(env => env.name === value)) {
+            return localize('duplicateEnv', 'Environment variable with name "{0}" already exists for this container.', value);
         }
 
         return undefined;

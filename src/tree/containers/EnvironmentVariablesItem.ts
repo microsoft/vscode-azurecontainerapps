@@ -47,7 +47,7 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
     }
 
     getChildren(): TreeElementBase[] {
-        return this.container.env?.map(env => new EnvironmentVariableItem(this.subscription, this.containerApp, this.revision, this.id, this.container, env)) ?? [];
+        return this.container.env?.map(env => RevisionDraftDescendantBase.createTreeItem(EnvironmentVariableItem, this.subscription, this.containerApp, this.revision, this.containersIdx, this.container, env)) ?? [];
     }
 
     private get contextValue(): string {
