@@ -96,6 +96,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.updateEnvironmentVariableName",
+                "title": "%containerApps.updateEnvironmentVariableName%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteEnvironmentVariable",
                 "title": "%containerApps.deleteEnvironmentVariable%",
                 "category": "Azure Container Apps"
@@ -507,6 +512,11 @@
                     "command": "containerApps.updateEnvironmentVariables",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem(.*)revisionMode:single/i",
                     "group": "2@2"
+                },
+                {
+                    "command": "containerApps.updateEnvironmentVariableName",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
+                    "group": "1@1"
                 },
                 {
                     "command": "containerApps.deleteEnvironmentVariable",

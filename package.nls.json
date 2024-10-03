@@ -12,6 +12,7 @@
     "containerApps.updateContainer": "Update Container...",
     "containerApps.updateContainerImage": "Update Container Image...",
     "containerApps.addEnvironmentVariable": "Add Environment Variable...",
+    "containerApps.updateEnvironmentVariableName": "Update Environment Variable Name...",
     "containerApps.deleteEnvironmentVariable": "Delete Environment Variable...",
     "containerApps.updateEnvironmentVariables": "Update Environment Variables (.env)...",
     "containerApps.toggleEnvironmentVariableVisibility": "Switch Environment Variable Visibility...",

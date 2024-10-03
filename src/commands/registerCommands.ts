@@ -14,6 +14,7 @@ import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspace
 import { editContainerApp } from './editContainerApp';
 import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
 import { deleteEnvironmentVariable } from './environmentVariables/deleteEnvironmentVariable/deleteEnvironmentVariable';
+import { updateEnvironmentVariableName } from './environmentVariables/updateEnvironmentVariable/updateEnvironmentVariableName';
 import { updateEnvironmentVariables } from './environmentVariables/updateEnvironmentVariables/updateEnvironmentVariables';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -73,6 +74,7 @@ export function registerCommands(): void {
 
     // environment variables
     registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
+    registerCommandWithTreeNodeUnwrapping('containerApps.updateEnvironmentVariableName', updateEnvironmentVariableName);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.updateEnvironmentVariables', updateEnvironmentVariables);
 
