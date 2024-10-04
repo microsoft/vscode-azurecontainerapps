@@ -102,7 +102,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         if (registryDomain === acrDomain) {
             picks.push({
                 label: 'Managed Identity',
-                description: '(recommended)',
+                description: localize('recommended', '(recommended)'),
                 detail: localize('systemIdentityDetails', 'Setup "{0}" access for container environment resources via a system-assigned identity', 'acrPull'),
                 data: RegistryCredentialType.SystemAssigned,
             });
