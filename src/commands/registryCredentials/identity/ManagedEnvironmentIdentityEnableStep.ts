@@ -19,7 +19,7 @@ export class ManagedEnvironmentIdentityEnableStep extends AzureWizardExecuteStep
         const managedEnvironment: ManagedEnvironment = nonNullProp(context, 'managedEnvironment');
         const parsedResourceId: ParsedAzureResourceId = parseAzureResourceId(nonNullProp(managedEnvironment, 'id'));
 
-        progress.report({ message: localize('enablingIdentity', 'Enabling managed identity...') })
+        progress.report({ message: localize('enablingIdentity', 'Enabling managed identity...') });
         context.managedEnvironment = await client.managedEnvironments.beginUpdateAndWait(parsedResourceId.resourceGroup, parsedResourceId.resourceName,
             {
                 location: managedEnvironment.location,

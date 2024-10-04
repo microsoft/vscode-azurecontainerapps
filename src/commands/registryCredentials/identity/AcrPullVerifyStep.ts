@@ -34,7 +34,7 @@ export class AcrPullVerifyStep extends AzureWizardExecuteStep<ManagedIdentityReg
     }
 
     public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
-        return !!context.registry;
+        return !context.hasAcrPullRole && !!context.registry;
     }
 
     public createSuccessOutput(context: ManagedIdentityRegistryCredentialsContext): ExecuteActivityOutput {

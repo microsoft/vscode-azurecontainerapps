@@ -37,5 +37,9 @@ export async function createOperationalInsightsManagementClient(context: AzExtCl
 }
 
 export async function createAuthorizationManagementClient(context: AzExtClientContext): Promise<AuthorizationManagementClient> {
-    return createAzureClient(context, (await import('@azure/arm-authorization')).AuthorizationManagementClient);
+    if (parseClientContext(context).isCustomCloud) {
+        return <AuthorizationManagementClient><unknown>createAzureClient(context, (await import('@azure/arm-authorization-profile-2020-09-01-hybrid')).AuthorizationManagementClient);
+    } else {
+        return createAzureClient(context, (await import('@azure/arm-authorization')).AuthorizationManagementClient);
+    }
 }
