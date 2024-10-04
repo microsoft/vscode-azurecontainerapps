@@ -28,7 +28,10 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 #### Steps
 ##### Managed Identity Registry Credential
-- Coming soon...
+- ManagedEnvironmentIdentityEnableStep: 450
+- AcrPullVerifyStep: 460
+- AcrPullEnableStep: 461
+- ManagedIdentityRegistryCredentialAddConfigurationStep: 470
 
 ##### Admin User Registry Credential
 - AcrEnableAdminUserStep: 450

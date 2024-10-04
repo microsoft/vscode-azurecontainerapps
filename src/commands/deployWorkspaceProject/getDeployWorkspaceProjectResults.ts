@@ -3,19 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { type RegistryCredentials } from "@azure/arm-appcontainers";
 import { type RegistryPassword } from "@azure/arm-containerregistry";
 import { type Workspace } from "@azure/arm-operationalinsights";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import type * as api from "../api/vscode-azurecontainerapps.api";
-import { listCredentialsFromRegistry } from "../image/imageSource/containerRegistry/acr/listCredentialsFromRegistry";
+import { listCredentialsFromAcr } from "../registryCredentials/dockerLogin/listCredentialsFromAcr";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 
 export type DeployWorkspaceProjectResults = api.DeployWorkspaceProjectResults;
 
 export async function getDeployWorkspaceProjectResults(context: DeployWorkspaceProjectContext): Promise<DeployWorkspaceProjectResults> {
-    const registryCredentials: { username: string, password: RegistryPassword } | undefined = context.registry ?
-        await listCredentialsFromRegistry(context, context.registry) : undefined;
+    const registryCredentials: RegistryCredentials | undefined = context.containerApp?.configuration?.registries?.find(r => r.server === context.registry?.loginServer);
+
+    let listedCredentials: { username: string, password: RegistryPassword } | undefined;
+    if (!registryCredentials?.identity) {
+        listedCredentials = await listCredentialsFromAcr(context);
+    }
 
     context.logAnalyticsWorkspace ??= await tryGetLogAnalyticsWorkspace(context);
 
@@ -26,8 +31,8 @@ export async function getDeployWorkspaceProjectResults(context: DeployWorkspaceP
         containerAppId: context.containerApp?.id,
         registryId: context.registry?.id,
         registryLoginServer: context.registry?.loginServer,
-        registryUsername: registryCredentials?.username,
-        registryPassword: registryCredentials?.password.value,
+        registryUsername: listedCredentials?.username,
+        registryPassword: listedCredentials?.password.value,
         imageName: context.imageName
     };
 }

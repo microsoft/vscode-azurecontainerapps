@@ -13,7 +13,7 @@ import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
 export class ContainerAppUpdateStep<T extends ImageSourceContext> extends AzureWizardExecuteStep<T> {
-    public priority: number = 650;
+    public priority: number = 680;
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');

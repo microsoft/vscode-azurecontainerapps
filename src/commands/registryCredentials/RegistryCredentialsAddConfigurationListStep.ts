@@ -10,6 +10,10 @@ import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
+import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
+import { AcrPullVerifyStep } from "./identity/AcrPullVerifyStep";
+import { ManagedEnvironmentIdentityEnableStep } from "./identity/ManagedEnvironmentIdentityEnableStep";
+import { ManagedIdentityRegistryCredentialsAddConfigurationStep } from "./identity/ManagedIdentityRegistryCredentialsAddConfigurationStep";
 import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCredentialsAndSecretsConfigurationStep";
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
@@ -56,13 +60,14 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         const registryDomain: SupportedRegistries | undefined = this.getRegistryDomain(context);
         switch (context.newRegistryCredentialType) {
-            // case RegistryCredentialType.SystemAssigned:
-            //     executeSteps.push(
-            //         new ManagedEnvironmentIdentityEnableStep(),
-            //         new AcrPullEnableStep(),
-            //         new ManagedIdentityRegistryCredentialAddConfigurationStep(registryDomain),
-            //     );
-            //     break;
+            case RegistryCredentialType.SystemAssigned:
+                executeSteps.push(
+                    new ManagedEnvironmentIdentityEnableStep(),
+                    new AcrPullVerifyStep(),
+                    new AcrPullEnableStep(),
+                    new ManagedIdentityRegistryCredentialsAddConfigurationStep(registryDomain),
+                );
+                break;
             case RegistryCredentialType.DockerLogin:
                 promptSteps.push(new AcrEnableAdminUserConfirmStep());
                 executeSteps.push(
@@ -95,12 +100,12 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         const registryDomain = this.getRegistryDomain(context);
 
         if (registryDomain === acrDomain) {
-            // picks.push({
-            //     label: 'Managed Identity',
-            //     description: '(recommended)',
-            //     detail: localize('systemIdentityDetails', 'Setup "{0}" access for container environment resources via a system-assigned identity', 'acrPull'),
-            //     data: RegistryCredentialType.SystemAssigned,
-            // });
+            picks.push({
+                label: 'Managed Identity',
+                description: localize('recommended', '(recommended)'),
+                detail: localize('systemIdentityDetails', 'Setup "{0}" access for container environment resources via a system-assigned identity', 'acrPull'),
+                data: RegistryCredentialType.SystemAssigned,
+            });
         }
 
         picks.push({
