@@ -13,7 +13,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainer } from "../../utils/pickItem/pickContainer";
-import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../utils/revisionDraftUtils";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerUpdateContext } from "./ContainerUpdateContext";
 import { ContainerUpdateDraftStep } from "./ContainerUpdateDraftStep";
@@ -23,6 +23,10 @@ import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
 export async function updateContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
     const item: ContainerItem | ContainersItem = node ?? await pickContainer(context, { autoSelectDraft: true });
     const { containerApp, subscription } = item;
+
+    if (!isTemplateItemEditable(item)) {
+        throwTemplateItemNotEditable(item);
+    }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);

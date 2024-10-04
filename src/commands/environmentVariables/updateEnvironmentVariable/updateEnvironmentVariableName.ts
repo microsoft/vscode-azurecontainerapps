@@ -12,7 +12,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourc
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariable } from "../../../utils/pickItem/pickEnvironmentVariables";
-import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
 import { EnvironmentVariableNameStep } from "../addEnvironmentVariable/EnvironmentVariableNameStep";
 import { type EnvironmentVariableUpdateContext } from "./EnvironmentVariableUpdateContext";
 import { EnvironmentVariableUpdateDraftStep } from "./EnvironmentVariableUpdateDraftStep";
@@ -20,6 +20,10 @@ import { EnvironmentVariableUpdateDraftStep } from "./EnvironmentVariableUpdateD
 export async function updateEnvironmentVariableName(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
     const item: EnvironmentVariableItem = node ?? await pickEnvironmentVariable(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
+
+    if (!isTemplateItemEditable(item)) {
+        throwTemplateItemNotEditable(item);
+    }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);

@@ -485,22 +485,12 @@
                 },
                 {
                     "command": "containerApps.updateContainer",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerItem(.*)revisionMode:single/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.updateContainer",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerItem(.*)revisionDraft:false(.*)revisionMode:multiple/i || viewItem =~ /containerItem(.*)draftItemDescendant:true(.*)revisionDraft:true(.*)revisionMode:multiple/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerItem/i",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.updateContainerImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem(.*)revisionMode:single/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.updateContainerImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem(.*)revisionDraft:false(.*)revisionMode:multiple/i || viewItem =~ /draftItemDescendant:true(.*)imageItem(.*)revisionDraft:true(.*)revisionMode:multiple/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem/i",
                     "group": "1@1"
                 },
                 {
@@ -510,7 +500,7 @@
                 },
                 {
                     "command": "containerApps.updateEnvironmentVariables",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem(.*)revisionMode:single/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem/i",
                     "group": "2@2"
                 },
                 {
@@ -521,11 +511,6 @@
                 {
                     "command": "containerApps.deleteEnvironmentVariable",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
-                    "group": "1@1"
-                },
-                {
-                    "command": "containerApps.updateEnvironmentVariables",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem(.*)revisionDraft:false(.*)revisionMode:multiple/i || viewItem =~ /draftItemDescendant:true(.*)environmentVariablesItem(.*)revisionDraft:true(.*)revisionMode:multiple/i",
                     "group": "1@2"
                 },
                 {

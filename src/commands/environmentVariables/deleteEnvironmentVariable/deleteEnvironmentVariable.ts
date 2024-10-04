@@ -12,13 +12,17 @@ import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourc
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariable } from "../../../utils/pickItem/pickEnvironmentVariables";
-import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
 import { type EnvironmentVariableDeleteContext } from "./EnvironmentVariableDeleteContext";
 import { EnvironmentVariableDeleteDraftStep } from "./EnvironmentVariableDeleteDraftStep";
 
 export async function deleteEnvironmentVariable(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
     const item: EnvironmentVariableItem = node ?? await pickEnvironmentVariable(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
+
+    if (!isTemplateItemEditable(item)) {
+        throwTemplateItemNotEditable(item);
+    }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
