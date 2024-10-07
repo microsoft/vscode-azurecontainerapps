@@ -10,7 +10,7 @@ import { type ScaleItem } from "../../../tree/scaling/ScaleItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScale } from "../../../utils/pickItem/pickScale";
-import { getParentResource } from "../../../utils/revisionDraftUtils";
+import { getParentResource, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
 import { type ScaleRangeContext } from "./ScaleRangeContext";
 import { ScaleRangePromptStep } from "./ScaleRangePromptStep";
 import { ScaleRangeUpdateStep } from "./ScaleRangeUpdateStep";
@@ -18,6 +18,10 @@ import { ScaleRangeUpdateStep } from "./ScaleRangeUpdateStep";
 export async function editScaleRange(context: IActionContext, node?: ScaleItem): Promise<void> {
     const item: ScaleItem = node ?? await pickScale(context, { autoSelectDraft: true });
     const { containerApp, revision, subscription } = item;
+
+    if (!isTemplateItemEditable(item)) {
+        throwTemplateItemNotEditable(item);
+    }
 
     const parentResource: ContainerAppModel | Revision = getParentResource(containerApp, revision);
     const scale: Scale = nonNullValueAndProp(parentResource.template, 'scale');
