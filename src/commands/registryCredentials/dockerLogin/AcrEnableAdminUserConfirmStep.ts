@@ -5,8 +5,8 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { acrDomain } from "../../../constants";
+import { tryGetRegistryDomainFromFullContext } from "../../../utils/imageNameUtils";
 import { localize } from "../../../utils/localize";
-import { getRegistryDomain } from "../getRegistryDomain";
 import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
 
 export class AcrEnableAdminUserConfirmStep extends AzureWizardPromptStep<DockerLoginRegistryCredentialsContext> {
@@ -16,6 +16,6 @@ export class AcrEnableAdminUserConfirmStep extends AzureWizardPromptStep<DockerL
     }
 
     public shouldPrompt(context: DockerLoginRegistryCredentialsContext): boolean {
-        return getRegistryDomain(context) === acrDomain && !context.registry?.adminUserEnabled;
+        return tryGetRegistryDomainFromFullContext(context) === acrDomain && !context.registry?.adminUserEnabled;
     }
 }
