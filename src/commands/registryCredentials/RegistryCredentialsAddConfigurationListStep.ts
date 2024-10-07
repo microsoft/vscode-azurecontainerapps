@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../constants";
-import { tryGetRegistryDomainFromFullContext } from "../../utils/imageNameUtils";
+import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
@@ -26,7 +26,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
     private requiresRegistryConfiguration: boolean;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
-        const registryDomain: SupportedRegistries | undefined = tryGetRegistryDomainFromFullContext(context);
+        const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         const hasExistingConfiguration: boolean = !!context.containerApp?.configuration?.registries?.some(r => {
             if (!r.server) {
                 return false;
@@ -68,7 +68,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         const promptSteps: AzureWizardPromptStep<RegistryCredentialsContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<RegistryCredentialsContext>[] = [];
 
-        const registryDomain: SupportedRegistries | undefined = tryGetRegistryDomainFromFullContext(context);
+        const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         switch (context.newRegistryCredentialType) {
             case RegistryCredentialType.SystemAssigned:
                 executeSteps.push(
@@ -100,7 +100,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
     public async getPicks(context: RegistryCredentialsContext): Promise<IAzureQuickPickItem<RegistryCredentialType>[]> {
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];
-        const registryDomain = tryGetRegistryDomainFromFullContext(context);
+        const registryDomain = getRegistryDomainFromContext(context);
 
         if (registryDomain === acrDomain) {
             picks.push({

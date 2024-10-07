@@ -69,7 +69,7 @@ export function getDomainFromRegistryName(registryName: string): SupportedRegist
  * This function should only be called when we expect to have the full set of inputs necessary to make an informed decision.
  * It assumes that any missing or ambiguous information has already been addressed prior to the call.
  */
-export function tryGetRegistryDomainFromFullContext(context: Partial<ContainerRegistryImageSourceContext>): SupportedRegistries | undefined {
+export function getRegistryDomainFromContext(context: Partial<ContainerRegistryImageSourceContext>): SupportedRegistries | undefined {
     switch (true) {
         case !!context.registryDomain:
             return context.registryDomain;
