@@ -5,19 +5,24 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { AzureWizardActivityOutputExecuteStep } from "../AzureWizardActivityOutputExecuteStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<ContainerAppCreateContext> {
+export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardActivityOutputExecuteStep<T> {
     public priority: number = 620;
+    public stepName: string = 'containerAppCreateStep';
+    protected getSuccessString = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}"', context.newContainerAppName);
+    protected getFailString = (context: T) => localize('createContainerAppFail', 'Failed to create container app "{0}"', context.newContainerAppName);
+    protected getTreeItemLabel = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
 
-    public async execute(context: ContainerAppCreateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
@@ -60,29 +65,7 @@ export class ContainerAppCreateStep extends AzureWizardExecuteStep<ContainerAppC
         }));
     }
 
-    public shouldExecute(context: ContainerAppCreateContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.containerApp;
-    }
-
-    public createSuccessOutput(context: ContainerAppCreateContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('createContainerAppSuccess', 'Created container app "{0}".', context.newContainerAppName)
-        };
-    }
-
-    public createFailOutput(context: ContainerAppCreateContext): ExecuteActivityOutput {
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerAppCreateStepFailItem', activityFailContext]),
-                label: localize('createContainerApp', 'Create container app "{0}"', context.newContainerAppName),
-                iconPath: activityFailIcon
-            }),
-            message: localize('createContainerAppFail', 'Failed to create container app "{0}".', context.newContainerAppName)
-        };
     }
 }

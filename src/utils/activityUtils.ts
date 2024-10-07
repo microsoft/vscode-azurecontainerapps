@@ -8,9 +8,10 @@ import { type AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-a
 import { ext } from "../extensionVariables";
 import { settingUtils } from "./settingUtils";
 
-export async function createActivityContext(): Promise<ExecuteActivityContext> {
+export async function createActivityContext(withChildren?: boolean): Promise<ExecuteActivityContext> {
     return {
         registerActivity: async (activity) => (ext.rgApiV2 as AzureResourcesExtensionApiWithActivity).activity.registerActivity(activity),
         suppressNotification: await settingUtils.getSetting('suppressActivityNotifications', undefined, 'azureResourceGroups'),
+        activityChildren: withChildren ? [] : undefined,
     };
 }

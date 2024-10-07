@@ -68,6 +68,7 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 #### Steps
 
+- QuickStartImageConfigureStep: 610
 - ContainerAppCreateStep: 620
 - ContainerAppUpdateStep: 650
 
