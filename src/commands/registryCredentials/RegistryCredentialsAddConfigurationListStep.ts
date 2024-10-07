@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../constants";
-import { detectRegistryDomain } from "../../utils/imageNameUtils";
+import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
@@ -23,24 +23,34 @@ export enum RegistryCredentialType {
 }
 
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
-    private hasExistingRegistry?: boolean;
+    private requiresRegistryConfiguration: boolean;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
-        this.hasExistingRegistry = !!context.containerApp?.configuration?.registries?.some(r => {
+        const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
+        const hasExistingConfiguration: boolean = !!context.containerApp?.configuration?.registries?.some(r => {
             if (!r.server) {
                 return false;
             }
 
-            const registryDomain: SupportedRegistries | undefined = this.getRegistryDomain(context);
             if (registryDomain === acrDomain) {
                 return r.server === context.registry?.loginServer;
-            } else {
+            } else if (context.registryName) {
                 return r.server === DockerLoginRegistryCredentialsAddConfigurationStep.getThirdPartyLoginServer(
                     registryDomain,
                     nonNullProp(context, 'registryName'),
                 );
             }
-        })
+
+            // At this point, there is the small possibility of an existing configuration existing that we don't have
+            // enough information to match.  This edge case usually happens for public repositories that are under the same
+            // private account configuration.  The good news is that these public repositories don't actually need a configuration
+            // to be registered because they are public, so the 'requiresRegistryConfiguration' check should be sufficient to handle these cases.
+            return false;
+        });
+
+        // Rule 1: If we're configuring a new ACR and don't have an existing configuration, we need to create one
+        // Rule 2: If we're configuring a new third party registry and don't have an existing configuration -- only do so if it's not a public repository.  We can detect this with the registryName, username, and secret
+        this.requiresRegistryConfiguration = (registryDomain === acrDomain || (!!context.registryName && !!context.username && !!context.secret)) && !hasExistingConfiguration;
     }
 
     public async prompt(context: RegistryCredentialsContext): Promise<void> {
@@ -51,14 +61,14 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {
-        return !this.hasExistingRegistry && !context.newRegistryCredentialType;
+        return this.requiresRegistryConfiguration && !context.newRegistryCredentialType;
     }
 
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {
         const promptSteps: AzureWizardPromptStep<RegistryCredentialsContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<RegistryCredentialsContext>[] = [];
 
-        const registryDomain: SupportedRegistries | undefined = this.getRegistryDomain(context);
+        const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         switch (context.newRegistryCredentialType) {
             case RegistryCredentialType.SystemAssigned:
                 executeSteps.push(
@@ -86,23 +96,16 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         };
     }
 
-    private getRegistryDomain(context: RegistryCredentialsContext): SupportedRegistries | undefined {
-        if (context.registry?.loginServer || context.registryName) {
-            return detectRegistryDomain(context.registry?.loginServer || nonNullProp(context, 'registryName'));
-        } else {
-            // If no registries exist, we can assume we're creating a new ACR
-            return acrDomain;
-        }
-    }
+
 
     public async getPicks(context: RegistryCredentialsContext): Promise<IAzureQuickPickItem<RegistryCredentialType>[]> {
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];
-        const registryDomain = this.getRegistryDomain(context);
+        const registryDomain = getRegistryDomainFromContext(context);
 
         if (registryDomain === acrDomain) {
             picks.push({
                 label: 'Managed Identity',
-                description: '(recommended)',
+                description: localize('recommended', '(recommended)'),
                 detail: localize('systemIdentityDetails', 'Setup "{0}" access for container environment resources via a system-assigned identity', 'acrPull'),
                 data: RegistryCredentialType.SystemAssigned,
             });

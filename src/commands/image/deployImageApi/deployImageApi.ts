@@ -7,7 +7,7 @@ import { callWithMaskHandling, createSubscriptionContext, type ExecuteActivityCo
 import { ImageSource, acrDomain } from "../../../constants";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type DeployImageApiTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
-import { detectRegistryDomain, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
+import { getDomainFromRegistryName, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { type ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
 import { type ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
@@ -35,7 +35,7 @@ export async function deployImageApi(context: IActionContext & Partial<Container
 
     Object.assign(context, { ...createSubscriptionContext(subscription), imageSource: ImageSource.ContainerRegistry }, deployImageOptions);
 
-    context.registryDomain = detectRegistryDomain(deployImageOptions.registryName);
+    context.registryDomain = getDomainFromRegistryName(deployImageOptions.registryName);
     if (context.registryDomain === acrDomain) {
         context.registry = await getRegistryFromAcrName(<ISubscriptionActionContext>context, deployImageOptions.registryName);
     }
