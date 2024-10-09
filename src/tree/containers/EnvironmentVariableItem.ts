@@ -43,6 +43,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
         return {
             label: this.label,
             contextValue: EnvironmentVariableItem.contextValue,
+            description: this.envVariable.secretRef && !this.hideValue ? localize('secretRef', 'Secret reference') : undefined,
             iconPath: new ThemeIcon('symbol-constant'),
             command: {
                 command: 'containerapps.toggleEnvironmentVariableVisibility',
@@ -61,17 +62,22 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
         return this.hideValue ? this.hiddenMessage : this.hiddenValue;
     }
 
+    private get envOutput(): string {
+        return this.envVariable.value ?? this.envVariable.secretRef ?? '';
+    }
+
     private get parentResource(): ContainerAppModel | Revision {
         return getParentResource(this.containerApp, this.revision);
     }
+
     protected setProperties(): void {
         this.hiddenMessage = `${this.envVariable.name}=Hidden value.Click to view.`;
-        this.hiddenValue = `${this.envVariable.name}=${this.envVariable.value}`;
+        this.hiddenValue = `${this.envVariable.name}=${this.envOutput}`;
     }
 
     protected setDraftProperties(): void {
         this.hiddenMessage = `${this.envVariable.name}=Hidden value.Click to view. *`;
-        this.hiddenValue = `${this.envVariable.name}=${this.envVariable.value} *`;
+        this.hiddenValue = `${this.envVariable.name}=${this.envOutput} *`;
     }
 
     hasUnsavedChanges(): boolean {

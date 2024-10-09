@@ -5,7 +5,8 @@
 
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { type ContainerRegistryImageSourceContext } from "../commands/image/imageSource/containerRegistry/ContainerRegistryImageSourceContext";
 import { acrDomain, dockerHubDomain, type SupportedRegistries } from "../constants";
 import { createContainerRegistryManagementClient } from "./azureClients";
 
@@ -42,7 +43,7 @@ export function parseImageName(imageName?: string): ParsedImageName {
     const match: RegExpMatchArray | null = imageName.match(/^(?:(?<registryName>[^/]+)\/)?(?:(?<namespace>[^/]+(?:\/[^/]+)*)\/)?(?<repositoryName>[^/:]+)(?::(?<tag>[^/]+))?$/);
     return {
         imageNameReference: imageName,
-        registryDomain: match?.groups?.registryName ? detectRegistryDomain(match.groups.registryName) : undefined,
+        registryDomain: match?.groups?.registryName ? getDomainFromRegistryName(match.groups.registryName) : undefined,
         registryName: match?.groups?.registryName,
         namespace: match?.groups?.namespace,
         repositoryName: match?.groups?.repositoryName,
@@ -53,13 +54,33 @@ export function parseImageName(imageName?: string): ParsedImageName {
 /**
  * @param registryName When parsed from a full image name, everything before the first slash
  */
-export function detectRegistryDomain(registryName: string): SupportedRegistries | undefined {
+export function getDomainFromRegistryName(registryName: string): SupportedRegistries | undefined {
     if (/\.azurecr\.io$/i.test(registryName)) {
         return acrDomain;
     } else if (/^docker\.io$/i.test(registryName)) {
         return dockerHubDomain;
     } else {
         return undefined;
+    }
+}
+
+/**
+ * A best effort attempt to obtain the registry domain using all available information on the context.
+ * This function should only be called when we expect to have the full set of inputs necessary to make an informed decision.
+ * It assumes that any missing or ambiguous information has already been addressed prior to the call.
+ */
+export function getRegistryDomainFromContext(context: Partial<ContainerRegistryImageSourceContext>): SupportedRegistries | undefined {
+    switch (true) {
+        case !!context.registryDomain:
+            return context.registryDomain;
+        case !!context.image:
+            const registryName: string | undefined = parseImageName(context.image).registryName;
+            return registryName ? getDomainFromRegistryName(registryName) : undefined;
+        case !!context.registry?.loginServer || !!context.registryName:
+            return getDomainFromRegistryName(context.registry?.loginServer || nonNullProp(context, 'registryName'));
+        default:
+            // If no image by this point, assume we're creating a new ACR
+            return acrDomain;
     }
 }
 
