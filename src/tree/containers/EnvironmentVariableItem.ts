@@ -63,7 +63,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
     }
 
     private get envOutput(): string {
-        return this.envVariable.value ?? this.envVariable.secretRef ?? '';
+        return this.envVariable.value || this.envVariable.secretRef || '';
     }
 
     private get parentResource(): ContainerAppModel | Revision {

@@ -304,8 +304,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerapps.toggleEnvironmentVariableVisibility",
-                "title": "%containerapps.toggleEnvironmentVariableVisibility%",
+                "command": "containerApps.toggleEnvironmentVariableVisibility",
+                "title": "%containerApps.toggleEnvironmentVariableVisibility%",
                 "category": "Azure Container Apps",
                 "icon": "$(eye)"
             }
@@ -574,7 +574,7 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerapps.toggleEnvironmentVariableVisibility",
+                    "command": "containerApps.toggleEnvironmentVariableVisibility",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
                     "group": "inline"
                 }

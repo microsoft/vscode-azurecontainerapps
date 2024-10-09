@@ -15,7 +15,7 @@
     "containerApps.updateEnvironmentVariableName": "Update Environment Variable Name...",
     "containerApps.deleteEnvironmentVariable": "Delete Environment Variable...",
     "containerApps.updateEnvironmentVariables": "Update Environment Variables (.env)...",
-    "containerApps.toggleEnvironmentVariableVisibility": "Switch Environment Variable Visibility...",
+    "containerApps.toggleEnvironmentVariableVisibility": "Toggle Environment Variable Visibility...",
     "containerApps.deployImageApi": "Deploy Image to Container App (API)...",
     "containerApps.deployWorkspaceProject": "Deploy Project from Workspace...",
     "containerApps.deployWorkspaceProjectApi": "Deploy Project from Workspace (API)...",
