@@ -19,7 +19,7 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, Ov
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface UpdateImageTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
+export interface ContainerUpdateTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
     skippedRegistryCredentialUpdate?: 'true' | 'false';
 }
