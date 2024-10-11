@@ -15,6 +15,8 @@ import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 
+const clickToView: string = localize('clickToView', 'Hidden value. Click to view.');
+
 export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'environmentVariableItem';
     static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariableItem.contextValue);
@@ -70,12 +72,12 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.hiddenMessage = `${this.envVariable.name}=Hidden value.Click to view.`;
+        this.hiddenMessage = `${this.envVariable.name}=${clickToView}`;
         this.hiddenValue = `${this.envVariable.name}=${this.envOutput}`;
     }
 
     protected setDraftProperties(): void {
-        this.hiddenMessage = `${this.envVariable.name}=Hidden value.Click to view. *`;
+        this.hiddenMessage = `${this.envVariable.name}=${clickToView} *`;
         this.hiddenValue = `${this.envVariable.name}=${this.envOutput} *`;
     }
 
