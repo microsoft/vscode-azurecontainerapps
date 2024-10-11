@@ -18,7 +18,6 @@ import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { deployImageApi } from './image/deployImageApi/deployImageApi';
 import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { openAcrBuildLogs } from './image/openAcrBuildLogs';
-import { updateImage } from './image/updateImage/updateImage';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress/enableIngress';
@@ -40,6 +39,7 @@ import { deleteScaleRule } from './scaling/scaleRule/deleteScaleRule/deleteScale
 import { addSecret } from './secret/addSecret/addSecret';
 import { deleteSecret } from './secret/deleteSecret/deleteSecret';
 import { editSecretValue } from './secret/editSecret/editSecretValue';
+import { updateContainer } from './updateContainer/updateContainer';
 import { addWorkspaceProjectWalkthrough } from './walkthrough/addWorkspaceProject';
 import { azureSignInWalkthrough } from './walkthrough/azureSignIn';
 import { cleanUpResourcesWalkthrough } from './walkthrough/cleanUpResources';
@@ -58,11 +58,13 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
-    registerCommandWithTreeNodeUnwrapping('containerApps.updateImage', updateImage);
     registerCommandWithTreeNodeUnwrapping('containerapps.toggleEnvironmentVariableVisibility',
         async (context: IActionContext, item: EnvironmentVariableItem) => {
             await item.toggleValueVisibility(context);
         });
+
+    // containers
+    registerCommandWithTreeNodeUnwrapping('containerApps.updateContainer', updateContainer);
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
