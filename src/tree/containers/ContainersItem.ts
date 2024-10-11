@@ -58,7 +58,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     }
 
     private get contextValue(): string {
-        return ContainersItem.contextValue;
+        return this.parentResource.template?.containers?.length === 1 ? ContainerItem.contextValue : ContainersItem.contextValue;
     }
 
     private get parentResource(): ContainerAppModel | Revision {

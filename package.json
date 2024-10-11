@@ -81,11 +81,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.updateImage",
-                "title": "%containerApps.updateImage%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.deployImageApi",
                 "title": "%containerApps.deployImageApi%",
                 "category": "Azure Container Apps"
@@ -201,6 +196,11 @@
             {
                 "command": "containerApps.openConsoleInPortal",
                 "title": "%containerApps.openConsoleInPortal%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.updateContainer",
+                "title": "%containerApps.updateContainer%",
                 "category": "Azure Container Apps"
             },
             {
@@ -374,19 +374,9 @@
                     "group": "3@2"
                 },
                 {
-                    "command": "containerApps.updateImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
-                    "group": "4@1"
-                },
-                {
                     "command": "containerApps.editContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "4@2"
-                },
-                {
-                    "command": "containerApps.updateContainer",
-                    "title": "%containerApps.updateContainer%",
-                    "category": "Azure Container Apps"
                 },
                 {
                     "command": "containerApps.startStreamingLogs",
@@ -444,11 +434,6 @@
                     "group": "2@2"
                 },
                 {
-                    "command": "containerApps.updateImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraft:false(.*)revisionItem/i",
-                    "group": "3@1"
-                },
-                {
                     "command": "containerApps.deployRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem(.*)unsavedChanges:true/i",
                     "group": "inline@1"
@@ -467,11 +452,6 @@
                     "command": "containerApps.discardRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
                     "group": "1@2"
-                },
-                {
-                    "command": "containerApps.updateImage",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionDraftItem/i",
-                    "group": "2@1"
                 },
                 {
                     "command": "containerApps.editRevisionDraft",
