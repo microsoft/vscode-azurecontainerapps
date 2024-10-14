@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { showDraftCommandDeployPopupKey } from "../../constants";
+import { showDraftCommandDeployPopupSetting } from "../../constants";
 import { localize } from "../../utils/localize";
 import { settingUtils } from "../../utils/settingUtils";
 import { type RevisionDraftContext } from "./RevisionDraftContext";
 
 export class RevisionDraftDeployPromptStep<T extends RevisionDraftContext> extends AzureWizardPromptStep<T> {
     public async prompt(context: T): Promise<void> {
-        if (!await settingUtils.getGlobalSetting(showDraftCommandDeployPopupKey)) {
+        if (!await settingUtils.getGlobalSetting(showDraftCommandDeployPopupSetting)) {
             context.shouldDeployRevisionDraft = false;
             return;
         }
@@ -37,7 +37,7 @@ export class RevisionDraftDeployPromptStep<T extends RevisionDraftContext> exten
         } else {
             context.shouldDeployRevisionDraft = false;
             if (result === dontAskAgain) {
-                await settingUtils.updateGlobalSetting(showDraftCommandDeployPopupKey, false);
+                await settingUtils.updateGlobalSetting(showDraftCommandDeployPopupSetting, false);
             }
         }
     }
