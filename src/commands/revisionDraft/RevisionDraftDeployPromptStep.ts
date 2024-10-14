@@ -19,16 +19,14 @@ export class RevisionDraftDeployPromptStep<T extends RevisionDraftContext> exten
         const yes: string = localize('yes', 'Yes');
         const no: string = localize('no', 'No');
         const dontAskAgain: string = localize('dontAskAgain', 'No, don\'t ask again');
-
         const picks: IAzureQuickPickItem<string>[] = [
             { label: yes, data: yes },
             { label: no, data: no },
             { label: dontAskAgain, data: dontAskAgain },
         ];
 
-        const message: string = localize('deployImmediately', 'Deploy changes immediately?');
         const result: string = (await context.ui.showQuickPick(picks, {
-            placeHolder: message,
+            placeHolder: localize('deployImmediately', 'Deploy changes immediately?'),
             suppressPersistence: true,
         })).data;
 
