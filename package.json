@@ -279,8 +279,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerapps.toggleEnvironmentVariableVisibility",
-                "title": "%containerapps.toggleEnvironmentVariableVisibility%",
+                "command": "containerApps.toggleEnvironmentVariableVisibility",
+                "title": "%containerApps.toggleEnvironmentVariableVisibility%",
                 "category": "Azure Container Apps",
                 "icon": "$(eye)"
             }
@@ -534,7 +534,7 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerapps.toggleEnvironmentVariableVisibility",
+                    "command": "containerApps.toggleEnvironmentVariableVisibility",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
                     "group": "inline"
                 }
@@ -799,7 +799,7 @@
         "@azure/storage-blob": "^12.4.1",
         "@microsoft/vscode-azext-azureutils": "^3.1.1",
         "@microsoft/vscode-azext-github": "^1.0.0",
-        "@microsoft/vscode-azext-utils": "^2.5.7",
+        "@microsoft/vscode-azext-utils": "^2.5.10",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",

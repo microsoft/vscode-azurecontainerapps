@@ -4,13 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import  { type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type IActionContext, type QuickPickWizardContext} from "@microsoft/vscode-azext-utils";
-import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard } from "@microsoft/vscode-azext-utils";
+import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import  { type ContainerAppModel } from "../../tree/ContainerAppItem";
-import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
-import  { type PickItemOptions } from "./PickItemOptions";
+import { type PickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
 export function getPickContainerAppStep(containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
@@ -50,7 +48,7 @@ export async function pickContainerApp(context: IActionContext, options?: PickIt
 }
 
 export async function pickContainerAppWithoutPrompt(
-    context: IActionContext,
+    context: Partial<ISubscriptionActionContext> & IActionContext,
     containerApp: ContainerAppModel,
     options?: PickItemOptions
 ): Promise<ContainerAppItem> {
@@ -58,7 +56,7 @@ export async function pickContainerAppWithoutPrompt(
 
     return await runQuickPickWizard(context, {
         promptSteps: [
-            ...getPickEnvironmentSteps(true /** skipIfOne */, environmentName),
+            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName),
             getPickContainerAppStep(containerApp.name)
         ],
         title: options?.title,

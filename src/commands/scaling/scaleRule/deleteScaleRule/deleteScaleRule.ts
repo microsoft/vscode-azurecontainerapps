@@ -4,13 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, DeleteConfirmationStep, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, DeleteConfirmationStep, createSubscriptionContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { type ScaleRuleItem } from "../../../../tree/scaling/ScaleRuleItem";
 import { createActivityContext } from "../../../../utils/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRule } from "../../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ScaleRuleContext } from "../ScaleRuleContext";
 import { DeleteScaleRuleStep } from "./DeleteScaleRuleStep";
 
@@ -30,17 +31,15 @@ export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleI
     }
 
     const confirmMessage = localize('confirmMessage', 'Are you sure you want to delete this scale rule?');
-
-    const promptSteps: AzureWizardPromptStep<ScaleRuleContext>[] = [
-        new DeleteConfirmationStep(confirmMessage)
-    ];
-
-    const executeSteps: AzureWizardExecuteStep<ScaleRuleContext>[] = [new DeleteScaleRuleStep(item)]
-
     const wizard: AzureWizard<ScaleRuleContext> = new AzureWizard(wizardContext, {
         title: localize('deleteScaleRuleTitle', 'Delete scale rule from "{0}" (draft)', parentResource.name),
-        promptSteps,
-        executeSteps
+        promptSteps: [
+            new DeleteConfirmationStep(confirmMessage),
+            new RevisionDraftDeployPromptStep(),
+        ],
+        executeSteps: [
+            new DeleteScaleRuleStep(item),
+        ],
     });
 
     await wizard.prompt();
