@@ -10,12 +10,13 @@ import { settingUtils } from "../../utils/settingUtils";
 import { type RevisionDraftContext } from "./RevisionDraftContext";
 
 export class RevisionDraftDeployPromptStep<T extends RevisionDraftContext> extends AzureWizardPromptStep<T> {
-    public async prompt(context: T): Promise<void> {
-        if (!await settingUtils.getGlobalSetting(showDraftCommandDeployPopupSetting)) {
+    public configureBeforePrompt(context: T): void | Promise<void> {
+        if (!settingUtils.getGlobalSetting(showDraftCommandDeployPopupSetting)) {
             context.shouldDeployRevisionDraft = false;
-            return;
         }
+    }
 
+    public async prompt(context: T): Promise<void> {
         const yes: string = localize('yes', 'Yes');
         const no: string = localize('no', 'No');
         const dontAskAgain: string = localize('dontAskAgain', 'No, don\'t ask again');
@@ -40,7 +41,7 @@ export class RevisionDraftDeployPromptStep<T extends RevisionDraftContext> exten
         }
     }
 
-    public shouldPrompt(): boolean {
-        return true;
+    public shouldPrompt(context: RevisionDraftContext): boolean {
+        return context.shouldDeployRevisionDraft === undefined;
     }
 }
