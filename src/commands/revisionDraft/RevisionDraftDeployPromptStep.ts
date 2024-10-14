@@ -41,7 +41,7 @@ export class RevisionDraftDeployPromptStep<T extends RevisionDraftContext> exten
         }
     }
 
-    public shouldPrompt(context: RevisionDraftContext): boolean {
+    public shouldPrompt(context: T): boolean {
         return context.shouldDeployRevisionDraft === undefined;
     }
 }
