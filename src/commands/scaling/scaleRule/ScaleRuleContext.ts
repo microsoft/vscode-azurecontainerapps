@@ -5,8 +5,8 @@
 
 import { type ScaleRule } from "@azure/arm-appcontainers";
 import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { type IContainerAppContext } from "../../IContainerAppContext";
+import { type RevisionDraftContext } from "../../revisionDraft/RevisionDraftContext";
 
-export interface ScaleRuleContext extends IContainerAppContext, ExecuteActivityContext {
+export interface ScaleRuleContext extends RevisionDraftContext, ExecuteActivityContext {
     scaleRule?: ScaleRule;
 }

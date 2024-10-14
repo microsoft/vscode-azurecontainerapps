@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type ExecuteActivityContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type UpdateImageTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
@@ -18,6 +18,7 @@ import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
 import { pickRevision, pickRevisionDraft } from "../../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ImageSourceBaseContext } from "../imageSource/ImageSourceContext";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { UpdateImageDraftStep } from "./UpdateImageDraftStep";
@@ -59,22 +60,18 @@ export async function updateImage(context: IActionContext, node?: ContainerAppIt
 
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const promptSteps: AzureWizardPromptStep<UpdateImageContext>[] = [
-        new ImageSourceListStep(),
-    ];
-
-    const executeSteps: AzureWizardExecuteStep<UpdateImageContext>[] = [
-        getVerifyProvidersStep<UpdateImageContext>(),
-        new UpdateRegistryAndSecretsStep(),
-        new UpdateImageDraftStep(item)
-    ];
-
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
-
     const wizard: AzureWizard<UpdateImageContext> = new AzureWizard(wizardContext, {
         title: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
-        promptSteps,
-        executeSteps,
+        promptSteps: [
+            new ImageSourceListStep(),
+            new RevisionDraftDeployPromptStep(),
+        ],
+        executeSteps: [
+            getVerifyProvidersStep<UpdateImageContext>(),
+            new UpdateRegistryAndSecretsStep(),
+            new UpdateImageDraftStep(item),
+        ],
         showLoadingPrompt: true
     });
 

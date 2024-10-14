@@ -34,6 +34,7 @@ export namespace RevisionConstants {
 }
 
 export const currentlyDeployed: string = localize('currentlyDeployed', '(currently deployed)');
+export const showDraftCommandDeployPopupKey: string = 'showDraftCommandDeployPopup';
 
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",
