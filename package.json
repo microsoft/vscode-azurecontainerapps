@@ -97,12 +97,14 @@
             },
             {
                 "command": "containerApps.updateEnvironmentVariableName",
-                "title": "%containerApps.updateEnvironmentVariableName%",
+                "title": "%containerApps.updateEnvironmentVariableName.title%",
+                "shortTitle": "%containerApps.updateEnvironmentVariableName.shortTitle%",
                 "category": "Azure Container Apps"
             },
             {
                 "command": "containerApps.deleteEnvironmentVariable",
-                "title": "%containerApps.deleteEnvironmentVariable%",
+                "title": "%containerApps.deleteEnvironmentVariable.title%",
+                "shortTitle": "%containerApps.deleteEnvironmentVariable.shortTitle%",
                 "category": "Azure Container Apps"
             },
             {
@@ -148,6 +150,7 @@
             {
                 "command": "containerApps.toggleVisibility",
                 "title": "%containerApps.toggleVisibility%",
+                "shortTitle": "Toggle Visibility",
                 "category": "Azure Container Apps"
             },
             {
@@ -305,7 +308,8 @@
             },
             {
                 "command": "containerApps.toggleEnvironmentVariableVisibility",
-                "title": "%containerApps.toggleEnvironmentVariableVisibility%",
+                "title": "%containerApps.toggleEnvironmentVariableVisibility.title%",
+                "shortTitle": "%containerApps.toggleEnvironmentVariableVisibility.shortTitle%",
                 "category": "Azure Container Apps",
                 "icon": "$(eye)"
             }

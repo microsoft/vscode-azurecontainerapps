@@ -46,7 +46,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
             description: this.envVariable.secretRef && !this.hideValue ? localize('secretRef', 'Secret reference') : undefined,
             iconPath: new ThemeIcon('symbol-constant'),
             command: {
-                command: 'containerapps.toggleEnvironmentVariableVisibility',
+                command: 'containerApps.toggleEnvironmentVariableVisibility',
                 title: localize('commandtitle', 'Toggle Environment Variable Visibility'),
                 arguments: [this, this.hideValue,]
             }
