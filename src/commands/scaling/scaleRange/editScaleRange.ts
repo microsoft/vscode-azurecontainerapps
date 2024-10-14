@@ -11,6 +11,7 @@ import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScale } from "../../../utils/pickItem/pickScale";
 import { getParentResource, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ScaleRangeContext } from "./ScaleRangeContext";
 import { ScaleRangePromptStep } from "./ScaleRangePromptStep";
 import { ScaleRangeUpdateStep } from "./ScaleRangeUpdateStep";
@@ -38,8 +39,13 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
 
     const wizard: AzureWizard<ScaleRangeContext> = new AzureWizard(wizardContext, {
         title: localize('editScaleRangePre', 'Update replica scaling range for "{0}" (draft)', parentResource.name),
-        promptSteps: [new ScaleRangePromptStep()],
-        executeSteps: [new ScaleRangeUpdateStep(item)],
+        promptSteps: [
+            new ScaleRangePromptStep(),
+            new RevisionDraftDeployPromptStep(),
+        ],
+        executeSteps: [
+            new ScaleRangeUpdateStep(item),
+        ],
         showLoadingPrompt: true
     });
 

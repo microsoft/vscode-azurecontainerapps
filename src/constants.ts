@@ -35,6 +35,8 @@ export namespace RevisionConstants {
 
 export const currentlyDeployed: string = localize('currentlyDeployed', '(currently deployed)');
 
+export const showDraftCommandDeployPopupSetting: string = 'showDraftCommandDeployPopup';
+
 export enum ScaleRuleTypes {
     HTTP = "HTTP scaling",
     Queue = "Azure queue"

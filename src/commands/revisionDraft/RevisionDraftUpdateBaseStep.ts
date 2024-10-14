@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullValueAndProp, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window, type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -14,11 +14,10 @@ import { localize } from "../../utils/localize";
 import { pickContainerAppWithoutPrompt } from "../../utils/pickItem/pickContainerApp";
 import { pickRevisionDraft } from "../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
-import { settingUtils } from "../../utils/settingUtils";
-import { type IContainerAppContext } from "../IContainerAppContext";
 import { deployRevisionDraft } from "./deployRevisionDraft/deployRevisionDraft";
+import { type RevisionDraftContext } from "./RevisionDraftContext";
 
-export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext> extends AzureWizardExecuteStep<T> {
+export abstract class RevisionDraftUpdateBaseStep<T extends RevisionDraftContext> extends AzureWizardExecuteStep<T> {
     /**
      * This property holds the active template revisions used for updating the revision draft
      */
@@ -32,14 +31,6 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     abstract execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void>;
     abstract shouldExecute(context: T): boolean;
 
-    /**
-     * Call this method to upload `revisionDraftTemplate` changes to the container app revision draft
-     */
-    protected async updateRevisionDraftWithTemplate(context: T): Promise<void> {
-        ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate);
-        await this.showRevisionDraftDeployPopup(context);
-    }
-
     private initRevisionDraftTemplate(): Template {
         let template: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this.baseItem);
         if (!template) {
@@ -50,46 +41,37 @@ export abstract class RevisionDraftUpdateBaseStep<T extends IContainerAppContext
     }
 
     /**
+     * Call this method to upload `revisionDraftTemplate` changes to the container app revision draft
+     */
+    protected async updateRevisionDraftWithTemplate(context: T): Promise<void> {
+        ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate);
+
+        if (context.shouldDeployRevisionDraft) {
+            await this.deployRevisionDraftTemplate(context);
+        }
+    }
+
+    /**
      * A deployment quick pick to show after executing a revision draft command
      * (Used to be an informational deployment pop-up)
      */
-    private async showRevisionDraftDeployPopup(context: T): Promise<void> {
-        if (!await settingUtils.getGlobalSetting('showDraftCommandDeployPopup')) {
-            return;
-        }
+    private async deployRevisionDraftTemplate(context: T): Promise<void> {
+        const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
+            location: ProgressLocation.Notification,
+            cancellable: false,
+            title: localize('preparingForDeployment', 'Preparing for deployment...')
+        }, async () => {
+            const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, this.baseItem.containerApp, { showLoadingPrompt: false });
 
-        const yes: string = localize('yes', 'Yes');
-        const no: string = localize('no', 'No');
-        const dontShowAgain: string = localize('dontShowAgain', 'Don\'t show again');
-        const message: string = localize('message', 'Deploy changes now?');
+            if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+                return containerAppItem;
+            } else {
+                return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
+            }
+        });
 
-        const picks: IAzureQuickPickItem<string>[] = [
-            { label: yes, data: yes },
-            { label: no, data: no },
-            { label: dontShowAgain, data: dontShowAgain },
-        ];
-        const result: string = (await context.ui.showQuickPick(picks, { placeHolder: message })).data;
-
-        if (result === yes) {
-            const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
-                location: ProgressLocation.Notification,
-                cancellable: false,
-                title: localize('preparingForDeployment', 'Preparing for deployment...')
-            }, async () => {
-                const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, this.baseItem.containerApp, { showLoadingPrompt: false });
-
-                if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-                    return containerAppItem;
-                } else {
-                    return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
-                }
-            });
-
-            // Pass the deploy command a fresh context
-            await callWithTelemetryAndErrorHandling('revisionDraftUpdateBaseStep.deploy',
-                async (context: IActionContext) => await deployRevisionDraft(context, item));
-        } else if (result === dontShowAgain) {
-            await settingUtils.updateGlobalSetting('showDraftCommandDeployPopup', false);
-        }
+        // Pass the deploy command a fresh context
+        await callWithTelemetryAndErrorHandling('revisionDraftUpdateBaseStep.deploy',
+            async (context: IActionContext) => await deployRevisionDraft(context, item));
     }
 }

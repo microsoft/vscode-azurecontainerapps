@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
-import { type IContainerAppContext } from "../../IContainerAppContext";
+import { type RevisionDraftContext } from "../../revisionDraft/RevisionDraftContext";
 
-export interface ScaleRangeContext extends IContainerAppContext, ExecuteActivityContext {
+export interface ScaleRangeContext extends RevisionDraftContext, ExecuteActivityContext {
     newMinRange?: number;
     newMaxRange?: number;
 
