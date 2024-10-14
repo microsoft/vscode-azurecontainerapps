@@ -10,7 +10,7 @@ import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../localize";
 import { type PickItemOptions } from "./PickItemOptions";
 
-export function getPickEnvironmentSteps(skipIfOne: boolean = false, environmentName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+export function getPickEnvironmentSteps(skipIfOne: boolean = false, subscriptionId?: string, environmentName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     const tdp: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
     const types = [AzExtResourceType.ContainerAppsEnvironment];
 
@@ -22,7 +22,7 @@ export function getPickEnvironmentSteps(skipIfOne: boolean = false, environmentN
     }
 
     return [
-        new QuickPickAzureSubscriptionStep(tdp),
+        new QuickPickAzureSubscriptionStep(tdp, { selectBySubscriptionId: subscriptionId }),
         new QuickPickGroupStep(tdp, {
             groupType: types
         }),

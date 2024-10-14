@@ -11,6 +11,7 @@ import { createActivityContext } from "../../../../utils/activityUtils";
 import { localize } from "../../../../utils/localize";
 import { pickScaleRuleGroup } from "../../../../utils/pickItem/pickScale";
 import { getParentResource } from "../../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../../revisionDraft/RevisionDraftDeployPromptStep";
 import { AddScaleRuleStep } from "./AddScaleRuleStep";
 import { type IAddScaleRuleContext } from "./IAddScaleRuleContext";
 import { ScaleRuleNameStep } from "./ScaleRuleNameStep";
@@ -33,8 +34,14 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
 
     const wizard: AzureWizard<IAddScaleRuleContext> = new AzureWizard(wizardContext, {
         title: localize('addScaleRuleTitle', 'Add scale rule to "{0}" (draft)', parentResource.name),
-        promptSteps: [new ScaleRuleNameStep(), new ScaleRuleTypeListStep()],
-        executeSteps: [new AddScaleRuleStep(item)],
+        promptSteps: [
+            new ScaleRuleNameStep(),
+            new ScaleRuleTypeListStep(),
+            new RevisionDraftDeployPromptStep(),
+        ],
+        executeSteps: [
+            new AddScaleRuleStep(item),
+        ],
         showLoadingPrompt: true
     });
 
