@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type Revision, type Scale } from "@azure/arm-appcontainers";
+import { type Revision, type Scale, type Template } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../extensionVariables";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type ScaleItem } from "../../../tree/scaling/ScaleItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScale } from "../../../utils/pickItem/pickScale";
 import { getParentResource, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ScaleRangeContext } from "./ScaleRangeContext";
 import { ScaleRangePromptStep } from "./ScaleRangePromptStep";
 import { ScaleRangeUpdateStep } from "./ScaleRangeUpdateStep";
@@ -24,8 +26,15 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
     }
 
     const parentResource: ContainerAppModel | Revision = getParentResource(containerApp, revision);
-    const scale: Scale = nonNullValueAndProp(parentResource.template, 'scale');
+    let template: Template | undefined;
 
+    if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(item)) {
+        template = ext.revisionDraftFileSystem.parseRevisionDraft(item);
+    } else {
+        template = parentResource.template;
+    }
+
+    const scale: Scale = nonNullValueAndProp(template, 'scale');
     const wizardContext: ScaleRangeContext = {
         ...context,
         ...createSubscriptionContext(subscription),
@@ -38,8 +47,13 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
 
     const wizard: AzureWizard<ScaleRangeContext> = new AzureWizard(wizardContext, {
         title: localize('editScaleRangePre', 'Update replica scaling range for "{0}" (draft)', parentResource.name),
-        promptSteps: [new ScaleRangePromptStep()],
-        executeSteps: [new ScaleRangeUpdateStep(item)],
+        promptSteps: [
+            new ScaleRangePromptStep(),
+            new RevisionDraftDeployPromptStep(),
+        ],
+        executeSteps: [
+            new ScaleRangeUpdateStep(item),
+        ],
         showLoadingPrompt: true
     });
 
