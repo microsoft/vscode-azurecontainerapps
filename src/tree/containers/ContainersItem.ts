@@ -34,7 +34,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
         private containers: Container[],
     ) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/${this.parentResource.template?.containers?.length === 1 ? 'container' : 'containers'}`;
+        this.id = `${this.parentResource.id}/containers`;
     }
 
     getChildren(): TreeElementBase[] {
@@ -84,8 +84,8 @@ export class ContainersItem extends RevisionDraftDescendantBase {
 
     static isContainersItem(item: unknown): item is ContainersItem {
         return typeof item === 'object' &&
-            typeof (item as ContainersItem).contextValue === 'string' &&
-            ContainersItem.contextValueRegExp.test((item as ContainersItem).contextValue);
+            typeof (item as ContainersItem).id === 'string' &&
+            (item as ContainersItem).id.endsWith('/containers');
     }
 
     hasUnsavedChanges(): boolean {

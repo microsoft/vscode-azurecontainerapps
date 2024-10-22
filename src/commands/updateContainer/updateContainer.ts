@@ -15,6 +15,7 @@ import { localize } from "../../utils/localize";
 import { pickContainer } from "../../utils/pickItem/pickContainer";
 import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../utils/revisionDraftUtils";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
+import { RevisionDraftDeployPromptStep } from "../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerUpdateContext } from "./ContainerUpdateContext";
 import { ContainerUpdateDraftStep } from "./ContainerUpdateDraftStep";
 import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
@@ -54,6 +55,7 @@ export async function updateContainer(context: IActionContext, node?: Containers
         title: localize('updateContainer', 'Update container for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep(),
+            new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerUpdateContext>(),
