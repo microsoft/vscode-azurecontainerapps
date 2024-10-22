@@ -14,6 +14,7 @@ import { localize } from "../../../utils/localize";
 import { pickImage } from "../../../utils/pickItem/pickImage";
 import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerUpdateContext } from "../ContainerUpdateContext";
 import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
 import { ContainerImageUpdateDraftStep } from "./ContainerImageUpdateDraftStep";
@@ -44,9 +45,10 @@ export async function updateContainerImage(context: IActionContext, node?: Image
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const wizard: AzureWizard<ContainerImageUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
+        title: localize('updateContainerImage', 'Update container image for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep({ suppressEnvPrompt: true }),
+            new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerImageUpdateContext>(),
