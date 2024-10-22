@@ -15,6 +15,8 @@ import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraft
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { EnvironmentVariableItem } from "./EnvironmentVariableItem";
 
+const environmentVariables: string = localize('environmentVariables', 'Environment Variables');
+
 export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'environmentVariablesItem';
     static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariablesItem.contextValue);
@@ -53,11 +55,11 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.label = localize('environmentVariables', 'Environment Variables');
+        this.label = environmentVariables;
     }
 
     protected setDraftProperties(): void {
-        this.label = localize('environmentVariablesDraft', 'Environment Variables*');
+        this.label = `${environmentVariables}*`;
     }
 
     hasUnsavedChanges(): boolean {
