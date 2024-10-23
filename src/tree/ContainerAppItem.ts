@@ -92,8 +92,8 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
                 this.containerApp.id,
                 this.containerApp.name);
 
-            if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
-                throw new Error(localize('provisioningError', 'The container app "{0}" cannot be expanded due to its provisioning state of "{1}". Its children cannot be accessed until the app is successfully provisioned.', this.containerApp.name, this.containerApp.provisioningState));
+            if (this.containerApp.provisioningState === 'Deleting' || this.containerApp.provisioningState === 'InProgress') {
+                throw new Error(localize('provisioningError', 'The container app "{0}" cannot be expanded due to its provisioning state of "{1}". Its children cannot be accessed until the app has finished provisioning.', this.containerApp.name, this.containerApp.provisioningState));
             }
 
             const children: TreeElementBase[] = [];
