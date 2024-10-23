@@ -204,6 +204,12 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.updateContainerImage",
+                "title": "%containerApps.updateContainerImage.title%",
+                "shortTitle": "%containerApps.updateContainerImage.shortTitle%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.editScaleRange",
                 "title": "%containerApps.editScaleRange%",
                 "category": "Azure Container Apps"
@@ -461,6 +467,11 @@
                 {
                     "command": "containerApps.updateContainer",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerItem/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.updateContainerImage",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem/i",
                     "group": "1@1"
                 },
                 {

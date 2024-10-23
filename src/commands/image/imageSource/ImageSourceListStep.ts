@@ -24,7 +24,15 @@ import { ContainerRegistryImageConfigureStep } from "./containerRegistry/Contain
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
 import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
+interface ImageSourceListStepOptions {
+    suppressEnvPrompt?: boolean;
+}
+
 export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContext> {
+    constructor(private readonly options?: ImageSourceListStepOptions) {
+        super();
+    }
+
     public async prompt(context: ImageSourceContext): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('containerRegistryLabel', 'Container Registry'),
@@ -81,7 +89,9 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
             default:
         }
 
-        promptSteps.push(new EnvironmentVariablesListStep());
+        if (!this.options?.suppressEnvPrompt) {
+            promptSteps.push(new EnvironmentVariablesListStep());
+        }
 
         return { promptSteps, executeSteps };
     }
