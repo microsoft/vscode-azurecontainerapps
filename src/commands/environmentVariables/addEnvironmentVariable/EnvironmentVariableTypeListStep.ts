@@ -21,15 +21,16 @@ export class EnvironmentVariableTypeListStep<T extends EnvironmentVariableAddCon
             {
                 label: localize('manualLabel', 'Manual entry'),
                 data: EnvironmentVariableType.ManualInput,
-                suppressPersistence: true
             },
             {
                 label: localize('secretRefLabel', 'Reference a secret'),
                 data: EnvironmentVariableType.SecretRef,
-                suppressPersistence: true
             },
         ];
-        context.newEnvironmentVariableType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
+        context.newEnvironmentVariableType = (await context.ui.showQuickPick(picks, {
+            placeHolder,
+            suppressPersistence: true,
+        })).data;
     }
 
     public shouldPrompt(context: T): boolean {

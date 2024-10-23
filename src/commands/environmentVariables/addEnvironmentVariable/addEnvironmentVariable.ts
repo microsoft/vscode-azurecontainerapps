@@ -13,6 +13,7 @@ import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type EnvironmentVariableAddContext } from "./EnvironmentVariableAddContext";
 import { EnvironmentVariableAddDraftStep } from "./EnvironmentVariableAddDraftStep";
 import { EnvironmentVariableNameStep } from "./EnvironmentVariableNameStep";
@@ -45,6 +46,7 @@ export async function addEnvironmentVariable(context: IActionContext, node?: Env
         promptSteps: [
             new EnvironmentVariableNameStep(item),
             new EnvironmentVariableTypeListStep(),
+            new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableAddContext>(),
