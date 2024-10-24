@@ -26,7 +26,7 @@ export class EnvironmentVariableAddDraftStep<T extends EnvironmentVariableAddCon
         container.env ??= [];
         container.env.push({
             name: context.newEnvironmentVariableName,
-            value: context.newEnvironmentVariableManualInput ?? '', // The server doesn't accept this value to be undefined
+            value: context.newEnvironmentVariableManualInput ?? '', // The server doesn't allow this value to be undefined
             secretRef: context.secretName,
         });
 
