@@ -30,7 +30,7 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
             ],
         }
 
-        await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
+        context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
     }
 
     public shouldExecute(context: IngressBaseContext): boolean {

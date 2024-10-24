@@ -3,7 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { quickStartImageName } from "../../../constants";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
@@ -11,6 +12,7 @@ import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
+import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { ContainerAppUpdateStep } from "../imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../imageSource/ImageSourceListStep";
 import { type ContainerRegistryImageSourceContext } from "../imageSource/containerRegistry/ContainerRegistryImageSourceContext";
@@ -33,18 +35,20 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
 
     const promptSteps: AzureWizardPromptStep<DeployImageApiContext>[] = [
         new ImageSourceListStep(),
-        new ContainerAppOverwriteConfirmStep(),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<DeployImageApiContext>[] = [
-        getVerifyProvidersStep<DeployImageApiContext>(),
-        new ContainerAppUpdateStep()
-    ];
+    if (context.containerApp?.template?.containers?.[0].image === quickStartImageName) {
+        promptSteps.push(new IngressPromptStep());
+    }
+    promptSteps.push(new ContainerAppOverwriteConfirmStep());
 
     const wizard: AzureWizard<DeployImageApiContext> = new AzureWizard(wizardContext, {
         title: localize('deploy', 'Deploy image to container app "{0}"', containerApp.name),
         promptSteps,
-        executeSteps,
+        executeSteps: [
+            getVerifyProvidersStep<DeployImageApiContext>(),
+            new ContainerAppUpdateStep(),
+        ],
         showLoadingPrompt: true
     });
 

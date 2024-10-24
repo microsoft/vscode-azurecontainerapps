@@ -21,7 +21,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {
-        await tryConfigureIngressUsingDockerfile(context);
+        await tryPreconfigureIngressUsingDockerfile(context);
     }
 
     public shouldPrompt(context: IngressContext): boolean {
@@ -47,7 +47,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     }
 }
 
-export async function tryConfigureIngressUsingDockerfile(context: IngressContext): Promise<void> {
+export async function tryPreconfigureIngressUsingDockerfile(context: IngressContext): Promise<void> {
     if (!context.dockerfilePath) {
         return;
     }
@@ -59,27 +59,30 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
         return;
     }
 
-    if (!context.dockerfileExposePorts) {
-        context.enableIngress = false;
-        context.enableExternal = false;
-    } else if (context.dockerfileExposePorts) {
+    if (context.dockerfileExposePorts) {
         context.enableIngress = true;
         context.enableExternal = true;
         context.targetPort = getDefaultPort(context);
+    } else {
+        context.enableIngress = false;
+        context.enableExternal = false;
     }
 
-    // If a container app already exists, activity children will be added automatically in later execute steps
-    if (!context.containerApp) {
-        context.activityChildren?.push(
-            new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['ingressPromptStepSuccessItem', activitySuccessContext]),
-                label: context.enableIngress ?
-                    localize('ingressEnableLabel', 'Enable ingress on port {0} (from Dockerfile configuration)', context.targetPort) :
-                    localize('ingressDisableLabel', 'Disable ingress (from Dockerfile configuration)'),
-                iconPath: activitySuccessIcon
-            })
-        );
+    const currentExternalEnabled: boolean | undefined = context.containerApp?.configuration?.ingress?.external;
+    const currentTargetPort: number | undefined = context.containerApp?.configuration?.ingress?.targetPort;
+    if (currentExternalEnabled === context.enableExternal && currentTargetPort === context.targetPort) {
+        return;
     }
+
+    context.activityChildren?.push(
+        new GenericTreeItem(undefined, {
+            contextValue: createUniversallyUniqueContextValue(['ingressPromptStepSuccessItem', activitySuccessContext]),
+            label: context.enableIngress ?
+                localize('ingressEnableLabel', 'Enable ingress on port {0} (from Dockerfile configuration)', context.targetPort) :
+                localize('ingressDisableLabel', 'Disable ingress (from Dockerfile configuration)'),
+            iconPath: activitySuccessIcon
+        })
+    );
 
     ext.outputChannel.appendLog(context.enableIngress ?
         localize('ingressEnabledLabel', 'Detected ingress on port {0} using Dockerfile configuration.', context.targetPort) :

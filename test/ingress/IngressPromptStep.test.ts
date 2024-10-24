@@ -6,7 +6,7 @@
 import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
 import { type Uri } from "vscode";
-import { tryConfigureIngressUsingDockerfile, type IngressContext } from "../../extension.bundle";
+import { tryPreconfigureIngressUsingDockerfile, type IngressContext } from "../../extension.bundle";
 import { getWorkspaceFolderUri } from "../testUtils";
 import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
 import { type MockIngressContext } from "./MockIngressContext";
@@ -33,7 +33,7 @@ suite('IngressPromptStep', async () => {
                 alwaysPromptIngress: i === 3
             };
 
-            await tryConfigureIngressUsingDockerfile(wrapWithMockTelemetry(context) as IngressContext);
+            await tryPreconfigureIngressUsingDockerfile(wrapWithMockTelemetry(context) as IngressContext);
 
             assert.deepStrictEqual({
                 enableIngress: context.enableIngress,
