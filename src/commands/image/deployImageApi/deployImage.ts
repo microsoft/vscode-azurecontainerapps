@@ -4,11 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, createSubscriptionContext, type AzureWizardPromptStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { quickStartImageName } from "../../../constants";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
+import { getImageNameWithoutTag } from "../../../utils/imageNameUtils";
 import { localize } from "../../../utils/localize";
 import { ContainerAppOverwriteConfirmStep } from "../../ContainerAppOverwriteConfirmStep";
 import { showContainerAppNotification } from "../../createContainerApp/showContainerAppNotification";
@@ -37,7 +37,8 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
         new ImageSourceListStep(),
     ];
 
-    if (context.containerApp?.template?.containers?.[0].image === quickStartImageName) {
+    // If more than just the image tag changed, prompt for ingress again
+    if (getImageNameWithoutTag(wizardContext.containerApp?.template?.containers?.[0].image ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
         promptSteps.push(new IngressPromptStep());
     }
     promptSteps.push(new ContainerAppOverwriteConfirmStep());
