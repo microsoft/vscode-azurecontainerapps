@@ -10,6 +10,7 @@ import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
+import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
@@ -21,16 +22,22 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
-        const ingress: Partial<Ingress> = {
-            targetPort: context.targetPort ?? containerAppEnvelope.configuration.ingress?.targetPort,
-            external: context.enableExternal ?? containerAppEnvelope.configuration.ingress?.external,
-        };
+        let ingress: Ingress | undefined;
+        if (context.enableIngress) {
+            ingress = {
+                ...enabledIngressDefaults,
+                ...containerAppEnvelope.configuration.ingress ?? {}, // Overwrite any default settings if we already have previous configurations set
+                external: context.enableExternal ?? containerAppEnvelope.configuration.ingress?.external,
+                targetPort: context.targetPort ?? containerAppEnvelope.configuration.ingress?.targetPort,
+            };
+        } else if (context.enableIngress === false) {
+            ingress = undefined;
+        } else {
+            // If enableIngress is not set, just default to the previous settings if they exist
+            ingress = containerAppEnvelope.configuration.ingress;
+        }
 
-        containerAppEnvelope.configuration.ingress = context.enableIngress !== undefined ? {
-            ...containerAppEnvelope.configuration.ingress ?? {},
-            ...ingress,
-        } : containerAppEnvelope.configuration.ingress;
-
+        containerAppEnvelope.configuration.ingress = ingress;
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
 

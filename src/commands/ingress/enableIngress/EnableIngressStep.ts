@@ -10,6 +10,17 @@ import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type IngressBaseContext } from "../IngressContext";
 
+export const enabledIngressDefaults = {
+    transport: 'auto',
+    allowInsecure: false,
+    traffic: [
+        {
+            weight: 100,
+            latestRevision: true
+        }
+    ],
+};
+
 export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext> {
     public priority: number = 750;
 
@@ -18,16 +29,9 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
 
         const containerApp = nonNullProp(context, 'containerApp');
         const ingress: Ingress = {
+            ...enabledIngressDefaults,
             targetPort: context.targetPort,
             external: context.enableExternal,
-            transport: 'auto',
-            allowInsecure: false,
-            traffic: [
-                {
-                    weight: 100,
-                    latestRevision: true
-                }
-            ],
         }
 
         context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });

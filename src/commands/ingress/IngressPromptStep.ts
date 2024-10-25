@@ -21,7 +21,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {
-        await tryPreconfigureIngressUsingDockerfile(context);
+        await tryConfigureIngressUsingDockerfile(context);
     }
 
     public shouldPrompt(context: IngressContext): boolean {
@@ -47,7 +47,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
     }
 }
 
-export async function tryPreconfigureIngressUsingDockerfile(context: IngressContext): Promise<void> {
+export async function tryConfigureIngressUsingDockerfile(context: IngressContext): Promise<void> {
     if (!context.dockerfilePath) {
         return;
     }
