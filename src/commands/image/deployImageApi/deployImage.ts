@@ -37,7 +37,7 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
         new ImageSourceListStep(),
     ];
 
-    // If more than just the image tag changed, prompt for ingress again
+    // If more than the image tag changed, prompt for ingress again
     if (getImageNameWithoutTag(wizardContext.containerApp?.template?.containers?.[0].image ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
         promptSteps.push(new IngressPromptStep());
     }
