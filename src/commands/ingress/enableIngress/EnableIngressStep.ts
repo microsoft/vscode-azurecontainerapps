@@ -30,6 +30,7 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
         const containerApp = nonNullProp(context, 'containerApp');
         const ingress: Ingress = {
             ...enabledIngressDefaults,
+            ...containerApp.configuration?.ingress ?? {},
             targetPort: context.targetPort,
             external: context.enableExternal,
         }
