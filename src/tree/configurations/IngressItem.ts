@@ -31,7 +31,7 @@ export class IngressEnabledItem implements ContainerAppsItem {
 
     viewProperties: ViewPropertiesModel = {
         getData: () => Promise.resolve(
-            (ext.resourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.ingress ??
+            (ext.viewPropertiesResourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.ingress ??
             this.ingress ??
             {}
         ),

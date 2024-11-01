@@ -27,7 +27,7 @@ export class SecretsItem implements ContainerAppsItem {
 
     viewProperties: ViewPropertiesModel = {
         getData: () => Promise.resolve(
-            (ext.resourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.secrets ??
+            (ext.viewPropertiesResourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.secrets ??
             this.containerApp.configuration?.secrets ??
             []
         ),

@@ -30,7 +30,7 @@ export class ConfigurationItem implements ContainerAppsItem {
 
     viewProperties: ViewPropertiesModel = {
         getData: () => Promise.resolve(
-            (ext.resourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration ??
+            (ext.viewPropertiesResourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration ??
             this.containerApp.configuration ??
             {}
         ),

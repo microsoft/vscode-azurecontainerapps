@@ -24,11 +24,11 @@ export class ManagedEnvironmentItem implements TreeElementBase {
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
         this.id = managedEnvironment.id;
-        ext.resourceCache.set(managedEnvironment.id, managedEnvironment);
+        ext.viewPropertiesResourceCache.set(managedEnvironment.id, managedEnvironment);
     }
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve(ext.resourceCache.get(this.managedEnvironment.id) ?? this.managedEnvironment),
+        getData: () => Promise.resolve(ext.viewPropertiesResourceCache.get(this.managedEnvironment.id) ?? this.managedEnvironment),
         label: this.managedEnvironment.name,
     }
 

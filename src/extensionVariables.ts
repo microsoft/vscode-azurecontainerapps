@@ -19,7 +19,7 @@ export namespace ext {
     export const prefix: string = 'containerApps';
     export let experimentationService: IExperimentationServiceAdapter;
     export let revisionDraftFileSystem: RevisionDraftFileSystem;
-    export let resourceCache: Map<string, {}>;
+    export let viewPropertiesResourceCache: Map<string, {}>;
 
     export let rgApiV2: AzureResourcesExtensionApi;
     export let state: TreeElementStateManager;

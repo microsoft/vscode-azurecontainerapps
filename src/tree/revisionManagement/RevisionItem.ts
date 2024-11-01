@@ -34,7 +34,7 @@ export class RevisionItem implements RevisionsItemModel {
         this.id = nonNullProp(this.revision, 'id');
         this.revisionsMode = containerApp.revisionsMode;
 
-        ext.resourceCache.set(this.id, this.revision);
+        ext.viewPropertiesResourceCache.set(this.id, this.revision);
     }
 
     private get contextValue(): string {
@@ -65,7 +65,7 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve(ext.resourceCache.get(this.id) ?? this.revision),
+        getData: () => Promise.resolve(ext.viewPropertiesResourceCache.get(this.id) ?? this.revision),
         label: nonNullProp(this.revision, 'name'),
     };
 

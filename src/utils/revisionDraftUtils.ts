@@ -19,8 +19,14 @@ export function getParentResource(containerApp: ContainerAppModel, revision: Rev
     return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp : revision;
 }
 
+/**
+ * Use to always select the correct parent resource from cache.
+ * This is primarily used to always show fresh view properties resource data.
+ */
 export function getParentResourceFromCache(containerApp: ContainerAppModel, revision: Revision): ContainerAppModel | Revision | undefined {
-    return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? ext.resourceCache.get(containerApp.id) : ext.resourceCache.get(nonNullProp(revision, 'id'));
+    return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ?
+        ext.viewPropertiesResourceCache.get(containerApp.id) :
+        ext.viewPropertiesResourceCache.get(nonNullProp(revision, 'id'));
 }
 
 /**
