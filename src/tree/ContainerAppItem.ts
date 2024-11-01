@@ -55,11 +55,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve(
-            ext.resourceCache.get(this.containerApp.id) ??
-            this.containerApp ??
-            {}
-        ),
+        getData: () => Promise.resolve(ext.resourceCache.get(this.containerApp.id) ?? this.containerApp),
         label: this.containerApp.name,
     }
 

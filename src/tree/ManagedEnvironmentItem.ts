@@ -28,11 +28,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     }
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve(
-            ext.resourceCache.get(this.managedEnvironment.id) ??
-            this.managedEnvironment ??
-            {}
-        ),
+        getData: () => Promise.resolve(ext.resourceCache.get(this.managedEnvironment.id) ?? this.managedEnvironment),
         label: this.managedEnvironment.name,
     }
 
