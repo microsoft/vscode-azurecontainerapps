@@ -36,6 +36,7 @@ export class ScaleItem extends RevisionDraftDescendantBase {
     id: string = `${this.parentResource.id}/scale`;
     label: string;
 
+    // Todo: Update to use 'getData' after PR merges adding containerIdx
     // Use getter here because some properties aren't available until after the constructor is run
     get viewProperties(): ViewPropertiesModel {
         return {

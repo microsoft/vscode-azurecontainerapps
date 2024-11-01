@@ -34,6 +34,7 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
     id: string = `${this.parentResource.id}/scalerules/${this.scaleRule.name}`;
     label: string;
 
+    // Todo: Update to use 'getData' after PR merges adding containerIdx
     viewProperties: ViewPropertiesModel = {
         data: this.scaleRule,
         label: `${this.parentResource.name} ${scaleRuleLabel} ${this.scaleRule.name}`,

@@ -33,6 +33,8 @@ export class RevisionItem implements RevisionsItemModel {
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
         this.id = nonNullProp(this.revision, 'id');
         this.revisionsMode = containerApp.revisionsMode;
+
+        ext.resourceCache.set(this.id, this.revision);
     }
 
     private get contextValue(): string {
@@ -63,7 +65,7 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     viewProperties: ViewPropertiesModel = {
-        data: this.revision,
+        getData: () => Promise.resolve(ext.resourceCache.get(this.id) ?? this.revision),
         label: nonNullProp(this.revision, 'name'),
     };
 

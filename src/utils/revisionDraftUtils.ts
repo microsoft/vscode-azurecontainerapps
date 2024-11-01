@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Revision } from "@azure/arm-appcontainers";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../tree/revisionManagement/RevisionDraftItem";
@@ -16,6 +17,10 @@ import { localize } from "./localize";
  */
 export function getParentResource(containerApp: ContainerAppModel, revision: Revision): ContainerAppModel | Revision {
     return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp : revision;
+}
+
+export function getParentResourceFromCache(containerApp: ContainerAppModel, revision: Revision): ContainerAppModel | Revision | undefined {
+    return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? ext.resourceCache.get(containerApp.id) : ext.resourceCache.get(nonNullProp(revision, 'id'));
 }
 
 /**

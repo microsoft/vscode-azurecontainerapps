@@ -8,6 +8,7 @@ import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureut
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureResource, type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { ext } from "../extensionVariables";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppItem } from "./ContainerAppItem";
@@ -23,10 +24,15 @@ export class ManagedEnvironmentItem implements TreeElementBase {
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
         this.id = managedEnvironment.id;
+        ext.resourceCache.set(managedEnvironment.id, managedEnvironment);
     }
 
     viewProperties: ViewPropertiesModel = {
-        data: this.managedEnvironment,
+        getData: () => Promise.resolve(
+            ext.resourceCache.get(this.managedEnvironment.id) ??
+            this.managedEnvironment ??
+            {}
+        ),
         label: this.managedEnvironment.name,
     }
 

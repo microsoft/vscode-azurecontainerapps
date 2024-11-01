@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { callWithTelemetryAndErrorHandling, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -29,7 +29,11 @@ export class ConfigurationItem implements ContainerAppsItem {
     }
 
     viewProperties: ViewPropertiesModel = {
-        data: nonNullProp(this.containerApp, 'configuration'),
+        getData: () => Promise.resolve(
+            (ext.resourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration ??
+            this.containerApp.configuration ??
+            {}
+        ),
         label: `${this.containerApp.name} ${configuration}`,
     }
 

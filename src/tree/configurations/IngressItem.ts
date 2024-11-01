@@ -8,6 +8,7 @@ import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { IngressConstants } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -29,7 +30,11 @@ export class IngressEnabledItem implements ContainerAppsItem {
     ingress: Ingress = this.containerApp.configuration?.ingress ?? {};
 
     viewProperties: ViewPropertiesModel = {
-        data: this.ingress,
+        getData: () => Promise.resolve(
+            (ext.resourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.ingress ??
+            this.ingress ??
+            {}
+        ),
         label: `${this.containerApp.name} ${label}`,
     }
 

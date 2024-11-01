@@ -33,6 +33,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
         registerCommands();
         ext.experimentationService = await createExperimentationService(context);
+        ext.resourceCache = new Map<string, {}>();
 
         ext.revisionDraftFileSystem = new RevisionDraftFileSystem();
         context.subscriptions.push(vscode.workspace.registerFileSystemProvider(RevisionDraftFileSystem.scheme, ext.revisionDraftFileSystem));

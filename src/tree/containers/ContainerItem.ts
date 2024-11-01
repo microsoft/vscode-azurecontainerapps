@@ -44,6 +44,7 @@ export class ContainerItem implements RevisionsItemModel {
         return getParentResource(this.containerApp, this.revision);
     }
 
+    // Todo: Update to use 'getData' after PR merges adding containerIdx
     viewProperties: ViewPropertiesModel = {
         data: this.container,
         label: nonNullProp(this.container, 'name'),

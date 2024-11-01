@@ -10,7 +10,7 @@ import * as deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
+import { getParentResource, getParentResourceFromCache } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
@@ -66,8 +66,15 @@ export class ContainersItem extends RevisionDraftDescendantBase {
 
     viewProperties: ViewPropertiesModel = {
         label: 'Containers',
-        getData: async () => {
-            return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers)
+        getData: () => {
+            const cachedResource: ContainerAppModel | Revision | undefined = getParentResourceFromCache(this.containerApp, this.revision);
+            const parentResource: ContainerAppModel | Revision = cachedResource ?? this.parentResource;
+
+            return Promise.resolve(
+                this.containers.length === 1 ?
+                    parentResource?.template?.containers?.[0] ?? {} :
+                    parentResource?.template?.containers ?? []
+            );
         }
     }
 

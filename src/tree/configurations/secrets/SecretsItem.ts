@@ -7,6 +7,7 @@ import { type Secret } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { ext } from "../../../extensionVariables";
 import { localize } from "../../../utils/localize";
 import { treeUtils } from "../../../utils/treeUtils";
 import { type ContainerAppModel } from "../../ContainerAppItem";
@@ -25,7 +26,11 @@ export class SecretsItem implements ContainerAppsItem {
     id: string = `${this.containerApp.id}/${SecretsItem.idSuffix}`;
 
     viewProperties: ViewPropertiesModel = {
-        data: this.containerApp.configuration?.secrets ?? [],
+        getData: () => Promise.resolve(
+            (ext.resourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.secrets ??
+            this.containerApp.configuration?.secrets ??
+            []
+        ),
         label: `${this.containerApp.name} ${secrets}`,
     }
 
