@@ -27,7 +27,10 @@ export class DaprEnabledItem implements TreeElementBase {
     id: string = `${this.containerApp.id}/DaprEnabled`;
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve((ext.viewPropertiesResourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.dapr ?? this.dapr),
+        getData: () => Promise.resolve(
+            (ext.viewPropertiesResourceCache.get(this.containerApp.id) as ContainerAppModel)?.configuration?.dapr ??
+            this.dapr
+        ),
         label: localize('daprProperties', '{0} Dapr', this.containerApp.name),
     }
 
