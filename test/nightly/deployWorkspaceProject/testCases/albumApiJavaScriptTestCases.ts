@@ -27,6 +27,8 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 sharedResourceName.slice(0, -1), // Isolate by using a different resource group name since we expect this case to fail
                 appResourceName,
                 `.${path.sep}src`,
+                'Docker Login Credentials',
+                'Enable',
                 'East US',
                 'Save'
             ],
@@ -45,6 +47,8 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 sharedResourceName,
                 appResourceName,
                 `.${path.sep}src`,
+                'Docker Login Credentials',
+                'Enable',
                 'East US',
                 'Save'
             ],
