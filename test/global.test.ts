@@ -14,8 +14,6 @@ const longRunningRemoteTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env
 
 export const longRunningTestsEnabled: boolean = longRunningLocalTestsEnabled || longRunningRemoteTestsEnabled;
 
-// export const longRunningTestsEnabled: boolean = false;
-
 // Runs before all tests
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);
