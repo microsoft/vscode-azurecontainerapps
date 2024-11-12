@@ -10,10 +10,10 @@ import * as assert from "assert";
 import { createManagedEnvironment } from "../../../extension.bundle";
 import { longRunningTestsEnabled } from '../../global.test';
 import { resourceGroupsToDelete } from "../global.nightly.test";
-import { getParallelTestScenarios, type DwpParallelTestScenario } from './getParallelScenarios';
+import { buildParallelTestScenarios, type DwpParallelTestScenario } from './buildParallelScenarios';
 
 let setupTask: Promise<void>;
-const testScenarios: DwpParallelTestScenario[] = getParallelTestScenarios();
+const testScenarios: DwpParallelTestScenario[] = buildParallelTestScenarios();
 
 suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
     this.timeout(15 * 60 * 1000);
@@ -49,10 +49,12 @@ async function setupManagedEnvironment(): Promise<void> {
                 managedEnvironment = await createManagedEnvironment(context);
             });
         });
-    } catch { /** Do nothing */ }
+    } catch (e) {
+        console.error(e);
+    }
 
     if (!managedEnvironment) {
-        assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" test.');
+        assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" tests.');
     }
     resourceGroupsToDelete.add(nonNullProp(managedEnvironment, 'name'));
 }

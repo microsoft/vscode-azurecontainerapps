@@ -18,16 +18,16 @@ export interface DwpParallelTestScenario {
     scenario?: Promise<void>;
 }
 
-export function getParallelTestScenarios(): DwpParallelTestScenario[] {
+export function buildParallelTestScenarios(): DwpParallelTestScenario[] {
     return dwpTestScenarios.map(scenario => {
         return {
             title: scenario.label,
-            callback: getParallelScenarioCallback(scenario),
+            callback: buildParallelScenarioCallback(scenario),
         };
     });
 }
 
-function getParallelScenarioCallback(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
+function buildParallelScenarioCallback(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
     return async (setupTask: Promise<void>) => {
         await setupTask;
 
