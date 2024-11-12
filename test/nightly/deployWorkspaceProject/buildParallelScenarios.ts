@@ -7,7 +7,7 @@ import { runWithTestActionContext } from "@microsoft/vscode-azext-dev";
 import * as assert from "assert";
 import * as path from "path";
 import { workspace, type Uri, type WorkspaceFolder } from "vscode";
-import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, parseError, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IParsedError } from "../../../extension.bundle";
+import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, ext, parseError, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IParsedError } from "../../../extension.bundle";
 import { assertStringPropsMatch, getWorkspaceFolderUri } from "../../testUtils";
 import { resourceGroupsToDelete } from "../global.nightly.test";
 import { dwpTestScenarios, type DeployWorkspaceProjectTestScenario } from "./dwpTestScenarios";
@@ -38,7 +38,7 @@ function buildParallelScenarioCallback(scenario: DeployWorkspaceProjectTestScena
         await cleanWorkspaceFolderSettings(rootFolder);
 
         for (const testCase of scenario.testCases) {
-            console.log(`*** ${scenario.label} - ${testCase.label} ***`);
+            ext.outputChannel.appendLog(`[[[ *** ${scenario.label} - ${testCase.label} *** ]]]`);
             await runWithTestActionContext('deployWorkspaceProject', async context => {
                 await context.ui.runWithInputs(testCase.inputs, async () => {
                     let results: DeployWorkspaceProjectResults;
