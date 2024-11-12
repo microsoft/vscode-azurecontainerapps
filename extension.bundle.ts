@@ -15,6 +15,8 @@
 // The tests should import '../extension.bundle'. At design-time they live in tests/ and so will pick up this file (extension.bundle.ts).
 // At runtime the tests live in dist/tests and will therefore pick up the main webpack bundle at dist/extension.bundle.js.
 export * from '@microsoft/vscode-azext-utils';
+
+export * from '@microsoft/vscode-azext-azureutils';
 // Export activate/deactivate for main.js
 export * from './src/commands/createManagedEnvironment/createManagedEnvironment';
 export * from './src/commands/deployWorkspaceProject/deployWorkspaceProject';

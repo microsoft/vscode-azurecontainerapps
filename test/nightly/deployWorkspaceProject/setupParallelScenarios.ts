@@ -26,9 +26,9 @@ export async function getParallelScenarios(): Promise<ParallelScenarios[]> {
     const managedEnvironment: ManagedEnvironment | undefined = await setupManagedEnvironment();
     if (!managedEnvironment) {
         return [{
-            title: "Deploy workspace project setup",
+            title: "Setup",
             callback: async () => {
-                test("Should create precursor managed environment", () => {
+                test("Should setup a precursor managed environment", () => {
                     assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" tests.');
                 });
             }
@@ -104,14 +104,17 @@ function getParallelScenarioCallback(scenario: DeployWorkspaceProjectTestScenari
 }
 
 async function setupManagedEnvironment(): Promise<ManagedEnvironment | undefined> {
-    let managedEnvironment: ManagedEnvironment | undefined;
-    await runWithTestActionContext('createManagedEnvironment', async context => {
-        const resourceName: string = 'dwp' + randomUtils.getRandomHexString(6);
-        await context.ui.runWithInputs([resourceName, 'East US'], async () => {
-            managedEnvironment = await createManagedEnvironment(context);
+    try {
+        await runWithTestActionContext('createManagedEnvironment', async context => {
+            const resourceName: string = 'dwp' + randomUtils.getRandomHexString(6);
+            await context.ui.runWithInputs([resourceName, 'East US'], async () => {
+                return await createManagedEnvironment(context);
+            });
         });
-    });
-    return managedEnvironment;
+    } catch {
+        // Skip, return undefined
+    }
+    return undefined;
 }
 
 function getMethodCleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {

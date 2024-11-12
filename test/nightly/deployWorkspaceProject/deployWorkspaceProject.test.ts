@@ -7,6 +7,7 @@ import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { longRunningTestsEnabled } from '../../global.test';
 import { getParallelScenarios, type ParallelScenarios } from './setupParallelScenarios';
 
+
 suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
     this.timeout(15 * 60 * 1000);
 
