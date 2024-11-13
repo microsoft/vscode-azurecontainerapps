@@ -5,7 +5,8 @@
 
 import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScriptTestCases";
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
-import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
+import { generateMonoRepoAdminCredentialsTestCases } from "./testCases/monoRepoTestCases/adminCredentialsTestCases";
+import { generateMonoRepoIdentityTestCases } from "./testCases/monoRepoTestCases/identityTestCases";
 
 export interface DeployWorkspaceProjectTestScenario {
     label: string;
@@ -17,11 +18,16 @@ export const dwpTestScenarios: DeployWorkspaceProjectTestScenario[] = [
     {
         label: 'albumapi-js',
         folderName: 'albumapi-js',
-        testCases: generateAlbumApiJavaScriptTestCases()
+        testCases: generateAlbumApiJavaScriptTestCases(),
     },
     {
-        label: 'monorepo',
-        folderName: 'monorepo-basic',
-        testCases: generateMonoRepoBasicTestCases()
+        label: 'monorepo-admincreds',
+        folderName: 'monorepo-admincreds',
+        testCases: generateMonoRepoAdminCredentialsTestCases(),
+    },
+    {
+        label: 'monorepo-identity',
+        folderName: 'monorepo-identity',
+        testCases: generateMonoRepoIdentityTestCases(),
     },
 ];
