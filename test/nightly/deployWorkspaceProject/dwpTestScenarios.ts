@@ -30,7 +30,7 @@ export function getDwpTestScenarios(): DeployWorkspaceProjectTestScenario[] {
     ];
 
     if (longRunningLocalTestsEnabled) {
-        // Insufficient auth privilege to test MI / Role Assignment in our manual testing subscription.
+        // Insufficient auth privilege to test managed identity / role assignment in our manual testing subscription.
         // Therefore, limit these tests to only run locally in personal subscriptions where user has full permission to assign roles.
         // Todo: Investigate if it makes sense to elevate remote privileges such that these tests can also be automated to run remotely.
         dwpTestScenarios.push({
