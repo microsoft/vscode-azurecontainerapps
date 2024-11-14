@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { longRunningLocalTestsEnabled } from "../../global.test";
 import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScriptTestCases";
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoAdminCredentialsTestCases } from "./testCases/monoRepoTestCases/adminCredentialsTestCases";
@@ -14,20 +15,30 @@ export interface DeployWorkspaceProjectTestScenario {
     testCases: DeployWorkspaceProjectTestCase[];
 }
 
-export const dwpTestScenarios: DeployWorkspaceProjectTestScenario[] = [
-    {
-        label: 'albumapi-js',
-        folderName: 'albumapi-js',
-        testCases: generateAlbumApiJavaScriptTestCases(),
-    },
-    {
-        label: 'monorepo-admincreds',
-        folderName: 'monorepo-admincreds',
-        testCases: generateMonoRepoAdminCredentialsTestCases(),
-    },
-    {
-        label: 'monorepo-identity',
-        folderName: 'monorepo-identity',
-        testCases: generateMonoRepoIdentityTestCases(),
-    },
-];
+export function getDwpTestScenarios(): DeployWorkspaceProjectTestScenario[] {
+    const dwpTestScenarios: DeployWorkspaceProjectTestScenario[] = [
+        {
+            label: 'albumapi-js',
+            folderName: 'albumapi-js',
+            testCases: generateAlbumApiJavaScriptTestCases(),
+        },
+        {
+            label: 'monorepo-admincreds',
+            folderName: 'monorepo-admincreds',
+            testCases: generateMonoRepoAdminCredentialsTestCases(),
+        },
+    ];
+
+    if (longRunningLocalTestsEnabled) {
+        // Insufficient auth privilege to test MI / Role Assignment in our manual testing subscription.
+        // Therefore, limit these tests to only run locally in personal subscriptions where user has full permission to assign roles.
+        // Todo: Investigate if it makes sense to elevate remote privileges such that these tests can also be automated to run remotely.
+        dwpTestScenarios.push({
+            label: 'monorepo-identity',
+            folderName: 'monorepo-identity',
+            testCases: generateMonoRepoIdentityTestCases(),
+        });
+    }
+
+    return dwpTestScenarios;
+}
