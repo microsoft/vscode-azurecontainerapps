@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
@@ -19,26 +19,36 @@ import { ContainerItem } from "./ContainerItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
 import { ImageItem } from "./ImageItem";
 
+export const container: string = localize('container', 'Container');
+export const containers: string = localize('containers', 'Containers');
+
 export class ContainersItem extends RevisionDraftDescendantBase {
     id: string;
     label: string;
-    private containers: Container[] = [];
 
-    constructor(public readonly subscription: AzureSubscription,
-        public readonly containerApp: ContainerAppModel,
-        public readonly revision: Revision,) {
+    static readonly contextValue: string = 'containersItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ContainersItem.contextValue);
+
+    constructor(
+        subscription: AzureSubscription,
+        containerApp: ContainerAppModel,
+        revision: Revision,
+
+        // Used as the basis for the view; can reflect either the original or the draft changes
+        private containers: Container[],
+    ) {
         super(subscription, containerApp, revision);
         this.id = `${this.parentResource.id}/containers`;
-        this.containers = nonNullValue(revision.template?.containers);
-        this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
     }
 
     getChildren(): TreeElementBase[] {
         if (this.containers.length === 1) {
-            return [new ImageItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0]),
-            new EnvironmentVariablesItem(this.subscription, this.containerApp, this.revision, this.id, this.containers[0])];
+            return [
+                RevisionDraftDescendantBase.createTreeItem(ImageItem, this.subscription, this.containerApp, this.revision, 0, this.containers[0]),
+                RevisionDraftDescendantBase.createTreeItem(EnvironmentVariablesItem, this.subscription, this.containerApp, this.revision, 0, this.containers[0]),
+            ];
         }
-        return nonNullValue(this.containers?.map(container => new ContainerItem(this.subscription, this.containerApp, this.revision, container)));
+        return this.containers?.map((container, idx) => RevisionDraftDescendantBase.createTreeItem(ContainerItem, this.subscription, this.containerApp, this.revision, idx, container)) ?? [];
     }
 
     getTreeItem(): TreeItem {
@@ -46,8 +56,13 @@ export class ContainersItem extends RevisionDraftDescendantBase {
             id: this.id,
             label: this.label,
             iconPath: treeUtils.getIconPath('containers'),
+            contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
         }
+    }
+
+    private get contextValue(): string {
+        return ContainersItem.contextValue;
     }
 
     private get parentResource(): ContainerAppModel | Revision {
@@ -55,13 +70,13 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     }
 
     protected setProperties(): void {
-        this.label = this.containers.length === 1 ? localize('container', 'Container') : localize('containers', 'Containers');
         this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
+        this.label = this.containers.length === 1 ? container : containers;
     }
 
     protected setDraftProperties(): void {
-        this.label = this.containers.length === 1 ? localize('container*', 'Container*') : localize('containers*', 'Containers*');
         this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
+        this.label = this.containers.length === 1 ? `${container}*` : `${containers}*`;
     }
 
     viewProperties: ViewPropertiesModel = {
@@ -69,6 +84,12 @@ export class ContainersItem extends RevisionDraftDescendantBase {
         getData: async () => {
             return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers)
         }
+    }
+
+    static isContainersItem(item: unknown): item is ContainersItem {
+        return typeof item === 'object' &&
+            typeof (item as ContainersItem).id === 'string' &&
+            (item as ContainersItem).id.endsWith('/containers');
     }
 
     hasUnsavedChanges(): boolean {
