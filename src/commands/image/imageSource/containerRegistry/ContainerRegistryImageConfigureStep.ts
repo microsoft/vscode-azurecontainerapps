@@ -12,9 +12,9 @@ import { getLoginServer } from "./getLoginServer";
 export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImageSourceContext> extends AzureWizardActivityOutputExecuteStep<T> {
     public priority: number = 570;
     public stepName: string = 'containerRegistryImageConfigureStep';
-    protected getSuccessString = (context: T) => localize('successOutput', 'Successfully set container app image to "{0}".', context.image);
-    protected getFailString = (context: T) => localize('failOutput', 'Failed to set container app image to "{0}".', context.image);
-    protected getTreeItemLabel = (context: T) => localize('treeItemLabel', 'Set container app image to "{0}"', context.image);
+    protected getSuccessString = (context: T) => localize('successOutput', 'Successfully set container image to "{0}".', context.image);
+    protected getFailString = (context: T) => localize('failOutput', 'Failed to set container image to "{0}".', context.image);
+    protected getTreeItemLabel = (context: T) => localize('treeItemLabel', 'Set container image to "{0}"', context.image);
 
     public async execute(context: T): Promise<void> {
         context.image = `${getLoginServer(context)}/${context.repositoryName}:${context.tag}`;
