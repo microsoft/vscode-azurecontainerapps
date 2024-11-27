@@ -11,9 +11,9 @@ import { ext } from "../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../updateContainerApp";
-import { type ContainerUpdateContext } from "./ContainerUpdateContext";
+import { type ContainerEditContext } from "./ContainerEditContext";
 
-export class RegistryAndSecretsUpdateStep<T extends ContainerUpdateContext> extends AzureWizardExecuteStep<T> {
+export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 580;
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

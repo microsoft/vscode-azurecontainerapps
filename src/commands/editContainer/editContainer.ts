@@ -16,12 +16,12 @@ import { pickContainer } from "../../utils/pickItem/pickContainer";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../utils/revisionDraftUtils";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../revisionDraft/RevisionDraftDeployPromptStep";
-import { type ContainerUpdateContext } from "./ContainerUpdateContext";
-import { ContainerUpdateDraftStep } from "./ContainerUpdateDraftStep";
+import { type ContainerEditContext } from "./ContainerEditContext";
+import { ContainerEditDraftStep } from "./ContainerEditDraftStep";
 import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
 
-// Updates both the 'image' and 'environmentVariables' portion of the container profile
-export async function updateContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
+// Edits both the 'image' and 'environmentVariables' portion of the container profile (draft)
+export async function editContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
     const item: ContainerItem | ContainersItem = node ?? await pickContainer(context, { autoSelectDraft: true });
     const { containerApp, subscription } = item;
 
@@ -34,13 +34,13 @@ export async function updateContainer(context: IActionContext, node?: Containers
 
     let containersIdx: number;
     if (ContainersItem.isContainersItem(item)) {
-        // The 'updateContainer' command should only show up on a 'ContainersItem' when it only has one container, else the command would show up on the 'ContainerItem'
+        // The 'editContainer' command should only show up on a 'ContainersItem' when it only has one container, else the command would show up on the 'ContainerItem'
         containersIdx = 0;
     } else {
         containersIdx = item.containersIdx;
     }
 
-    const wizardContext: ContainerUpdateContext = {
+    const wizardContext: ContainerEditContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(true),
@@ -51,16 +51,16 @@ export async function updateContainer(context: IActionContext, node?: Containers
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<ContainerUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('updateContainer', 'Update container for "{0}" (draft)', parentResource.name),
+    const wizard: AzureWizard<ContainerEditContext> = new AzureWizard(wizardContext, {
+        title: localize('editContainer', 'Edit container {0} for "{1}" (draft)', wizardContext.containersIdx, parentResource.name),
         promptSteps: [
             new ImageSourceListStep(),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
-            getVerifyProvidersStep<ContainerUpdateContext>(),
+            getVerifyProvidersStep<ContainerEditContext>(),
             new RegistryAndSecretsUpdateStep(),
-            new ContainerUpdateDraftStep(item),
+            new ContainerEditDraftStep(item),
         ],
         showLoadingPrompt: true,
     });
