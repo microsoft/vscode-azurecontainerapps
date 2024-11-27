@@ -7,7 +7,7 @@ import { generateAlbumApiJavaScriptTestCases } from "./testCases/albumApiJavaScr
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoBasicTestCases } from "./testCases/monoRepoBasicTestCases";
 
-interface DeployWorkspaceProjectTestScenario {
+export interface DeployWorkspaceProjectTestScenario {
     label: string;
     folderName: string;
     testCases: DeployWorkspaceProjectTestCase[];
