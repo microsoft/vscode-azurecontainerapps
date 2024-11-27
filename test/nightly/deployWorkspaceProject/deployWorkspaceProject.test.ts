@@ -53,8 +53,6 @@ async function setupManagedEnvironment(): Promise<void> {
         console.error(e);
     }
 
-    if (!managedEnvironment) {
-        assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" tests.');
-    }
+    assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" tests.');
     resourceGroupsToDelete.add(nonNullProp(managedEnvironment, 'name'));
 }
