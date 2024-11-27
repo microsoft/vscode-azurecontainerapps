@@ -13,7 +13,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainer } from "../../utils/pickItem/pickContainer";
-import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../utils/revisionDraftUtils";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerUpdateContext } from "./ContainerUpdateContext";
@@ -26,7 +26,7 @@ export async function updateContainer(context: IActionContext, node?: Containers
     const { containerApp, subscription } = item;
 
     if (!isTemplateItemEditable(item)) {
-        throwTemplateItemNotEditable(item);
+        throw new TemplateItemNotEditableError(item);
     }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
