@@ -12,9 +12,9 @@ import { localize } from "../../../utils/localize";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { getContainerNameForImage } from "../../image/imageSource/containerRegistry/getContainerNameForImage";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import { type ContainerImageUpdateContext } from "./updateContainerImage";
+import { type ContainerImageUpdateContext } from "./editContainerImage";
 
-export class ContainerImageUpdateDraftStep<T extends ContainerImageUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
+export class ContainerImageEditDraftStep<T extends ContainerImageUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {

@@ -9,6 +9,7 @@
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.createContainerAppFromWorkspace": "Create Container App from Workspace...",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",
+    "containerApps.editContainer": "Edit Container...",
     "containerApps.updateContainer": "Update Container...",
     "containerApps.updateContainerImage.title": "Update Container Image...",
     "containerApps.updateContainerImage.shortTitle": "Update Image...",

@@ -36,7 +36,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext> extends AzureW
         progress.report({ message: updating });
 
         await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
-            await updateContainerApp(context, context.subscription, containerAppEnvelope);
+            context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
             ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
         });
     }

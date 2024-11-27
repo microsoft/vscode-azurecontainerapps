@@ -73,14 +73,11 @@ export class ContainerItemPickSteps<T extends AzureResourceQuickPickWizardContex
 
         let containers: Container[] = [];
         if (ContainerAppItem.isContainerAppItem(lastNode)) {
-            const node = lastNode as ContainerAppItem;
-            containers = node.containerApp.template?.containers ?? [];
+            containers = lastNode.containerApp.template?.containers ?? [];
         } else if (RevisionItem.isRevisionItem(lastNode)) {
-            const node = lastNode as RevisionItem;
-            containers = node.revision.template?.containers ?? [];
+            containers = lastNode.revision.template?.containers ?? [];
         } else if (RevisionDraftItem.isRevisionDraftItem(lastNode)) {
-            const node = lastNode as RevisionDraftItem;
-            containers = node.revision.template?.containers ?? [];
+            containers = lastNode.revision.template?.containers ?? [];
         }
 
         const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [];
