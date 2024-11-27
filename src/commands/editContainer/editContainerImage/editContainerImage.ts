@@ -19,7 +19,7 @@ import { type ContainerEditContext } from "../ContainerEditContext";
 import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
 import { ContainerImageEditDraftStep } from "./ContainerImageEditDraftStep";
 
-export type ContainerImageUpdateContext = ContainerEditContext;
+export type ContainerEditUpdateContext = ContainerEditContext;
 
 // Edits only the 'image' portion of the container profile
 export async function editContainerImage(context: IActionContext, node?: ImageItem): Promise<void> {
@@ -33,7 +33,7 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizardContext: ContainerImageUpdateContext = {
+    const wizardContext: ContainerEditUpdateContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(true),
@@ -44,14 +44,14 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<ContainerImageUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('updateContainerImage', 'Update container image for "{0}" (draft)', parentResource.name),
+    const wizard: AzureWizard<ContainerEditUpdateContext> = new AzureWizard(wizardContext, {
+        title: localize('editContainerImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep({ suppressEnvPrompt: true }),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
-            getVerifyProvidersStep<ContainerImageUpdateContext>(),
+            getVerifyProvidersStep<ContainerEditUpdateContext>(),
             new RegistryAndSecretsUpdateStep(),
             new ContainerImageEditDraftStep(item),
         ],

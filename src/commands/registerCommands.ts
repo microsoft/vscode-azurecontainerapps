@@ -66,7 +66,7 @@ export function registerCommands(): void {
 
     // containers
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainer', editContainer);
-    registerCommandWithTreeNodeUnwrapping('containerApps.updateContainerImage', editContainerImage);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editContainerImage', editContainerImage);
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
