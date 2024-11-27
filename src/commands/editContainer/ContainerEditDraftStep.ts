@@ -37,38 +37,38 @@ export class ContainerEditDraftStep<T extends ContainerEditContext> extends Revi
         return context.containersIdx !== undefined && !!context.image;
     }
 
-    public createSuccessOutput(context: T): ExecuteActivityOutput {
+    public createSuccessOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['containerEditDraftStepSuccessItem', activitySuccessContext]),
-                label: localize('editContainer', 'Edit container {0} for "{1}" (draft)', context.containersIdx, parentResource.name),
+                label: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
                 iconPath: activitySuccessIcon,
             }),
-            message: localize('editContainerSuccess', 'Successfully edited container {0} for "{1}" (draft).', context.containersIdx, parentResource.name),
+            message: localize('editContainerSuccess', 'Successfully edited container profile for container app "{0}" (draft).', parentResource.name),
         };
     }
 
-    public createProgressOutput(context: T): ExecuteActivityOutput {
+    public createProgressOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['containerEditDraftStepProgressItem', activityProgressContext]),
-                label: localize('editContainer', 'Edit container {0} for "{1}" (draft)', context.containersIdx, parentResource.name),
+                label: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
                 iconPath: activityProgressIcon,
             }),
         };
     }
 
-    public createFailOutput(context: T): ExecuteActivityOutput {
+    public createFailOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['containerEditDraftStepFailItem', activityFailContext]),
-                label: localize('editContainer', 'Edit container {0} for "{1}" (draft)', context.containersIdx, parentResource.name),
+                label: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
                 iconPath: activityFailIcon,
             }),
-            message: localize('editContainerFail', 'Failed to edit container {0} for app "{1}" (draft).', context.containersIdx, parentResource.name),
+            message: localize('editContainerFail', 'Failed to edit container profile for container app "{0}" (draft).', parentResource.name),
         };
     }
 }
