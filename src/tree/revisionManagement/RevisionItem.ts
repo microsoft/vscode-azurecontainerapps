@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, type Revision
 import { createContextValue, nonNullProp, type TreeItemIconPath } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue } from "../../constants";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -45,7 +45,6 @@ export class RevisionItem implements RevisionsItemModel {
 
         values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
-        values.push(this.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
 
         return createContextValue(values);
     }
@@ -121,5 +120,11 @@ export class RevisionItem implements RevisionsItemModel {
         }
 
         return new ThemeIcon(id, colorId ? new ThemeColor(colorId) : undefined);
+    }
+
+    static isRevisionItem(item: unknown): item is RevisionItem {
+        return typeof item === 'object' &&
+            typeof (item as RevisionItem).contextValue === 'string' &&
+            RevisionItem.contextValueRegExp.test((item as RevisionItem).contextValue);
     }
 }
