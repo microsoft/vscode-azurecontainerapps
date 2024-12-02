@@ -10,6 +10,8 @@
     "containerApps.createContainerAppFromWorkspace": "Create Container App from Workspace...",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",
     "containerApps.editContainer": "Edit Container...",
+    "containerApps.editContainerImage.title": "Edit Container Image...",
+    "containerApps.editContainerImage.shortTitle": "Edit Image...",
     "containerApps.deployImageApi": "Deploy Image to Container App (API)...",
     "containerApps.deployWorkspaceProject": "Deploy Project from Workspace...",
     "containerApps.deployWorkspaceProjectApi": "Deploy Project from Workspace (API)...",

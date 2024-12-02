@@ -96,11 +96,11 @@ export class ImageItem extends RevisionDraftDescendantBase {
         }
 
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container = currentContainers[this.containersIdx];
+        const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
         return {
-            imageNameItem: this.getImageName(currentContainer.image) !== this.getImageName(this.container.image),
-            imageRegistryItem: this.getLoginServer(currentContainer.image) !== this.getLoginServer(this.container.image),
+            imageNameItem: this.getImageName(currentContainer?.image) !== this.getImageName(this.container.image),
+            imageRegistryItem: this.getLoginServer(currentContainer?.image) !== this.getLoginServer(this.container.image),
         };
     }
 
@@ -111,8 +111,8 @@ export class ImageItem extends RevisionDraftDescendantBase {
         }
 
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container = currentContainers[this.containersIdx];
+        const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
-        return this.container.image !== currentContainer.image;
+        return this.container.image !== currentContainer?.image;
     }
 }
