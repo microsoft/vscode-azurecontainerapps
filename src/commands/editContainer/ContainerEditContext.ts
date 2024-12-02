@@ -9,8 +9,8 @@ import { type ContainerUpdateTelemetryProps as TelemetryProps } from "../../tele
 import { type IContainerAppContext } from "../IContainerAppContext";
 import { type ImageSourceBaseContext } from "../image/imageSource/ImageSourceContext";
 
-export interface ContainerUpdateBaseContext extends IContainerAppContext, ImageSourceBaseContext, ExecuteActivityContext {
+export interface ContainerEditBaseContext extends IContainerAppContext, ImageSourceBaseContext, ExecuteActivityContext {
     containersIdx: number;
 }
 
-export type ContainerUpdateContext = ContainerUpdateBaseContext & SetTelemetryProps<TelemetryProps>;
+export type ContainerEditContext = ContainerEditBaseContext & SetTelemetryProps<TelemetryProps>;

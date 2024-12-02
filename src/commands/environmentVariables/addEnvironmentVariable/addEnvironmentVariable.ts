@@ -12,7 +12,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourc
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
-import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type EnvironmentVariableAddContext } from "./EnvironmentVariableAddContext";
 import { EnvironmentVariableAddDraftStep } from "./EnvironmentVariableAddDraftStep";
@@ -24,7 +24,7 @@ export async function addEnvironmentVariable(context: IActionContext, node?: Env
     const { subscription, containerApp } = item;
 
     if (!isTemplateItemEditable(item)) {
-        throwTemplateItemNotEditable(item);
+        throw new TemplateItemNotEditableError(item);
     }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);

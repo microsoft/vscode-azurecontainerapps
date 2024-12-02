@@ -199,19 +199,14 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.updateContainer",
-                "title": "%containerApps.updateContainer%",
+                "command": "containerApps.editContainer",
+                "title": "%containerApps.editContainer%",
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.updateContainerImage",
-                "title": "%containerApps.updateContainerImage.title%",
-                "shortTitle": "%containerApps.updateContainerImage.shortTitle%",
-                "category": "Azure Container Apps"
-            },
-            {
-                "command": "containerApps.addEnvironmentVariable",
-                "title": "%containerApps.addEnvironmentVariable%",
+                "command": "containerApps.editContainerImage",
+                "title": "%containerApps.editContainerImage.title%",
+                "shortTitle": "%containerApps.editContainerImage.shortTitle%",
                 "category": "Azure Container Apps"
             },
             {
@@ -470,12 +465,12 @@
                     "group": "3@1"
                 },
                 {
-                    "command": "containerApps.updateContainer",
+                    "command": "containerApps.editContainer",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerItem/i",
                     "group": "1@1"
                 },
                 {
-                    "command": "containerApps.updateContainerImage",
+                    "command": "containerApps.editContainerImage",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /imageItem/i",
                     "group": "1@1"
                 },

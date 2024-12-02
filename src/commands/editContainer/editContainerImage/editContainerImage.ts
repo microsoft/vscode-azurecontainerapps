@@ -12,28 +12,28 @@ import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourc
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickImage } from "../../../utils/pickItem/pickImage";
-import { getParentResourceFromItem, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
+import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
-import { type ContainerUpdateContext } from "../ContainerUpdateContext";
+import { type ContainerEditContext } from "../ContainerEditContext";
 import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
-import { ContainerImageUpdateDraftStep } from "./ContainerImageUpdateDraftStep";
+import { ContainerImageEditDraftStep } from "./ContainerImageEditDraftStep";
 
-export type ContainerImageUpdateContext = ContainerUpdateContext;
+export type ContainerEditUpdateContext = ContainerEditContext;
 
-// Updates only the 'image' portion of the container profile
-export async function updateContainerImage(context: IActionContext, node?: ImageItem): Promise<void> {
+// Edits only the 'image' portion of the container profile
+export async function editContainerImage(context: IActionContext, node?: ImageItem): Promise<void> {
     const item: ImageItem = node ?? await pickImage(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
 
     if (!isTemplateItemEditable(item)) {
-        throwTemplateItemNotEditable(item);
+        throw new TemplateItemNotEditableError(item);
     }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizardContext: ContainerImageUpdateContext = {
+    const wizardContext: ContainerEditUpdateContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(true),
@@ -44,16 +44,16 @@ export async function updateContainerImage(context: IActionContext, node?: Image
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<ContainerImageUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('updateContainerImage', 'Update container image for "{0}" (draft)', parentResource.name),
+    const wizard: AzureWizard<ContainerEditUpdateContext> = new AzureWizard(wizardContext, {
+        title: localize('editContainerImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep({ suppressEnvPrompt: true }),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
-            getVerifyProvidersStep<ContainerImageUpdateContext>(),
+            getVerifyProvidersStep<ContainerEditUpdateContext>(),
             new RegistryAndSecretsUpdateStep(),
-            new ContainerImageUpdateDraftStep(item),
+            new ContainerImageEditDraftStep(item),
         ],
         showLoadingPrompt: true,
     });
