@@ -26,6 +26,8 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 sharedResourceName,
                 'app1',
                 `.${path.sep}app1`,
+                'Docker Login Credentials',
+                'Enable',
                 path.join('app1', '.env.example'),
                 'East US',
                 'Save'
@@ -49,6 +51,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'Continue',
                 'app2',
                 `.${path.sep}app2`,
+                'Docker Login Credentials',
                 path.join('app2', '.env.example'),
                 'Save'
             ],
@@ -71,6 +74,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'Continue',
                 'app3',
                 `.${path.sep}app3`,
+                'Docker Login Credentials',
                 path.join('app3', '.env.example'),
                 'Save'
             ],

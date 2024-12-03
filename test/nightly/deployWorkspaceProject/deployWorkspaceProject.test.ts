@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { type ManagedEnvironment } from '@azure/arm-appcontainers';
 import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
-import { parseError, type IParsedError } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, parseError, randomUtils, type IParsedError } from "@microsoft/vscode-azext-utils";
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
+import { AzExtFsExtra, createManagedEnvironment, deployWorkspaceProject, dwpSettingUtilsV2, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete } from '../global.nightly.test';
@@ -17,10 +18,17 @@ import { dwpTestScenarios } from './dwpTestScenarios';
 suite('deployWorkspaceProject', function (this: Mocha.Suite) {
     this.timeout(15 * 60 * 1000);
 
-    suiteSetup(function (this: Mocha.Context) {
+    suiteSetup(async function (this: Mocha.Context) {
         if (!longRunningTestsEnabled) {
             this.skip();
         }
+
+        // Create a managed environment first so that we can guarantee one is always built before workspace deployment tests start.
+        // This is crucial for test consistency because the managed environment prompt will skip if no managed environment
+        // resources are available yet. Creating at least one environment first ensures consistent reproduceability.
+        const managedEnvironment: ManagedEnvironment | undefined = await setupManagedEnvironment();
+        assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" tests.');
+        resourceGroupsToDelete.add(nonNullProp(managedEnvironment, 'name'));
     });
 
     for (const scenario of dwpTestScenarios) {
@@ -82,6 +90,17 @@ suite('deployWorkspaceProject', function (this: Mocha.Suite) {
         });
     }
 });
+
+async function setupManagedEnvironment(): Promise<ManagedEnvironment | undefined> {
+    let managedEnvironment: ManagedEnvironment | undefined;
+    await runWithTestActionContext('createManagedEnvironment', async context => {
+        const resourceName: string = 'dwp' + randomUtils.getRandomHexString(6);
+        await context.ui.runWithInputs([resourceName, 'East US'], async () => {
+            managedEnvironment = await createManagedEnvironment(context);
+        });
+    });
+    return managedEnvironment;
+}
 
 function getMethodCleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {
     return async function cleanWorkspaceFolderSettings(): Promise<void> {

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, createSubscriptionContext, nonNullProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
@@ -16,7 +17,7 @@ import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreate
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
 
-export async function createManagedEnvironment(context: IActionContext, node?: { subscription: AzureSubscription }): Promise<void> {
+export async function createManagedEnvironment(context: IActionContext, node?: { subscription: AzureSubscription }): Promise<ManagedEnvironment> {
     const subscription = node?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
 
     const wizardContext: ManagedEnvironmentCreateContext = {
@@ -54,4 +55,5 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     await wizard.execute();
 
     ext.branchDataProvider.refresh();
+    return nonNullProp(wizardContext, 'managedEnvironment');
 }
