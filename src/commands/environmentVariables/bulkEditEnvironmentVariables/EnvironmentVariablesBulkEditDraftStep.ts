@@ -9,9 +9,9 @@ import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
+import { type EnvironmentVariablesBulkEditContext } from "./EnvironmentVariablesBulkEditContext";
 
-export class EnvironmentVariablesEditDraftStep<T extends EnvironmentVariablesEditContext> extends RevisionDraftUpdateBaseStep<T> {
+export class EnvironmentVariablesBulkEditDraftStep<T extends EnvironmentVariablesBulkEditContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {

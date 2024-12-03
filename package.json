@@ -221,8 +221,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.editEnvironmentVariables",
-                "title": "%containerApps.editEnvironmentVariables%",
+                "command": "containerApps.bulkEditEnvironmentVariables",
+                "title": "%containerApps.bulkEditEnvironmentVariables%",
                 "category": "Azure Container Apps"
             },
             {
@@ -496,7 +496,7 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "containerApps.editEnvironmentVariables",
+                    "command": "containerApps.bulkEditEnvironmentVariables",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem/i",
                     "group": "1@2"
                 },

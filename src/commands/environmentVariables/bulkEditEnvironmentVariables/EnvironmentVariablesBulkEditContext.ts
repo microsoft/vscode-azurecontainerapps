@@ -7,5 +7,5 @@ import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type ContainerUpdateTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
 import { type EnvironmentVariablesBaseContext } from "../EnvironmentVariablesContext";
 
-export type EnvironmentVariablesEditBaseContext = EnvironmentVariablesBaseContext;
-export type EnvironmentVariablesEditContext = EnvironmentVariablesEditBaseContext & SetTelemetryProps<TelemetryProps>;
+export type EnvironmentVariablesBulkEditBaseContext = EnvironmentVariablesBaseContext;
+export type EnvironmentVariablesBulkEditContext = EnvironmentVariablesBulkEditBaseContext & SetTelemetryProps<TelemetryProps>;
