@@ -57,17 +57,14 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     viewProperties: ViewPropertiesModel = {
         label: this.containerApp.name,
         getData: () => {
-            const containerApp: ContainerAppModel = {
-                ...(ext.viewPropertiesResourceCache.get(nonNullProp(this.containerApp, 'id')) as ContainerAppModel) ?? this.containerApp,
-            };
-
+            let containerApp: ContainerAppModel = ext.viewPropertiesResourceCache.get(nonNullProp(this.containerApp, 'id')) as ContainerAppModel | undefined ?? this.containerApp;
             if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                // Since we're changing a property on the envelope directly, deep copy first so we don't accidentally change the original cached value
+                containerApp = JSON.parse(JSON.stringify(containerApp)) as ContainerAppModel;
                 containerApp.template = ext.revisionDraftFileSystem.parseRevisionDraft(this);
             }
 
-            return Promise.resolve(
-                containerApp ?? {}
-            );
+            return Promise.resolve(containerApp);
         },
     }
 
