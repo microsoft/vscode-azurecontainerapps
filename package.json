@@ -215,6 +215,12 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.editEnvironmentVariableName",
+                "title": "%containerApps.editEnvironmentVariableName.title%",
+                "shortTitle": "%containerApps.editEnvironmentVariableName.shortTitle%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.editScaleRange",
                 "title": "%containerApps.editScaleRange%",
                 "category": "Azure Container Apps"
@@ -482,6 +488,11 @@
                 {
                     "command": "containerApps.addEnvironmentVariable",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.editEnvironmentVariableName",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
                     "group": "1@1"
                 },
                 {
