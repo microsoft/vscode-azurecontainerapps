@@ -40,7 +40,7 @@ export async function editEnvironmentVariables(context: IActionContext, node?: E
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const wizard: AzureWizard<EnvironmentVariablesEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editEnvironmentVariables', 'Edit environment variables for "{0}" (draft)', parentResource.name),
+        title: localize('editEnvironmentVariables', 'Bulk edit environment variables for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvFileListStep({ suppressSkipPick: true }),
         ],
