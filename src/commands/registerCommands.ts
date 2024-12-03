@@ -16,6 +16,7 @@ import { editContainerImage } from './editContainer/editContainerImage/editConta
 import { editContainerApp } from './editContainerApp';
 import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
 import { bulkEditEnvironmentVariables } from './environmentVariables/bulkEditEnvironmentVariables/bulkEditEnvironmentVariables';
+import { deleteEnvironmentVariable } from './environmentVariables/deleteEnvironmentVariable/deleteEnvironmentVariable';
 import { editEnvironmentVariableName } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableName';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -75,6 +76,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableName', editEnvironmentVariableName);
     registerCommandWithTreeNodeUnwrapping('containerApps.bulkEditEnvironmentVariables', bulkEditEnvironmentVariables);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
