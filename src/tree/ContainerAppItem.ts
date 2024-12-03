@@ -63,7 +63,6 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
                 containerApp = JSON.parse(JSON.stringify(containerApp)) as ContainerAppModel;
                 containerApp.template = ext.revisionDraftFileSystem.parseRevisionDraft(this);
             }
-
             return Promise.resolve(containerApp);
         },
     }
