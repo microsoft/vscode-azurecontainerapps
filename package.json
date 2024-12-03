@@ -216,7 +216,7 @@
             },
             {
                 "command": "containerApps.editEnvironmentVariableName",
-                "title": "%containerApps.editEnvironmentVariableName%",
+                "title": "%containerApps.editEnvironmentVariableName.title%",
                 "shortTitle": "%containerApps.editEnvironmentVariableName.shortTitle%",
                 "category": "Azure Container Apps"
             },
