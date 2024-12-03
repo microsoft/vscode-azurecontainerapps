@@ -64,8 +64,16 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve(ext.viewPropertiesResourceCache.get(this.id) ?? this.revision),
         label: nonNullProp(this.revision, 'name'),
+        getData: () => {
+            const cachedResource: Revision | undefined = ext.viewPropertiesResourceCache.get(nonNullProp(this.revision, 'id'));
+            const parentResource: Revision = cachedResource ?? this.revision;
+
+            return Promise.resolve(
+                parentResource ??
+                {}
+            );
+        },
     };
 
     static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {

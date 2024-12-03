@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type Revision, type Scale } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Revision, type Scale, type Template } from "@azure/arm-appcontainers";
 import { createGenericElement, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from 'deep-eql';
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
+import { getParentResource, getParentResourceFromCache } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type TreeElementBase } from "../ContainerAppsBranchDataProvider";
@@ -36,13 +36,21 @@ export class ScaleItem extends RevisionDraftDescendantBase {
     id: string = `${this.parentResource.id}/scale`;
     label: string;
 
-    // Todo: Update to use 'getData' after PR merges adding containerIdx
-    // Use getter here because some properties aren't available until after the constructor is run
-    get viewProperties(): ViewPropertiesModel {
-        return {
-            data: this.scale,
-            label: `${this.parentResource.name} Scaling`,
-        };
+    viewProperties: ViewPropertiesModel = {
+        label: scaling,
+        getData: () => {
+            let cachedResource: Template | undefined;
+            if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                cachedResource = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+            } else {
+                cachedResource = getParentResourceFromCache(this.containerApp, this.revision)?.template;
+            }
+
+            const parentResource: Template | undefined = cachedResource ?? this.parentResource.template;
+            return Promise.resolve(
+                parentResource?.scale ?? {}
+            );
+        }
     }
 
     private get parentResource(): ContainerAppModel | Revision {

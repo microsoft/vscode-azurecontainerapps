@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Container, type Revision, type Template } from "@azure/arm-appcontainers";
 import { nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from 'deep-eql';
@@ -19,8 +19,8 @@ import { ContainerItem } from "./ContainerItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
 import { ImageItem } from "./ImageItem";
 
-export const container: string = localize('container', 'Container');
-export const containers: string = localize('containers', 'Containers');
+export const containerTitle: string = localize('container', 'Container');
+export const containersTitle: string = localize('containers', 'Containers');
 
 export class ContainersItem extends RevisionDraftDescendantBase {
     id: string;
@@ -71,24 +71,29 @@ export class ContainersItem extends RevisionDraftDescendantBase {
 
     protected setProperties(): void {
         this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
-        this.label = this.containers.length === 1 ? container : containers;
+        this.label = this.containers.length === 1 ? containerTitle : containersTitle;
     }
 
     protected setDraftProperties(): void {
         this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
-        this.label = this.containers.length === 1 ? `${container}*` : `${containers}*`;
+        this.label = this.containers.length === 1 ? `${containerTitle}*` : `${containersTitle}*`;
     }
 
     viewProperties: ViewPropertiesModel = {
-        label: 'Containers',
+        label: containersTitle,
         getData: () => {
-            const cachedResource: ContainerAppModel | Revision | undefined = getParentResourceFromCache(this.containerApp, this.revision);
-            const parentResource: ContainerAppModel | Revision = cachedResource ?? this.parentResource;
+            let cachedResource: Template | undefined;
+            if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                cachedResource = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+            } else {
+                cachedResource = getParentResourceFromCache(this.containerApp, this.revision)?.template;
+            }
 
+            const parentResource: Template | undefined = cachedResource ?? this.parentResource.template;
             return Promise.resolve(
-                this.containers.length === 1 ?
-                    parentResource?.template?.containers?.[0] ?? {} :
-                    parentResource?.template?.containers ?? []
+                parentResource?.containers?.length === 1 ?
+                    parentResource?.containers?.[0] ?? {} :
+                    parentResource?.containers ?? []
             );
         }
     }

@@ -55,11 +55,20 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     viewProperties: ViewPropertiesModel = {
-        getData: () => Promise.resolve(
-            ext.viewPropertiesResourceCache.get(this.containerApp.id) ??
-            this.containerApp
-        ),
         label: this.containerApp.name,
+        getData: () => {
+            const containerApp: ContainerAppModel = {
+                ...(ext.viewPropertiesResourceCache.get(nonNullProp(this.containerApp, 'id')) as ContainerAppModel) ?? this.containerApp,
+            };
+
+            if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                containerApp.template = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+            }
+
+            return Promise.resolve(
+                containerApp ?? {}
+            );
+        },
     }
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);

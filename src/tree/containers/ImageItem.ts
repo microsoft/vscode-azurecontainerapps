@@ -3,12 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { createGenericElement, nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { KnownActiveRevisionsMode, type Container, type Revision, type Template } from "@azure/arm-appcontainers";
+import { createGenericElement, nonNullValue, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
+import { getParentResource, getParentResourceFromCache } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
@@ -32,10 +33,21 @@ export class ImageItem extends RevisionDraftDescendantBase {
     id: string = `${this.parentResource.id}/image/${this.container.image}`;
     label: string;
 
-    // Todo: Update to use 'getData' after PR merges adding containerIdx
     viewProperties: ViewPropertiesModel = {
-        data: nonNullValueAndProp(this.container, 'image'),
-        label: this.container.name ?? '',
+        label: localize('image', 'Image'),
+        getData: () => {
+            let cachedResource: Template | undefined;
+            if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                cachedResource = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+            } else {
+                cachedResource = getParentResourceFromCache(this.containerApp, this.revision)?.template;
+            }
+
+            const parentResource: Template | undefined = cachedResource ?? this.parentResource.template;
+            return Promise.resolve(
+                parentResource?.containers?.[this.containersIdx].image ?? ''
+            );
+        }
     }
 
     private getImageName(image?: string): string {

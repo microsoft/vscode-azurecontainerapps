@@ -3,12 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type Revision, type ScaleRule } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type Revision, type ScaleRule, type Template } from "@azure/arm-appcontainers";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
 import { ThemeIcon, type TreeItem } from "vscode";
+import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
+import { getParentResource, getParentResourceFromCache } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
@@ -34,11 +35,22 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
     id: string = `${this.parentResource.id}/scalerules/${this.scaleRule.name}`;
     label: string;
 
-    // Todo: Update to use 'getData' after PR merges adding containerIdx
     viewProperties: ViewPropertiesModel = {
-        data: this.scaleRule,
-        label: `${this.parentResource.name} ${scaleRuleLabel} ${this.scaleRule.name}`,
-    };
+        label: scaleRuleLabel,
+        getData: () => {
+            let cachedResource: Template | undefined;
+            if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                cachedResource = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+            } else {
+                cachedResource = getParentResourceFromCache(this.containerApp, this.revision)?.template;
+            }
+
+            const parentResource: Template | undefined = cachedResource ?? this.parentResource.template;
+            return Promise.resolve(
+                parentResource?.scale?.rules?.find(rule => rule.name === this.scaleRule.name) ?? {}
+            );
+        }
+    }
 
     private get description(): string {
         if (this.scaleRule.http) {

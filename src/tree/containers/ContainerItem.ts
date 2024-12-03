@@ -3,15 +3,17 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
-import { nonNullProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
+import { KnownActiveRevisionsMode, type Container, type Revision, type Template } from "@azure/arm-appcontainers";
+import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import * as deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { getParentResource } from "../../utils/revisionDraftUtils";
+import { ext } from "../../extensionVariables";
+import { getParentResource, getParentResourceFromCache } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
 import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
+import { containerTitle } from "./ContainersItem";
 import { EnvironmentVariablesItem } from "./EnvironmentVariablesItem";
 import { ImageItem } from "./ImageItem";
 
@@ -55,10 +57,21 @@ export class ContainerItem extends RevisionDraftDescendantBase {
         return getParentResource(this.containerApp, this.revision);
     }
 
-    // Todo: Update to use 'getData' after PR merges adding containerIdx
     viewProperties: ViewPropertiesModel = {
-        data: this.container,
-        label: nonNullProp(this.container, 'name'),
+        label: containerTitle,
+        getData: () => {
+            let cachedResource: Template | undefined;
+            if (ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this)) {
+                cachedResource = ext.revisionDraftFileSystem.parseRevisionDraft(this);
+            } else {
+                cachedResource = getParentResourceFromCache(this.containerApp, this.revision)?.template;
+            }
+
+            const parentResource: Template | undefined = cachedResource ?? this.parentResource.template;
+            return Promise.resolve(
+                parentResource?.containers?.[this.containersIdx] ?? []
+            );
+        }
     }
 
     protected setProperties(): void {
