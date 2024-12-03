@@ -11,7 +11,7 @@ import { type ScaleItem } from "../../../tree/scaling/ScaleItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickScale } from "../../../utils/pickItem/pickScale";
-import { getParentResource, isTemplateItemEditable, throwTemplateItemNotEditable } from "../../../utils/revisionDraftUtils";
+import { getParentResource, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ScaleRangeContext } from "./ScaleRangeContext";
 import { ScaleRangePromptStep } from "./ScaleRangePromptStep";
@@ -22,7 +22,7 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
     const { containerApp, revision, subscription } = item;
 
     if (!isTemplateItemEditable(item)) {
-        throwTemplateItemNotEditable(item);
+        throw new TemplateItemNotEditableError(item);
     }
 
     const parentResource: ContainerAppModel | Revision = getParentResource(containerApp, revision);
