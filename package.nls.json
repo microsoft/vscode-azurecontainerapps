@@ -15,6 +15,7 @@
     "containerApps.addEnvironmentVariable": "Add Environment Variable...",
     "containerApps.editEnvironmentVariableName.title": "Edit Environment Variable Name...",
     "containerApps.editEnvironmentVariableName.shortTitle": "Edit Name...",
+    "containerApps.editEnvironmentVariables": "Bulk Edit Environment Variables (.env)...",
     "containerApps.deployImageApi": "Deploy Image to Container App (API)...",
     "containerApps.deployWorkspaceProject": "Deploy Project from Workspace...",
     "containerApps.deployWorkspaceProjectApi": "Deploy Project from Workspace (API)...",
