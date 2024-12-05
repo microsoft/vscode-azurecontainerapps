@@ -5,10 +5,8 @@
 
 import { ContextValueQuickPickStep, runQuickPickWizard, type AzureWizardPromptStep, type IActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
-import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { ImageItem } from "../../tree/containers/ImageItem";
 import { getPickContainerSteps } from "./pickContainer";
-import { pickContainerApp } from "./pickContainerApp";
 import { type RevisionDraftPickItemOptions } from "./PickItemOptions";
 
 function getPickImageStep(): AzureWizardPromptStep<QuickPickWizardContext> {
@@ -19,12 +17,11 @@ function getPickImageStep(): AzureWizardPromptStep<QuickPickWizardContext> {
 }
 
 export async function pickImage(context: IActionContext, options?: RevisionDraftPickItemOptions): Promise<ImageItem> {
-    const containerAppItem: ContainerAppItem = await pickContainerApp(context);
     return await runQuickPickWizard(context, {
         promptSteps: [
-            ...getPickContainerSteps(containerAppItem, options),
+            ...getPickContainerSteps(options),
             getPickImageStep(),
         ],
         title: options?.title,
-    }, containerAppItem);
+    });
 }

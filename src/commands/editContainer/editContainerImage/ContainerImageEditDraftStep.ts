@@ -12,9 +12,9 @@ import { localize } from "../../../utils/localize";
 import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { getContainerNameForImage } from "../../image/imageSource/containerRegistry/getContainerNameForImage";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import { type ContainerImageUpdateContext } from "./updateContainerImage";
+import { type ContainerEditUpdateContext } from "./editContainerImage";
 
-export class ContainerImageUpdateDraftStep<T extends ContainerImageUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
+export class ContainerImageEditDraftStep<T extends ContainerEditUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
@@ -22,7 +22,7 @@ export class ContainerImageUpdateDraftStep<T extends ContainerImageUpdateContext
     }
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        progress.report({ message: localize('updatingImage', 'Updating image (draft)...') });
+        progress.report({ message: localize('editingImage', 'Editing image (draft)...') });
         this.revisionDraftTemplate.containers ??= [];
 
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
@@ -40,11 +40,11 @@ export class ContainerImageUpdateDraftStep<T extends ContainerImageUpdateContext
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerImageUpdateDraftStepSuccessItem', activitySuccessContext]),
-                label: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
+                contextValue: createUniversallyUniqueContextValue(['containerImageEditDraftStepSuccessItem', activitySuccessContext]),
+                label: localize('editImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
                 iconPath: activitySuccessIcon,
             }),
-            message: localize('updateImageSuccess', 'Updated container app "{0}" with image "{1}" (draft).', parentResource.name, context.image),
+            message: localize('editImageSuccess', 'Successfully added image "{0}" to container app "{1}" (draft).', context.image, parentResource.name),
         };
     }
 
@@ -52,8 +52,8 @@ export class ContainerImageUpdateDraftStep<T extends ContainerImageUpdateContext
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
             item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerImageUpdateDraftStepProgressItem', activityProgressContext]),
-                label: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
+                contextValue: createUniversallyUniqueContextValue(['containerImageEditDraftStepProgressItem', activityProgressContext]),
+                label: localize('editImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
                 iconPath: activityProgressIcon,
             }),
         };
@@ -63,11 +63,11 @@ export class ContainerImageUpdateDraftStep<T extends ContainerImageUpdateContext
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
             item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerImageUpdateDraftStepFailItem', activityFailContext]),
-                label: localize('updateImage', 'Update container image for "{0}" (draft)', parentResource.name),
+                contextValue: createUniversallyUniqueContextValue(['containerImageEditDraftStepFailItem', activityFailContext]),
+                label: localize('editImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
                 iconPath: activityFailIcon,
             }),
-            message: localize('updateImageFail', 'Failed to update container app "{0}" with image "{1}" (draft).', parentResource.name, context.image),
+            message: localize('editImageFail', 'Failed to add image "{0}" to container app "{1}" (draft).', context.image, parentResource.name),
         };
     }
 }
