@@ -50,7 +50,7 @@ export function getPickContainerSteps(options?: RevisionDraftPickItemOptions): A
 
 /**
  * Use to add pick steps that select down to the `ContainerItem` given that the last node picked was
- * either a `ContainerAppItem`, `RevisionItem` or `RevisionDraftItem`
+ * either a `ContainerAppItem`, `RevisionItem` or `RevisionDraftItem` (i.e. a parent resource item)
  */
 export class ContainerItemPickSteps<T extends AzureResourceQuickPickWizardContext> extends AzureWizardPromptStep<T> {
     public async prompt(): Promise<void> {

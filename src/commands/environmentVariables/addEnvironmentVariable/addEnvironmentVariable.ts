@@ -6,24 +6,21 @@
 import { type Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { type ImageItem } from "../../../tree/containers/ImageItem";
+import { type EnvironmentVariablesItem } from "../../../tree/containers/EnvironmentVariablesItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
-import { pickImage } from "../../../utils/pickItem/pickImage";
+import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
-import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
-import { type ContainerEditContext } from "../ContainerEditContext";
-import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
-import { ContainerImageEditDraftStep } from "./ContainerImageEditDraftStep";
+import { type EnvironmentVariableAddContext } from "./EnvironmentVariableAddContext";
+import { EnvironmentVariableAddDraftStep } from "./EnvironmentVariableAddDraftStep";
+import { EnvironmentVariableNameStep } from "./EnvironmentVariableNameStep";
+import { EnvironmentVariableTypeListStep } from "./EnvironmentVariableTypeListStep";
 
-export type ContainerEditUpdateContext = ContainerEditContext;
-
-// Edits only the 'image' portion of the container profile
-export async function editContainerImage(context: IActionContext, node?: ImageItem): Promise<void> {
-    const item: ImageItem = node ?? await pickImage(context, { autoSelectDraft: true });
+export async function addEnvironmentVariable(context: IActionContext, node?: EnvironmentVariablesItem): Promise<void> {
+    const item: EnvironmentVariablesItem = node ?? await pickEnvironmentVariables(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
 
     if (!isTemplateItemEditable(item)) {
@@ -33,10 +30,10 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizardContext: ContainerEditUpdateContext = {
+    const wizardContext: EnvironmentVariableAddContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext(),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
@@ -44,20 +41,20 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<ContainerEditUpdateContext> = new AzureWizard(wizardContext, {
-        title: localize('editContainerImage', 'Edit container image for "{0}" (draft)', parentResource.name),
+    const wizard: AzureWizard<EnvironmentVariableAddContext> = new AzureWizard(wizardContext, {
+        title: localize('updateEnvironmentVariables', 'Add environment variable to "{0}" (draft)', parentResource.name),
         promptSteps: [
-            new ImageSourceListStep({ suppressEnvPrompt: true }),
+            new EnvironmentVariableNameStep(item),
+            new EnvironmentVariableTypeListStep(),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
-            getVerifyProvidersStep<ContainerEditUpdateContext>(),
-            new RegistryAndSecretsUpdateStep(),
-            new ContainerImageEditDraftStep(item),
+            getVerifyProvidersStep<EnvironmentVariableAddContext>(),
+            new EnvironmentVariableAddDraftStep(item),
         ],
-        showLoadingPrompt: true,
     });
 
     await wizard.prompt();
+    wizardContext.activityTitle = localize('updateEnvironmentVariables', 'Add environment variable "{0}" to "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
     await wizard.execute();
 }

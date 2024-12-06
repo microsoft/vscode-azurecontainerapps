@@ -28,6 +28,9 @@ export function getPickContainerAppStep(containerAppName?: string | RegExp): Azu
     });
 }
 
+/**
+ * Get all the steps required to pick a `ContainerAppItem`
+ */
 export function getPickContainerAppSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     return [
         ...getPickEnvironmentSteps(),

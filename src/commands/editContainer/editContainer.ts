@@ -52,7 +52,7 @@ export async function editContainer(context: IActionContext, node?: ContainersIt
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
     const wizard: AzureWizard<ContainerEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
+        title: localize('editContainer', 'Edit container profile for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new ImageSourceListStep(),
             new RevisionDraftDeployPromptStep(),
