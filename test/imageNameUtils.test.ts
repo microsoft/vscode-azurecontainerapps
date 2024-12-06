@@ -9,6 +9,7 @@ import { getImageNameWithoutTag } from "../extension.bundle";
 suite('imageNameUtils', () => {
     test('getImageNameWithoutTag', () => {
         const testValues: string[] = [
+            '',
             'myimage:latest',
             'repository/name:1.0.0',
             'custom-registry.com/myimage:v2',
@@ -31,6 +32,7 @@ suite('imageNameUtils', () => {
         ];
 
         const expectedValues: string[] = [
+            '',
             'myimage',
             'repository/name',
             'custom-registry.com/myimage',
