@@ -31,6 +31,7 @@ export * from './src/commands/ingress/tryGetDockerfileExposePorts';
 export { activate, deactivate } from './src/extension';
 export * from './src/extensionVariables';
 export * from './src/utils/azureClients';
+export * from './src/utils/imageNameUtils';
 export * from './src/utils/settingUtils';
 export * from './src/utils/validateUtils';
 
