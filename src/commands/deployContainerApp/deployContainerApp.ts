@@ -37,6 +37,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         ...subscriptionActionContext,
         ...await createActivityContext(true),
         subscription: item.subscription,
+        containerApp: item.containerApp,
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
         imageSource,
     };
@@ -54,7 +55,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     await LocationListStep.setLocation(wizardContext, item.containerApp.location);
 
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
-        title: localize('deployContainerApp', 'Deploy to container app'),
+        title: localize('deployContainerAppTitle', 'Deploy to container app'),
         promptSteps: [
             new ImageSourceListStep(),
         ],
@@ -66,6 +67,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     });
 
     await wizard.prompt();
+    wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
     await wizard.execute();
 }
 
