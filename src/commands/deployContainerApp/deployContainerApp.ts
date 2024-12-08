@@ -33,6 +33,8 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         throw new UserCancelledError();
     }
 
+    // Todo: Add better activity children for deploying an existing image from a registry
+
     const wizardContext: ContainerAppDeployContext = {
         ...subscriptionActionContext,
         ...await createActivityContext(true),
