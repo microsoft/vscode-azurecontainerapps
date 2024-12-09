@@ -119,15 +119,24 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
                 'If you would like to update your environment variables later, try re-running the container app update or deploy command.'
             );
             ext.outputChannel.appendLog(logMessage);
-        } else {
+        } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
-                    label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using .env file'),
                     iconPath: activitySuccessIcon
                 })
             );
-            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration.'));
+            ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using .env file.'));
+        } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+                    label: localize('useExistingEnvVarsLabel', 'Use previously set environment variables', context.envPath),
+                    iconPath: activitySuccessIcon
+                })
+            );
+            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used previously set environment variables.'));
         }
     }
 }

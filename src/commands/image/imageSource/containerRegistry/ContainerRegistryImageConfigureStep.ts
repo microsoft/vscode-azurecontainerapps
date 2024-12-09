@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../../../extensionVariables";
 import { getImageNameWithoutTag, parseImageName } from "../../../../utils/imageNameUtils";
+import { localize } from "../../../../utils/localize";
 import { IngressPromptStep } from "../../../ingress/IngressPromptStep";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLoginServer } from "./getLoginServer";
@@ -16,6 +18,16 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
         const { registryName, registryDomain } = parseImageName(context.image);
         context.telemetry.properties.registryName = registryName;
         context.telemetry.properties.registryDomain = registryDomain ?? 'other';
+
+        // Output logs
+        context.activityChildren?.push(
+            new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['containerRegistryImageConfigureStepItem', activitySuccessContext]),
+                label: localize('configureTargetImageLabel', 'Configure target image "{0}"', context.image),
+                iconPath: activitySuccessIcon
+            })
+        );
+        ext.outputChannel.appendLog(localize('configureTargetImageMessage', 'Configured target image "{0}".', context.image));
     }
 
     public async prompt(): Promise<void> {
