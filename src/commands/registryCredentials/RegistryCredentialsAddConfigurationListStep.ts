@@ -90,7 +90,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 context.activityChildren?.push(
                     new GenericTreeItem(undefined, {
                         contextValue: createUniversallyUniqueContextValue(['registryCredentialsAddConfigurationListStepVerifyItem', activitySuccessContext]),
-                        label: localize('verifyRegistryCredentials', 'Verify existing registry credentials'),
+                        label: localize('verifyRegistryCredentials', 'Verify existing registry credential'),
                         iconPath: activitySuccessIcon
                     })
                 );

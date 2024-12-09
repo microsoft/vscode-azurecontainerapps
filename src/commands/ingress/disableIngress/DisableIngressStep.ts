@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
 import { type IngressBaseContext } from "../IngressContext";
@@ -25,4 +25,17 @@ export class DisableIngressStep extends IngressUpdateStepBase<IngressBaseContext
     public shouldExecute(context: IngressBaseContext): boolean {
         return context.enableIngress === false && isIngressEnabled(context);
     }
+
+    public static createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['disableIngressStepSuccessItem', activitySuccessContext]),
+                label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('disableMessage', 'Disabled ingress for container app "{0}".', context.containerApp?.name)
+        };
+    }
+
+    // Todo: For the sake of completeness, add success and fail outputs, otherwise the static method on its own looks kind of weird
 }

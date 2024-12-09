@@ -123,20 +123,20 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
-                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using .env file'),
+                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using provided .env file'),
                     iconPath: activitySuccessIcon
                 })
             );
-            ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using .env file.'));
+            ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
-                    label: localize('useExistingEnvVarsLabel', 'Use previously set environment variables', context.envPath),
+                    label: localize('useExistingEnvVarsLabel', 'Use existing environment variables'),
                     iconPath: activitySuccessIcon
                 })
             );
-            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used previously set environment variables.'));
+            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variables.'));
         }
     }
 }
