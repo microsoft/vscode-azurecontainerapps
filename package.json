@@ -96,11 +96,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.deployWorkspaceProjectToContainerApp",
-                "title": "%containerApps.deployWorkspaceProjectToContainerApp%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.deployContainerApp",
                 "title": "%containerApps.deployContainerApp%",
                 "category": "Azure Container Apps"
@@ -365,11 +360,6 @@
                     "group": "2@1"
                 },
                 {
-                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
-                    "group": "2@2"
-                },
-                {
                     "command": "containerApps.deployRevisionDraft",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single(.*)unsavedChanges:true/i",
                     "group": "inline@1"
@@ -553,10 +543,6 @@
             "commandPalette": [
                 {
                     "command": "containerApps.createContainerAppFromWorkspace",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
                     "when": "never"
                 },
                 {
