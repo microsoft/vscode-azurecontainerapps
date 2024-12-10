@@ -9,6 +9,4 @@ import { type IContainerAppContext } from '../IContainerAppContext';
 import { type ImageSourceBaseContext } from '../image/imageSource/ImageSourceContext';
 import { type IngressBaseContext } from '../ingress/IngressContext';
 
-export interface ContainerAppDeployContext extends IResourceGroupWizardContext, ImageSourceBaseContext, IngressBaseContext, IContainerAppContext, ExecuteActivityContext {
-    //
-}
+export type ContainerAppDeployContext = IResourceGroupWizardContext & ImageSourceBaseContext & IngressBaseContext & IContainerAppContext & ExecuteActivityContext;

@@ -29,8 +29,6 @@ export interface DeployWorkspaceProjectResults {
     logAnalyticsWorkspaceId?: string;
     managedEnvironmentId?: string;
     containerAppId?: string;
-
-    // ACR
     registryId?: string;
     registryLoginServer?: string;
     registryUsername?: string;

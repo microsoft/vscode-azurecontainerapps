@@ -14,17 +14,19 @@ import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../.
 import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../../utils/localize";
 import { type IContainerAppContext } from "../IContainerAppContext";
-import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
+import type * as api from "../api/vscode-azurecontainerapps.api";
 import { browseContainerApp } from "../browseContainerApp";
+import { getDeployContainerAppResults } from "../deployContainerApp/getDeployContainerAppResults";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { formatSectionHeader } from "./formatSectionHeader";
-import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
 import { type DeployWorkspaceProjectInternalContext } from "./internal/DeployWorkspaceProjectInternalContext";
 import { deployWorkspaceProjectInternal } from "./internal/deployWorkspaceProjectInternal";
 import { convertV1ToV2SettingsSchema } from "./settings/convertSettings/convertV1ToV2SettingsSchema";
+
+export type DeployWorkspaceProjectResults = api.DeployWorkspaceProjectResults;
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
@@ -67,7 +69,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     displayNotification(deployWorkspaceProjectContext);
-    return await getDeployWorkspaceProjectResults(deployWorkspaceProjectContext);
+    return await getDeployContainerAppResults(deployWorkspaceProjectContext);
 }
 
 function displayNotification(context: DeployWorkspaceProjectContext): void {

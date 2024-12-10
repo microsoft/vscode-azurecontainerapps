@@ -33,9 +33,22 @@ export class DisableIngressStep extends IngressUpdateStepBase<IngressBaseContext
                 label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('disableMessage', 'Disabled ingress for container app "{0}".', context.containerApp?.name)
+            message: localize('disableSuccessMessage', 'Disabled ingress for container app "{0}".', context.containerApp?.name)
         };
     }
 
-    // Todo: For the sake of completeness, add success and fail outputs, otherwise the static method on its own looks kind of weird
+    public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return DisableIngressStep.createSuccessOutput(context);
+    }
+
+    public createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['disableIngressStepFailItem', activitySuccessContext]),
+                label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('disableFailMessage', 'Failed to disable ingress for container app "{0}".', context.containerApp?.name)
+        };
+    }
 }

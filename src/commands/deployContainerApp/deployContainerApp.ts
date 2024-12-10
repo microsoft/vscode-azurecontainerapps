@@ -5,7 +5,7 @@
 
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, UserCancelledError, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -18,8 +18,9 @@ import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspac
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerAppDeployContext } from "./ContainerAppDeployContext";
+import { getDeployContainerAppResults, type DeployContainerAppResults } from "./getDeployContainerAppResults";
 
-export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem) {
+export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<DeployContainerAppResults> {
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
@@ -27,13 +28,8 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
     const imageSource: ImageSource = await promptImageSource(subscriptionActionContext);
     if (imageSource === ImageSource.RemoteAcrBuild) {
-        // Add generic return for deploy call that roughly matches the deployWorkspaceProjectResults
-        // Also check how we want to differentiate this version of deployment from update container...
-        void deployWorkspaceProject(context, item);
-        throw new UserCancelledError();
+        return await deployWorkspaceProject(context, item);
     }
-
-    // Todo: Add better activity children for deploying an existing image from a registry
 
     const wizardContext: ContainerAppDeployContext = {
         ...subscriptionActionContext,
@@ -71,6 +67,8 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     await wizard.prompt();
     wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
     await wizard.execute();
+
+    return await getDeployContainerAppResults(wizardContext);
 }
 
 async function promptImageSource(context: ISubscriptionActionContext): Promise<ImageSource> {

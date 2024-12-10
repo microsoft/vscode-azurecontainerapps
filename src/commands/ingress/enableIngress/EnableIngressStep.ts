@@ -39,22 +39,20 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
     }
 
     public shouldExecute(context: IngressBaseContext): boolean {
-        return context.enableIngress === true &&
-            (context.enableExternal !== undefined && context.enableExternal !== context.containerApp?.configuration?.ingress?.external) ||
-            (!!context.targetPort && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort);
+        const hasNewVisiblity: boolean = context.enableExternal !== undefined && context.enableExternal !== context.containerApp?.configuration?.ingress?.external;
+        const hasNewTargetPort: boolean = !!context.targetPort && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
+        return context.enableIngress === true && hasNewVisiblity || hasNewTargetPort;
     }
 
     public static createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        const ingressLocation: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
-        // Todo: If dockerfilePath exists and alwaysPromptIngress is false, add note (from dockerfile configuration)...
-        // Remove the manual outputs from IngressPromptStep
+        const visibility: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['enableIngressStepSuccessItem', activitySuccessContext]),
-                label: localize('enableIngressLabel', 'Enable ingress on port {0} ({1})', context.targetPort, ingressLocation),
+                label: localize('enableIngressLabel', 'Enable {0} ingress on port {1}', visibility, context.targetPort),
                 iconPath: activitySuccessIcon
             }),
-            message: localize('enableCompleted', 'Enabled ingress on port {0} ({1})".', context.targetPort, ingressLocation)
+            message: localize('enableCompleted', 'Enabled {0} ingress on port {1}.', visibility, context.targetPort)
         };
     }
 
@@ -63,14 +61,14 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
     }
 
     public createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        const ingressLocation: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
+        const visibility: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['enableIngressStepFailItem', activityFailContext]),
-                label: localize('enableIngressLabel', 'Enable ingress on port {0} ({1})', context.targetPort, ingressLocation),
+                label: localize('enableIngressLabel', 'Enable {0} ingress on port {1}', visibility, context.targetPort),
                 iconPath: activityFailIcon
             }),
-            message: localize('enableIngressFailed', 'Failed to enable ingress on port {0} ({1}).', context.targetPort, ingressLocation)
+            message: localize('enableIngressFailed', 'Failed to enable {0} ingress on port {1}.', visibility, context.targetPort)
         };
     }
 }
