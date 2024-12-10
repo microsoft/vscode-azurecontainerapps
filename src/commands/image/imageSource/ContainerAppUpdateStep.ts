@@ -19,6 +19,7 @@ import { getContainerNameForImage } from "./containerRegistry/getContainerNameFo
 export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 680;
 
+    // Todo: Add retries to fix issue when deploying using docker login credentials and enabling admin user creds
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
