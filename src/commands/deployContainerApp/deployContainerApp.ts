@@ -18,9 +18,8 @@ import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspac
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerAppDeployContext } from "./ContainerAppDeployContext";
-import { getDeployContainerAppResults, type DeployContainerAppResults } from "./getDeployContainerAppResults";
 
-export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<DeployContainerAppResults> {
+export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<void> {
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
@@ -28,7 +27,8 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
     const imageSource: ImageSource = await promptImageSource(subscriptionActionContext);
     if (imageSource === ImageSource.RemoteAcrBuild) {
-        return await deployWorkspaceProject(context, item);
+        await deployWorkspaceProject(context, item);
+        return;
     }
 
     const wizardContext: ContainerAppDeployContext = {
@@ -67,8 +67,6 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     await wizard.prompt();
     wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
     await wizard.execute();
-
-    return await getDeployContainerAppResults(wizardContext);
 }
 
 async function promptImageSource(context: ISubscriptionActionContext): Promise<ImageSource> {
