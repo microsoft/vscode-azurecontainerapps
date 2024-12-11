@@ -5,6 +5,7 @@
 
 import { type Ingress } from "@azure/arm-appcontainers";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import * as retry from 'p-retry';
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
@@ -12,6 +13,7 @@ import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { DisableIngressStep } from "../../ingress/disableIngress/DisableIngressStep";
 import { enabledIngressDefaults, EnableIngressStep } from "../../ingress/enableIngress/EnableIngressStep";
+import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
@@ -19,7 +21,6 @@ import { getContainerNameForImage } from "./containerRegistry/getContainerNameFo
 export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 680;
 
-    // Todo: Add retries to fix issue when deploying using docker login credentials and enabling admin user creds
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
@@ -64,13 +65,35 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
             name: getContainerNameForImage(nonNullProp(context, 'image')),
         });
 
-        const updating = localize('updatingContainerApp', 'Updating container app...', containerApp.name);
-        progress.report({ message: updating });
+        const retries = 4;
+        await retry(
+            async (currentAttempt: number): Promise<void> => {
+                if (context.newRegistryCredentialType === RegistryCredentialType.DockerLogin && currentAttempt === 2) {
+                    const reason: string = localize('authenticationRequired', 'Container registry authentication was rejected due to unauthorized access. This may be due to internal permissions still propagating. Authentication will be attempted up to {0} times.', retries + 1);
+                    ext.outputChannel.appendLog(reason);
+                }
 
-        await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
-            context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
-            ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
-        });
+                const message: string = currentAttempt === 1 ?
+                    localize('updatingContainerApp', 'Updating container app...') :
+                    localize('updatingContainerAppAttempt', 'Updating container app (Attempt {0}/{1})...', currentAttempt, retries + 1);
+                progress.report({ message: message });
+                ext.outputChannel.appendLog(message);
+
+                await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
+                    context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
+                    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+                });
+            },
+            {
+                onFailedAttempt: (err: retry.FailedAttemptError) => {
+                    if (!/authentication\srequired/i.test(err.message)) {
+                        throw err;
+                    }
+                },
+                retries,
+                minTimeout: 2 * 1000,
+            }
+        );
     }
 
     public shouldExecute(context: T): boolean {
