@@ -13,6 +13,10 @@ import { localize } from "../../../../utils/localize";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
+// Todo: Replace with a step that forces user to pick a registry if one is missing.
+// We can recommend registry in the same resource group like for managed environment step
+// Or they can select to create
+
 type TryUseExistingResourceGroupRegistryContext = DeployWorkspaceProjectInternalContext & SetTelemetryProps<TelemetryProps>;
 
 export class TryUseExistingResourceGroupRegistryStep<T extends TryUseExistingResourceGroupRegistryContext> extends AzureWizardExecuteStep<T> {

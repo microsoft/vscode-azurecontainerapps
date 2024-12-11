@@ -15,6 +15,8 @@ import { type DeploymentConfigurationSettings } from "../../../settings/DeployWo
 import { dwpSettingUtilsV2 } from "../../../settings/dwpSettingUtilsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
+// Todo: Maybe can delete this step since we're aiming to force users to always pick container registries now unless a setting already exists
+
 type TryUseExistingWorkspaceRegistryContext = WorkspaceDeploymentConfigurationContext & SetTelemetryProps<TelemetryProps>;
 
 export class TryUseExistingWorkspaceRegistryStep<T extends TryUseExistingWorkspaceRegistryContext> extends AzureWizardExecuteStep<T> {
