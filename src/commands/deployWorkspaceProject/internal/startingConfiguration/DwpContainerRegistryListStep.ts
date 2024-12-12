@@ -22,7 +22,8 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
 
         const placeHolder: string = localize('selectContainerRegistry', 'Select a container registry');
         const pick = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
-        // context.telemetry.properties.usedRecommendedEnv = isRecommendedPick(pick) ? 'true' : 'false';
+        // Todo: Add telemetry similar to below
+        // context.telemetry.properties.usedReckommendedEnv = isRecommendedPick(pick) ? 'true' : 'false';
         // context.telemetry.properties.recommendedEnvCount =
         //     String(picks.reduce((count, pick) => count + (isRecommendedPick(pick) ? 1 : 0), 0));
 
@@ -39,21 +40,20 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
             return [];
         }
 
-        // Group registries by resource group
-        const registryGroups: Record<string, Registry[]> = {};
+        const registriesByGroup: Record<string, Registry[]> = {};
         for (const r of registries) {
             if (!r.id) {
                 continue;
             }
 
             const { resourceGroup } = parseAzureResourceId(r.id);
-            const registryGroup: Registry[] = registryGroups[resourceGroup] ?? [];
-            registryGroup.push(r);
-            registryGroups[resourceGroup] = registryGroup;
+            const registriesGroup: Registry[] = registriesByGroup[resourceGroup] ?? [];
+            registriesGroup.push(r);
+            registriesByGroup[resourceGroup] = registriesGroup;
         }
 
         // Sort resource groups alphabetically; if matches selected resource group, prioritize to the top
-        const sortedResourceGroups: string[] = Object.keys(registryGroups).sort((a, b) => {
+        const sortedResourceGroups: string[] = Object.keys(registriesByGroup).sort((a, b) => {
             const lowA: string = a.toLocaleLowerCase();
             const lowB: string = b.toLocaleLowerCase();
 
@@ -64,7 +64,7 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
                 case b === context.resourceGroup?.name:
                     return 1;
 
-                // Everything below is for normal alphabetical sorting
+                // Everything below handles normal alphabetical sorting
                 case lowA < lowB:
                     return -1;
                 case lowB < lowA:
@@ -82,7 +82,7 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
         ];
 
         for (const rg of sortedResourceGroups) {
-            const registryGroup: Registry[] = registryGroups[rg];
+            const registryGroup: Registry[] = registriesByGroup[rg];
             const maybeRecommended: string = rg === context.resourceGroup?.name ? ` ${recommendedPickDescription}` : '';
 
             picks.push(...registryGroup.map(r => {
