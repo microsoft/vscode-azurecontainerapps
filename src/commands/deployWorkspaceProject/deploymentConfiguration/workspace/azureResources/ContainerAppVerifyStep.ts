@@ -18,6 +18,13 @@ export class ContainerAppVerifyStep extends AzureResourceVerifyStepBase {
     protected contextKey = 'containerApp' as const;
 
     protected async verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
+        if (context.containerApp) {
+            return;
+        }
+        await ContainerAppVerifyStep.verifyContainerApp(context);
+    }
+
+    static async verifyContainerApp(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const containerApp: ContainerApp = await client.containerApps.get(nonNullValueAndProp(context.resourceGroup, 'name'), nonNullValueAndProp(context.deploymentConfigurationSettings, 'containerApp'));
         context.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);

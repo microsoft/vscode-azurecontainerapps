@@ -13,6 +13,7 @@ import { ContainerAppVerifyStep } from "./azureResources/ContainerAppVerifyStep"
 import { ContainerRegistryVerifyStep } from "./azureResources/ContainerRegistryVerifyStep";
 import { ResourceGroupVerifyStep } from "./azureResources/ResourceGroupVerifyStep";
 import { DockerfileValidateStep } from "./filePaths/DockerfileValidateStep";
+import { EnvUseExistingConfigurationPromptStep } from "./filePaths/EnvUseExistingConfigurationPromptStep";
 import { EnvValidateStep } from "./filePaths/EnvValidateStep";
 import { SrcValidateStep } from "./filePaths/SrcValidateStep";
 
@@ -52,6 +53,9 @@ export class DeploymentConfigurationListStep extends AzureWizardPromptStep<Works
         context.activityChildren ??= [];
 
         return {
+            promptSteps: [
+                new EnvUseExistingConfigurationPromptStep(),
+            ],
             executeSteps: [
                 new DockerfileValidateStep(),
                 new SrcValidateStep(),

@@ -40,7 +40,7 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
         // If more than the image tag changed, prompt for ingress again
-        if (getImageNameWithoutTag(context.containerApp?.template?.containers?.[0].image ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
+        if (getImageNameWithoutTag(context.containerApp?.template?.containers?.[context.containersIdx ?? 0].image ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
             return {
                 promptSteps: [new IngressPromptStep()],
             };

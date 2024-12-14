@@ -30,15 +30,16 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
 
     public async prompt(context: EnvironmentVariablesContext): Promise<void> {
-        // since we only allow one container, we can assume that we want the first container's env settings
-        const existingData = context.containerApp?.template?.containers?.[0].env;
+        const existingData = context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
         context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
 
-        if (!context.envPath && existingData) {
+        if (context.envPath) {
+            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
+        } else if (existingData) {
             context.environmentVariables = existingData;
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
         } else {
-            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.SkipForNow;
         }
 
         if (this._setEnvironmentVariableOption) {
@@ -76,10 +77,16 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         }
 
         this._setEnvironmentVariableOption = SetEnvironmentVariableOption.ProvideFile;
+        return EnvironmentVariablesListStep.parseEnvironmentVariablesFromEnvPath(envPath);
+    }
+
+    public static async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
+        if (!envPath || !await AzExtFsExtra.pathExists(envPath)) {
+            return [];
+        }
 
         const data: string = await AzExtFsExtra.readFile(envPath);
         const envData: DotenvParseOutput = parse(data);
-
         return Object.keys(envData).map(name => { return { name, value: envData[name] } });
     }
 
@@ -132,11 +139,11 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
-                    label: localize('useExistingEnvVarsLabel', 'Use existing environment variables'),
+                    label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
                     iconPath: activitySuccessIcon
                 })
             );
-            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variables.'));
+            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
     }
 }
