@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Revision } from "@azure/arm-appcontainers";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../tree/revisionManagement/RevisionDraftItem";
@@ -16,6 +17,16 @@ import { localize } from "./localize";
  */
 export function getParentResource(containerApp: ContainerAppModel, revision: Revision): ContainerAppModel | Revision {
     return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp : revision;
+}
+
+/**
+ * Use to always select the correct parent resource from cache.
+ * This is primarily used to always show fresh view properties resource data.
+ */
+export function getParentResourceFromCache(containerApp: ContainerAppModel, revision: Revision): ContainerAppModel | Revision | undefined {
+    return containerApp.revisionsMode === KnownActiveRevisionsMode.Single ?
+        ext.viewPropertiesResourceCache.get(containerApp.id) :
+        ext.viewPropertiesResourceCache.get(nonNullProp(revision, 'id'));
 }
 
 /**

@@ -33,6 +33,8 @@ export class RevisionItem implements RevisionsItemModel {
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
         this.id = nonNullProp(this.revision, 'id');
         this.revisionsMode = containerApp.revisionsMode;
+
+        ext.viewPropertiesResourceCache.set(this.id, this.revision);
     }
 
     private get contextValue(): string {
@@ -62,8 +64,16 @@ export class RevisionItem implements RevisionsItemModel {
     }
 
     viewProperties: ViewPropertiesModel = {
-        data: this.revision,
         label: nonNullProp(this.revision, 'name'),
+        getData: () => {
+            const cachedResource: Revision | undefined = ext.viewPropertiesResourceCache.get(nonNullProp(this.revision, 'id'));
+            const parentResource: Revision = cachedResource ?? this.revision;
+
+            return Promise.resolve(
+                parentResource ??
+                {}
+            );
+        },
     };
 
     static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
