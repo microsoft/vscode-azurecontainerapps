@@ -19,7 +19,7 @@ export class EnvironmentVariableDeleteDraftStep<T extends EnvironmentVariableDel
     }
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        progress.report({ message: localize('addingEnv', 'Deleting environment variable (draft)...') });
+        progress.report({ message: localize('deletingEnv', 'Deleting environment variable (draft)...') });
         this.revisionDraftTemplate.containers ??= [];
 
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
@@ -29,6 +29,6 @@ export class EnvironmentVariableDeleteDraftStep<T extends EnvironmentVariableDel
     }
 
     public shouldExecute(context: T): boolean {
-        return context.containersIdx !== undefined && !!context.environmentVariable;
+        return !!context.environmentVariable;
     }
 }

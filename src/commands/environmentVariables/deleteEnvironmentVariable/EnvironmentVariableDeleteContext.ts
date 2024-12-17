@@ -9,6 +9,7 @@ import { type ContainerUpdateTelemetryProps as TelemetryProps } from "../../../t
 import { type EnvironmentVariablesBaseContext } from "../EnvironmentVariablesContext";
 
 export interface EnvironmentVariableDeleteBaseContext extends EnvironmentVariablesBaseContext {
+    // Require the environment variable upfront so we can delete
     environmentVariable: EnvironmentVar;
 }
 

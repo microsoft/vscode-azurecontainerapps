@@ -39,11 +39,11 @@ export async function deleteEnvironmentVariable(context: IActionContext, node?: 
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const confirmMessage: string = localize('confirmDeleteEnv', 'Are you sure you want to delete environment variable "{0}"?', item.envVariable.name);
+    const confirmMessage: string = localize('confirmDeleteEnv', 'Are you sure you want to delete environment variable "{0}" (draft)?', item.envVariable.name);
     const wizard: AzureWizard<EnvironmentVariableDeleteContext> = new AzureWizard(wizardContext, {
         title: localize('deleteEnvironmentVariable', 'Delete environment variable "{0}" from "{1}" (draft)', item.envVariable.name, parentResource.name),
         promptSteps: [
-            new DeleteConfirmationStep(confirmMessage)
+            new DeleteConfirmationStep(confirmMessage),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableDeleteContext>(),
