@@ -51,6 +51,10 @@ export function parseImageName(imageName?: string): ParsedImageName {
     };
 }
 
+export function getImageNameWithoutTag(imageName: string): string {
+    return imageName.replace(/:[^:]*$/, '');
+}
+
 /**
  * @param registryName When parsed from a full image name, everything before the first slash
  */
