@@ -11,14 +11,16 @@ import { createManagedEnvironment } from './createManagedEnvironment/createManag
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
 import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
+import { editContainer } from './editContainer/editContainer';
+import { editContainerImage } from './editContainer/editContainerImage/editContainerImage';
 import { editContainerApp } from './editContainerApp';
+import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
 import { deployImageApi } from './image/deployImageApi/deployImageApi';
 import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { openAcrBuildLogs } from './image/openAcrBuildLogs';
-import { updateImage } from './image/updateImage/updateImage';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress/enableIngress';
@@ -58,11 +60,17 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
-    registerCommandWithTreeNodeUnwrapping('containerApps.updateImage', updateImage);
-    registerCommandWithTreeNodeUnwrapping('containerapps.toggleEnvironmentVariableVisibility',
+    registerCommandWithTreeNodeUnwrapping('containerApps.toggleEnvironmentVariableVisibility',
         async (context: IActionContext, item: EnvironmentVariableItem) => {
             await item.toggleValueVisibility(context);
         });
+
+    // containers
+    registerCommandWithTreeNodeUnwrapping('containerApps.editContainer', editContainer);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editContainerImage', editContainerImage);
+
+    // environment variables
+    registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
 
     // deploy
     registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);

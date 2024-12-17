@@ -23,7 +23,7 @@ export interface RevisionsDraftModel {
 }
 
 export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {
-    static readonly idSuffix: string = '/revisionDraft';
+    static readonly idSuffix: string = 'revisionDraft';
     static readonly contextValue: string = 'revisionDraftItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
 
@@ -58,7 +58,7 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
 
     static isRevisionDraftItem(item: unknown): item is RevisionDraftItem {
         return typeof item === 'object' &&
-            (item as RevisionDraftItem).id === 'string' &&
+            typeof (item as RevisionDraftItem).id === 'string' &&
             (item as RevisionDraftItem).id.split('/').at(-1) === RevisionDraftItem.idSuffix;
     }
 

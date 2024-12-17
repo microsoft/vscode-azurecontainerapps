@@ -7,16 +7,16 @@ import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers"
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import { type Progress } from "vscode";
-import { ext } from "../../../extensionVariables";
-import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { localize } from "../../../utils/localize";
-import { updateContainerApp } from "../../updateContainerApp";
-import { type UpdateImageContext } from "./updateImage";
+import { ext } from "../../extensionVariables";
+import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../tree/ContainerAppItem";
+import { localize } from "../../utils/localize";
+import { updateContainerApp } from "../updateContainerApp";
+import { type ContainerEditContext } from "./ContainerEditContext";
 
-export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateImageContext> {
+export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 580;
 
-    public async execute(context: UpdateImageContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -28,20 +28,17 @@ export class UpdateRegistryAndSecretsStep extends AzureWizardExecuteStep<UpdateI
             context.telemetry.properties.skippedRegistryCredentialUpdate = 'true';
             return;
         }
-
         context.telemetry.properties.skippedRegistryCredentialUpdate = 'false';
 
         progress.report({ message: localize('configuringSecrets', 'Configuring registry secrets...') });
-
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
-
         ext.outputChannel.appendLog(localize('updatedSecrets', 'Updated container app "{0}" with new registry secrets.', containerApp.name));
     }
 
-    public shouldExecute(context: UpdateImageContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !!context.registryCredentials && !!context.secrets;
     }
 
