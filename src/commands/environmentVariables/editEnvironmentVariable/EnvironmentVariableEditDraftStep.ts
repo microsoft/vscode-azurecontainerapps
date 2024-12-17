@@ -35,6 +35,6 @@ export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditC
     }
 
     public shouldExecute(context: T): boolean {
-        return context.containersIdx !== undefined && !!context.environmentVariable;
+        return !!context.environmentVariable;
     }
 }

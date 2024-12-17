@@ -20,20 +20,22 @@ export class EnvironmentVariableAddDraftStep<T extends EnvironmentVariableAddCon
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('addingEnv', 'Adding environment variable (draft)...') });
+        context.environmentVariable = {
+            name: context.newEnvironmentVariableName,
+            value: context.newEnvironmentVariableManualInput ?? '', // The server doesn't allow this value to be undefined
+            secretRef: context.secretName,
+        };
+
         this.revisionDraftTemplate.containers ??= [];
 
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
         container.env ??= [];
-        container.env.push({
-            name: context.newEnvironmentVariableName,
-            value: context.newEnvironmentVariableManualInput ?? '', // The server doesn't allow this value to be undefined
-            secretRef: context.secretName,
-        });
+        container.env.push(context.environmentVariable);
 
         await this.updateRevisionDraftWithTemplate(context);
     }
 
     public shouldExecute(context: T): boolean {
-        return context.containersIdx !== undefined && !!context.newEnvironmentVariableName;
+        return !context.environmentVariable;
     }
 }
