@@ -29,6 +29,6 @@ export class EnvironmentVariablesBulkEditDraftStep<T extends EnvironmentVariable
     }
 
     public shouldExecute(context: T): boolean {
-        return context.containersIdx !== undefined && !!context.environmentVariables;
+        return !!context.environmentVariables;
     }
 }
