@@ -53,7 +53,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     await LocationListStep.setLocation(wizardContext, item.containerApp.location);
 
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
-        title: localize('deployContainerAppTitle', 'Deploy to container app'),
+        title: localize('deployContainerAppTitle', 'Deploy image to container app'),
         promptSteps: [
             new ImageSourceListStep(),
         ],
