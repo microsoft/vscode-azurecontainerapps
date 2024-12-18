@@ -39,7 +39,7 @@ export async function createContainerApp(context: IActionContext, node?: Managed
     };
 
     if (isAzdExtensionInstalled()) {
-        wizardContext.telemetry.properties.isAzdWorkspaceProject = 'true';
+        wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
 
     // Use the same resource group and location as the parent resource (managed environment)

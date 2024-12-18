@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { UIKind, env, workspace } from "vscode";
 import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
@@ -33,7 +33,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
         super();
     }
 
-    public async prompt(context: ImageSourceContext): Promise<void> {
+    public async prompt(context: ISubscriptionActionContext & { imageSource?: ImageSource, showQuickStartImage?: boolean }): Promise<void> {
         const imageSourceLabels: string[] = [
             localize('containerRegistryLabel', 'Container Registry'),
             localize('quickstartImageLabel', 'Quickstart'),
