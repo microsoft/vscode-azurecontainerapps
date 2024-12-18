@@ -56,7 +56,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         const retries = 4;
         await retry(
             async (currentAttempt: number): Promise<void> => {
-                if (context.newRegistryCredentialType === RegistryCredentialType.DockerLogin && currentAttempt === 2) {
+                if (currentAttempt === 2) {
                     const reason: string = localize('authenticationRequired', 'Container registry authentication was rejected due to unauthorized access. This may be due to internal permissions still propagating. Authentication will be attempted up to {0} times.', retries + 1);
                     ext.outputChannel.appendLog(reason);
                 }
@@ -74,7 +74,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
             },
             {
                 onFailedAttempt: (err: retry.FailedAttemptError) => {
-                    if (!/authentication\srequired/i.test(err.message)) {
+                    if (context.newRegistryCredentialType !== RegistryCredentialType.DockerLogin || !/authentication\srequired/i.test(err.message)) {
                         throw err;
                     }
                 },
