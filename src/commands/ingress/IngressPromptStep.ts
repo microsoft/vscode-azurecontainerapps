@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type AzureWizardExecuteStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type AzureWizardExecuteStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { type IngressContext } from "./IngressContext";
@@ -61,7 +61,7 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
 
     if (context.dockerfileExposePorts) {
         context.enableIngress = true;
-        context.enableExternal = true;
+        context.enableExternal = context.containerApp?.configuration?.ingress?.external ?? true;
         context.targetPort = getDefaultPort(context);
     } else {
         context.enableIngress = false;
@@ -73,16 +73,6 @@ export async function tryConfigureIngressUsingDockerfile(context: IngressContext
     if (currentExternalEnabled === context.enableExternal && currentTargetPort === context.targetPort) {
         return;
     }
-
-    context.activityChildren?.push(
-        new GenericTreeItem(undefined, {
-            contextValue: createUniversallyUniqueContextValue(['ingressPromptStepSuccessItem', activitySuccessContext]),
-            label: context.enableIngress ?
-                localize('ingressEnableLabel', 'Enable ingress on port {0} (from Dockerfile configuration)', context.targetPort) :
-                localize('ingressDisableLabel', 'Disable ingress (from Dockerfile configuration)'),
-            iconPath: activitySuccessIcon
-        })
-    );
 
     ext.outputChannel.appendLog(context.enableIngress ?
         localize('ingressEnabledLabel', 'Detected ingress on port {0} using Dockerfile configuration.', context.targetPort) :

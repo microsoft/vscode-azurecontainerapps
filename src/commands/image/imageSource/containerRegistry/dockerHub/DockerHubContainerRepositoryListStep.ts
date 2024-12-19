@@ -24,7 +24,7 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
-            const { registryDomain, namespace, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            const { registryDomain, namespace, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (
                 context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
                 registryDomain === dockerHubDomain &&

@@ -16,6 +16,7 @@ export interface ImageSourceBaseContext extends RegistryCredentialsContext, ICon
     imageSource?: ImageSource;
     showQuickStartImage?: boolean;
 
+    containersIdx?: number;
     image?: string;
 
     envPath?: string;

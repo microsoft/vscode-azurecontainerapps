@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Ingress } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
-import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
+import { DisableIngressStep } from "../../ingress/disableIngress/DisableIngressStep";
+import { enabledIngressDefaults, EnableIngressStep } from "../../ingress/enableIngress/EnableIngressStep";
 import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
@@ -37,6 +38,17 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         } else {
             // If enableIngress is not set, just default to the previous settings if they exist
             ingress = containerAppEnvelope.configuration.ingress;
+        }
+
+        // Display ingress log outputs
+        if (ingress) {
+            const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
+            item && context.activityChildren?.push(item);
+            message && ext.outputChannel.appendLog(message);
+        } else {
+            const { item, message } = DisableIngressStep.createSuccessOutput({ ...context, enableIngress: false });
+            item && context.activityChildren?.push(item);
+            message && ext.outputChannel.appendLog(message);
         }
 
         containerAppEnvelope.configuration.ingress = ingress;

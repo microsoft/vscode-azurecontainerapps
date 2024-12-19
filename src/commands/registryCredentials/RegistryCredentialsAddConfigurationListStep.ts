@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
@@ -86,6 +87,14 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 );
                 break;
             default:
+                context.activityChildren?.push(
+                    new GenericTreeItem(undefined, {
+                        contextValue: createUniversallyUniqueContextValue(['registryCredentialsAddConfigurationListStepVerifyItem', activitySuccessContext]),
+                        label: localize('verifyRegistryCredentials', 'Verify existing registry credential'),
+                        iconPath: activitySuccessIcon
+                    })
+                );
+                ext.outputChannel.appendLog(localize('verifiedRegistryCredentials', 'Verified existing registry credentials.'));
         }
 
         executeSteps.push(new RegistryCredentialsAndSecretsConfigurationStep());
@@ -95,8 +104,6 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             executeSteps,
         };
     }
-
-
 
     public async getPicks(context: RegistryCredentialsContext): Promise<IAzureQuickPickItem<RegistryCredentialType>[]> {
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];

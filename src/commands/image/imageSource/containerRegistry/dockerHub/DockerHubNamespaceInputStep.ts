@@ -43,7 +43,7 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
     private getSuggestedNamespace(context: ContainerRegistryImageSourceContext): string {
         let suggestedNamespace: string | undefined;
         if (context.containerApp) {
-            const { registryDomain, namespace } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            const { registryDomain, namespace } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === dockerHubDomain) {
                 suggestedNamespace = namespace;
             }

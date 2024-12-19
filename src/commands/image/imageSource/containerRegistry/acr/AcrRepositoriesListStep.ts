@@ -22,7 +22,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
-            const { registryDomain, registryName, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            const { registryDomain, registryName, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (
                 context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
                 registryDomain === acrDomain &&
