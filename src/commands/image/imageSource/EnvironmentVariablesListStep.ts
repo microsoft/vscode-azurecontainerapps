@@ -113,7 +113,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
 
             const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
-                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ')
+                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected.' : '.')
             );
             ext.outputChannel.appendLog(logMessage);
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.ProvideFile) {
