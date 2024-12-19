@@ -53,6 +53,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
             name: getContainerNameForImage(nonNullProp(context, 'image')),
         });
 
+        // Related: https://github.com/microsoft/vscode-azurecontainerapps/pull/805
         const retries = 4;
         await retry(
             async (currentAttempt: number): Promise<void> => {
