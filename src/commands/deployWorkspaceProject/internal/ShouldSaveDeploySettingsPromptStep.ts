@@ -26,9 +26,9 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
                 (context.dockerfilePath && convertRelativeToAbsolutePath(rootPath, setting?.dockerfilePath) !== context.dockerfilePath) ||
                 (context.envPath && convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath) ||
                 (context.srcPath && convertRelativeToAbsolutePath(rootPath, setting?.srcPath) !== context.srcPath) ||
-                (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name) ||
-                (!!context.containerApp && setting?.containerApp !== context.containerApp.name) ||
-                (!!context.registry && setting?.containerRegistry !== context.registry.name);
+                (!!context.newResourceGroupName && setting?.resourceGroup !== context.newResourceGroupName) ||
+                (!!context.newContainerAppName && setting?.containerApp !== context.newContainerAppName) ||
+                (!!context.newRegistryName && setting?.containerRegistry !== context.newRegistryName)
 
             if (!hasNewSettings) {
                 context.telemetry.properties.hasNewSettings = 'false';

@@ -9,7 +9,6 @@ import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { type IContainerAppContext } from "../../IContainerAppContext";
 import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "./DeploymentConfiguration";
-import { TryUseExistingWorkspaceRegistryStep } from "./workspace/azureResources/TryUseExistingWorkspaceRegistryStep";
 
 type TreeItemDeploymentConfigurationContext = IContainerAppContext & DeploymentConfiguration;
 
@@ -17,8 +16,9 @@ export async function getTreeItemDeploymentConfiguration(context: IContainerAppC
     const wizardContext: TreeItemDeploymentConfigurationContext = context;
 
     const wizard: AzureWizard<TreeItemDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
-        promptSteps: [new RootFolderStep()],
-        executeSteps: [new TryUseExistingWorkspaceRegistryStep()]
+        promptSteps: [
+            new RootFolderStep(),
+        ],
     });
 
     await wizard.prompt();
