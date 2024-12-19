@@ -76,7 +76,7 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
         const picks: IAzureQuickPickItem<Registry | undefined>[] = [
             {
                 label: localize('newContainerRegistry', '$(plus) Create new container registry'),
-                data: undefined
+                data: undefined,
             }
         ];
 
@@ -97,4 +97,4 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
     }
 }
 
-const isRecommendedPick = (pick: IAzureQuickPickItem<Registry | undefined>): boolean => pick.description === recommendedPickDescription;
+const isRecommendedPick = (pick: IAzureQuickPickItem<Registry | undefined>): boolean => new RegExp(recommendedPickDescription).test(pick.description ?? '');
