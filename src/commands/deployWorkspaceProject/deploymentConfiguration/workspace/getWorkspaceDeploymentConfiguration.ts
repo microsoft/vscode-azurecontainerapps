@@ -12,7 +12,6 @@ import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/Roo
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
-import { TryUseExistingWorkspaceRegistryStep } from "./azureResources/TryUseExistingWorkspaceRegistryStep";
 
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext & { rootFolder?: WorkspaceFolder }): Promise<DeploymentConfiguration> {
     const wizardContext: WorkspaceDeploymentConfigurationContext = Object.assign(context, {
@@ -25,9 +24,6 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
             new RootFolderStep(),
             new DeploymentConfigurationListStep(),
         ],
-        executeSteps: [
-            new TryUseExistingWorkspaceRegistryStep()
-        ]
     });
 
     await wizard.prompt();
