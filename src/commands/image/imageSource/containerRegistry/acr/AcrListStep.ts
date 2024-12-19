@@ -79,7 +79,7 @@ export class AcrListStep extends AzureWizardPromptStep<ContainerRegistryImageSou
         let suggestedRegistry: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
-            const { registryDomain, registryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            const { registryDomain, registryName, imageNameReference } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
 
             // If the image is not the default quickstart image, then we can try to suggest a registry based on the latest Container App image
             if (
