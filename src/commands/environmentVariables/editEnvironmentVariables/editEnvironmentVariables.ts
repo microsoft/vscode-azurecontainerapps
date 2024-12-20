@@ -14,6 +14,7 @@ import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
 import { EnvFileListStep } from "../../image/imageSource/EnvFileListStep";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
 import { EnvironmentVariablesEditDraftStep } from "./EnvironmentVariablesEditDraftStep";
 
@@ -43,6 +44,7 @@ export async function editEnvironmentVariables(context: IActionContext, node?: E
         title: localize('editEnvironmentVariables', 'Edit environment variables for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvFileListStep({ suppressSkipPick: true }),
+            new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariablesEditContext>(),

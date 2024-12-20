@@ -228,7 +228,8 @@
             {
                 "command": "containerApps.deleteEnvironmentVariable",
                 "title": "%containerApps.deleteEnvironmentVariable.title%",
-                "shortTitle": "%containerApps.deleteEnvironmentVariable.shortTitle%"
+                "shortTitle": "%containerApps.deleteEnvironmentVariable.shortTitle%",
+                "category": "Azure Container Apps"
             },
             {
                 "command": "containerApps.editScaleRange",

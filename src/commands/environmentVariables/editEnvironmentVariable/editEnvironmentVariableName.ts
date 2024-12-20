@@ -13,6 +13,7 @@ import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariable } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
+import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { EnvironmentVariableNameStep } from "../addEnvironmentVariable/EnvironmentVariableNameStep";
 import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
 import { EnvironmentVariableEditDraftStep } from "./EnvironmentVariableEditDraftStep";
@@ -44,6 +45,7 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
         title: localize('editEnvironmentVariableTitle', 'Edit environment variable name in "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvironmentVariableNameStep(item),
+            new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableEditContext>(),
