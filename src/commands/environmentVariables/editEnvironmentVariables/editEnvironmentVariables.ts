@@ -14,10 +14,10 @@ import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
 import { EnvFileListStep } from "../../image/imageSource/EnvFileListStep";
-import { type EnvironmentVariablesBulkEditContext } from "./EnvironmentVariablesBulkEditContext";
-import { EnvironmentVariablesBulkEditDraftStep } from "./EnvironmentVariablesBulkEditDraftStep";
+import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
+import { EnvironmentVariablesEditDraftStep } from "./EnvironmentVariablesEditDraftStep";
 
-export async function bulkEditEnvironmentVariables(context: IActionContext, node?: EnvironmentVariablesItem): Promise<void> {
+export async function editEnvironmentVariables(context: IActionContext, node?: EnvironmentVariablesItem): Promise<void> {
     const item: EnvironmentVariablesItem = node ?? await pickEnvironmentVariables(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
 
@@ -28,7 +28,7 @@ export async function bulkEditEnvironmentVariables(context: IActionContext, node
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizardContext: EnvironmentVariablesBulkEditContext = {
+    const wizardContext: EnvironmentVariablesEditContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(),
@@ -39,14 +39,14 @@ export async function bulkEditEnvironmentVariables(context: IActionContext, node
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<EnvironmentVariablesBulkEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editEnvironmentVariables', 'Bulk edit environment variables for "{0}" (draft)', parentResource.name),
+    const wizard: AzureWizard<EnvironmentVariablesEditContext> = new AzureWizard(wizardContext, {
+        title: localize('editEnvironmentVariables', 'Edit environment variables for "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvFileListStep({ suppressSkipPick: true }),
         ],
         executeSteps: [
-            getVerifyProvidersStep<EnvironmentVariablesBulkEditContext>(),
-            new EnvironmentVariablesBulkEditDraftStep(item),
+            getVerifyProvidersStep<EnvironmentVariablesEditContext>(),
+            new EnvironmentVariablesEditDraftStep(item),
         ],
     });
 
