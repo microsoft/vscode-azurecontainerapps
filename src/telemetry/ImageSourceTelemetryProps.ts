@@ -3,8 +3,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type SetEnvironmentVariableOption } from "../commands/image/imageSource/EnvironmentVariablesListStep";
 import { type AcrBuildSupportedOS } from "../commands/image/imageSource/buildImageInAzure/OSPickStep";
+import { type SetEnvironmentVariableOption } from "../commands/image/imageSource/EnvFileListStep";
 import { type ImageSource, type SupportedRegistries } from "../constants";
 import { type AzdTelemetryProps } from "./AzdTelemetryProps";
 import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
@@ -32,6 +32,6 @@ export interface BuildImageInAzureTelemetryProps extends AzdTelemetryProps, Pick
 }
 
 export interface EnvironmentVariableTelemetryProps extends Pick<WorkspaceFileTelemetryProps, 'environmentVariableFileCount'> {
-    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
+    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvFileListStep
     // environmentVariableFileCount
 }
