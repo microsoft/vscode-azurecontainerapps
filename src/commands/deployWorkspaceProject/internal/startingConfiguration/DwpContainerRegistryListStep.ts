@@ -10,7 +10,7 @@ import { localize } from "../../../../utils/localize";
 import { AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
-const recommendedPickDescription: string = localize('recommended', '(Recommended)');
+const recommendedPickDescription: string = localize('recommended', '(recommended)');
 
 export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {

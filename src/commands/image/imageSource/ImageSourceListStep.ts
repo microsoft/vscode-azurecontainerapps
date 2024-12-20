@@ -77,13 +77,29 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.QuickstartImage;
                 break;
             case ImageSource.ContainerRegistry:
-                promptSteps.push(new ContainerRegistryListStep(), new RegistryCredentialsAddConfigurationListStep(), new ContainerRegistryImageConfigureStep());
-                executeSteps.push();
+                promptSteps.push(
+                    new ContainerRegistryListStep(),
+                    new RegistryCredentialsAddConfigurationListStep(),
+                    new ContainerRegistryImageConfigureStep(),
+                );
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                promptSteps.push(new RootFolderStep(), new DockerfileItemStep(), new SourcePathStep(), new AcrListStep(), new RegistryCredentialsAddConfigurationListStep(), new ImageNameStep(), new OSPickStep(), new ContainerRegistryImageConfigureStep());
-                executeSteps.push(new TarFileStep(), new UploadSourceCodeStep(), new RunStep(), new BuildImageStep());
+                promptSteps.push(
+                    new RootFolderStep(),
+                    new DockerfileItemStep(),
+                    new SourcePathStep(),
+                    new AcrListStep(),
+                    new RegistryCredentialsAddConfigurationListStep(),
+                    new ImageNameStep(),
+                    new OSPickStep(),
+                );
+                executeSteps.push(
+                    new TarFileStep(),
+                    new UploadSourceCodeStep(),
+                    new RunStep(),
+                    new BuildImageStep(),
+                );
                 context.telemetry.properties.imageSource = ImageSource.RemoteAcrBuild;
                 break;
             default:

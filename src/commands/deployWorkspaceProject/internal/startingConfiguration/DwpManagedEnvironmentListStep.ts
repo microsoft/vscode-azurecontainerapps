@@ -13,7 +13,8 @@ import { type DeploymentConfigurationSettings } from "../../settings/DeployWorks
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
-const recommendedPickDescription: string = localize('recommended', '(Recommended)');
+const recommendedPickDescription: string = localize('recommended', '(recommended)');
+
 export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const placeHolder: string = localize('selectManagedEnvironment', 'Select a container apps environment');

@@ -20,15 +20,22 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder);
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
+            const hasNewResourceGroupSetting: boolean = (!!context.newResourceGroupName && setting?.resourceGroup !== context.newResourceGroupName) ||
+                (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name);
+            const hasNewContainerAppSetting: boolean = (!!context.newContainerAppName && setting?.containerApp !== context.newContainerAppName) ||
+                (!!context.containerApp && setting?.containerApp !== context.containerApp.name);
+            const hasNewRegistrySetting: boolean = (!!context.newRegistryName && setting?.containerRegistry !== context.newRegistryName) ||
+                (!!context.registry && setting?.containerRegistry !== context.registry.name);
+
             const hasNewSettings: boolean =
                 !setting?.label ||
                 setting?.type !== 'AcrDockerBuildRequest' ||
                 (context.dockerfilePath && convertRelativeToAbsolutePath(rootPath, setting?.dockerfilePath) !== context.dockerfilePath) ||
                 (context.envPath && convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath) ||
                 (context.srcPath && convertRelativeToAbsolutePath(rootPath, setting?.srcPath) !== context.srcPath) ||
-                (!!context.newResourceGroupName && setting?.resourceGroup !== context.newResourceGroupName) ||
-                (!!context.newContainerAppName && setting?.containerApp !== context.newContainerAppName) ||
-                (!!context.newRegistryName && setting?.containerRegistry !== context.newRegistryName)
+                hasNewResourceGroupSetting ||
+                hasNewContainerAppSetting ||
+                hasNewRegistrySetting;
 
             if (!hasNewSettings) {
                 context.telemetry.properties.hasNewSettings = 'false';
