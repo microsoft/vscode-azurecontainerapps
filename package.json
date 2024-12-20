@@ -96,8 +96,8 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.deployWorkspaceProjectToContainerApp",
-                "title": "%containerApps.deployWorkspaceProjectToContainerApp%",
+                "command": "containerApps.deployContainerApp",
+                "title": "%containerApps.deployContainerApp%",
                 "category": "Azure Container Apps"
             },
             {
@@ -377,7 +377,7 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
+                    "command": "containerApps.deployContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "2@1"
                 },
@@ -585,10 +585,6 @@
             "commandPalette": [
                 {
                     "command": "containerApps.createContainerAppFromWorkspace",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.deployWorkspaceProjectToContainerApp",
                     "when": "never"
                 },
                 {
