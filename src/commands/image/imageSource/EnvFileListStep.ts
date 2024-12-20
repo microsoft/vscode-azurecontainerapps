@@ -121,18 +121,27 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
             const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
-                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ')
+                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected.' : '.')
             );
             ext.outputChannel.appendLog(logMessage);
-        } else {
+        } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['envFileListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
-                    label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using provided .env file'),
                     iconPath: activitySuccessIcon
                 })
             );
-            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration.'));
+            ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
+        } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+                    label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
+                    iconPath: activitySuccessIcon
+                })
+            );
+            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
     }
 }

@@ -212,6 +212,8 @@ export async function getContainerEnvelopeWithSecrets(context: IActionContext, s
     const concreteContainerAppEnvelope = <Required<ContainerApp>>containerAppEnvelope;
     const webClient: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(subscription)]);
 
+    // Todo: If a container app fails to provision, this list command may error with code 400
+    // We need to determine the best way to break the user out of this state once they get locked into it
     concreteContainerAppEnvelope.configuration.secrets = ((await webClient.containerApps.listSecrets(containerApp.resourceGroup, containerApp.name)).value);
     concreteContainerAppEnvelope.configuration.registries ||= [];
 
