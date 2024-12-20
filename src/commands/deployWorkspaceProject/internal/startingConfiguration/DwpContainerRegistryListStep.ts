@@ -20,7 +20,7 @@ export class DwpContainerRegistryListStep extends AzureWizardPromptStep<DeployWo
             return;
         }
 
-        const placeHolder: string = localize('selectContainerRegistry', 'Select a container registry');
+        const placeHolder: string = localize('selectContainerRegistry', 'Select a container registry to store your image');
         const pick = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
         context.registry = pick.data;
 
