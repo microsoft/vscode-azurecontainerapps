@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
 import { type TreeElementBase } from '../tree/ContainerAppsBranchDataProvider';
 
 export namespace treeUtils {
-    export function getIconPath(iconName: string): TreeItemIconPath {
+    export function getIconPath(iconName: string): Uri {
         return Uri.joinPath(getResourcesUri(), `${iconName}.svg`);
     }
 
