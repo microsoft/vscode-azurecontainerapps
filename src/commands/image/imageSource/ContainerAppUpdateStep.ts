@@ -5,12 +5,14 @@
 
 import { type Ingress } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
+import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
@@ -19,6 +21,8 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
     public priority: number = 680;
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('updatingContainerApp', 'Updating container app...') });
+
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -51,13 +55,25 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
             name: getContainerNameForImage(nonNullProp(context, 'image')),
         });
 
-        const updating = localize('updatingContainerApp', 'Updating container app...', containerApp.name);
-        progress.report({ message: updating });
-
-        await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
-            context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
-            ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
-        });
+        // Related: https://github.com/microsoft/vscode-azurecontainerapps/pull/805
+        const retries = 4;
+        await retry(
+            async (): Promise<void> => {
+                await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
+                    context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
+                    ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+                });
+            },
+            {
+                onFailedAttempt: (err: retry.FailedAttemptError) => {
+                    if (context.newRegistryCredentialType !== RegistryCredentialType.DockerLogin || !/authentication\srequired/i.test(err.message)) {
+                        throw err;
+                    }
+                },
+                retries,
+                minTimeout: 2 * 1000,
+            }
+        );
     }
 
     public shouldExecute(context: T): boolean {
