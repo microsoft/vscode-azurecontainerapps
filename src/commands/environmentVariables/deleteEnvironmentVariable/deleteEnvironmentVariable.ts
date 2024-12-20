@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, DeleteConfirmationStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type EnvironmentVariableItem } from "../../../tree/containers/EnvironmentVariableItem";
 import { createActivityContext } from "../../../utils/activityUtils";
@@ -14,11 +14,10 @@ import { localize } from "../../../utils/localize";
 import { pickEnvironmentVariable } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
-import { EnvironmentVariableNameStep } from "../addEnvironmentVariable/EnvironmentVariableNameStep";
-import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
-import { EnvironmentVariableEditDraftStep } from "./EnvironmentVariableEditDraftStep";
+import { type EnvironmentVariableDeleteContext } from "./EnvironmentVariableDeleteContext";
+import { EnvironmentVariableDeleteDraftStep } from "./EnvironmentVariableDeleteDraftStep";
 
-export async function editEnvironmentVariableName(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
+export async function deleteEnvironmentVariable(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
     const item: EnvironmentVariableItem = node ?? await pickEnvironmentVariable(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
 
@@ -29,7 +28,7 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizardContext: EnvironmentVariableEditContext = {
+    const wizardContext: EnvironmentVariableDeleteContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(),
@@ -41,19 +40,19 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<EnvironmentVariableEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editEnvironmentVariableTitle', 'Edit environment variable name in "{0}" (draft)', parentResource.name),
+    const confirmMessage: string = localize('confirmDeleteEnv', 'Are you sure you want to delete environment variable "{0}" locally?\n\nThis change will not be reflected in your container app until you deploy changes.', item.envVariable.name);
+    const wizard: AzureWizard<EnvironmentVariableDeleteContext> = new AzureWizard(wizardContext, {
+        title: localize('deleteEnvironmentVariable', 'Delete environment variable "{0}" from "{1}" (draft)', item.envVariable.name, parentResource.name),
         promptSteps: [
-            new EnvironmentVariableNameStep(item),
+            new DeleteConfirmationStep(confirmMessage),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
-            getVerifyProvidersStep<EnvironmentVariableEditContext>(),
-            new EnvironmentVariableEditDraftStep(item),
+            getVerifyProvidersStep<EnvironmentVariableDeleteContext>(),
+            new EnvironmentVariableDeleteDraftStep(item),
         ],
     });
 
     await wizard.prompt();
-    wizardContext.activityTitle = localize('editEnvironmentVariableActivityTitle', 'Edit environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
     await wizard.execute();
 }
