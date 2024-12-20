@@ -4,22 +4,21 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, DeleteConfirmationStep, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { type EnvironmentVariablesItem } from "../../../tree/containers/EnvironmentVariablesItem";
+import { type EnvironmentVariableItem } from "../../../tree/containers/EnvironmentVariableItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
-import { pickEnvironmentVariables } from "../../../utils/pickItem/pickEnvironmentVariables";
+import { pickEnvironmentVariable } from "../../../utils/pickItem/pickEnvironmentVariables";
 import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEditableError } from "../../../utils/revisionDraftUtils";
-import { EnvFileListStep } from "../../image/imageSource/EnvFileListStep";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
-import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
-import { EnvironmentVariablesEditDraftStep } from "./EnvironmentVariablesEditDraftStep";
+import { type EnvironmentVariableDeleteContext } from "./EnvironmentVariableDeleteContext";
+import { EnvironmentVariableDeleteDraftStep } from "./EnvironmentVariableDeleteDraftStep";
 
-export async function editEnvironmentVariables(context: IActionContext, node?: EnvironmentVariablesItem): Promise<void> {
-    const item: EnvironmentVariablesItem = node ?? await pickEnvironmentVariables(context, { autoSelectDraft: true });
+export async function deleteEnvironmentVariable(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
+    const item: EnvironmentVariableItem = node ?? await pickEnvironmentVariable(context, { autoSelectDraft: true });
     const { subscription, containerApp } = item;
 
     if (!isTemplateItemEditable(item)) {
@@ -29,7 +28,7 @@ export async function editEnvironmentVariables(context: IActionContext, node?: E
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
-    const wizardContext: EnvironmentVariablesEditContext = {
+    const wizardContext: EnvironmentVariableDeleteContext = {
         ...context,
         ...subscriptionContext,
         ...await createActivityContext(),
@@ -37,18 +36,20 @@ export async function editEnvironmentVariables(context: IActionContext, node?: E
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
         containersIdx: item.containersIdx,
+        environmentVariable: item.envVariable,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<EnvironmentVariablesEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editEnvironmentVariables', 'Edit environment variables for "{0}" (draft)', parentResource.name),
+    const confirmMessage: string = localize('confirmDeleteEnv', 'Are you sure you want to delete environment variable "{0}" locally?\n\nThis change will not be reflected in your container app until you deploy changes.', item.envVariable.name);
+    const wizard: AzureWizard<EnvironmentVariableDeleteContext> = new AzureWizard(wizardContext, {
+        title: localize('deleteEnvironmentVariable', 'Delete environment variable "{0}" from "{1}" (draft)', item.envVariable.name, parentResource.name),
         promptSteps: [
-            new EnvFileListStep({ suppressSkipPick: true }),
+            new DeleteConfirmationStep(confirmMessage),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
-            getVerifyProvidersStep<EnvironmentVariablesEditContext>(),
-            new EnvironmentVariablesEditDraftStep(item),
+            getVerifyProvidersStep<EnvironmentVariableDeleteContext>(),
+            new EnvironmentVariableDeleteDraftStep(item),
         ],
     });
 
