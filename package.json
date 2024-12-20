@@ -604,6 +604,10 @@
                     "when": "never"
                 },
                 {
+                    "command": "containerApps.toggleEnvironmentVariableVisibility",
+                    "when": "never"
+                },
+                {
                     "command": "containerApps.walkthrough.addWorkspaceProject",
                     "when": "never"
                 },
