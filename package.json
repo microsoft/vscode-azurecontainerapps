@@ -221,6 +221,17 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.editEnvironmentVariables",
+                "title": "%containerApps.editEnvironmentVariables%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.deleteEnvironmentVariable",
+                "title": "%containerApps.deleteEnvironmentVariable.title%",
+                "shortTitle": "%containerApps.deleteEnvironmentVariable.shortTitle%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.editScaleRange",
                 "title": "%containerApps.editScaleRange%",
                 "category": "Azure Container Apps"
@@ -491,9 +502,19 @@
                     "group": "1@1"
                 },
                 {
+                    "command": "containerApps.editEnvironmentVariables",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariablesItem/i",
+                    "group": "1@2"
+                },
+                {
                     "command": "containerApps.editEnvironmentVariableName",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.deleteEnvironmentVariable",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /environmentVariableItem/i",
+                    "group": "1@2"
                 },
                 {
                     "command": "containerApps.editScaleRange",
@@ -576,6 +597,10 @@
                 },
                 {
                     "command": "containerApps.openAcrBuildLogs",
+                    "when": "never"
+                },
+                {
+                    "command": "containerApps.toggleEnvironmentVariableVisibility",
                     "when": "never"
                 },
                 {

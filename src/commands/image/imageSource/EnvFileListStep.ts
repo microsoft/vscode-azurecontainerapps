@@ -13,7 +13,11 @@ import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import { type ImageSourceBaseContext } from "./ImageSourceContext";
+import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
+
+export interface EnvFileListStepOptions {
+    suppressSkipPick?: boolean;
+}
 
 export enum SetEnvironmentVariableOption {
     NoDotEnv = 'noDotEnv',
@@ -22,14 +26,18 @@ export enum SetEnvironmentVariableOption {
     UseExisting = 'useExisting'
 }
 
-type EnvironmentVariablesContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
+type EnvFileListContext = EnvironmentVariablesContext & SetTelemetryProps<TelemetryProps>;
 
 const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<EnvironmentVariablesContext> {
+export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
 
-    public async prompt(context: EnvironmentVariablesContext): Promise<void> {
+    constructor(public readonly options?: EnvFileListStepOptions) {
+        super();
+    }
+
+    public async prompt(context: T): Promise<void> {
         const existingData = context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
         context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
 
@@ -45,7 +53,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         }
     }
 
-    public async configureBeforePrompt(context: EnvironmentVariablesContext): Promise<void> {
+    public async configureBeforePrompt(context: T): Promise<void> {
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
@@ -56,16 +64,16 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         }
     }
 
-    public shouldPrompt(context: EnvironmentVariablesContext): boolean {
+    public shouldPrompt(context: T): boolean {
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
-    private async promptForEnvPath(context: EnvironmentVariablesContext, showHasExistingData?: boolean): Promise<string | undefined> {
+    private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
         return await selectWorkspaceFile(context, placeHolder,
-            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true, skipLabel }, allEnvFilesGlobPattern);
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: !this.options?.suppressSkipPick, skipLabel }, allEnvFilesGlobPattern);
     }
 
     private async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
@@ -93,7 +101,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         return !!envFileUris.length;
     }
 
-    private outputLogs(context: EnvironmentVariablesContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+    private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
         if (
@@ -102,7 +110,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         ) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createUniversallyUniqueContextValue(['envFileListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')

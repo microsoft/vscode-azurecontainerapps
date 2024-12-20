@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type Container, type EnvironmentVar } from "@azure/arm-appcontainers";
-import { nonNullValue } from "@microsoft/vscode-azext-utils";
+import { type Container } from "@azure/arm-appcontainers";
 import { type Progress } from "vscode";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../utils/localize";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
-import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
+import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
 
-export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditContext> extends RevisionDraftUpdateBaseStep<T> {
+export class EnvironmentVariablesEditDraftStep<T extends EnvironmentVariablesEditContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
@@ -20,21 +19,16 @@ export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditC
     }
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        progress.report({ message: localize('editingEnv', 'Editing environment variable (draft)...') });
+        progress.report({ message: localize('editingEnv', 'Editing environment variables (draft)...') });
         this.revisionDraftTemplate.containers ??= [];
 
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
-        container.env ??= [];
-
-        const environmentVariable: EnvironmentVar = nonNullValue(container.env.find(env => env.name === context.environmentVariable.name));
-        environmentVariable.name = context.newEnvironmentVariableName ?? environmentVariable.name;
-        environmentVariable.value = context.newEnvironmentVariableManualInput ?? environmentVariable.value;
-        environmentVariable.secretRef = context.secretName ?? environmentVariable.secretRef;
+        container.env = context.environmentVariables;
 
         await this.updateRevisionDraftWithTemplate(context);
     }
 
     public shouldExecute(context: T): boolean {
-        return !!context.environmentVariable;
+        return !!context.environmentVariables;
     }
 }
