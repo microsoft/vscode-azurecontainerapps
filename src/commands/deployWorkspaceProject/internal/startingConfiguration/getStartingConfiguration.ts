@@ -11,8 +11,8 @@ import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
+import { DwpContainerRegistryListStep } from "./DwpContainerRegistryListStep";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
-import { TryUseExistingResourceGroupRegistryStep } from "./TryUseExistingRegistryStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
@@ -22,11 +22,9 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         promptSteps: [
             new RootFolderStep(),
             new DockerfileItemStep(),
-            new DwpManagedEnvironmentListStep()
+            new DwpManagedEnvironmentListStep(),
+            new DwpContainerRegistryListStep(),
         ],
-        executeSteps: [
-            new TryUseExistingResourceGroupRegistryStep()
-        ]
     });
 
     await wizard.prompt();
