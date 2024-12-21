@@ -6,7 +6,7 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
-import { EnvironmentVariablesListStep } from "../../../image/imageSource/EnvironmentVariablesListStep";
+import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
 import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
@@ -44,7 +44,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         environmentVariables:
             context.envPath ?
                 undefined /** No need to set anything if there's an envPath, the step will handle parsing the data for us */ :
-                await EnvironmentVariablesListStep.workspaceHasEnvFile(context.rootFolder) ? undefined : [] /** The equivalent of "skipForNow" */,
+                await EnvFileListStep.workspaceHasEnvFile(context.rootFolder) ? undefined : [] /** The equivalent of "skipForNow" */,
     };
 }
 

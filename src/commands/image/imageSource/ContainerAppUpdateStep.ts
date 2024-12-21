@@ -22,6 +22,8 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
     public priority: number = 680;
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('updatingContainerApp', 'Updating container app...') });
+
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
@@ -68,18 +70,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         // Related: https://github.com/microsoft/vscode-azurecontainerapps/pull/805
         const retries = 4;
         await retry(
-            async (currentAttempt: number): Promise<void> => {
-                if (currentAttempt === 2) {
-                    const reason: string = localize('authenticationRequired', 'Container registry authentication was rejected due to unauthorized access. This may be due to internal permissions still propagating. Authentication will be attempted up to {0} times.', retries + 1);
-                    ext.outputChannel.appendLog(reason);
-                }
-
-                const message: string = currentAttempt === 1 ?
-                    localize('updatingContainerApp', 'Updating container app...') :
-                    localize('updatingContainerAppAttempt', 'Updating container app (Attempt {0}/{1})...', currentAttempt, retries + 1);
-                progress.report({ message: message });
-                ext.outputChannel.appendLog(message);
-
+            async (): Promise<void> => {
                 await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
                     context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
                     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);

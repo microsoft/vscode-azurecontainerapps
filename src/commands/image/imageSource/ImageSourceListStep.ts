@@ -9,7 +9,7 @@ import { ImageSource } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { QuickStartImageConfigureStep } from "../../createContainerApp/QuickStartImageConfigureStep";
 import { RegistryCredentialsAddConfigurationListStep } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
-import { EnvironmentVariablesListStep } from "./EnvironmentVariablesListStep";
+import { EnvFileListStep } from "./EnvFileListStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { BuildImageStep } from "./buildImageInAzure/BuildImageStep";
 import { DockerfileItemStep } from "./buildImageInAzure/DockerfileItemStep";
@@ -106,7 +106,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
         }
 
         if (!this.options?.suppressEnvPrompt) {
-            promptSteps.push(new EnvironmentVariablesListStep());
+            promptSteps.push(new EnvFileListStep());
         }
 
         return { promptSteps, executeSteps };
