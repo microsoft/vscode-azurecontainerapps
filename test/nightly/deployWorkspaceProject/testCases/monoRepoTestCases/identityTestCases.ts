@@ -5,14 +5,13 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { type DeploymentConfigurationSettings } from "../../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../../typeUtils";
-import { dwpTestUtils } from "../dwpTestUtils";
-import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
+import { dwpTestUtils } from "../../dwpTestUtils";
+import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestCase";
+import { generateExpectedDeploymentConfiguration } from "./generateExpectedDeploymentConfiguration";
 
-export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase[] {
-    const folderName: string = 'monorepo-basic';
-    const sharedResourceName: string = 'monorepo-basic' + randomUtils.getRandomHexString(4);
+export function generateMonoRepoIdentityTestCases(): DeployWorkspaceProjectTestCase[] {
+    const folderName: string = 'monorepo-identity';
+    const sharedResourceName: string = 'monorepo-id' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
     return [
@@ -26,13 +25,12 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 sharedResourceName,
                 'app1',
                 `.${path.sep}app1`,
-                'Docker Login Credentials',
-                'Enable',
+                'Managed Identity',
                 path.join('app1', '.env.example'),
                 'East US',
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, 'app1'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
@@ -51,11 +49,11 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'Continue',
                 'app2',
                 `.${path.sep}app2`,
-                'Docker Login Credentials',
+                'Managed Identity',
                 path.join('app2', '.env.example'),
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, 'app2'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
@@ -74,11 +72,11 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'Continue',
                 'app3',
                 `.${path.sep}app3`,
-                'Docker Login Credentials',
+                'Managed Identity',
                 path.join('app3', '.env.example'),
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, 'app3'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
@@ -95,7 +93,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'app1',
                 'Continue'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, 'app1'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
@@ -106,17 +104,4 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] })
         }
     ];
-}
-
-function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
-    return {
-        label: appResourceName,
-        type: 'AcrDockerBuildRequest',
-        dockerfilePath: path.join(appResourceName, 'Dockerfile'),
-        srcPath: appResourceName,
-        envPath: path.join(appResourceName, '.env.example'),
-        resourceGroup: sharedResourceName,
-        containerApp: appResourceName,
-        containerRegistry: new RegExp(`${acrResourceName}.{6}`, 'i'),
-    };
 }
