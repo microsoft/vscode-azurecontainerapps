@@ -8,6 +8,7 @@ import { ext } from "../../../../extensionVariables";
 import { getImageNameWithoutTag, parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
 import { IngressPromptStep } from "../../../ingress/IngressPromptStep";
+import { type RevisionDraftContext } from "../../../revisionDraft/RevisionDraftContext";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLoginServer } from "./getLoginServer";
 
@@ -38,13 +39,19 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
         return false;
     }
 
-    public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
+    public async getSubWizard(context: T & Partial<RevisionDraftContext>): Promise<IWizardOptions<T> | undefined> {
+        if (context.isDraftCommand) {
+            // Skip any steps that would attempt to update the container app directly while running draft commands
+            return undefined;
+        }
+
         // If more than the image tag changed, prompt for ingress again
         if (getImageNameWithoutTag(context.containerApp?.template?.containers?.[context.containersIdx ?? 0].image ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
             return {
                 promptSteps: [new IngressPromptStep()],
             };
         }
+
         return undefined;
     }
 }

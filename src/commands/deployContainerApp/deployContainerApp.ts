@@ -40,6 +40,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
         imageSource,
     };
+    wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
     if (isAzdExtensionInstalled()) {
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
