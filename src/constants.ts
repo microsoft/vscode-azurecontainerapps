@@ -33,8 +33,8 @@ export namespace RevisionConstants {
     export const single: IAzureQuickPickItem<string> = { label: localize('single', 'Single'), description: localize('singleDesc', 'One active revision at a time'), data: 'single' };
 }
 
-export const currentlyDeployed: string = localize('currentlyDeployed', '(currently deployed)');
-
+export const currentlyDeployedPickDescription: string = localize('currentlyDeployed', '(currently deployed)');
+export const recommendedPickDescription: string = localize('recommended', '(recommended)');
 export const showDraftCommandDeployPopupSetting: string = 'showDraftCommandDeployPopup';
 
 export enum ScaleRuleTypes {
