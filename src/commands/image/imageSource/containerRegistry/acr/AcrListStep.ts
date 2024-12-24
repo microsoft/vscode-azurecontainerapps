@@ -174,8 +174,8 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
                 };
             });
 
-            // If a currently deployed registry exists, we can expect it to be in the first resource group because we already sorted it to the front
-            if (i === 0) {
+            // If a currently deployed registry exists, we can expect it to be in the first resource group because we already sorted the group to the front
+            if (i === 0 && srExists) {
                 groupedRegistries.sort((a, b) => {
                     if (new RegExp(currentlyDeployedPickDescription).test(a.description ?? '')) {
                         return -1;
