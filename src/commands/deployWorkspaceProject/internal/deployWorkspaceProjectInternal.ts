@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, createUniversallyUniqueContextValue, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
@@ -77,6 +78,13 @@ export async function deployWorkspaceProjectInternal(
     }, async () => {
         startingConfiguration = await getStartingConfiguration({ ...context });
     });
+
+    if (startingConfiguration?.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+        throw new Error(localize('multipleRevisionsNotSupported', 'The container app "{0}" cannot be updated using "Deploy Project from Workspace..." while in multiple revisions mode.', startingConfiguration?.containerApp?.name));
+    }
+    if ((startingConfiguration?.containerApp?.template?.containers?.length ?? 0) > 1) {
+        throw new Error(localize('multipleContainersNotSupported', 'The container app "{0}" cannot be updated using "Deploy Project from Workspace..." while having more than one active container.', startingConfiguration?.containerApp?.name));
+    }
 
     const wizardContext: DeployWorkspaceProjectInternalContext = {
         ...context,
