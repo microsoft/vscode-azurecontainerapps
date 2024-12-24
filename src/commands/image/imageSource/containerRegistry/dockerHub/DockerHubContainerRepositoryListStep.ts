@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
-import { currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
+import { currentlyDeployedPickDescription, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
@@ -45,7 +45,7 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
         const picks: QuickPickItem[] = response.results.map((r) => {
             return !!suggestedRepository && r.name === suggestedRepository ?
-                { label: r.name, description: r.description ? `${r.description} ${currentlyDeployed}` : currentlyDeployed, suppressPersistence: true } :
+                { label: r.name, description: r.description ? `${r.description} ${currentlyDeployedPickDescription}` : currentlyDeployedPickDescription, suppressPersistence: true } :
                 { label: r.name, description: r.description, suppressPersistence: srExists }
         });
         cachedPicks.cache.push(...picks);

@@ -11,7 +11,7 @@ import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
-import { DwpContainerRegistryListStep } from "./DwpContainerRegistryListStep";
+import { DwpAcrListStep } from "./DwpAcrListStep";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
@@ -23,7 +23,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
             new RootFolderStep(),
             new DockerfileItemStep(),
             new DwpManagedEnvironmentListStep(),
-            new DwpContainerRegistryListStep(),
+            new DwpAcrListStep(),
         ],
     });
 

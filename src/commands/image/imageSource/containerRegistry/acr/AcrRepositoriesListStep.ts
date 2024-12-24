@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
-import { acrDomain, currentlyDeployed, noMatchingResourcesQp } from "../../../../../constants";
+import { acrDomain, currentlyDeployedPickDescription, noMatchingResourcesQp } from "../../../../../constants";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
@@ -47,7 +47,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         // Prefer 'suppressPersistence: true' to avoid the possibility of a double parenthesis appearing in the description
         return repositoryNames.map((rn) => {
             return !!suggestedRepository && rn === suggestedRepository ?
-                { label: rn, description: currentlyDeployed, suppressPersistence: true } :
+                { label: rn, description: currentlyDeployedPickDescription, suppressPersistence: true } :
                 { label: rn, suppressPersistence: srExists };
         });
     }
