@@ -41,7 +41,7 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
 
     public async getSubWizard(context: T & Partial<RevisionDraftContext>): Promise<IWizardOptions<T> | undefined> {
         if (context.isDraftCommand) {
-            // Don't update the container app directly if we're in a drafting mode
+            // Skip any steps that would attempt to update the container app directly while we're in a drafting mode
             return undefined;
         }
 
