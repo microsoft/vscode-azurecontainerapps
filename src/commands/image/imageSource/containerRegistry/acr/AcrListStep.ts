@@ -12,7 +12,7 @@ import { acrDomain, currentlyDeployedPickDescription, noMatchingResources, noMat
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { isRecommendedPick } from "../../../../../utils/telemetryUtils";
+import { isRecommendedPick } from "../../../../../utils/pickUtils";
 import { type ContainerAppCreateBaseContext } from "../../../../createContainerApp/ContainerAppCreateContext";
 import { type ManagedEnvironmentCreateContext } from "../../../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
