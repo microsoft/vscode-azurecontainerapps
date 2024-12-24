@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { activityInfoIcon, activitySuccessContext, AzureWizard, createSubscriptionContext, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, nonNullValue, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
@@ -24,6 +25,13 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
+
+    if (item.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+        throw new Error(localize('multipleRevisionsNotSupported', 'The container app "{0}" cannot be updated using "Deploy to Container App..." while in multiple revisions mode.', item.containerApp.name));
+    }
+    if ((item.containerApp.template?.containers?.length ?? 0) > 1) {
+        throw new Error(localize('multipleContainersNotSupported', 'The container app "{0}" cannot be updated using "Deploy to Container App..." while having more than one active container.', item.containerApp.name));
+    }
 
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
     const imageSource: ImageSource = await promptImageSource(subscriptionActionContext);
