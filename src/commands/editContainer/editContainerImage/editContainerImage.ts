@@ -41,6 +41,7 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
         containersIdx: item.containersIdx,
+        isDraftCommand: true,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 

@@ -6,5 +6,6 @@
 import { type IContainerAppContext } from "../IContainerAppContext";
 
 export interface RevisionDraftContext extends IContainerAppContext {
+    isDraftCommand?: boolean;
     shouldDeployRevisionDraft?: boolean;
 }

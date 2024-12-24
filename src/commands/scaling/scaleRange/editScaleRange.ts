@@ -42,7 +42,8 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
         containerApp,
         subscription,
         scaleMinRange: scale.minReplicas ?? 0,
-        scaleMaxRange: scale.maxReplicas ?? 0
+        scaleMaxRange: scale.maxReplicas ?? 0,
+        isDraftCommand: true,
     };
 
     const wizard: AzureWizard<ScaleRangeContext> = new AzureWizard(wizardContext, {

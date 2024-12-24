@@ -4,11 +4,15 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Revision } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { type ResourceGroup } from "@azure/arm-resources";
+import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
+import { activityInfoIcon, activitySuccessContext, AzureWizard, createSubscriptionContext, createUniversallyUniqueContextValue, GenericTreeItem, nonNullValue, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { ext } from "../../extensionVariables";
 import { type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { type ContainerItem } from "../../tree/containers/ContainerItem";
 import { ContainersItem } from "../../tree/containers/ContainersItem";
 import { createActivityContext } from "../../utils/activityUtils";
+import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
@@ -48,8 +52,41 @@ export async function editContainer(context: IActionContext, node?: ContainersIt
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
         containersIdx,
+        isDraftCommand: true,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
+
+    if (isAzdExtensionInstalled()) {
+        wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
+    }
+
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
+    wizardContext.resourceGroup = nonNullValue(
+        resourceGroups.find(rg => rg.name === item.containerApp.resourceGroup),
+        localize('containerAppResourceGroup', 'Expected to find the container app\'s resource group.'),
+    );
+
+    // Log resource group
+    wizardContext.activityChildren?.push(
+        new GenericTreeItem(undefined, {
+            contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activitySuccessContext]),
+            label: localize('useResourceGroup', 'Using resource group "{0}"', wizardContext.resourceGroup.name),
+            iconPath: activityInfoIcon
+        })
+    );
+    ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', wizardContext.resourceGroup.name));
+
+    // Log container app
+    wizardContext.activityChildren?.push(
+        new GenericTreeItem(undefined, {
+            contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activitySuccessContext]),
+            label: localize('useContainerApp', 'Using container app "{0}"', wizardContext.containerApp?.name),
+            iconPath: activityInfoIcon
+        })
+    );
+    ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', wizardContext.containerApp?.name));
+
+    await LocationListStep.setLocation(wizardContext, item.containerApp.location);
 
     const wizard: AzureWizard<ContainerEditContext> = new AzureWizard(wizardContext, {
         title: localize('editContainer', 'Edit container profile for "{0}" (draft)', parentResource.name),
