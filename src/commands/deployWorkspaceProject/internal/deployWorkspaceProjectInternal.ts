@@ -33,6 +33,10 @@ export interface DeployWorkspaceProjectInternalOptions {
      */
     suppressActivity?: boolean;
     /**
+     * Suppress registry selection prompt
+     */
+    suppressRegistryPrompt?: boolean;
+    /**
      * Suppress any [resource] confirmation prompts
      */
     suppressConfirmation?: boolean;
@@ -76,7 +80,7 @@ export async function deployWorkspaceProjectInternal(
             undefined :
             localize('loadingWorkspaceTitle', 'Loading workspace project starting configurations...')
     }, async () => {
-        startingConfiguration = await getStartingConfiguration({ ...context });
+        startingConfiguration = await getStartingConfiguration({ ...context }, options);
     });
 
     if (startingConfiguration?.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {

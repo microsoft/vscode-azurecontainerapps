@@ -17,4 +17,7 @@ export interface DockerLoginRegistryCredentialsContext extends CreateAcrContext,
 
     newRegistrySecret?: Secret;
     newRegistryCredential?: RegistryCredentials;
+
+    // Docker Login
+    acrEnableAdminUserConfirmed?: boolean;
 }

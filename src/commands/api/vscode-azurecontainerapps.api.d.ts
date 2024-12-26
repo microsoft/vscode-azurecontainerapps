@@ -19,6 +19,7 @@ export interface DeployWorkspaceProjectOptionsContract {
     dockerfilePath?: string;
 
     // Options
+    suppressRegistryPrompt?: boolean;
     suppressConfirmation?: boolean;  // Suppress any [resource] confirmation prompts
     suppressContainerAppCreation?: boolean;
     shouldSaveDeploySettings?: boolean;
