@@ -6,8 +6,9 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
-import { currentlyDeployedPickDescription, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
+import { dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
+import { currentlyDeployedPickDescription } from "../../../../../utils/pickUtils";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";

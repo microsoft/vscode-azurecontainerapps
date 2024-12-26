@@ -8,11 +8,11 @@ import { type ContainerRegistryManagementClient, type Registry } from "@azure/ar
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, currentlyDeployedPickDescription, noMatchingResources, noMatchingResourcesQp, recommendedPickDescription } from "../../../../../constants";
+import { acrDomain, noMatchingResources, noMatchingResourcesQp } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { isRecommendedPick } from "../../../../../utils/pickUtils";
+import { currentlyDeployedPickDescription, isRecommendedPick, recommendedPickDescription } from "../../../../../utils/pickUtils";
 import { type ContainerAppCreateBaseContext } from "../../../../createContainerApp/ContainerAppCreateContext";
 import { type ManagedEnvironmentCreateContext } from "../../../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
