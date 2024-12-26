@@ -6,7 +6,7 @@
 import { type Registry } from "@azure/arm-containerregistry";
 import { AzureWizardPromptStep, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
-import { isRecommendedPick } from "../../../../utils/telemetryUtils";
+import { isRecommendedPick } from "../../../../utils/pickUtils";
 import { acrCreatePick, AcrListStep } from "../../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 

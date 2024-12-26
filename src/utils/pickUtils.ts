@@ -4,12 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import { currentlyDeployedPickDescription, recommendedPickDescription } from "../constants";
+import { localize } from "./localize";
+
+export const recommendedPickDescription: string = localize('recommended', '(recommended)');
 
 export function isRecommendedPick(pick: IAzureQuickPickItem<unknown>): boolean {
-    return new RegExp(recommendedPickDescription).test(pick.description ?? '');
+    return new RegExp(recommendedPickDescription, 'i').test(pick.description ?? '');
 }
 
+export const currentlyDeployedPickDescription: string = localize('currentlyDeployed', '(currently deployed)');
+
 export function isCurrentlyDeployedPick(pick: IAzureQuickPickItem<unknown>): boolean {
-    return new RegExp(currentlyDeployedPickDescription).test(pick.description ?? '');
+    return new RegExp(currentlyDeployedPickDescription, 'i').test(pick.description ?? '');
 }

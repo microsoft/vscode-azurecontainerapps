@@ -8,11 +8,11 @@ import { type ContainerRegistryManagementClient, type Registry } from "@azure/ar
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, currentlyDeployedPickDescription, noMatchingResources, noMatchingResourcesQp, recommendedPickDescription } from "../../../../../constants";
+import { acrDomain, noMatchingResources, noMatchingResourcesQp } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { isRecommendedPick } from "../../../../../utils/telemetryUtils";
+import { currentlyDeployedPickDescription, isRecommendedPick, recommendedPickDescription } from "../../../../../utils/pickUtils";
 import { type ContainerAppCreateBaseContext } from "../../../../createContainerApp/ContainerAppCreateContext";
 import { type ManagedEnvironmentCreateContext } from "../../../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
@@ -28,7 +28,6 @@ export interface AcrListStepOptions {
 
 export const acrCreatePick = {
     label: localize('newContainerRegistry', '$(plus) Create new container registry'),
-    description: '',
     data: undefined
 };
 
@@ -46,7 +45,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             const picks: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[] = await this.getPicks(context);
             if (picks.length === 1 && picks[0] === acrCreatePick) {
                 pick = acrCreatePick;
-                result = undefined;
+                result = pick.data as typeof acrCreatePick['data'];
                 break;
             }
 
@@ -162,10 +161,10 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
         const picks: IAzureQuickPickItem<Registry>[] = [];
         for (const [i, rg] of sortedResourceGroups.entries()) {
-            const registryGroup: Registry[] = registriesByGroup[rg];
+            const registriesGroup: Registry[] = registriesByGroup[rg];
             const maybeRecommended: string = rg === context.resourceGroup?.name && !srExists ? ` ${recommendedPickDescription}` : '';
 
-            const groupedRegistries: IAzureQuickPickItem<Registry>[] = registryGroup.map(r => {
+            const groupedRegistries: IAzureQuickPickItem<Registry>[] = registriesGroup.map(r => {
                 const maybeDeployed: string = r.loginServer === currentRegistry ? ` ${currentlyDeployedPickDescription}` : '';
                 return {
                     label: nonNullProp(r, 'name'),
@@ -177,9 +176,11 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             // If a currently deployed registry exists, we can expect it to be in the first resource group because we already sorted the group to the front
             if (i === 0 && srExists) {
                 groupedRegistries.sort((a, b) => {
-                    if (new RegExp(currentlyDeployedPickDescription).test(a.description ?? '')) {
+                    const currentDeployed: RegExp = new RegExp(currentlyDeployedPickDescription);
+
+                    if (currentDeployed.test(a.description ?? '')) {
                         return -1;
-                    } else if (new RegExp(currentlyDeployedPickDescription).test(b.description ?? '')) {
+                    } else if (currentDeployed.test(b.description ?? '')) {
                         return 1;
                     } else {
                         return 0;
