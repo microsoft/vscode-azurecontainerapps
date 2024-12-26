@@ -9,11 +9,10 @@ import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microso
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
+import { isRecommendedPick, recommendedPickDescription } from "../../../../utils/pickUtils";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
-
-const recommendedPickDescription: string = localize('recommended', '(recommended)');
 
 export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
@@ -110,5 +109,3 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
         });
     }
 }
-
-const isRecommendedPick = (pick: IAzureQuickPickItem<ManagedEnvironment | undefined>): boolean => pick.description === recommendedPickDescription;
