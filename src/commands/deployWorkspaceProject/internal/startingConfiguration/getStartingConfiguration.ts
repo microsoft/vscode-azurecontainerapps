@@ -44,7 +44,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         containerApp: context.containerApp,
         registry: context.registry,
         newRegistrySku: KnownSkuName.Basic,
-        acrEnableAdminUserConfirmed: options.suppressConfirmation,
+        suppressEnableAdminUserPrompt: options.suppressConfirmation,
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
         envPath: context.envPath,

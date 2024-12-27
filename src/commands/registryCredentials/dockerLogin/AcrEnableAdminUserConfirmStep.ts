@@ -16,6 +16,6 @@ export class AcrEnableAdminUserConfirmStep extends AzureWizardPromptStep<DockerL
     }
 
     public shouldPrompt(context: DockerLoginRegistryCredentialsContext): boolean {
-        return context.acrEnableAdminUserConfirmed !== undefined && getRegistryDomainFromContext(context) === acrDomain && !context.registry?.adminUserEnabled;
+        return !context.suppressEnableAdminUserPrompt && getRegistryDomainFromContext(context) === acrDomain && !context.registry?.adminUserEnabled;
     }
 }
