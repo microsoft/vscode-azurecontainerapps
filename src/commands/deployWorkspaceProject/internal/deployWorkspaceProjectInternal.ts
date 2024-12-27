@@ -82,10 +82,10 @@ export async function deployWorkspaceProjectInternal(
     });
 
     if (startingConfiguration?.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-        throw new Error(localize('multipleRevisionsNotSupported', 'The container app "{0}" cannot be updated using "{1}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{2}" instead.', startingConfiguration?.containerApp?.name, deployWorkspaceProjectCommandName, editContainerCommandName));
+        throw new Error(localize('multipleRevisionsNotSupported', 'The container app cannot be updated using "{0}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{1}" instead.', deployWorkspaceProjectCommandName, editContainerCommandName));
     }
     if ((startingConfiguration?.containerApp?.template?.containers?.length ?? 0) > 1) {
-        throw new Error(localize('multipleContainersNotSupported', 'The container app "{0}" cannot be updated using "{1}" while having more than one active container. Navigate to the specific container instance and execute "{2}" instead.', startingConfiguration?.containerApp?.name, deployWorkspaceProjectCommandName, editContainerCommandName));
+        throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployWorkspaceProjectCommandName, editContainerCommandName));
     }
 
     const wizardContext: DeployWorkspaceProjectInternalContext = {

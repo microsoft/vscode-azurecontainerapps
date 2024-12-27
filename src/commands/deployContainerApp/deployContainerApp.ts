@@ -30,10 +30,10 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
 
     if (item.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-        throw new Error(localize('multipleRevisionsNotSupported', 'The container app "{0}" cannot be updated using "{1}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{2}" instead.', item.containerApp.name, deployContainerAppCommandName, editContainerCommandName));
+        throw new Error(localize('multipleRevisionsNotSupported', 'The container app cannot be updated using "{0}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
     }
     if ((item.containerApp.template?.containers?.length ?? 0) > 1) {
-        throw new Error(localize('multipleContainersNotSupported', 'The container app "{0}" cannot be updated using "{1}" while having more than one active container. Navigate to the specific container instance and execute "{2}" instead.', item.containerApp.name, deployContainerAppCommandName, editContainerCommandName));
+        throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
     }
 
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
