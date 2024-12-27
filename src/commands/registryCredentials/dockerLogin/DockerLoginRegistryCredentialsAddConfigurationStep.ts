@@ -85,4 +85,6 @@ export class DockerLoginRegistryCredentialsAddConfigurationStep extends AzureWiz
     public static getThirdPartyLoginServer(registryDomain: typeof dockerHubDomain | undefined, registryName: string): string {
         return (registryDomain === dockerHubDomain) ? dockerHubRegistry : registryName.toLowerCase();
     }
+
+    // Todo: Add output methods
 }

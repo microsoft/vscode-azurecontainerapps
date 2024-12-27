@@ -32,4 +32,6 @@ export class ManagedIdentityRegistryCredentialsAddConfigurationStep extends Azur
     public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
         return !context.newRegistryCredential;
     }
+
+    // Todo: Add output steps
 }
