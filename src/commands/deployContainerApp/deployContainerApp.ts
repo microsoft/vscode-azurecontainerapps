@@ -17,9 +17,12 @@ import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
+import { editContainerCommandName } from "../editContainer/editContainer";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerAppDeployContext } from "./ContainerAppDeployContext";
+
+const deployContainerAppCommandName: string = localize('deployContainerApp', 'Deploy to Container App...');
 
 export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<void> {
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
@@ -27,10 +30,10 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
 
     if (item.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
-        throw new Error(localize('multipleRevisionsNotSupported', 'The container app "{0}" cannot be updated using "Deploy to Container App..." while in multiple revisions mode.', item.containerApp.name));
+        throw new Error(localize('multipleRevisionsNotSupported', 'The container app "{0}" cannot be updated using "{1}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{2}" instead.', item.containerApp.name, deployContainerAppCommandName, editContainerCommandName));
     }
     if ((item.containerApp.template?.containers?.length ?? 0) > 1) {
-        throw new Error(localize('multipleContainersNotSupported', 'The container app "{0}" cannot be updated using "Deploy to Container App..." while having more than one active container.', item.containerApp.name));
+        throw new Error(localize('multipleContainersNotSupported', 'The container app "{0}" cannot be updated using "{1}" while having more than one active container. Navigate to the specific container instance and execute "{2}" instead.', item.containerApp.name, deployContainerAppCommandName, editContainerCommandName));
     }
 
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
