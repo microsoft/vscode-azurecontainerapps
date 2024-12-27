@@ -3,7 +3,7 @@
 ### 0.0.3
 
 ### Changed
-* [[]]() Add backward compatibility to maintain existing API behaviors with the new managed identity features.
+* [[816]](https://github.com/microsoft/vscode-azurecontainerapps/pull/816) Added backward compatibility to ensure existing functionality remains unaffected by new managed identity features.
 
 ### 0.0.2
 
