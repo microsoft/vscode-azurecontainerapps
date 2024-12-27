@@ -5,6 +5,7 @@
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
+import { deployImageApiCompat } from './api/deployImageApi/deployImageApiCompat';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
@@ -22,7 +23,6 @@ import { editEnvironmentVariables } from './environmentVariables/editEnvironment
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
-import { deployImageApi } from './image/deployImageApi/deployImageApi';
 import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { openAcrBuildLogs } from './image/openAcrBuildLogs';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
@@ -80,7 +80,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
 
     // deploy
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApiCompat);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployContainerApp', deployContainerApp);
