@@ -153,10 +153,10 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             const { registryDomain, registryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === acrDomain) {
                 currentRegistry = registryName;
-            }
 
-            const srIndex: number = registries.findIndex((r) => !!currentRegistry && r.loginServer === currentRegistry);
-            depRegExists = srIndex !== -1;
+                const srIndex: number = registries.findIndex((r) => !!currentRegistry && r.loginServer === currentRegistry);
+                depRegExists = srIndex !== -1;
+            }
         }
 
         const picks: IAzureQuickPickItem<Registry>[] = [];
