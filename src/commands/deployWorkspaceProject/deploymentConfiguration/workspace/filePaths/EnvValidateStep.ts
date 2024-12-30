@@ -3,17 +3,82 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzExtFsExtra, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import * as path from "path";
+import { type Progress } from "vscode";
+import { localize } from "../../../../../utils/localize";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
-import { FilePathsVerifyStep } from "./FilePathsVerifyStep";
+import { useExistingConfigurationKey } from "./EnvUseExistingConfigurationPromptStep";
+import { verifyingFilePaths } from "./FilePathsVerifyStep";
 
-export class EnvValidateStep extends FilePathsVerifyStep {
-    priority: number = 120;
+export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> extends AzureWizardExecuteStep<T> {
+    public priority: number = 120;
+    private configEnvPath: string;
 
-    deploymentSettingskey = 'envPath' as const;
-    contextKey = 'envPath' as const;
-    fileType = 'environment variables';
+    public async execute(context: T, progress: Progress<{ message?: string; increment?: number; }>): Promise<void> {
+        this.options.continueOnFail = true;
+        progress.report({ message: verifyingFilePaths });
 
-    public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !context.envPath;
+        this.configEnvPath = nonNullValueAndProp(context.deploymentConfigurationSettings, 'envPath');
+        if (this.configEnvPath === useExistingConfigurationKey) {
+            context.envPath = '';
+            return;
+        }
+
+        const rootPath: string = nonNullProp(context, 'rootFolder').uri.fsPath;
+        if (!context.envPath && this.configEnvPath) {
+            const fullPath: string = path.join(rootPath, this.configEnvPath);
+            if (await this.verifyFilePath(fullPath)) {
+                context.envPath = fullPath;
+            }
+        }
+    }
+
+    public shouldExecute(context: T): boolean {
+        return context.envPath === undefined;
+    }
+
+    public async verifyFilePath(path: string): Promise<boolean> {
+        if (await AzExtFsExtra.pathExists(path)) {
+            return true;
+        } else {
+            throw new Error(localize('fileNotFound', 'File not found: {0}', path));
+        }
+    }
+
+    public createSuccessOutput(context: T): ExecuteActivityOutput {
+        if (context.envPath === undefined) {
+            return {};
+        }
+
+        let label: string;
+        let message: string;
+        if (context.envPath === '') {
+            label = localize('environmentVariablesLabel', 'Environment variables');
+            message = localize('environmentVariablesMessage', 'User chose to re-use any existing environment variable configuration.');
+        } else {
+            label = localize('envPathLabel', 'Env path');
+            message = localize('envPathSuccessMessage', 'Successfully verified {0} path "{1}".', '.env', context.envPath);
+        }
+
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['envValidateStepSuccessItem', activitySuccessContext]),
+                label,
+                iconPath: activitySuccessIcon
+            }),
+            message,
+        };
+    }
+
+    public createFailOutput(): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['envValidateStepFailItem', activityFailContext]),
+                label: localize('envPathLabel', 'Env path'),
+                iconPath: activityFailIcon
+            }),
+            message: localize('envPathFailMessage', 'Failed to verify {0} path "{1}".', '.env', this.configEnvPath),
+        };
     }
 }

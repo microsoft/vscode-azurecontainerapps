@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-util
 import * as path from "path";
 import { type WorkspaceFolder } from "vscode";
 import { localize } from "../../../utils/localize";
+import { useExistingConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseExistingConfigurationPromptStep";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
@@ -20,6 +21,15 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder);
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
+            let hasNewEnvPath: boolean;
+            if (context.envPath) {
+                hasNewEnvPath = convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath;
+            } else if (context.envPath === '') {
+                hasNewEnvPath = setting?.envPath !== useExistingConfigurationKey;
+            } else {
+                hasNewEnvPath = context.envPath !== setting?.envPath;
+            }
+
             const hasNewResourceGroupSetting: boolean = (!!context.newResourceGroupName && setting?.resourceGroup !== context.newResourceGroupName) ||
                 (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name);
             const hasNewContainerAppSetting: boolean = (!!context.newContainerAppName && setting?.containerApp !== context.newContainerAppName) ||
@@ -31,7 +41,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
                 !setting?.label ||
                 setting?.type !== 'AcrDockerBuildRequest' ||
                 (context.dockerfilePath && convertRelativeToAbsolutePath(rootPath, setting?.dockerfilePath) !== context.dockerfilePath) ||
-                (context.envPath && convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath) ||
+                hasNewEnvPath ||
                 (context.srcPath && convertRelativeToAbsolutePath(rootPath, setting?.srcPath) !== context.srcPath) ||
                 hasNewResourceGroupSetting ||
                 hasNewContainerAppSetting ||
