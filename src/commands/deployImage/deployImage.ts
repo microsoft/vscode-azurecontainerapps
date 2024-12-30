@@ -34,8 +34,9 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
 
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
+    const parentResourceName: string = getParentResource(containerApp, node.revision).name ?? containerApp.name;
     const wizard: AzureWizard<DeployImageContext> = new AzureWizard(wizardContext, {
-        title: localize('deployImageTitle', 'Deploy image to container app "{0}"', containerApp.name),
+        title: localize('deployImageTitle', 'Deploy image to "{0}"', parentResourceName),
         promptSteps: [
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
