@@ -148,7 +148,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
         // Check for a currently deployed registry
         let currentRegistry: string | undefined;
-        let srExists: boolean = false;
+        let depRegExists: boolean = false;
         if (context.containerApp) {
             const { registryDomain, registryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === acrDomain) {
@@ -156,13 +156,13 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             }
 
             const srIndex: number = registries.findIndex((r) => !!currentRegistry && r.loginServer === currentRegistry);
-            srExists = srIndex !== -1;
+            depRegExists = srIndex !== -1;
         }
 
         const picks: IAzureQuickPickItem<Registry>[] = [];
         for (const [i, rg] of sortedResourceGroups.entries()) {
             const registriesGroup: Registry[] = registriesByGroup[rg];
-            const maybeRecommended: string = rg === context.resourceGroup?.name && !srExists ? ` ${recommendedPickDescription}` : '';
+            const maybeRecommended: string = rg === context.resourceGroup?.name && !depRegExists ? ` ${recommendedPickDescription}` : '';
 
             const groupedRegistries: IAzureQuickPickItem<Registry>[] = registriesGroup.map(r => {
                 const maybeDeployed: string = r.loginServer === currentRegistry ? ` ${currentlyDeployedPickDescription}` : '';
@@ -174,7 +174,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             });
 
             // If a currently deployed registry exists, we can expect it to be in the first resource group because we already sorted the group to the front
-            if (i === 0 && srExists) {
+            if (i === 0 && depRegExists) {
                 groupedRegistries.sort((a, b) => {
                     const currentDeployed: RegExp = new RegExp(currentlyDeployedPickDescription);
 
