@@ -3,19 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../../constants";
 import { localize } from "../../../utils/localize";
+import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
 import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
-export class ManagedIdentityRegistryCredentialsAddConfigurationStep extends AzureWizardExecuteStep<ManagedIdentityRegistryCredentialsContext> {
+export class ManagedIdentityRegistryCredentialsAddConfigurationStep<T extends ManagedIdentityRegistryCredentialsContext> extends AzureWizardActivityOutputExecuteStep<T> {
     public priority: number = 470;
+    public stepName: string = 'managedIdentityRegistryCredentialsAddConfigurationStep';
+    protected getSuccessString = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (system-assigned identity).', context.newRegistryCredential?.server);
+    protected getFailString = () => localize('createRegistryCredentialFail', 'Failed to add registry credential (system-assigned identity).');
+    protected getTreeItemLabel = (context: T) => localize('createRegistryCredentialLabel', 'Add registry credential for "{0}" (system-assigned identity)', context.newRegistryCredential?.server);
 
     constructor(private readonly supportedRegistryDomain: SupportedRegistries | undefined) {
         super();
     }
 
-    public async execute(context: ManagedIdentityRegistryCredentialsContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         if (this.supportedRegistryDomain !== acrDomain) {
             throw new Error(localize('domainNotSupported', 'The provided registry domain does not have managed identity connection support.'));
         }
@@ -29,9 +34,7 @@ export class ManagedIdentityRegistryCredentialsAddConfigurationStep extends Azur
         };
     }
 
-    public shouldExecute(context: ManagedIdentityRegistryCredentialsContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.newRegistryCredential;
     }
-
-    // Todo: Add output steps
 }

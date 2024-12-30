@@ -46,7 +46,8 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
         }
 
         // If more than the image tag changed, prompt for ingress again
-        if (getImageNameWithoutTag(context.containerApp?.template?.containers?.[context.containersIdx ?? 0].image ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
+        const currentImage: string | undefined = context.template?.containers?.[context.containersIdx ?? 0].image ?? context.containerApp?.template?.containers?.[context.containersIdx ?? 0].image;
+        if (getImageNameWithoutTag(currentImage ?? '') !== getImageNameWithoutTag(context.image ?? '')) {
             return {
                 promptSteps: [new IngressPromptStep()],
             };

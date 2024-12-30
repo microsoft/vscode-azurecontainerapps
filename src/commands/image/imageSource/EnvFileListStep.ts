@@ -38,7 +38,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
     }
 
     public async prompt(context: T): Promise<void> {
-        const existingData = context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
+        const existingData = context.template?.containers?.[context.containersIdx ?? 0].env ?? context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
         context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
 
         if (!context.envPath && existingData) {

@@ -57,8 +57,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
 
-        // We want to replace the old image
-        containerAppEnvelope.template ||= {};
+        containerAppEnvelope.template = context.template ?? containerAppEnvelope.template ?? {};
         containerAppEnvelope.template.containers ||= [];
 
         const newContainer: Container = {

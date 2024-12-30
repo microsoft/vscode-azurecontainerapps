@@ -3,12 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullValueAndProp, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerItem } from "../../tree/containers/ContainerItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
+import { getParentResource } from "../../utils/revisionDraftUtils";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { showContainerAppNotification } from "../createContainerApp/showContainerAppNotification";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
@@ -28,6 +29,7 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
         containersIdx: node.containersIdx,
+        template: nonNullValueAndProp(getParentResource(containerApp, node.revision), 'template'),
     };
 
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
