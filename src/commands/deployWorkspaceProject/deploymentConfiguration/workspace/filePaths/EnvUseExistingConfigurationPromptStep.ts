@@ -50,7 +50,7 @@ export class EnvUseExistingConfigurationPromptStep<T extends WorkspaceDeployment
         ];
 
         const result: string = (await context.ui.showQuickPick(picks, {
-            placeHolder: localize('envMismatch', 'New environment variables detected. Choose the correct source.'),
+            placeHolder: localize('selectSourcePrompt', 'Detected conflicts between local and remote environment variables. Select source.'),
             suppressPersistence: true,
         })).data;
 
