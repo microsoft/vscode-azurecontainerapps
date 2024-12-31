@@ -8,7 +8,7 @@ import * as path from "path";
 import { type Progress } from "vscode";
 import { localize } from "../../../../../utils/localize";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
-import { useExistingConfigurationKey } from "./EnvUseExistingConfigurationPromptStep";
+import { useRemoteConfigurationKey, useRemoteConfigurationLabel, useRemoteConfigurationOutputMessage } from "./EnvUseRemoteConfigurationPromptStep";
 import { verifyingFilePaths } from "./FilePathsVerifyStep";
 
 export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> extends AzureWizardExecuteStep<T> {
@@ -20,7 +20,7 @@ export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> 
         progress.report({ message: verifyingFilePaths });
 
         this.configEnvPath = nonNullValueAndProp(context.deploymentConfigurationSettings, 'envPath');
-        if (this.configEnvPath === useExistingConfigurationKey) {
+        if (this.configEnvPath === useRemoteConfigurationKey) {
             context.envPath = '';
             return;
         }
@@ -54,8 +54,8 @@ export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> 
         let label: string;
         let message: string;
         if (context.envPath === '') {
-            label = localize('environmentVariablesLabel', 'Environment variables');
-            message = localize('environmentVariablesMessage', 'User chose to re-use any existing environment variable configuration.');
+            label = useRemoteConfigurationLabel;
+            message = useRemoteConfigurationOutputMessage;
         } else {
             label = localize('envPathLabel', 'Env path');
             message = localize('envPathSuccessMessage', 'Successfully verified {0} path "{1}".', '.env', context.envPath);

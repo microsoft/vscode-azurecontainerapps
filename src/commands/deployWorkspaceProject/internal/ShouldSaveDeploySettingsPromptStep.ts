@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-util
 import * as path from "path";
 import { type WorkspaceFolder } from "vscode";
 import { localize } from "../../../utils/localize";
-import { useExistingConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseExistingConfigurationPromptStep";
+import { useRemoteConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseRemoteConfigurationPromptStep";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
@@ -25,7 +25,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             if (context.envPath) {
                 hasNewEnvPath = convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath;
             } else if (context.envPath === '') {
-                hasNewEnvPath = setting?.envPath !== useExistingConfigurationKey;
+                hasNewEnvPath = setting?.envPath !== useRemoteConfigurationKey;
             } else {
                 hasNewEnvPath = context.envPath !== setting?.envPath;
             }

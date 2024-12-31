@@ -4,23 +4,26 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import * as path from "path";
+import { ext } from "../../../../../extensionVariables";
 import { localize } from "../../../../../utils/localize";
 import { EnvFileListStep } from "../../../../image/imageSource/EnvFileListStep";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { ContainerAppVerifyStep } from "../azureResources/ContainerAppVerifyStep";
 import { ResourceGroupVerifyStep } from "../azureResources/ResourceGroupVerifyStep";
 
-export const useExistingConfigurationKey: string = 'useExistingConfiguration';
+export const useRemoteConfigurationKey: string = 'useRemoteConfiguration';
+export const useRemoteConfigurationLabel: string = localize('useRemoteConfiguration', 'Remote env configuration');
+export const useRemoteConfigurationOutputMessage: string = localize('usingRemoteConfiguration', 'Using the existing remote env configuration.');
 
-export class EnvUseExistingConfigurationPromptStep<T extends WorkspaceDeploymentConfigurationContext> extends AzureWizardPromptStep<T> {
+export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentConfigurationContext> extends AzureWizardPromptStep<T> {
     private shouldPromptEnvVars?: boolean;
 
     public async configureBeforePrompt(context: T): Promise<void> {
         const envPath: string | undefined = context.deploymentConfigurationSettings?.envPath;
-        if (!envPath || envPath === useExistingConfigurationKey) {
+        if (!envPath || envPath === useRemoteConfigurationKey) {
             this.shouldPromptEnvVars = false;
             return;
         }
@@ -44,9 +47,10 @@ export class EnvUseExistingConfigurationPromptStep<T extends WorkspaceDeployment
     public async prompt(context: T): Promise<void> {
         const useEnvFile: string = localize('useEnvFile', 'Env file');
         const useExistingConfig: string = localize('useExistingConfig', 'Existing configuration');
+
         const picks: IAzureQuickPickItem<string>[] = [
-            { label: useEnvFile, data: useEnvFile },
-            { label: useExistingConfig, data: useExistingConfig },
+            { label: useEnvFile, data: useEnvFile, description: localize('local', 'Local') },
+            { label: useExistingConfig, data: useExistingConfig, description: localize('remote', 'Remote') },
         ];
 
         const result: string = (await context.ui.showQuickPick(picks, {
@@ -54,12 +58,18 @@ export class EnvUseExistingConfigurationPromptStep<T extends WorkspaceDeployment
             suppressPersistence: true,
         })).data;
 
-        // Todo: outputlog
-
         if (result === useEnvFile) {
             // Do nothing, later steps will verify the file path
         } else if (result === useExistingConfig) {
             context.envPath = '';
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createUniversallyUniqueContextValue(['envUseExistingConfigurationPromptStepItem', activitySuccessContext]),
+                    label: useRemoteConfigurationLabel,
+                    iconPath: activitySuccessIcon,
+                })
+            );
+            ext.outputChannel.appendLog(useRemoteConfigurationOutputMessage);
         }
     }
 

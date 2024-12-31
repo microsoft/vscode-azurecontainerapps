@@ -8,7 +8,7 @@ import * as path from "path";
 import { type Progress, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { useExistingConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseExistingConfigurationPromptStep";
+import { useRemoteConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseRemoteConfigurationPromptStep";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
@@ -54,7 +54,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
         if (envPath === undefined) {
             return '';
         } else if (envPath === '') {
-            return useExistingConfigurationKey;
+            return useRemoteConfigurationKey;
         } else {
             return path.relative(rootFolder.uri.fsPath, envPath);
         }
