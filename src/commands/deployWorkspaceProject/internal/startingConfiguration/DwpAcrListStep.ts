@@ -13,7 +13,7 @@ import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspacePr
 export class DwpAcrListStep<T extends DeployWorkspaceProjectInternalContext> extends AzureWizardPromptStep<T> {
     public async prompt(context: T): Promise<void> {
         const picks: IAzureQuickPickItem<Registry | undefined>[] = await this.getPicks(context);
-        if (!picks.length) {
+        if (picks.length < 2) {
             // No container registries to choose from
             return;
         }
