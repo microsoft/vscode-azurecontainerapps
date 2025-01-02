@@ -15,6 +15,8 @@
     "containerApps.addEnvironmentVariable": "Add Environment Variable...",
     "containerApps.editEnvironmentVariableName.title": "Edit Environment Variable Name...",
     "containerApps.editEnvironmentVariableName.shortTitle": "Edit Name...",
+    "containerApps.editEnvironmentVariableValue.title": "Edit Environment Variable Value...",
+    "containerApps.editEnvironmentVariableValue.shortTitle": "Edit Value...",
     "containerApps.editEnvironmentVariables": "Edit Environment Variables (.env)...",
     "containerApps.deleteEnvironmentVariable.title": "Delete Environment Variable...",
     "containerApps.deleteEnvironmentVariable.shortTitle": "Delete...",
