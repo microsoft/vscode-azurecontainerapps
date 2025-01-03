@@ -13,7 +13,7 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 
 export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const prompt: string = localize('selectRootWorkspace', 'Select the project\'s root directory');
+        const prompt: string = localize('selectRootWorkspace', 'Select the project\'s root directory (browsing to a folder will reload VS Code)');
         const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(context, prompt);
 
         if (!rootFolder) {
