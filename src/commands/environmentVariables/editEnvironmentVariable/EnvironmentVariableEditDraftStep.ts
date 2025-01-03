@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Container, type EnvironmentVar } from "@azure/arm-appcontainers";
-import { nonNullValue } from "@microsoft/vscode-azext-utils";
+import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
@@ -14,7 +14,7 @@ import { EnvironmentVariableType } from "../addEnvironmentVariable/EnvironmentVa
 import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
 
 export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditContext> extends RevisionDraftUpdateBaseStep<T> {
-    public priority: number = 590;
+    public priority: number = 960;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
         super(baseItem);
@@ -48,5 +48,27 @@ export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditC
 
     public shouldExecute(context: T): boolean {
         return !!context.environmentVariable;
+    }
+
+    public createSuccessOutput(): ExecuteActivityOutput {
+        return {
+            item: new GenericTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['environmentVariableEditDraftStepSuccessItem', activitySuccessContext]),
+                label: localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
+                iconPath: activitySuccessIcon
+            }),
+            message: localize('editEnvironmentVariableSuccess', 'Edited environment variable (draft)')
+        };
+    }
+
+    public createFailOutput(): ExecuteActivityOutput {
+        return {
+            item: new GenericParentTreeItem(undefined, {
+                contextValue: createUniversallyUniqueContextValue(['environmentVariableEditDraftStepFailItem', activityFailContext]),
+                label: localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
+                iconPath: activityFailIcon
+            }),
+            message: localize('editEnvironmentVariableFail', 'Failed to edit environment variable (draft).')
+        };
     }
 }

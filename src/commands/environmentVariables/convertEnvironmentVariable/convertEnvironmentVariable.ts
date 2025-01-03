@@ -29,7 +29,9 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
         throw new TemplateItemNotEditableError(item);
     }
 
-    // Todo: Make it so that the command only runs if the chosen environment variable is not already a secretRef
+    if (item.envVariable.secretRef) {
+        throw new Error(localize('alreadySecret', 'The environment variable you chose to convert already uses a secret reference.'));
+    }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
     const wizardContext: EnvironmentVariableConvertContext = {
@@ -55,14 +57,12 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableConvertContext>(),
-            // Todo: Add output
             new SecretCreateStep(),
-            // Todo: Adjust priority level
-            // Todo: Add output
             new EnvironmentVariableEditDraftStep(item),
         ],
     });
 
     await wizard.prompt();
+    wizardContext.activityTitle = localize('convertEnvironmentVariableActivityTitle', 'Convert environment variable "{0}" to use secret "{1}" (draft)', wizardContext.environmentVariable.name, wizardContext.newSecretName);
     await wizard.execute();
 }
