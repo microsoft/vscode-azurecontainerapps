@@ -3,13 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { callWithMaskHandling, callWithTelemetryAndErrorHandling, createSubscriptionContext, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { ImageSource, acrDomain } from "../../../constants";
-import { getDomainFromRegistryName, getRegistryFromAcrName } from "../../../utils/imageNameUtils";
-import { pickContainer } from "../../../utils/pickItem/pickContainer";
-import { deployImage } from "../../deployImage/deployImage";
-import { type ContainerRegistryImageSourceContext } from "../../image/imageSource/containerRegistry/ContainerRegistryImageSourceContext";
-import { type DeployImageToAcaOptionsContract } from "../vscode-azurecontainerapps.api";
+import { callWithMaskHandling, callWithTelemetryAndErrorHandling, createSubscriptionContext, type ExecuteActivityContext, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { ImageSource, acrDomain } from "../../constants";
+import { type DeployImageApiTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
+import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
+import { getDomainFromRegistryName, getRegistryFromAcrName } from "../../utils/imageNameUtils";
+import { pickContainer } from "../../utils/pickItem/pickContainer";
+import { deployImage } from "../deployImage/deployImage";
+import { type ContainerRegistryImageSourceContext } from "../image/imageSource/containerRegistry/ContainerRegistryImageSourceContext";
+import { type ImageSourceBaseContext } from "../image/imageSource/ImageSourceContext";
+import { type DeployImageToAcaOptionsContract } from "./vscode-azurecontainerapps.api";
+
+export type DeployImageApiContext = ImageSourceBaseContext & ExecuteActivityContext & SetTelemetryProps<TelemetryProps>;
 
 export async function deployImageApi(deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
     return await callWithTelemetryAndErrorHandling('containerApps.api.deployImage', async (context: IActionContext & Partial<ContainerRegistryImageSourceContext>) => {
@@ -40,4 +45,11 @@ export async function deployImageApi(deployImageOptions: DeployImageToAcaOptions
             return deployImage(context, node);
         }
     });
+}
+
+/**
+ * A compatibility wrapper for the legacy entrypoint utilizing `deployImageApi`
+ */
+export async function deployImageApiCompat(_: IActionContext & Partial<ContainerRegistryImageSourceContext>, deployImageOptions: DeployImageToAcaOptionsContract): Promise<void> {
+    return await deployImageApi(deployImageOptions);
 }
