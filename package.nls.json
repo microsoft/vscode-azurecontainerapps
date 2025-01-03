@@ -7,7 +7,6 @@
     "containerApps.showDraftCommandDeployPopup": "Prompt to deploy revision draft whenever a draft command is run.",
     "containerApps.browse": "Browse",
     "containerApps.createContainerApp": "Create Container App...",
-    "containerApps.createContainerAppFromWorkspace": "Create Container App from Workspace...",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",
     "containerApps.editContainer": "Edit Container...",
     "containerApps.editContainerImage.title": "Edit Container Image...",

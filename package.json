@@ -66,11 +66,6 @@
                 "icon": "$(add)"
             },
             {
-                "command": "containerApps.createContainerAppFromWorkspace",
-                "title": "%containerApps.createContainerAppFromWorkspace%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.deleteManagedEnvironment",
                 "title": "%containerApps.deleteManagedEnvironment%",
                 "category": "Azure Container Apps"
@@ -369,11 +364,6 @@
                     "group": "2@1"
                 },
                 {
-                    "command": "containerApps.createContainerAppFromWorkspace",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /managedEnvironmentItem/i",
-                    "group": "2@2"
-                },
-                {
                     "command": "containerApps.deleteManagedEnvironment",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /managedEnvironmentItem/i",
                     "group": "3@1"
@@ -605,10 +595,6 @@
                 }
             ],
             "commandPalette": [
-                {
-                    "command": "containerApps.createContainerAppFromWorkspace",
-                    "when": "never"
-                },
                 {
                     "command": "containerApps.deployWorkspaceProjectApi",
                     "when": "never"

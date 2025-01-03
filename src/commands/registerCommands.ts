@@ -62,7 +62,6 @@ export function registerCommands(): void {
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
-    registerCommandWithTreeNodeUnwrapping('containerApps.createContainerAppFromWorkspace', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
