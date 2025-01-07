@@ -39,10 +39,9 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
                 external: context.enableExternal,
                 targetPort: context.targetPort,
             };
-        } else {
-            ingress = undefined;
         }
 
+        // Display ingress log outputs
         if (ingress) {
             const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
             item && context.activityChildren?.push(item);
