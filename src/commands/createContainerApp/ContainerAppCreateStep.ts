@@ -32,14 +32,11 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const containerAppName: string = nonNullProp(context, 'newContainerAppName');
 
-        let ingress: Ingress | undefined;
-        if (context.enableIngress) {
-            ingress = {
-                ...enabledIngressDefaults,
-                external: context.enableExternal,
-                targetPort: context.targetPort,
-            };
-        }
+        const ingress: Ingress | undefined = context.enableIngress ? {
+            ...enabledIngressDefaults,
+            external: context.enableExternal,
+            targetPort: context.targetPort,
+        } : undefined;
 
         // Display ingress log outputs
         if (ingress) {
