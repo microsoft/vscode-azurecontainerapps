@@ -8,11 +8,14 @@ import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { AzureWizardActivityOutputExecuteStep } from "../AzureWizardActivityOutputExecuteStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
+import { DisableIngressStep } from "../ingress/disableIngress/DisableIngressStep";
+import { enabledIngressDefaults, EnableIngressStep } from "../ingress/enableIngress/EnableIngressStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 
 export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardActivityOutputExecuteStep<T> {
@@ -23,26 +26,32 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
     protected getTreeItemLabel = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        progress.report({ message: localize('creatingContainerApp', 'Creating container app...') });
 
+        const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const containerAppName: string = nonNullProp(context, 'newContainerAppName');
 
-        const ingress: Ingress | undefined = context.enableIngress ? {
-            targetPort: context.targetPort,
-            external: context.enableExternal,
-            transport: 'auto',
-            allowInsecure: false,
-            traffic: [
-                {
-                    weight: 100,
-                    latestRevision: true
-                }
-            ],
-        } : undefined;
+        let ingress: Ingress | undefined;
+        if (context.enableIngress) {
+            ingress = {
+                ...enabledIngressDefaults,
+                external: context.enableExternal,
+                targetPort: context.targetPort,
+            };
+        } else {
+            ingress = undefined;
+        }
 
-        const creating: string = localize('creatingContainerApp', 'Creating container app...');
-        progress.report({ message: creating });
+        if (ingress) {
+            const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
+            item && context.activityChildren?.push(item);
+            message && ext.outputChannel.appendLog(message);
+        } else {
+            const { item, message } = DisableIngressStep.createSuccessOutput({ ...context, enableIngress: false });
+            item && context.activityChildren?.push(item);
+            message && ext.outputChannel.appendLog(message);
+        }
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
