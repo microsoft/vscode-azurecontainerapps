@@ -37,7 +37,7 @@ export abstract class AzureResourceVerifyStepBase extends AzureWizardExecuteStep
     protected abstract verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void>;
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !!context.deploymentConfigurationSettings?.[this.deploymentSettingsKey] && !context?.[this.contextKey];
+        return !!context.deploymentConfigurationSettings?.[this.deploymentSettingsKey];
     }
 
     public createSuccessOutput(context: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
