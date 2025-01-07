@@ -15,7 +15,7 @@ export class ResourceGroupVerifyStep extends AzureResourceVerifyStepBase {
     protected deploymentSettingsKey = 'resourceGroup' as const;
     protected contextKey = 'resourceGroup' as const;
 
-    public async verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
+    protected async verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         await ResourceGroupVerifyStep.verifyResourceGroup(context);
     }
 
