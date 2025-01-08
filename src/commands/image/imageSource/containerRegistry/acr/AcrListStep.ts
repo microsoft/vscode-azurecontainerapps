@@ -95,7 +95,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
         const registryPicks: IAzureQuickPickItem<Registry>[] = await AcrListStep.getSortedAndRecommendedPicks(context);
         if (!picks.length && !registryPicks.length) {
-            picks.push(noMatchingResourcesQp);
+            return [noMatchingResourcesQp];
         }
 
         return picks.concat(registryPicks);
