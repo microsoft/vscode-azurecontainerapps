@@ -11,8 +11,6 @@ import { StartingResourcesLogStep } from "../UsingResourcesLogStep";
 import { type ContainerEditContext } from "./ContainerEditContext";
 
 export class ContainerEditStartingResourcesLogStep<T extends ContainerEditContext> extends StartingResourcesLogStep<T> {
-    public hideStepCount: boolean = true;
-
     override async configureBeforePrompt(context: T): Promise<void> {
         const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
         context.resourceGroup = nonNullValue(
