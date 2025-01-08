@@ -21,6 +21,6 @@ export class ContainerEditStartingResourcesLogStep<T extends ContainerEditContex
         );
 
         await LocationListStep.setLocation(context, nonNullValueAndProp(context.containerApp, 'location'));
-        await this.outputStartingResourceLogs(context);
+        await this.logStartingResources(context);
     }
 }

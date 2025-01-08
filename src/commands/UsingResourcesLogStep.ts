@@ -28,8 +28,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         if (this.hasLogged) {
             return;
         }
-
-        await this.outputStartingResourceLogs(context);
+        await this.logStartingResources(context);
     }
 
     public async prompt(): Promise<void> {
@@ -40,7 +39,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         return true;
     }
 
-    protected async outputStartingResourceLogs(context: T): Promise<void> {
+    protected async logStartingResources(context: T): Promise<void> {
         if (context.resourceGroup) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
