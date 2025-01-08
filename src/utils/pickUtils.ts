@@ -6,7 +6,7 @@
 import { type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from "./localize";
 
-export const recommendedPickDescription: string = localize('recommended', '(same resource group)');
+export const recommendedPickDescription: string = localize('recommended', '(recommended)');
 
 export function isRecommendedPick(pick: IAzureQuickPickItem<unknown>): boolean {
     return new RegExp(recommendedPickDescription, 'i').test(pick.description ?? '');
