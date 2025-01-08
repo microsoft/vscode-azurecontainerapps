@@ -30,7 +30,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         }
 
         await this.outputStartingResourceLogs(context);
-        this.hasLogged = true;
     }
 
     public async prompt(): Promise<void> {
@@ -79,5 +78,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
             const location: string = (await LocationListStep.getLocation(context)).name;
             ext.outputChannel.appendLog(localize('usingLocation', 'Using location: "{0}".', location));
         }
+
+        this.hasLogged = true;
     }
 }
