@@ -12,6 +12,10 @@ import { type ContainerEditContext } from "./ContainerEditContext";
 
 export class ContainerEditStartingResourcesLogStep<T extends ContainerEditContext> extends StartingResourcesLogStep<T> {
     override async configureBeforePrompt(context: T): Promise<void> {
+        if (this.hasLogged) {
+            return;
+        }
+
         const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
         context.resourceGroup = nonNullValue(
             resourceGroups.find(rg => rg.name === context.containerApp?.resourceGroup),
