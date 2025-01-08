@@ -7,7 +7,7 @@ import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
-import { StartingResourcesLogStep } from "../UsingResourcesLogStep";
+import { StartingResourcesLogStep } from "../StartingResourcesLogStep";
 import { type ContainerEditContext } from "./ContainerEditContext";
 
 export class ContainerEditStartingResourcesLogStep<T extends ContainerEditContext> extends StartingResourcesLogStep<T> {
