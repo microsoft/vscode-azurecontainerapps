@@ -12,7 +12,7 @@ import { acrDomain, noMatchingResources, noMatchingResourcesQp } from "../../../
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
-import { currentlyDeployedPickDescription, isRecommendedPick, recommendedPickDescription } from "../../../../../utils/pickUtils";
+import { currentlyDeployedPickDescription, hasMatchingPickDescription } from "../../../../../utils/pickUtils";
 import { type ContainerAppCreateBaseContext } from "../../../../createContainerApp/ContainerAppCreateContext";
 import { type ManagedEnvironmentCreateContext } from "../../../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
@@ -49,11 +49,10 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
                 break;
             }
 
-            pick = (await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true }));
+            pick = (await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true, suppressPersistence: true }));
             result = pick.data;
         } while (result === noMatchingResources);
 
-        context.telemetry.properties.usedRecommendedRegistry = pick && isRecommendedPick(pick) ? 'true' : 'false';
         context.registry = result;
     }
 
@@ -148,39 +147,51 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
         // Check for a currently deployed registry
         let currentRegistry: string | undefined;
-        let depRegExists: boolean = false;
+        let hasCurrentRegistry: boolean = false;
         if (context.containerApp) {
             const { registryDomain, registryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === acrDomain) {
                 currentRegistry = registryName;
 
-                const srIndex: number = registries.findIndex((r) => !!currentRegistry && r.loginServer === currentRegistry);
-                depRegExists = srIndex !== -1;
+                const crIndex: number = registries.findIndex((r) => !!currentRegistry && r.loginServer === currentRegistry);
+                hasCurrentRegistry = crIndex !== -1;
             }
         }
 
         const picks: IAzureQuickPickItem<Registry>[] = [];
+        let hasSameRgRegistry: boolean = false;
+        context.telemetry.properties.sameRgAcrCount = '0';
         for (const [i, rg] of sortedResourceGroups.entries()) {
             const registriesGroup: Registry[] = registriesByGroup[rg];
-            const maybeRecommended: string = rg === context.resourceGroup?.name && !depRegExists ? ` ${recommendedPickDescription}` : '';
+
+            let maybeSameRg: string | undefined;
+            if (i === 0 && !hasCurrentRegistry && rg === context.resourceGroup?.name) {
+                maybeSameRg = localize('sameRg', 'Within Same Resource Group');
+                context.telemetry.properties.sameRgAcrCount = String(registriesGroup.length);
+                hasSameRgRegistry = true;
+            }
+
+            let maybeOtherRg: string | undefined;
+            if (i > 0 && hasSameRgRegistry) {
+                maybeOtherRg = localize('other', 'Other');
+            }
 
             const groupedRegistries: IAzureQuickPickItem<Registry>[] = registriesGroup.map(r => {
                 const maybeDeployed: string = r.loginServer === currentRegistry ? ` ${currentlyDeployedPickDescription}` : '';
                 return {
                     label: nonNullProp(r, 'name'),
-                    description: rg + maybeRecommended + maybeDeployed,
+                    group: maybeSameRg || maybeOtherRg,
+                    description: maybeDeployed || rg,
                     data: r,
                 };
             });
 
             // If a currently deployed registry exists, we can expect it to be in the first resource group because we already sorted the group to the front
-            if (i === 0 && depRegExists) {
+            if (i === 0 && hasCurrentRegistry) {
                 groupedRegistries.sort((a, b) => {
-                    const currentDeployed: RegExp = new RegExp(currentlyDeployedPickDescription);
-
-                    if (currentDeployed.test(a.description ?? '')) {
+                    if (hasMatchingPickDescription(a, currentlyDeployedPickDescription)) {
                         return -1;
-                    } else if (currentDeployed.test(b.description ?? '')) {
+                    } else if (hasMatchingPickDescription(b, currentlyDeployedPickDescription)) {
                         return 1;
                     } else {
                         return 0;
@@ -191,7 +202,6 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             picks.push(...groupedRegistries);
         }
 
-        context.telemetry.properties.recommendedRegistryCount = String(picks.reduce((count, pick) => count + (isRecommendedPick(pick) ? 1 : 0), 0));
         return picks;
     }
 
