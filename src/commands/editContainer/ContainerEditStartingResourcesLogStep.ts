@@ -11,18 +11,12 @@ import { StartingResourcesLogStep } from "../StartingResourcesLogStep";
 import { type ContainerEditContext } from "./ContainerEditContext";
 
 export class ContainerEditStartingResourcesLogStep<T extends ContainerEditContext> extends StartingResourcesLogStep<T> {
-    override async configureBeforePrompt(context: T): Promise<void> {
-        if (this.hasLogged) {
-            return;
-        }
-
+    async configureStartingResources(context: T): Promise<void> {
         const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
         context.resourceGroup = nonNullValue(
             resourceGroups.find(rg => rg.name === context.containerApp?.resourceGroup),
             localize('containerAppResourceGroup', 'Expected to find the container app\'s resource group.'),
         );
-
         await LocationListStep.setLocation(context, nonNullValueAndProp(context.containerApp, 'location'));
-        await this.logStartingResources(context);
     }
 }

@@ -20,14 +20,17 @@ type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityConte
 /**
  * Use to display primary Azure resources to the output and activity log
  */
-export class StartingResourcesLogStep<T extends StartingResourcesLogContext> extends AzureWizardPromptStep<T> {
+export abstract class StartingResourcesLogStep<T extends StartingResourcesLogContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
     protected hasLogged: boolean = false;
+
+    protected configureStartingResources?(context: T): void | Promise<void>;
 
     public async configureBeforePrompt(context: T): Promise<void> {
         if (this.hasLogged) {
             return;
         }
+        await this.configureStartingResources?.(context);
         await this.logStartingResources(context);
     }
 
