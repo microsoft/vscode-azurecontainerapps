@@ -164,6 +164,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         for (const [i, rg] of sortedResourceGroups.entries()) {
             const registriesGroup: Registry[] = registriesByGroup[rg];
 
+            // Same resource group would be sorted to the top of the list...
             let maybeSameRg: string | undefined;
             if (i === 0 && !hasCurrentRegistry && rg === context.resourceGroup?.name) {
                 maybeSameRg = localize('sameRg', 'Within Same Resource Group');
@@ -171,6 +172,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
                 hasSameRgRegistry = true;
             }
 
+            // ...any "Other" resource groups would come after
             let maybeOtherRg: string | undefined;
             if (i > 0 && hasSameRgRegistry) {
                 maybeOtherRg = localize('other', 'Other');
