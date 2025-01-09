@@ -36,7 +36,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
     }
 
     public shouldPrompt(): boolean {
-        return true;
+        return false;
     }
 
     protected async logStartingResources(context: T): Promise<void> {
