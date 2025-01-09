@@ -18,12 +18,16 @@ type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityConte
 };
 
 /**
- * Use to display primary Azure resources to the output and activity log
+ * Use to display primary Azure resource data to the output and activity log
+ * i.e. resource group, managed environment, container app, location
  */
 export abstract class StartingResourcesLogStep<T extends StartingResourcesLogContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
     protected hasLogged: boolean = false;
 
+    /**
+     * Implement if you require additional context loading before resource logging
+     */
     protected configureStartingResources?(context: T): void | Promise<void>;
 
     public async configureBeforePrompt(context: T): Promise<void> {
