@@ -5,5 +5,5 @@
 
 export interface ContainerTelemetryProps {
     containersIdx?: string; // Number casted to string
-    basedOnLatestRevision?: string; // Boolean casted to string
+    basedOnLatestRevision?: 'true' | 'false';
 }
