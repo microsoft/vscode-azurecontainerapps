@@ -46,8 +46,8 @@ export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentCo
 
     public async prompt(context: T): Promise<void> {
         const envPath: string = nonNullValueAndProp(context.deploymentConfigurationSettings, 'envPath');
-        const useEnvFile: string = localize('useEnvFile', 'Env file');
-        const useExistingConfig: string = localize('useExistingConfig', 'Existing configuration');
+        const useEnvFile: string = localize('useEnvFile', 'Local config');
+        const useExistingConfig: string = localize('useExistingConfig', 'Remote config');
 
         const picks: IAzureQuickPickItem<string>[] = [
             { label: useEnvFile, data: useEnvFile, description: envPath },
