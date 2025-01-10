@@ -19,8 +19,8 @@ import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCreden
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
 export enum RegistryCredentialType {
-    SystemAssigned,
-    DockerLogin,
+    SystemAssigned = 'system-assigned',
+    DockerLogin = 'docker-login',
 }
 
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
@@ -76,6 +76,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         switch (context.newRegistryCredentialType) {
             case RegistryCredentialType.SystemAssigned:
+                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.SystemAssigned;
                 executeSteps.push(
                     new ManagedEnvironmentIdentityEnableStep(),
                     new AcrPullVerifyStep(),
@@ -84,6 +85,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 );
                 break;
             case RegistryCredentialType.DockerLogin:
+                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.DockerLogin;
                 promptSteps.push(new AcrEnableAdminUserConfirmStep());
                 executeSteps.push(
                     new AcrEnableAdminUserStep(),
@@ -91,6 +93,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 );
                 break;
             default:
+                context.telemetry.properties.newRegistryCredentialType = 'useExisting';
                 context.activityChildren?.push(
                     new GenericTreeItem(undefined, {
                         contextValue: createUniversallyUniqueContextValue(['registryCredentialsAddConfigurationListStepVerifyItem', activitySuccessContext]),

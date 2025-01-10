@@ -47,11 +47,11 @@ export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentCo
     public async prompt(context: T): Promise<void> {
         const envPath: string = nonNullValueAndProp(context.deploymentConfigurationSettings, 'envPath');
         const useEnvFile: string = localize('useEnvFile', 'Local config');
-        const useExistingConfig: string = localize('useExistingConfig', 'Remote config');
+        const useRemoteConfig: string = localize('useRemoteConfig', 'Remote config');
 
         const picks: IAzureQuickPickItem<string>[] = [
             { label: useEnvFile, data: useEnvFile, description: envPath },
-            { label: useExistingConfig, data: useExistingConfig, description: context.containerApp?.name },
+            { label: useRemoteConfig, data: useRemoteConfig, description: context.containerApp?.name },
         ];
 
         const result: string = (await context.ui.showQuickPick(picks, {
@@ -61,11 +61,13 @@ export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentCo
 
         if (result === useEnvFile) {
             // Do nothing, later steps will verify the file path
-        } else if (result === useExistingConfig) {
+            context.telemetry.properties.useRemoteEnvConfiguration = 'false';
+        } else if (result === useRemoteConfig) {
+            context.telemetry.properties.useRemoteEnvConfiguration = 'true';
             context.envPath = '';
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['envUseExistingConfigurationPromptStepItem', activitySuccessContext]),
+                    contextValue: createUniversallyUniqueContextValue(['envUseRemoteConfigurationPromptStepItem', activitySuccessContext]),
                     label: useRemoteConfigurationLabel,
                     iconPath: activitySuccessIcon,
                 })

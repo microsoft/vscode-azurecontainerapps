@@ -51,6 +51,9 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
 
+    wizardContext.telemetry.properties.containersIdx = String(item.containersIdx ?? 0);
+    wizardContext.telemetry.properties.basedOnLatestRevision = containerApp.latestRevisionName === item.revision.name ? 'true' : 'false';
+
     const wizard: AzureWizard<ContainerEditUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('editContainerImage', 'Edit container image for "{0}" (draft)', parentResource.name),
         promptSteps: [

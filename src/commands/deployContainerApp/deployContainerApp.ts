@@ -13,6 +13,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
 import { editContainerCommandName } from "../editContainer/editContainer";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
@@ -49,7 +50,6 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
         imageSource,
     };
-    wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
     if (isAzdExtensionInstalled()) {
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
@@ -60,6 +60,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         promptSteps: [
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
+            new ContainerAppOverwriteConfirmStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),

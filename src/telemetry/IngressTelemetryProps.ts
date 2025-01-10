@@ -6,6 +6,7 @@
 export interface IngressTelemetryProps {
     dockerfileExposePortRangeCount?: string;  // IngressPromptStep
     enableIngress?: 'true' | 'false'; //IngressPromptStep
+    enableExternal?: 'true' | 'false'; // IngressPromptStep
     suggestedTargetPort?: string; //getDefaultPort
     targetPort?: string; //TargetPortInputStep
 }

@@ -5,12 +5,17 @@
 
 import { type AcrBuildSupportedOS } from "../commands/image/imageSource/buildImageInAzure/OSPickStep";
 import { type SetEnvironmentVariableOption } from "../commands/image/imageSource/EnvFileListStep";
+import { type RegistryCredentialType } from "../commands/registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { type ImageSource, type SupportedRegistries } from "../constants";
 import { type AzdTelemetryProps } from "./AzdTelemetryProps";
 import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface ImageSourceTelemetryProps extends ContainerRegistryTelemetryProps, BuildImageInAzureTelemetryProps, EnvironmentVariableTelemetryProps {
+export interface ImageSourceTelemetryProps extends ContainerRegistryCredentialsTelemetryProps, ContainerRegistryTelemetryProps, BuildImageInAzureTelemetryProps, EnvironmentVariableTelemetryProps {
     imageSource?: ImageSource;
+}
+
+export interface ContainerRegistryCredentialsTelemetryProps {
+    newRegistryCredentialType?: RegistryCredentialType | 'useExisting';
 }
 
 export interface ContainerRegistryTelemetryProps {
