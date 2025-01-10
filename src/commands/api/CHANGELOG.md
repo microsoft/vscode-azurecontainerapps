@@ -2,6 +2,9 @@
 
 ### 0.0.3
 
+### Added
+* [[817]](https://github.com/microsoft/vscode-azurecontainerapps/pull/817) Added an API entry-point and compat wrapper for existing `deployImageApi` command
+
 ### Changed
 * [[816]](https://github.com/microsoft/vscode-azurecontainerapps/pull/816) Added backward compatibility to ensure existing functionality remains unaffected by new managed identity features.
 

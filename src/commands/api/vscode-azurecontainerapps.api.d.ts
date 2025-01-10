@@ -8,6 +8,15 @@ export interface AzureContainerAppsExtensionApi {
     deployWorkspaceProject(options: DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults>;
 }
 
+// The interface of the command options passed to the Azure Container Apps extension's deployImageToAca command
+// This interface is shared with the Docker extension (https://github.com/microsoft/vscode-docker)
+export interface DeployImageToAcaOptionsContract {
+    image: string;
+    registryName: string;
+    username?: string;
+    secret?: string;
+}
+
 export interface DeployWorkspaceProjectOptionsContract {
     // Existing resources
     subscriptionId?: string;

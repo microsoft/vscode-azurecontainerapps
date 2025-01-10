@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type Ingress } from "@azure/arm-appcontainers";
+import { type Container, type Ingress } from "@azure/arm-appcontainers";
 import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
@@ -57,15 +57,19 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
 
-        // We want to replace the old image
-        containerAppEnvelope.template ||= {};
-        containerAppEnvelope.template.containers = [];
+        containerAppEnvelope.template = context.template ?? containerAppEnvelope.template ?? {};
+        containerAppEnvelope.template.containers ||= [];
 
-        containerAppEnvelope.template.containers.push({
+        const newContainer: Container = {
             env: context.environmentVariables,
             image: context.image,
             name: getContainerNameForImage(nonNullProp(context, 'image')),
-        });
+        };
+        if (context.containersIdx) {
+            containerAppEnvelope.template.containers[context.containersIdx] = newContainer;
+        } else {
+            containerAppEnvelope.template.containers = [newContainer];
+        }
 
         // Related: https://github.com/microsoft/vscode-azurecontainerapps/pull/805
         const retries = 4;
