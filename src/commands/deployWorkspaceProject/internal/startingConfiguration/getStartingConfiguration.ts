@@ -11,20 +11,26 @@ import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
+import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
 import { DwpAcrListStep } from "./DwpAcrListStep";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
-export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
+export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
+    const promptSteps = [
+        new RootFolderStep(),
+        new DockerfileItemStep(),
+        new DwpManagedEnvironmentListStep(),
+    ];
+
+    if (!options.suppressRegistryPrompt) {
+        promptSteps.push(new DwpAcrListStep());
+    }
+
     const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(context, {
-        promptSteps: [
-            new RootFolderStep(),
-            new DockerfileItemStep(),
-            new DwpManagedEnvironmentListStep(),
-            new DwpAcrListStep(),
-        ],
+        promptSteps,
     });
 
     await wizard.prompt();
@@ -38,6 +44,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         containerApp: context.containerApp,
         registry: context.registry,
         newRegistrySku: KnownSkuName.Basic,
+        suppressEnableAdminUserPrompt: options.suppressConfirmation,
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
         envPath: context.envPath,
