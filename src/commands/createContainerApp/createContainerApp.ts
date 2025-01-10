@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, createSubscriptionContext, nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type ResourceGroup } from "@azure/arm-resources";
+import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -15,25 +17,24 @@ import { localize } from "../../utils/localize";
 import { pickEnvironment } from "../../utils/pickItem/pickEnvironment";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
-import { ContainerAppCreateStartingResourcesLogStep } from "./ContainerAppCreateStartingResourcesLogStep";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 import { showContainerAppNotification } from "./showContainerAppNotification";
 
-export async function createContainerApp(context: IActionContext, item?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
+export async function createContainerApp(context: IActionContext, node?: ManagedEnvironmentItem): Promise<ContainerAppItem> {
     // If an incompatible tree item is passed, treat it as if no item was passed
-    if (item && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
-        item = undefined;
+    if (node && !ManagedEnvironmentItem.isManagedEnvironmentItem(node)) {
+        node = undefined;
     }
 
-    item ??= await pickEnvironment(context);
+    node ??= await pickEnvironment(context);
 
     const wizardContext: ContainerAppCreateContext = {
         ...context,
-        ...createSubscriptionContext(item.subscription),
+        ...createSubscriptionContext(node.subscription),
         ...await createActivityContext(true),
-        subscription: item.subscription,
-        managedEnvironment: item.managedEnvironment,
+        subscription: node.subscription,
+        managedEnvironment: node.managedEnvironment,
         imageSource: ImageSource.QuickstartImage,
     };
 
@@ -41,10 +42,16 @@ export async function createContainerApp(context: IActionContext, item?: Managed
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
 
+    // Use the same resource group and location as the parent resource (managed environment)
+    const resourceGroupName: string = nonNullValueAndProp(node.resource, 'resourceGroup');
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
+    wizardContext.resourceGroup = nonNullValue(resourceGroups.find(rg => rg.name === resourceGroupName));
+
+    await LocationListStep.setLocation(wizardContext, nonNullProp(node.resource, 'location'));
+
     const wizard: AzureWizard<ContainerAppCreateContext> = new AzureWizard(wizardContext, {
         title: localize('createContainerApp', 'Create container app'),
         promptSteps: [
-            new ContainerAppCreateStartingResourcesLogStep(item),
             new ContainerAppNameStep(),
             new ImageSourceListStep(),
         ],
@@ -58,7 +65,7 @@ export async function createContainerApp(context: IActionContext, item?: Managed
 
     const newContainerAppName = nonNullProp(wizardContext, 'newContainerAppName');
     await ext.state.showCreatingChild(
-        item.managedEnvironment.id,
+        node.managedEnvironment.id,
         localize('creating', 'Creating "{0}"...', newContainerAppName),
         async () => {
             wizardContext.activityTitle = localize('createNamedContainerApp', 'Create container app "{0}"', newContainerAppName);
@@ -71,5 +78,5 @@ export async function createContainerApp(context: IActionContext, item?: Managed
         void showContainerAppNotification(createdContainerApp);
     }
 
-    return new ContainerAppItem(item.subscription, createdContainerApp);
+    return new ContainerAppItem(node.subscription, createdContainerApp);
 }
