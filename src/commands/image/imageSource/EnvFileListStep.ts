@@ -37,15 +37,10 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         super();
     }
 
-    public async prompt(context: T): Promise<void> {
-        const existingData = context.template?.containers?.[context.containersIdx ?? 0].env ?? context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
-        context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
-
-        if (!context.envPath && existingData) {
-            context.environmentVariables = existingData;
-            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
-        } else {
-            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
+    public async configureBeforePrompt(context: T): Promise<void> {
+        if (context.environmentVariables?.length === 0) {
+            context.telemetry.properties.environmentVariableFileCount = '0';
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
         }
 
         if (this._setEnvironmentVariableOption) {
@@ -53,10 +48,17 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         }
     }
 
-    public async configureBeforePrompt(context: T): Promise<void> {
-        if (context.environmentVariables?.length === 0) {
-            context.telemetry.properties.environmentVariableFileCount = '0';
-            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
+    public async prompt(context: T): Promise<void> {
+        const existingData = context.template?.containers?.[context.containersIdx ?? 0].env ?? context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
+        context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
+
+        if (context.envPath) {
+            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
+        } else if (existingData) {
+            context.environmentVariables = existingData;
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
+        } else {
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.SkipForNow;
         }
 
         if (this._setEnvironmentVariableOption) {
@@ -83,10 +85,16 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         }
 
         this._setEnvironmentVariableOption = SetEnvironmentVariableOption.ProvideFile;
+        return await EnvFileListStep.parseEnvironmentVariablesFromEnvPath(envPath);
+    }
+
+    public static async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
+        if (!envPath || !await AzExtFsExtra.pathExists(envPath)) {
+            return [];
+        }
 
         const data: string = await AzExtFsExtra.readFile(envPath);
         const envData: DotenvParseOutput = parse(data);
-
         return Object.keys(envData).map(name => { return { name, value: envData[name] } });
     }
 

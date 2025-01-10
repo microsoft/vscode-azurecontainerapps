@@ -10,6 +10,8 @@ import { localize } from "../../../../../utils/localize";
 import { type DeploymentConfigurationSettings } from "../../../settings/DeployWorkspaceProjectSettingsV2";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
+export const verifyingFilePaths: string = localize('verifyingFilePaths', `Verifying file paths...`);
+
 export abstract class FilePathsVerifyStep extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
     abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;
     abstract contextKey: keyof Pick<WorkspaceDeploymentConfigurationContext, 'srcPath' | 'envPath' | 'dockerfilePath'>;
@@ -23,7 +25,7 @@ export abstract class FilePathsVerifyStep extends AzureWizardExecuteStep<Workspa
 
     public async execute(context: WorkspaceDeploymentConfigurationContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.continueOnFail = true;
-        progress.report({ message: localize('verifyingFilePaths', `Verifying file paths...`) });
+        progress.report({ message: verifyingFilePaths });
 
         const rootPath: string = nonNullProp(context, 'rootFolder').uri.fsPath;
 
