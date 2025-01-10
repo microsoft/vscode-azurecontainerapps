@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Template } from "@azure/arm-appcontainers";
-import { type DeployImageApiContext } from "../api/deployImageApi/DeployImageApiContext";
+import { type DeployImageApiContext } from "../api/deployImageApi";
 
 export interface DeployImageContext extends DeployImageApiContext {
     containersIdx: number;

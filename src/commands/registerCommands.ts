@@ -5,7 +5,7 @@
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
-import { deployImageApiCompat } from './api/deployImageApi/deployImageApiCompat';
+import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
@@ -17,7 +17,6 @@ import { editContainer } from './editContainer/editContainer';
 import { editContainerImage } from './editContainer/editContainerImage/editContainerImage';
 import { editContainerApp } from './editContainerApp';
 import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
-import { convertEnvironmentVariable } from './environmentVariables/convertEnvironmentVariable/convertEnvironmentVariable';
 import { deleteEnvironmentVariable } from './environmentVariables/deleteEnvironmentVariable/deleteEnvironmentVariable';
 import { editEnvironmentVariableName } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableName';
 import { editEnvironmentVariableValue } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableValue';
@@ -78,7 +77,6 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableName', editEnvironmentVariableName);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableValue', editEnvironmentVariableValue);
-    registerCommandWithTreeNodeUnwrapping('containerApps.convertEnvironmentVariable', convertEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariables', editEnvironmentVariables);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
 

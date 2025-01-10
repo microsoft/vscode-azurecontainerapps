@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { createApiProvider, type apiUtils } from "@microsoft/vscode-azext-utils";
-import { deployImageApi } from "./deployImageApi/deployImageApi";
+import { deployImageApi } from "./deployImageApi";
 import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
