@@ -38,6 +38,7 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
         containerApp,
         containersIdx: item.containersIdx,
         environmentVariable: item.envVariable,
+        isDraftCommand: true,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 

@@ -27,7 +27,8 @@ export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleI
         ...await createActivityContext(),
         containerApp,
         subscription,
-        scaleRule: item.scaleRule
+        scaleRule: item.scaleRule,
+        isDraftCommand: true,
     }
 
     const confirmMessage = localize('confirmMessage', 'Are you sure you want to delete this scale rule?');

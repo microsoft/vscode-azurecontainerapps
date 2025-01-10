@@ -49,7 +49,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
                 break;
             }
 
-            pick = (await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true, suppressPersistence: true }));
+            pick = await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true, suppressPersistence: true });
             result = pick.data;
         } while (result === noMatchingResources);
 

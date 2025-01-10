@@ -6,10 +6,10 @@
 import { type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { type ContainerUpdateTelemetryProps as TelemetryProps } from "../../telemetry/commandTelemetryProps";
-import { type IContainerAppContext } from "../IContainerAppContext";
 import { type ImageSourceBaseContext } from "../image/imageSource/ImageSourceContext";
+import { type RevisionDraftContext } from "../revisionDraft/RevisionDraftContext";
 
-export interface ContainerEditBaseContext extends IContainerAppContext, ImageSourceBaseContext, ExecuteActivityContext {
+export interface ContainerEditBaseContext extends RevisionDraftContext, ImageSourceBaseContext, ExecuteActivityContext {
     containersIdx: number;
 }
 
