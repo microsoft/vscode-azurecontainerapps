@@ -91,3 +91,5 @@ export const revisionDraftFalseContextValue: string = 'revisionDraft:false';
 
 export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
+
+export const activityInfoContext: string = 'activity:info';
