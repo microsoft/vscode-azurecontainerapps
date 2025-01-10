@@ -6,9 +6,9 @@
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type ContainerUpdateTelemetryProps as TelemetryProps } from "../../../telemetry/commandTelemetryProps";
-import { type EnvironmentVariableAddContext } from "../addEnvironmentVariable/EnvironmentVariableAddContext";
+import { type EnvironmentVariableAddBaseContext } from "../addEnvironmentVariable/EnvironmentVariableAddContext";
 
-export interface EnvironmentVariableEditBaseContext extends EnvironmentVariableAddContext {
+export interface EnvironmentVariableEditBaseContext extends EnvironmentVariableAddBaseContext {
     // Require the environment variable upfront so we can make edits
     environmentVariable: EnvironmentVar;
 }

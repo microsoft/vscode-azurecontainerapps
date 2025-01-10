@@ -12,7 +12,7 @@ import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUp
 import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
 
 export class EnvironmentVariablesEditDraftStep<T extends EnvironmentVariablesEditContext> extends RevisionDraftUpdateBaseStep<T> {
-    public priority: number = 590;
+    public priority: number = 920;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
         super(baseItem);

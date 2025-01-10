@@ -93,15 +93,28 @@ When creating or updating resources, execute steps should occupy certain priorit
 - SecretCreateStep: 820
 - SecretUpdateStep: 850
 
-### 8. Unallocated Space
+### 8. Environment Variables
 
-<b>Priority Range</b>: 900 - 1090
+<b>Priority Range</b>: 900 - 990
+
+#### Steps
+<!-- Bulk edit -->
+- EnvironmentVariablesEditDraftStep: 920 (single command)
+
+<!-- Single edit -->
+- EnvironmentVariableAddDraftStep: 940 (single command)
+- EnvironmentVariableEditDraftStep: 960 (single command)
+- EnvironmentVariableDeleteDraftStep: 980 (single command)
+
+### 9. Unallocated Space
+
+<b>Priority Range</b>: 1000 - 1090
 
 #### Steps
 
 - Reserved for future commands TBD.
 
-### 9. Scaling
+### 10. Scaling
 
 <b>Priority Range</b>: 1100 - 1190
 
@@ -109,7 +122,7 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - AddScaleRuleStep: 1120 (revision draft)
 
-### 10. Unallocated Space
+### 11. Unallocated Space
 
 <b>Priority Range</b>: 1200 - 1390
 
@@ -117,7 +130,7 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - Reserved for future commands TBD.
 
-### 11. Deploy
+### 12. Deploy
 
 <b>Priority Range</b>: 1400 - 1490
 

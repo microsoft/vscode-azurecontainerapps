@@ -12,7 +12,7 @@ import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUp
 import { type EnvironmentVariableDeleteContext } from "./EnvironmentVariableDeleteContext";
 
 export class EnvironmentVariableDeleteDraftStep<T extends EnvironmentVariableDeleteContext> extends RevisionDraftUpdateBaseStep<T> {
-    public priority: number = 590;
+    public priority: number = 980;
 
     constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
         super(baseItem);
