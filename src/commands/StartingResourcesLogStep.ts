@@ -21,7 +21,7 @@ type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityConte
  * Use to display primary Azure resource data to the output and activity log
  * i.e. resource group, managed environment, container app, location
  */
-export abstract class StartingResourcesLogStep<T extends StartingResourcesLogContext> extends AzureWizardPromptStep<T> {
+export class StartingResourcesLogStep<T extends StartingResourcesLogContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
     protected hasLogged: boolean = false;
 
