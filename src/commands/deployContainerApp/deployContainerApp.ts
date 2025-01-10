@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { activityInfoIcon, activitySuccessContext, AzureWizard, createSubscriptionContext, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, nonNullValue, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
@@ -16,14 +17,24 @@ import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
+import { editContainerCommandName } from "../editContainer/editContainer";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { type ContainerAppDeployContext } from "./ContainerAppDeployContext";
+
+const deployContainerAppCommandName: string = localize('deployContainerApp', 'Deploy to Container App...');
 
 export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<void> {
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
+
+    if (item.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+        throw new Error(localize('multipleRevisionsNotSupported', 'The container app cannot be updated using "{0}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
+    }
+    if ((item.containerApp.template?.containers?.length ?? 0) > 1) {
+        throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
+    }
 
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
     const imageSource: ImageSource = await promptImageSource(subscriptionActionContext);

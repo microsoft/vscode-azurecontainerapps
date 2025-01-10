@@ -22,6 +22,8 @@ import { ContainerEditDraftStep } from "./ContainerEditDraftStep";
 import { ContainerEditStartingResourcesLogStep } from "./ContainerEditStartingResourcesLogStep";
 import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
 
+export const editContainerCommandName: string = localize('editContainer', 'Edit Container...');
+
 // Edits both the 'image' and 'environmentVariables' portion of the container profile (draft)
 export async function editContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
     const item: ContainerItem | ContainersItem = node ?? await pickContainer(context, { autoSelectDraft: true });
