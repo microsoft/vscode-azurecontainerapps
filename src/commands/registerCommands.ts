@@ -19,6 +19,7 @@ import { editContainerApp } from './editContainerApp';
 import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
 import { deleteEnvironmentVariable } from './environmentVariables/deleteEnvironmentVariable/deleteEnvironmentVariable';
 import { editEnvironmentVariableName } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableName';
+import { editEnvironmentVariableValue } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableValue';
 import { editEnvironmentVariables } from './environmentVariables/editEnvironmentVariables/editEnvironmentVariables';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
@@ -76,6 +77,7 @@ export function registerCommands(): void {
     // environment variables
     registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableName', editEnvironmentVariableName);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableValue', editEnvironmentVariableValue);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariables', editEnvironmentVariables);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
 
@@ -117,7 +119,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.addScaleRule', addScaleRule);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteScaleRule', deleteScaleRule);
 
-    //log streaming
+    // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 
