@@ -4,10 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type Revision } from "@azure/arm-appcontainers";
-import { type ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { activityInfoIcon, activitySuccessContext, AzureWizard, createSubscriptionContext, createUniversallyUniqueContextValue, GenericTreeItem, nonNullValue, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { ext } from "../../../extensionVariables";
+import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type ImageItem } from "../../../tree/containers/ImageItem";
 import { createActivityContext } from "../../../utils/activityUtils";
@@ -20,6 +17,7 @@ import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEdita
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerEditContext } from "../ContainerEditContext";
+import { ContainerEditStartingResourcesLogStep } from "../ContainerEditStartingResourcesLogStep";
 import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
 import { ContainerImageEditDraftStep } from "./ContainerImageEditDraftStep";
 
@@ -53,37 +51,10 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
 
-    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(wizardContext);
-    wizardContext.resourceGroup = nonNullValue(
-        resourceGroups.find(rg => rg.name === item.containerApp.resourceGroup),
-        localize('containerAppResourceGroup', 'Expected to find the container app\'s resource group.'),
-    );
-
-    // Log resource group
-    wizardContext.activityChildren?.push(
-        new GenericTreeItem(undefined, {
-            contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activitySuccessContext]),
-            label: localize('useResourceGroup', 'Using resource group "{0}"', wizardContext.resourceGroup.name),
-            iconPath: activityInfoIcon
-        })
-    );
-    ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', wizardContext.resourceGroup.name));
-
-    // Log container app
-    wizardContext.activityChildren?.push(
-        new GenericTreeItem(undefined, {
-            contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activitySuccessContext]),
-            label: localize('useContainerApp', 'Using container app "{0}"', wizardContext.containerApp?.name),
-            iconPath: activityInfoIcon
-        })
-    );
-    ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', wizardContext.containerApp?.name));
-
-    await LocationListStep.setLocation(wizardContext, item.containerApp.location);
-
     const wizard: AzureWizard<ContainerEditUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('editContainerImage', 'Edit container image for "{0}" (draft)', parentResource.name),
         promptSteps: [
+            new ContainerEditStartingResourcesLogStep(),
             new ImageSourceListStep({ suppressEnvPrompt: true }),
             new RevisionDraftDeployPromptStep(),
         ],
