@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import * as path from "path";
 import { ext } from "../../../../../extensionVariables";
@@ -45,12 +45,13 @@ export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentCo
     }
 
     public async prompt(context: T): Promise<void> {
+        const envPath: string = nonNullValueAndProp(context.deploymentConfigurationSettings, 'envPath');
         const useEnvFile: string = localize('useEnvFile', 'Env file');
         const useExistingConfig: string = localize('useExistingConfig', 'Existing configuration');
 
         const picks: IAzureQuickPickItem<string>[] = [
-            { label: useEnvFile, data: useEnvFile, description: localize('local', 'Local') },
-            { label: useExistingConfig, data: useExistingConfig, description: localize('remote', 'Remote') },
+            { label: useEnvFile, data: useEnvFile, description: envPath },
+            { label: useExistingConfig, data: useExistingConfig, description: context.containerApp?.name },
         ];
 
         const result: string = (await context.ui.showQuickPick(picks, {
