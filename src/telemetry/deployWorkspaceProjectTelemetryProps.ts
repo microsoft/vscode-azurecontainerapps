@@ -18,8 +18,6 @@ export interface DeployWorkspaceProjectTelemetryProps extends DeployWorkspacePro
 export interface DeployWorkspaceProjectInternalTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps, IngressTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 
-    defaultedRegistryInternal?: 'true' | 'false';
-
     // Resources
     existingResourceGroup?: 'true' | 'false';
     existingEnvironment?: 'true' | 'false';

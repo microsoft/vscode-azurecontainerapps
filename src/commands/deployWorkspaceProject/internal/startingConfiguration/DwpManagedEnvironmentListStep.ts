@@ -9,11 +9,11 @@ import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microso
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 import { localize } from "../../../../utils/localize";
+import { hasMatchingPickDescription, recommendedPickDescription } from "../../../../utils/pickUtils";
 import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
-const recommendedPickDescription: string = localize('recommended', '(Recommended)');
 export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async prompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         const placeHolder: string = localize('selectManagedEnvironment', 'Select a container apps environment');
@@ -26,9 +26,9 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
 
         await this.setRecommendedPicks(context, picks);
         const pick = await context.ui.showQuickPick(picks, { placeHolder, suppressPersistence: true });
-        context.telemetry.properties.usedRecommendedEnv = isRecommendedPick(pick) ? 'true' : 'false';
+        context.telemetry.properties.usedRecommendedEnv = hasMatchingPickDescription(pick, recommendedPickDescription) ? 'true' : 'false';
         context.telemetry.properties.recommendedEnvCount =
-            String(picks.reduce((count, pick) => count + (isRecommendedPick(pick) ? 1 : 0), 0));
+            String(picks.reduce((count, pick) => count + (hasMatchingPickDescription(pick, recommendedPickDescription) ? 1 : 0), 0));
 
         const managedEnvironment: ManagedEnvironment | undefined = pick.data;
         if (!managedEnvironment) {
@@ -99,9 +99,9 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
 
         // sort the picks by recommendation
         picks.sort((a, b) => {
-            if (isRecommendedPick(a)) {
+            if (hasMatchingPickDescription(a, recommendedPickDescription)) {
                 return -1;
-            } else if (isRecommendedPick(b)) {
+            } else if (hasMatchingPickDescription(b, recommendedPickDescription)) {
                 return 1;
             } else {
                 return 0;
@@ -109,5 +109,3 @@ export class DwpManagedEnvironmentListStep extends AzureWizardPromptStep<DeployW
         });
     }
 }
-
-const isRecommendedPick = (pick: IAzureQuickPickItem<ManagedEnvironment | undefined>): boolean => pick.description === recommendedPickDescription;

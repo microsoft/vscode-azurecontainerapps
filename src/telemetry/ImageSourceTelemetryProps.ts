@@ -18,6 +18,9 @@ export interface ContainerRegistryTelemetryProps {
     registryDomain?: SupportedRegistries | 'other';
     registryName?: string;
     hasRegistrySecrets?: 'true' | 'false';  // Helps us identify private third party registries
+
+    // Recommended container registries
+    sameRgAcrCount?: string; // number casted to string
 }
 
 export interface BuildImageInAzureTelemetryProps extends AzdTelemetryProps, Pick<WorkspaceFileTelemetryProps, 'dockerfileCount'> {
