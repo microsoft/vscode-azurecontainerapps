@@ -112,7 +112,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
     private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         if (this.hasLogged) {
-            // This path indicates user clicked the back button, so we need to undo the previous logs to some extent
+            // This path indicates user clicked the back button, so we need to undo the previous logs
             context.activityChildren?.pop();
             ext.outputChannel.appendLog(localize('resetEnv', 'User chose to go back a step - resetting environment variables.'));
         }
