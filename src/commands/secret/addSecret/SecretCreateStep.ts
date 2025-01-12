@@ -5,7 +5,6 @@
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
@@ -33,10 +32,6 @@ export class SecretCreateStep<T extends ISecretContext> extends AzureWizardActiv
         progress.report({ message: creatingSecret });
 
         await updateContainerApp(context, context.subscription, containerAppEnvelope);
-
-        const addedSecret: string = localize('addedSecret', 'Added secret "{0}" to container app "{1}"', context.newSecretName, containerApp.name);
-        ext.outputChannel.appendLog(addedSecret);
-
         context.secretName = context.newSecretName;
     }
 

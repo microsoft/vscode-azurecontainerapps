@@ -17,6 +17,7 @@ import { editContainer } from './editContainer/editContainer';
 import { editContainerImage } from './editContainer/editContainerImage/editContainerImage';
 import { editContainerApp } from './editContainerApp';
 import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
+import { convertEnvironmentVariable } from './environmentVariables/convertEnvironmentVariable/convertEnvironmentVariable';
 import { deleteEnvironmentVariable } from './environmentVariables/deleteEnvironmentVariable/deleteEnvironmentVariable';
 import { editEnvironmentVariableName } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableName';
 import { editEnvironmentVariableValue } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableValue';
@@ -78,6 +79,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableName', editEnvironmentVariableName);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableValue', editEnvironmentVariableValue);
     registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariables', editEnvironmentVariables);
+    registerCommandWithTreeNodeUnwrapping('containerApps.convertEnvironmentVariable', convertEnvironmentVariable);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
 
     // deploy
