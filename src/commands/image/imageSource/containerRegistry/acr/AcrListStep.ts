@@ -73,7 +73,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
             await tryConfigureResourceGroupForRegistry(context, promptSteps);
 
-            if (context.resourceGroup) {
+            if (!LocationListStep.hasLocation(context) && context.resourceGroup) {
                 await LocationListStep.setLocation(context, context.resourceGroup.location);
             } else {
                 LocationListStep.addStep(context, promptSteps);
@@ -188,20 +188,16 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
                 };
             });
 
-            // If a currently deployed registry exists, we can expect it to be in the first resource group because we already sorted the group to the front
-            if (i === 0 && hasCurrentRegistry) {
-                groupedRegistries.sort((a, b) => {
-                    if (hasMatchingPickDescription(a, currentlyDeployedPickDescription)) {
-                        return -1;
-                    } else if (hasMatchingPickDescription(b, currentlyDeployedPickDescription)) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
-            }
-
             picks.push(...groupedRegistries);
+        }
+
+        // If a currently deployed registry exists, bring it to the front of the list
+        if (hasCurrentRegistry) {
+            const cdIdx: number = picks.findIndex(p => hasMatchingPickDescription(p, currentlyDeployedPickDescription));
+            if (cdIdx !== -1) {
+                const currentlyDeployedPick: IAzureQuickPickItem<Registry> | undefined = picks.splice(cdIdx, 1)[0];
+                picks.unshift(currentlyDeployedPick);
+            }
         }
 
         return picks;
