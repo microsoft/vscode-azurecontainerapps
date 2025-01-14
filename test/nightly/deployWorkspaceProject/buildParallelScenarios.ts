@@ -10,7 +10,7 @@ import { workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, ext, parseError, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IParsedError } from "../../../extension.bundle";
 import { assertStringPropsMatch, getWorkspaceFolderUri } from "../../testUtils";
 import { resourceGroupsToDelete } from "../global.nightly.test";
-import { dwpTestScenarios, type DeployWorkspaceProjectTestScenario } from "./dwpTestScenarios";
+import { getDwpTestScenarios, type DeployWorkspaceProjectTestScenario } from "./dwpTestScenarios";
 
 export interface DwpParallelTestScenario {
     title: string;
@@ -19,7 +19,7 @@ export interface DwpParallelTestScenario {
 }
 
 export function buildParallelTestScenarios(): DwpParallelTestScenario[] {
-    return dwpTestScenarios.map(scenario => {
+    return getDwpTestScenarios().map(scenario => {
         return {
             title: scenario.label,
             callback: buildParallelScenarioCallback(scenario),
