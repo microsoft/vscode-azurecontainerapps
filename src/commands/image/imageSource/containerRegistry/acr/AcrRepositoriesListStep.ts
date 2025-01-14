@@ -7,9 +7,10 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValue } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
-import { acrDomain, currentlyDeployed, noMatchingResourcesQp } from "../../../../../constants";
+import { acrDomain, noMatchingResourcesQp } from "../../../../../constants";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
+import { currentlyDeployedPickDescription } from "../../../../../utils/pickUtils";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
@@ -22,7 +23,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
-            const { registryDomain, registryName, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            const { registryDomain, registryName, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (
                 context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
                 registryDomain === acrDomain &&
@@ -47,7 +48,7 @@ export class AcrRepositoriesListStep extends RegistryRepositoriesListStepBase {
         // Prefer 'suppressPersistence: true' to avoid the possibility of a double parenthesis appearing in the description
         return repositoryNames.map((rn) => {
             return !!suggestedRepository && rn === suggestedRepository ?
-                { label: rn, description: currentlyDeployed, suppressPersistence: true } :
+                { label: rn, description: currentlyDeployedPickDescription, suppressPersistence: true } :
                 { label: rn, suppressPersistence: srExists };
         });
     }

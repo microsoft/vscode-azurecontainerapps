@@ -6,8 +6,9 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
-import { currentlyDeployed, dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
+import { dockerHubDomain, loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
+import { currentlyDeployedPickDescription } from "../../../../../utils/pickUtils";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { RegistryRepositoriesListStepBase } from "../RegistryRepositoriesListBaseStep";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
@@ -24,7 +25,7 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         let suggestedRepository: string | undefined;
         let srExists: boolean = false;
         if (context.containerApp) {
-            const { registryDomain, namespace, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp));
+            const { registryDomain, namespace, repositoryName } = parseImageName(getLatestContainerAppImage(context.containerApp, context.containersIdx ?? 0));
             if (
                 context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single &&
                 registryDomain === dockerHubDomain &&
@@ -45,7 +46,7 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         // Preferring 'suppressPersistence: true' over 'priority: highest' to avoid the possibility of a double parenthesis appearing in the description
         const picks: QuickPickItem[] = response.results.map((r) => {
             return !!suggestedRepository && r.name === suggestedRepository ?
-                { label: r.name, description: r.description ? `${r.description} ${currentlyDeployed}` : currentlyDeployed, suppressPersistence: true } :
+                { label: r.name, description: r.description ? `${r.description} ${currentlyDeployedPickDescription}` : currentlyDeployedPickDescription, suppressPersistence: true } :
                 { label: r.name, description: r.description, suppressPersistence: srExists }
         });
         cachedPicks.cache.push(...picks);

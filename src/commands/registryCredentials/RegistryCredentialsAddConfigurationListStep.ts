@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../constants";
+import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
@@ -18,8 +19,8 @@ import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCreden
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
 export enum RegistryCredentialType {
-    SystemAssigned,
-    DockerLogin,
+    SystemAssigned = 'system-assigned',
+    DockerLogin = 'docker-login',
 }
 
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
@@ -54,8 +55,12 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
     }
 
     public async prompt(context: RegistryCredentialsContext): Promise<void> {
+        const placeHolder: string = context.registry || context.newRegistryName ?
+            localize('selectCredentialTypeNamed', 'Select a connection method for registry "{0}"', context.registry?.name || context.newRegistryName) :
+            localize('selectCredentialType', 'Select a registry connection method');
+
         context.newRegistryCredentialType = (await context.ui.showQuickPick(this.getPicks(context), {
-            placeHolder: localize('selectCredentialType', 'Select a registry connection method'),
+            placeHolder,
             suppressPersistence: true,
         })).data;
     }
@@ -71,6 +76,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         switch (context.newRegistryCredentialType) {
             case RegistryCredentialType.SystemAssigned:
+                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.SystemAssigned;
                 executeSteps.push(
                     new ManagedEnvironmentIdentityEnableStep(),
                     new AcrPullVerifyStep(),
@@ -79,6 +85,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 );
                 break;
             case RegistryCredentialType.DockerLogin:
+                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.DockerLogin;
                 promptSteps.push(new AcrEnableAdminUserConfirmStep());
                 executeSteps.push(
                     new AcrEnableAdminUserStep(),
@@ -86,6 +93,15 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 );
                 break;
             default:
+                context.telemetry.properties.newRegistryCredentialType = 'useExisting';
+                context.activityChildren?.push(
+                    new GenericTreeItem(undefined, {
+                        contextValue: createUniversallyUniqueContextValue(['registryCredentialsAddConfigurationListStepVerifyItem', activitySuccessContext]),
+                        label: localize('verifyRegistryCredentials', 'Verify existing registry credential'),
+                        iconPath: activitySuccessIcon
+                    })
+                );
+                ext.outputChannel.appendLog(localize('verifiedRegistryCredentials', 'Verified existing registry credentials.'));
         }
 
         executeSteps.push(new RegistryCredentialsAndSecretsConfigurationStep());
@@ -95,8 +111,6 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             executeSteps,
         };
     }
-
-
 
     public async getPicks(context: RegistryCredentialsContext): Promise<IAzureQuickPickItem<RegistryCredentialType>[]> {
         const picks: IAzureQuickPickItem<RegistryCredentialType>[] = [];

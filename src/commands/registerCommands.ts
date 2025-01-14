@@ -5,20 +5,26 @@
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
+import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
 import { deleteManagedEnvironment } from './deleteManagedEnvironment/deleteManagedEnvironment';
+import { deployContainerApp } from './deployContainerApp/deployContainerApp';
 import { deployWorkspaceProject } from './deployWorkspaceProject/deployWorkspaceProject';
 import { editContainer } from './editContainer/editContainer';
 import { editContainerImage } from './editContainer/editContainerImage/editContainerImage';
 import { editContainerApp } from './editContainerApp';
 import { addEnvironmentVariable } from './environmentVariables/addEnvironmentVariable/addEnvironmentVariable';
+import { convertEnvironmentVariable } from './environmentVariables/convertEnvironmentVariable/convertEnvironmentVariable';
+import { deleteEnvironmentVariable } from './environmentVariables/deleteEnvironmentVariable/deleteEnvironmentVariable';
+import { editEnvironmentVariableName } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableName';
+import { editEnvironmentVariableValue } from './environmentVariables/editEnvironmentVariable/editEnvironmentVariableValue';
+import { editEnvironmentVariables } from './environmentVariables/editEnvironmentVariables/editEnvironmentVariables';
 import { connectToGitHub } from './gitHub/connectToGitHub/connectToGitHub';
 import { disconnectRepo } from './gitHub/disconnectRepo/disconnectRepo';
 import { openGitHubRepo } from './gitHub/openGitHubRepo';
-import { deployImageApi } from './image/deployImageApi/deployImageApi';
 import { createAcr } from './image/imageSource/containerRegistry/acr/createAcr/createAcr';
 import { openAcrBuildLogs } from './image/openAcrBuildLogs';
 import { disableIngress } from './ingress/disableIngress/disableIngress';
@@ -56,7 +62,6 @@ export function registerCommands(): void {
     // container apps
     registerCommandWithTreeNodeUnwrapping('containerApps.browse', browseContainerAppNode);
     registerCommandWithTreeNodeUnwrapping('containerApps.createContainerApp', createContainerApp);
-    registerCommandWithTreeNodeUnwrapping('containerApps.createContainerAppFromWorkspace', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
@@ -71,12 +76,17 @@ export function registerCommands(): void {
 
     // environment variables
     registerCommandWithTreeNodeUnwrapping('containerApps.addEnvironmentVariable', addEnvironmentVariable);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableName', editEnvironmentVariableName);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariableValue', editEnvironmentVariableValue);
+    registerCommandWithTreeNodeUnwrapping('containerApps.editEnvironmentVariables', editEnvironmentVariables);
+    registerCommandWithTreeNodeUnwrapping('containerApps.convertEnvironmentVariable', convertEnvironmentVariable);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deleteEnvironmentVariable', deleteEnvironmentVariable);
 
     // deploy
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApi);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployImageApi', deployImageApiCompat);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
-    registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProjectToContainerApp', deployWorkspaceProject);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployContainerApp', deployContainerApp);
 
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);
@@ -110,7 +120,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.addScaleRule', addScaleRule);
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteScaleRule', deleteScaleRule);
 
-    //log streaming
+    // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 

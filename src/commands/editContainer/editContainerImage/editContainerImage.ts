@@ -8,6 +8,7 @@ import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubs
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type ImageItem } from "../../../tree/containers/ImageItem";
 import { createActivityContext } from "../../../utils/activityUtils";
+import { isAzdExtensionInstalled } from "../../../utils/azdUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
@@ -16,6 +17,7 @@ import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEdita
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerEditContext } from "../ContainerEditContext";
+import { ContainerEditStartingResourcesLogStep } from "../ContainerEditStartingResourcesLogStep";
 import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
 import { ContainerImageEditDraftStep } from "./ContainerImageEditDraftStep";
 
@@ -41,12 +43,21 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
         containersIdx: item.containersIdx,
+        isDraftCommand: true,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
+
+    if (isAzdExtensionInstalled()) {
+        wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
+    }
+
+    wizardContext.telemetry.properties.containersIdx = String(item.containersIdx ?? 0);
+    wizardContext.telemetry.properties.basedOnLatestRevision = containerApp.latestRevisionName === item.revision.name ? 'true' : 'false';
 
     const wizard: AzureWizard<ContainerEditUpdateContext> = new AzureWizard(wizardContext, {
         title: localize('editContainerImage', 'Edit container image for "{0}" (draft)', parentResource.name),
         promptSteps: [
+            new ContainerEditStartingResourcesLogStep(),
             new ImageSourceListStep({ suppressEnvPrompt: true }),
             new RevisionDraftDeployPromptStep(),
         ],

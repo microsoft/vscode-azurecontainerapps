@@ -8,6 +8,7 @@ import * as path from "path";
 import { type Progress, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
 import { localize } from "../../../utils/localize";
+import { useRemoteConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseRemoteConfigurationPromptStep";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
@@ -30,7 +31,7 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
             type: 'AcrDockerBuildRequest',
             dockerfilePath: path.relative(rootFolder.uri.fsPath, nonNullProp(context, 'dockerfilePath')),
             srcPath: path.relative(rootFolder.uri.fsPath, context.srcPath || rootFolder.uri.fsPath) || ".",
-            envPath: context.envPath ? path.relative(rootFolder.uri.fsPath, context.envPath) : "",
+            envPath: this.getEnvPath(rootFolder, context.envPath),
             resourceGroup: context.resourceGroup?.name,
             containerApp: context.containerApp?.name,
             containerRegistry: context.registry?.name,
@@ -47,6 +48,16 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
 
     public shouldExecute(context: DeployWorkspaceProjectInternalContext): boolean {
         return !!context.shouldSaveDeploySettings;
+    }
+
+    private getEnvPath(rootFolder: WorkspaceFolder, envPath: string | undefined): string {
+        if (envPath === undefined) {
+            return '';
+        } else if (envPath === '') {
+            return useRemoteConfigurationKey;
+        } else {
+            return path.relative(rootFolder.uri.fsPath, envPath);
+        }
     }
 
     public createSuccessOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {

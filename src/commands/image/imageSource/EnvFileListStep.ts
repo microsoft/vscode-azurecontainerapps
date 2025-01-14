@@ -13,7 +13,11 @@ import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
-import { type ImageSourceBaseContext } from "./ImageSourceContext";
+import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
+
+export interface EnvFileListStepOptions {
+    suppressSkipPick?: boolean;
+}
 
 export enum SetEnvironmentVariableOption {
     NoDotEnv = 'noDotEnv',
@@ -22,51 +26,57 @@ export enum SetEnvironmentVariableOption {
     UseExisting = 'useExisting'
 }
 
-type EnvironmentVariablesContext = ImageSourceBaseContext & SetTelemetryProps<TelemetryProps>;
+type EnvFileListContext = EnvironmentVariablesContext & SetTelemetryProps<TelemetryProps>;
 
 const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
-export class EnvironmentVariablesListStep extends AzureWizardPromptStep<EnvironmentVariablesContext> {
+export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
+    private hasLogged: boolean = false;
 
-    public async prompt(context: EnvironmentVariablesContext): Promise<void> {
-        // since we only allow one container, we can assume that we want the first container's env settings
-        const existingData = context.containerApp?.template?.containers?.[0].env;
-        context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
-
-        if (!context.envPath && existingData) {
-            context.environmentVariables = existingData;
-            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
-        } else {
-            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
-        }
-
-        if (this._setEnvironmentVariableOption) {
-            this.outputLogs(context, this._setEnvironmentVariableOption);
-        }
+    constructor(public readonly options?: EnvFileListStepOptions) {
+        super();
     }
 
-    public async configureBeforePrompt(context: EnvironmentVariablesContext): Promise<void> {
+    public async configureBeforePrompt(context: T): Promise<void> {
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
         }
 
+        if (this._setEnvironmentVariableOption && !this.hasLogged) {
+            this.outputLogs(context, this._setEnvironmentVariableOption);
+        }
+    }
+
+    public async prompt(context: T): Promise<void> {
+        const existingData = context.template?.containers?.[context.containersIdx ?? 0].env ?? context.containerApp?.template?.containers?.[context.containersIdx ?? 0].env;
+        context.envPath ??= await this.promptForEnvPath(context, !!existingData /** showHasExistingData */);
+
+        if (context.envPath) {
+            context.environmentVariables = await this.parseEnvironmentVariablesFromEnvPath(context.envPath);
+        } else if (existingData) {
+            context.environmentVariables = existingData;
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.UseExisting;
+        } else {
+            this._setEnvironmentVariableOption = SetEnvironmentVariableOption.SkipForNow;
+        }
+
         if (this._setEnvironmentVariableOption) {
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
     }
 
-    public shouldPrompt(context: EnvironmentVariablesContext): boolean {
+    public shouldPrompt(context: T): boolean {
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
-    private async promptForEnvPath(context: EnvironmentVariablesContext, showHasExistingData?: boolean): Promise<string | undefined> {
+    private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
         return await selectWorkspaceFile(context, placeHolder,
-            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: true, skipLabel }, allEnvFilesGlobPattern);
+            { filters: { 'env file': ['env', 'env.*'] }, allowSkip: !this.options?.suppressSkipPick, skipLabel }, allEnvFilesGlobPattern);
     }
 
     private async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
@@ -76,10 +86,16 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         }
 
         this._setEnvironmentVariableOption = SetEnvironmentVariableOption.ProvideFile;
+        return await EnvFileListStep.parseEnvironmentVariablesFromEnvPath(envPath);
+    }
+
+    public static async parseEnvironmentVariablesFromEnvPath(envPath: string | undefined): Promise<EnvironmentVar[]> {
+        if (!envPath || !await AzExtFsExtra.pathExists(envPath)) {
+            return [];
+        }
 
         const data: string = await AzExtFsExtra.readFile(envPath);
         const envData: DotenvParseOutput = parse(data);
-
         return Object.keys(envData).map(name => { return { name, value: envData[name] } });
     }
 
@@ -94,8 +110,13 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         return !!envFileUris.length;
     }
 
-    // Todo: It might be nice to add a direct command to update just the environment variables rather than having to suggest to re-run the entire command again
-    private outputLogs(context: EnvironmentVariablesContext, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+    private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+        if (this.hasLogged) {
+            // This path indicates user clicked the back button, so we need to undo the previous logs
+            context.activityChildren?.pop();
+            ext.outputChannel.appendLog(localize('resetEnv', 'User chose to go back a step - resetting environment variables.'));
+        }
+
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
         if (
@@ -104,7 +125,7 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
         ) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
+                    contextValue: createUniversallyUniqueContextValue(['envFileListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
@@ -115,19 +136,29 @@ export class EnvironmentVariablesListStep extends AzureWizardPromptStep<Environm
 
             const logMessage: string = localize('skippedEnvVarsMessage',
                 'Skipped environment variable configuration for the container app' +
-                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected. ' : '. ') +
-                'If you would like to update your environment variables later, try re-running the container app update or deploy command.'
+                (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' because no .env files were detected.' : '.')
             );
             ext.outputChannel.appendLog(logMessage);
-        } else {
+        } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
-                    label: localize('saveEnvVarsLabel', 'Save environment variable configuration'),
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using provided .env file'),
                     iconPath: activitySuccessIcon
                 })
             );
-            ext.outputChannel.appendLog(localize('savedEnvVarsMessage', 'Saved environment variable configuration.'));
+            ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
+        } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+                    label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
+                    iconPath: activitySuccessIcon
+                })
+            );
+            ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
+
+        this.hasLogged = true;
     }
 }

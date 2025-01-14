@@ -9,6 +9,7 @@ import { type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { type ContainerItem } from "../../tree/containers/ContainerItem";
 import { ContainersItem } from "../../tree/containers/ContainersItem";
 import { createActivityContext } from "../../utils/activityUtils";
+import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
@@ -18,7 +19,10 @@ import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { RevisionDraftDeployPromptStep } from "../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerEditContext } from "./ContainerEditContext";
 import { ContainerEditDraftStep } from "./ContainerEditDraftStep";
+import { ContainerEditStartingResourcesLogStep } from "./ContainerEditStartingResourcesLogStep";
 import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
+
+export const editContainerCommandName: string = localize('editContainer', 'Edit Container...');
 
 // Edits both the 'image' and 'environmentVariables' portion of the container profile (draft)
 export async function editContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
@@ -48,12 +52,21 @@ export async function editContainer(context: IActionContext, node?: ContainersIt
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
         containersIdx,
+        isDraftCommand: true,
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
+
+    if (isAzdExtensionInstalled()) {
+        wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
+    }
+
+    wizardContext.telemetry.properties.containersIdx = String(wizardContext.containersIdx ?? 0);
+    wizardContext.telemetry.properties.basedOnLatestRevision = containerApp.latestRevisionName === item.revision.name ? 'true' : 'false';
 
     const wizard: AzureWizard<ContainerEditContext> = new AzureWizard(wizardContext, {
         title: localize('editContainer', 'Edit container profile for "{0}" (draft)', parentResource.name),
         promptSteps: [
+            new ContainerEditStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new RevisionDraftDeployPromptStep(),
         ],

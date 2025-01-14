@@ -35,6 +35,6 @@ export async function connectToGitHub(context: ITreeItemPickerContext, item?: Pi
      * VS Code does not have sufficient scopes to handle CRUD on service principals & federated credentials.
      * Bump users to the portal to avoid providing an incomplete/partial connection experience.
      */
-    const portalUrl: string = createPortalUrl(subscription, `${containerApp.id}/continuousDeployment`).toString(true /** skipEncoding */);
+    const portalUrl: string = createPortalUrl(subscription, `${containerApp.id}/deployment`).toString(true /** skipEncoding */);
     await openUrl(portalUrl);
 }

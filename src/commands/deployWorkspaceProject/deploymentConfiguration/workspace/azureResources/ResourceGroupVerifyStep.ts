@@ -16,6 +16,14 @@ export class ResourceGroupVerifyStep extends AzureResourceVerifyStepBase {
     protected contextKey = 'resourceGroup' as const;
 
     protected async verifyResource(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
+        await ResourceGroupVerifyStep.verifyResourceGroup(context);
+    }
+
+    static async verifyResourceGroup(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
+        if (context.resourceGroup) {
+            return;
+        }
+
         const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
         context.resourceGroup = resourceGroups.find(rg => rg.name === context.deploymentConfigurationSettings?.resourceGroup);
     }

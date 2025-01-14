@@ -29,7 +29,8 @@ export async function addScaleRule(context: IActionContext, node?: ScaleRuleGrou
         ...await createActivityContext(),
         containerApp,
         subscription,
-        parentResourceName: nonNullProp(parentResource, 'name')
+        parentResourceName: nonNullProp(parentResource, 'name'),
+        isDraftCommand: true,
     };
 
     const wizard: AzureWizard<IAddScaleRuleContext> = new AzureWizard(wizardContext, {

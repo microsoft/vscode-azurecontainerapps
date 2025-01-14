@@ -15,11 +15,21 @@ import { type DeployWorkspaceProjectContext } from "../deployWorkspaceProject/De
 import { getDeployWorkspaceProjectResults, type DeployWorkspaceProjectResults } from "../deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import { type DeployWorkspaceProjectInternalContext } from "../deployWorkspaceProject/internal/DeployWorkspaceProjectInternalContext";
 import { deployWorkspaceProjectInternal } from "../deployWorkspaceProject/internal/deployWorkspaceProjectInternal";
+import { RegistryCredentialType } from "../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import type * as api from "./vscode-azurecontainerapps.api";
 
 export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
     return await callWithTelemetryAndErrorHandling('containerApps.api.deployWorkspaceProject', async (context: IActionContext): Promise<DeployWorkspaceProjectResults> => {
-        const { resourceGroupId, rootPath, dockerfilePath, srcPath, suppressConfirmation, suppressContainerAppCreation, shouldSaveDeploySettings } = deployWorkspaceProjectOptions;
+        const {
+            resourceGroupId,
+            rootPath,
+            dockerfilePath,
+            srcPath,
+            suppressRegistryPrompt,
+            suppressConfirmation,
+            suppressContainerAppCreation,
+            shouldSaveDeploySettings
+        } = deployWorkspaceProjectOptions;
 
         const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
             selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
@@ -38,12 +48,14 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             rootFolder,
             srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
             dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
+            newRegistryCredentialType: RegistryCredentialType.DockerLogin,
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
         });
 
         const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
             suppressActivity: true,
             suppressConfirmation,
+            suppressRegistryPrompt: suppressRegistryPrompt ?? true,
             suppressContainerAppCreation,
             suppressProgress: true,
             suppressWizardTitle: true,

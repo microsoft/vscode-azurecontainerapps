@@ -3,21 +3,29 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type SetEnvironmentVariableOption } from "../commands/image/imageSource/EnvironmentVariablesListStep";
 import { type AcrBuildSupportedOS } from "../commands/image/imageSource/buildImageInAzure/OSPickStep";
+import { type SetEnvironmentVariableOption } from "../commands/image/imageSource/EnvFileListStep";
+import { type RegistryCredentialType } from "../commands/registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { type ImageSource, type SupportedRegistries } from "../constants";
 import { type AzdTelemetryProps } from "./AzdTelemetryProps";
 import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface ImageSourceTelemetryProps extends ContainerRegistryTelemetryProps, BuildImageInAzureTelemetryProps, EnvironmentVariableTelemetryProps {
+export interface ImageSourceTelemetryProps extends ContainerRegistryCredentialsTelemetryProps, ContainerRegistryTelemetryProps, BuildImageInAzureTelemetryProps, EnvironmentVariableTelemetryProps {
     imageSource?: ImageSource;
 }
 
+export interface ContainerRegistryCredentialsTelemetryProps {
+    newRegistryCredentialType?: RegistryCredentialType | 'useExisting';
+}
+
 export interface ContainerRegistryTelemetryProps {
-    acrCount?: string;  // AcrListStep
     registryDomain?: SupportedRegistries | 'other';
     registryName?: string;
     hasRegistrySecrets?: 'true' | 'false';  // Helps us identify private third party registries
+
+    // AcrListStep
+    acrCount?: string;
+    sameRgAcrCount?: string;
 }
 
 export interface BuildImageInAzureTelemetryProps extends AzdTelemetryProps, Pick<WorkspaceFileTelemetryProps, 'dockerfileCount'> {
@@ -32,6 +40,6 @@ export interface BuildImageInAzureTelemetryProps extends AzdTelemetryProps, Pick
 }
 
 export interface EnvironmentVariableTelemetryProps extends Pick<WorkspaceFileTelemetryProps, 'environmentVariableFileCount'> {
-    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvironmentVariablesListStep
+    setEnvironmentVariableOption?: SetEnvironmentVariableOption;  // EnvFileListStep
     // environmentVariableFileCount
 }

@@ -10,15 +10,17 @@ import { type IngressTelemetryProps } from "./IngressTelemetryProps";
 import { type OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 import { type WorkspaceFileTelemetryProps } from "./WorkspaceFileTelemetryProps";
 
-export interface DeployWorkspaceProjectTelemetryProps extends DeployWorkspaceProjectInternalTelemetryProps {
+export interface WorkspaceDeploymentConfigurationTelemetryProps {
+    // EnvUseRemoteConfigurationPromptStep
+    useRemoteEnvConfiguration?: 'true' | 'false'; // Only gets prompted when there's a discrepancy between saved file and remote env configuration
+}
+
+export interface DeployWorkspaceProjectTelemetryProps extends DeployWorkspaceProjectInternalTelemetryProps, WorkspaceDeploymentConfigurationTelemetryProps {
     choseExistingWorkspaceConfiguration?: 'true' | 'false';
-    defaultedRegistry?: 'true' | 'false';
 }
 
 export interface DeployWorkspaceProjectInternalTelemetryProps extends AzdTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, WorkspaceFileTelemetryProps, IngressTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-
-    defaultedRegistryInternal?: 'true' | 'false';
 
     // Resources
     existingResourceGroup?: 'true' | 'false';

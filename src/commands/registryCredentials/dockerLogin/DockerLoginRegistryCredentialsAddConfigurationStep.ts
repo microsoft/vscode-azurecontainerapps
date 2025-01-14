@@ -4,8 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, dockerHubRegistry, type SupportedRegistries } from "../../../constants";
+import { localize } from "../../../utils/localize";
+import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
 import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
 import { listCredentialsFromAcr } from "./listCredentialsFromAcr";
 
@@ -14,14 +16,18 @@ interface RegistryCredentialAndSecret {
     secret: Secret;
 }
 
-export class DockerLoginRegistryCredentialsAddConfigurationStep extends AzureWizardExecuteStep<DockerLoginRegistryCredentialsContext> {
+export class DockerLoginRegistryCredentialsAddConfigurationStep<T extends DockerLoginRegistryCredentialsContext> extends AzureWizardActivityOutputExecuteStep<T> {
     public priority: number = 470;
+    public stepName: string = 'dockerLoginRegistryCredentialsAddConfigurationStep';
+    protected getSuccessString = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (Docker login).', context.newRegistryCredential?.server);
+    protected getFailString = () => localize('createRegistryCredentialFail', 'Failed to add registry credential (Docker login).');
+    protected getTreeItemLabel = (context: T) => localize('createRegistryCredentialLabel', 'Add registry credential for "{0}" (Docker login)', context.newRegistryCredential?.server);
 
     constructor(private readonly supportedRegistryDomain: SupportedRegistries | undefined) {
         super();
     }
 
-    public async execute(context: DockerLoginRegistryCredentialsContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         if (this.supportedRegistryDomain === acrDomain) {
             // ACR
             const acrRegistryCredentialAndSecret: RegistryCredentialAndSecret = await this.getAcrCredentialAndSecret(context);
@@ -37,11 +43,11 @@ export class DockerLoginRegistryCredentialsAddConfigurationStep extends AzureWiz
         }
     }
 
-    public shouldExecute(context: DockerLoginRegistryCredentialsContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.newRegistryCredential || !context.newRegistrySecret;
     }
 
-    private async getAcrCredentialAndSecret(context: DockerLoginRegistryCredentialsContext): Promise<RegistryCredentialAndSecret> {
+    private async getAcrCredentialAndSecret(context: T): Promise<RegistryCredentialAndSecret> {
         const registry = nonNullProp(context, 'registry');
         const { username, password } = await listCredentialsFromAcr(context);
         const passwordName = `${registry.name?.toLocaleLowerCase()}-${password?.name}`;
@@ -60,7 +66,7 @@ export class DockerLoginRegistryCredentialsAddConfigurationStep extends AzureWiz
         };
     }
 
-    private getThirdPartyRegistryCredentialAndSecret(context: DockerLoginRegistryCredentialsContext): RegistryCredentialAndSecret {
+    private getThirdPartyRegistryCredentialAndSecret(context: T): RegistryCredentialAndSecret {
         // If 'docker.io', convert to 'index.docker.io', else use registryName as loginServer
         const loginServer: string = DockerLoginRegistryCredentialsAddConfigurationStep.getThirdPartyLoginServer(
             this.supportedRegistryDomain as typeof dockerHubDomain | undefined,

@@ -6,27 +6,31 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
-import { EnvironmentVariablesListStep } from "../../../image/imageSource/EnvironmentVariablesListStep";
+import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
 import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
+import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
+import { DwpAcrListStep } from "./DwpAcrListStep";
 import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
-import { TryUseExistingResourceGroupRegistryStep } from "./TryUseExistingRegistryStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
-export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
+export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
+    const promptSteps = [
+        new RootFolderStep(),
+        new DockerfileItemStep(),
+        new DwpManagedEnvironmentListStep(),
+    ];
+
+    if (!options.suppressRegistryPrompt) {
+        promptSteps.push(new DwpAcrListStep());
+    }
+
     const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(context, {
-        promptSteps: [
-            new RootFolderStep(),
-            new DockerfileItemStep(),
-            new DwpManagedEnvironmentListStep()
-        ],
-        executeSteps: [
-            new TryUseExistingResourceGroupRegistryStep()
-        ]
+        promptSteps,
     });
 
     await wizard.prompt();
@@ -40,13 +44,14 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
         containerApp: context.containerApp,
         registry: context.registry,
         newRegistrySku: KnownSkuName.Basic,
+        suppressEnableAdminUserPrompt: options.suppressConfirmation,
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
         envPath: context.envPath,
         environmentVariables:
             context.envPath ?
                 undefined /** No need to set anything if there's an envPath, the step will handle parsing the data for us */ :
-                await EnvironmentVariablesListStep.workspaceHasEnvFile(context.rootFolder) ? undefined : [] /** The equivalent of "skipForNow" */,
+                await EnvFileListStep.workspaceHasEnvFile(context.rootFolder) ? undefined : [] /** The equivalent of "skipForNow" */,
     };
 }
 

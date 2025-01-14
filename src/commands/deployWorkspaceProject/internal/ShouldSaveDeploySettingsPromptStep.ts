@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-util
 import * as path from "path";
 import { type WorkspaceFolder } from "vscode";
 import { localize } from "../../../utils/localize";
+import { useRemoteConfigurationKey } from "../deploymentConfiguration/workspace/filePaths/EnvUseRemoteConfigurationPromptStep";
 import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
@@ -20,15 +21,31 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             const settings: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder);
             const setting: DeploymentConfigurationSettings | undefined = settings?.[context.configurationIdx];
 
+            let hasNewEnvPath: boolean;
+            if (context.envPath) {
+                hasNewEnvPath = convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath;
+            } else if (context.envPath === '') {
+                hasNewEnvPath = setting?.envPath !== useRemoteConfigurationKey;
+            } else {
+                hasNewEnvPath = context.envPath !== setting?.envPath;
+            }
+
+            const hasNewResourceGroupSetting: boolean = (!!context.newResourceGroupName && setting?.resourceGroup !== context.newResourceGroupName) ||
+                (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name);
+            const hasNewContainerAppSetting: boolean = (!!context.newContainerAppName && setting?.containerApp !== context.newContainerAppName) ||
+                (!!context.containerApp && setting?.containerApp !== context.containerApp.name);
+            const hasNewRegistrySetting: boolean = (!!context.newRegistryName && setting?.containerRegistry !== context.newRegistryName) ||
+                (!!context.registry && setting?.containerRegistry !== context.registry.name);
+
             const hasNewSettings: boolean =
                 !setting?.label ||
                 setting?.type !== 'AcrDockerBuildRequest' ||
                 (context.dockerfilePath && convertRelativeToAbsolutePath(rootPath, setting?.dockerfilePath) !== context.dockerfilePath) ||
-                (context.envPath && convertRelativeToAbsolutePath(rootPath, setting?.envPath) !== context.envPath) ||
+                hasNewEnvPath ||
                 (context.srcPath && convertRelativeToAbsolutePath(rootPath, setting?.srcPath) !== context.srcPath) ||
-                (!!context.resourceGroup && setting?.resourceGroup !== context.resourceGroup.name) ||
-                (!!context.containerApp && setting?.containerApp !== context.containerApp.name) ||
-                (!!context.registry && setting?.containerRegistry !== context.registry.name);
+                hasNewResourceGroupSetting ||
+                hasNewContainerAppSetting ||
+                hasNewRegistrySetting;
 
             if (!hasNewSettings) {
                 context.telemetry.properties.hasNewSettings = 'false';
