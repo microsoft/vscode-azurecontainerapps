@@ -9,9 +9,9 @@ import { type ImageSource } from "../../../constants";
 import { type ImageSourceTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { type IContainerAppContext } from "../../IContainerAppContext";
-import { type RegistryCredentialsContext } from "../../registryCredentials/RegistryCredentialsContext";
+import { type RegistryCredentialsBaseContext } from "../../registryCredentials/RegistryCredentialsContext";
 
-export interface ImageSourceBaseContext extends RegistryCredentialsContext, IContainerAppContext, ExecuteActivityContext {
+export interface ImageSourceBaseContext extends RegistryCredentialsBaseContext, IContainerAppContext, ExecuteActivityContext {
     // If a template is provided, prioritize data from this, else prioritize the latest container app template
     // Todo: In the future, we should migrate to always requiring a template be supplied in advance by individual commands
     template?: Template;

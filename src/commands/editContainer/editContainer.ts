@@ -60,6 +60,9 @@ export async function editContainer(context: IActionContext, node?: ContainersIt
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
 
+    wizardContext.telemetry.properties.containersIdx = String(wizardContext.containersIdx ?? 0);
+    wizardContext.telemetry.properties.basedOnLatestRevision = containerApp.latestRevisionName === item.revision.name ? 'true' : 'false';
+
     const wizard: AzureWizard<ContainerEditContext> = new AzureWizard(wizardContext, {
         title: localize('editContainer', 'Edit container profile for "{0}" (draft)', parentResource.name),
         promptSteps: [
