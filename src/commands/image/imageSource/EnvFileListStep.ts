@@ -32,6 +32,7 @@ const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
 
 export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
+    private hasLogged: boolean = false;
 
     constructor(public readonly options?: EnvFileListStepOptions) {
         super();
@@ -43,7 +44,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
         }
 
-        if (this._setEnvironmentVariableOption) {
+        if (this._setEnvironmentVariableOption && !this.hasLogged) {
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
     }
@@ -110,6 +111,12 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
     }
 
     private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
+        if (this.hasLogged) {
+            // This path indicates user clicked the back button, so we need to undo the previous logs
+            context.activityChildren?.pop();
+            ext.outputChannel.appendLog(localize('resetEnv', 'User chose to go back a step - resetting environment variables.'));
+        }
+
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
         if (
@@ -151,5 +158,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
+
+        this.hasLogged = true;
     }
 }
