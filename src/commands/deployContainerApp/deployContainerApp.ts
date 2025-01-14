@@ -54,6 +54,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     if (isAzdExtensionInstalled()) {
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
+    wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
         title: localize('deployContainerAppTitle', 'Deploy image to container app'),
