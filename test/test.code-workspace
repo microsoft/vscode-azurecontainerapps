@@ -2,19 +2,19 @@
     "folders": [
         {
             "name": "albumapi-js",
-            "path": "./testProjects/containerapps-albumapi-javascript"
+            "path": "testProjects/containerapps-albumapi-javascript"
         },
         {
             "name": "dockerfiles",
-            "path": "./testProjects/dockerfiles"
+            "path": "testProjects/dockerfiles"
         },
         {
             "name": "monorepo-admincreds",
-            "path": "./testProjects/monorepo-basic-1"
+            "path": "testProjects/monorepo-basic-1"
         },
         {
             "name": "monorepo-identity",
-            "path": "./testProjects/monorepo-basic-2"
+            "path": "testProjects/monorepo-basic-2"
         }
     ]
 }

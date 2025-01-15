@@ -25,6 +25,7 @@ export * from './src/commands/deployWorkspaceProject/settings/DeployWorkspacePro
 export * from './src/commands/deployWorkspaceProject/settings/dwpSettingUtilsV1';
 export * from './src/commands/deployWorkspaceProject/settings/dwpSettingUtilsV2';
 export * from './src/commands/IContainerAppContext';
+export * from './src/commands/image/imageSource/containerRegistry/acr/createAcr/createAcr';
 export * from './src/commands/ingress/editTargetPort/getDefaultPort';
 export * from './src/commands/ingress/IngressContext';
 export * from './src/commands/ingress/IngressPromptStep';
