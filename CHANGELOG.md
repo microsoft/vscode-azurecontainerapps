@@ -5,8 +5,7 @@
 ## Overview
 Summary of major changes:
 1. Managed identity support has been added for new connections to container registries. Assuming you have sufficient privileges, this is the preferred method for securing your app and container registry
-1. A new `Container` view has been added, providing more direct ways for users to edit container images and environment variables directly
-1. New container image and environment variable editing commands have been added to the `Container` view
+1. A new `Container` view has been added along with a host of new commands, providing more ways to edit container images and environment variables directly
 1. `Create container app...` now initializes with a quickstart image
 1. New one-click deployment method `Deploy to Container App...` added to the top-level container app node supports streamlined deployment from a workspace project or container registry. <br />
 (If wishing to manage multiple apps in a workspace project, or if wishing to leverage faster deployments using saved settings, `Deploy Project from Workspace...` still remains the preferred deployment method and can be accessed via the workspace view.)
