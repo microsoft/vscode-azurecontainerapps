@@ -10,13 +10,14 @@ Summary of major changes:
 1. `Create container app...` now initializes with a quickstart image
 1. New one-click deployment method `Deploy to Container App...` added to the top-level container app node supports streamlined deployment from a workspace project or container registry. <br />
 (If wishing to manage multiple apps in a workspace project, or if wishing to leverage faster deployments using saved settings, `Deploy Project from Workspace...` still remains the preferred deployment method and can be accessed via the workspace view.)
+1. Improved activity log output for all major commands
 
 ## Added
 * [[745]](https://github.com/microsoft/vscode-azurecontainerapps/pull/745) Add managed identity support for new connections to container registries
 * [[804]](https://github.com/microsoft/vscode-azurecontainerapps/pull/804) New command `Deploy to Container App...` found on the container app item.  This one-click deploy command allows deploying from a workspace project or container registry while in single revision mode.
 * [[673]](https://github.com/microsoft/vscode-azurecontainerapps/pull/673) New `Container` view under the container app item. The container item provides direct access for interacting with the container's image and environment variables
 * [[778]](https://github.com/microsoft/vscode-azurecontainerapps/pull/778) New command `Edit Container Image...` for allowing edits to the container image without forcing an update to environment variables
-* Multiple new environment variable CRUD commands found on the new environment variables item
+* [[763]](https://github.com/microsoft/vscode-azurecontainerapps/issues/763) Multiple new environment variable CRUD commands found on the new environment variables item
 * [[825]](https://github.com/microsoft/vscode-azurecontainerapps/pull/825) New command `Convert Environment Variable to Secret...` to quickly turn an environment variable into a container app secret
 
 ## Changed
