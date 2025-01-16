@@ -20,12 +20,12 @@ Summary of major changes:
 * [[825]](https://github.com/microsoft/vscode-azurecontainerapps/pull/825) New command `Convert Environment Variable to Secret...` to quickly turn an environment variable into a container app secret
 
 ## Changed
-* [[755]](https://github.com/microsoft/vscode-azurecontainerapps/pull/755) Command `Create container app...` now always starts with a quickstart image
+* [[755]](https://github.com/microsoft/vscode-azurecontainerapps/pull/755) Command `Create Container App...` now always starts with a quickstart image
 * [[769]](https://github.com/microsoft/vscode-azurecontainerapps/pull/769) Rename the `Update Container Image...` command to `Edit Container...`.  This command is now found on the container item.
 * [[820]](https://github.com/microsoft/vscode-azurecontainerapps/pull/820) When running `Deploy Project from Workspace...`, if remote environment variables conflict with saved settings, prompt for update.  Add new `envPath` option `useRemoteConfiguration`.
 * [[817]](https://github.com/microsoft/vscode-azurecontainerapps/pull/817) Deploying an image through the Docker extension now allows user to target specific revisions / containers
 * [[800]](https://github.com/microsoft/vscode-azurecontainerapps/pull/800) When deploying a new image to a container app, only show ingress prompt when more than the image tag is changed
-* [[440]](https://github.com/microsoft/vscode-azurecontainerapps/issues/440) Improve the ACR selection dropdowns
+* [[440]](https://github.com/microsoft/vscode-azurecontainerapps/issues/440) Improve the ACR selection dropdowns, providing better pick recommendations and sorting by resource group
 * [[806]](https://github.com/microsoft/vscode-azurecontainerapps/pull/806) [[756]](https://github.com/microsoft/vscode-azurecontainerapps/pull/756) [[814]](https://github.com/microsoft/vscode-azurecontainerapps/pull/814) Improve activity log outputs for major commands
 * [[771]](https://github.com/microsoft/vscode-azurecontainerapps/pull/771) Change draft deploy prompt to be a quick pick instead of a pop-up window
 
