@@ -24,9 +24,9 @@ suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
             this.skip();
         }
 
-        // Create a managed environment first so that we can guarantee one is always built before workspace deployment tests start.
-        // This is crucial for test consistency because the managed environment prompt will skip if no managed environment
-        // resources are available yet. Creating at least one environment first ensures consistent reproduceability.
+        // Create a container registry & managed environment first so that we can guarantee one is always built before workspace deployment tests start.
+        // This is crucial for test consistency because some resource prompts will skip if no existing resources exist to choose from
+        // Creating at least one of each resource first ensures consistent reproduceability.
         setupTask = setupResources();
 
         for (const s of testScenarios) {
@@ -42,10 +42,10 @@ suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
 });
 
 async function setupResources(): Promise<void> {
-    let taskOne: Promise<void> | undefined;
+    let envResourceTask: Promise<void> | undefined;
     let managedEnvironment: ManagedEnvironment | undefined;
     try {
-        taskOne = runWithTestActionContext('createManagedEnvironment', async context => {
+        envResourceTask = runWithTestActionContext('createManagedEnvironment', async context => {
             const resourceName: string = 'dwp' + randomUtils.getRandomHexString(6);
             await context.ui.runWithInputs([resourceName, 'East US'], async () => {
                 managedEnvironment = await createManagedEnvironment(context);
@@ -55,10 +55,10 @@ async function setupResources(): Promise<void> {
         console.error(e);
     }
 
-    let taskTwo: Promise<void> | undefined;
+    let acrResourceTask: Promise<void> | undefined;
     let registry: Registry | undefined;
     try {
-        taskTwo = runWithTestActionContext('createContainerRegistry', async context => {
+        acrResourceTask = runWithTestActionContext('createContainerRegistry', async context => {
             const resourceName: string = 'dwp' + randomUtils.getRandomHexString(6);
             await context.ui.runWithInputs([resourceName, 'Basic', 'East US'], async () => {
                 registry = await createAcr(context);
@@ -68,7 +68,7 @@ async function setupResources(): Promise<void> {
         console.error(e);
     }
 
-    await Promise.allSettled([taskOne, taskTwo]);
+    await Promise.allSettled([envResourceTask, acrResourceTask]);
 
     assert.ok(managedEnvironment, 'Failed to create managed environment - skipping "deployWorkspaceProject" tests.');
     resourceGroupsToDelete.add(nonNullProp(managedEnvironment, 'name'));
