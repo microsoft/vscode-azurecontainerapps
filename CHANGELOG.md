@@ -2,7 +2,6 @@
 
 ## 0.8.0 - 2025-01-22
 
-## Overview
 Summary of major changes:
 1. Managed identity support has been added for connecting container apps to container registries. Assuming you have sufficient privileges, this is the preferred method for securing these resources.
 1. A new `Container` view has been added along with a host of new commands, providing more ways to edit container images and environment variables directly
