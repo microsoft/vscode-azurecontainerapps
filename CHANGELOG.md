@@ -33,7 +33,7 @@ Summary of major changes:
 * [[827]](https://github.com/microsoft/vscode-azurecontainerapps/pull/827) Removed `Create Container App from Workspace...`.  Preferred flow is `Create Container App...` followed by `Deploy to Container App...`.
 
 ## Engineering
-* [[817]](https://github.com/microsoft/vscode-azurecontainerapps/pull/817) Add `api.deployImage` as part of updated API export and ensure backward compatability in support of new managed identity features
+* [[817]](https://github.com/microsoft/vscode-azurecontainerapps/pull/817) Add `api.deployImage` as part of updated API export and ensure backward compatibility in support of new managed identity features
 * [[816]](https://github.com/microsoft/vscode-azurecontainerapps/pull/816) Add backward compatibility to `api.deployWorkspaceProject` in support of the new managed identity features
 * [[790]](https://github.com/microsoft/vscode-azurecontainerapps/pull/790) Add `tsaoptions.json`
 * [[788]](https://github.com/microsoft/vscode-azurecontainerapps/pull/788) Setup workspace project tests to run in parallel
