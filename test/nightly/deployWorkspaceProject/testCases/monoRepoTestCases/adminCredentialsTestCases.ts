@@ -21,6 +21,7 @@ export function generateMonoRepoAdminCredentialsTestCases(): DeployWorkspaceProj
                 new RegExp(folderName, 'i'),
                 path.join('app1', 'Dockerfile'),
                 new RegExp('Create new container apps environment', 'i'),
+                new RegExp('Create new container registry', 'i'),
                 'Continue',
                 sharedResourceName,
                 'app1',
@@ -47,6 +48,7 @@ export function generateMonoRepoAdminCredentialsTestCases(): DeployWorkspaceProj
                 new RegExp('Create and deploy new app configuration', 'i'),
                 path.join('app2', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
+                new RegExp(sharedResourceName, 'i'),  // Select a container registry - this should match the description of the ACR previously created in the same resource group
                 'Continue',
                 'app2',
                 `.${path.sep}app2`,
@@ -70,6 +72,7 @@ export function generateMonoRepoAdminCredentialsTestCases(): DeployWorkspaceProj
                 new RegExp('Create and deploy new app configuration', 'i'),
                 path.join('app3', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
+                new RegExp(sharedResourceName, 'i'),  // Select a container registry - this should match the description of the ACR previously created in the same resource group
                 'Continue',
                 'app3',
                 `.${path.sep}app3`,
