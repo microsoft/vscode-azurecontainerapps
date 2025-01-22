@@ -10,10 +10,19 @@
 
     <img alt="Container View Screenshot" height="150px" src="resources/changelog/0.8.0/container-view.png"> <br />
 
-1. `Create container app...` now initializes with a quickstart image.
-1. New one-click deployment method `Deploy to Container App...` added to the top-level container app node supports deployments from a workspace project or container registry. <br />
-(If wishing to manage multiple apps in a workspace project, or if wishing to leverage faster deployments using saved settings, `Deploy Project from Workspace...` still remains the preferred deployment method and can be accessed via the workspace view.)
 1. Improved activity log output for all major commands.
+
+    <img alt="Activity Log Screenshot" height="250px" src="resources/changelog/0.8.0/activity-log.png"> <br />
+
+1. New one-click deployment method `Deploy to Container App...` added to the top-level container app node supports deployments from a workspace project or container registry. <br />
+    (If wishing to manage multiple apps in a workspace project, or if wishing to leverage faster deployments using saved settings, `Deploy Project from Workspace...` still remains the preferred deployment method and can be accessed via the workspace view.)
+
+    <img alt="Deploy to Container App Screenshot" height="150px" src="resources/changelog/0.8.0/deploy-container-app.png">
+    <img alt="Deploy Workspace Project Screenshot" height="90px" src="resources/changelog/0.8.0/deploy-workspace-project.png">
+    <br />
+
+1. `Create container app...` now initializes with a quickstart image.
+
 
 ### Added
 * [[745]](https://github.com/microsoft/vscode-azurecontainerapps/pull/745) Add managed identity support for new connections to container registries
