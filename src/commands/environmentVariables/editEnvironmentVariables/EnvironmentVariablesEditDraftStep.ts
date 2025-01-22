@@ -25,9 +25,11 @@ export class EnvironmentVariablesEditDraftStep<T extends EnvironmentVariablesEdi
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
 
         const envMap: Map<string, EnvironmentVar> = new Map();
+        // Set current environment variables
         for (const env of container.env ?? []) {
             envMap.set(nonNullProp(env, 'name'), env);
         }
+        // Add new environment variables
         for (const env of context.environmentVariables ?? []) {
             envMap.set(nonNullProp(env, 'name'), env);
         }
