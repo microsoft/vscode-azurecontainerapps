@@ -5,14 +5,13 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { type DeploymentConfigurationSettings } from "../../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../../typeUtils";
-import { dwpTestUtils } from "../dwpTestUtils";
-import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
+import { dwpTestUtils } from "../../dwpTestUtils";
+import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestCase";
+import { generateExpectedDeploymentConfiguration } from "./generateExpectedDeploymentConfiguration";
 
-export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase[] {
-    const folderName: string = 'monorepo-basic';
-    const sharedResourceName: string = 'monorepo-basic' + randomUtils.getRandomHexString(4);
+export function generateMonoRepoAdminCredentialsTestCases(): DeployWorkspaceProjectTestCase[] {
+    const folderName: string = 'monorepo-admincreds';
+    const sharedResourceName: string = 'monorepo-ac' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
     return [
@@ -22,6 +21,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 new RegExp(folderName, 'i'),
                 path.join('app1', 'Dockerfile'),
                 new RegExp('Create new container apps environment', 'i'),
+                new RegExp('Create new container registry', 'i'),
                 'Continue',
                 sharedResourceName,
                 'app1',
@@ -32,7 +32,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'East US',
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, 'app1'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1')
@@ -48,6 +48,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 new RegExp('Create and deploy new app configuration', 'i'),
                 path.join('app2', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
+                new RegExp(sharedResourceName, 'i'),  // Select a container registry - this should match the description of the ACR previously created in the same resource group
                 'Continue',
                 'app2',
                 `.${path.sep}app2`,
@@ -55,7 +56,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 path.join('app2', '.env.example'),
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app2'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, 'app2'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
@@ -71,6 +72,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 new RegExp('Create and deploy new app configuration', 'i'),
                 path.join('app3', 'Dockerfile'),
                 new RegExp('(Recommended)', 'i'), // Select a container app environment
+                new RegExp(sharedResourceName, 'i'),  // Select a container registry - this should match the description of the ACR previously created in the same resource group
                 'Continue',
                 'app3',
                 `.${path.sep}app3`,
@@ -78,7 +80,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 path.join('app3', '.env.example'),
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app3'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, 'app3'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
@@ -95,7 +97,7 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
                 'app1',
                 'Continue'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, 'app1'),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, 'app1'),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, 'app1'),
@@ -106,17 +108,4 @@ export function generateMonoRepoBasicTestCases(): DeployWorkspaceProjectTestCase
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] })
         }
     ];
-}
-
-function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
-    return {
-        label: appResourceName,
-        type: 'AcrDockerBuildRequest',
-        dockerfilePath: path.join(appResourceName, 'Dockerfile'),
-        srcPath: appResourceName,
-        envPath: path.join(appResourceName, '.env.example'),
-        resourceGroup: sharedResourceName,
-        containerApp: appResourceName,
-        containerRegistry: new RegExp(`${acrResourceName}.{6}`, 'i'),
-    };
 }

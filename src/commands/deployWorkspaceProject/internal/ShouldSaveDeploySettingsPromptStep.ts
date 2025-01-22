@@ -27,7 +27,7 @@ export class ShouldSaveDeploySettingsPromptStep extends AzureWizardPromptStep<De
             } else if (context.envPath === '') {
                 hasNewEnvPath = setting?.envPath !== useRemoteConfigurationKey;
             } else {
-                hasNewEnvPath = context.envPath !== setting?.envPath;
+                hasNewEnvPath = false;
             }
 
             const hasNewResourceGroupSetting: boolean = (!!context.newResourceGroupName && setting?.resourceGroup !== context.newResourceGroupName) ||

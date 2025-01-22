@@ -21,8 +21,9 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
             label: 'Should fail to deploy app (bad Dockerfile)',
             inputs: [
                 new RegExp(folderName, 'i'),
-                new RegExp('test_fail.Dockerfile', 'i'),
+                path.join('src', 'test_fail.Dockerfile'),
                 new RegExp('Create new container apps environment', 'i'),
+                new RegExp('Create new container registry', 'i'),
                 'Continue',
                 sharedResourceName.slice(0, -1), // Isolate by using a different resource group name since we expect this case to fail
                 appResourceName,
@@ -41,8 +42,9 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
             label: 'Deploy App',
             inputs: [
                 new RegExp(folderName, 'i'),
-                'Dockerfile',
+                path.join('src', 'Dockerfile'),
                 new RegExp('Create new container apps environment', 'i'),
+                new RegExp('Create new container registry', 'i'),
                 'Continue',
                 sharedResourceName,
                 appResourceName,
@@ -52,7 +54,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 'East US',
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, appResourceName),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
@@ -68,7 +70,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 appResourceName,
                 'Continue'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, appResourceName),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)

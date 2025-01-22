@@ -13,7 +13,7 @@ import { subscriptionContext } from "../global.nightly.test";
 import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
 
 export namespace dwpTestUtils {
-    export function generateExpectedResults(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
+    export function generateExpectedResultsWithCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
         return {
             containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
             imageName: new RegExp(appResourceName, 'i'),
@@ -23,6 +23,20 @@ export namespace dwpTestUtils {
             registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
             registryPassword: new RegExp('.*'),
             registryUsername: new RegExp(`${acrResourceName}.{6}`, 'i'),
+            resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
+        };
+    }
+
+    export function generateExpectedResultsWithoutCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
+        return {
+            containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
+            imageName: new RegExp(appResourceName, 'i'),
+            logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
+            managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
+            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),
+            registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
+            registryPassword: undefined,
+            registryUsername: undefined,
             resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
         };
     }
