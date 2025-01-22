@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type Container } from "@azure/arm-appcontainers";
+import { type Container, type EnvironmentVar } from "@azure/arm-appcontainers";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
@@ -21,10 +22,19 @@ export class EnvironmentVariablesEditDraftStep<T extends EnvironmentVariablesEdi
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('editingEnv', 'Editing environment variables (draft)...') });
         this.revisionDraftTemplate.containers ??= [];
-
         const container: Container = this.revisionDraftTemplate.containers[context.containersIdx] ?? {};
-        container.env = context.environmentVariables;
 
+        const envMap: Map<string, EnvironmentVar> = new Map();
+        // Set current environment variables
+        for (const env of container.env ?? []) {
+            envMap.set(nonNullProp(env, 'name'), env);
+        }
+        // Add new environment variables
+        for (const env of context.environmentVariables ?? []) {
+            envMap.set(nonNullProp(env, 'name'), env);
+        }
+
+        container.env = Array.from(envMap.values());
         await this.updateRevisionDraftWithTemplate(context);
     }
 

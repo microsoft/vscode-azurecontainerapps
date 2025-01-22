@@ -3,8 +3,9 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type Registry } from "@azure/arm-containerregistry";
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, createSubscriptionContext, nonNullValue, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, nonNullValue, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../../../../extensionVariables";
 import { createActivityContext } from "../../../../../../utils/activityUtils";
@@ -15,7 +16,7 @@ import { RegistryCreateStep } from "./RegistryCreateStep";
 import { RegistryNameStep } from "./RegistryNameStep";
 import { SkuListStep } from "./SkuListStep";
 
-export async function createAcr(context: IActionContext, node?: { subscription: AzureSubscription }): Promise<void> {
+export async function createAcr(context: IActionContext, node?: { subscription: AzureSubscription }): Promise<Registry> {
     const subscription = node?.subscription ?? await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
 
     const wizardContext: CreateAcrContext = {
@@ -52,4 +53,5 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
     wizardContext.activityTitle = localize('createAcr', 'Create Azure Container Registry "{0}"', wizardContext.newRegistryName);
 
     await wizard.execute();
+    return nonNullProp(wizardContext, 'registry');
 }
