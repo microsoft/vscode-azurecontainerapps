@@ -52,7 +52,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 'East US',
                 'Save'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, appResourceName),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
@@ -68,7 +68,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
                 appResourceName,
                 'Continue'
             ],
-            expectedResults: dwpTestUtils.generateExpectedResults(sharedResourceName, acrResourceName, appResourceName),
+            expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
                     generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)

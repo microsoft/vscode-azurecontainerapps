@@ -9,8 +9,12 @@
             "path": "./testProjects/dockerfiles"
         },
         {
-            "name": "monorepo-basic",
-            "path": "./testProjects/monorepo-basic"
+            "name": "monorepo-admincreds",
+            "path": "./testProjects/monorepo-basic-1"
         },
+        {
+            "name": "monorepo-identity",
+            "path": "./testProjects/monorepo-basic-2"
+        }
     ]
 }
