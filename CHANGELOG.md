@@ -1,5 +1,55 @@
 # Change Log
 
+## 0.8.0 - 2025-01-22
+### Summary of Major Changes
+1. Managed identity support has been added for connecting container apps to container registries. Assuming you have sufficient privileges, this is the preferred method for securing these resources.
+
+    <img alt="Managed Identity Screenshot" height="150px" src="resources/changelog/0.8.0/managed-identity.png"> <br />
+
+1. A new `Container` view has been added along with a host of new commands, providing more ways to edit container images and environment variables directly.
+
+    <img alt="Container View Screenshot" height="150px" src="resources/changelog/0.8.0/container-view.png"> <br />
+
+1. New one-click deployment method `Deploy to Container App...` added to the top-level container app node supports deployments from a workspace project or container registry. <br />
+    (If wishing to manage multiple apps in a workspace project, or if wishing to leverage faster deployments using saved settings, `Deploy Project from Workspace...` still remains the preferred deployment method and can be accessed via the workspace view.)
+
+    <img alt="Deploy to Container App Screenshot" height="150px" src="resources/changelog/0.8.0/deploy-container-app.png">
+    <img alt="Deploy Workspace Project Screenshot" height="90px" src="resources/changelog/0.8.0/deploy-workspace-project.png">
+    <br />
+
+1. Improved activity log output for all major commands.
+
+    <img alt="Activity Log Screenshot" height="250px" src="resources/changelog/0.8.0/activity-log.png"> <br />
+
+1. `Create container app...` now initializes with a quickstart image.
+
+### Added
+* [[745]](https://github.com/microsoft/vscode-azurecontainerapps/pull/745) Add managed identity support for new connections to container registries
+* [[804]](https://github.com/microsoft/vscode-azurecontainerapps/pull/804) New command `Deploy to Container App...` found on the container app item.  This one-click deploy command allows deploying from a workspace project or container registry while in single revision mode.
+* [[673]](https://github.com/microsoft/vscode-azurecontainerapps/pull/673) New `Container` view under the container app item. The container item provides direct access for interacting with the container's image and environment variables
+* [[778]](https://github.com/microsoft/vscode-azurecontainerapps/pull/778) New command `Edit Container Image...` for allowing edits to the container image without prompting to update environment variables
+* [[763]](https://github.com/microsoft/vscode-azurecontainerapps/issues/763) Multiple new environment variable CRUD commands found on the new environment variables item
+* [[825]](https://github.com/microsoft/vscode-azurecontainerapps/pull/825) New command `Convert Environment Variable to Secret...` to quickly turn an environment variable into a container app secret
+
+### Changed
+* [[755]](https://github.com/microsoft/vscode-azurecontainerapps/pull/755) Command `Create Container App...` now always starts with a quickstart image
+* [[769]](https://github.com/microsoft/vscode-azurecontainerapps/pull/769) Rename the `Update Container Image...` command to `Edit Container...`.  This command is now found on the container item.
+* [[820]](https://github.com/microsoft/vscode-azurecontainerapps/pull/820) When running `Deploy Project from Workspace...`, if remote environment variables conflict with saved settings, prompt for update.  Add new `envPath` option `useRemoteConfiguration`.
+* [[817]](https://github.com/microsoft/vscode-azurecontainerapps/pull/817) Deploying an image through the Docker extension now allows user to target specific revisions / containers
+* [[800]](https://github.com/microsoft/vscode-azurecontainerapps/pull/800) When deploying a new image to a container app, only show ingress prompt when more than the image tag is changed
+* [[440]](https://github.com/microsoft/vscode-azurecontainerapps/issues/440) Improve the ACR selection dropdowns, providing better pick recommendations and sorting by resource group
+* [[806]](https://github.com/microsoft/vscode-azurecontainerapps/pull/806) [[756]](https://github.com/microsoft/vscode-azurecontainerapps/pull/756) [[814]](https://github.com/microsoft/vscode-azurecontainerapps/pull/814) Improve activity log outputs for major commands
+* [[771]](https://github.com/microsoft/vscode-azurecontainerapps/pull/771) Change draft deploy prompt to be a quick pick instead of a pop-up window
+
+### Removed
+* [[827]](https://github.com/microsoft/vscode-azurecontainerapps/pull/827) Removed `Create Container App from Workspace...`.  Preferred flow is `Create Container App...` followed by `Deploy to Container App...`.
+
+### Engineering
+* [[817]](https://github.com/microsoft/vscode-azurecontainerapps/pull/817) Add `api.deployImage` as part of updated API export and ensure backward compatibility in support of new managed identity features
+* [[816]](https://github.com/microsoft/vscode-azurecontainerapps/pull/816) Add backward compatibility to `api.deployWorkspaceProject` in support of the new managed identity features
+* [[790]](https://github.com/microsoft/vscode-azurecontainerapps/pull/790) Add `tsaoptions.json`
+* [[788]](https://github.com/microsoft/vscode-azurecontainerapps/pull/788) Setup workspace project tests to run in parallel
+
 ## 0.7.1 - 2024-09-04
 
 ### Changed
