@@ -23,7 +23,6 @@
 
 1. `Create container app...` now initializes with a quickstart image.
 
-
 ### Added
 * [[745]](https://github.com/microsoft/vscode-azurecontainerapps/pull/745) Add managed identity support for new connections to container registries
 * [[804]](https://github.com/microsoft/vscode-azurecontainerapps/pull/804) New command `Deploy to Container App...` found on the container app item.  This one-click deploy command allows deploying from a workspace project or container registry while in single revision mode.
