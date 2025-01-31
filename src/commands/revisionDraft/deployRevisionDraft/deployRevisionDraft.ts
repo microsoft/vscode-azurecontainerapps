@@ -37,6 +37,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         template: ext.revisionDraftFileSystem.parseRevisionDraft(item),
     };
 
+    wizardContext.valuesToMask.push(containerApp.name);
     if (!await item.hasUnsavedChanges()) {
         throw new Error(localize('noUnsavedChanges', 'No unsaved changes detected to deploy to container app "{0}".', containerApp.name));
     }
