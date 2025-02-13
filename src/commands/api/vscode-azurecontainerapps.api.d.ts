@@ -5,6 +5,7 @@
 
 export interface AzureContainerAppsExtensionApi {
     apiVersion: string;
+    deployImage(options: DeployImageToAcaOptionsContract): Promise<void>;
     deployWorkspaceProject(options: DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults>;
 }
 
