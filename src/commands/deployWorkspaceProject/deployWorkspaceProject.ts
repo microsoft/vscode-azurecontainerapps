@@ -61,6 +61,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+        advancedCreate: true, // Todo:
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,

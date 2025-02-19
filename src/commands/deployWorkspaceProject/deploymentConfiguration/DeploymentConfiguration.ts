@@ -10,6 +10,7 @@ import { type WorkspaceFolder } from "vscode";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
 
 export interface DeploymentConfiguration {
+    deploymentMode?: 'basic' | 'advanced';
     configurationIdx?: number;
     shouldSaveDeploySettings?: boolean;
     rootFolder?: WorkspaceFolder;

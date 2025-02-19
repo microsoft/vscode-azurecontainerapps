@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerApp, type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, type ILocationWizardContext } from "@microsoft/vscode-azext-azureutils";
 import { activityInfoIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
@@ -14,6 +15,7 @@ import { localize } from "../utils/localize";
 type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityContext> & ILocationWizardContext & {
     resourceGroup?: ResourceGroup,
     managedEnvironment?: ManagedEnvironment,
+    registry?: Registry;
     containerApp?: ContainerApp
 };
 
@@ -47,7 +49,9 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
     }
 
     protected async logStartingResources(context: T): Promise<void> {
+        // Resource group
         if (context.resourceGroup) {
+            context.telemetry.properties.existingResourceGroup = 'true';
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activityInfoContext]),
@@ -56,9 +60,13 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 })
             );
             ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', context.resourceGroup.name));
+        } else {
+            context.telemetry.properties.existingResourceGroup = 'false';
         }
 
+        // Managed environment
         if (context.managedEnvironment) {
+            context.telemetry.properties.existingEnvironment = 'true';
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingManagedEnvironmentInfoItem', activityInfoContext]),
@@ -67,9 +75,28 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 })
             );
             ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
+        } else {
+            context.telemetry.properties.existingEnvironment = 'false';
         }
 
+        // Container registry
+        if (context.registry) {
+            context.telemetry.properties.existingRegistry = 'true';
+            context.activityChildren?.push(
+                new GenericTreeItem(undefined, {
+                    contextValue: createUniversallyUniqueContextValue(['useExistingAcrInfoItem', activityInfoContext]),
+                    label: localize('useAcr', 'Using container registry "{0}"', context.registry.name),
+                    iconPath: activityInfoIcon
+                })
+            );
+            ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', context.registry.name));
+        } else {
+            context.telemetry.properties.existingRegistry = 'false';
+        }
+
+        // Container app
         if (context.containerApp) {
+            context.telemetry.properties.existingContainerApp = 'true';
             context.activityChildren?.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activityInfoContext]),
@@ -78,11 +105,17 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 })
             );
             ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', context.containerApp.name));
+        } else {
+            context.telemetry.properties.existingContainerApp = 'false';
         }
 
+        // Location
         if (LocationListStep.hasLocation(context)) {
+            context.telemetry.properties.existingLocation = 'true';
             const location: string = (await LocationListStep.getLocation(context)).name;
             ext.outputChannel.appendLog(localize('usingLocation', 'Using location: "{0}".', location));
+        } else {
+            context.telemetry.properties.existingLocation = 'false';
         }
 
         this.hasLogged = true;
