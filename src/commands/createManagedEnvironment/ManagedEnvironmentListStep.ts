@@ -15,7 +15,7 @@ import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreate
 export type ManagedEnvironmentPick = IAzureQuickPickItem<ManagedEnvironment | undefined>;
 
 export interface ManagedEnvironmentRecommendedPicksStrategy<T extends Partial<ManagedEnvironmentCreateContext>> {
-    setRecommendedPicks(context: T, picks: ManagedEnvironmentPick[]): ManagedEnvironmentPick[] | Promise<ManagedEnvironmentPick[]>;
+    setRecommendedPicks(context: T, picks: ManagedEnvironmentPick[]): void | Promise<void>;
 }
 
 export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardPromptStep<T> {
@@ -24,10 +24,8 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     public async prompt(context: T): Promise<void> {
-        let picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[] = await this.getPicks(context);
-        if (this.options?.recommendedPicksStrategy) {
-            picks = await this.options.recommendedPicksStrategy.setRecommendedPicks(context, picks);
-        }
+        const picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[] = await this.getPicks(context);
+        await this.options?.recommendedPicksStrategy?.setRecommendedPicks(context, picks);
         if (!picks.length) {
             return;
         }

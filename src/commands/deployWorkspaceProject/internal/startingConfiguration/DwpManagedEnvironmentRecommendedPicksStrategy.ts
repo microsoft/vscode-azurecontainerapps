@@ -12,10 +12,10 @@ import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 
 export class DwpManagedEnvironmentRecommendedPicksStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentRecommendedPicksStrategy<T> {
-    async setRecommendedPicks(context: T, picks: ManagedEnvironmentPick[]): Promise<ManagedEnvironmentPick[]> {
+    async setRecommendedPicks(context: T, picks: ManagedEnvironmentPick[]): Promise<void> {
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!deploymentConfigurations?.length) {
-            return picks;
+            return;
         }
 
         const client = await createContainerAppsAPIClient(context);
@@ -44,7 +44,5 @@ export class DwpManagedEnvironmentRecommendedPicksStrategy<T extends DeployWorks
                 return 0;
             }
         });
-
-        return picks;
     }
 }
