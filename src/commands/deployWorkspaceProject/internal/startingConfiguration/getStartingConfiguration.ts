@@ -6,6 +6,7 @@
 import { KnownSkuName } from "@azure/arm-containerregistry";
 import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
+import { ManagedEnvironmentListStep } from "../../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
 import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
@@ -13,7 +14,7 @@ import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/Roo
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
 import { DwpAcrListStep } from "./DwpAcrListStep";
-import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
+import { DwpManagedEnvironmentRecommendedPicksStrategy } from "./DwpManagedEnvironmentRecommendedPicksStrategy";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
@@ -22,7 +23,9 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
     const promptSteps = [
         new RootFolderStep(),
         new DockerfileItemStep(),
-        new DwpManagedEnvironmentListStep(),
+        new ManagedEnvironmentListStep({
+            recommendedPicksStrategy: new DwpManagedEnvironmentRecommendedPicksStrategy(),
+        }),
     ];
 
     if (!options.suppressRegistryPrompt) {
