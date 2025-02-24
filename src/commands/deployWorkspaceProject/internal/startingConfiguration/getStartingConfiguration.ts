@@ -13,16 +13,15 @@ import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/Roo
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
 import { DwpAcrListStep } from "./DwpAcrListStep";
-import { DwpManagedEnvironmentListStep } from "./DwpManagedEnvironmentListStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
+// Todo: Maybe extract a lot of htis logic out into the if statements?
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
     const promptSteps = [
         new RootFolderStep(),
         new DockerfileItemStep(),
-        new DwpManagedEnvironmentListStep(),
     ];
 
     if (!options.suppressRegistryPrompt) {

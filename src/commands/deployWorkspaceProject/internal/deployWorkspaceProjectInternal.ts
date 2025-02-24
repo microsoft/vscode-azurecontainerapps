@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, GenericTreeItem, activityInfoIcon, activitySuccessContext, createUniversallyUniqueContextValue, nonNullValueAndProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
@@ -15,6 +15,7 @@ import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
+import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { editContainerCommandName } from "../../editContainer/editContainer";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
@@ -22,14 +23,12 @@ import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { deployWorkspaceProjectCommandName } from "../deployWorkspaceProject";
 import { formatSectionHeader } from "../formatSectionHeader";
 import { AppResourcesNameStep } from "./AppResourcesNameStep";
-import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
-import { DwpStartingResourcesLogStep } from "./DwpStartingResourcesLogStep";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
+import { DwpManagedEnvironmentRecommendedPicksStrategy } from "./startingConfiguration/DwpManagedEnvironmentRecommendedPicksStrategy";
 import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
-import { ManagedEnvironmentNameStep } from "../../createManagedEnvironment/ManagedEnvironmentNameStep";
 
 export interface DeployWorkspaceProjectInternalOptions {
     advancedCreate: boolean;
@@ -102,139 +101,105 @@ export async function deployWorkspaceProjectInternal(
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
-        new DwpStartingResourcesLogStep(),
-        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation), // Todo: Maybe add this confirm step later?
+        // new DwpStartingResourcesLogStep(),
+        // new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
     ];
 
-    const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [
-        new DeployWorkspaceProjectSaveSettingsStep()
-    ];
+    const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
     if (!options.advancedCreate) {
+        // Basic
         promptSteps.push(new SharedResourcesNameStep());
         promptSteps.push(new AppResourcesNameStep(!!options.suppressContainerAppCreation));
-    }
-
-    // Resource group
-    if (!wizardContext.resourceGroup) {
-        if (options.advancedCreate) {
-            promptSteps.push(new ResourceGroupListStep());
-        } else {
+        if (!wizardContext.resourceGroup) {
             executeSteps.push(new ResourceGroupCreateStep());
         }
-    }
-
-    // Managed environment
-    if (!wizardContext.managedEnvironment) {
-        if (options.advancedCreate) {
-            promptSteps.push(new ManagedEnvironmentNameStep());
+        if (!wizardContext.managedEnvironment) {
+            executeSteps.push(
+                new LogAnalyticsCreateStep(),
+                new ManagedEnvironmentCreateStep(),
+            );
         }
-
-        executeSteps.push(
-            new LogAnalyticsCreateStep(),
-            new ManagedEnvironmentCreateStep(),
-        );
+        if (!wizardContext.registry) {
+            // Add acrListStep, maybe add new way of handling registry recommendation strategy
+        }
+        if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
+            executeSteps.push(new ContainerAppCreateStep());
+        }
+    } else {
+        // Advanced
+        if (!wizardContext.resourceGroup) {
+            promptSteps.push(new ResourceGroupListStep());
+        }
+        if (!wizardContext.managedEnvironment) {
+            promptSteps.push(new ManagedEnvironmentListStep({
+                recommendedPicksStrategy: new DwpManagedEnvironmentRecommendedPicksStrategy(),
+            }));
+        }
+        if (!wizardContext.registry) {
+            // Add acrListStep, maybe add new way of handling registry recommendation strategy
+            // Sku step select step?
+        }
+        if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
+            // Container app list step
+        }
     }
-}
 
-// Azure Container Registry
-if (wizardContext.registry) {
-    wizardContext.telemetry.properties.existingRegistry = 'true';
+    if (wizardContext.containerApp) {
+        executeSteps.push(new ContainerAppUpdateStep());
+        if (!LocationListStep.hasLocation(wizardContext)) {
+            await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
+        }
+    }
 
-    const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
+    promptSteps.push(
+        new ImageSourceListStep(),
+        new IngressPromptStep(),
+    );
+    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
 
-    wizardContext.activityChildren?.push(
-        new GenericTreeItem(undefined, {
-            contextValue: createUniversallyUniqueContextValue(['useExistingAcrInfoItem', activitySuccessContext]),
-            label: localize('useAcr', 'Using container registry "{0}"', registryName),
-            iconPath: activityInfoIcon
-        })
+    // Location
+    if (LocationListStep.hasLocation(wizardContext)) {
+        wizardContext.telemetry.properties.existingLocation = 'true';
+        ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', (await LocationListStep.getLocation(wizardContext)).name));
+    } else {
+        wizardContext.telemetry.properties.existingLocation = 'false';
+        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
+        LocationListStep.addStep(wizardContext, promptSteps);
+    }
+
+    // Save deploy settings
+    promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
+    executeSteps.push(new DeployWorkspaceProjectSaveSettingsStep());
+
+    const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(wizardContext, {
+        title: options.suppressWizardTitle ?
+            undefined :
+            localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
+        promptSteps,
+        executeSteps,
+        showLoadingPrompt: true
+    });
+
+    await wizard.prompt();
+
+    if (!options.suppressActivity) {
+        wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
+    }
+
+    ext.outputChannel.appendLog(
+        formatSectionHeader(localize('beginCommandExecution', 'Deploy workspace project'))
     );
 
-    ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', registryName));
-} else {
-    // ImageSourceListStep can already handle this creation logic
-    wizardContext.telemetry.properties.existingRegistry = 'false';
-}
+    await wizard.execute();
 
-// Container app
-if (wizardContext.containerApp) {
-    wizardContext.telemetry.properties.existingContainerApp = 'true';
+    wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
 
-    const containerAppName: string = nonNullValueAndProp(wizardContext.containerApp, 'name');
-
-    executeSteps.push(new ContainerAppUpdateStep());
-
-    wizardContext.activityChildren?.push(
-        new GenericTreeItem(undefined, {
-            contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activitySuccessContext]),
-            label: localize('useContainerApp', 'Using container app "{0}"', containerAppName),
-            iconPath: activityInfoIcon
-        })
+    ext.outputChannel.appendLog(
+        formatSectionHeader(localize('finishCommandExecution', 'Finished deploying workspace project'))
     );
 
-    ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', containerAppName));
+    ext.branchDataProvider.refresh();
 
-    if (!LocationListStep.hasLocation(wizardContext)) {
-        await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
-    }
-} else {
-    wizardContext.telemetry.properties.existingContainerApp = 'false';
-
-    if (!options.suppressContainerAppCreation) {
-        executeSteps.push(new ContainerAppCreateStep());
-    }
-}
-
-promptSteps.push(
-    new ImageSourceListStep(),
-    new IngressPromptStep(),
-);
-
-// Verify providers
-executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
-
-// Location
-if (LocationListStep.hasLocation(wizardContext)) {
-    wizardContext.telemetry.properties.existingLocation = 'true';
-    ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', (await LocationListStep.getLocation(wizardContext)).name));
-} else {
-    wizardContext.telemetry.properties.existingLocation = 'false';
-    LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
-    LocationListStep.addStep(wizardContext, promptSteps);
-}
-
-// Save deploy settings
-promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
-
-const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(wizardContext, {
-    title: options.suppressWizardTitle ?
-        undefined :
-        localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
-    promptSteps,
-    executeSteps,
-    showLoadingPrompt: true
-});
-
-await wizard.prompt();
-
-if (!options.suppressActivity) {
-    wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
-}
-
-ext.outputChannel.appendLog(
-    formatSectionHeader(localize('beginCommandExecution', 'Deploy workspace project'))
-);
-
-await wizard.execute();
-
-wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
-
-ext.outputChannel.appendLog(
-    formatSectionHeader(localize('finishCommandExecution', 'Finished deploying workspace project'))
-);
-
-ext.branchDataProvider.refresh();
-
-return wizardContext;
+    return wizardContext;
 }
