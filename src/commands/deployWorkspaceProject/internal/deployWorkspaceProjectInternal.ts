@@ -24,17 +24,17 @@ import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpda
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
+import { StartingResourcesLogStep } from "../../StartingResourcesLogStep";
 import { deployWorkspaceProjectCommandName } from "../deployWorkspaceProject";
 import { formatSectionHeader } from "../formatSectionHeader";
 import { AppResourcesNameStep } from "./AppResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
-import { DwpStartingResourcesLogStep } from "./DwpStartingResourcesLogStep";
+import { getStartingConfiguration } from "./getStartingConfiguration";
 import { ManagedEnvironmentRecommendWorkspacePicksStrategy } from "./ManagedEnvironmentRecommendWorkspacePicksStrategy";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
-import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
 
 export interface DeployWorkspaceProjectInternalOptions {
     /**
@@ -96,10 +96,10 @@ export async function deployWorkspaceProjectInternal(
         startingConfiguration = await getStartingConfiguration({ ...context }, options);
     });
 
-    if (startingConfiguration?.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+    if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
         throw new Error(localize('multipleRevisionsNotSupported', 'The container app cannot be updated using "{0}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{1}" instead.', deployWorkspaceProjectCommandName, editContainerCommandName));
     }
-    if ((startingConfiguration?.containerApp?.template?.containers?.length ?? 0) > 1) {
+    if ((context.containerApp?.template?.containers?.length ?? 0) > 1) {
         throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployWorkspaceProjectCommandName, editContainerCommandName));
     }
 
@@ -113,7 +113,7 @@ export async function deployWorkspaceProjectInternal(
         new RootFolderStep(),
         new DockerfileItemStep(),
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
-        new DwpStartingResourcesLogStep(),
+        new StartingResourcesLogStep(),
     ];
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
@@ -141,6 +141,10 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
         }
+        promptSteps.push(
+            new ImageSourceListStep(),
+            new IngressPromptStep(),
+        );
     } else {
         // Advanced
         if (!wizardContext.resourceGroup) {
@@ -157,20 +161,18 @@ export async function deployWorkspaceProjectInternal(
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             promptSteps.push(new ContainerAppListStep({ skipIfNone: true }));
+        } else {
+            promptSteps.push(
+                new ImageSourceListStep(),
+                new IngressPromptStep(),
+            );
         }
     }
 
     if (wizardContext.containerApp) {
         executeSteps.push(new ContainerAppUpdateStep());
-        if (!LocationListStep.hasLocation(wizardContext)) {
-            await LocationListStep.setLocation(wizardContext, wizardContext.containerApp.location);
-        }
     }
 
-    promptSteps.push(
-        new ImageSourceListStep(),
-        new IngressPromptStep(),
-    );
     executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
 
     // Location
@@ -193,7 +195,7 @@ export async function deployWorkspaceProjectInternal(
             localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),
         promptSteps,
         executeSteps,
-        showLoadingPrompt: true
+        showLoadingPrompt: true,
     });
 
     await wizard.prompt();
@@ -201,7 +203,6 @@ export async function deployWorkspaceProjectInternal(
     if (!options.suppressActivity) {
         wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
     }
-
     ext.outputChannel.appendLog(
         formatSectionHeader(localize('beginCommandExecution', 'Deploy workspace project'))
     );
@@ -209,12 +210,10 @@ export async function deployWorkspaceProjectInternal(
     await wizard.execute();
 
     wizardContext.telemetry.properties.revisionMode = wizardContext.containerApp?.revisionsMode;
-
     ext.outputChannel.appendLog(
         formatSectionHeader(localize('finishCommandExecution', 'Finished deploying workspace project'))
     );
 
     ext.branchDataProvider.refresh();
-
     return wizardContext;
 }

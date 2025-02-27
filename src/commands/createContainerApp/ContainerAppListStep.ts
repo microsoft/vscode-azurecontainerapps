@@ -13,6 +13,7 @@ import { localize } from "../../utils/localize";
 import { ManagedEnvironmentListStep } from "../createManagedEnvironment/ManagedEnvironmentListStep";
 import { type IContainerAppContext } from "../IContainerAppContext";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
+import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
@@ -89,6 +90,8 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
             promptSteps: [
                 new ContainerAppNameStep(),
                 new ImageSourceListStep(),
+                // Todo: Check if this is needed
+                new IngressPromptStep(),
             ],
             executeSteps: [
                 new ContainerAppCreateStep(),

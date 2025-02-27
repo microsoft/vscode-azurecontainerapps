@@ -4,21 +4,19 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import { ImageSource } from "../../../../constants";
-import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
-import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
-import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
-import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
-import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
+import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
+import { ImageSource } from "../../../constants";
+import { ContainerAppListStep } from "../../createContainerApp/ContainerAppListStep";
+import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
+import { EnvFileListStep } from "../../image/imageSource/EnvFileListStep";
+import { AcrBuildSupportedOS } from "../../image/imageSource/buildImageInAzure/OSPickStep";
+import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
+import { type DeployWorkspaceProjectInternalOptions } from "./deployWorkspaceProjectInternal";
 
-// Todo: Maybe extract a lot of htis logic out into the if statements?
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
     return {
-        resourceGroup: context.resourceGroup,
-        managedEnvironment: context.managedEnvironment,
-        containerApp: context.containerApp,
         suppressEnableAdminUserPrompt: options.suppressConfirmation,
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
@@ -31,14 +29,15 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
 }
 
 async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-    if (!context.containerApp && !context.managedEnvironment) {
+    if (!context.containerApp && !context.managedEnvironment && !context.resourceGroup) {
         return;
     } else if (context.containerApp) {
-        const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
-        context.resourceGroup ??= resources.resourceGroup;
-        context.managedEnvironment ??= resources.managedEnvironment;
+        await ContainerAppListStep.populateContextWithContainerApp(context, context.containerApp);
     } else if (context.managedEnvironment) {
-        const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
-        context.resourceGroup ??= resources.resourceGroup;
+        await ManagedEnvironmentListStep.populateContextWithManagedEnvironment(context, context.managedEnvironment);
+    } else if (context.resourceGroup) {
+        if (!LocationListStep.hasLocation(context)) {
+            await LocationListStep.setLocation(context, context.resourceGroup.location);
+        }
     }
 }

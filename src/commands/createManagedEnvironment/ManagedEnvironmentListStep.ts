@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
-import { ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -80,14 +80,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         });
     }
 
-    static async populateContextWithManagedEnvironment(context: ManagedEnvironmentContext & { resourceGroup?: ResourceGroup }, managedEnvironment: ManagedEnvironment): Promise<void> {
-        if (!context.resourceGroup) {
-            const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-            context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
-        }
-        context.managedEnvironment = managedEnvironment;
-    }
-
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
         if (this.options?.skipSubWizardCreate || context.managedEnvironment) {
             return undefined;
@@ -107,5 +99,16 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     static async getManagedEnvironments(context: ISubscriptionActionContext): Promise<ManagedEnvironment[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         return await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+    }
+
+    static async populateContextWithManagedEnvironment(context: ManagedEnvironmentContext & { resourceGroup?: ResourceGroup }, managedEnvironment: ManagedEnvironment): Promise<void> {
+        if (!context.resourceGroup) {
+            const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
+            context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
+        }
+        if (!LocationListStep.hasLocation(context)) {
+            await LocationListStep.setLocation(context, managedEnvironment.location);
+        }
+        context.managedEnvironment = managedEnvironment;
     }
 }
