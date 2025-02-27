@@ -4,49 +4,25 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import { AzureWizard } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
 import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
-import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
-import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
-import { DwpAcrListStep } from "./DwpAcrListStep";
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppsResourceHelpers";
 
 // Todo: Maybe extract a lot of htis logic out into the if statements?
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
-    const promptSteps = [
-        new RootFolderStep(),
-        new DockerfileItemStep(),
-    ];
-
-    if (!options.suppressRegistryPrompt) {
-        promptSteps.push(new DwpAcrListStep());
-    }
-
-    const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(context, {
-        promptSteps,
-    });
-
-    await wizard.prompt();
-    await wizard.execute();
-
     return {
-        rootFolder: context.rootFolder,
-        dockerfilePath: context.dockerfilePath,
         resourceGroup: context.resourceGroup,
         managedEnvironment: context.managedEnvironment,
         containerApp: context.containerApp,
-        registry: context.registry,
-        newRegistrySku: KnownSkuName.Basic,
         suppressEnableAdminUserPrompt: options.suppressConfirmation,
         imageSource: ImageSource.RemoteAcrBuild,
         os: AcrBuildSupportedOS.Linux,
-        envPath: context.envPath,
+        newRegistrySku: !options.advancedCreate ? KnownSkuName.Basic : undefined,
         environmentVariables:
             context.envPath ?
                 undefined /** No need to set anything if there's an envPath, the step will handle parsing the data for us */ :

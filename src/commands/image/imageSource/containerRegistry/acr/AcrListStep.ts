@@ -23,22 +23,27 @@ import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";
 
 export interface AcrListStepOptions {
-    suppressCreate?: boolean;
+    skipSubWizardCreate?: boolean;
+    suppressCreatePick?: boolean;
+    pickUpdateStrategy?: AcrPickUpdateStrategy;
 }
 
-export const acrCreatePick = {
+export interface AcrPickUpdateStrategy {
+    updatePicks(context: ContainerRegistryImageSourceContext, picks: IAzureQuickPickItem<Registry>[]): void | Promise<void>;
+}
+
+const acrCreatePick = {
     label: localize('newContainerRegistry', '$(plus) Create new container registry'),
-    data: undefined
+    data: undefined,
 };
 
 export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends AzureWizardPromptStep<T> {
-    constructor(private readonly options?: AcrListStepOptions) {
+    constructor(readonly options: AcrListStepOptions = {}) {
         super();
+        this.options.pickUpdateStrategy ??= new AcrDefaultPickUpdateStrategy();
     }
 
     public async prompt(context: T): Promise<void> {
-        const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
-
         let pick: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>;
         let result: Registry | typeof noMatchingResources | undefined;
         do {
@@ -49,7 +54,11 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
                 break;
             }
 
-            pick = await context.ui.showQuickPick(picks, { placeHolder, enableGrouping: true, suppressPersistence: true });
+            pick = await context.ui.showQuickPick(picks, {
+                placeHolder: localize('selectRegistry', 'Select a container registry'),
+                enableGrouping: true,
+                suppressPersistence: true,
+            });
             result = pick.data;
         } while (result === noMatchingResources);
 
@@ -60,66 +69,92 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         return !context.registry && !context.newRegistryName;
     }
 
+    private async getPicks(context: T): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
+        const registryPicks: IAzureQuickPickItem<Registry>[] = (await AcrListStep.getRegistries(context)).map(r => {
+            return {
+                label: nonNullProp(r, 'name'),
+                data: r,
+            };
+        });
+        await this.options.pickUpdateStrategy?.updatePicks(context, registryPicks);
+
+        const picks: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[] = registryPicks;
+        if (!this.options?.suppressCreatePick) {
+            picks.push(acrCreatePick);
+        }
+        if (!picks.length) {
+            return [noMatchingResourcesQp];
+        }
+
+        return picks;
+    }
+
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
-        const promptSteps: AzureWizardPromptStep<T>[] = [];
-        const executeSteps: AzureWizardExecuteStep<T>[] = [];
+        if (this.options.skipSubWizardCreate || context.registry) {
+            return undefined;
+        }
 
-        if (!context.registry) {
-            promptSteps.push(
-                new RegistryNameStep(),
-                new SkuListStep()
-            );
-            executeSteps.push(new RegistryCreateStep());
+        const promptSteps: AzureWizardPromptStep<T>[] = [
+            new RegistryNameStep(),
+            new SkuListStep(),
+        ];
+        const executeSteps: AzureWizardExecuteStep<T>[] = [
+            new RegistryCreateStep(),
+        ];
 
-            await tryConfigureResourceGroupForRegistry(context, promptSteps);
+        await tryConfigureResourceGroupForRegistry(context, promptSteps);
 
-            if (!LocationListStep.hasLocation(context) && context.resourceGroup) {
-                await LocationListStep.setLocation(context, context.resourceGroup.location);
-            } else {
-                LocationListStep.addStep(context, promptSteps);
-            }
+        if (!LocationListStep.hasLocation(context) && context.resourceGroup) {
+            await LocationListStep.setLocation(context, context.resourceGroup.location);
+        } else {
+            LocationListStep.addStep(context, promptSteps);
         }
 
         return {
             promptSteps,
-            executeSteps
+            executeSteps,
         };
     }
 
-    public async getPicks(context: T): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {
-        const picks: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[] = [];
-        if (!this.options?.suppressCreate) {
-            picks.push(acrCreatePick);
-        }
+    public static async getRegistries(context: ISubscriptionActionContext): Promise<Registry[]> {
+        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
+        return await uiUtils.listAllIterator(client.registries.list());
+    }
+}
 
-        const registryPicks: IAzureQuickPickItem<Registry>[] = await AcrListStep.getSortedAndRecommendedPicks(context);
-        if (!picks.length && !registryPicks.length) {
-            return [noMatchingResourcesQp];
-        }
-
-        return picks.concat(registryPicks);
+async function tryConfigureResourceGroupForRegistry(
+    context: ContainerRegistryImageSourceContext,
+    promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
+): Promise<void> {
+    // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
+    const resourceCreationContext = context as Partial<ContainerAppCreateBaseContext> & Partial<ManagedEnvironmentCreateContext> & CreateAcrContext;
+    if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
+        return;
     }
 
-    /**
-     * Returns a list of registries sorted by resource group, with matching resource group sorted to the top of the list.
-     * If a currently deployed registry exists, that will be sorted to the top and marked instead.
-     */
-    public static async getSortedAndRecommendedPicks(context: ISubscriptionActionContext & Partial<ContainerRegistryImageSourceContext>): Promise<IAzureQuickPickItem<Registry>[]> {
-        const registries: Registry[] = await AcrListStep.getRegistries(context);
-        context.telemetry.properties.acrCount = String(registries.length);
-        if (!registries.length) {
-            return [];
-        }
+    // Try to check for an existing container app or managed environment resource group
+    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup ||
+        (resourceCreationContext.managedEnvironment?.id ? getResourceGroupFromId(resourceCreationContext.managedEnvironment.id) : undefined);
+    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
 
+    resourceCreationContext.resourceGroup = resourceGroups.find(rg => resourceGroupName && rg.name === resourceGroupName);
+    if (!resourceCreationContext.resourceGroup) {
+        promptSteps.push(new ResourceGroupListStep());
+    }
+}
+
+export class AcrDefaultPickUpdateStrategy implements AcrPickUpdateStrategy {
+    updatePicks(context: ContainerRegistryImageSourceContext, picks: IAzureQuickPickItem<Registry>[]): void {
         const registriesByGroup: Record<string, Registry[]> = {};
-        for (const r of registries) {
-            if (!r.id) {
+        for (const p of picks) {
+            const registry: Registry | undefined = p.data;
+            if (!registry.id) {
                 continue;
             }
 
-            const { resourceGroup } = parseAzureResourceId(r.id);
+            const { resourceGroup } = parseAzureResourceId(registry.id);
             const registriesGroup: Registry[] = registriesByGroup[resourceGroup] ?? [];
-            registriesGroup.push(r);
+            registriesGroup.push(registry);
             registriesByGroup[resourceGroup] = registriesGroup;
         }
 
@@ -153,12 +188,12 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             if (context.containerApp.revisionsMode === KnownActiveRevisionsMode.Single && registryDomain === acrDomain) {
                 currentRegistry = registryName;
 
-                const crIndex: number = registries.findIndex((r) => !!currentRegistry && r.loginServer === currentRegistry);
+                const crIndex: number = picks.findIndex((p) => !!currentRegistry && p.data.loginServer === currentRegistry);
                 hasCurrentRegistry = crIndex !== -1;
             }
         }
 
-        const picks: IAzureQuickPickItem<Registry>[] = [];
+        const reOrderedPicks: IAzureQuickPickItem<Registry>[] = [];
         let hasSameRgRegistry: boolean = false;
         context.telemetry.properties.sameRgAcrCount = '0';
         for (const [i, rg] of sortedResourceGroups.entries()) {
@@ -200,32 +235,6 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             }
         }
 
-        return picks;
-    }
-
-    public static async getRegistries(context: ISubscriptionActionContext): Promise<Registry[]> {
-        const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
-        return await uiUtils.listAllIterator(client.registries.list());
-    }
-}
-
-async function tryConfigureResourceGroupForRegistry(
-    context: ContainerRegistryImageSourceContext,
-    promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[],
-): Promise<void> {
-    // No need to pollute the base context with all the potential pre-create typings as they are not otherwise used
-    const resourceCreationContext = context as Partial<ContainerAppCreateBaseContext> & Partial<ManagedEnvironmentCreateContext> & CreateAcrContext;
-    if (resourceCreationContext.resourceGroup || resourceCreationContext.newResourceGroupName) {
-        return;
-    }
-
-    // Try to check for an existing container app or managed environment resource group
-    const resourceGroupName: string | undefined = resourceCreationContext.containerApp?.resourceGroup ||
-        (resourceCreationContext.managedEnvironment?.id ? getResourceGroupFromId(resourceCreationContext.managedEnvironment.id) : undefined);
-    const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(resourceCreationContext);
-
-    resourceCreationContext.resourceGroup = resourceGroups.find(rg => resourceGroupName && rg.name === resourceGroupName);
-    if (!resourceCreationContext.resourceGroup) {
-        promptSteps.push(new ResourceGroupListStep());
+        picks = reOrderedPicks;
     }
 }

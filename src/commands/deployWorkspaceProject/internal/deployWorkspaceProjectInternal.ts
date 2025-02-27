@@ -13,25 +13,34 @@ import { createActivityContext } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
+import { ContainerAppListStep } from "../../createContainerApp/ContainerAppListStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { editContainerCommandName } from "../../editContainer/editContainer";
+import { DockerfileItemStep } from "../../image/imageSource/buildImageInAzure/DockerfileItemStep";
+import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
+import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { deployWorkspaceProjectCommandName } from "../deployWorkspaceProject";
 import { formatSectionHeader } from "../formatSectionHeader";
 import { AppResourcesNameStep } from "./AppResourcesNameStep";
+import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
+import { DwpStartingResourcesLogStep } from "./DwpStartingResourcesLogStep";
+import { ManagedEnvironmentRecommendWorkspacePicksStrategy } from "./ManagedEnvironmentRecommendWorkspacePicksStrategy";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
-import { DwpManagedEnvironmentRecommendedPicksStrategy } from "./startingConfiguration/DwpManagedEnvironmentRecommendedPicksStrategy";
 import { getStartingConfiguration } from "./startingConfiguration/getStartingConfiguration";
 
 export interface DeployWorkspaceProjectInternalOptions {
-    advancedCreate: boolean;
+    /**
+     * Set to offer advanced creation prompts
+     */
+    advancedCreate?: boolean;
     /**
      * Suppress showing the wizard execution through the activity log
      */
@@ -97,14 +106,15 @@ export async function deployWorkspaceProjectInternal(
     const wizardContext: DeployWorkspaceProjectInternalContext = {
         ...context,
         ...activityContext,
-        ...startingConfiguration
+        ...startingConfiguration,
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
-        // new DwpStartingResourcesLogStep(),
-        // new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
+        new RootFolderStep(),
+        new DockerfileItemStep(),
+        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
+        new DwpStartingResourcesLogStep(),
     ];
-
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
     if (!options.advancedCreate) {
@@ -115,13 +125,18 @@ export async function deployWorkspaceProjectInternal(
             executeSteps.push(new ResourceGroupCreateStep());
         }
         if (!wizardContext.managedEnvironment) {
+            promptSteps.push(new ManagedEnvironmentListStep({
+                skipIfNone: true,
+                skipSubWizardCreate: true,
+                pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
+            }));
             executeSteps.push(
                 new LogAnalyticsCreateStep(),
                 new ManagedEnvironmentCreateStep(),
             );
         }
-        if (!wizardContext.registry) {
-            // Add acrListStep, maybe add new way of handling registry recommendation strategy
+        if (!wizardContext.registry && !options.suppressRegistryPrompt) {
+            promptSteps.push(new AcrListStep({ skipSubWizardCreate: true }));
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
@@ -133,15 +148,15 @@ export async function deployWorkspaceProjectInternal(
         }
         if (!wizardContext.managedEnvironment) {
             promptSteps.push(new ManagedEnvironmentListStep({
-                recommendedPicksStrategy: new DwpManagedEnvironmentRecommendedPicksStrategy(),
+                skipIfNone: true,
+                pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
             }));
         }
         if (!wizardContext.registry) {
-            // Add acrListStep, maybe add new way of handling registry recommendation strategy
-            // Sku step select step?
+            promptSteps.push(new AcrListStep());
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
-            // Container app list step
+            promptSteps.push(new ContainerAppListStep({ skipIfNone: true }));
         }
     }
 

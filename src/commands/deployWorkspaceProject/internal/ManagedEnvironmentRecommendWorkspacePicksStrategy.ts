@@ -3,16 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
-import { hasMatchingPickDescription, recommendedPickDescription } from "../../../../utils/pickUtils";
-import { type ManagedEnvironmentPick, type ManagedEnvironmentRecommendedPicksStrategy } from "../../../createManagedEnvironment/ManagedEnvironmentListStep";
-import { type DeploymentConfigurationSettings } from "../../settings/DeployWorkspaceProjectSettingsV2";
-import { dwpSettingUtilsV2 } from "../../settings/dwpSettingUtilsV2";
-import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
+import { type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { nonNullProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
+import { hasMatchingPickDescription, recommendedPickDescription } from "../../../utils/pickUtils";
+import { type ManagedEnvironmentPickUpdateStrategy } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
+import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
+import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
-export class DwpManagedEnvironmentRecommendedPicksStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentRecommendedPicksStrategy<T> {
-    async setRecommendedPicks(context: T, picks: ManagedEnvironmentPick[]): Promise<void> {
+export class ManagedEnvironmentRecommendWorkspacePicksStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentPickUpdateStrategy {
+    async updatePicks(context: T, picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[]): Promise<void> {
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!deploymentConfigurations?.length) {
             return;
@@ -44,5 +45,7 @@ export class DwpManagedEnvironmentRecommendedPicksStrategy<T extends DeployWorks
                 return 0;
             }
         });
+
+        // Todo: Add telemetry for pick filter type
     }
 }
