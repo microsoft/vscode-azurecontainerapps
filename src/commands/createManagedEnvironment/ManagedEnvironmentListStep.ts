@@ -40,7 +40,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         }
 
         const picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[] = environmentPicks;
-        picks.push({
+        picks.unshift({
             label: localize('newManagedEnvironment', '$(plus) Create new container apps environment'),
             data: undefined,
         });

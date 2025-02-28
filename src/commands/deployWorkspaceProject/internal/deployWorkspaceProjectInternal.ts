@@ -112,8 +112,6 @@ export async function deployWorkspaceProjectInternal(
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new RootFolderStep(),
         new DockerfileItemStep(),
-        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
-        new StartingResourcesLogStep(),
     ];
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
@@ -141,10 +139,6 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
         }
-        promptSteps.push(
-            new ImageSourceListStep(),
-            new IngressPromptStep(),
-        );
     } else {
         // Advanced
         if (!wizardContext.resourceGroup) {
@@ -160,16 +154,15 @@ export async function deployWorkspaceProjectInternal(
             promptSteps.push(new AcrListStep());
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
-            promptSteps.push(new ContainerAppListStep({ skipIfNone: true }));
-        } else {
-            promptSteps.push(
-                new ImageSourceListStep(),
-                new IngressPromptStep(),
-            );
+            promptSteps.push(new ContainerAppListStep({ skipIfNone: true, updateIfExists: true }));
         }
     }
 
     if (wizardContext.containerApp) {
+        promptSteps.push(
+            new ImageSourceListStep(),
+            new IngressPromptStep(),
+        );
         executeSteps.push(new ContainerAppUpdateStep());
     }
 
@@ -184,6 +177,11 @@ export async function deployWorkspaceProjectInternal(
         LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
         LocationListStep.addStep(wizardContext, promptSteps);
     }
+
+    promptSteps.push(
+        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
+        new StartingResourcesLogStep(),
+    );
 
     // Save deploy settings
     promptSteps.push(new ShouldSaveDeploySettingsPromptStep());

@@ -12,6 +12,7 @@ import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { ManagedEnvironmentListStep } from "../createManagedEnvironment/ManagedEnvironmentListStep";
 import { type IContainerAppContext } from "../IContainerAppContext";
+import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
@@ -19,7 +20,18 @@ import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 
 export type ContainerAppListStepOptions = {
+    /**
+     * If no existing container apps to choose from, skip prompt automatically and create
+     */
     skipIfNone?: boolean;
+    /**
+     * For existing container apps, automatically add subwizard steps to update
+     */
+    updateIfExists?: boolean;
+    /**
+     * Provide a custom strategy for updating the list of container app picks.
+     * Can be used to inject custom sorting, grouping, filtering, etc.
+     */
     pickUpdateStrategy?: ContainerAppPickUpdateStrategy;
 };
 
@@ -41,7 +53,7 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         }
 
         const picks: IAzureQuickPickItem<ContainerApp | undefined>[] = containerAppPicks;
-        picks.push({
+        picks.unshift({
             label: localize('newContainerApp', '$(plus) Create new container app'),
             data: undefined,
         });
@@ -82,21 +94,34 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
     }
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
-        if (context.containerApp) {
-            return undefined;
+        // Create
+        if (!context.containerApp) {
+            return {
+                promptSteps: [
+                    new ContainerAppNameStep(),
+                    new ImageSourceListStep(),
+                    new IngressPromptStep(),
+                ],
+                executeSteps: [
+                    new ContainerAppCreateStep(),
+                ],
+            };
         }
 
-        return {
-            promptSteps: [
-                new ContainerAppNameStep(),
-                new ImageSourceListStep(),
-                // Todo: Check if this is needed
-                new IngressPromptStep(),
-            ],
-            executeSteps: [
-                new ContainerAppCreateStep(),
-            ],
-        };
+        // Update
+        if (this.options.updateIfExists) {
+            return {
+                promptSteps: [
+                    new ImageSourceListStep(),
+                    new IngressPromptStep(),
+                ],
+                executeSteps: [
+                    new ContainerAppUpdateStep(),
+                ],
+            };
+        }
+
+        return undefined;
     }
 
     static async populateContextWithContainerApp(context: IContainerAppContext & { resourceGroup?: ResourceGroup; managedEnvironment?: ManagedEnvironment }, containerApp: ContainerApp): Promise<void> {

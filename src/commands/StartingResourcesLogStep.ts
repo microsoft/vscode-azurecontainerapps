@@ -7,7 +7,7 @@ import { type ContainerApp, type ManagedEnvironment } from "@azure/arm-appcontai
 import { type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, type ILocationWizardContext } from "@microsoft/vscode-azext-azureutils";
-import { activityInfoIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { activityInfoIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, type AzExtTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { activityInfoContext } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../utils/localize";
@@ -49,10 +49,12 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
     }
 
     protected async logStartingResources(context: T): Promise<void> {
+        const activityChildren: AzExtTreeItem[] = [];
+
         // Resource group
         if (context.resourceGroup) {
             context.telemetry.properties.existingResourceGroup = 'true';
-            context.activityChildren?.push(
+            activityChildren.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activityInfoContext]),
                     label: localize('useResourceGroup', 'Using resource group "{0}"', context.resourceGroup.name),
@@ -67,7 +69,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         // Managed environment
         if (context.managedEnvironment) {
             context.telemetry.properties.existingEnvironment = 'true';
-            context.activityChildren?.push(
+            activityChildren.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingManagedEnvironmentInfoItem', activityInfoContext]),
                     label: localize('useManagedEnvironment', 'Using managed environment "{0}"', context.managedEnvironment.name),
@@ -82,7 +84,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         // Container registry
         if (context.registry) {
             context.telemetry.properties.existingRegistry = 'true';
-            context.activityChildren?.push(
+            activityChildren.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingAcrInfoItem', activityInfoContext]),
                     label: localize('useAcr', 'Using container registry "{0}"', context.registry.name),
@@ -97,7 +99,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         // Container app
         if (context.containerApp) {
             context.telemetry.properties.existingContainerApp = 'true';
-            context.activityChildren?.push(
+            activityChildren.push(
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activityInfoContext]),
                     label: localize('useContainerApp', 'Using container app "{0}"', context.containerApp.name),
@@ -116,6 +118,11 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
             ext.outputChannel.appendLog(localize('usingLocation', 'Using location: "{0}".', location));
         } else {
             context.telemetry.properties.existingLocation = 'false';
+        }
+
+        if (context.activityChildren) {
+            // Always put these at the front (top) of the list
+            context.activityChildren.unshift(...activityChildren);
         }
 
         this.hasLogged = true;
