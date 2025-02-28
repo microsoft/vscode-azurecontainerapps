@@ -18,7 +18,6 @@ import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyt
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { editContainerCommandName } from "../../editContainer/editContainer";
-import { DockerfileItemStep } from "../../image/imageSource/buildImageInAzure/DockerfileItemStep";
 import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
@@ -93,7 +92,7 @@ export async function deployWorkspaceProjectInternal(
             undefined :
             localize('loadingWorkspaceTitle', 'Loading workspace project starting configurations...')
     }, async () => {
-        startingConfiguration = await getStartingConfiguration({ ...context }, options);
+        startingConfiguration = await getStartingConfiguration(context, options);
     });
 
     if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
@@ -111,7 +110,7 @@ export async function deployWorkspaceProjectInternal(
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new RootFolderStep(),
-        new DockerfileItemStep(),
+        // new DockerfileItemStep(),
     ];
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
