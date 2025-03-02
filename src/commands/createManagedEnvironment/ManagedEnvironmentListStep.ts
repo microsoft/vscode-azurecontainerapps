@@ -13,6 +13,7 @@ import { localize } from "../../utils/localize";
 import { hasMatchingPickDescription, recommendedPickDescription } from "../../utils/pickUtils";
 import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
+import { LogAnalyticsListStep } from "./LogAnalyticsListStep";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
@@ -110,7 +111,8 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
         }
         if (!context.logAnalyticsWorkspace) {
-            // Todo: Populate log analytics workspace
+            const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
+            context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
         }
         if (!LocationListStep.hasLocation(context)) {
             await LocationListStep.setLocation(context, managedEnvironment.location);
