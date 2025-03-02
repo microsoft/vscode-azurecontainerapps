@@ -5,16 +5,19 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
 import { type CreateAcrContext } from "./CreateAcrContext";
 
-export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext> {
+// Made the base context partial here to help improve type compatability with some other command entrypoints
+type RegistryCreateContext = Partial<CreateAcrContext> & ISubscriptionActionContext;
+
+export class RegistryCreateStep<T extends RegistryCreateContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 350;
 
-    public async execute(context: CreateAcrContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('creatingRegistry', 'Creating registry...') });
 
         const client: ContainerRegistryManagementClient = await createContainerRegistryManagementClient(context);
@@ -28,11 +31,11 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext>
         );
     }
 
-    public shouldExecute(context: CreateAcrContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.registry;
     }
 
-    public createSuccessOutput(context: CreateAcrContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['registryCreateStepSuccessItem', activitySuccessContext]),
@@ -43,7 +46,7 @@ export class RegistryCreateStep extends AzureWizardExecuteStep<CreateAcrContext>
         };
     }
 
-    public createFailOutput(context: CreateAcrContext): ExecuteActivityOutput {
+    public createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new GenericParentTreeItem(undefined, {
                 contextValue: createUniversallyUniqueContextValue(['registryCreateStepFailItem', activityFailContext]),

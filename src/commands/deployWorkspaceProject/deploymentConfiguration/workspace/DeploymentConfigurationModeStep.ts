@@ -13,11 +13,6 @@ export enum DeploymentMode {
 }
 
 export class DeploymentConfigurationModeStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
-    public configureBeforePrompt(context: WorkspaceDeploymentConfigurationContext): void {
-        // For now always default to advanced if not explicitly set otherwise
-        context.deploymentMode ??= DeploymentMode.Advanced;
-    }
-
     public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         const picks: IAzureQuickPickItem<DeploymentMode>[] = [
             {

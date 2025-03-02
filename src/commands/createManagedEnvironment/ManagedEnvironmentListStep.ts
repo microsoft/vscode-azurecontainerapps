@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type Workspace } from "@azure/arm-operationalinsights";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
@@ -22,8 +23,10 @@ export type ManagedEnvironmentListStepOptions = {
     pickUpdateStrategy?: ManagedEnvironmentPickUpdateStrategy;
 };
 
+export type ManagedEnvironmentPick = IAzureQuickPickItem<ManagedEnvironment>;
+
 export interface ManagedEnvironmentPickUpdateStrategy {
-    updatePicks(context: Partial<ManagedEnvironmentCreateContext>, picks: IAzureQuickPickItem<ManagedEnvironment>[]): void | Promise<void>;
+    updatePicks(context: Partial<ManagedEnvironmentCreateContext>, picks: ManagedEnvironmentPick[]): ManagedEnvironmentPick[] | Promise<ManagedEnvironmentPick[]>;
 }
 
 export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardPromptStep<T> {
@@ -32,7 +35,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     public async prompt(context: T): Promise<void> {
-        const environmentPicks: IAzureQuickPickItem<ManagedEnvironment>[] = await this.getPicks(context);
+        const environmentPicks: ManagedEnvironmentPick[] = await this.getPicks(context);
         await this.options?.pickUpdateStrategy?.updatePicks(context, environmentPicks);
 
         if (!environmentPicks.length && this.options?.skipIfNone) {
@@ -64,7 +67,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         return !context.managedEnvironment && !context.newManagedEnvironmentName;
     }
 
-    private async getPicks(context: T): Promise<IAzureQuickPickItem<ManagedEnvironment>[]> {
+    private async getPicks(context: T): Promise<ManagedEnvironmentPick[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(
             context.resourceGroup ?
@@ -101,10 +104,13 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         return await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
     }
 
-    static async populateContextWithManagedEnvironment(context: ManagedEnvironmentContext & { resourceGroup?: ResourceGroup }, managedEnvironment: ManagedEnvironment): Promise<void> {
+    static async populateContextWithManagedEnvironment(context: ManagedEnvironmentContext & { resourceGroup?: ResourceGroup; logAnalyticsWorkspace?: Workspace }, managedEnvironment: ManagedEnvironment): Promise<void> {
         if (!context.resourceGroup) {
             const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
             context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
+        }
+        if (!context.logAnalyticsWorkspace) {
+            // Todo: Populate log analytics workspace
         }
         if (!LocationListStep.hasLocation(context)) {
             await LocationListStep.setLocation(context, managedEnvironment.location);

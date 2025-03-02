@@ -21,6 +21,7 @@ import { editContainerCommandName } from "../../editContainer/editContainer";
 import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
+import { RegistryCreateStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryCreateStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../../ingress/IngressPromptStep";
 import { StartingResourcesLogStep } from "../../StartingResourcesLogStep";
@@ -79,8 +80,7 @@ export async function deployWorkspaceProjectInternal(
     if (options.suppressActivity) {
         activityContext = { suppressNotification: true };
     } else {
-        activityContext = await createActivityContext();
-        activityContext.activityChildren = [];
+        activityContext = await createActivityContext(true);
     }
 
     // Show loading indicator while we configure starting values
@@ -116,8 +116,6 @@ export async function deployWorkspaceProjectInternal(
 
     if (!options.advancedCreate) {
         // Basic
-        promptSteps.push(new SharedResourcesNameStep());
-        promptSteps.push(new AppResourcesNameStep(!!options.suppressContainerAppCreation));
         if (!wizardContext.resourceGroup) {
             executeSteps.push(new ResourceGroupCreateStep());
         }
@@ -134,16 +132,24 @@ export async function deployWorkspaceProjectInternal(
         }
         if (!wizardContext.registry && !options.suppressRegistryPrompt) {
             promptSteps.push(new AcrListStep({ skipSubWizardCreate: true }));
+            executeSteps.push(new RegistryCreateStep());
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
         }
+        promptSteps.push(
+            new SharedResourcesNameStep(),
+            new AppResourcesNameStep(!!options.suppressContainerAppCreation),
+            new ImageSourceListStep(),
+            new IngressPromptStep(),
+        );
     } else {
         // Advanced
         if (!wizardContext.resourceGroup) {
             promptSteps.push(new ResourceGroupListStep());
         }
         if (!wizardContext.managedEnvironment) {
+            // Todo: try out different pick filter strategies based on existing resource group vs. existing config
             promptSteps.push(new ManagedEnvironmentListStep({
                 skipIfNone: true,
                 pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
@@ -158,10 +164,6 @@ export async function deployWorkspaceProjectInternal(
     }
 
     if (wizardContext.containerApp) {
-        promptSteps.push(
-            new ImageSourceListStep(),
-            new IngressPromptStep(),
-        );
         executeSteps.push(new ContainerAppUpdateStep());
     }
 

@@ -19,6 +19,7 @@ import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
+import { DeploymentMode } from "./deploymentConfiguration/workspace/DeploymentConfigurationModeStep";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { formatSectionHeader } from "./formatSectionHeader";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
@@ -61,7 +62,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
-        advancedCreate: true, // Todo:
+        advancedCreate: deploymentConfiguration.deploymentMode === DeploymentMode.Advanced ? true : false,
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,

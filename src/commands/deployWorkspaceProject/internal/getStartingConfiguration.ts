@@ -36,6 +36,7 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
     } else if (context.managedEnvironment) {
         await ManagedEnvironmentListStep.populateContextWithManagedEnvironment(context, context.managedEnvironment);
     } else if (context.resourceGroup) {
+        // Todo: Inquire if this makes sense
         if (!LocationListStep.hasLocation(context)) {
             await LocationListStep.setLocation(context, context.resourceGroup.location);
         }

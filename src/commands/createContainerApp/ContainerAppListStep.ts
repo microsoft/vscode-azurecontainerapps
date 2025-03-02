@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerApp, type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { type Workspace } from "@azure/arm-operationalinsights";
 import { type ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValue, nonNullValueAndProp, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -124,14 +125,12 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         return undefined;
     }
 
-    static async populateContextWithContainerApp(context: IContainerAppContext & { resourceGroup?: ResourceGroup; managedEnvironment?: ManagedEnvironment }, containerApp: ContainerApp): Promise<void> {
-        if (!context.resourceGroup) {
-            const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-            context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(containerApp, 'id')));
-        }
-        if (!context.managedEnvironment) {
-            const managedEnvironments: ManagedEnvironment[] = await ManagedEnvironmentListStep.getManagedEnvironments(context);
-            context.managedEnvironment = nonNullValue(managedEnvironments.find(env => env.id === containerApp.managedEnvironmentId));
+    static async populateContextWithContainerApp(context: IContainerAppContext & { resourceGroup?: ResourceGroup; logAnalyticsWorkspace?: Workspace; managedEnvironment?: ManagedEnvironment }, containerApp: ContainerApp): Promise<void> {
+        if (!context.resourceGroup || !context.logAnalyticsWorkspace || !context.managedEnvironment) {
+            await ManagedEnvironmentListStep.populateContextWithManagedEnvironment(
+                context,
+                context.managedEnvironment ?? nonNullValue((await ManagedEnvironmentListStep.getManagedEnvironments(context)).find(env => env.id === containerApp.managedEnvironmentId))
+            );
         }
         if (!LocationListStep.hasLocation(context)) {
             await LocationListStep.setLocation(context, containerApp.location);
