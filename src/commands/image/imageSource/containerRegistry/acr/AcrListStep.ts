@@ -13,7 +13,7 @@ import { localize } from "../../../../../utils/localize";
 import { type ContainerAppCreateBaseContext } from "../../../../createContainerApp/ContainerAppCreateContext";
 import { type ManagedEnvironmentCreateContext } from "../../../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
-import { AcrDefaultPickUpdateStrategy } from "./AcrDefaultPickUpdateStrategy";
+import { AcrResourceGroupAndDeployedPickUpdateStrategy } from "./AcrResourceGroupAndDeployedPickUpdateStrategy";
 import { type CreateAcrContext } from "./createAcr/CreateAcrContext";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
@@ -39,7 +39,7 @@ const acrCreatePick = {
 export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends AzureWizardPromptStep<T> {
     constructor(readonly options: AcrListStepOptions = {}) {
         super();
-        this.options.pickUpdateStrategy ??= new AcrDefaultPickUpdateStrategy();
+        this.options.pickUpdateStrategy ??= new AcrResourceGroupAndDeployedPickUpdateStrategy();
     }
 
     public async prompt(context: T): Promise<void> {

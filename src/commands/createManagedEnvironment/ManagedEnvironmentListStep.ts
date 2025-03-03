@@ -27,7 +27,7 @@ export type ManagedEnvironmentListStepOptions = {
 export type ManagedEnvironmentPick = IAzureQuickPickItem<ManagedEnvironment>;
 
 export interface ManagedEnvironmentPickUpdateStrategy {
-    updatePicks(context: Partial<ManagedEnvironmentCreateContext>, picks: ManagedEnvironmentPick[]): ManagedEnvironmentPick[] | Promise<ManagedEnvironmentPick[]>;
+    updatePicks(context: ManagedEnvironmentCreateContext | Partial<ManagedEnvironmentContext>, picks: ManagedEnvironmentPick[]): ManagedEnvironmentPick[] | Promise<ManagedEnvironmentPick[]>;
 }
 
 export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardPromptStep<T> {
@@ -59,9 +59,8 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             await ManagedEnvironmentListStep.populateContextWithManagedEnvironment(context, managedEnvironment);
         }
 
+        // Additional recommendations may be set with custom pick update strategies
         context.telemetry.properties.usedRecommendedEnv = hasMatchingPickDescription(pick, recommendedPickDescription) ? 'true' : 'false';
-        context.telemetry.properties.recommendedEnvCount =
-            String(picks.reduce((count, pick) => count + (hasMatchingPickDescription(pick, recommendedPickDescription) ? 1 : 0), 0));
     }
 
     public shouldPrompt(context: T): boolean {
@@ -70,6 +69,8 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
 
     private async getPicks(context: T): Promise<ManagedEnvironmentPick[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
+        // Todo: Should we always enforce the managed environment to be in the same resource group as the container app?
+        // For example in advanced mode, if I select a resource group, should I filter only managed environments in that resource group, or should I offer all managed environments
         const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(
             context.resourceGroup ?
                 client.managedEnvironments.listByResourceGroup(nonNullValueAndProp(context.resourceGroup, 'name')) :

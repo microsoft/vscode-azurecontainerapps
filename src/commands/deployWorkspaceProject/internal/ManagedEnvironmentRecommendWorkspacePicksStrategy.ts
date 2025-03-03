@@ -11,6 +11,9 @@ import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspac
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
+// Todo: We should make the recommended picks the group level label
+// Descriptions should be the resource group
+
 export class ManagedEnvironmentRecommendWorkspacePicksStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentPickUpdateStrategy {
     async updatePicks(context: T, picks: ManagedEnvironmentPick[]): Promise<ManagedEnvironmentPick[]> {
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
@@ -44,6 +47,9 @@ export class ManagedEnvironmentRecommendWorkspacePicksStrategy<T extends DeployW
                 return 0;
             }
         });
+
+        context.telemetry.properties.recommendedEnvCount =
+            String(picks.reduce((count, pick) => count + (hasMatchingPickDescription(pick, recommendedPickDescription) ? 1 : 0), 0));
 
         return picks;
     }

@@ -109,8 +109,8 @@ export async function deployWorkspaceProjectInternal(
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
+        // Todo: Test this flow when you have no root folder open / a project with no dockerfile to see if it still works properly
         new RootFolderStep(),
-        // new DockerfileItemStep(),
     ];
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
@@ -149,10 +149,8 @@ export async function deployWorkspaceProjectInternal(
             promptSteps.push(new ResourceGroupListStep());
         }
         if (!wizardContext.managedEnvironment) {
-            // Todo: try out different pick filter strategies based on existing resource group vs. existing config
             promptSteps.push(new ManagedEnvironmentListStep({
                 skipIfNone: true,
-                pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
             }));
         }
         if (!wizardContext.registry) {

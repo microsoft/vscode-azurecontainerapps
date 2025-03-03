@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type Registry } from "@azure/arm-containerregistry";
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
@@ -10,7 +15,7 @@ import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryIm
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { type AcrPickItem, type AcrPickUpdateStrategy } from "./AcrListStep";
 
-export class AcrDefaultPickUpdateStrategy implements AcrPickUpdateStrategy {
+export class AcrResourceGroupAndDeployedPickUpdateStrategy implements AcrPickUpdateStrategy {
     updatePicks(context: ContainerRegistryImageSourceContext, picks: AcrPickItem[]): AcrPickItem[] {
         const registriesByGroup: Record<string, Registry[]> = {};
         for (const p of picks) {
