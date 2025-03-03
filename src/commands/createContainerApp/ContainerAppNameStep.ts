@@ -47,7 +47,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ContainerAppCrea
             return undefined;
         }
 
-        const resourceGroupName: string = getResourceGroupFromId(nonNullValueAndProp(context.managedEnvironment, 'id'));
+        const resourceGroupName: string = context.resourceGroup?.name ?? getResourceGroupFromId(nonNullValueAndProp(context.managedEnvironment, 'id'));
         if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
         }

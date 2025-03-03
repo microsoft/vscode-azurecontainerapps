@@ -15,6 +15,7 @@ import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { ContainerAppListStep } from "../../createContainerApp/ContainerAppListStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
+import { type ManagedEnvironmentCreateContext } from "../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { editContainerCommandName } from "../../editContainer/editContainer";
@@ -32,7 +33,7 @@ import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfi
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { getStartingConfiguration } from "./getStartingConfiguration/getStartingConfiguration";
-import { ManagedEnvironmentRecommendWorkspacePicksStrategy } from "./ManagedEnvironmentRecommendWorkspacePicksStrategy";
+import { ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy } from "./ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 
@@ -95,10 +96,10 @@ export async function deployWorkspaceProjectInternal(
         startingConfiguration = await getStartingConfiguration(context, options);
     });
 
-    if (context.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
+    if (startingConfiguration?.containerApp?.revisionsMode === KnownActiveRevisionsMode.Multiple) {
         throw new Error(localize('multipleRevisionsNotSupported', 'The container app cannot be updated using "{0}" while in multiple revisions mode. Navigate to the revision\'s container and execute "{1}" instead.', deployWorkspaceProjectCommandName, editContainerCommandName));
     }
-    if ((context.containerApp?.template?.containers?.length ?? 0) > 1) {
+    if ((startingConfiguration?.containerApp?.template?.containers?.length ?? 0) > 1) {
         throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployWorkspaceProjectCommandName, editContainerCommandName));
     }
 
@@ -109,8 +110,7 @@ export async function deployWorkspaceProjectInternal(
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
-        // Todo: Test this flow when you have no root folder open / a project with no dockerfile to see if it still works properly
-        new RootFolderStep(),
+        new RootFolderStep(), // Todo: Check if we need this from all entry-points
     ];
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
@@ -119,13 +119,14 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.resourceGroup) {
             executeSteps.push(new ResourceGroupCreateStep());
         }
-        // Todo: Should try to automatically populate location using managed environment resources?
         if (!wizardContext.managedEnvironment) {
-            promptSteps.push(new ManagedEnvironmentListStep({
+            await (new ManagedEnvironmentListStep({
                 skipIfNone: true,
+                addRelatedResources: true,
                 skipSubWizardCreate: true,
-                pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
-            }));
+                pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
+            })).prompt(wizardContext as ManagedEnvironmentCreateContext);
+
             executeSteps.push(
                 new LogAnalyticsCreateStep(),
                 new ManagedEnvironmentCreateStep(),
@@ -141,9 +142,6 @@ export async function deployWorkspaceProjectInternal(
         promptSteps.push(
             new SharedResourcesNameStep(),
             new AppResourcesNameStep(!!options.suppressContainerAppCreation),
-        );
-
-        promptSteps.push(
             new ImageSourceListStep(),
             new IngressPromptStep(),
         );
@@ -155,7 +153,7 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.managedEnvironment) {
             promptSteps.push(new ManagedEnvironmentListStep({
                 skipIfNone: true,
-                pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
+                pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
             }));
         }
         if (!wizardContext.registry) {
@@ -180,16 +178,15 @@ export async function deployWorkspaceProjectInternal(
         LocationListStep.addStep(wizardContext, promptSteps);
     }
 
-    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
-
     promptSteps.push(
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new StartingResourcesLogStep(),
+        new ShouldSaveDeploySettingsPromptStep(),
     );
-
-    // Save deploy settings
-    promptSteps.push(new ShouldSaveDeploySettingsPromptStep());
-    executeSteps.push(new DeployWorkspaceProjectSaveSettingsStep());
+    executeSteps.push(
+        getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>(),
+        new DeployWorkspaceProjectSaveSettingsStep()
+    );
 
     const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(wizardContext, {
         title: options.suppressWizardTitle ?
