@@ -3,16 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerApp, type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
-import { type Workspace } from "@azure/arm-operationalinsights";
-import { type ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, nonNullValue, nonNullValueAndProp, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { type ContainerApp, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
+import { parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { ManagedEnvironmentListStep } from "../createManagedEnvironment/ManagedEnvironmentListStep";
-import { type IContainerAppContext } from "../IContainerAppContext";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
 import { IngressPromptStep } from "../ingress/IngressPromptStep";
@@ -65,7 +61,7 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         })).data;
 
         if (containerApp) {
-            await ContainerAppListStep.populateContextWithContainerApp(context, containerApp);
+            context.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
         }
     }
 
@@ -76,11 +72,14 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
     private async getPicks(context: T): Promise<IAzureQuickPickItem<ContainerApp>[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
-        let containerApps: ContainerApp[] = await uiUtils.listAllIterator(
-            context.resourceGroup ?
-                client.containerApps.listByResourceGroup(nonNullValueAndProp(context.resourceGroup, 'name')) :
-                client.containerApps.listBySubscription()
-        );
+        let containerApps: ContainerApp[] = [];
+        if (context.resourceGroup) {
+            containerApps = await uiUtils.listAllIterator(client.containerApps.listByResourceGroup(nonNullProp(context.resourceGroup, 'name')));
+        } else if (context.newResourceGroupName) {
+            containerApps = [];
+        } else {
+            containerApps = await uiUtils.listAllIterator(client.containerApps.listBySubscription());
+        }
 
         if (context.managedEnvironment) {
             containerApps = containerApps.filter(ca => ca.managedEnvironmentId === context.managedEnvironment.id);
@@ -89,6 +88,7 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         return containerApps.map(ca => {
             return {
                 label: nonNullProp(ca, 'name'),
+                description: parseAzureResourceId(nonNullProp(ca, 'id')).resourceGroup,
                 data: ca,
             };
         });
@@ -123,18 +123,5 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         }
 
         return undefined;
-    }
-
-    static async populateContextWithContainerApp(context: IContainerAppContext & { resourceGroup?: ResourceGroup; logAnalyticsWorkspace?: Workspace; managedEnvironment?: ManagedEnvironment }, containerApp: ContainerApp): Promise<void> {
-        if (!context.resourceGroup || !context.logAnalyticsWorkspace || !context.managedEnvironment) {
-            await ManagedEnvironmentListStep.populateContextWithManagedEnvironment(
-                context,
-                context.managedEnvironment ?? nonNullValue((await ManagedEnvironmentListStep.getManagedEnvironments(context)).find(env => env.id === containerApp.managedEnvironmentId))
-            );
-        }
-        if (!LocationListStep.hasLocation(context)) {
-            await LocationListStep.setLocation(context, containerApp.location);
-        }
-        context.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
     }
 }

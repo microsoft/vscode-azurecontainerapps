@@ -4,16 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
-import { type Workspace } from "@azure/arm-operationalinsights";
-import { type ResourceGroup } from "@azure/arm-resources";
-import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { hasMatchingPickDescription, recommendedPickDescription } from "../../utils/pickUtils";
 import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
-import { LogAnalyticsListStep } from "./LogAnalyticsListStep";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
@@ -53,11 +50,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             placeHolder: localize('selectManagedEnvironment', 'Select a container apps environment'),
             suppressPersistence: true,
         });
-        const managedEnvironment: ManagedEnvironment | undefined = pick.data;
-
-        if (managedEnvironment) {
-            await ManagedEnvironmentListStep.populateContextWithManagedEnvironment(context, managedEnvironment);
-        }
+        context.managedEnvironment = pick.data;
 
         // Additional recommendations may be set with custom pick update strategies
         context.telemetry.properties.usedRecommendedEnv = hasMatchingPickDescription(pick, recommendedPickDescription) ? 'true' : 'false';
@@ -71,11 +64,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         // Todo: Should we always enforce the managed environment to be in the same resource group as the container app?
         // For example in advanced mode, if I select a resource group, should I filter only managed environments in that resource group, or should I offer all managed environments
-        const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(
-            context.resourceGroup ?
-                client.managedEnvironments.listByResourceGroup(nonNullValueAndProp(context.resourceGroup, 'name')) :
-                client.managedEnvironments.listBySubscription()
-        );
+        const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
 
         return managedEnvironments.map(env => {
             return {
@@ -104,20 +93,5 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     static async getManagedEnvironments(context: ISubscriptionActionContext): Promise<ManagedEnvironment[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         return await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
-    }
-
-    static async populateContextWithManagedEnvironment(context: ManagedEnvironmentContext & { resourceGroup?: ResourceGroup; logAnalyticsWorkspace?: Workspace }, managedEnvironment: ManagedEnvironment): Promise<void> {
-        if (!context.resourceGroup) {
-            const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
-            context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
-        }
-        if (!context.logAnalyticsWorkspace) {
-            const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
-            context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
-        }
-        if (!LocationListStep.hasLocation(context)) {
-            await LocationListStep.setLocation(context, managedEnvironment.location);
-        }
-        context.managedEnvironment = managedEnvironment;
     }
 }

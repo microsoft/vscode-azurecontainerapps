@@ -31,7 +31,7 @@ import { AppResourcesNameStep } from "./AppResourcesNameStep";
 import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfirmStep";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
-import { getStartingConfiguration } from "./getStartingConfiguration";
+import { getStartingConfiguration } from "./getStartingConfiguration/getStartingConfiguration";
 import { ManagedEnvironmentRecommendWorkspacePicksStrategy } from "./ManagedEnvironmentRecommendWorkspacePicksStrategy";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
@@ -119,6 +119,7 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.resourceGroup) {
             executeSteps.push(new ResourceGroupCreateStep());
         }
+        // Todo: Should try to automatically populate location using managed environment resources?
         if (!wizardContext.managedEnvironment) {
             promptSteps.push(new ManagedEnvironmentListStep({
                 skipIfNone: true,
@@ -140,6 +141,9 @@ export async function deployWorkspaceProjectInternal(
         promptSteps.push(
             new SharedResourcesNameStep(),
             new AppResourcesNameStep(!!options.suppressContainerAppCreation),
+        );
+
+        promptSteps.push(
             new ImageSourceListStep(),
             new IngressPromptStep(),
         );
@@ -151,6 +155,7 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.managedEnvironment) {
             promptSteps.push(new ManagedEnvironmentListStep({
                 skipIfNone: true,
+                pickUpdateStrategy: new ManagedEnvironmentRecommendWorkspacePicksStrategy(),
             }));
         }
         if (!wizardContext.registry) {
@@ -165,8 +170,6 @@ export async function deployWorkspaceProjectInternal(
         executeSteps.push(new ContainerAppUpdateStep());
     }
 
-    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
-
     // Location
     if (LocationListStep.hasLocation(wizardContext)) {
         wizardContext.telemetry.properties.existingLocation = 'true';
@@ -176,6 +179,8 @@ export async function deployWorkspaceProjectInternal(
         LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
         LocationListStep.addStep(wizardContext, promptSteps);
     }
+
+    executeSteps.push(getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>());
 
     promptSteps.push(
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),

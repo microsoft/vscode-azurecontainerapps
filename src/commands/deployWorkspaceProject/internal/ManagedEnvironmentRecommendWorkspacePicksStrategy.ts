@@ -21,6 +21,7 @@ export class ManagedEnvironmentRecommendWorkspacePicksStrategy<T extends DeployW
             return picks;
         }
 
+        // Todo: The performance for this kind of sucks, we need to run this check concurrently
         const client = await createContainerAppsAPIClient(context);
         for (const config of deploymentConfigurations) {
             try {
