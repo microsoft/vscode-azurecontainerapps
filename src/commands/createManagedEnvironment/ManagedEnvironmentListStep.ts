@@ -19,7 +19,7 @@ import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
 
 export type ManagedEnvironmentListStepOptions = {
-    addRelatedResources?: boolean;
+    populateRelatedResources?: boolean;
     skipIfNone?: boolean;
     skipSubWizardCreate?: boolean;
     pickUpdateStrategy?: ManagedEnvironmentPickUpdateStrategy;
@@ -56,7 +56,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         });
         context.managedEnvironment = pick.data;
 
-        if (context.managedEnvironment && this.options.addRelatedResources) {
+        if (context.managedEnvironment && this.options.populateRelatedResources) {
             await ManagedEnvironmentListStep.populateContextWithRelatedResources(context, context.managedEnvironment);
         }
 
@@ -70,8 +70,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
 
     private async getPicks(context: T): Promise<ManagedEnvironmentPick[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-        // Todo: Should we always enforce the managed environment to be in the same resource group as the container app?
-        // For example in advanced mode, if I select a resource group, should I filter only managed environments in that resource group, or should I offer all managed environments
         const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
 
         return managedEnvironments.map(env => {

@@ -122,7 +122,7 @@ export async function deployWorkspaceProjectInternal(
         if (!wizardContext.managedEnvironment) {
             await (new ManagedEnvironmentListStep({
                 skipIfNone: true,
-                addRelatedResources: true,
+                populateRelatedResources: true,
                 skipSubWizardCreate: true,
                 pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
             })).prompt(wizardContext as ManagedEnvironmentCreateContext);
@@ -147,6 +147,8 @@ export async function deployWorkspaceProjectInternal(
         );
     } else {
         // Advanced
+        // Todo: Maybe add pick update strategy for resourcegroupliststep
+        // Todo: Maybe add logic to supply suggestions
         if (!wizardContext.resourceGroup) {
             promptSteps.push(new ResourceGroupListStep());
         }

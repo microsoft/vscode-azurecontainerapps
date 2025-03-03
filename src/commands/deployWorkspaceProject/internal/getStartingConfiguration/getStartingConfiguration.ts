@@ -35,6 +35,7 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
 
 async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<void> {
     if (!options.advancedCreate) {
+        // For basic create, try to pre-populate most resources using inference to reduce prompting
         if (context.containerApp && (!context.resourceGroup || !context.managedEnvironment)) {
             const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
             context.resourceGroup ??= resources.resourceGroup;
