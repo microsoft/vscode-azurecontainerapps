@@ -170,6 +170,8 @@ export async function deployWorkspaceProjectInternal(
         executeSteps.push(new ContainerAppUpdateStep());
     }
 
+    promptSteps.push(new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation));
+
     // Location
     if (LocationListStep.hasLocation(wizardContext)) {
         wizardContext.telemetry.properties.existingLocation = 'true';
@@ -181,7 +183,6 @@ export async function deployWorkspaceProjectInternal(
     }
 
     promptSteps.push(
-        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new StartingResourcesLogStep(),
         new ShouldSaveDeploySettingsPromptStep(),
     );
