@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
@@ -116,21 +116,24 @@ export async function deployWorkspaceProjectInternal(
 
     if (!options.advancedCreate) {
         // Basic
-        if (!wizardContext.resourceGroup) {
-            executeSteps.push(new ResourceGroupCreateStep());
-        }
         if (!wizardContext.managedEnvironment) {
             await (new ManagedEnvironmentListStep({
                 skipIfNone: true,
-                populateRelatedResources: true,
                 skipSubWizardCreate: true,
                 pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
             })).prompt(wizardContext as ManagedEnvironmentCreateContext);
+
+            if (wizardContext.managedEnvironment) {
+                await ManagedEnvironmentListStep.populateContextWithRelatedResources(wizardContext, wizardContext.managedEnvironment);
+            }
 
             executeSteps.push(
                 new LogAnalyticsCreateStep(),
                 new ManagedEnvironmentCreateStep(),
             );
+        }
+        if (!wizardContext.resourceGroup) {
+            executeSteps.push(new ResourceGroupCreateStep());
         }
         if (!wizardContext.registry && !options.suppressRegistryPrompt) {
             promptSteps.push(new AcrListStep({ skipSubWizardCreate: true }));
@@ -147,16 +150,20 @@ export async function deployWorkspaceProjectInternal(
         );
     } else {
         // Advanced
-        // Todo: Maybe add pick update strategy for resourcegroupliststep
-        // Todo: Maybe add logic to supply suggestions
-        if (!wizardContext.resourceGroup) {
-            promptSteps.push(new ResourceGroupListStep());
-        }
         if (!wizardContext.managedEnvironment) {
-            promptSteps.push(new ManagedEnvironmentListStep({
+            await (new ManagedEnvironmentListStep({
                 skipIfNone: true,
+                skipSubWizardCreate: true,
                 pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
-            }));
+            })).prompt(wizardContext as ManagedEnvironmentCreateContext);
+
+            if (wizardContext.managedEnvironment && !LocationListStep.hasLocation(wizardContext)) {
+                await LocationListStep.setLocation(wizardContext, (context.managedEnvironment as ManagedEnvironment).location)
+            }
+        }
+        if (!wizardContext.resourceGroup) {
+            // Todo: If managed environment was selected, provide a pick update strategy to recommend the matching resource group
+            promptSteps.push(new ResourceGroupListStep());
         }
         if (!wizardContext.registry) {
             promptSteps.push(new AcrListStep());

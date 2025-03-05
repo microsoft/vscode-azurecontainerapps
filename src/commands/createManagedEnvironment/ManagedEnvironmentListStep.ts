@@ -19,7 +19,6 @@ import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
 
 export type ManagedEnvironmentListStepOptions = {
-    populateRelatedResources?: boolean;
     skipIfNone?: boolean;
     skipSubWizardCreate?: boolean;
     pickUpdateStrategy?: ManagedEnvironmentPickUpdateStrategy;
@@ -55,10 +54,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             suppressPersistence: true,
         });
         context.managedEnvironment = pick.data;
-
-        if (context.managedEnvironment && this.options.populateRelatedResources) {
-            await ManagedEnvironmentListStep.populateContextWithRelatedResources(context, context.managedEnvironment);
-        }
 
         // Additional recommendations may be set with custom pick update strategies
         context.telemetry.properties.usedRecommendedEnv = hasMatchingPickDescription(pick, recommendedPickDescription) || /recommended/i.test(pick.group ?? '') ? 'true' : 'false';

@@ -46,10 +46,10 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
             const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
             context.resourceGroup ??= resources.resourceGroup;
         }
+    }
 
-        if (!LocationListStep.hasLocation(context)) {
-            await tryAddMissingLocationToContext(context);
-        }
+    if (!LocationListStep.hasLocation(context)) {
+        await tryAddMissingLocationToContext(context);
     }
 
     if (!context.logAnalyticsWorkspace && context.managedEnvironment) {
@@ -61,8 +61,6 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
 async function tryAddMissingLocationToContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
     if (context.managedEnvironment) {
         await LocationListStep.setLocation(context, context.managedEnvironment.location);
-    } else if (context.resourceGroup) {
-        await LocationListStep.setLocation(context, context.resourceGroup.location);
     } else if (context.containerApp) {
         await LocationListStep.setLocation(context, context.containerApp.location);
     }
