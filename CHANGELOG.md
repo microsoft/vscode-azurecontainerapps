@@ -3,7 +3,7 @@
 ## 0.8.1 - 2025-03-10
 ### Changed
 * [[855](https://github.com/microsoft/vscode-azurecontainerapps/pull/855)] Automatically collect subscription and resource information for telemetry. [How to disable telemetry reporting](https://code.visualstudio.com/docs/supporting/FAQ#_how-to-disable-telemetry-reporting)
-* [[854](https://github.com/microsoft/vscode-azurecontainerapps/pull/854)] Require a minimum version of VS Code 1.95.0 (October 2024)
+* [[854](https://github.com/microsoft/vscode-azurecontainerapps/pull/854)] Require VS Code version 1.95.0 (October 2024) or greater
 
 ### Engineering
 * [[851](https://github.com/microsoft/vscode-azurecontainerapps/pull/851)] Update API type definition for `deployImage`
