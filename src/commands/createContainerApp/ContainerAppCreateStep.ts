@@ -28,6 +28,8 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('creatingContainerApp', 'Creating container app...') });
 
+        throw new Error('Manually thrown error in ContainerAppCreateStep');
+
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const containerAppName: string = nonNullProp(context, 'newContainerAppName');
