@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
 import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentityRegistryCredentialsContext";
 
-export class ManagedIdentityRegistryCredentialsAddConfigurationStep<T extends ManagedIdentityRegistryCredentialsContext> extends AzureWizardActivityOutputExecuteStep<T> {
+export class ManagedIdentityRegistryCredentialsAddConfigurationStep<T extends ManagedIdentityRegistryCredentialsContext> extends AzureWizardStepWithActivityOutput<T> {
     public priority: number = 470;
     public stepName: string = 'managedIdentityRegistryCredentialsAddConfigurationStep';
     protected getSuccessString = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (system-assigned identity).', context.newRegistryCredential?.server);
