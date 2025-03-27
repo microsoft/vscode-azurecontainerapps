@@ -4,10 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, dockerHubRegistry, type SupportedRegistries } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
 import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
 import { listCredentialsFromAcr } from "./listCredentialsFromAcr";
 
@@ -16,7 +15,7 @@ interface RegistryCredentialAndSecret {
     secret: Secret;
 }
 
-export class DockerLoginRegistryCredentialsAddConfigurationStep<T extends DockerLoginRegistryCredentialsContext> extends AzureWizardActivityOutputExecuteStep<T> {
+export class DockerLoginRegistryCredentialsAddConfigurationStep<T extends DockerLoginRegistryCredentialsContext> extends AzureWizardStepWithActivityOutput<T> {
     public priority: number = 470;
     public stepName: string = 'dockerLoginRegistryCredentialsAddConfigurationStep';
     protected getSuccessString = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (Docker login).', context.newRegistryCredential?.server);
