@@ -40,12 +40,14 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
         // Display ingress log outputs
         if (ingress) {
             const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
-            item && context.activityChildren?.push(item);
+            item && context.activityChildren?.splice(context.activityChildren.length - 1, 0, item);
             message && ext.outputChannel.appendLog(message);
+            context.reportActivityProgress?.();
         } else {
             const { item, message } = DisableIngressStep.createSuccessOutput({ ...context, enableIngress: false });
-            item && context.activityChildren?.push(item);
+            item && context.activityChildren?.splice(context.activityChildren.length - 1, 0, item);
             message && ext.outputChannel.appendLog(message);
+            context.reportActivityProgress?.();
         }
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
