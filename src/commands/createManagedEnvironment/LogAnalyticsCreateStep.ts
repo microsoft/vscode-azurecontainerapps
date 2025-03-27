@@ -4,51 +4,32 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
-export class LogAnalyticsCreateStep extends AzureWizardExecuteStep<ManagedEnvironmentCreateContext> {
+export class LogAnalyticsCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardStepWithActivityOutput<T> {
     public priority: number = 220;
+    public stepName: string = 'logAnalyticsCreateStep';
+    protected getSuccessString = (context: T) => localize('createLogAnalyticsSuccess', 'Successfully created log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName'));
+    protected getFailString = (context: T) => localize('createLogAnalyticsFail', 'Failed to create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName'));
+    protected getTreeItemLabel = (context: T) => localize('createLogAnalyticsLabel', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName'));
 
-    public async execute(context: ManagedEnvironmentCreateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...') });
+
         const opClient = await createOperationalInsightsManagementClient(context);
         const resourceGroup = nonNullProp(context, 'resourceGroup');
         const workspaceName = context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName');
-
-        const creating: string = localize('creatingLogAnalyticsWorkspace', 'Creating log analytics workspace...');
-        progress.report({ message: creating });
 
         context.logAnalyticsWorkspace = await opClient.workspaces.beginCreateOrUpdateAndWait(
             nonNullProp(resourceGroup, 'name'), workspaceName, { location: (await LocationListStep.getLocation(context)).name });
     }
 
-    public shouldExecute(context: ManagedEnvironmentCreateContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.logAnalyticsWorkspace;
-    }
-
-    public createSuccessOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('createLogAnalyticsWorkspaceSuccess', 'Created log analytics workspace "{0}".', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName)
-        };
-    }
-
-    public createFailOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['logAnalyticsCreateStepFailItem', activityFailContext]),
-                label: localize('createWorkspace', 'Create log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName),
-                iconPath: activityFailIcon
-            }),
-            message: localize('createLogAnalyticsWorkspaceFail', 'Failed to create log analytics workspace "{0}".', context.newLogAnalyticsWorkspaceName || context.newManagedEnvironmentName)
-        };
     }
 }
