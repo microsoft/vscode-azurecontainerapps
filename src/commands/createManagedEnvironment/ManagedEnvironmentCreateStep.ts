@@ -5,18 +5,21 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { managedEnvironmentsAppProvider } from "../../constants";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
-export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<ManagedEnvironmentCreateContext> {
+export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardStepWithActivityOutput<T> {
     public priority: number = 250;
+    public stepName: string = 'managedEnvironmentCreateStep';
+    protected getSuccessString = (context: T) => localize('createManagedEnvironmentSuccess', 'Successfully created managed environment "{0}"', context.newManagedEnvironmentName);
+    protected getFailString = (context: T) => localize('createManagedEnvironmentFail', 'Failed to create managed environment "{0}"', context.newManagedEnvironmentName);
+    protected getTreeItemLabel = (context: T) => localize('createManagedEnvironmentLabel', 'Create managed environment "{0}"', context.newManagedEnvironmentName);
 
-    public async execute(context: ManagedEnvironmentCreateContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const opClient = await createOperationalInsightsManagementClient(context);
 
@@ -49,39 +52,9 @@ export class ManagedEnvironmentCreateStep extends AzureWizardExecuteStep<Managed
                 ]
             }
         );
-
-        if (!context.activityChildren) {
-            context.activityResult = {
-                id: nonNullProp(context.managedEnvironment, 'id'),
-                name: managedEnvironmentName,
-                type: managedEnvironmentsAppProvider
-            };
-        }
     }
 
-    public shouldExecute(context: ManagedEnvironmentCreateContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.managedEnvironment;
-    }
-
-    public createSuccessOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['managedEnvironmentCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('createdManagedEnvironmentSuccess', 'Created container apps environment "{0}".', context.newManagedEnvironmentName)
-        };
-    }
-
-    public createFailOutput(context: ManagedEnvironmentCreateContext): ExecuteActivityOutput {
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['managedEnvironmentCreateStepFailItem', activityFailContext]),
-                label: localize('createManagedEnvironment', 'Create container apps environment "{0}"', context.newManagedEnvironmentName),
-                iconPath: activityFailIcon
-            }),
-            message: localize('createdManagedEnvironmentFail', 'Failed to create container apps environment "{0}".', context.newManagedEnvironmentName)
-        };
     }
 }
