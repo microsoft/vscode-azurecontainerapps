@@ -10,6 +10,7 @@ import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { insertActivityChildDuringProgress } from "../../utils/activityUtils";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
@@ -40,14 +41,12 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
         // Display ingress log outputs
         if (ingress) {
             const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
-            item && context.activityChildren?.splice(context.activityChildren.length - 1, 0, item);
+            item && insertActivityChildDuringProgress(context, item);
             message && ext.outputChannel.appendLog(message);
-            context.reportActivityProgress?.();
         } else {
             const { item, message } = DisableIngressStep.createSuccessOutput({ ...context, enableIngress: false });
-            item && context.activityChildren?.splice(context.activityChildren.length - 1, 0, item);
+            item && insertActivityChildDuringProgress(context, item);
             message && ext.outputChannel.appendLog(message);
-            context.reportActivityProgress?.();
         }
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
