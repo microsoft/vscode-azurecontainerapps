@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
 import { ext } from "../../extensionVariables";
@@ -18,7 +18,7 @@ import { DisableIngressStep } from "../ingress/disableIngress/DisableIngressStep
 import { enabledIngressDefaults, EnableIngressStep } from "../ingress/enableIngress/EnableIngressStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 
-export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardStepWithActivityOutput<T> {
+export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 620;
     public stepName: string = 'containerAppCreateStep';
     protected getSuccessString = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}"', context.newContainerAppName);
