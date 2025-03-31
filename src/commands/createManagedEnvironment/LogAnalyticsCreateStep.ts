@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
-export class LogAnalyticsCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardStepWithActivityOutput<T> {
+export class LogAnalyticsCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 220;
     public stepName: string = 'logAnalyticsCreateStep';
     protected getSuccessString = (context: T) => localize('createLogAnalyticsSuccess', 'Successfully created log analytics workspace "{0}"', context.newLogAnalyticsWorkspaceName || nonNullProp(context, 'newManagedEnvironmentName'));

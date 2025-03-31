@@ -74,7 +74,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 new GenericTreeItem(undefined, {
                     contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activityInfoContext]),
                     label: localize('useContainerApp', 'Using container app "{0}"', context.containerApp.name),
-                    iconPath: activityInfoIcon
+                    iconPath: activityInfoIcon,
                 })
             );
             ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', context.containerApp.name));
