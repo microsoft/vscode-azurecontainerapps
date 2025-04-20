@@ -8,7 +8,7 @@ import { AcrListStep } from "../../../../image/imageSource/containerRegistry/acr
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { AzureResourceVerifyStepBase } from "./AzureResourceVerifyStepBase";
 
-export class ContainerRegistryVerifyStep extends AzureResourceVerifyStepBase {
+export class ContainerRegistryVerifyStep extends AzureResourceVerifyStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 210;  /** Todo: Figure out a good priority level */
 
     protected resourceType = 'container registry' as const;

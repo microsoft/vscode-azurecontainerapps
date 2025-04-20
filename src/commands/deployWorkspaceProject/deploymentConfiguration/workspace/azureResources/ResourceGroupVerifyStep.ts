@@ -8,7 +8,7 @@ import { ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { AzureResourceVerifyStepBase } from "./AzureResourceVerifyStepBase";
 
-export class ResourceGroupVerifyStep extends AzureResourceVerifyStepBase {
+export class ResourceGroupVerifyStep extends AzureResourceVerifyStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 200;  /** Todo: Figure out a good priority level */
 
     protected resourceType = 'resource group' as const;

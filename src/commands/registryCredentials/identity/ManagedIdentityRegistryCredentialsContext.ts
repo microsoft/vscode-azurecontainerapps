@@ -11,7 +11,5 @@ import { type ManagedEnvironmentRequiredContext } from "../../ManagedEnvironment
 
 export interface ManagedIdentityRegistryCredentialsContext extends CreateAcrContext, ManagedEnvironmentRequiredContext, IContainerAppContext {
     registryDomain?: SupportedRegistries;
-
-    hasAcrPullRole?: boolean;
     newRegistryCredential?: RegistryCredentials;
 }

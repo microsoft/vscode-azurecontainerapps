@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress, type WorkspaceFolder } from "vscode";
 import { relativeSettingsFilePath } from "../../../constants";
@@ -13,10 +13,12 @@ import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspac
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
-const saveSettingsLabel: string = localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
-
-export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext> {
+export class DeployWorkspaceProjectSaveSettingsStep<T extends DeployWorkspaceProjectInternalContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 1480;
+    public stepName: string = 'deployWorkspaceProjectSaveSettingsStepItem';
+    protected getOutputLogSuccess = () => localize('savedSettingsSuccess', 'Saved deployment settings to workspace "{0}".', relativeSettingsFilePath);
+    protected getOutputLogFail = () => localize('savedSettingsFail', 'Failed to save deployment settings to workspace "{0}".', relativeSettingsFilePath);
+    protected getTreeItemLabel = () => localize('saveSettingsLabel', 'Save deployment settings to workspace "{0}"', relativeSettingsFilePath);
 
     public async execute(context: DeployWorkspaceProjectInternalContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         this.options.continueOnFail = true;
@@ -58,31 +60,5 @@ export class DeployWorkspaceProjectSaveSettingsStep extends AzureWizardExecuteSt
         } else {
             return path.relative(rootFolder.uri.fsPath, envPath);
         }
-    }
-
-    public createSuccessOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
-        context.telemetry.properties.didSaveSettings = 'true';
-
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['dwpSaveSettingsStepSuccessItem', activitySuccessContext]),
-                label: saveSettingsLabel,
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('savedSettingsSuccess', 'Saved deployment settings to workspace "{0}".', relativeSettingsFilePath)
-        };
-    }
-
-    public createFailOutput(context: DeployWorkspaceProjectInternalContext): ExecuteActivityOutput {
-        context.telemetry.properties.didSaveSettings = 'false';
-
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['dwpSaveSettingsStepFailItem', activityFailContext]),
-                label: saveSettingsLabel,
-                iconPath: activityFailIcon
-            }),
-            message: localize('savedSettingsFail', 'Failed to save deployment settings to workspace "{0}".', relativeSettingsFilePath)
-        };
     }
 }

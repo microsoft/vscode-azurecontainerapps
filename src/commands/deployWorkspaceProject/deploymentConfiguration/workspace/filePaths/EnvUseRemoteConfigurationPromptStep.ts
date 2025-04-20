@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityInfoContext, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import * as path from "path";
 import { ext } from "../../../../../extensionVariables";
@@ -66,10 +66,11 @@ export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentCo
             context.telemetry.properties.useRemoteEnvConfiguration = 'true';
             context.envPath = '';
             context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['envUseRemoteConfigurationPromptStepItem', activitySuccessContext]),
+                new ActivityChildItem({
                     label: useRemoteConfigurationLabel,
-                    iconPath: activitySuccessIcon,
+                    contextValue: createContextValue(['envUseRemoteConfigurationPromptStepItem', activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: activityInfoIcon,
                 })
             );
             ext.outputChannel.appendLog(useRemoteConfigurationOutputMessage);

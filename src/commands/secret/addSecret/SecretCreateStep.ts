@@ -3,19 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
-import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ISecretContext } from "../ISecretContext";
 
-export class SecretCreateStep<T extends ISecretContext> extends AzureWizardActivityOutputExecuteStep<T> {
+export class SecretCreateStep<T extends ISecretContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 820;
     public stepName: string = 'secretCreateStep';
-    protected getSuccessString = (context: T) => localize('createSecretSuccess', 'Successfully created secret "{0}" for container app "{1}".', context.secretName, context.containerApp?.name);
-    protected getFailString = (context: T) => localize('createSecretFail', 'Failed to create secret "{0}" for container app "{1}".', context.newSecretName, context.containerApp?.name);
+    protected getOutputLogSuccess = (context: T) => localize('createSecretSuccess', 'Successfully created secret "{0}" for container app "{1}".', context.secretName, context.containerApp?.name);
+    protected getOutputLogFail = (context: T) => localize('createSecretFail', 'Failed to create secret "{0}" for container app "{1}".', context.newSecretName, context.containerApp?.name);
     protected getTreeItemLabel = (context: T) => localize('createSecretLabel', 'Create secret "{0}" for container app "{1}"', context.secretName, context.containerApp?.name);
 
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

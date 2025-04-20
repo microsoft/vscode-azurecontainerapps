@@ -6,7 +6,7 @@
 import { type ContainerApp, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, type ILocationWizardContext } from "@microsoft/vscode-azext-azureutils";
-import { activityInfoIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { activityInfoContext } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../utils/localize";
@@ -16,6 +16,8 @@ type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityConte
     managedEnvironment?: ManagedEnvironment,
     containerApp?: ContainerApp
 };
+
+const startingResourcesContext: string = 'startingResourcesLogStepItem';
 
 /**
  * Use to display primary Azure resource data to the output and activity log
@@ -49,9 +51,10 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
     protected async logStartingResources(context: T): Promise<void> {
         if (context.resourceGroup) {
             context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activityInfoContext]),
-                    label: localize('useResourceGroup', 'Using resource group "{0}"', context.resourceGroup.name),
+                new ActivityChildItem({
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    label: localize('useResourceGroup', 'Use resource group "{0}"', context.resourceGroup.name),
+                    activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon
                 })
             );
@@ -60,22 +63,24 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
         if (context.managedEnvironment) {
             context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingManagedEnvironmentInfoItem', activityInfoContext]),
-                    label: localize('useManagedEnvironment', 'Using managed environment "{0}"', context.managedEnvironment.name),
+                new ActivityChildItem({
+                    label: localize('useManagedEnvironment', 'Use managed environment "{0}"', context.managedEnvironment.name),
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon
-                })
-            );
+                }),
+            )
             ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
         }
 
         if (context.containerApp) {
             context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activityInfoContext]),
-                    label: localize('useContainerApp', 'Using container app "{0}"', context.containerApp.name),
-                    iconPath: activityInfoIcon
-                })
+                new ActivityChildItem({
+                    label: localize('useContainerApp', 'Use container app "{0}"', context.containerApp.name),
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: activityInfoIcon,
+                }),
             );
             ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', context.containerApp.name));
         }
