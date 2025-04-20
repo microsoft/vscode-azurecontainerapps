@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoIcon, createContextValue } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activitySuccessContext, activitySuccessIcon, createContextValue } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
-import { ImageSource, activityInfoContext, envFileGlobPattern } from "../../../constants";
+import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
@@ -131,9 +131,10 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
                     ),
-                    contextValue: createContextValue([envFileListStepContext, setEnvironmentVariableOption, activityInfoContext]),
-                    activityType: ActivityChildType.Info,
-                    iconPath: activityInfoIcon,
+                    description: '0s',
+                    contextValue: createContextValue([envFileListStepContext, setEnvironmentVariableOption, activitySuccessContext]),
+                    activityType: ActivityChildType.Success,
+                    iconPath: activitySuccessIcon,
                 })
             );
 
@@ -146,9 +147,10 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             context.activityChildren?.push(
                 new ActivityChildItem({
                     label: localize('saveEnvVarsFileLabel', 'Save environment variables using provided .env file'),
-                    contextValue: createContextValue([envFileListStepContext, activityInfoContext]),
-                    activityType: ActivityChildType.Info,
-                    iconPath: activityInfoIcon,
+                    description: '0s',
+                    contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
+                    activityType: ActivityChildType.Success,
+                    iconPath: activitySuccessIcon,
                 })
             );
             ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
@@ -156,9 +158,10 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             context.activityChildren?.push(
                 new ActivityChildItem({
                     label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
-                    contextValue: createContextValue([envFileListStepContext, activityInfoContext]),
-                    activityType: ActivityChildType.Info,
-                    iconPath: activityInfoIcon,
+                    description: '0s',
+                    contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
+                    activityType: ActivityChildType.Success,
+                    iconPath: activitySuccessIcon,
                 })
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));

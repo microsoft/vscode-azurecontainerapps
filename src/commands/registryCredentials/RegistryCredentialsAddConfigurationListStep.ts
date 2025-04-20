@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActivityChildItem, ActivityChildType, activityInfoContext, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
@@ -94,10 +94,11 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 context.telemetry.properties.newRegistryCredentialType = 'useExisting';
                 context.activityChildren?.push(
                     new ActivityChildItem({
-                        contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
                         label: localize('useExistingRegistryCredentials', 'Use existing registry credential'),
-                        activityType: ActivityChildType.Info,
-                        iconPath: activityInfoIcon,
+                        contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activitySuccessContext]),
+                        description: '0s',
+                        activityType: ActivityChildType.Success,
+                        iconPath: activitySuccessIcon,
                     })
                 );
                 ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));

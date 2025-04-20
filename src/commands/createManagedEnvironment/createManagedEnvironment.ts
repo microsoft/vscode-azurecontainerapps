@@ -23,7 +23,7 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const wizardContext: ManagedEnvironmentCreateContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...await createActivityContext(),
+        ...await createActivityContext({ withChildren: true }),
         subscription
     };
 

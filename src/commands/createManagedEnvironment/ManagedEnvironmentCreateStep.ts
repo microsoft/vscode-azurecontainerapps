@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { managedEnvironmentsAppProvider } from "../../constants";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
@@ -13,7 +13,7 @@ import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
-export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardExecuteStep<T> {
+export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 250;
     public stepName: string = 'managedEnvironmentCreateStep';
     protected getOutputLogSuccess = (context: T): string => localize('createdManagedEnvironmentSuccess', 'Successfully created container apps environment "{0}".', context.newManagedEnvironmentName);

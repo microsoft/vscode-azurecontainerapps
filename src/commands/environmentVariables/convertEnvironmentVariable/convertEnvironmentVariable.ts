@@ -37,7 +37,7 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
     const wizardContext: EnvironmentVariableConvertContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,

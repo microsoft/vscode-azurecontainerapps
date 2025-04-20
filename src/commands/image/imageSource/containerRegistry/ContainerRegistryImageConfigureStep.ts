@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActivityChildItem, ActivityChildType, activitySuccessContext, AzureWizardPromptStep, createContextValue, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createContextValue, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../../extensionVariables";
 import { getImageNameWithoutTag, parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
@@ -24,9 +24,10 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
         context.activityChildren?.push(
             new ActivityChildItem({
                 label: localize('configureTargetImageLabel', 'Configure target image "{0}"', context.image),
+                description: '0s',
                 contextValue: createContextValue(['containerRegistryImageConfigureStepItem', activitySuccessContext]),
                 activityType: ActivityChildType.Success,
-                iconPath: activitySuccessContext,
+                iconPath: activitySuccessIcon,
             })
         );
         ext.outputChannel.appendLog(localize('configureTargetImageMessage', 'Configured target image "{0}".', context.image));
