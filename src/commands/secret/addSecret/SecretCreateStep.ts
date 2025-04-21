@@ -15,7 +15,7 @@ export class SecretCreateStep<T extends ISecretContext> extends AzureWizardExecu
     public stepName: string = 'secretCreateStep';
     protected getOutputLogSuccess = (context: T) => localize('createSecretSuccess', 'Successfully created secret "{0}" for container app "{1}".', context.secretName, context.containerApp?.name);
     protected getOutputLogFail = (context: T) => localize('createSecretFail', 'Failed to create secret "{0}" for container app "{1}".', context.newSecretName, context.containerApp?.name);
-    protected getTreeItemLabel = (context: T) => localize('createSecretLabel', 'Create secret "{0}" for container app "{1}"', context.secretName, context.containerApp?.name);
+    protected getTreeItemLabel = (context: T) => localize('createSecretLabel', 'Create secret "{0}" for container app "{1}"', context.newSecretName, context.containerApp?.name);
 
     public async execute(context: ISecretContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
