@@ -69,7 +69,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                     activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon
                 }),
-            )
+            );
             ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
         }
 
