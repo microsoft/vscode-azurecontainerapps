@@ -62,8 +62,6 @@ export abstract class AzureResourceVerifyStepBase<T extends WorkspaceDeploymentC
         };
     }
 
-    // Todo: Verify if we need progress output
-
     public createFailOutput(context: T): ExecuteActivityOutput {
         return {
             item: new ActivityChildItem({

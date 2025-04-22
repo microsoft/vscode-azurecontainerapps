@@ -9,7 +9,7 @@ import { ActivityChildItem, ActivityChildType, AzureWizard, activityInfoContext,
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { createActivityContext } from "../../../utils/activityUtils";
+import { createActivityContext, insertAfterLastInfoChild } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
@@ -114,7 +114,7 @@ export async function deployWorkspaceProjectInternal(
 
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
-        wizardContext.activityChildren?.push(
+        insertAfterLastInfoChild(context,
             new ActivityChildItem({
                 label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
                 activityType: ActivityChildType.Info,
@@ -136,7 +136,7 @@ export async function deployWorkspaceProjectInternal(
 
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
-        wizardContext.activityChildren?.push(
+        insertAfterLastInfoChild(context,
             new ActivityChildItem({
                 label: localize('useManagedEnvironment', 'Use container apps environment "{0}"', managedEnvironmentName),
                 activityType: ActivityChildType.Info,
@@ -149,7 +149,7 @@ export async function deployWorkspaceProjectInternal(
             await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
         }
 
-        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
+        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Use container apps environment "{0}".', managedEnvironmentName));
     } else {
         wizardContext.telemetry.properties.existingEnvironment = 'false';
 
@@ -165,9 +165,9 @@ export async function deployWorkspaceProjectInternal(
 
         const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
 
-        wizardContext.activityChildren?.push(
+        insertAfterLastInfoChild(context,
             new ActivityChildItem({
-                label: localize('useAcr', 'Using container registry "{0}"', registryName),
+                label: localize('useAcr', 'Use container registry "{0}"', registryName),
                 activityType: ActivityChildType.Info,
                 contextValue: activityInfoContext,
                 iconPath: activityInfoIcon
@@ -188,9 +188,9 @@ export async function deployWorkspaceProjectInternal(
 
         executeSteps.push(new ContainerAppUpdateStep());
 
-        wizardContext.activityChildren?.push(
+        insertAfterLastInfoChild(context,
             new ActivityChildItem({
-                label: localize('useContainerApp', 'Using container app "{0}"', containerAppName),
+                label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
                 activityType: ActivityChildType.Info,
                 contextValue: activityInfoContext,
                 iconPath: activityInfoIcon
