@@ -11,7 +11,7 @@ import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { addActivityInfoChild } from "../../../utils/activityUtils";
+import { insertAfterLastInfoChild } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
@@ -156,7 +156,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             );
             ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
-            addActivityInfoChild(context,
+            insertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
                     contextValue: createContextValue([envFileListStepContext, activityInfoContext]),

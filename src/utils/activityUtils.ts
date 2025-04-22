@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { activityInfoContext, type ActivityChildItemBase, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
+import { ActivityChildType, type ActivityChildItemBase, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { type AzureResourcesExtensionApiWithActivity } from "@microsoft/vscode-azext-utils/activity";
 import { ext } from "../extensionVariables";
 import { settingUtils } from "./settingUtils";
@@ -16,14 +16,19 @@ export async function createActivityContext(options?: { withChildren?: boolean }
     };
 }
 
-export function addActivityInfoChild(context: ExecuteActivityContext, child: ActivityChildItemBase): void {
+/**
+ * Adds a new activity child after the last info child in the `activityChildren` array.
+ * If no info child already exists, the new child is prepended to the front of the array.
+ * (This utility function is useful for keeping the info children grouped at the front of the list)
+ */
+export function insertAfterLastInfoChild(context: ExecuteActivityContext, child: ActivityChildItemBase): void {
     if (!context.activityChildren) {
         return;
     }
 
     const idx: number = context.activityChildren
-        .map(child => child.contextValue?.includes(activityInfoContext) ? activityInfoContext : child.contextValue)
-        .lastIndexOf(activityInfoContext);
+        .map(child => child.activityType)
+        .lastIndexOf(ActivityChildType.Info);
 
     if (idx === -1) {
         context.activityChildren.unshift(child);
