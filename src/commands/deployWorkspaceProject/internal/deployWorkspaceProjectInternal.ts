@@ -149,7 +149,7 @@ export async function deployWorkspaceProjectInternal(
             await LocationListStep.setLocation(wizardContext, wizardContext.managedEnvironment.location);
         }
 
-        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Use container apps environment "{0}".', managedEnvironmentName));
+        ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using container apps environment "{0}".', managedEnvironmentName));
     } else {
         wizardContext.telemetry.properties.existingEnvironment = 'false';
 
