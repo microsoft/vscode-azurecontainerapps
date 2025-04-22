@@ -21,7 +21,7 @@ export async function createActivityContext(options?: { withChildren?: boolean }
  * If no info child already exists, the new child is prepended to the front of the array.
  * (This utility function is useful for keeping the info children grouped at the front of the list)
  */
-export function insertAfterLastInfoChild(context: ExecuteActivityContext, child: ActivityChildItemBase): void {
+export function insertAfterLastInfoChild(context: Partial<ExecuteActivityContext>, child: ActivityChildItemBase): void {
     if (!context.activityChildren) {
         return;
     }

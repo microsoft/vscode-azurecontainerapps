@@ -9,6 +9,7 @@ import { LocationListStep, type ILocationWizardContext } from "@microsoft/vscode
 import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { activityInfoContext } from "../constants";
 import { ext } from "../extensionVariables";
+import { insertAfterLastInfoChild } from "../utils/activityUtils";
 import { localize } from "../utils/localize";
 
 type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityContext> & ILocationWizardContext & {
@@ -50,7 +51,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
     protected async logStartingResources(context: T): Promise<void> {
         if (context.resourceGroup) {
-            context.activityChildren?.push(
+            insertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
                     label: localize('useResourceGroup', 'Use resource group "{0}"', context.resourceGroup.name),
@@ -62,7 +63,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         }
 
         if (context.managedEnvironment) {
-            context.activityChildren?.push(
+            insertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useManagedEnvironment', 'Use managed environment "{0}"', context.managedEnvironment.name),
                     contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
@@ -74,7 +75,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         }
 
         if (context.containerApp) {
-            context.activityChildren?.push(
+            insertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useContainerApp', 'Use container app "{0}"', context.containerApp.name),
                     contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
