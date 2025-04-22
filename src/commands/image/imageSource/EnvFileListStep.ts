@@ -4,13 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activitySuccessContext, activitySuccessIcon, createContextValue } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
+import { addActivityInfoChild } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
@@ -146,7 +147,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
                 new ActivityChildItem({
-                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using provided .env file'),
+                    label: localize('saveEnvVarsFileLabel', 'Save environment variables from provided .env file'),
                     description: '0s',
                     contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
                     activityType: ActivityChildType.Success,
@@ -155,13 +156,12 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             );
             ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
-            context.activityChildren?.push(
+            addActivityInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
-                    description: '0s',
-                    contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
-                    activityType: ActivityChildType.Success,
-                    iconPath: activitySuccessIcon,
+                    contextValue: createContextValue([envFileListStepContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: activityInfoIcon,
                 })
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
