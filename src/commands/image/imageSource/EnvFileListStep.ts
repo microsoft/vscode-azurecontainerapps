@@ -71,6 +71,14 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
+    public confirmationViewProperties(context: T): { name: string; value: string; valueInContext: string; } {
+        return {
+            name: localize('environmentVariables', 'Environment Variables'),
+            value: context.envPath ?? localize('useExisting', 'Use existing configuration'),
+            valueInContext: 'envPath'
+        };
+    }
+
     private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;

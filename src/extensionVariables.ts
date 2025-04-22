@@ -23,4 +23,5 @@ export namespace ext {
 
     export let state: TreeElementStateManager;
     export let branchDataProvider: ContainerAppsBranchDataProvider;
+    export let isBundle: boolean | undefined;
 }

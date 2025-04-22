@@ -13,6 +13,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { OpenConfirmationViewStep } from "../../webviews/OpenConfirmationViewStep";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
 import { editContainerCommandName } from "../editContainer/editContainer";
@@ -62,17 +63,18 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
+            new OpenConfirmationViewStep(() => wizard.viewConfirmation)
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),
             new ContainerAppUpdateStep(),
         ],
-        showLoadingPrompt: true
     });
 
     await wizard.prompt();
     wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
-    await wizard.execute();
+    // Temporarily removing for testing purposes
+    //await wizard.execute();
 }
 
 async function promptImageSource(context: ISubscriptionActionContext): Promise<ImageSource> {

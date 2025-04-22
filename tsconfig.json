@@ -1,16 +1,18 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es6",
+        "target": "es2018",
         "outDir": "out",
         "lib": [
-            "es6"
+            "es2018",
+            "dom"
         ],
         "sourceMap": true,
         "rootDir": ".",
         "noUnusedLocals": true,
         "noImplicitThis": true,
         "noImplicitReturns": true,
+        "skipLibCheck": true,
         "strictNullChecks": true,
         "noUnusedParameters": true,
         "baseUrl": "./",
@@ -19,7 +21,8 @@
                 "node_modules/vscode/*",
                 "*"
             ]
-        }
+        },
+        "jsx": "react-jsx",
     },
     "exclude": [
         "node_modules",

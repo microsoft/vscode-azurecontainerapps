@@ -26,6 +26,8 @@ export enum RegistryCredentialType {
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
     private requiresRegistryConfiguration: boolean;
 
+    public pickLabel: string | undefined;
+
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         const hasExistingConfiguration: boolean = !!context.containerApp?.configuration?.registries?.some(r => {
@@ -59,14 +61,25 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             localize('selectCredentialTypeNamed', 'Select a connection method for registry "{0}"', context.registry?.name || context.newRegistryName) :
             localize('selectCredentialType', 'Select a registry connection method');
 
-        context.newRegistryCredentialType = (await context.ui.showQuickPick(this.getPicks(context), {
+        const pick = (await context.ui.showQuickPick(this.getPicks(context), {
             placeHolder,
             suppressPersistence: true,
-        })).data;
+        }))
+
+        this.pickLabel = pick.label;
+        context.newRegistryCredentialType = pick.data;
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {
         return this.requiresRegistryConfiguration && !context.newRegistryCredentialType;
+    }
+
+    public confirmationViewProperties(_context: RegistryCredentialsContext): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('connectionMethod', 'Connection method'),
+            value: this.pickLabel ?? '',
+            valueInContext: 'newRegistryCredentialType',
+        };
     }
 
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {

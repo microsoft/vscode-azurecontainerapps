@@ -7,6 +7,7 @@
     "containerApps.showDraftCommandDeployPopup": "Prompt to deploy revision draft whenever a draft command is run.",
     "containerApps.browse": "Browse",
     "containerApps.createContainerApp": "Create Container App...",
+    "containerApps.openConfirmationView": " Open Confirmation View",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",
     "containerApps.editContainer": "Edit Container...",
     "containerApps.editContainerImage.title": "Edit Container Image...",

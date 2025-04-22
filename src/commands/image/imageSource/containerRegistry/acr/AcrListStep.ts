@@ -36,6 +36,8 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         super();
     }
 
+    private pickLabel: string;
+
     public async prompt(context: T): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
 
@@ -53,11 +55,20 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             result = pick.data;
         } while (result === noMatchingResources);
 
+        this.pickLabel = pick.label
         context.registry = result;
     }
 
     public shouldPrompt(context: T): boolean {
         return !context.registry && !context.newRegistryName;
+    }
+
+    public confirmationViewProperties(_context: T): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('registry', 'Registry'),
+            value: this.pickLabel ?? '',
+            valueInContext: 'registry'
+        }
     }
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {

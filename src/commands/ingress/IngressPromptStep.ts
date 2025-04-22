@@ -28,6 +28,14 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
         return context.enableIngress === undefined;
     }
 
+    public confirmationViewProperties(context: IngressContext): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('enableIngress', 'Ingress'),
+            value: context.enableIngress ? localize('enabled', 'Enabled') : localize('disabled', 'Disabled'),
+            valueInContext: 'enableIngress'
+        };
+    }
+
     public async getSubWizard(context: IngressContext): Promise<IWizardOptions<IngressContext> | undefined> {
         const promptSteps: AzureWizardPromptStep<IngressContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IngressContext>[] = [];

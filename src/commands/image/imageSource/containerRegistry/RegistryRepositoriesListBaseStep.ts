@@ -31,5 +31,13 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
         return !context.repositoryName;
     }
 
+    public confirmationViewProperties(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('repository', 'Repository'),
+            value: context.repositoryName ?? '',
+            valueInContext: 'repositoryName'
+        }
+    }
+
     public abstract getPicks(context: ContainerRegistryImageSourceContext, picksCache: QuickPicksCache | undefined): Promise<QuickPickItem[]>
 }
