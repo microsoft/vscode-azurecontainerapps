@@ -318,6 +318,11 @@
                 "title": "%containerApps.toggleEnvironmentVariableVisibility%",
                 "category": "Azure Container Apps",
                 "icon": "$(eye)"
+            },
+            {
+                "command": "containerApps.askAgentCreateDockerfile",
+                "title": "%containerApps.askAgentCreateDockerfile%",
+                "category": "Azure Container Apps"
             }
         ],
         "submenus": [
@@ -337,8 +342,12 @@
                     "group": "1_deploy@1"
                 },
                 {
-                    "command": "containerApps.createContainerApp",
+                    "command": "containerApps.askAgentCreateDockerfile",
                     "group": "2_create@1"
+                },
+                {
+                    "command": "containerApps.createContainerApp",
+                    "group": "2_create@2"
                 },
                 {
                     "command": "containerApps.walkthrough.gettingStarted.internal",

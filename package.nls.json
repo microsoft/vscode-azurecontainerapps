@@ -72,6 +72,7 @@
     "containerApps.deploymentConfiguration.containerApp": "The name of the target container app.",
     "containerApps.deploymentConfiguration.containerRegistry": "The name of the container registry to use for storing and building images.",
     "containerApps.deploymentConfigurations": "A list of saved deployment configurations used for quickly redeploying a workspace project to a container app.",
+    "containerApps.askAgentCreateDockerfile": "Create Dockerfile (Copilot)",
     "containerApps.toggleEnvironmentVariableVisibility": "Toggle Environment Variable Visibility",
     "containerApps.walkthrough.gettingStarted.internal": "Open Walkthrough",
     "containerApps.walkthrough.gettingStarted.title": "Getting Started with Azure Container Apps",

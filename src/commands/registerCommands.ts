@@ -7,6 +7,7 @@ import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHa
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
+import { askAgentCreateDockerfile } from './chat/askAgentCreateDockerfile';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -131,6 +132,9 @@ export function registerCommands(): void {
     // registries
     registerCommand('containerApps.createAcr', createAcr);
     registerCommand('containerApps.openAcrBuildLogs', openAcrBuildLogs);
+
+    // chat
+    registerCommand('containerApps.askAgentCreateDockerfile', askAgentCreateDockerfile);
 
     // walkthrough
     registerCommand('containerApps.walkthrough.gettingStarted.internal', gettingStartedInternalWalkthrough);
