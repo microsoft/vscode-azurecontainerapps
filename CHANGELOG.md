@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.8.2 - 2025-04-28
+### Changed
+* [[867](https://github.com/microsoft/vscode-azurecontainerapps/pull/867)] [[868](https://github.com/microsoft/vscode-azurecontainerapps/pull/868)] Upgrade to latest version of the activity log (v2).  Now shows live progress on each activity child with timers.
+
 ## 0.8.1 - 2025-03-10
 ### Changed
 * [[855](https://github.com/microsoft/vscode-azurecontainerapps/pull/855)] Automatically collect subscription and resource information for telemetry. [How to disable telemetry reporting](https://code.visualstudio.com/docs/supporting/FAQ#_how-to-disable-telemetry-reporting)
