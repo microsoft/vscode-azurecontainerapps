@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Ingress } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
@@ -21,10 +21,11 @@ export const enabledIngressDefaults = {
     ],
 };
 
-export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext> {
+export class EnableIngressStep<T extends IngressBaseContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 750;
+    public stepName: string = 'enableIngressStep';
 
-    public async execute(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('enablingIngress', 'Enabling ingress...') });
 
         const containerApp = nonNullProp(context, 'containerApp');
@@ -38,37 +39,24 @@ export class EnableIngressStep extends AzureWizardExecuteStep<IngressBaseContext
         context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
     }
 
-    public shouldExecute(context: IngressBaseContext): boolean {
+    public shouldExecute(context: T): boolean {
         const hasNewVisiblity: boolean = context.enableExternal !== undefined && context.enableExternal !== context.containerApp?.configuration?.ingress?.external;
         const hasNewTargetPort: boolean = !!context.targetPort && context.targetPort !== context.containerApp?.configuration?.ingress?.targetPort;
         return context.enableIngress === true && hasNewVisiblity || hasNewTargetPort;
     }
 
-    public static createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
+    public getTreeItemLabel(context: T): string {
         const visibility: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['enableIngressStepSuccessItem', activitySuccessContext]),
-                label: localize('enableIngressLabel', 'Enable {0} ingress on port {1}', visibility, context.targetPort),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('enableCompleted', 'Enabled {0} ingress on port {1}.', visibility, context.targetPort)
-        };
+        return localize('enableIngressLabel', 'Enable {0} ingress on port {1}', visibility, context.targetPort);
     }
 
-    public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        return EnableIngressStep.createSuccessOutput(context);
+    public getOutputLogSuccess(context: T): string {
+        const visibility: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
+        return localize('enableSuccess', 'Successfully enabled {0} ingress on port {1}.', visibility, context.targetPort);
     }
 
-    public createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
+    public getOutputLogFail(context: T): string {
         const visibility: string = context.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['enableIngressStepFailItem', activityFailContext]),
-                label: localize('enableIngressLabel', 'Enable {0} ingress on port {1}', visibility, context.targetPort),
-                iconPath: activityFailIcon
-            }),
-            message: localize('enableIngressFailed', 'Failed to enable {0} ingress on port {1}.', visibility, context.targetPort)
-        };
+        return localize('enableFailed', 'Failed to enable {0} ingress on port {1}.', visibility, context.targetPort);
     }
 }

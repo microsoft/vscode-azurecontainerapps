@@ -5,24 +5,21 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { containerAppsWebProvider } from "../../constants";
-import { ext } from "../../extensionVariables";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { AzureWizardActivityOutputExecuteStep } from "../AzureWizardActivityOutputExecuteStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
-import { DisableIngressStep } from "../ingress/disableIngress/DisableIngressStep";
-import { enabledIngressDefaults, EnableIngressStep } from "../ingress/enableIngress/EnableIngressStep";
+import { enabledIngressDefaults } from "../ingress/enableIngress/EnableIngressStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 
-export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardActivityOutputExecuteStep<T> {
+export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 620;
     public stepName: string = 'containerAppCreateStep';
-    protected getSuccessString = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}"', context.newContainerAppName);
-    protected getFailString = (context: T) => localize('createContainerAppFail', 'Failed to create container app "{0}"', context.newContainerAppName);
+    protected getOutputLogSuccess = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}"', context.newContainerAppName);
+    protected getOutputLogFail = (context: T) => localize('createContainerAppFail', 'Failed to create container app "{0}"', context.newContainerAppName);
     protected getTreeItemLabel = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -37,17 +34,6 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
             external: context.enableExternal,
             targetPort: context.targetPort,
         } : undefined;
-
-        // Display ingress log outputs
-        if (ingress) {
-            const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
-            item && context.activityChildren?.push(item);
-            message && ext.outputChannel.appendLog(message);
-        } else {
-            const { item, message } = DisableIngressStep.createSuccessOutput({ ...context, enableIngress: false });
-            item && context.activityChildren?.push(item);
-            message && ext.outputChannel.appendLog(message);
-        }
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,

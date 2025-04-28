@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { AzureWizardExecuteStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { ImageSource, quickStartImageName } from "../../constants";
 import { localize } from "../../utils/localize";
-import { AzureWizardActivityOutputExecuteStep } from "../AzureWizardActivityOutputExecuteStep";
 import { type ImageSourceContext } from "../image/imageSource/ImageSourceContext";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 
-export class QuickStartImageConfigureStep<T extends ContainerAppCreateContext & ImageSourceContext> extends AzureWizardActivityOutputExecuteStep<T> {
+export class QuickStartImageConfigureStep<T extends ContainerAppCreateContext & ImageSourceContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 610;
     public stepName: string = 'quickStartImageConfigureStep';
-    protected getSuccessString = () => localize('quickStartImageSuccess', 'Successfully configured quick start image.');
-    protected getFailString = () => localize('quickStartImageFail', 'Failed to configure quick start image.');
+    protected getOutputLogSuccess = () => localize('quickStartImageSuccess', 'Successfully configured quick start image.');
+    protected getOutputLogFail = () => localize('quickStartImageFail', 'Failed to configure quick start image.');
     protected getTreeItemLabel = () => localize('quickStartImageLabel', 'Configure quick start image');
 
     public async execute(context: T): Promise<void> {

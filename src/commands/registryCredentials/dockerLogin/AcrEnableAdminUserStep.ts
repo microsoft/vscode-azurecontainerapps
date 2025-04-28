@@ -5,15 +5,19 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, nonNullValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
 
-export class AcrEnableAdminUserStep extends AzureWizardExecuteStep<DockerLoginRegistryCredentialsContext> {
+export class AcrEnableAdminUserStep<T extends DockerLoginRegistryCredentialsContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 450;
+    public stepName: string = 'acrEnableAdminUserStep';
+    protected getOutputLogSuccess = (context: T) => localize('enableAdminUserSuccess', 'Successfully enabled admin user setting for container registry "{0}".', context.registry?.name);
+    protected getOutputLogFail = (context: T) => localize('enableAdminUserFail', 'Failed to enable admin user setting for container registry "{0}".', context.registry?.name);
+    protected getTreeItemLabel = (context: T) => localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name);
 
-    public async execute(context: DockerLoginRegistryCredentialsContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         const registry = nonNullValue(context.registry);
         registry.adminUserEnabled = true;
 
@@ -25,29 +29,7 @@ export class AcrEnableAdminUserStep extends AzureWizardExecuteStep<DockerLoginRe
         }
     }
 
-    public shouldExecute(context: DockerLoginRegistryCredentialsContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !!context.registry && !context.registry.adminUserEnabled;
-    }
-
-    public createSuccessOutput(context: DockerLoginRegistryCredentialsContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['acrEnableAdminUserStepSuccessItem', activitySuccessContext]),
-                label: localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('enableAdminUserSuccess', 'Successfully enabled admin user setting for container registry "{0}".', context.registry?.name)
-        };
-    }
-
-    public createFailOutput(context: DockerLoginRegistryCredentialsContext): ExecuteActivityOutput {
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['acrEnableAdminUserStepFailItem', activitySuccessContext]),
-                label: localize('enableAdminUser', 'Enable admin user setting for container registry "{0}"', context.registry?.name),
-                iconPath: activityFailIcon
-            }),
-            message: localize('enableAdminUserFail', 'Failed to enable admin user setting for container registry "{0}".', context.registry?.name)
-        };
     }
 }

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Container, type Revision } from "@azure/arm-appcontainers";
-import { activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
-import { type Progress } from "vscode";
+import { ActivityChildItem, ActivityChildType, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { TreeItemCollapsibleState, type Progress } from "vscode";
 import { type ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../utils/localize";
@@ -13,6 +13,8 @@ import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import { RevisionDraftUpdateBaseStep } from "../revisionDraft/RevisionDraftUpdateBaseStep";
 import { type ContainerEditContext } from "./ContainerEditContext";
+
+const containerEditDraftStepItem: string = 'containerEditDraftStepItem';
 
 export class ContainerEditDraftStep<T extends ContainerEditContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
@@ -40,9 +42,10 @@ export class ContainerEditDraftStep<T extends ContainerEditContext> extends Revi
     public createSuccessOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerEditDraftStepSuccessItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
+                contextValue: createContextValue([containerEditDraftStepItem, activitySuccessContext]),
+                activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon,
             }),
             message: localize('editContainerSuccess', 'Successfully edited container profile for container app "{0}" (draft).', parentResource.name),
@@ -52,9 +55,10 @@ export class ContainerEditDraftStep<T extends ContainerEditContext> extends Revi
     public createProgressOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerEditDraftStepProgressItem', activityProgressContext]),
+            item: new ActivityChildItem({
                 label: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
+                contextValue: createContextValue([containerEditDraftStepItem, activityProgressContext]),
+                activityType: ActivityChildType.Progress,
                 iconPath: activityProgressIcon,
             }),
         };
@@ -63,10 +67,13 @@ export class ContainerEditDraftStep<T extends ContainerEditContext> extends Revi
     public createFailOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerEditDraftStepFailItem', activityFailContext]),
+            item: new ActivityChildItem({
                 label: localize('editContainer', 'Edit container profile for container app "{0}" (draft)', parentResource.name),
+                contextValue: createContextValue([containerEditDraftStepItem, activityFailContext]),
+                initialCollapsibleState: TreeItemCollapsibleState.Expanded,
+                activityType: ActivityChildType.Fail,
                 iconPath: activityFailIcon,
+                isParent: true,
             }),
             message: localize('editContainerFail', 'Failed to edit container profile for container app "{0}" (draft).', parentResource.name),
         };

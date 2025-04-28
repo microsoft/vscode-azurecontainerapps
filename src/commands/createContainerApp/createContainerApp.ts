@@ -31,7 +31,7 @@ export async function createContainerApp(context: IActionContext, item?: Managed
     const wizardContext: ContainerAppCreateContext = {
         ...context,
         ...createSubscriptionContext(item.subscription),
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription: item.subscription,
         managedEnvironment: item.managedEnvironment,
         imageSource: ImageSource.QuickstartImage,

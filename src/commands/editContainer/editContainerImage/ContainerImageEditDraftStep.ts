@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Container, type Revision } from "@azure/arm-appcontainers";
-import { activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { type ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type RevisionsItemModel } from "../../../tree/revisionManagement/RevisionItem";
@@ -13,6 +13,8 @@ import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { getContainerNameForImage } from "../../image/imageSource/containerRegistry/getContainerNameForImage";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import { type ContainerEditUpdateContext } from "./editContainerImage";
+
+const containerImageEditDraftStepContext: string = 'containerImageEditDraftStep';
 
 export class ContainerImageEditDraftStep<T extends ContainerEditUpdateContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 590;
@@ -39,9 +41,10 @@ export class ContainerImageEditDraftStep<T extends ContainerEditUpdateContext> e
     public createSuccessOutput(context: T): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerImageEditDraftStepSuccessItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label: localize('editImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
+                contextValue: createContextValue([containerImageEditDraftStepContext, activitySuccessContext]),
+                activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon,
             }),
             message: localize('editImageSuccess', 'Successfully added image "{0}" to container app "{1}" (draft).', context.image, parentResource.name),
@@ -51,9 +54,10 @@ export class ContainerImageEditDraftStep<T extends ContainerEditUpdateContext> e
     public createProgressOutput(): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerImageEditDraftStepProgressItem', activityProgressContext]),
+            item: new ActivityChildItem({
                 label: localize('editImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
+                contextValue: createContextValue([containerImageEditDraftStepContext, activityProgressContext]),
+                activityType: ActivityChildType.Progress,
                 iconPath: activityProgressIcon,
             }),
         };
@@ -62,9 +66,10 @@ export class ContainerImageEditDraftStep<T extends ContainerEditUpdateContext> e
     public createFailOutput(context: T): ExecuteActivityOutput {
         const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(this.baseItem);
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerImageEditDraftStepFailItem', activityFailContext]),
+            item: new ActivityChildItem({
                 label: localize('editImage', 'Edit container image for app "{0}" (draft)', parentResource.name),
+                contextValue: createContextValue([containerImageEditDraftStepContext, activityFailContext]),
+                activityType: ActivityChildType.Fail,
                 iconPath: activityFailIcon,
             }),
             message: localize('editImageFail', 'Failed to add image "{0}" to container app "{1}" (draft).', context.image, parentResource.name),

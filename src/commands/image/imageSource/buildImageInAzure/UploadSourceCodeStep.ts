@@ -4,18 +4,19 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtFsExtra, AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullValue, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityInfoContext, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullValue, type ActivityChildItemOptions, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
 import { randomUUID } from 'crypto';
 import { tmpdir } from 'os';
 import * as path from 'path';
 import * as tar from 'tar';
-import { ThemeColor, ThemeIcon, type Progress } from 'vscode';
+import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type Progress } from 'vscode';
 import { ext } from '../../../../extensionVariables';
 import { createContainerRegistryManagementClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 const vcsIgnoreList = ['.git', '.gitignore', '.bzr', 'bzrignore', '.hg', '.hgignore', '.svn'];
+const uploadSourceCodeStepContext: string = 'uploadSourceCodeStepItem';
 
 export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 530;
@@ -107,39 +108,41 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
     }
 
     public createSuccessOutput(context: T): ExecuteActivityOutput {
-        const baseTreeItemOptions = {
-            contextValue: createUniversallyUniqueContextValue(['uploadSourceCodeStepSuccessItem', activitySuccessContext]),
+        const baseTreeItemOptions: ActivityChildItemOptions = {
             label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
+            contextValue: createContextValue([uploadSourceCodeStepContext, activitySuccessContext]),
+            activityType: ActivityChildType.Success,
             iconPath: activitySuccessIcon,
         };
 
-        let parentTreeItem: GenericParentTreeItem | undefined;
+        let parentTreeItem: ActivityChildItem | undefined;
         if (this._customDockerfileDirPath) {
-            parentTreeItem = new GenericParentTreeItem(undefined, {
-                ...baseTreeItemOptions,
-                loadMoreChildrenImpl: () => {
-                    const removePlatformFlagItem = new GenericTreeItem(undefined, {
-                        contextValue: createUniversallyUniqueContextValue(['removePlatformFlagItem']),
-                        label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
-                        iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
-                    });
-                    return Promise.resolve([removePlatformFlagItem]);
-                }
-            });
+            parentTreeItem = new ActivityChildItem({ ...baseTreeItemOptions, initialCollapsibleState: TreeItemCollapsibleState.Expanded });
+            parentTreeItem.getChildren = () => {
+                const removePlatformFlagItem = new ActivityChildItem({
+                    label: localize('removePlatformFlag', 'Remove unsupported ACR "--platform" flag'),
+                    contextValue: createContextValue(['removePlatformFlagItem', activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: new ThemeIcon('dash', new ThemeColor('terminal.ansiWhite')),
+                });
+                return Promise.resolve([removePlatformFlagItem]);
+            };
         }
 
         return {
-            item: parentTreeItem ?? new GenericTreeItem(undefined, { ...baseTreeItemOptions }),
+            item: parentTreeItem ?? new ActivityChildItem({ ...baseTreeItemOptions }),
             message: localize('uploadedSourceCodeSuccess', 'Uploaded source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
         };
     }
 
     public createFailOutput(context: T): ExecuteActivityOutput {
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['uploadSourceCodeStepFailItem', activityFailContext]),
+            item: new ActivityChildItem({
                 label: localize('uploadSourceCodeLabel', 'Upload source code from "{1}" directory to registry "{0}"', context.registry?.name, this._sourceFilePath),
-                iconPath: activityFailIcon
+                contextValue: createContextValue([uploadSourceCodeStepContext, activityFailContext]),
+                activityType: ActivityChildType.Fail,
+                iconPath: activityFailIcon,
+                isParent: true,
             }),
             message: localize('uploadedSourceCodeFail', 'Failed to upload source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
         };

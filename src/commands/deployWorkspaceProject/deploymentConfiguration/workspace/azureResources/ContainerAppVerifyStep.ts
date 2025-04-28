@@ -10,7 +10,7 @@ import { createContainerAppsAPIClient } from "../../../../../utils/azureClients"
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { AzureResourceVerifyStepBase } from "./AzureResourceVerifyStepBase";
 
-export class ContainerAppVerifyStep extends AzureResourceVerifyStepBase {
+export class ContainerAppVerifyStep extends AzureResourceVerifyStepBase<WorkspaceDeploymentConfigurationContext> {
     public priority: number = 205;  /** Todo: Figure out a good priority level */
 
     protected resourceType = 'container app' as const;

@@ -4,10 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
-import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { acrDomain, dockerHubDomain, dockerHubRegistry, type SupportedRegistries } from "../../../constants";
 import { localize } from "../../../utils/localize";
-import { AzureWizardActivityOutputExecuteStep } from "../../AzureWizardActivityOutputExecuteStep";
 import { type DockerLoginRegistryCredentialsContext } from "./DockerLoginRegistryCredentialsContext";
 import { listCredentialsFromAcr } from "./listCredentialsFromAcr";
 
@@ -16,11 +15,11 @@ interface RegistryCredentialAndSecret {
     secret: Secret;
 }
 
-export class DockerLoginRegistryCredentialsAddConfigurationStep<T extends DockerLoginRegistryCredentialsContext> extends AzureWizardActivityOutputExecuteStep<T> {
+export class DockerLoginRegistryCredentialsAddConfigurationStep<T extends DockerLoginRegistryCredentialsContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 470;
     public stepName: string = 'dockerLoginRegistryCredentialsAddConfigurationStep';
-    protected getSuccessString = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (Docker login).', context.newRegistryCredential?.server);
-    protected getFailString = () => localize('createRegistryCredentialFail', 'Failed to add registry credential (Docker login).');
+    protected getOutputLogSuccess = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (Docker login).', context.newRegistryCredential?.server);
+    protected getOutputLogFail = () => localize('createRegistryCredentialFail', 'Failed to add registry credential (Docker login).');
     protected getTreeItemLabel = (context: T) => localize('createRegistryCredentialLabel', 'Add registry credential for "{0}" (Docker login)', context.newRegistryCredential?.server);
 
     constructor(private readonly supportedRegistryDomain: SupportedRegistries | undefined) {

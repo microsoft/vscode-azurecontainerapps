@@ -3,12 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
 import { type IngressBaseContext } from "../IngressContext";
 import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 import { isIngressEnabled } from "../isIngressEnabled";
+
+const disableIngressStepContext: string = 'disableIngressStepItem';
 
 export class DisableIngressStep extends IngressUpdateStepBase<IngressBaseContext> {
     public priority: number = 750;
@@ -26,27 +28,36 @@ export class DisableIngressStep extends IngressUpdateStepBase<IngressBaseContext
         return context.enableIngress === false && isIngressEnabled(context);
     }
 
-    public static createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['disableIngressStepSuccessItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
+                contextValue: createContextValue([disableIngressStepContext, activitySuccessContext]),
+                activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon
             }),
             message: localize('disableSuccessMessage', 'Disabled ingress for container app "{0}".', context.containerApp?.name)
         };
     }
 
-    public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        return DisableIngressStep.createSuccessOutput(context);
+    public createProgressOutput(context: IngressBaseContext): ExecuteActivityOutput {
+        return {
+            item: new ActivityChildItem({
+                label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
+                contextValue: createContextValue([disableIngressStepContext, activityProgressContext]),
+                activityType: ActivityChildType.Progress,
+                iconPath: activityProgressIcon
+            }),
+        };
     }
 
     public createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['disableIngressStepFailItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
-                iconPath: activitySuccessIcon
+                contextValue: createContextValue([disableIngressStepContext, activityFailContext]),
+                activityType: ActivityChildType.Fail,
+                iconPath: activityFailIcon,
             }),
             message: localize('disableFailMessage', 'Failed to disable ingress for container app "{0}".', context.containerApp?.name)
         };

@@ -47,7 +47,7 @@ export async function editContainer(context: IActionContext, node?: ContainersIt
     const wizardContext: ContainerEditContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
