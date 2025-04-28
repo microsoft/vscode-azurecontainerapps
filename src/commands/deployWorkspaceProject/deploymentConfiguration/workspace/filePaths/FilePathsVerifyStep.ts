@@ -64,6 +64,8 @@ export abstract class FilePathsVerifyStep extends AzureWizardExecuteStep<Workspa
         };
     }
 
+    // Todo: Verify if we need a progress output here
+
     public createFailOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
             item: new ActivityChildItem({
