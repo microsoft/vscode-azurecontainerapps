@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActivityChildItem, ActivityChildType, activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, type SupportedRegistries } from "../../constants";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { prependOrInsertAfterLastInfoChild } from "../../utils/activityUtils";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
@@ -92,13 +93,12 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 break;
             default:
                 context.telemetry.properties.newRegistryCredentialType = 'useExisting';
-                context.activityChildren?.push(
+                prependOrInsertAfterLastInfoChild(context,
                     new ActivityChildItem({
-                        label: localize('useExistingRegistryCredentials', 'Use existing registry credential'),
-                        contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activitySuccessContext]),
-                        description: '0s',
-                        activityType: ActivityChildType.Success,
-                        iconPath: activitySuccessIcon,
+                        label: localize('useExistingRegistryCredentials', 'Use existing registry credentials'),
+                        contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
+                        activityType: ActivityChildType.Info,
+                        iconPath: activityInfoIcon,
                     })
                 );
                 ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));

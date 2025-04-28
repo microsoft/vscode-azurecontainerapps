@@ -9,7 +9,7 @@ import { ActivityChildItem, ActivityChildType, AzureWizard, activityInfoContext,
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { createActivityContext } from "../../../utils/activityUtils";
+import { createActivityContext, prependOrInsertAfterLastInfoChild } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
@@ -69,8 +69,7 @@ export async function deployWorkspaceProjectInternal(
     if (options.suppressActivity) {
         activityContext = { suppressNotification: true };
     } else {
-        activityContext = await createActivityContext();
-        activityContext.activityChildren = [];
+        activityContext = await createActivityContext({ withChildren: true });
     }
 
     // Show loading indicator while we configure starting values
@@ -114,7 +113,7 @@ export async function deployWorkspaceProjectInternal(
 
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
-        wizardContext.activityChildren?.push(
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
                 label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
                 activityType: ActivityChildType.Info,
@@ -136,7 +135,7 @@ export async function deployWorkspaceProjectInternal(
 
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
-        wizardContext.activityChildren?.push(
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
                 label: localize('useManagedEnvironment', 'Use container apps environment "{0}"', managedEnvironmentName),
                 activityType: ActivityChildType.Info,
@@ -165,9 +164,9 @@ export async function deployWorkspaceProjectInternal(
 
         const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
 
-        wizardContext.activityChildren?.push(
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
-                label: localize('useAcr', 'Using container registry "{0}"', registryName),
+                label: localize('useAcr', 'Use container registry "{0}"', registryName),
                 activityType: ActivityChildType.Info,
                 contextValue: activityInfoContext,
                 iconPath: activityInfoIcon
@@ -188,9 +187,9 @@ export async function deployWorkspaceProjectInternal(
 
         executeSteps.push(new ContainerAppUpdateStep());
 
-        wizardContext.activityChildren?.push(
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
-                label: localize('useContainerApp', 'Using container app "{0}"', containerAppName),
+                label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
                 activityType: ActivityChildType.Info,
                 contextValue: activityInfoContext,
                 iconPath: activityInfoIcon

@@ -47,7 +47,7 @@ export abstract class RevisionDraftUpdateBaseStep<T extends RevisionDraftContext
         ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate);
 
         if (context.shouldDeployRevisionDraft) {
-            await this.deployRevisionDraftTemplate(context);
+            void this.deployRevisionDraftTemplate(context);
         }
     }
 
