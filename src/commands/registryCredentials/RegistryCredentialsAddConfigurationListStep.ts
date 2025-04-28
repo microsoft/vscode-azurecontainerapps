@@ -6,7 +6,7 @@
 import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { insertAfterLastInfoChild } from "../../utils/activityUtils";
+import { prependOrInsertAfterLastInfoChild } from "../../utils/activityUtils";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
@@ -93,7 +93,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 break;
             default:
                 context.telemetry.properties.newRegistryCredentialType = 'useExisting';
-                insertAfterLastInfoChild(context,
+                prependOrInsertAfterLastInfoChild(context,
                     new ActivityChildItem({
                         label: localize('useExistingRegistryCredentials', 'Use existing registry credentials'),
                         contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),

@@ -9,7 +9,7 @@ import { ActivityChildItem, ActivityChildType, AzureWizard, activityInfoContext,
 import { ProgressLocation, window } from "vscode";
 import { appProvider, managedEnvironmentsId } from "../../../constants";
 import { ext } from "../../../extensionVariables";
-import { createActivityContext, insertAfterLastInfoChild } from "../../../utils/activityUtils";
+import { createActivityContext, prependOrInsertAfterLastInfoChild } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
@@ -113,7 +113,7 @@ export async function deployWorkspaceProjectInternal(
 
         const resourceGroupName: string = nonNullValueAndProp(wizardContext.resourceGroup, 'name');
 
-        insertAfterLastInfoChild(wizardContext,
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
                 label: localize('useResourceGroup', 'Use resource group "{0}"', resourceGroupName),
                 activityType: ActivityChildType.Info,
@@ -135,7 +135,7 @@ export async function deployWorkspaceProjectInternal(
 
         const managedEnvironmentName: string = nonNullValueAndProp(wizardContext.managedEnvironment, 'name');
 
-        insertAfterLastInfoChild(wizardContext,
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
                 label: localize('useManagedEnvironment', 'Use container apps environment "{0}"', managedEnvironmentName),
                 activityType: ActivityChildType.Info,
@@ -164,7 +164,7 @@ export async function deployWorkspaceProjectInternal(
 
         const registryName: string = nonNullValueAndProp(wizardContext.registry, 'name');
 
-        insertAfterLastInfoChild(wizardContext,
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
                 label: localize('useAcr', 'Use container registry "{0}"', registryName),
                 activityType: ActivityChildType.Info,
@@ -187,7 +187,7 @@ export async function deployWorkspaceProjectInternal(
 
         executeSteps.push(new ContainerAppUpdateStep());
 
-        insertAfterLastInfoChild(wizardContext,
+        prependOrInsertAfterLastInfoChild(wizardContext,
             new ActivityChildItem({
                 label: localize('useContainerApp', 'Use container app "{0}"', containerAppName),
                 activityType: ActivityChildType.Info,
