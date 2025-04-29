@@ -6,7 +6,6 @@
 import { localize } from "./localize";
 
 export namespace validateUtils {
-    // Estimated using UTF-8 encoding, where a character can be up to ~4 bytes long
     const allowedSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
 
     /**
