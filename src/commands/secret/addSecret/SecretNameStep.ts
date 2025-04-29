@@ -6,7 +6,6 @@
 import { type Secret } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, validationUtils } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { validateUtils } from "../../../utils/validateUtils";
 import { type ISecretContext } from "../ISecretContext";
 
 export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
@@ -29,6 +28,7 @@ export class SecretNameStep extends AzureWizardPromptStep<ISecretContext> {
             return validationUtils.getInvalidCharLengthMessage();
         }
 
+        // Todo:
         if (!validateUtils.isLowerCaseAlphanumericWithSymbols(value)) {
             return validateUtils.getInvalidLowerCaseAlphanumericWithSymbolsMessage();
         }
