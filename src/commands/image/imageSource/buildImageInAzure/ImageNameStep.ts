@@ -3,9 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, validationUtils } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../../utils/localize";
-import { validateUtils } from "../../../../utils/validateUtils";
 import { type ContainerAppCreateContext } from "../../../createContainerApp/ContainerAppCreateContext";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 
@@ -33,8 +32,9 @@ export class ImageNameStep extends AzureWizardPromptStep<BuildImageInAzureImageS
     private validateInput(name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
-        if (!validateUtils.isValidLength(name, 1, maxImageNameLength)) {
-            return validateUtils.getInvalidLengthMessage(1, maxImageNameLength);
+        const range: validationUtils.RangeConstraints = { lowerLimitIncl: 1, upperLimitIncl: maxImageNameLength };
+        if (!validationUtils.hasValidCharLength(name, range)) {
+            return validationUtils.getInvalidCharLengthMessage(range);
         }
 
         return undefined;

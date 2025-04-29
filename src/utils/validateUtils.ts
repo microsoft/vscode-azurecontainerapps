@@ -6,28 +6,11 @@
 import { localize } from "./localize";
 
 export namespace validateUtils {
-    const thirtyTwoBitMaxSafeInteger: number = 2147483647;
     // Estimated using UTF-8 encoding, where a character can be up to ~4 bytes long
-    const maxSafeCharacterLength: number = thirtyTwoBitMaxSafeInteger / 32;
     const allowedSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
 
     /**
-     * Validates that the given input string is the appropriate length as determined by the optional lower and upper limit parameters
-     */
-    export function isValidLength(value: string, lowerLimitIncl?: number, upperLimitIncl?: number): boolean {
-        lowerLimitIncl ??= 1;
-        upperLimitIncl = (!upperLimitIncl || upperLimitIncl > maxSafeCharacterLength) ? maxSafeCharacterLength : upperLimitIncl;
-
-        if (lowerLimitIncl > upperLimitIncl || value.length < lowerLimitIncl || value.length > upperLimitIncl) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Provides a message that can be used to inform the user of invalid input lengths as determined by the optional lower and upper limit parameters
-     */
+     * Provides a message that can be used to inform the user of invalid input lengths as determined by the optional lower and upper limit parameters     */
     export const getInvalidLengthMessage = (lowerLimitIncl?: number, upperLimitIncl?: number): string => {
         if (!lowerLimitIncl && !upperLimitIncl) {
             // Could technically also correspond to a 'maxSafeCharacterLength' overflow (see 'isValidLength'),

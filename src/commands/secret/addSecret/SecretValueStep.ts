@@ -3,9 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, validationUtils } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
-import { validateUtils } from "../../../utils/validateUtils";
 import { type ISecretContext } from "../ISecretContext";
 
 export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
@@ -25,8 +24,8 @@ export class SecretValueStep extends AzureWizardPromptStep<ISecretContext> {
     private validateInput(val: string | undefined): string | undefined {
         val ??= '';
 
-        if (!validateUtils.isValidLength(val)) {
-            return validateUtils.getInvalidLengthMessage();
+        if (!validationUtils.hasValidCharLength(val)) {
+            return validationUtils.getInvalidCharLengthMessage();
         }
 
         return undefined;
