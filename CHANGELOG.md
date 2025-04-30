@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.8.2 - 2025-04-29
+## 0.8.2 - 2025-04-30
 ### Changed
 * [[867](https://github.com/microsoft/vscode-azurecontainerapps/pull/867)] [[868](https://github.com/microsoft/vscode-azurecontainerapps/pull/868)] Upgrade to latest version of the activity log (v2).  Now shows live progress on each activity child with timers.
 
