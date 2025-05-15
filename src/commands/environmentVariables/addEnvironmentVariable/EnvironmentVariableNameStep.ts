@@ -34,10 +34,9 @@ export class EnvironmentVariableNameStep<T extends EnvironmentVariableAddContext
             return validationUtils.getInvalidCharLengthMessage();
         }
 
-        // This is the same regex used by the portal with similar warning verbiage
         const rule = /^[-._a-zA-z][-._a-zA-Z0-9]*$/;
         if (!rule.test(value)) {
-            return localize('invalidEnvName', 'Name contains invalid character. Regex used for validation is "{0}".', String(rule));
+            return localize('invalidEnvName', 'The name may contain letters, numbers, periods, underscores, or hyphens. The name may not start with a number.');
         }
 
         // Check for duplicates
