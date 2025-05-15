@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { type Ingress } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
@@ -21,7 +22,8 @@ export class DisableIngressStep<T extends IngressBaseContext> extends AzureWizar
         progress.report({ message: localize('disablingIngress', 'Disabling ingress...') });
 
         const containerApp = nonNullProp(context, 'containerApp');
-        context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: undefined } });
+        // Note: The ingress needs to be set to null to register a disable properly, but the SDK typing doesn't include this
+        context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: null as unknown as Ingress | undefined } });
     }
 
     public shouldExecute(context: IngressBaseContext): boolean {
