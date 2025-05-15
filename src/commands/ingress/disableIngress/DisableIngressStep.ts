@@ -22,7 +22,7 @@ export class DisableIngressStep<T extends IngressBaseContext> extends AzureWizar
         progress.report({ message: localize('disablingIngress', 'Disabling ingress...') });
 
         const containerApp = nonNullProp(context, 'containerApp');
-        // Note: The ingress needs to be set to null to register a disable properly, but the SDK typing doesn't include this
+        // Note: The ingress needs to be set to null to register a disable properly, but the SDK typing doesn't seem to allow this
         context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: null as unknown as Ingress | undefined } });
     }
 
