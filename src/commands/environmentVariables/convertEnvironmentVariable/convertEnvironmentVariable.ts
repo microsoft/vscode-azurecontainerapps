@@ -68,7 +68,7 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
     await wizard.prompt();
     wizardContext.activityTitle = localize('convertEnvironmentVariableActivityTitle', 'Convert environment variable "{0}" to use secret "{1}" (draft)', wizardContext.environmentVariable.name, wizardContext.newSecretName);
     editDraftStepOutputs.treeItemLabel = localize('convertLabel', 'Edit environment variable to use secret "{0}" (draft)', wizardContext.newSecretName);
-    editDraftStepOutputs.outputLogSuccessMessage = localize('convertSuccess', 'Successfully edited environment variable "{0}" to use secret "{1}" (draft)', wizardContext.environmentVariable.name, wizardContext.newSecretName);
-    editDraftStepOutputs.outputLogFailMessage = localize('convertFail', 'Failed to edit environment variable "{0}" to use secret "{1}" (draft)', wizardContext.environmentVariable.name, wizardContext.newSecretName);
+    editDraftStepOutputs.outputLogSuccessMessage = localize('convertSuccess', 'Successfully edited environment variable "{0}" to use secret "{1}" (draft).', wizardContext.environmentVariable.name, wizardContext.newSecretName);
+    editDraftStepOutputs.outputLogFailMessage = localize('convertFail', 'Failed to edit environment variable "{0}" to use secret "{1}" (draft).', wizardContext.environmentVariable.name, wizardContext.newSecretName);
     await wizard.execute();
 }

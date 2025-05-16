@@ -60,7 +60,7 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
     await wizard.prompt();
     wizardContext.activityTitle = localize('editNameActivityTitle', 'Edit environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
     editDraftStepOutputs.treeItemLabel = localize('editNameLabel', 'Edit environment variable name to "{0}" (draft)', wizardContext.newEnvironmentVariableName);
-    editDraftStepOutputs.outputLogSuccessMessage = localize('editNameSuccess', 'Successfully edited environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
-    editDraftStepOutputs.outputLogFailMessage = localize('editNameFail', 'Failed to edit environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
+    editDraftStepOutputs.outputLogSuccessMessage = localize('editNameSuccess', 'Successfully edited environment variable name to "{0}" in "{1}" (draft).', wizardContext.newEnvironmentVariableName, parentResource.name);
+    editDraftStepOutputs.outputLogFailMessage = localize('editNameFail', 'Failed to edit environment variable name to "{0}" in "{1}" (draft).', wizardContext.newEnvironmentVariableName, parentResource.name);
     await wizard.execute();
 }

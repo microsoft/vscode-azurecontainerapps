@@ -57,7 +57,7 @@ export async function editEnvironmentVariableValue(context: IActionContext, node
 
     await wizard.prompt();
     editDraftStepOutputs.treeItemLabel = title;
-    editDraftStepOutputs.outputLogSuccessMessage = localize('editValueSuccess', 'Successfully edited environment variable value for "{0}" (draft)', wizardContext.environmentVariable.name);
-    editDraftStepOutputs.outputLogSuccessMessage = localize('editValueFail', 'Failed to edit environment variable value for "{0}" (draft)', wizardContext.environmentVariable.name);
+    editDraftStepOutputs.outputLogSuccessMessage = localize('editValueSuccess', 'Successfully edited environment variable value for "{0}" (draft).', wizardContext.environmentVariable.name);
+    editDraftStepOutputs.outputLogFailMessage = localize('editValueFail', 'Failed to edit environment variable value for "{0}" (draft).', wizardContext.environmentVariable.name);
     await wizard.execute();
 }
