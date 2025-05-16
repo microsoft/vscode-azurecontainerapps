@@ -16,7 +16,7 @@ import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEdita
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { EnvironmentVariableNameStep } from "../addEnvironmentVariable/EnvironmentVariableNameStep";
 import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
-import { EnvironmentVariableEditDraftStep } from "./EnvironmentVariableEditDraftStep";
+import { EnvironmentVariableEditDraftStep, type EnvironmentVariableEditOutputs } from "./EnvironmentVariableEditDraftStep";
 
 export async function editEnvironmentVariableName(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
     const item: EnvironmentVariableItem = node ?? await pickEnvironmentVariable(context, { autoSelectDraft: true });
@@ -42,19 +42,25 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
+    // Create an output reference to pass to the draft step so we can edit after prompting
+    const editDraftStepOutputs: EnvironmentVariableEditOutputs = {};
+
     const wizard: AzureWizard<EnvironmentVariableEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editEnvironmentVariableTitle', 'Edit environment variable name in "{0}" (draft)', parentResource.name),
+        title: localize('editNameTitle', 'Edit environment variable name in "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvironmentVariableNameStep(item),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableEditContext>(),
-            new EnvironmentVariableEditDraftStep(item),
+            new EnvironmentVariableEditDraftStep(item, editDraftStepOutputs),
         ],
     });
 
     await wizard.prompt();
-    wizardContext.activityTitle = localize('editEnvironmentVariableActivityTitle', 'Edit environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
+    wizardContext.activityTitle = localize('editNameActivityTitle', 'Edit environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
+    editDraftStepOutputs.treeItemLabel = localize('editNameLabel', 'Edit environment variable name to "{0}" (draft)', wizardContext.newEnvironmentVariableName);
+    editDraftStepOutputs.outputLogSuccessMessage = localize('editNameSuccess', 'Successfully edited environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
+    editDraftStepOutputs.outputLogFailMessage = localize('editNameFail', 'Failed to edit environment variable name to "{0}" in "{1}" (draft)', wizardContext.newEnvironmentVariableName, parentResource.name);
     await wizard.execute();
 }

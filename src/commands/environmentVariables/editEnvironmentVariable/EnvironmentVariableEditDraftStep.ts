@@ -13,12 +13,18 @@ import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUp
 import { EnvironmentVariableType } from "../addEnvironmentVariable/EnvironmentVariableTypeListStep";
 import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
 
+export type EnvironmentVariableEditOutputs = {
+    treeItemLabel?: string;
+    outputLogSuccessMessage?: string;
+    outputLogFailMessage?: string;
+};
+
 const environmentVariableEditDraftStepContext: string = 'environmentVariableEditDraftStepItem';
 
 export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 960;
 
-    constructor(baseItem: ContainerAppItem | RevisionsItemModel) {
+    constructor(baseItem: ContainerAppItem | RevisionsItemModel, readonly outputs: EnvironmentVariableEditOutputs = {}) {
         super(baseItem);
     }
 
@@ -55,19 +61,19 @@ export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditC
     public createSuccessOutput(): ExecuteActivityOutput {
         return {
             item: new ActivityChildItem({
-                label: localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
+                label: this.outputs.treeItemLabel ?? localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
                 contextValue: createContextValue([environmentVariableEditDraftStepContext, activitySuccessContext]),
                 activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon
             }),
-            message: localize('editEnvironmentVariableSuccess', 'Edited environment variable (draft)')
+            message: this.outputs.outputLogSuccessMessage ?? localize('editEnvironmentVariableSuccess', 'Edited environment variable (draft)')
         };
     }
 
     public createProgressOutput(): ExecuteActivityOutput {
         return {
             item: new ActivityChildItem({
-                label: localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
+                label: this.outputs.treeItemLabel ?? localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
                 contextValue: createContextValue([environmentVariableEditDraftStepContext, activityProgressContext]),
                 activityType: ActivityChildType.Progress,
                 iconPath: activityProgressIcon
@@ -78,14 +84,14 @@ export class EnvironmentVariableEditDraftStep<T extends EnvironmentVariableEditC
     public createFailOutput(): ExecuteActivityOutput {
         return {
             item: new ActivityChildItem({
-                label: localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
+                label: this.outputs.treeItemLabel ?? localize('editEnvironmentVariable', 'Edit environment variable (draft)'),
                 contextValue: createContextValue([environmentVariableEditDraftStepContext, activityFailContext]),
                 initialCollapsibleState: TreeItemCollapsibleState.Expanded,
                 activityType: ActivityChildType.Fail,
                 iconPath: activityFailIcon,
                 isParent: true,
             }),
-            message: localize('editEnvironmentVariableFail', 'Failed to edit environment variable (draft).')
+            message: this.outputs.outputLogFailMessage ?? localize('editEnvironmentVariableFail', 'Failed to edit environment variable (draft).')
         };
     }
 }
