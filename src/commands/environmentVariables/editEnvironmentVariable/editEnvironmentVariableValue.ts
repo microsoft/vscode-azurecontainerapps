@@ -14,7 +14,7 @@ import { isTemplateItemEditable, TemplateItemNotEditableError } from "../../../u
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { EnvironmentVariableTypeListStep } from "../addEnvironmentVariable/EnvironmentVariableTypeListStep";
 import { type EnvironmentVariableEditContext } from "./EnvironmentVariableEditContext";
-import { EnvironmentVariableEditDraftStep } from "./EnvironmentVariableEditDraftStep";
+import { EnvironmentVariableEditDraftStep, type EnvironmentVariableEditOutputs } from "./EnvironmentVariableEditDraftStep";
 
 export async function editEnvironmentVariableValue(context: IActionContext, node?: EnvironmentVariableItem): Promise<void> {
     const item: EnvironmentVariableItem = node ?? await pickEnvironmentVariable(context, { autoSelectDraft: true });
@@ -39,18 +39,25 @@ export async function editEnvironmentVariableValue(context: IActionContext, node
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
+    // Create an output reference to pass to the draft step so we can edit after prompting
+    const editDraftStepOutputs: EnvironmentVariableEditOutputs = {};
+
+    const title: string = localize('editEnvironmentVariableValue', 'Edit environment variable value for "{0}" (draft)', wizardContext.environmentVariable.name);
     const wizard: AzureWizard<EnvironmentVariableEditContext> = new AzureWizard(wizardContext, {
-        title: localize('editEnvironmentVariableValue', 'Edit environment variable value for "{0}" (draft)', wizardContext.environmentVariable.name),
+        title,
         promptSteps: [
             new EnvironmentVariableTypeListStep(),
             new RevisionDraftDeployPromptStep(),
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableEditContext>(),
-            new EnvironmentVariableEditDraftStep(item),
+            new EnvironmentVariableEditDraftStep(item, editDraftStepOutputs),
         ],
     });
 
     await wizard.prompt();
+    editDraftStepOutputs.treeItemLabel = title;
+    editDraftStepOutputs.outputLogSuccessMessage = localize('editValueSuccess', 'Successfully edited environment variable value for "{0}" (draft).', wizardContext.environmentVariable.name);
+    editDraftStepOutputs.outputLogFailMessage = localize('editValueFail', 'Failed to edit environment variable value for "{0}" (draft).', wizardContext.environmentVariable.name);
     await wizard.execute();
 }
