@@ -5,7 +5,6 @@
 
 // This file is just for testing purporses and will be removed
 
-
 import { ViewColumn } from "vscode";
 import { ConfirmationViewController } from "./confirmationViewController";
 

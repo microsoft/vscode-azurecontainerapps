@@ -17,8 +17,6 @@ type Item = {
     value: string;
 }
 
-
-
 function createNewSetWithItem(set: Set<SelectionItemId>, first: boolean): Set<SelectionItemId> {
     if (first) {
         const firstElement = Array.from(set)[0];
@@ -134,7 +132,7 @@ export const ConfirmationView = (): JSX.Element => {
                 <h1>
                     Confirm + Deploy
                 </h1>
-                <div>Please select any inputs you would like to change. Otherwise click "Confirm" to deploy.</div>
+                <div>Please select an input you would like to change. Otherwise click "Confirm" to deploy.</div>
             </div>
 
             <div className='viewContent'>
