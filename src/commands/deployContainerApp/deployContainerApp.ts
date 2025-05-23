@@ -13,6 +13,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { OpenConfirmationViewStep } from "../../webviews/OpenConfirmationViewStep";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
 import { editContainerCommandName } from "../editContainer/editContainer";
@@ -62,12 +63,12 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
+            new OpenConfirmationViewStep(() => wizard.confirmationViewProperties)
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),
             new ContainerAppUpdateStep(),
         ],
-        showLoadingPrompt: true
     });
 
     await wizard.prompt();

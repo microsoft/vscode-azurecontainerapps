@@ -27,6 +27,14 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
         return !context.dockerHubNamespace;
     }
 
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string; } {
+        return {
+            name: localize('dockerHubNamespace', 'Docker Hub Namespace'),
+            value: context.dockerHubNamespace ?? '',
+            valueInContext: 'dockerHubNamespace'
+        };
+    }
+
     private async validateInput(name: string | undefined): Promise<string | undefined> {
         name = name ? name.trim() : '';
 

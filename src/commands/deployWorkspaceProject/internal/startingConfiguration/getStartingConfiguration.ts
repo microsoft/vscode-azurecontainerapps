@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import { AzureWizard } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, type AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../../../constants";
 import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
 import { DockerfileItemStep } from "../../../image/imageSource/buildImageInAzure/DockerfileItemStep";
@@ -19,7 +19,7 @@ import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentH
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
 
-    const promptSteps = [
+    const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new RootFolderStep(),
         new DockerfileItemStep(),
         new DwpManagedEnvironmentListStep(),

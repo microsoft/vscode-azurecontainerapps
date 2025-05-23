@@ -3,6 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
+import { SharedState } from '../OpenConfirmationViewStep';
 import { WebviewBaseController } from './WebviewBaseController';
 /**
  * WebviewController is a class that manages a vscode.WebviewPanel and provides
@@ -58,7 +59,9 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                         this._panel.dispose();
                         break;
                     case 'confirm':
+                        SharedState.itemsToClear = message.itemsToClear ?? 0;
                         this._panel.dispose();
+                        break;
                 }
             }
         );

@@ -8,7 +8,7 @@ import { Sparkle16Filled } from '@fluentui/react-icons';
 import * as React from 'react';
 import { useContext, useState, type JSX } from 'react';
 import './confirmationView.scss';
-import { type ConfirmationViewControllerType } from './confirmationViewController';
+import { type ConfirmationViewControllerType } from './ConfirmationViewController';
 import { useConfiguration } from './webview-client/useConfiguration';
 import { WebviewContext } from './WebviewContext';
 
@@ -87,7 +87,10 @@ export const ConfirmationView = (): JSX.Element => {
                 return <TableCellLayout className='value'> {item.value}
                     <Tooltip content='Ask Copilot' relationship='label'>
                         <Button
-                            appearance='transparent' icon={<Sparkle16Filled />} onClick={() => { void copilotClicked(item.name, item.value); }}>
+                            appearance='transparent' icon={<Sparkle16Filled />} onClick={(event) => {
+                                event.stopPropagation();
+                                copilotClicked(item.name, item.value);
+                            }}>
                         </Button>
                     </Tooltip>
                 </TableCellLayout >;
