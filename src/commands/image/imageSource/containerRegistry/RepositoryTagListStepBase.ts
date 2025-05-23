@@ -26,5 +26,13 @@ export abstract class RepositoryTagListStepBase extends AzureWizardPromptStep<Co
         return !context.tag;
     }
 
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('tag', 'Tag'),
+            value: context.tag ?? '',
+            valueInContext: 'tag'
+        };
+    }
+
     public abstract getPicks(context: ContainerRegistryImageSourceContext, picksCache: QuickPicksCache | undefined): Promise<QuickPickItem[]>
 }

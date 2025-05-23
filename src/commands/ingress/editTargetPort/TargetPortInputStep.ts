@@ -29,6 +29,14 @@ export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {
         return !context.targetPort;
     }
 
+    public confirmationViewProperty(context: IngressContext): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('targetPort', 'Target Port'),
+            value: String(context.targetPort),
+            valueInContext: 'targetPort'
+        };
+    }
+
     private validateInput(val: string): string | undefined {
         const num = Number(val);
         if (isNaN(num)) {

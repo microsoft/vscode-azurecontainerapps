@@ -24,4 +24,12 @@ export class IngressVisibilityStep<T extends IngressContext> extends AzureWizard
     public shouldPrompt(context: T): boolean {
         return context.enableIngress === true && context.enableExternal === undefined;
     }
+
+    public confirmationViewProperty(context: T): { name: string; value: string; valueInContext: string } {
+        return {
+            name: localize('ingressVisibility', 'Ingress Visibility'),
+            value: context.enableExternal ? 'External' : 'Internal',
+            valueInContext: 'enableExternal'
+        }
+    }
 }

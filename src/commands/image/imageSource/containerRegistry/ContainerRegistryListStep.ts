@@ -18,6 +18,7 @@ import { RegistryImageInputStep } from "./RegistryImageInputStep";
 
 export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
     public hideStepCount: boolean = true;
+    public pickLabel: string | undefined;
 
     public async prompt(context: ContainerRegistryImageSourceContext): Promise<void> {
         const placeHolder: string = localize('selectTag', 'Select a container registry');
@@ -31,11 +32,21 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         // there is a chance that this will fail in vscode.dev due to CORS, but we should still allow the user to enter a custom registry
         picks.push({ label: localize('otherPublicRegistry', 'Other public registry'), data: undefined });
 
-        context.registryDomain = (await context.ui.showQuickPick(picks, { placeHolder })).data;
+        const pick: IAzureQuickPickItem<SupportedRegistries | undefined> | undefined = await context.ui.showQuickPick(picks, { placeHolder });
+        this.pickLabel = pick?.label;
+        context.registryDomain = pick.data;
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return !context.image && !context.registryDomain;
+    }
+
+    public confirmationViewProperty(_context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string; } {
+        return {
+            name: localize('containerRegistryDomain', 'Container Registry Domain'),
+            value: this.pickLabel ?? '',
+            valueInContext: 'registryDomain'
+        };
     }
 
     public async getSubWizard(context: ContainerRegistryImageSourceContext): Promise<IWizardOptions<ContainerRegistryImageSourceContext> | undefined> {
