@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, AzureWizardPromptStep, nonNullValue, type RelevantFileMetadata } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, AzureWizardPromptStep, nonNullValue, type FileActivityAttributes } from '@microsoft/vscode-azext-utils';
 import { dockerFilePick, dockerfileGlobPattern } from "../../../../constants";
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
@@ -19,15 +19,14 @@ export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> e
     }
 
     private async addDockerfileContextToCommandMetadata(context: T, dockerfilePath: string): Promise<void> {
-        const relevantFile: RelevantFileMetadata = {
+        const dockerfile: FileActivityAttributes = {
             name: 'Dockerfile',
             description: 'A Dockerfile from the user\'s VS Code workspace that was used to build the app',
             path: dockerfilePath,
             content: await AzExtFsExtra.readFile(dockerfilePath),
         };
 
-        context.commandMetadata ??= {};
-        context.commandMetadata.relevantFiles ??= [];
-        context.commandMetadata.relevantFiles.push(relevantFile);
+        context.activityAttributes.files ??= [];
+        context.activityAttributes.files.push(dockerfile);
     }
 }
