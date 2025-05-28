@@ -26,6 +26,7 @@ export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> e
             content: await AzExtFsExtra.readFile(dockerfilePath),
         };
 
+        context.activityAttributes ??= {};
         context.activityAttributes.files ??= [];
         context.activityAttributes.files.push(dockerfile);
     }
