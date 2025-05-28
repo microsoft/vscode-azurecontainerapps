@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { ActivityChildItem, ActivityChildType, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type ActivityChildItemOptions, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type ActivityChildItemOptions, type ExecuteActivityOutput, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, window, type MessageItem } from "vscode";
 import { acrDomain } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -107,6 +107,15 @@ export class BuildImageStep<T extends BuildImageInAzureImageSourceContext> exten
                 });
                 return Promise.resolve([buildImageLogsItem]);
             };
+
+            const logs: LogActivityAttributes = {
+                name: `Acr Build Logs - ${this.acrBuildError.name}`,
+                description: 'The ACR build logs returned from a failed run of building a project based on the workspace project and Dockerfile.',
+                content: this.acrBuildError.content,
+            };
+
+            context.activityAttributes.logs ??= [];
+            context.activityAttributes.logs.push(logs);
         }
 
         return {

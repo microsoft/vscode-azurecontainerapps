@@ -97,6 +97,13 @@ export async function deployWorkspaceProjectInternal(
         ...startingConfiguration
     };
 
+    wizardContext.activityAttributes ??= {};
+    wizardContext.activityAttributes.troubleshooting = [
+        `When ACR build errors are present, try to inspect the Dockerfile and ACR build logs.
+        When an error is related to the Dockerfile, offer to make direct fixes for the user.
+        If the Dockerfile and dependencies mismatch, focus on updating the Dockerfile to reflect the project, not the other way around.`
+    ];
+
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new SharedResourcesNameStep(),

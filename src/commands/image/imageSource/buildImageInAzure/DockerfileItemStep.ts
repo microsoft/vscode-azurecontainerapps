@@ -3,17 +3,30 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, nonNullValue } from '@microsoft/vscode-azext-utils';
+import { AzExtFsExtra, AzureWizardPromptStep, nonNullValue, type FileActivityAttributes } from '@microsoft/vscode-azext-utils';
 import { dockerFilePick, dockerfileGlobPattern } from "../../../../constants";
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
-export class DockerfileItemStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
-    public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
+export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardPromptStep<T> {
+    public async prompt(context: T): Promise<void> {
         context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
+        await this.addDockerfileContextToCommandMetadata(context, context.dockerfilePath);
     }
 
-    public shouldPrompt(context: BuildImageInAzureImageSourceContext): boolean {
+    public shouldPrompt(context: T): boolean {
         return !context.dockerfilePath;
+    }
+
+    private async addDockerfileContextToCommandMetadata(context: T, dockerfilePath: string): Promise<void> {
+        const dockerfile: FileActivityAttributes = {
+            name: 'Dockerfile',
+            description: 'A Dockerfile from the user\'s VS Code workspace that was used to build the app',
+            path: dockerfilePath,
+            content: await AzExtFsExtra.readFile(dockerfilePath),
+        };
+
+        context.activityAttributes.files ??= [];
+        context.activityAttributes.files.push(dockerfile);
     }
 }
