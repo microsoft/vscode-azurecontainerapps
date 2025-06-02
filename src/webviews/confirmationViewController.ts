@@ -7,15 +7,17 @@ import { ViewColumn } from "vscode";
 import { ext } from "../extensionVariables";
 import { WebviewController } from "./extension-server/WebviewController";
 
-export type ConfirmationViewControllerType = Array<{
-    name: string;
-    value: string;
-    valueInContext: string;
-}>
+export type ConfirmationViewControllerType = {
+    title: string;
+    items: Array<{
+        name: string;
+        value: string;
+        valueInContext: string;
+    }>;
+}
 
 export class ConfirmationViewController extends WebviewController<ConfirmationViewControllerType> {
     constructor(viewConfig: ConfirmationViewControllerType) {
-        const title = 'Confirmation View';
-        super(ext.context, title, 'confirmationView', viewConfig, ViewColumn.Active)
+        super(ext.context, viewConfig.title, 'confirmationView', viewConfig, ViewColumn.Active);
     }
 }

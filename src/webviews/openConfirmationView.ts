@@ -6,11 +6,14 @@
 // This file is just for testing purporses and will be removed
 
 import { ViewColumn } from "vscode";
-import { ConfirmationViewController } from "./confirmationViewController";
+import { ConfirmationViewController } from "./ConfirmationViewController";
 
 // Todo: remove. This is a placeholder function to simulate the view being opened
 export function openConfirmationView() {
-    const confirmationView = new ConfirmationViewController(viewConfig);
+    const confirmationView = new ConfirmationViewController({
+        items: viewConfig,
+        title: 'Confirm + Deploy'
+    });
     confirmationView.revealToForeground(ViewColumn.Active);
 }
 
