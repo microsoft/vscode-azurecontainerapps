@@ -38,4 +38,12 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegis
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {
         return context.image === undefined;
     }
+
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string; } {
+        return {
+            name: localize('containerImage', 'Container Image'),
+            value: context.image ?? '',
+            valueInContext: 'image'
+        };
+    }
 }
