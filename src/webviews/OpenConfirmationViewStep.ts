@@ -3,12 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GoBackError, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, GoBackError, UserCancelledError, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ViewColumn } from "vscode";
 import { ConfirmationViewController } from "./ConfirmationViewController";
 
 export const SharedState = {
-    itemsToClear: 0
+    itemsToClear: 0,
+    cancelled: false
 };
 
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
@@ -28,6 +29,10 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                 try {
                     if (SharedState.itemsToClear > 0) {
                         throw new GoBackError(SharedState.itemsToClear);
+                    }
+
+                    if (SharedState.cancelled) {
+                        throw new UserCancelledError('openConfirmationViewStep');
                     }
                 } catch (error) {
                     reject(error);
