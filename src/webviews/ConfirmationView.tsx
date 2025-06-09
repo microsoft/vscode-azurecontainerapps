@@ -10,7 +10,7 @@ import { useContext, useState, type JSX } from 'react';
 import './confirmationView.scss';
 import { type ConfirmationViewControllerType } from './ConfirmationViewController';
 import { useConfiguration } from './useConfiguration';
-import { WebviewCommands } from './webviewConstants';
+import { ConfirmationViewCommands } from './webviewConstants';
 import { WebviewContext } from './WebviewContext';
 
 type Item = {
@@ -39,7 +39,7 @@ export const ConfirmationView = (): JSX.Element => {
         const selectedItemIndex = Number(Array.from(selectedItems)[0]);
         const itemsToClear = configuration.items.length - selectedItemIndex;
         vscodeApi.postMessage({
-            command: WebviewCommands.Confirm,
+            command: ConfirmationViewCommands.Confirm,
             itemsToClear: itemsToClear
         });
         console.log(itemsToClear);
@@ -47,7 +47,7 @@ export const ConfirmationView = (): JSX.Element => {
 
     const copilotClicked = (name: string, value: string) => {
         vscodeApi.postMessage({
-            command: WebviewCommands.Copilot,
+            command: ConfirmationViewCommands.Copilot,
             itemsToClear: 0,
             name: name,
             value: value
@@ -56,7 +56,7 @@ export const ConfirmationView = (): JSX.Element => {
 
     const cancelClicked = () => {
         vscodeApi.postMessage({
-            command: WebviewCommands.Cancel
+            command: ConfirmationViewCommands.Cancel
         })
     };
 

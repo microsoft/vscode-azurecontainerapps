@@ -817,7 +817,8 @@
         "test": "node ./dist/test/runTest.js",
         "watch:views": "webpack serve --mode development --config ./webpack.config.views.js",
         "webpack": "npm run build && gulp webpack-dev",
-        "webpack-prod": "npm run build && gulp webpack-prod",
+        "webpack-prod": "npm run build && gulp webpack-prod && npm run webpack-prod-wv ",
+        "webpack-prod-wv": "webpack --mode production --config ./webpack.config.views.js",
         "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
         "prepare": "husky install"
     },

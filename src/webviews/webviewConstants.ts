@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-export const enum WebviewCommands {
+export const enum ConfirmationViewCommands {
     Confirm = 'confirm',
     Cancel = 'cancel',
     Copilot = 'copilot',
