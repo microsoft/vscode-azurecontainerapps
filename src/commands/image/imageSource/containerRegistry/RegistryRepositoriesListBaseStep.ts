@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
 import { loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -31,11 +31,11 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
         return !context.repositoryName;
     }
 
-    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string } {
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): ConfirmationViewProperty {
         return {
             name: localize('repository', 'Repository'),
             value: context.repositoryName ?? '',
-            valueInContext: 'repositoryName'
+            contextPropertyName: 'repositoryName'
         }
     }
 

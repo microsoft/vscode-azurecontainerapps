@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../IngressContext";
 import { getDefaultPort } from "./getDefaultPort";
@@ -29,11 +29,11 @@ export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {
         return !context.targetPort;
     }
 
-    public confirmationViewProperty(context: IngressContext): { name: string; value: string; valueInContext: string } {
+    public confirmationViewProperty(context: IngressContext): ConfirmationViewProperty {
         return {
             name: localize('targetPort', 'Target Port'),
             value: String(context.targetPort),
-            valueInContext: 'targetPort'
+            contextPropertyName: 'targetPort'
         };
     }
 
