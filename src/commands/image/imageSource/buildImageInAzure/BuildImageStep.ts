@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { ActivityChildItem, ActivityChildType, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type ActivityChildItemOptions, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type ActivityChildItemOptions, type ExecuteActivityOutput, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
 import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, window, type MessageItem } from "vscode";
 import { acrDomain } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -107,6 +107,15 @@ export class BuildImageStep<T extends BuildImageInAzureImageSourceContext> exten
                 });
                 return Promise.resolve([buildImageLogsItem]);
             };
+
+            const logs: LogActivityAttributes = {
+                name: `ACR Build Logs - ${this.acrBuildError.name}`,
+                description: 'Build logs are provided by Azure Container Registry (ACR) after a failed build. The build was attempted on an uploaded project using a Dockerfile, which ACR followed to try and build the image.',
+                content: this.acrBuildError.content,
+            };
+
+            context.activityAttributes.logs ??= [];
+            context.activityAttributes.logs.push(logs);
         }
 
         return {

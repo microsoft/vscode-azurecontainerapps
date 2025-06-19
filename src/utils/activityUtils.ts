@@ -13,6 +13,7 @@ export async function createActivityContext(options?: { withChildren?: boolean }
         registerActivity: async (activity) => (ext.rgApiV2 as AzureResourcesExtensionApiWithActivity).activity.registerActivity(activity),
         suppressNotification: await settingUtils.getSetting('suppressActivityNotifications', undefined, 'azureResourceGroups'),
         activityChildren: options?.withChildren ? [] : undefined,
+        activityAttributes: {},
     };
 }
 
