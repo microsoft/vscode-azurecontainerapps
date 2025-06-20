@@ -114,6 +114,7 @@ export class BuildImageStep<T extends BuildImageInAzureImageSourceContext> exten
                 content: this.acrBuildError.content,
             };
 
+            context.activityAttributes ??= {};
             context.activityAttributes.logs ??= [];
             context.activityAttributes.logs.push(logs);
         }

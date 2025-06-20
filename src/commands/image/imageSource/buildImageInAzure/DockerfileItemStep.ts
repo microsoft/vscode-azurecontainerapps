@@ -30,4 +30,6 @@ export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> e
         context.activityAttributes.files ??= [];
         context.activityAttributes.files.push(dockerfile);
     }
+
+    // Todo: Add goback logic for removing dockerfile from attributes
 }
