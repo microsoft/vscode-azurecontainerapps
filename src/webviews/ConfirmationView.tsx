@@ -9,7 +9,8 @@ import * as React from 'react';
 import { useContext, useState, type JSX } from 'react';
 import './confirmationView.scss';
 import { type ConfirmationViewControllerType } from './ConfirmationViewController';
-import { useConfiguration } from './webview-client/useConfiguration';
+import { useConfiguration } from './useConfiguration';
+import { ConfirmationViewCommands } from './webviewConstants';
 import { WebviewContext } from './WebviewContext';
 
 type Item = {
@@ -28,16 +29,17 @@ function createNewSetWithItem(set: Set<SelectionItemId>, first: boolean): Set<Se
 }
 
 export const ConfirmationView = (): JSX.Element => {
-    const [title, setTitle] = useState('Confirm');
+    const [buttonName, setName] = useState('Confirm');
     const [selectedItems, setSelectedItems] = useState<Set<SelectionItemId>>(new Set());
     const { vscodeApi } = useContext(WebviewContext);
 
     const configuration = useConfiguration<ConfirmationViewControllerType>();
+    const title = configuration.title;
     const confirmClicked = () => {
         const selectedItemIndex = Number(Array.from(selectedItems)[0]);
-        const itemsToClear = configuration.length - selectedItemIndex;
+        const itemsToClear = configuration.items.length - selectedItemIndex;
         vscodeApi.postMessage({
-            command: 'confirm',
+            command: ConfirmationViewCommands.Confirm,
             itemsToClear: itemsToClear
         });
         console.log(itemsToClear);
@@ -45,7 +47,7 @@ export const ConfirmationView = (): JSX.Element => {
 
     const copilotClicked = (name: string, value: string) => {
         vscodeApi.postMessage({
-            command: 'copilot',
+            command: ConfirmationViewCommands.Copilot,
             itemsToClear: 0,
             name: name,
             value: value
@@ -54,12 +56,12 @@ export const ConfirmationView = (): JSX.Element => {
 
     const cancelClicked = () => {
         vscodeApi.postMessage({
-            command: 'cancel'
+            command: ConfirmationViewCommands.Cancel
         })
     };
 
     const onChange = (_ev: React.MouseEvent<HTMLInputElement, MouseEvent>, data: OnSelectionChangeData) => {
-        setTitle(data.selectedItems.size > 0 ? 'Edit' : 'Confirm');
+        setName(data.selectedItems.size > 0 ? 'Edit' : 'Confirm');
         setSelectedItems(data.selectedItems.size > 0 ? createNewSetWithItem(data.selectedItems, false) : createNewSetWithItem(data.selectedItems, true));
     }
 
@@ -111,7 +113,7 @@ export const ConfirmationView = (): JSX.Element => {
     }> = ({ context, selectedItems, onSelectionChange },) => {
         return (
             <DataGrid
-                items={context}
+                items={context.items}
                 columns={columns}
                 onSelectionChange={onSelectionChange}
                 selectionMode='multiselect'
@@ -139,7 +141,7 @@ export const ConfirmationView = (): JSX.Element => {
         <div className='confirmationView'>
             <div className='header'>
                 <h1>
-                    Confirm + Deploy
+                    {title}
                 </h1>
                 <div>Please select an input you would like to change. Otherwise click "Confirm" to deploy.</div>
             </div>
@@ -148,7 +150,7 @@ export const ConfirmationView = (): JSX.Element => {
                 <DataGridComponent context={configuration} selectedItems={selectedItems} onSelectionChange={onChange} />
                 <div className='buttonsView'>
                     <Button appearance='primary' onClick={confirmClicked} size='large' >
-                        {title}
+                        {buttonName}
                     </Button>
                     <Button appearance='secondary' onClick={cancelClicked} size='large' >
                         Cancel

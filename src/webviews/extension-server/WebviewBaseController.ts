@@ -5,6 +5,7 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */
 import { randomBytes } from 'crypto';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { ext } from "../../extensionVariables";
 
@@ -46,9 +47,9 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
         const isProduction = ext.context.extensionMode === vscode.ExtensionMode.Production;
         const nonce = randomBytes(16).toString('base64');
 
-        const filename = 'views.js'; // todo
-
-        const srcUri = `${DEV_SERVER_HOST}/${filename}`
+        const filename = 'views.js';
+        const uri = (...parts: string[]) => webview?.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, ...parts))).toString(true);
+        const srcUri = isProduction ? uri(filename) : `${DEV_SERVER_HOST}/${filename}`;
 
         const csp = (
             isProduction
