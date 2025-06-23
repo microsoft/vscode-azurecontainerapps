@@ -57,13 +57,15 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     }
     wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
+    const title: string = localize('deployContainerAppTitle', 'Deploy image to container app')
+
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
-        title: localize('deployContainerAppTitle', 'Deploy image to container app'),
+        title: title,
         promptSteps: [
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
-            new OpenConfirmationViewStep(() => wizard.confirmationViewProperties)
+            new OpenConfirmationViewStep(title, () => wizard.confirmationViewProperties)
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),
