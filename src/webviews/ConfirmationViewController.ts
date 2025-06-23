@@ -10,6 +10,7 @@ import { WebviewController } from "./extension-server/WebviewController";
 
 export type ConfirmationViewControllerType = {
     title: string;
+    description: string;
     items: Array<ConfirmationViewProperty>
 }
 

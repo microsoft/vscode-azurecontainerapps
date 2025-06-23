@@ -35,6 +35,7 @@ export const ConfirmationView = (): JSX.Element => {
 
     const configuration = useConfiguration<ConfirmationViewControllerType>();
     const title = configuration.title;
+    const description = configuration.description;
     const confirmClicked = () => {
         const selectedItemIndex = Number(Array.from(selectedItems)[0]);
         const itemsToClear = configuration.items.length - selectedItemIndex;
@@ -140,10 +141,8 @@ export const ConfirmationView = (): JSX.Element => {
     return (
         <div className='confirmationView'>
             <div className='header'>
-                <h1>
-                    {title}
-                </h1>
-                <div>Please select an input you would like to change. Otherwise click "Confirm" to deploy.</div>
+                <h1>{title}</h1>
+                <div>{description}</div>
             </div>
 
             <div className='viewContent'>
