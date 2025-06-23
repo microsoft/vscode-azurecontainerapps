@@ -84,7 +84,13 @@ export const ConfirmationView = (): JSX.Element => {
         createTableColumn<Item>({
             columnId: 'value',
             renderCell: (item: Item) => {
-                return <TableCellLayout className='value'> {item.value}
+                return <TableCellLayout className='value'> {item.value}</TableCellLayout >;
+            },
+        }),
+        createTableColumn<Item>({
+            columnId: 'copilot',
+            renderCell: (item: Item) => {
+                return <TableCellLayout className='copilot'>
                     <Tooltip content='Ask Copilot' relationship='label'>
                         <Button
                             appearance='transparent' icon={<Sparkle16Filled />} onClick={(event) => {
