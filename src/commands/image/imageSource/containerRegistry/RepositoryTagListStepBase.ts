@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
 import { loadMoreQp, type QuickPicksCache } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -26,11 +26,11 @@ export abstract class RepositoryTagListStepBase extends AzureWizardPromptStep<Co
         return !context.tag;
     }
 
-    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string } {
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): ConfirmationViewProperty {
         return {
             name: localize('tag', 'Tag'),
             value: context.tag ?? '',
-            valueInContext: 'tag'
+            contextPropertyName: 'tag'
         };
     }
 

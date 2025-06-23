@@ -3,17 +3,14 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { ViewColumn } from "vscode";
 import { ext } from "../extensionVariables";
 import { WebviewController } from "./extension-server/WebviewController";
 
 export type ConfirmationViewControllerType = {
     title: string;
-    items: Array<{
-        name: string;
-        value: string;
-        valueInContext: string;
-    }>;
+    items: Array<ConfirmationViewProperty>
 }
 
 export class ConfirmationViewController extends WebviewController<ConfirmationViewControllerType> {

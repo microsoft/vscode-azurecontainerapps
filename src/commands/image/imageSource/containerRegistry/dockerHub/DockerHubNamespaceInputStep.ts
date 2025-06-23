@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { dockerHubDomain } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
@@ -27,11 +27,11 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
         return !context.dockerHubNamespace;
     }
 
-    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string; } {
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): ConfirmationViewProperty {
         return {
             name: localize('dockerHubNamespace', 'Docker Hub Namespace'),
             value: context.dockerHubNamespace ?? '',
-            valueInContext: 'dockerHubNamespace'
+            contextPropertyName: 'dockerHubNamespace'
         };
     }
 

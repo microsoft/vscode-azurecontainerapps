@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GoBackError, UserCancelledError, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, GoBackError, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ViewColumn } from "vscode";
 import { ConfirmationViewController } from "./ConfirmationViewController";
 
@@ -13,10 +13,10 @@ export const SharedState = {
 };
 
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
-    private readonly viewConfig: () => { name: string, value: string, valueInContext: string; }[];
+    private readonly viewConfig: () => ConfirmationViewProperty[];
     private readonly title: string;
 
-    public constructor(title: string, viewConfig: () => { name: string, value: string, valueInContext: string; }[]) {
+    public constructor(title: string, viewConfig: () => ConfirmationViewProperty[]) {
         super();
         this.title = title;
         this.viewConfig = viewConfig;

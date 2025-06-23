@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { acrDomain, quickStartImageName } from "../../../../constants";
 import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
@@ -39,11 +39,11 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegis
         return context.image === undefined;
     }
 
-    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string; } {
+    public confirmationViewProperty(context: ContainerRegistryImageSourceContext): ConfirmationViewProperty {
         return {
             name: localize('containerImage', 'Container Image'),
             value: context.image ?? '',
-            valueInContext: 'image'
+            contextPropertyName: 'image'
         };
     }
 }

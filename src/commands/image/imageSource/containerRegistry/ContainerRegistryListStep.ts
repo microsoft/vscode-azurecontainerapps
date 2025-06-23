@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { UIKind, env } from "vscode";
 import { acrDomain, dockerHubDomain, type SupportedRegistries } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -41,11 +41,11 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         return !context.image && !context.registryDomain;
     }
 
-    public confirmationViewProperty(_context: ContainerRegistryImageSourceContext): { name: string; value: string; valueInContext: string; } {
+    public confirmationViewProperty(_context: ContainerRegistryImageSourceContext): ConfirmationViewProperty {
         return {
             name: localize('containerRegistryDomain', 'Container Registry Domain'),
             value: this.pickLabel ?? '',
-            valueInContext: 'registryDomain'
+            contextPropertyName: 'registryDomain'
         };
     }
 

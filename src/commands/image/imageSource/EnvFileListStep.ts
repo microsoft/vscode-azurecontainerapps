@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
@@ -73,11 +73,11 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
     }
 
-    public confirmationViewProperty(context: T): { name: string; value: string; valueInContext: string; } {
+    public confirmationViewProperty(context: T): ConfirmationViewProperty {
         return {
             name: localize('environmentVariables', 'Environment Variables'),
             value: context.envPath ?? localize('useExisting', 'Use existing configuration'),
-            valueInContext: 'envPath'
+            contextPropertyName: 'envPath'
         };
     }
 

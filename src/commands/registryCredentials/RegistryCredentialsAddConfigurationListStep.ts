@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { prependOrInsertAfterLastInfoChild } from "../../utils/activityUtils";
@@ -73,11 +73,11 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         return this.requiresRegistryConfiguration && !context.newRegistryCredentialType;
     }
 
-    public confirmationViewProperty(_context: RegistryCredentialsContext): { name: string; value: string; valueInContext: string } {
+    public confirmationViewProperty(_context: RegistryCredentialsContext): ConfirmationViewProperty {
         return {
             name: localize('connectionMethod', 'Connection method'),
             value: this.pickLabel ?? '',
-            valueInContext: 'newRegistryCredentialType',
+            contextPropertyName: 'newRegistryCredentialType',
         };
     }
 
