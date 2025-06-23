@@ -6,8 +6,8 @@
 import * as React from 'react';
 import { createContext } from 'react';
 import { type WebviewApi } from 'vscode-webview';
-import { type Channel } from './channel/Channel';
-import { WebviewChannel } from './channel/WebviewChannel';
+import { type Channel } from './Channel/Channel';
+import { WebviewChannel } from './Channel/WebviewChannel';
 
 export type WebviewState = object;
 

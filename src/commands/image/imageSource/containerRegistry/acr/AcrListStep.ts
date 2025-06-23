@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, ResourceGroupListStep, getResourceGroupFromId, parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, noMatchingResources, noMatchingResourcesQp } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
@@ -36,6 +36,8 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         super();
     }
 
+    private pickLabel: string;
+
     public async prompt(context: T): Promise<void> {
         const placeHolder: string = localize('selectRegistry', 'Select an Azure Container Registry');
 
@@ -53,11 +55,20 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             result = pick.data;
         } while (result === noMatchingResources);
 
+        this.pickLabel = pick.label;
         context.registry = result;
     }
 
     public shouldPrompt(context: T): boolean {
         return !context.registry && !context.newRegistryName;
+    }
+
+    public confirmationViewProperty(_context: T): ConfirmationViewProperty {
+        return {
+            name: localize('registry', 'Registry'),
+            value: this.pickLabel ?? '',
+            contextPropertyName: 'registry'
+        }
     }
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {

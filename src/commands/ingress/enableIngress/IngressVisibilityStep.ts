@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { IngressConstants } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../IngressContext";
@@ -23,5 +23,13 @@ export class IngressVisibilityStep<T extends IngressContext> extends AzureWizard
 
     public shouldPrompt(context: T): boolean {
         return context.enableIngress === true && context.enableExternal === undefined;
+    }
+
+    public confirmationViewProperty(context: T): ConfirmationViewProperty {
+        return {
+            name: localize('ingressVisibility', 'Ingress Visibility'),
+            value: context.enableExternal ? 'External' : 'Internal',
+            contextPropertyName: 'enableExternal'
+        }
     }
 }
