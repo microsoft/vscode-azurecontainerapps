@@ -16,18 +16,21 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
     private readonly viewConfig: () => ConfirmationViewProperty[];
     private readonly title: string;
     private readonly description: string;
+    private readonly commandName: string;
 
-    public constructor(title: string, description: string, viewConfig: () => ConfirmationViewProperty[]) {
+    public constructor(title: string, description: string, commandName: string, viewConfig: () => ConfirmationViewProperty[]) {
         super();
         this.title = title;
         this.description = description;
         this.viewConfig = viewConfig;
+        this.commandName = commandName;
     }
 
     public async prompt(_context: T): Promise<void> {
         const confirmationView = new ConfirmationViewController({
             title: this.title,
             description: this.description,
+            commandName: this.commandName,
             items: this.viewConfig()
         });
 

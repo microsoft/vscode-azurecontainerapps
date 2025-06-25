@@ -53,7 +53,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
         this._panel.iconPath = this._iconPath;
 
         this._panel.webview.onDidReceiveMessage(
-            async (message: { command: string, itemsToClear?: number, name?: string, value?: string }) => {
+            async (message: { command: string, itemsToClear?: number, name?: string, value?: string, commandName?: string }) => {
                 // Todo: these are placeholders. May change to using trpc for the webview
                 switch (message.command) {
                     case 'cancel':
@@ -68,7 +68,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                         await vscode.commands.executeCommand("workbench.action.chat.newChat");
                         await vscode.commands.executeCommand("workbench.action.chat.open", {
                             mode: 'agent',
-                            query: createCopilotPromptForConfirmationViewButton(nonNullValue(message.name), nonNullValue(message.value), 'deploy container app to Azure', 'Azure Container Apps'),
+                            query: createCopilotPromptForConfirmationViewButton(nonNullValue(message.name), nonNullValue(message.value), nonNullValue(message.commandName), 'Azure Container Apps'),
                         });
 
                         break;
@@ -111,5 +111,5 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
 }
 
 export function createCopilotPromptForConfirmationViewButton(name: string, value: string, command: string, extension: string): string {
-    return `Help explain what ${name}: ${value} means in the context of the ${command} command using the ${extension} extension for VSCode.`
+    return `Help explain what ${name}: ${value} means in the context of the "${command}" command using the ${extension} extension for VSCode.`
 }
