@@ -5,6 +5,7 @@
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
+import { openConfirmationView } from '../webviews/openConfirmationView';
 import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
 import { createContainerApp } from './createContainerApp/createContainerApp';
@@ -87,6 +88,8 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployContainerApp', deployContainerApp);
+    // Todo: remove. just a placeholder for testing purposes
+    registerCommandWithTreeNodeUnwrapping('containerApps.openConfirmationView', openConfirmationView)
 
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);
