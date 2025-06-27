@@ -111,6 +111,6 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
     }
 }
 
-export function createCopilotPromptForConfirmationViewButton(name: string, value: string, command: string, extension: string): string {
-    return `Help explain what ${name}: ${value} means in the context of the "${command}" command using the ${extension} extension for VSCode.`
+export function createCopilotPromptForConfirmationViewButton(name: string, value: string, commandName: string, extension: string): string {
+    return `Help explain what ${name}: ${value} means in the context of the "${commandName}" command using the ${extension} extension for VSCode.`
 }
