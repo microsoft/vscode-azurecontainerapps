@@ -11,7 +11,7 @@ import { WebviewController } from "./extension-server/WebviewController";
 export type ConfirmationViewControllerType = {
     title: string;
     description: string;
-    commandName: string;
+    commandName: string; // only used to help construct the copilot prompt
     items: Array<ConfirmationViewProperty>
 }
 

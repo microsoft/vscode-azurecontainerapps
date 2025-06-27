@@ -65,6 +65,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                         this._panel.dispose();
                         break;
                     case 'copilot':
+                        await vscode.commands.executeCommand("workbench.action.chat.open");
                         await vscode.commands.executeCommand("workbench.action.chat.newChat");
                         await vscode.commands.executeCommand("workbench.action.chat.open", {
                             mode: 'agent',
