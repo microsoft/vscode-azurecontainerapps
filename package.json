@@ -269,11 +269,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.openConfirmationView",
-                "title": "%containerApps.openConfirmationView%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.startStreamingLogs",
                 "title": "%containerApps.startStreamingLogs%",
                 "category": "Azure Container Apps"
@@ -437,11 +432,6 @@
                     "command": "containerApps.openConsoleInPortal",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "9@3"
-                },
-                {
-                    "command": "containerApps.openConfirmationView",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
-                    "group": "2@3"
                 },
                 {
                     "command": "containerApps.createRevisionDraft",

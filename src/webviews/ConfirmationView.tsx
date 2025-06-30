@@ -36,6 +36,7 @@ export const ConfirmationView = (): JSX.Element => {
     const configuration = useConfiguration<ConfirmationViewControllerType>();
     const title = configuration.title;
     const description = configuration.description;
+    const commandName = configuration.commandName;
     const confirmClicked = () => {
         const selectedItemIndex = Number(Array.from(selectedItems)[0]);
         const itemsToClear = configuration.items.length - selectedItemIndex;
@@ -49,9 +50,9 @@ export const ConfirmationView = (): JSX.Element => {
     const copilotClicked = (name: string, value: string) => {
         vscodeApi.postMessage({
             command: ConfirmationViewCommands.Copilot,
-            itemsToClear: 0,
             name: name,
-            value: value
+            value: value,
+            commandName: commandName
         });
     }
 
