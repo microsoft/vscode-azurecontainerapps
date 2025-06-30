@@ -2,7 +2,9 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
+import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { SharedState } from '../OpenConfirmationViewStep';
 import { WebviewBaseController } from './WebviewBaseController';
 /**
  * WebviewController is a class that manages a vscode.WebviewPanel and provides
@@ -51,14 +53,26 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
         this._panel.iconPath = this._iconPath;
 
         this._panel.webview.onDidReceiveMessage(
-            async (message: { command: string, itemsToClear?: number }) => {
+            async (message: { command: string, itemsToClear?: number, name?: string, value?: string, commandName?: string }) => {
                 // Todo: these are placeholders. May change to using trpc for the webview
                 switch (message.command) {
                     case 'cancel':
+                        SharedState.cancelled = true;
                         this._panel.dispose();
                         break;
                     case 'confirm':
+                        SharedState.itemsToClear = message.itemsToClear ?? 0;
                         this._panel.dispose();
+                        break;
+                    case 'copilot':
+                        await vscode.commands.executeCommand("workbench.action.chat.open");
+                        await vscode.commands.executeCommand("workbench.action.chat.newChat");
+                        await vscode.commands.executeCommand("workbench.action.chat.open", {
+                            mode: 'agent',
+                            query: createCopilotPromptForConfirmationViewButton(nonNullValue(message.name), nonNullValue(message.value), nonNullValue(message.commandName), 'Azure Container Apps'),
+                        });
+
+                        break;
                 }
             }
         );
@@ -95,4 +109,8 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
     public revealToForeground(viewColumn: vscode.ViewColumn = vscode.ViewColumn.One): void {
         this._panel.reveal(viewColumn, true);
     }
+}
+
+export function createCopilotPromptForConfirmationViewButton(name: string, value: string, commandName: string, extension: string): string {
+    return `Help explain what ${name}: ${value} means in the context of the "${commandName}" command using the ${extension} extension for VSCode.`
 }

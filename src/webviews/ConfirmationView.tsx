@@ -35,6 +35,8 @@ export const ConfirmationView = (): JSX.Element => {
 
     const configuration = useConfiguration<ConfirmationViewControllerType>();
     const title = configuration.title;
+    const description = configuration.description;
+    const commandName = configuration.commandName;
     const confirmClicked = () => {
         const selectedItemIndex = Number(Array.from(selectedItems)[0]);
         const itemsToClear = configuration.items.length - selectedItemIndex;
@@ -48,9 +50,9 @@ export const ConfirmationView = (): JSX.Element => {
     const copilotClicked = (name: string, value: string) => {
         vscodeApi.postMessage({
             command: ConfirmationViewCommands.Copilot,
-            itemsToClear: 0,
             name: name,
-            value: value
+            value: value,
+            commandName: commandName
         });
     }
 
@@ -86,10 +88,19 @@ export const ConfirmationView = (): JSX.Element => {
         createTableColumn<Item>({
             columnId: 'value',
             renderCell: (item: Item) => {
-                return <TableCellLayout className='value'> {item.value}
+                return <TableCellLayout className='value'> {item.value}</TableCellLayout >;
+            },
+        }),
+        createTableColumn<Item>({
+            columnId: 'copilot',
+            renderCell: (item: Item) => {
+                return <TableCellLayout className='copilot'>
                     <Tooltip content='Ask Copilot' relationship='label'>
                         <Button
-                            appearance='transparent' icon={<Sparkle16Filled />} onClick={() => { void copilotClicked(item.name, item.value); }}>
+                            appearance='transparent' icon={<Sparkle16Filled />} onClick={(event) => {
+                                event.stopPropagation();
+                                copilotClicked(item.name, item.value);
+                            }}>
                         </Button>
                     </Tooltip>
                 </TableCellLayout >;
@@ -131,10 +142,8 @@ export const ConfirmationView = (): JSX.Element => {
     return (
         <div className='confirmationView'>
             <div className='header'>
-                <h1>
-                    {title}
-                </h1>
-                <div>Please select an input you would like to change. Otherwise click "Confirm" to deploy.</div>
+                <h1>{title}</h1>
+                <div>{description}</div>
             </div>
 
             <div className='viewContent'>
