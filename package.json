@@ -864,7 +864,6 @@
         "@microsoft/vscode-azext-github": "^1.0.2",
         "@microsoft/vscode-azext-utils": "^3.1.4",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
-        "@swc/core-linux-x64-gnu": "^1.12.9",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",
         "deep-eql": "^4.1.3",
@@ -881,6 +880,9 @@
         "uuid": "^10.0.0",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
+    },
+    "optionalDependencies": {
+        "@swc/core-linux-x64-gnu": "^1.12.9"
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
