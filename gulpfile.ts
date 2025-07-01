@@ -29,7 +29,7 @@ async function cleanReadme(): Promise<void> {
 
 async function installSwcCore(): Promise<void> {
     if (process.platform === 'linux') {
-        child_process.execSync('npm install @swc/core-linux-x64-gnue --save-dev')
+        child_process.execSync('npm install @swc/core-linux-x64-gnu --save-dev')
     }
 }
 
