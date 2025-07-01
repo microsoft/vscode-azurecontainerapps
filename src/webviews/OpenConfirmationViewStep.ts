@@ -9,7 +9,7 @@ import { ConfirmationViewController } from "./ConfirmationViewController";
 
 export const SharedState = {
     itemsToClear: 0,
-    cancelled: false
+    cancelled: true
 };
 
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {

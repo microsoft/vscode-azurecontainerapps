@@ -57,10 +57,10 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                 // Todo: these are placeholders. May change to using trpc for the webview
                 switch (message.command) {
                     case 'cancel':
-                        SharedState.cancelled = true;
                         this._panel.dispose();
                         break;
                     case 'confirm':
+                        SharedState.cancelled = false;
                         SharedState.itemsToClear = message.itemsToClear ?? 0;
                         this._panel.dispose();
                         break;
