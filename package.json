@@ -810,7 +810,8 @@
         "webpack-prod": "npm run build && gulp webpack-prod && npm run webpack-prod-wv ",
         "webpack-prod-wv": "webpack --mode production --config ./webpack.config.views.js",
         "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "preinstall": "gulp installSwcCore"
     },
     "devDependencies": {
         "@azure/ms-rest-azure-env": "^2.0.0",
@@ -880,9 +881,6 @@
         "uuid": "^10.0.0",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
-    },
-    "optionalDependencies": {
-        "@swc/core-linux-x64-gnu": "^1.12.9"
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
