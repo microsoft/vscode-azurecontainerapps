@@ -8,6 +8,8 @@ import { dockerFilePick, dockerfileGlobPattern } from "../../../../constants";
 import { selectWorkspaceFile } from "../../../../utils/workspaceUtils";
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
+const dockerfileAttributeName: string = 'Dockerfile';
+
 export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardPromptStep<T> {
     public async prompt(context: T): Promise<void> {
         context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
@@ -20,7 +22,7 @@ export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> e
 
     private async addDockerfileAttributes(context: T, dockerfilePath: string): Promise<void> {
         const dockerfile: FileActivityAttributes = {
-            name: 'Dockerfile',
+            name: dockerfileAttributeName,
             description: 'A Dockerfile from the user\'s VS Code workspace that was used to build the project.',
             path: dockerfilePath,
             content: await AzExtFsExtra.readFile(dockerfilePath),
@@ -31,5 +33,13 @@ export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> e
         context.activityAttributes.files.push(dockerfile);
     }
 
-    // Todo: Add goback logic for removing dockerfile from attributes
+    public undo(context: T): void {
+        const files: FileActivityAttributes[] = context.activityAttributes?.files ?? [];
+        if (files[files.length - 1]) {
+            const lastFile = files[files.length - 1];
+            if (lastFile.name === dockerfileAttributeName) {
+                context.activityAttributes?.files?.pop();
+            }
+        }
+    }
 }
