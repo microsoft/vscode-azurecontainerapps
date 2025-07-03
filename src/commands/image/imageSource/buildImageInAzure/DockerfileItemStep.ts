@@ -11,6 +11,12 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 const dockerfileAttributeName: string = 'Dockerfile';
 
 export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardPromptStep<T> {
+    public async configureBeforePrompt(context: T): Promise<void> {
+        if (context.dockerfilePath) {
+            await this.addDockerfileAttributes(context, context.dockerfilePath);
+        }
+    }
+
     public async prompt(context: T): Promise<void> {
         context.dockerfilePath = nonNullValue(await selectWorkspaceFile(context, dockerFilePick, { filters: {}, autoSelectIfOne: true }, `**/${dockerfileGlobPattern}`));
         await this.addDockerfileAttributes(context, context.dockerfilePath);
@@ -21,6 +27,11 @@ export class DockerfileItemStep<T extends BuildImageInAzureImageSourceContext> e
     }
 
     private async addDockerfileAttributes(context: T, dockerfilePath: string): Promise<void> {
+        if (context.activityAttributes?.files?.some(f => f.path === dockerfilePath)) {
+            // If this dockerfile already exists in activity attributes, don't add it again
+            return;
+        }
+
         const dockerfile: FileActivityAttributes = {
             name: dockerfileAttributeName,
             description: 'A Dockerfile from the user\'s VS Code workspace that was used to build the project.',
