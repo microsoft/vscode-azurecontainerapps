@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as deepEqual from "deep-eql";
 import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -13,22 +13,37 @@ import { localize } from "../../utils/localize";
 import { updateContainerApp } from "../updateContainerApp";
 import { type ContainerEditContext } from "./ContainerEditContext";
 
-export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extends AzureWizardExecuteStep<T> {
+export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 580;
+    public stepName: string = 'registryAndSecretsUpdateStep';
+    protected getOutputLogSuccess = (context: T) => localize('updateRegistryCredentialsSuccess', 'Successfully updated new registry credentials and secrets for container app "{0}".', context.containerApp?.name);
+    protected getOutputLogFail = (context: T) => localize('updateRegistryCredentialsFail', 'Failed to update new registry credentials and secrets for container app "{0}".', context.containerApp?.name);
+    protected getTreeItemLabel = () => localize('updateRegistryCredentialsLabel', 'Update registry credentials and secrets');
 
-    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    private skipRegistryCredentialUpdate: boolean;
+
+    public async configureBeforeExecute(context: T): Promise<void> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         // If the credentials have not changed, we can skip this update
         if (
+            context.secrets && context.registryCredentials &&
             this.areSecretsDeepEqual(containerAppEnvelope.configuration.secrets, context.secrets) &&
             this.areRegistriesDeepEqual(containerAppEnvelope.configuration.registries, context.registryCredentials)
         ) {
+            this.skipRegistryCredentialUpdate = true;
             context.telemetry.properties.skippedRegistryCredentialUpdate = 'true';
-            return;
+            ext.outputChannel.appendLog(localize('skippingCredentialUpdate', 'Verified existing registry credentials are up to date.'));
+        } else {
+            this.skipRegistryCredentialUpdate = false;
+            context.telemetry.properties.skippedRegistryCredentialUpdate = 'false';
         }
-        context.telemetry.properties.skippedRegistryCredentialUpdate = 'false';
+    }
+
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
+        const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
         progress.report({ message: localize('configuringSecrets', 'Configuring registry secrets...') });
         containerAppEnvelope.configuration.secrets = context.secrets;
@@ -39,7 +54,7 @@ export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extend
     }
 
     public shouldExecute(context: T): boolean {
-        return !!context.registryCredentials && !!context.secrets;
+        return !!context.registryCredentials && !!context.secrets && !this.skipRegistryCredentialUpdate;
     }
 
     private areSecretsDeepEqual(originalSecrets: Secret[] | undefined, newSecrets: Secret[] | undefined): boolean {

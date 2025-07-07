@@ -3,52 +3,30 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { type Ingress } from "@azure/arm-appcontainers";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
+import { updateContainerApp } from "../../updateContainerApp";
 import { type IngressBaseContext } from "../IngressContext";
-import { IngressUpdateStepBase } from "../IngressUpdateStepBase";
 import { isIngressEnabled } from "../isIngressEnabled";
 
-export class DisableIngressStep extends IngressUpdateStepBase<IngressBaseContext> {
+export class DisableIngressStep<T extends IngressBaseContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 750;
+    public stepName: string = 'disableIngressStep';
+    protected getOutputLogSuccess = (context: T) => localize('disableSucceeded', 'Successfully disabled ingress for container app "{0}".', context.containerApp?.name);
+    protected getOutputLogFail = (context: T) => localize('disableFailed', 'Failed to disable ingress for container app "{0}".', context.containerApp?.name);
+    protected getTreeItemLabel = (context: T) => localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name);
 
     public async execute(context: IngressBaseContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('disablingIngress', 'Disabling ingress...') });
+
         const containerApp = nonNullProp(context, 'containerApp');
-
-        const working: string = localize('disablingIngress', 'Disabling ingress...');
-        const workCompleted: string = localize('disableCompleted', 'Disabled ingress for container app "{0}"', containerApp.name)
-
-        await this.updateIngressSettings(context, progress, { ingress: null, working, workCompleted });
+        // Note: The ingress needs to be set to null to register a disable properly, but the SDK typing doesn't seem to allow this
+        context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: null as unknown as Ingress | undefined } });
     }
 
     public shouldExecute(context: IngressBaseContext): boolean {
         return context.enableIngress === false && isIngressEnabled(context);
-    }
-
-    public static createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['disableIngressStepSuccessItem', activitySuccessContext]),
-                label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('disableSuccessMessage', 'Disabled ingress for container app "{0}".', context.containerApp?.name)
-        };
-    }
-
-    public createSuccessOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        return DisableIngressStep.createSuccessOutput(context);
-    }
-
-    public createFailOutput(context: IngressBaseContext): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['disableIngressStepFailItem', activitySuccessContext]),
-                label: localize('disableIngressLabel', 'Disable ingress for container app "{0}"', context.containerApp?.name),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('disableFailMessage', 'Failed to disable ingress for container app "{0}".', context.containerApp?.name)
-        };
     }
 }

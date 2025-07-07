@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, AzureWizardExecuteStep, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
 import { localize } from "../../../../../utils/localize";
@@ -11,6 +11,7 @@ import { type DeploymentConfigurationSettings } from "../../../settings/DeployWo
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 
 export const verifyingFilePaths: string = localize('verifyingFilePaths', `Verifying file paths...`);
+const filePathVerifyStepContext: string = 'filePathsVerifyStepItem';
 
 export abstract class FilePathsVerifyStep extends AzureWizardExecuteStep<WorkspaceDeploymentConfigurationContext> {
     abstract deploymentSettingskey: keyof DeploymentConfigurationSettings;
@@ -53,21 +54,25 @@ export abstract class FilePathsVerifyStep extends AzureWizardExecuteStep<Workspa
         }
 
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['filePathVerifyStepSuccessItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label: this.fileType.charAt(0).toUpperCase() + this.fileType.slice(1) + ' ' + localize('path', 'path'),
+                contextValue: createContextValue([filePathVerifyStepContext, activitySuccessContext]),
+                activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon
             }),
             message: localize('verifyPathSuccess', 'Successfully verified {0} path "{1}".', this.fileType, this.configPath)
         };
     }
 
+    // Todo: Verify if we need a progress output here
+
     public createFailOutput(_: WorkspaceDeploymentConfigurationContext): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['filePathVerifyStepFailItem', activityFailContext]),
+            item: new ActivityChildItem({
                 label: this.fileType.charAt(0).toUpperCase() + this.fileType.slice(1) + ' ' + localize('path', 'path'),
-                iconPath: activityFailIcon
+                contextValue: createContextValue([filePathVerifyStepContext, activityFailContext]),
+                activityType: ActivityChildType.Fail,
+                iconPath: activityFailIcon,
             }),
             message: localize('verifyPathFail', 'Failed to verify {0} path "{1}".', this.fileType, this.configPath)
         };

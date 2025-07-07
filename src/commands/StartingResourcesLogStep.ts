@@ -7,7 +7,7 @@ import { type ContainerApp, type ManagedEnvironment } from "@azure/arm-appcontai
 import { type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, type ILocationWizardContext } from "@microsoft/vscode-azext-azureutils";
-import { activityInfoIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, type AzExtTreeItem, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { activityInfoContext } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../utils/localize";
@@ -18,6 +18,8 @@ type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityConte
     registry?: Registry;
     containerApp?: ContainerApp
 };
+
+const startingResourcesContext: string = 'startingResourcesLogStepItem';
 
 /**
  * Use to display primary Azure resource data to the output and activity log
@@ -49,17 +51,16 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
     }
 
     protected async logStartingResources(context: T): Promise<void> {
-        const activityChildren: AzExtTreeItem[] = [];
-
         // Resource group
         if (context.resourceGroup) {
             context.telemetry.properties.existingResourceGroup = 'true';
-            activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingResourceGroupInfoItem', activityInfoContext]),
-                    label: localize('useResourceGroup', 'Using resource group "{0}"', context.resourceGroup.name),
+            prependOrInsertAfterLastInfoChild(context,
+                new ActivityChildItem({
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    label: localize('useResourceGroup', 'Use resource group "{0}"', context.resourceGroup.name),
+                    activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon
-                })
+                }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', context.resourceGroup.name));
         } else {
@@ -69,12 +70,13 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         // Managed environment
         if (context.managedEnvironment) {
             context.telemetry.properties.existingEnvironment = 'true';
-            activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingManagedEnvironmentInfoItem', activityInfoContext]),
-                    label: localize('useManagedEnvironment', 'Using managed environment "{0}"', context.managedEnvironment.name),
+            prependOrInsertAfterLastInfoChild(context,
+                new ActivityChildItem({
+                    label: localize('useManagedEnvironment', 'Use managed environment "{0}"', context.managedEnvironment.name),
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon
-                })
+                }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
         } else {
@@ -84,12 +86,13 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         // Container registry
         if (context.registry) {
             context.telemetry.properties.existingRegistry = 'true';
-            activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingAcrInfoItem', activityInfoContext]),
+            prependOrInsertAfterLastInfoChild(context,
+                new ActivityChildItem({
                     label: localize('useAcr', 'Using container registry "{0}"', context.registry.name),
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon
-                })
+                }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', context.registry.name));
         } else {
@@ -99,12 +102,13 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
         // Container app
         if (context.containerApp) {
             context.telemetry.properties.existingContainerApp = 'true';
-            activityChildren.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['useExistingContainerAppInfoItem', activityInfoContext]),
-                    label: localize('useContainerApp', 'Using container app "{0}"', context.containerApp.name),
-                    iconPath: activityInfoIcon
-                })
+            prependOrInsertAfterLastInfoChild(context,
+                new ActivityChildItem({
+                    label: localize('useContainerApp', 'Use container app "{0}"', context.containerApp.name),
+                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: activityInfoIcon,
+                }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', context.containerApp.name));
         } else {
@@ -118,11 +122,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
             ext.outputChannel.appendLog(localize('usingLocation', 'Using location: "{0}".', location));
         } else {
             context.telemetry.properties.existingLocation = 'false';
-        }
-
-        if (context.activityChildren) {
-            // Always put these at the front (top) of the list
-            context.activityChildren.unshift(...activityChildren);
         }
 
         this.hasLogged = true;

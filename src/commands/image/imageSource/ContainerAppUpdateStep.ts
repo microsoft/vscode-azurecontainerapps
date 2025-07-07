@@ -4,22 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Container, type Ingress } from "@azure/arm-appcontainers";
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, nonNullProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
-import { DisableIngressStep } from "../../ingress/disableIngress/DisableIngressStep";
-import { enabledIngressDefaults, EnableIngressStep } from "../../ingress/enableIngress/EnableIngressStep";
+import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
 import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
-export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStep<T> {
+export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 680;
+    public stepName: string = 'containerAppUpdateStep';
+    protected getOutputLogSuccess = (context: T): string => localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name);
+    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name);
+    protected getTreeItemLabel = (context: T): string => localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('updatingContainerApp', 'Updating container app...') });
@@ -40,17 +43,6 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         } else {
             // If enableIngress is not set, just default to the previous settings if they exist
             ingress = containerAppEnvelope.configuration.ingress;
-        }
-
-        // Display ingress log outputs
-        if (ingress) {
-            const { item, message } = EnableIngressStep.createSuccessOutput({ ...context, enableExternal: ingress.external, targetPort: ingress.targetPort });
-            item && context.activityChildren?.push(item);
-            message && ext.outputChannel.appendLog(message);
-        } else {
-            const { item, message } = DisableIngressStep.createSuccessOutput({ ...context, enableIngress: false });
-            item && context.activityChildren?.push(item);
-            message && ext.outputChannel.appendLog(message);
         }
 
         containerAppEnvelope.configuration.ingress = ingress;
@@ -94,27 +86,5 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
 
     public shouldExecute(context: T): boolean {
         return !!context.containerApp;
-    }
-
-    public createSuccessOutput(context: T): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerAppUpdateStepSuccessItem', activitySuccessContext]),
-                label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name)
-        };
-    }
-
-    public createFailOutput(context: T): ExecuteActivityOutput {
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['containerAppUpdateStepFailItem', activityFailContext]),
-                label: localize('updateContainerAppLabel', 'Update container app "{0}"', context.containerApp?.name),
-                iconPath: activityFailIcon
-            }),
-            message: localize('updateContainerAppFail', 'Failed to update container app "{0}".', context.containerApp?.name)
-        };
     }
 }

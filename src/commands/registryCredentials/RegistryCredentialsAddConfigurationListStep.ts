@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { activitySuccessContext, activitySuccessIcon, AzureWizardPromptStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { acrDomain, type SupportedRegistries } from "../../constants";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
@@ -12,7 +12,6 @@ import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserC
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
 import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
-import { AcrPullVerifyStep } from "./identity/AcrPullVerifyStep";
 import { ManagedEnvironmentIdentityEnableStep } from "./identity/ManagedEnvironmentIdentityEnableStep";
 import { ManagedIdentityRegistryCredentialsAddConfigurationStep } from "./identity/ManagedIdentityRegistryCredentialsAddConfigurationStep";
 import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCredentialsAndSecretsConfigurationStep";
@@ -79,7 +78,6 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.SystemAssigned;
                 executeSteps.push(
                     new ManagedEnvironmentIdentityEnableStep(),
-                    new AcrPullVerifyStep(),
                     new AcrPullEnableStep(),
                     new ManagedIdentityRegistryCredentialsAddConfigurationStep(registryDomain),
                 );
@@ -94,14 +92,15 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 break;
             default:
                 context.telemetry.properties.newRegistryCredentialType = 'useExisting';
-                context.activityChildren?.push(
-                    new GenericTreeItem(undefined, {
-                        contextValue: createUniversallyUniqueContextValue(['registryCredentialsAddConfigurationListStepVerifyItem', activitySuccessContext]),
-                        label: localize('verifyRegistryCredentials', 'Verify existing registry credential'),
-                        iconPath: activitySuccessIcon
-                    })
+                prependOrInsertAfterLastInfoChild(context,
+                    new ActivityChildItem({
+                        label: localize('useExistingRegistryCredentials', 'Use existing registry credentials'),
+                        contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
+                        activityType: ActivityChildType.Info,
+                        iconPath: activityInfoIcon,
+                    }) as ActivityInfoChild,
                 );
-                ext.outputChannel.appendLog(localize('verifiedRegistryCredentials', 'Verified existing registry credentials.'));
+                ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));
         }
 
         executeSteps.push(new RegistryCredentialsAndSecretsConfigurationStep());

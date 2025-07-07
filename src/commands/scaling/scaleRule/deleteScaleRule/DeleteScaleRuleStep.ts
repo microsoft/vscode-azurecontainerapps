@@ -28,7 +28,7 @@ export class DeleteScaleRuleStep<T extends ScaleRuleContext> extends RevisionDra
         await this.updateRevisionDraftWithTemplate(context);
 
         const resourceName = getParentResourceFromItem(this.baseItem).name;
-        ext.outputChannel.appendLog(localize('deletedScaleRule', 'Deleted rule "{0}" to "{1}" (draft)', context.scaleRule?.name, resourceName));
+        ext.outputChannel.appendLog(localize('deletedScaleRule', 'Deleted rule "{0}" from "{1}" (draft)', context.scaleRule?.name, resourceName));
     }
 
     public shouldExecute(context: T): boolean {

@@ -15,7 +15,7 @@ import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraft
 import { SecretCreateStep } from "../../secret/addSecret/SecretCreateStep";
 import { SecretNameStep } from "../../secret/addSecret/SecretNameStep";
 import { EnvironmentVariableType } from "../addEnvironmentVariable/EnvironmentVariableTypeListStep";
-import { EnvironmentVariableEditDraftStep } from "../editEnvironmentVariable/EnvironmentVariableEditDraftStep";
+import { EnvironmentVariableEditDraftStep, type EnvironmentVariableEditOutputs } from "../editEnvironmentVariable/EnvironmentVariableEditDraftStep";
 import { type EnvironmentVariableConvertContext } from "./EnvironmentVariableConvertContext";
 
 /**
@@ -37,7 +37,7 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
     const wizardContext: EnvironmentVariableConvertContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,
@@ -49,6 +49,9 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
+    // Create an output reference to pass to the draft step so we can edit after prompting
+    const editDraftStepOutputs: EnvironmentVariableEditOutputs = {};
+
     const wizard: AzureWizard<EnvironmentVariableConvertContext> = new AzureWizard(wizardContext, {
         title: localize('convertEnvironmentVariableTitle', 'Convert environment variable "{0}" to use a secret (draft)', wizardContext.environmentVariable.name),
         promptSteps: [
@@ -58,11 +61,14 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariableConvertContext>(),
             new SecretCreateStep(),
-            new EnvironmentVariableEditDraftStep(item),
+            new EnvironmentVariableEditDraftStep(item, editDraftStepOutputs),
         ],
     });
 
     await wizard.prompt();
     wizardContext.activityTitle = localize('convertEnvironmentVariableActivityTitle', 'Convert environment variable "{0}" to use secret "{1}" (draft)', wizardContext.environmentVariable.name, wizardContext.newSecretName);
+    editDraftStepOutputs.treeItemLabel = localize('convertLabel', 'Edit environment variable to use secret "{0}" (draft)', wizardContext.newSecretName);
+    editDraftStepOutputs.outputLogSuccessMessage = localize('convertSuccess', 'Successfully edited environment variable "{0}" to use secret "{1}" (draft).', wizardContext.environmentVariable.name, wizardContext.newSecretName);
+    editDraftStepOutputs.outputLogFailMessage = localize('convertFail', 'Failed to edit environment variable "{0}" to use secret "{1}" (draft).', wizardContext.environmentVariable.name, wizardContext.newSecretName);
     await wizard.execute();
 }

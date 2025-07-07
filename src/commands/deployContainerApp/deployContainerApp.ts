@@ -44,7 +44,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
 
     const wizardContext: ContainerAppDeployContext = {
         ...subscriptionActionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription: item.subscription,
         containerApp: item.containerApp,
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),

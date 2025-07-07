@@ -1,5 +1,30 @@
 # Change Log
 
+## 0.8.3 - 2025-06-17
+### Changed
+* [[884](https://github.com/microsoft/vscode-azurecontainerapps/pull/884)] Upgrade dependencies for various activity log updates. Activities with activity children will now be accompanied alongside a live timer.
+* [[883](https://github.com/microsoft/vscode-azurecontainerapps/pull/883)] Improve output log messages when editing environment variables
+* [[882](https://github.com/microsoft/vscode-azurecontainerapps/pull/882)] Improve validation error message when naming environment variables
+
+### Fixed
+* [[880](https://github.com/microsoft/vscode-azurecontainerapps/pull/880)] Fix output log string when deleting a scale rule
+
+## 0.8.2 - 2025-04-30
+### Changed
+* [[867](https://github.com/microsoft/vscode-azurecontainerapps/pull/867)] [[868](https://github.com/microsoft/vscode-azurecontainerapps/pull/868)] Upgrade to latest version of the activity log (v2).  Now shows live progress on each activity child with timers.
+
+### Engineering
+* [[872](https://github.com/microsoft/vscode-azurecontainerapps/pull/872)] Upgrade utils package for more improvements to telemetry
+
+## 0.8.1 - 2025-03-10
+### Changed
+* [[855](https://github.com/microsoft/vscode-azurecontainerapps/pull/855)] Automatically collect subscription and resource information for telemetry. [How to disable telemetry reporting](https://code.visualstudio.com/docs/supporting/FAQ#_how-to-disable-telemetry-reporting)
+* [[854](https://github.com/microsoft/vscode-azurecontainerapps/pull/854)] Require VS Code version 1.95.0 (October 2024) or greater
+
+### Engineering
+* [[851](https://github.com/microsoft/vscode-azurecontainerapps/pull/851)] Update API type definition for `deployImage`
+
+
 ## 0.8.0 - 2025-01-22
 ### Summary of Major Changes
 1. Managed identity support has been added for connecting container apps to container registries. Assuming you have sufficient privileges, this is the preferred method for securing these resources.

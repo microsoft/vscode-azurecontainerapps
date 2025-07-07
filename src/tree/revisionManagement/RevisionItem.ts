@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, type Revision } from "@azure/arm-appcontainers";
-import { createContextValue, nonNullProp, type TreeItemIconPath } from "@microsoft/vscode-azext-utils";
+import { createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type IconPath, type TreeItem } from "vscode";
 import { revisionDraftFalseContextValue, revisionDraftTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
@@ -88,7 +88,7 @@ export class RevisionItem implements RevisionsItemModel {
         };
     }
 
-    private get iconPath(): TreeItemIconPath {
+    private get iconPath(): IconPath {
         let id: string;
         let colorId: string;
 

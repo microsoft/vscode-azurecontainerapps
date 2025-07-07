@@ -5,7 +5,7 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
@@ -14,8 +14,12 @@ import { type CreateAcrContext } from "./CreateAcrContext";
 // Made the base context partial here to help improve type compatability with some other command entrypoints
 type RegistryCreateContext = Partial<CreateAcrContext> & ISubscriptionActionContext;
 
-export class RegistryCreateStep<T extends RegistryCreateContext> extends AzureWizardExecuteStep<T> {
+export class RegistryCreateStep<T extends RegistryCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 350;
+    public stepName: string = 'registryCreateStep';
+    protected getOutputLogSuccess = (context: T) => localize('createRegistrySuccess', 'Created container registry "{0}".', context.newRegistryName);
+    protected getOutputLogFail = (context: T) => localize('createRegistryFail', 'Failed to create container registry "{0}".', context.newRegistryName);
+    protected getTreeItemLabel = (context: T) => localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('creatingRegistry', 'Creating registry...') });
@@ -33,27 +37,5 @@ export class RegistryCreateStep<T extends RegistryCreateContext> extends AzureWi
 
     public shouldExecute(context: T): boolean {
         return !context.registry;
-    }
-
-    public createSuccessOutput(context: T): ExecuteActivityOutput {
-        return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['registryCreateStepSuccessItem', activitySuccessContext]),
-                label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
-                iconPath: activitySuccessIcon
-            }),
-            message: localize('createRegistrySuccess', 'Created container registry "{0}".', context.newRegistryName)
-        };
-    }
-
-    public createFailOutput(context: T): ExecuteActivityOutput {
-        return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['registryCreateStepFailItem', activityFailContext]),
-                label: localize('createRegistryLabel', 'Create container registry "{0}"', context.newRegistryName),
-                iconPath: activityFailIcon
-            }),
-            message: localize('createRegistryFail', 'Failed to create container registry "{0}".', context.newRegistryName)
-        };
     }
 }

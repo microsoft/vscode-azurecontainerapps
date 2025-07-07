@@ -26,7 +26,7 @@ export async function deployImage(context: IActionContext & Partial<ContainerReg
     const wizardContext: DeployImageContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,

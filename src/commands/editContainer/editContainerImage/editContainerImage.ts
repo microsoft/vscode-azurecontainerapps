@@ -38,7 +38,7 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
     const wizardContext: ContainerEditUpdateContext = {
         ...context,
         ...subscriptionContext,
-        ...await createActivityContext(true),
+        ...await createActivityContext({ withChildren: true }),
         subscription,
         managedEnvironment: await getManagedEnvironmentFromContainerApp({ ...context, ...subscriptionContext }, containerApp),
         containerApp,

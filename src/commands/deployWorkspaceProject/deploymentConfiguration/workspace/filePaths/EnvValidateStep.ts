@@ -3,13 +3,15 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzExtFsExtra, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericTreeItem, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, AzExtFsExtra, AzureWizardExecuteStep, createContextValue, nonNullProp, nonNullValueAndProp, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { type Progress } from "vscode";
 import { localize } from "../../../../../utils/localize";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
 import { useRemoteConfigurationKey, useRemoteConfigurationLabel, useRemoteConfigurationOutputMessage } from "./EnvUseRemoteConfigurationPromptStep";
 import { verifyingFilePaths } from "./FilePathsVerifyStep";
+
+const envValidateStepContext: string = 'envValidateStepItem';
 
 export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 120;
@@ -62,20 +64,24 @@ export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> 
         }
 
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['envValidateStepSuccessItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label,
+                contextValue: createContextValue([envValidateStepContext, activitySuccessContext]),
+                activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon
             }),
             message,
         };
     }
 
+    // Todo: Verify if we need progress output
+
     public createFailOutput(): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['envValidateStepFailItem', activityFailContext]),
+            item: new ActivityChildItem({
                 label: localize('envPathLabel', 'Env path'),
+                contextValue: createContextValue([envValidateStepContext, activityFailContext]),
+                activityType: ActivityChildType.Fail,
                 iconPath: activityFailIcon
             }),
             message: localize('envPathFailMessage', 'Failed to verify {0} path "{1}".', '.env', this.configEnvPath),

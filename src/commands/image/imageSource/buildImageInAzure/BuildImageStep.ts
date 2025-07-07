@@ -4,19 +4,21 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { sendRequestWithTimeout, type AzExtPipelineResponse } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, GenericParentTreeItem, GenericTreeItem, activityFailContext, activityFailIcon, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type AzExtTreeItem, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
-import { ThemeColor, ThemeIcon, window, type MessageItem } from "vscode";
+import { ActivityChildItem, ActivityChildType, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullProp, nonNullValue, nonNullValueAndProp, type ActivityChildItemOptions, type ExecuteActivityOutput, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
+import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, window, type MessageItem } from "vscode";
 import { acrDomain } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
 import { openAcrBuildLogs, type AcrBuildResults } from "../../openAcrBuildLogs";
 import { type BuildImageInAzureImageSourceContext } from "./BuildImageInAzureImageSourceContext";
 import { buildImageInAzure } from "./buildImageInAzure";
 
-export class BuildImageStep extends AzureWizardExecuteStep<BuildImageInAzureImageSourceContext> {
+const buildImageStepContext: string = 'buildImageStepItem';
+
+export class BuildImageStep<T extends BuildImageInAzureImageSourceContext> extends AzureWizardExecuteStep<T> {
     public priority: number = 550;
     protected acrBuildError: AcrBuildResults;
 
-    public async execute(context: BuildImageInAzureImageSourceContext): Promise<void> {
+    public async execute(context: T): Promise<void> {
         context.registryDomain = acrDomain;
 
         const run = await buildImageInAzure(context);
@@ -51,43 +53,74 @@ export class BuildImageStep extends AzureWizardExecuteStep<BuildImageInAzureImag
         }
     }
 
-    public shouldExecute(context: BuildImageInAzureImageSourceContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.image;
     }
 
-    public createSuccessOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
+    public createSuccessOutput(context: T): ExecuteActivityOutput {
         return {
-            item: new GenericTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['buildImageStepSuccessItem', activitySuccessContext]),
+            item: new ActivityChildItem({
                 label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                contextValue: createContextValue([buildImageStepContext, activitySuccessContext]),
+                activityType: ActivityChildType.Success,
                 iconPath: activitySuccessIcon
             }),
             message: localize('buildImageSuccess', 'Finished building image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }
 
-    public createFailOutput(context: BuildImageInAzureImageSourceContext): ExecuteActivityOutput {
-        let loadMoreChildrenImpl: (() => Promise<AzExtTreeItem[]>) | undefined;
+    public createProgressOutput(context: T): ExecuteActivityOutput {
+        return {
+            item: new ActivityChildItem({
+                label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+                contextValue: createContextValue([buildImageStepContext, activityProgressContext]),
+                activityType: ActivityChildType.Progress,
+                iconPath: activityProgressIcon
+            })
+        };
+    }
+
+    public createFailOutput(context: T): ExecuteActivityOutput {
+        const baseTreeItemOptions: ActivityChildItemOptions = {
+            label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
+            contextValue: createContextValue([buildImageStepContext, activityFailContext]),
+            initialCollapsibleState: TreeItemCollapsibleState.Expanded,
+            activityType: ActivityChildType.Fail,
+            iconPath: activityFailIcon,
+            isParent: true,
+        };
+
+        let item: ActivityChildItem | undefined;
         if (this.acrBuildError) {
-            loadMoreChildrenImpl = () => {
-                const buildImageLogsItem = new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['logsLinkItem']),
+            item = new ActivityChildItem({ ...baseTreeItemOptions });
+            item.getChildren = () => {
+                const buildImageLogsItem = new ActivityChildItem({
                     label: localize('buildImageLogs', 'Click to view build image logs'),
+                    contextValue: 'logsLinkItem',
+                    activityType: ActivityChildType.Command,
                     iconPath: new ThemeIcon('link-external', new ThemeColor('terminal.ansiWhite')),
-                    commandId: 'containerApps.openAcrBuildLogs',
+                    command: {
+                        title: '',
+                        command: 'containerApps.openAcrBuildLogs',
+                        arguments: [this.acrBuildError],
+                    }
                 });
-                buildImageLogsItem.commandArgs = [this.acrBuildError];
                 return Promise.resolve([buildImageLogsItem]);
             };
+
+            const logs: LogActivityAttributes = {
+                name: `ACR Build Logs - ${this.acrBuildError.name}`,
+                description: 'Build logs are provided by Azure Container Registry (ACR) after a failed build. The build was attempted on an uploaded project using a Dockerfile, which ACR followed to try and build the image.',
+                content: this.acrBuildError.content,
+            };
+
+            context.activityAttributes ??= {};
+            context.activityAttributes.logs ??= [];
+            context.activityAttributes.logs.push(logs);
         }
 
         return {
-            item: new GenericParentTreeItem(undefined, {
-                contextValue: createUniversallyUniqueContextValue(['buildImageStepFailItem', activityFailContext]),
-                label: localize('buildImageLabel', 'Build image "{0}" in registry "{1}"', context.imageName, context.registryName),
-                iconPath: activityFailIcon,
-                loadMoreChildrenImpl
-            }),
+            item: item ?? new ActivityChildItem({ ...baseTreeItemOptions }),
             message: localize('buildImageFail', 'Failed to build image "{0}" in registry "{1}".', context.imageName, context.registryName)
         };
     }

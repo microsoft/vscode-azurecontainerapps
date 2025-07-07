@@ -81,7 +81,7 @@ export async function deployWorkspaceProjectInternal(
     if (options.suppressActivity) {
         activityContext = { suppressNotification: true };
     } else {
-        activityContext = await createActivityContext(true);
+        activityContext = await createActivityContext({ withChildren: true });
     }
 
     // Show loading indicator while we configure starting values
@@ -107,6 +107,18 @@ export async function deployWorkspaceProjectInternal(
         ...context,
         ...activityContext,
         ...startingConfiguration,
+        activityAttributes: {
+            description: `Takes a workspace project with a Dockerfile and deploys it to an Azure Container App.
+                Automatically creates any required resources (resource group, managed environment, container registry, container app, log analytics workspace).
+                Supports single repo and monorepo, with deployment settings saved and reused via local VS Code settings (.vscode/settings.json).
+                Deployment settings are saved under "containerApps.deploymentConfigurations".
+                Deployment is agnostic to project runtime and language.`,
+            troubleshooting: [
+                `When ACR build errors are present, try to inspect the Dockerfile and ACR build logs.
+                When an error is related to the Dockerfile, offer to make direct fixes for the user.
+                If the Dockerfile and project dependencies don't match, focus on updating the Dockerfile to reflect the project, not the other way around.`
+            ],
+        },
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [

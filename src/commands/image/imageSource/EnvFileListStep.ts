@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { AzExtFsExtra, AzureWizardPromptStep, GenericTreeItem, activitySuccessContext, activitySuccessIcon, createUniversallyUniqueContextValue } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
@@ -29,6 +29,7 @@ export enum SetEnvironmentVariableOption {
 type EnvFileListContext = EnvironmentVariablesContext & SetTelemetryProps<TelemetryProps>;
 
 const allEnvFilesGlobPattern: string = `**/${envFileGlobPattern}`;
+const envFileListStepContext: string = 'envFileListStepItem';
 
 export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
@@ -112,6 +113,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
     private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
         if (this.hasLogged) {
+            // Todo: Handle this with the undo method (not currently exposed in utils type def file)
             // This path indicates user clicked the back button, so we need to undo the previous logs
             context.activityChildren?.pop();
             ext.outputChannel.appendLog(localize('resetEnv', 'User chose to go back a step - resetting environment variables.'));
@@ -124,13 +126,15 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             setEnvironmentVariableOption === SetEnvironmentVariableOption.SkipForNow
         ) {
             context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['envFileListStepSuccessItem', setEnvironmentVariableOption, activitySuccessContext]),
+                new ActivityChildItem({
                     label: localize('skipEnvVarsLabel',
                         'Skip environment variable configuration' +
                         (setEnvironmentVariableOption === SetEnvironmentVariableOption.NoDotEnv ? ' (no .env files found)' : '')
                     ),
-                    iconPath: activitySuccessIcon
+                    description: '0s',
+                    contextValue: createContextValue([envFileListStepContext, setEnvironmentVariableOption, activitySuccessContext]),
+                    activityType: ActivityChildType.Success,
+                    iconPath: activitySuccessIcon,
                 })
             );
 
@@ -141,20 +145,23 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             ext.outputChannel.appendLog(logMessage);
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.ProvideFile) {
             context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
-                    label: localize('saveEnvVarsFileLabel', 'Save environment variables using provided .env file'),
-                    iconPath: activitySuccessIcon
+                new ActivityChildItem({
+                    label: localize('saveEnvVarsFileLabel', 'Save environment variables from provided .env file'),
+                    description: '0s',
+                    contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
+                    activityType: ActivityChildType.Success,
+                    iconPath: activitySuccessIcon,
                 })
             );
             ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
         } else if (setEnvironmentVariableOption === SetEnvironmentVariableOption.UseExisting) {
-            context.activityChildren?.push(
-                new GenericTreeItem(undefined, {
-                    contextValue: createUniversallyUniqueContextValue(['environmentVariablesListStepSuccessItem', activitySuccessContext]),
+            prependOrInsertAfterLastInfoChild(context,
+                new ActivityChildItem({
                     label: localize('useExistingEnvVarsLabel', 'Use existing environment variable configuration'),
-                    iconPath: activitySuccessIcon
-                })
+                    contextValue: createContextValue([envFileListStepContext, activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: activityInfoIcon,
+                }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
