@@ -48,20 +48,18 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
         }
     }
 
-    if (!LocationListStep.hasLocation(context)) {
-        await tryAddMissingLocationToContext(context);
-    }
-
-    if (!context.logAnalyticsWorkspace && context.managedEnvironment) {
+    if (context.managedEnvironment && !context.logAnalyticsWorkspace) {
         const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
         context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === context.managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
     }
+
+    await addAutoSelectLocationContext(context);
 }
 
-async function tryAddMissingLocationToContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-    if (context.managedEnvironment) {
-        await LocationListStep.setLocation(context, context.managedEnvironment.location);
-    } else if (context.containerApp) {
-        await LocationListStep.setLocation(context, context.containerApp.location);
+async function addAutoSelectLocationContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+    if (context.containerApp) {
+        await LocationListStep.setAutoSelectLocation(context, context.containerApp.location);
+    } else if (context.managedEnvironment) {
+        await LocationListStep.setAutoSelectLocation(context, context.managedEnvironment.location);
     }
 }
