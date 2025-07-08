@@ -28,6 +28,7 @@ async function cleanReadme(): Promise<void> {
 }
 
 async function installSwcCore(): Promise<void> {
+    // Our pipelies run on Linux so we need to install the correct @swc/core package for te pipelines to pass.
     if (process.platform === 'linux') {
         child_process.execSync('npm install @swc/core-linux-x64-gnu --save-dev')
     }

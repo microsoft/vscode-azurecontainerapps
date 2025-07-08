@@ -17,6 +17,6 @@ export type ConfirmationViewControllerType = {
 
 export class ConfirmationViewController extends WebviewController<ConfirmationViewControllerType> {
     constructor(viewConfig: ConfirmationViewControllerType) {
-        super(ext.context, viewConfig.title, 'confirmationView', viewConfig, ViewColumn.Active);
+        super(ext.context, 'Summary - Deploy Image to Container App', 'confirmationView', viewConfig, ViewColumn.Active);
     }
 }
