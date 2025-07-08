@@ -22,7 +22,6 @@ import { TarFileStep } from "./buildImageInAzure/TarFileStep";
 import { UploadSourceCodeStep } from "./buildImageInAzure/UploadSourceCodeStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
-import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
 interface ImageSourceListStepOptions {
     suppressEnvPrompt?: boolean;
@@ -85,10 +84,6 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
-                // Todo: Is this still needed?
-                if (!context.registry && !context.newRegistryName) {
-                    promptSteps.push(new AcrListStep());
-                }
                 promptSteps.push(
                     new RegistryCredentialsAddConfigurationListStep(),
                     new RootFolderStep(),
