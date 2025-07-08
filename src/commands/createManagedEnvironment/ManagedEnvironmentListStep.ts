@@ -11,7 +11,6 @@ import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type I
 import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { hasMatchingPickDescription, recommendedPickDescription } from "../../utils/pickUtils";
 import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
 import { LogAnalyticsListStep } from "./LogAnalyticsListStep";
@@ -43,15 +42,11 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             data: undefined,
         });
 
-        const pick = await context.ui.showQuickPick(picks, {
+        context.managedEnvironment = (await context.ui.showQuickPick(picks, {
             placeHolder: localize('selectManagedEnvironment', 'Select a container apps environment'),
             enableGrouping: true,
             suppressPersistence: true,
-        });
-        context.managedEnvironment = pick.data;
-
-        // Additional recommendations may be set with custom pick update strategies
-        context.telemetry.properties.usedRecommendedEnv = hasMatchingPickDescription(pick, recommendedPickDescription) || /recommended/i.test(pick.group ?? '') ? 'true' : 'false';
+        })).data;
     }
 
     public shouldPrompt(context: T): boolean {
