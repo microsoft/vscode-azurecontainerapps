@@ -54,9 +54,17 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
     }
 
     public async prompt(context: RegistryCredentialsContext): Promise<void> {
-        const placeHolder: string = context.registry || context.newRegistryName ?
-            localize('selectCredentialTypeNamed', 'Select a connection method for registry "{0}"', context.registry?.name || context.newRegistryName) :
-            localize('selectCredentialType', 'Select a registry connection method');
+        let placeHolder: string;
+        switch (true) {
+            case !!context.registry:
+                placeHolder = localize('selectCredentialTypeExistingRegistry', 'Select a connection method for registry "{0}"', context.registry?.name);
+                break;
+            case !!context.newRegistryName:
+                placeHolder = localize('selectCredentialTypeNewRegistry', 'Select a connection method for new registry "{0}"', context.newRegistryName);
+                break;
+            default:
+                placeHolder = localize('selectCredentialTypeGeneric', 'Select a registry connection method');
+        }
 
         context.newRegistryCredentialType = (await context.ui.showQuickPick(this.getPicks(context), {
             placeHolder,

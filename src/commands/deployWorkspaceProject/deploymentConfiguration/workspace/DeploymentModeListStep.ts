@@ -12,7 +12,7 @@ export enum DeploymentMode {
     Advanced = 'advanced',
 }
 
-export class DeploymentConfigurationModeStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
+export class DeploymentModeListStep extends AzureWizardPromptStep<WorkspaceDeploymentConfigurationContext> {
     public async prompt(context: WorkspaceDeploymentConfigurationContext): Promise<void> {
         const picks: IAzureQuickPickItem<DeploymentMode>[] = [
             {
@@ -22,7 +22,7 @@ export class DeploymentConfigurationModeStep extends AzureWizardPromptStep<Works
             },
             {
                 label: localize('advanced', 'Advanced'),
-                detail: localize('advancedDetails', 'Deploy an advanced app with greater customizations. Ideal for existing container apps.'),
+                detail: localize('advancedDetails', 'Deploy an advanced app with greater customizations. Use for existing container apps.'),
                 data: DeploymentMode.Advanced,
             },
         ];

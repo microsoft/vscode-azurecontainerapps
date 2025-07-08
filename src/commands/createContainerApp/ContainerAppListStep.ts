@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerApp, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { LocationListStep, parseAzureResourceId, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { containerAppProvider, containerAppResourceType } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -17,10 +18,6 @@ import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
 
 export type ContainerAppListStepOptions = {
-    /**
-     * If no existing container apps to choose from, skip prompt automatically and create
-     */
-    skipIfNone?: boolean;
     /**
      * For existing container apps, automatically add subwizard steps to update
      */
@@ -43,13 +40,8 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
 
     public async prompt(context: T): Promise<void> {
         const containerAppPicks: IAzureQuickPickItem<ContainerApp>[] = await this.getPicks(context);
-        await this.options.pickUpdateStrategy?.updatePicks(context, containerAppPicks);
+        const picks: IAzureQuickPickItem<ContainerApp | undefined>[] = await this.options.pickUpdateStrategy?.updatePicks(context, containerAppPicks) ?? containerAppPicks;
 
-        if (!containerAppPicks.length && this.options?.skipIfNone) {
-            return;
-        }
-
-        const picks: IAzureQuickPickItem<ContainerApp | undefined>[] = containerAppPicks;
         picks.unshift({
             label: localize('newContainerApp', '$(plus) Create new container app'),
             data: undefined,
@@ -95,33 +87,33 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
     }
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
+        const promptSteps: AzureWizardPromptStep<T>[] = [];
+        const executeSteps: AzureWizardExecuteStep<T>[] = [];
+
         // Create
         if (!context.containerApp) {
-            return {
-                promptSteps: [
-                    new ContainerAppNameStep(),
-                    new ImageSourceListStep(),
-                    new IngressPromptStep(),
-                ],
-                executeSteps: [
-                    new ContainerAppCreateStep(),
-                ],
-            };
+            if (!context.resourceGroup) {
+                promptSteps.push(new ResourceGroupListStep());
+            }
+
+            promptSteps.push(new ContainerAppNameStep());
+
+            LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
+            LocationListStep.addStep(context, promptSteps);
+
+            executeSteps.push(new ContainerAppCreateStep());
         }
 
         // Update
-        if (this.options.updateIfExists) {
-            return {
-                promptSteps: [
-                    new ImageSourceListStep(),
-                    new IngressPromptStep(),
-                ],
-                executeSteps: [
-                    new ContainerAppUpdateStep(),
-                ],
-            };
+        if (context.containerApp && this.options.updateIfExists) {
+            executeSteps.push(new ContainerAppUpdateStep());
         }
 
-        return undefined;
+        promptSteps.push(
+            new ImageSourceListStep(),
+            new IngressPromptStep(),
+        )
+
+        return { promptSteps, executeSteps };
     }
 }

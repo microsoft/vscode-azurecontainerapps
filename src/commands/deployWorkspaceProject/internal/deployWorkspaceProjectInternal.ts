@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { KnownActiveRevisionsMode, type ManagedEnvironment } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { appProvider, managedEnvironmentsId } from "../../../constants";
+import { containerAppProvider, containerAppResourceType, logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType, registryProvider, registryResourceType } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
@@ -15,7 +15,6 @@ import { localize } from "../../../utils/localize";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { ContainerAppListStep } from "../../createContainerApp/ContainerAppListStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
-import { type ManagedEnvironmentCreateContext } from "../../createManagedEnvironment/ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { editContainerCommandName } from "../../editContainer/editContainer";
@@ -46,6 +45,7 @@ export interface DeployWorkspaceProjectInternalOptions {
      * Suppress showing the wizard execution through the activity log
      */
     suppressActivity?: boolean;
+    // Todo: We might not need this option anymore
     /**
      * Suppress registry selection prompt
      */
@@ -128,60 +128,54 @@ export async function deployWorkspaceProjectInternal(
 
     if (!options.advancedCreate) {
         // Basic
+        if (!wizardContext.resourceGroup) {
+            executeSteps.push(new ResourceGroupCreateStep());
+        }
         if (!wizardContext.managedEnvironment) {
-            await (new ManagedEnvironmentListStep({
-                skipIfNone: true,
-                skipSubWizardCreate: true,
-                pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
-            })).prompt(wizardContext as ManagedEnvironmentCreateContext);
-
-            if (wizardContext.managedEnvironment) {
-                await ManagedEnvironmentListStep.populateContextWithRelatedResources(wizardContext, wizardContext.managedEnvironment);
-            }
-
             executeSteps.push(
                 new LogAnalyticsCreateStep(),
                 new ManagedEnvironmentCreateStep(),
             );
         }
-        if (!wizardContext.resourceGroup) {
-            executeSteps.push(new ResourceGroupCreateStep());
-        }
-        if (!wizardContext.registry && !options.suppressRegistryPrompt) {
-            promptSteps.push(new AcrListStep({ skipSubWizardCreate: true }));
+        if (!wizardContext.registry) {
             executeSteps.push(new RegistryCreateStep());
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             executeSteps.push(new ContainerAppCreateStep());
         }
+
         promptSteps.push(
             new SharedResourcesNameStep(),
             new AppResourcesNameStep(!!options.suppressContainerAppCreation),
+        );
+
+        // Location filters are usually provided in list steps, let's front-load them here since we aren't calling them for this flow
+        LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
+        LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
+        LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
+        LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
+        LocationListStep.addStep(context, promptSteps);
+
+        promptSteps.push(
             new ImageSourceListStep(),
             new IngressPromptStep(),
         );
     } else {
         // Advanced
         if (!wizardContext.managedEnvironment) {
-            await (new ManagedEnvironmentListStep({
-                skipIfNone: true,
-                skipSubWizardCreate: true,
+            promptSteps.push(new ManagedEnvironmentListStep({
                 pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
-            })).prompt(wizardContext as ManagedEnvironmentCreateContext);
-
-            if (wizardContext.managedEnvironment && !LocationListStep.hasLocation(wizardContext)) {
-                await LocationListStep.setLocation(wizardContext, (context.managedEnvironment as ManagedEnvironment).location)
-            }
+            }));
         }
         if (!wizardContext.resourceGroup) {
-            // Todo: If managed environment was selected, provide a pick update strategy to recommend the matching resource group
+            // Todo: Stretch goal, if managed environment was selected, provide a pick update strategy to recommend the matching resource group
             promptSteps.push(new ResourceGroupListStep());
         }
         if (!wizardContext.registry) {
             promptSteps.push(new AcrListStep());
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
-            promptSteps.push(new ContainerAppListStep({ skipIfNone: true, updateIfExists: true }));
+            promptSteps.push(new ContainerAppListStep({ updateIfExists: true }));
         }
     }
 
@@ -189,22 +183,12 @@ export async function deployWorkspaceProjectInternal(
         executeSteps.push(new ContainerAppUpdateStep());
     }
 
-    promptSteps.push(new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation));
-
-    // Location
-    if (LocationListStep.hasLocation(wizardContext)) {
-        wizardContext.telemetry.properties.existingLocation = 'true';
-        ext.outputChannel.appendLog(localize('useLocation', 'Using location "{0}".', (await LocationListStep.getLocation(wizardContext)).name));
-    } else {
-        wizardContext.telemetry.properties.existingLocation = 'false';
-        LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
-        LocationListStep.addStep(wizardContext, promptSteps);
-    }
-
     promptSteps.push(
+        new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new StartingResourcesLogStep(),
         new ShouldSaveDeploySettingsPromptStep(),
     );
+
     executeSteps.push(
         getVerifyProvidersStep<DeployWorkspaceProjectInternalContext>(),
         new DeployWorkspaceProjectSaveSettingsStep()
@@ -224,6 +208,7 @@ export async function deployWorkspaceProjectInternal(
     if (!options.suppressActivity) {
         wizardContext.activityTitle = localize('deployWorkspaceProjectActivityTitle', 'Deploy workspace project to container app "{0}"', wizardContext.containerApp?.name || wizardContext.newContainerAppName);
     }
+
     ext.outputChannel.appendLog(
         formatSectionHeader(localize('beginCommandExecution', 'Deploy workspace project'))
     );

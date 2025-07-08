@@ -19,7 +19,7 @@ import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
-import { DeploymentMode } from "./deploymentConfiguration/workspace/DeploymentConfigurationModeStep";
+import { DeploymentMode } from "./deploymentConfiguration/workspace/DeploymentModeListStep";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { formatSectionHeader } from "./formatSectionHeader";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";

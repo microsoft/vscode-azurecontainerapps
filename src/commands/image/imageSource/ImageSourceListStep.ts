@@ -85,6 +85,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 context.telemetry.properties.imageSource = ImageSource.ContainerRegistry;
                 break;
             case ImageSource.RemoteAcrBuild:
+                // Todo: Is this still needed?
                 if (!context.registry && !context.newRegistryName) {
                     promptSteps.push(new AcrListStep());
                 }

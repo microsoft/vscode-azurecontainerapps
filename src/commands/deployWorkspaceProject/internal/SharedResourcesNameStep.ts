@@ -13,7 +13,7 @@ import { RegistryNameStep } from "../../image/imageSource/containerRegistry/acr/
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { sanitizeResourceName } from "./sanitizeResourceName";
 
-/** Names any app environment shared resources: `resource group`, `managed environment`, `container registry` */
+/** Names any app environment shared resources: `resource group`, `managed environment`, `log analytics workspace`, `container registry` */
 export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspaceProjectInternalContext> {
     public async configureBeforePrompt(context: DeployWorkspaceProjectInternalContext): Promise<void> {
         if ((context.resourceGroup || context.managedEnvironment) && !context.registry) {

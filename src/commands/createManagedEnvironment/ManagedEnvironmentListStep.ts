@@ -7,7 +7,8 @@ import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm
 import { type Workspace } from "@azure/arm-operationalinsights";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { getResourceGroupFromId, LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { hasMatchingPickDescription, recommendedPickDescription } from "../../utils/pickUtils";
@@ -19,8 +20,6 @@ import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
 
 export type ManagedEnvironmentListStepOptions = {
-    skipIfNone?: boolean;
-    skipSubWizardCreate?: boolean;
     pickUpdateStrategy?: ManagedEnvironmentPickUpdateStrategy;
 };
 
@@ -38,10 +37,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     public async prompt(context: T): Promise<void> {
         const environmentPicks: ManagedEnvironmentPick[] = await this.getPicks(context);
         const picks: IAzureQuickPickItem<ManagedEnvironment | undefined>[] = await this.options.pickUpdateStrategy?.updatePicks(context, environmentPicks) ?? environmentPicks;
-
-        if (!picks.length && this.options?.skipIfNone) {
-            return;
-        }
 
         picks.unshift({
             label: localize('newManagedEnvironment', '$(plus) Create new container apps environment'),
@@ -76,19 +71,30 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {
-        if (this.options?.skipSubWizardCreate || context.managedEnvironment) {
+        if (context.managedEnvironment) {
+            await ManagedEnvironmentListStep.populateContextWithRelatedResources(context, context.managedEnvironment);
             return undefined;
         }
 
-        return {
-            promptSteps: [
-                new ManagedEnvironmentNameStep(),
-            ],
-            executeSteps: [
-                new LogAnalyticsCreateStep(),
-                new ManagedEnvironmentCreateStep(),
-            ],
-        };
+        const promptSteps: AzureWizardPromptStep<T>[] = [];
+        const executeSteps: AzureWizardExecuteStep<T>[] = [];
+
+        if (!context.resourceGroup) {
+            promptSteps.push(new ResourceGroupListStep());
+        }
+
+        promptSteps.push(new ManagedEnvironmentNameStep());
+
+        LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
+        LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
+        LocationListStep.addStep(context, promptSteps);
+
+        executeSteps.push(
+            new LogAnalyticsCreateStep(),
+            new ManagedEnvironmentCreateStep(),
+        );
+
+        return { promptSteps, executeSteps };
     }
 
     static async getManagedEnvironments(context: ISubscriptionActionContext): Promise<ManagedEnvironment[]> {
@@ -105,9 +111,8 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
             context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
         }
-        if (!LocationListStep.hasLocation(context)) {
-            await LocationListStep.setLocation(context, managedEnvironment.location);
-        }
+
+        await LocationListStep.setAutoSelectLocation(context, managedEnvironment.location);
         context.managedEnvironment = managedEnvironment;
     }
 }
