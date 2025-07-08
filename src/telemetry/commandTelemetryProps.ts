@@ -5,6 +5,7 @@
 
 import { type KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type AzdTelemetryProps } from "./AzdTelemetryProps";
+import { type ConfirmationViewTelemetryProps } from "./ConfirmationViewTelemetryProps";
 import { type ContainerTelemetryProps } from "./ContainerTelemetryProps";
 import { type ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
 import { type IngressTelemetryProps } from "./IngressTelemetryProps";
@@ -14,7 +15,7 @@ export interface DeployImageApiTelemetryProps extends AzdTelemetryProps, Contain
     revisionMode?: KnownActiveRevisionsMode;
 }
 
-export type DeployContainerAppTelemetryProps = AzdTelemetryProps & ImageSourceTelemetryProps & OverwriteConfirmTelemetryProps;
+export type DeployContainerAppTelemetryProps = AzdTelemetryProps & ImageSourceTelemetryProps & OverwriteConfirmTelemetryProps & ConfirmationViewTelemetryProps;
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;

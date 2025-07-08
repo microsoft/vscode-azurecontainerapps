@@ -28,7 +28,7 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
         this.commandName = commandName;
     }
 
-    public async prompt(_context: T): Promise<void> {
+    public async prompt(context: T): Promise<void> {
         const confirmationView = new ConfirmationViewController({
             title: this.title,
             tabTitle: this.tabTitle,
@@ -43,6 +43,7 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
             confirmationView.onDisposed(() => {
                 try {
                     if (SharedState.itemsToClear > 0) {
+                        context.telemetry.properties.editingPicks = 'true';
                         throw new GoBackError(SharedState.itemsToClear);
                     }
 
