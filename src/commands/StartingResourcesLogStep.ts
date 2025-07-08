@@ -88,7 +88,7 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
             context.telemetry.properties.existingRegistry = 'true';
             prependOrInsertAfterLastInfoChild(context,
                 new ActivityChildItem({
-                    label: localize('useAcr', 'Using container registry "{0}"', context.registry.name),
+                    label: localize('useAcr', 'Use container registry "{0}"', context.registry.name),
                     contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
                     activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon

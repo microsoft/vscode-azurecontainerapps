@@ -20,6 +20,7 @@ import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/Manag
 import { editContainerCommandName } from "../../editContainer/editContainer";
 import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
+import { AcrDefaultSortAndPrioritizationStrategy } from "../../image/imageSource/containerRegistry/acr/AcrDefaultSortAndPrioritizationStrategy";
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { RegistryCreateStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryCreateStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
@@ -32,7 +33,7 @@ import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfi
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { getStartingConfiguration } from "./getStartingConfiguration/getStartingConfiguration";
-import { ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy } from "./ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy";
+import { ManagedEnvironmentLocalSettingsSortStrategy } from "./ManagedEnvironmentLocalSettingsSortStrategy";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 
@@ -164,15 +165,16 @@ export async function deployWorkspaceProjectInternal(
         // Advanced
         if (!wizardContext.managedEnvironment) {
             promptSteps.push(new ManagedEnvironmentListStep({
-                pickUpdateStrategy: new ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy(),
+                pickUpdateStrategy: new ManagedEnvironmentLocalSettingsSortStrategy(),
             }));
         }
         if (!wizardContext.resourceGroup) {
-            // Todo: Stretch goal, if managed environment was selected, provide a pick update strategy to recommend the matching resource group
             promptSteps.push(new ResourceGroupListStep());
         }
         if (!wizardContext.registry) {
-            promptSteps.push(new AcrListStep());
+            promptSteps.push(new AcrListStep({
+                pickUpdateStrategy: new AcrDefaultSortAndPrioritizationStrategy(),
+            }));
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
             promptSteps.push(new ContainerAppListStep({ updateIfExists: true }));

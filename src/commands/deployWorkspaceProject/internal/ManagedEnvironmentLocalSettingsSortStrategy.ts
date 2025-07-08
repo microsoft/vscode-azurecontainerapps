@@ -13,7 +13,10 @@ import { type DeploymentConfigurationSettings } from "../settings/DeployWorkspac
 import { dwpSettingUtilsV2 } from "../settings/dwpSettingUtilsV2";
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 
-export class ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentPickUpdateStrategy {
+/**
+ * Sort and recommend managed environments that are used in local settings deployment configurations.
+ */
+export class ManagedEnvironmentLocalSettingsSortStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentPickUpdateStrategy {
     async updatePicks(context: T, picks: ManagedEnvironmentPick[]): Promise<ManagedEnvironmentPick[]> {
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!deploymentConfigurations?.length) {
@@ -45,7 +48,7 @@ export class ManagedEnvironmentDeploymentConfigurationPickUpdateStrategy<T exten
             p.description = parseAzureResourceId(id).resourceGroup;
 
             if (recommendedEnvironmentIds.has(id)) {
-                p.group = localize('recommended', 'Recommended');
+                p.group = localize('localSettings', 'Local Settings');
                 recommendedPicks.push(p);
             } else {
                 p.group = localize('other', 'Other');

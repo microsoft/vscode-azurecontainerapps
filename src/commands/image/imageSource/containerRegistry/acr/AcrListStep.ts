@@ -10,7 +10,7 @@ import { noMatchingResources, noMatchingResourcesQp, registryProvider, registryR
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
-import { AcrResourceGroupAndDeployedPickUpdateStrategy } from "./AcrResourceGroupAndDeployedPickUpdateStrategy";
+import { AcrDefaultSortAndPrioritizationStrategy } from "./AcrDefaultSortAndPrioritizationStrategy";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";
@@ -34,7 +34,7 @@ const acrCreatePick = {
 export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends AzureWizardPromptStep<T> {
     constructor(readonly options: AcrListStepOptions = {}) {
         super();
-        this.options.pickUpdateStrategy ??= new AcrResourceGroupAndDeployedPickUpdateStrategy();
+        this.options.pickUpdateStrategy ??= new AcrDefaultSortAndPrioritizationStrategy();
     }
 
     public async prompt(context: T): Promise<void> {

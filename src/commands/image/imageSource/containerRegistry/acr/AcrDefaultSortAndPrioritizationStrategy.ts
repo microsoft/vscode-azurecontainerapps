@@ -15,7 +15,12 @@ import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryIm
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 import { type AcrPickItem, type AcrPickUpdateStrategy } from "./AcrListStep";
 
-export class AcrResourceGroupAndDeployedPickUpdateStrategy implements AcrPickUpdateStrategy {
+/**
+ * This strategy organizes Azure Container Registry (ACR) picks for the user by grouping registries by resource group,
+ * prioritizing registries in the currently selected resource group, and highlighting the registry currently deployed to the container app if it exists.
+ * Registries in the same resource group are shown at the top, followed by others, and the currently deployed registry (if any) is moved to the front of the list.
+ */
+export class AcrDefaultSortAndPrioritizationStrategy implements AcrPickUpdateStrategy {
     updatePicks(context: ContainerRegistryImageSourceContext, picks: AcrPickItem[]): AcrPickItem[] {
         const registriesByGroup: Record<string, Registry[]> = {};
         for (const p of picks) {
