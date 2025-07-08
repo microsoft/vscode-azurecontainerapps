@@ -13,6 +13,7 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { OpenConfirmationViewStep } from "../../webviews/OpenConfirmationViewStep";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
 import { editContainerCommandName } from "../editContainer/editContainer";
@@ -56,18 +57,23 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     }
     wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
+    const confirmationViewTitle: string = localize('summary', 'Summary');
+    const confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Otherwise click "Confirm" to deploy.');
+    const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
+    const title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
+
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
-        title: localize('deployContainerAppTitle', 'Deploy image to container app'),
+        title: title,
         promptSteps: [
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
+            new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),
             new ContainerAppUpdateStep(),
         ],
-        showLoadingPrompt: true
     });
 
     await wizard.prompt();
