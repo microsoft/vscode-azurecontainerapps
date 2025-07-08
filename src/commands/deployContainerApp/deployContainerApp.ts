@@ -59,6 +59,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
 
     const confirmationViewTitle: string = localize('summary', 'Summary');
     const confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Otherwise click "Confirm" to deploy.');
+    const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
     const title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
 
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
@@ -67,7 +68,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
-            new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
+            new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),

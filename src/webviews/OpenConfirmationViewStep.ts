@@ -15,12 +15,14 @@ export const SharedState = {
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
     private readonly viewConfig: () => ConfirmationViewProperty[];
     private readonly title: string;
+    private readonly tabTitle: string;
     private readonly description: string;
     private readonly commandName: string;
 
-    public constructor(title: string, description: string, commandName: string, viewConfig: () => ConfirmationViewProperty[]) {
+    public constructor(title: string, tabTitle: string, description: string, commandName: string, viewConfig: () => ConfirmationViewProperty[]) {
         super();
         this.title = title;
+        this.tabTitle = tabTitle
         this.description = description;
         this.viewConfig = viewConfig;
         this.commandName = commandName;
@@ -29,6 +31,7 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
     public async prompt(_context: T): Promise<void> {
         const confirmationView = new ConfirmationViewController({
             title: this.title,
+            tabTitle: this.tabTitle,
             description: this.description,
             commandName: this.commandName,
             items: this.viewConfig()
