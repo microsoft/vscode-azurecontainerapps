@@ -11,8 +11,6 @@ import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
-import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
-import { IngressPromptStep } from "../ingress/IngressPromptStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
 import { ContainerAppNameStep } from "./ContainerAppNameStep";
@@ -108,11 +106,6 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         if (context.containerApp && this.options.updateIfExists) {
             executeSteps.push(new ContainerAppUpdateStep());
         }
-
-        promptSteps.push(
-            new ImageSourceListStep(),
-            new IngressPromptStep(),
-        )
 
         return { promptSteps, executeSteps };
     }

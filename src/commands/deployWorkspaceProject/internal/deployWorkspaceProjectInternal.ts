@@ -46,11 +46,6 @@ export interface DeployWorkspaceProjectInternalOptions {
      * Suppress showing the wizard execution through the activity log
      */
     suppressActivity?: boolean;
-    // Todo: We might not need this option anymore
-    /**
-     * Suppress registry selection prompt
-     */
-    suppressRegistryPrompt?: boolean;
     /**
      * Suppress any [resource] confirmation prompts
      */
@@ -123,9 +118,15 @@ export async function deployWorkspaceProjectInternal(
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [
-        new RootFolderStep(), // Todo: Check if we need this from all entry-points
+        new RootFolderStep(),
     ];
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
+
+    LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
+    LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
+    LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
+    LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
+    LocationListStep.addStep(wizardContext, promptSteps);
 
     if (!options.advancedCreate) {
         // Basic
@@ -148,18 +149,6 @@ export async function deployWorkspaceProjectInternal(
         promptSteps.push(
             new SharedResourcesNameStep(),
             new AppResourcesNameStep(!!options.suppressContainerAppCreation),
-        );
-
-        // Location filters are usually provided in list steps, let's front-load them here since we aren't calling them for this flow
-        LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
-        LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
-        LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
-        LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
-        LocationListStep.addStep(context, promptSteps);
-
-        promptSteps.push(
-            new ImageSourceListStep(),
-            new IngressPromptStep(),
         );
     } else {
         // Advanced
@@ -186,6 +175,8 @@ export async function deployWorkspaceProjectInternal(
     }
 
     promptSteps.push(
+        new ImageSourceListStep(),
+        new IngressPromptStep(),
         new DeployWorkspaceProjectConfirmStep(!!options.suppressConfirmation),
         new StartingResourcesLogStep(),
         new ShouldSaveDeploySettingsPromptStep(),
