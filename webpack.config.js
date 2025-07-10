@@ -52,14 +52,28 @@ let webConfig = dev.getDefaultWebpackConfig({
         '../build/default/bufferutil': 'commonjs ../build/default/bufferutil',
     },
     target: 'webworker',
-    plugins: [new webpack.ProvidePlugin({
-        Buffer: ['buffer', 'Buffer'],
-    })],
+    plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        })
+    ],
     suppressCleanDistFolder: true,
     resolveFallbackAliases: {
         'constants': false
     },
     alias
+});
+
+// Add process polyfill and alias for browser builds
+webConfig.resolve = webConfig.resolve || {};
+webConfig.resolve.fallback = Object.assign({}, webConfig.resolve.fallback, {
+    process: require.resolve('process/browser.js')
+});
+webConfig.resolve.alias = Object.assign({}, webConfig.resolve.alias, {
+    'process/browser': require.resolve('process/browser.js')
 });
 
 if (DEBUG_WEBPACK) {

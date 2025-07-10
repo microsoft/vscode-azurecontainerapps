@@ -25,11 +25,7 @@ export async function run(): Promise<void> {
 
     const mocha = new Mocha(options);
 
-    const files: string[] = await new Promise((resolve, reject) => {
-        glob('**/**.test.js', { cwd: __dirname }, (err, result) => {
-            err ? reject(err) : resolve(result);
-        });
-    });
+    const files: string[] = await glob.glob('**/**.test.js', { cwd: __dirname });
 
     files.forEach(f => mocha.addFile(path.resolve(__dirname, f)));
 
