@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.8.3 - 2025-06-17
+### Changed
+* [[884](https://github.com/microsoft/vscode-azurecontainerapps/pull/884)] Upgrade dependencies for various activity log updates. Activities with activity children will now be accompanied alongside a live timer.
+* [[883](https://github.com/microsoft/vscode-azurecontainerapps/pull/883)] Improve output log messages when editing environment variables
+* [[882](https://github.com/microsoft/vscode-azurecontainerapps/pull/882)] Improve validation error message when naming environment variables
+
+### Fixed
+* [[880](https://github.com/microsoft/vscode-azurecontainerapps/pull/880)] Fix output log string when deleting a scale rule
+
 ## 0.8.2 - 2025-04-30
 ### Changed
 * [[867](https://github.com/microsoft/vscode-azurecontainerapps/pull/867)] [[868](https://github.com/microsoft/vscode-azurecontainerapps/pull/868)] Upgrade to latest version of the activity log (v2).  Now shows live progress on each activity child with timers.
