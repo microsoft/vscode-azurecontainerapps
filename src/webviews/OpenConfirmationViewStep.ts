@@ -71,12 +71,12 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
 
                     if (SharedState.editingPicks && SharedState.itemsToClear === 0 && SharedState.copilotClicked) {
                         resolve();
-                        const message = localize('editingPicksMessage', 'How was your experience using copilot and revising your selections?');
+                        const message = localize('editingPicksandCopilotMessage', 'How was your experience using Copilot and revising your selections?');
                         const result = await vscode.window.showInformationMessage(message, ...buttons);
                         await confirmationViewButtonActions(context, result);
                     } else if (!SharedState.cancelled && !SharedState.copilotClicked && !SharedState.editingPicks) {
                         resolve();
-                        const message = localize('confirmPMessage', 'How was your experience using the summary view?');
+                        const message = localize('confirmMessage', 'How was your experience using the summary view?');
                         const result = await vscode.window.showInformationMessage(message, ...buttons);
                         await confirmationViewButtonActions(context, result);
                     } else if (SharedState.editingPicks && SharedState.itemsToClear === 0) {
@@ -86,7 +86,7 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                         await confirmationViewButtonActions(context, result);
                     } else if (SharedState.copilotClicked && !SharedState.cancelled) {
                         resolve();
-                        const message = localize('copilotMessage', 'How was your experience using copilot and the summary view?');
+                        const message = localize('copilotMessage', 'How was your experience using Copilot and the summary view?');
                         const result = await vscode.window.showInformationMessage(message, ...buttons);
                         if (result === surveyButton) {
                             await confirmationViewButtonActions(context, result);
