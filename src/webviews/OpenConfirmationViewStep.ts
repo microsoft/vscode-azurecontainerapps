@@ -100,6 +100,11 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                     }
                 }
             });
+            // reset the shared state
+            SharedState.itemsToClear = 0;
+            SharedState.cancelled = true;
+            SharedState.copilotClicked = false;
+            SharedState.editingPicks = false;
         });
     }
 
