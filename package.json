@@ -295,22 +295,22 @@
             },
             {
                 "command": "containerApps.walkthrough.addWorkspaceProject",
-                "title": "%containerApps.walkthrough.addWorkspaceProject%",
+                "title": "%containerApps.walkthrough.addWorkspaceProject.title%",
                 "category": "Azure Container Apps"
             },
             {
                 "command": "containerApps.walkthrough.azureSignIn",
-                "title": "%containerApps.walkthrough.azureSignIn%",
+                "title": "%containerApps.walkthrough.azureSignIn.title%",
                 "category": "Azure Container Apps"
             },
             {
                 "command": "containerApps.walkthrough.deployWorkspaceProject",
-                "title": "%containerApps.walkthrough.deployWorkspaceProject%",
+                "title": "%containerApps.walkthrough.deployWorkspaceProject.title%",
                 "category": "Azure Container Apps"
             },
             {
                 "command": "containerApps.walkthrough.cleanUpResources",
-                "title": "%containerApps.walkthrough.cleanUpResources%",
+                "title": "%containerApps.walkthrough.cleanUpResources.title%",
                 "category": "Azure Container Apps"
             },
             {
