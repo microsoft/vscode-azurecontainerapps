@@ -5,7 +5,6 @@
 
 export interface ConfirmationViewTelemetryProps {
     editingPicks: 'true',
-    confirmClicked: 'true',
     cancelClicked: 'true',
     copilotClicked: "true",
     confirmationViewHelpful: "true",

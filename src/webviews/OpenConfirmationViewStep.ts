@@ -52,6 +52,7 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                     }
 
                     if (SharedState.cancelled) {
+                        context.telemetry.properties.cancelClicked = 'true';
                         throw new UserCancelledError('openConfirmationViewStep');
                     }
                 } catch (error) {
