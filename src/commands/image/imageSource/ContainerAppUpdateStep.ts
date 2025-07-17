@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownRevisionProvisioningState, KnownRevisionRunningState, type Container, type ContainerAppsAPIClient, type Ingress, type Revision } from "@azure/arm-appcontainers";
+import { LogsQueryClient, LogsQueryResultStatus, type LogsTable } from "@azure/monitor-query";
 import { parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
@@ -130,6 +131,10 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
 
         const parsedResource = parseAzureResourceId(this._revisionId);
 
+        try {
+            await this.addLogAttributes(context, parsedResource.resourceName);
+        } catch { /** Do nothing */ }
+
         if (!this._revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out - unable to determine the final status of the newly deployed container app revision "{0}".', parsedResource.resourceName));
         } else if (this._revisionStatus !== KnownRevisionRunningState.Running) {
@@ -203,5 +208,59 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         }
 
         return undefined;
+    }
+
+    private async addLogAttributes(context: T, revisionName: string) {
+        const workspaceId = context.managedEnvironment.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
+        if (!workspaceId) {
+            return;
+        }
+
+        const logsQueryClient = new LogsQueryClient(await context.createCredentialsForScopes(["https://api.loganalytics.io/.default"]));
+        const query = `
+ContainerAppConsoleLogs_CL
+| where RevisionName_s == "${revisionName}"
+| project TimeGenerated, Stream_s, Log_s
+| order by TimeGenerated desc
+`;
+
+        const queryResult = await logsQueryClient.queryWorkspace(workspaceId, query, {
+            // <= 5 min (ISO 8601)
+            duration: 'PT5M'
+        });
+
+        if (queryResult.status !== LogsQueryResultStatus.Success) {
+            return;
+        }
+
+        let content: string = '';
+        const table: LogsTable = queryResult.tables[0];
+
+        content += table.columnDescriptors.map(c => c.name).join(',') + '\n';
+        for (const row of table.rows) {
+            if (!Array.isArray(row)) {
+                continue;
+            }
+
+            for (const r of row) {
+                if (r instanceof Date) {
+                    content += r.toLocaleString() + ' ';
+                } else {
+                    content += String(r) + ' ';
+                }
+            }
+
+            content += '\n';
+        }
+
+        const logs: LogActivityAttributes = {
+            name: 'Container App Console Logs',
+            description: `Historical application (container runtime) logs for revision "${revisionName}". When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
+            content,
+        };
+
+        context.activityAttributes ??= {};
+        context.activityAttributes.logs ??= [];
+        context.activityAttributes?.logs.push(logs);
     }
 }
