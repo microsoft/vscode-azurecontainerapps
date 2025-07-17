@@ -114,18 +114,19 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
     protected getTreeItemLabel = (): string => localize('verifyContainerAppLabel', 'Verify successful container app runtime status');
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        this.options.continueOnFail = true;
         progress.report({ message: localize('verifyingContainerApp', 'Verifying container app runtime status...') });
 
-        const maxWaitTimeMs: number = 1000 * 20;
-        this._revisionId = await this.waitAndGetRevisionById(context, maxWaitTimeMs);
+        // Estimated time (n=1): 1s
+        this._revisionId = await this.waitAndGetRevisionById(context, 1000 * 10 /** maxWaitTimeMs */);
 
         if (!this._revisionId) {
             throw new Error(localize('revisionCheckTimeout', 'Status check timed out - unable to find the newly deployed container app revision.'));
         }
 
         const containerAppName: string = nonNullValueAndProp(context.containerApp, 'name');
-        this._revisionStatus = await this.waitAndGetRevisionStatus(context, this._revisionId, containerAppName, maxWaitTimeMs);
+
+        // Estimated time (n=1): 20s
+        this._revisionStatus = await this.waitAndGetRevisionStatus(context, this._revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
 
         const parsedResource = parseAzureResourceId(this._revisionId);
 
@@ -134,7 +135,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         } else if (this._revisionStatus !== KnownRevisionRunningState.Running) {
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'Deployment failed - the container app revision "{0}" did not start successfully and has reverted to the previous working revision. This is most often caused by a container runtime error, such as a crash or misconfiguration.',
+                'Deployment failed - the container app revision "{0}" failed to start successfully. The service will attempt to revert to the previous working revision. This is most often caused by a container runtime error, such as a crash or misconfiguration.',
                 parsedResource.resourceName,
             ));
         }
@@ -164,12 +165,10 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
             revision = revisions.find(r => r.template?.containers?.[context.containersIdx ?? 0].image === context.image);
 
             if (revision) {
-                console.log(`Found revision: ${revision.id}`);
                 return revision.id;
             }
 
-            console.log('Checking')
-            await delay(1000);
+            await delay(2000);
         }
 
         return undefined;
@@ -187,20 +186,19 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
                 break;
             }
 
-            await delay(1000);
+            await delay(2000);
 
             revision = await this._client.containerAppsRevisions.getRevision(parsedRevision.resourceGroup, containerAppName, parsedRevision.resourceName);
 
             if (
                 revision.provisioningState === KnownRevisionProvisioningState.Deprovisioning ||
                 revision.provisioningState === KnownRevisionProvisioningState.Provisioning ||
-                revision.runningState === KnownRevisionRunningState.Processing
+                revision.runningState === KnownRevisionRunningState.Processing ||
+                revision.runningState === 'Activating'
             ) {
-                console.log(`Checking revision status: ${revision.provisioningState} - ${revision.runningState}`);
                 continue;
             }
 
-            console.log(revision.runningState);
             return revision.runningState;
         }
 
