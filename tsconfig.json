@@ -15,6 +15,7 @@
         "skipLibCheck": true,
         "strictNullChecks": true,
         "noUnusedParameters": true,
+        "resolveJsonModule": true,
         "baseUrl": "./",
         "paths": {
             "*": [
