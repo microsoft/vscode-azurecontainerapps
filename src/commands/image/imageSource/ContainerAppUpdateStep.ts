@@ -194,7 +194,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
                 revision.provisioningState === KnownRevisionProvisioningState.Deprovisioning ||
                 revision.provisioningState === KnownRevisionProvisioningState.Provisioning ||
                 revision.runningState === KnownRevisionRunningState.Processing ||
-                revision.runningState === 'Activating'
+                revision.runningState === 'Activating' // For some reason this isn't listed in the enum
             ) {
                 continue;
             }
