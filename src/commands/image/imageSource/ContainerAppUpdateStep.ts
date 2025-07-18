@@ -233,30 +233,21 @@ ContainerAppConsoleLogs_CL
             return;
         }
 
-        let content: string = '';
+        const lines: string[] = [];
         const table: LogsTable = queryResult.tables[0];
 
-        content += table.columnDescriptors.map(c => c.name).join(',') + '\n';
+        lines.push(table.columnDescriptors.map(c => c.name ?? '{columnName}').join(','));
         for (const row of table.rows) {
             if (!Array.isArray(row)) {
                 continue;
             }
-
-            for (const r of row) {
-                if (r instanceof Date) {
-                    content += r.toLocaleString() + ' ';
-                } else {
-                    content += String(r) + ' ';
-                }
-            }
-
-            content += '\n';
+            lines.push(row.map(r => r instanceof Date ? r.toLocaleString() : String(r)).join(' '));
         }
 
         const logs: LogActivityAttributes = {
             name: 'Container App Console Logs',
-            description: `Historical application (container runtime) logs for revision "${revisionName}". When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
-            content,
+            description: `Historical application (container runtime) logs for revision "${revisionName}" within the last 5 minutes. When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
+            content: lines.join('\n'),
         };
 
         context.activityAttributes ??= {};
