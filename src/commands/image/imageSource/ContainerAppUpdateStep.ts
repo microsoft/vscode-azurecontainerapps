@@ -211,6 +211,13 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
     }
 
     private async addLogAttributes(context: T, revisionName: string) {
+        // Basic validation check since we're including a name directly in the query
+        if (revisionName.length > 54 || !/^[\w-]+$/.test(revisionName)) {
+            const invalidName: string = localize('unexpectedRevisionName', 'Internal warning: Encountered an unexpected revision name format "{0}". Skipping log query for the revision status check.', revisionName);
+            ext.outputChannel.appendLog(invalidName);
+            throw new Error(invalidName);
+        }
+
         const workspaceId = context.managedEnvironment.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
         if (!workspaceId) {
             return;
