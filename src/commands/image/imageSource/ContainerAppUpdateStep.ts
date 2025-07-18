@@ -173,7 +173,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
                 return revision.id;
             }
 
-            await delay(2000);
+            await delay(1000);
         }
 
         return undefined;
