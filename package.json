@@ -851,14 +851,13 @@
         "webpack-dev-server": "^5.1.0"
     },
     "dependencies": {
-        "@azure/arm-appcontainers": "^2.2.0",
+        "@azure/arm-appcontainers": "^2.1.0-beta.1",
         "@azure/arm-authorization": "^9.0.0",
         "@azure/arm-containerregistry": "^10.0.0",
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.2.0",
         "@azure/container-registry": "1.0.0-beta.5",
         "@azure/core-rest-pipeline": "1.10.3",
-        "@azure/monitor-query": "^1.3.2",
         "@azure/storage-blob": "^12.4.1",
         "@fluentui/react-components": "^9.56.2",
         "@fluentui/react-icons": "^2.0.265",
