@@ -4,5 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 export interface ContainerAppUpdateTelemetryProps {
+    /**
+     * Indicates the result of attempting to add logs during container app update verification.
+     *
+     * undefined — Did not attempt to add logs.
+     * 'false'   — Attempted to add logs but failed.
+     * 'true'    — Successfully added logs.
+     */
     addedContainerAppUpdateVerifyLogs?: 'true' | 'false';
 }
