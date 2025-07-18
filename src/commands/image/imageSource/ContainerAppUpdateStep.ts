@@ -140,7 +140,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         } else if (this._revisionStatus !== KnownRevisionRunningState.Running) {
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'Deployment failed - the container app revision "{0}" failed to start successfully. The service will attempt to revert to the previous working revision. This is most often caused by a container runtime error, such as a crash or misconfiguration.',
+                'Deployment failed - the container app revision "{0}" failed to run successfully. The service will attempt to revert to the previous working revision. Inspect the application logs for this revision to help identify the root cause.',
                 parsedResource.resourceName,
             ));
         }
