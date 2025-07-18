@@ -4,16 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownRevisionProvisioningState, KnownRevisionRunningState, type Container, type ContainerAppsAPIClient, type Ingress, type Revision } from "@azure/arm-appcontainers";
-import { LogsQueryClient, LogsQueryResultStatus, type LogsTable } from "@azure/monitor-query";
+import { LogsQueryResultStatus, type LogsTable } from "@azure/monitor-query";
 import { parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, nonNullProp, nonNullValueAndProp, parseError, type AzureWizardExecuteStep, type IParsedError, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppUpdateTelemetryProps } from "../../../telemetry/ContainerAppUpdateTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
-import { createContainerAppsAPIClient } from "../../../utils/azureClients";
+import { createContainerAppsAPIClient, createLogsQueryClient } from "../../../utils/azureClients";
 import { delay } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
@@ -137,8 +137,10 @@ class ContainerAppUpdateVerifyStep<T extends ContainerAppUpdateContext> extends 
             try {
                 // Try to query and provide any logs to the LLM before throwing
                 await this.tryAddLogAttributes(context, parsedResource.resourceName);
-            } catch {
-                // Do nothing
+            } catch (error) {
+                const perr: IParsedError = parseError(error);
+                ext.outputChannel.appendLog(localize('logQueryError', 'Error encountered while trying to verify container app revision logs through log query platform.'));
+                ext.outputChannel.appendLog(perr.message);
             }
 
             throw new Error(localize(
@@ -217,6 +219,7 @@ class ContainerAppUpdateVerifyStep<T extends ContainerAppUpdateContext> extends 
      * Try to query for any logs associated with the revision and add them to the Copilot activity attributes
      */
     private async tryAddLogAttributes(context: T, revisionName: string) {
+        context.telemetry.properties.targetCloud = context.environment.name;
         context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'false';
 
         // Basic validation check since we're including a name directly in the query
@@ -231,7 +234,7 @@ class ContainerAppUpdateVerifyStep<T extends ContainerAppUpdateContext> extends 
             return;
         }
 
-        const logsQueryClient = new LogsQueryClient(await context.createCredentialsForScopes(["https://api.loganalytics.io/.default"]));
+        const logsQueryClient = await createLogsQueryClient(context);
         const query = `
 ContainerAppConsoleLogs_CL
 | where RevisionName_s == "${revisionName}"
