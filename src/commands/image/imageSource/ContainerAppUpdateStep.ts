@@ -107,8 +107,6 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
     public priority: number = 681;
     public stepName: string = 'containerAppUpdateVerifyStep';
 
-    private _revisionId: string | undefined;
-    private _revisionStatus: string | undefined;
     private _client: ContainerAppsAPIClient;
 
     protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Verified container app "{0}" deployment started successfully.', context.containerApp?.name);
@@ -117,21 +115,21 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('verifyingContainerApp', 'Verifying container app startup status...') });
+        const containerAppName: string = nonNullValueAndProp(context.containerApp, 'name');
 
         // Estimated time (n=1): 1s
-        this._revisionId = await this.waitAndGetRevisionId(context, 1000 * 10 /** maxWaitTimeMs */);
-        if (!this._revisionId) {
+        const revisionId: string | undefined = await this.waitAndGetRevisionId(context, 1000 * 10 /** maxWaitTimeMs */);
+        if (!revisionId) {
             throw new Error(localize('revisionCheckTimeout', 'Status check timed out before retrieving the latest deployed container app revision.'));
         }
 
-        const containerAppName: string = nonNullValueAndProp(context.containerApp, 'name');
         // Estimated time (n=1): 20s
-        this._revisionStatus = await this.waitAndGetRevisionStatus(context, this._revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
+        const revisionStatus: string | undefined = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
 
-        const parsedResource = parseAzureResourceId(this._revisionId);
-        if (!this._revisionStatus) {
+        const parsedResource = parseAzureResourceId(revisionId);
+        if (!revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
-        } else if (this._revisionStatus !== KnownRevisionRunningState.Running) {
+        } else if (revisionStatus !== KnownRevisionRunningState.Running) {
             try {
                 // Try to query and provide any logs to the LLM before throwing
                 await this.tryAddLogAttributes(context, parsedResource.resourceName);
