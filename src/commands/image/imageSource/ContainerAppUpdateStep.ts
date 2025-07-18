@@ -118,7 +118,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         progress.report({ message: localize('verifyingContainerApp', 'Verifying container app runtime status...') });
 
         // Estimated time (n=1): 1s
-        this._revisionId = await this.waitAndGetRevisionById(context, 1000 * 10 /** maxWaitTimeMs */);
+        this._revisionId = await this.waitAndGetRevisionId(context, 1000 * 10 /** maxWaitTimeMs */);
 
         if (!this._revisionId) {
             throw new Error(localize('revisionCheckTimeout', 'Status check timed out - unable to find the newly deployed container app revision.'));
@@ -150,7 +150,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         return !!context.containerApp;
     }
 
-    private async waitAndGetRevisionById(context: T, maxWaitTimeMs: number): Promise<string | undefined> {
+    private async waitAndGetRevisionId(context: T, maxWaitTimeMs: number): Promise<string | undefined> {
         this._client ??= await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
 
         const resourceGroupName: string = nonNullValueAndProp(context.containerApp, 'resourceGroup');
