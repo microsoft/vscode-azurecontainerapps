@@ -6,7 +6,7 @@
 import { KnownRevisionProvisioningState, KnownRevisionRunningState, type Container, type ContainerAppsAPIClient, type Ingress, type Revision } from "@azure/arm-appcontainers";
 import { LogsQueryResultStatus, type LogsTable } from "@azure/monitor-query";
 import { parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, nonNullProp, nonNullValueAndProp, parseError, type AzureWizardExecuteStep, type IParsedError, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, maskUserInfo, nonNullProp, nonNullValueAndProp, parseError, type AzureWizardExecuteStep, type IParsedError, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
@@ -141,6 +141,7 @@ class ContainerAppUpdateVerifyStep<T extends ContainerAppUpdateContext> extends 
                 const perr: IParsedError = parseError(error);
                 ext.outputChannel.appendLog(localize('logQueryError', 'Error encountered while trying to verify container app revision logs through log query platform.'));
                 ext.outputChannel.appendLog(perr.message);
+                context.telemetry.properties.getLogsQueryError = maskUserInfo(perr.message, []);
             }
 
             throw new Error(localize(

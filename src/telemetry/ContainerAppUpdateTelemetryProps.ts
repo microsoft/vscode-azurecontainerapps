@@ -12,5 +12,6 @@ export interface ContainerAppUpdateTelemetryProps {
      * 'true'    — Successfully added logs.
      */
     addedContainerAppUpdateVerifyLogs?: 'true' | 'false';
+    getLogsQueryError?: string;
     targetCloud?: string;
 }
