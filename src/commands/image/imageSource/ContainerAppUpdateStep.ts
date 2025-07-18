@@ -246,7 +246,7 @@ ContainerAppConsoleLogs_CL
 
         const logs: LogActivityAttributes = {
             name: 'Container App Console Logs',
-            description: `Historical application (container runtime) logs for revision "${revisionName}" within the last 5 minutes. When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
+            description: `Historical container runtime logs for revision "${revisionName}" (<= 5 min). When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
             content: lines.join('\n'),
         };
 
