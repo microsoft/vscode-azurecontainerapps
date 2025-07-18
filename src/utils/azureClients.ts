@@ -74,7 +74,6 @@ export async function createLogsQueryClient(context: ISubscriptionActionContext)
         case Environment.AzureCloud.name:
         default:
             scope = 'https://api.loganalytics.io/.default';
-            break;
     }
 
     return new LogsQueryClient(await context.createCredentialsForScopes([scope]));
