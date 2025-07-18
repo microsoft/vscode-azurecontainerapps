@@ -4,5 +4,5 @@
 *--------------------------------------------------------------------------------------------*/
 
 export interface ContainerAppUpdateTelemetryProps {
-    addedContainerAppUpdateVerifyLogs: 'true' | 'false';
+    addedContainerAppUpdateVerifyLogs?: 'true' | 'false';
 }
