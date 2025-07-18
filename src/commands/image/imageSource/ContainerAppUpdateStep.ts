@@ -10,6 +10,8 @@ import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, no
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
+import { type ContainerAppUpdateTelemetryProps } from "../../../telemetry/ContainerAppUpdateTelemetryProps";
+import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { delay } from "../../../utils/delay";
@@ -21,7 +23,9 @@ import { updateContainerApp } from "../../updateContainerApp";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
-export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
+type ContainerAppUpdateContext = ImageSourceContext & IngressContext & SetTelemetryProps<ContainerAppUpdateTelemetryProps>;
+
+export class ContainerAppUpdateStep<T extends ContainerAppUpdateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 680;
     public stepName: string = 'containerAppUpdateStep';
     protected getOutputLogSuccess = (context: T): string => localize('updateContainerAppSuccess', 'Updated container app "{0}".', context.containerApp?.name);
@@ -103,7 +107,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
  * Note: Sometimes an image builds and deploys successfully but fails to run.
  * This leads to the Azure Container Apps service silently reverting to the last successful revision.
  */
-class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
+class ContainerAppUpdateVerifyStep<T extends ContainerAppUpdateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 681;
     public stepName: string = 'containerAppUpdateVerifyStep';
 
@@ -213,6 +217,8 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
      * Try to query for any logs associated with the revision and add them to the Copilot activity attributes
      */
     private async tryAddLogAttributes(context: T, revisionName: string) {
+        context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'false';
+
         // Basic validation check since we're including a name directly in the query
         if (revisionName.length > 54 || !/^[\w-]+$/.test(revisionName)) {
             const invalidName: string = localize('unexpectedRevisionName', 'Internal warning: Encountered an unexpected revision name format "{0}". Skipping log query for the revision status check.', revisionName);
@@ -262,5 +268,6 @@ ContainerAppConsoleLogs_CL
         context.activityAttributes ??= {};
         context.activityAttributes.logs ??= [];
         context.activityAttributes?.logs.push(logs);
+        context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'true';
     }
 }
