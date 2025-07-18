@@ -166,14 +166,14 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
                 break;
             }
 
+            await delay(1000);
+
             revisions = await uiUtils.listAllIterator(this._client.containerAppsRevisions.listRevisions(resourceGroupName, containerAppName));
             revision = revisions.find(r => r.template?.containers?.[context.containersIdx ?? 0].image === context.image);
 
             if (revision) {
                 return revision.id;
             }
-
-            await delay(1000);
         }
 
         return undefined;
