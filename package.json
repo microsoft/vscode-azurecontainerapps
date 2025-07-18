@@ -851,7 +851,7 @@
         "webpack-dev-server": "^5.1.0"
     },
     "dependencies": {
-        "@azure/arm-appcontainers": "^2.2.0",
+        "@azure/arm-appcontainers": "^2.1.0-beta.1",
         "@azure/arm-authorization": "^9.0.0",
         "@azure/arm-containerregistry": "^10.0.0",
         "@azure/arm-operationalinsights": "^8.0.0",
