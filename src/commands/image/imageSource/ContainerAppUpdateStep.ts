@@ -98,8 +98,9 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
 }
 
 /**
- * Verifies that the updated container app does not have runtime issues.
- * Sometimes an image builds and deploys successfully but fails to run.
+ * Verifies that the recently updated container app did not have any startup issues.
+ *
+ * Note: Sometimes an image builds and deploys successfully but fails to run.
  * This leads to the Azure Container Apps service silently reverting to the last successful revision.
  */
 class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
@@ -119,25 +120,25 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
 
         // Estimated time (n=1): 1s
         this._revisionId = await this.waitAndGetRevisionId(context, 1000 * 10 /** maxWaitTimeMs */);
-
         if (!this._revisionId) {
-            throw new Error(localize('revisionCheckTimeout', 'Status check timed out before finding the latest deployed container app revision.'));
+            throw new Error(localize('revisionCheckTimeout', 'Status check timed out before retrieving the latest deployed container app revision.'));
         }
 
         const containerAppName: string = nonNullValueAndProp(context.containerApp, 'name');
-
         // Estimated time (n=1): 20s
         this._revisionStatus = await this.waitAndGetRevisionStatus(context, this._revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
 
         const parsedResource = parseAzureResourceId(this._revisionId);
-
-        try {
-            await this.addLogAttributes(context, parsedResource.resourceName);
-        } catch { /** Do nothing */ }
-
         if (!this._revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
         } else if (this._revisionStatus !== KnownRevisionRunningState.Running) {
+            try {
+                // Try to query and provide any logs to the LLM before throwing
+                await this.tryAddLogAttributes(context, parsedResource.resourceName);
+            } catch {
+                // Do nothing
+            }
+
             throw new Error(localize(
                 'unexpectedRevisionState',
                 'The deployed container app revision "{0}" has failed to start. The service will try to revert to the previous working revision. Inspect the application logs to address startup issues.',
@@ -199,7 +200,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
                 revision.provisioningState === KnownRevisionProvisioningState.Deprovisioning ||
                 revision.provisioningState === KnownRevisionProvisioningState.Provisioning ||
                 revision.runningState === KnownRevisionRunningState.Processing ||
-                revision.runningState === 'Activating' // For some reason this isn't listed in the enum
+                revision.runningState === 'Activating' // For some reason this isn't listed in the known enum
             ) {
                 continue;
             }
@@ -210,7 +211,10 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         return undefined;
     }
 
-    private async addLogAttributes(context: T, revisionName: string) {
+    /**
+     * Try to query for any logs associated with the revision and add them to the Copilot activity attributes
+     */
+    private async tryAddLogAttributes(context: T, revisionName: string) {
         // Basic validation check since we're including a name directly in the query
         if (revisionName.length > 54 || !/^[\w-]+$/.test(revisionName)) {
             const invalidName: string = localize('unexpectedRevisionName', 'Internal warning: Encountered an unexpected revision name format "{0}". Skipping log query for the revision status check.', revisionName);
@@ -232,7 +236,7 @@ ContainerAppConsoleLogs_CL
 `;
 
         const queryResult = await logsQueryClient.queryWorkspace(workspaceId, query, {
-            // <= 5 min (ISO 8601)
+            // <= 5 min ago (ISO 8601)
             duration: 'PT5M'
         });
 
@@ -253,7 +257,7 @@ ContainerAppConsoleLogs_CL
 
         const logs: LogActivityAttributes = {
             name: 'Container App Console Logs',
-            description: `Container runtime logs for revision "${revisionName}" (<= 5 min ago). When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
+            description: `Container runtime logs for revision "${revisionName}" (<= 5 min ago). When a container app update was unsuccessful, these should be inspected to help identify the root cause.`,
             content: lines.join('\n'),
         };
 
