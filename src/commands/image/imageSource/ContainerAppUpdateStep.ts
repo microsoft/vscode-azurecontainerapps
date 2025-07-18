@@ -110,18 +110,18 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
     private _revisionStatus: string | undefined;
     private _client: ContainerAppsAPIClient;
 
-    protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Successfully verified container app "{0}" runtime status.', context.containerApp?.name);
-    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify successful container app "{0}" runtime status.', context.containerApp?.name);
-    protected getTreeItemLabel = (): string => localize('verifyContainerAppLabel', 'Verify successful container app runtime status');
+    protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Verified container app "{0}" deployment started successfully.', context.containerApp?.name);
+    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify container app "{0}" deployment started successfully.', context.containerApp?.name);
+    protected getTreeItemLabel = (): string => localize('verifyContainerAppLabel', 'Verify container app deployment started successfully');
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        progress.report({ message: localize('verifyingContainerApp', 'Verifying container app runtime status...') });
+        progress.report({ message: localize('verifyingContainerApp', 'Verifying container app startup status...') });
 
         // Estimated time (n=1): 1s
         this._revisionId = await this.waitAndGetRevisionId(context, 1000 * 10 /** maxWaitTimeMs */);
 
         if (!this._revisionId) {
-            throw new Error(localize('revisionCheckTimeout', 'Status check timed out - unable to find the newly deployed container app revision.'));
+            throw new Error(localize('revisionCheckTimeout', 'Status check timed out before finding the latest deployed container app revision.'));
         }
 
         const containerAppName: string = nonNullValueAndProp(context.containerApp, 'name');
@@ -136,11 +136,11 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
         } catch { /** Do nothing */ }
 
         if (!this._revisionStatus) {
-            throw new Error(localize('revisionStatusTimeout', 'Status check timed out - unable to determine the final status of the newly deployed container app revision "{0}".', parsedResource.resourceName));
+            throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
         } else if (this._revisionStatus !== KnownRevisionRunningState.Running) {
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'Deployment failed - the container app revision "{0}" failed to run successfully. The service will attempt to revert to the previous working revision. Inspect the application logs for this revision to help identify the root cause.',
+                'The deployed container app revision "{0}" has failed to start. The service will try to revert to the previous working revision. Inspect the application logs to address startup issues.',
                 parsedResource.resourceName,
             ));
         }
@@ -169,7 +169,7 @@ class ContainerAppUpdateVerifyStep<T extends ImageSourceContext & IngressContext
             await delay(1000);
 
             revisions = await uiUtils.listAllIterator(this._client.containerAppsRevisions.listRevisions(resourceGroupName, containerAppName));
-            revision = revisions.find(r => r.template?.containers?.[context.containersIdx ?? 0].image === context.image);
+            revision = revisions.find(r => r.name === context.containerApp?.latestRevisionName && r.template?.containers?.[context.containersIdx ?? 0].image === context.image);
 
             if (revision) {
                 return revision.id;
@@ -246,7 +246,7 @@ ContainerAppConsoleLogs_CL
 
         const logs: LogActivityAttributes = {
             name: 'Container App Console Logs',
-            description: `Historical container runtime logs for revision "${revisionName}" (<= 5 min). When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
+            description: `Container runtime logs for revision "${revisionName}" (<= 5 min ago). When a container app update cannot be successfully verified, these should be inspected to help identify the root cause.`,
             content: lines.join('\n'),
         };
 
