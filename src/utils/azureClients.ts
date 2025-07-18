@@ -49,7 +49,7 @@ export async function createAuthorizationManagementClient(context: AzExtClientCo
 
 /**
  * @throws Throws an error if logsQueryClient is created by a user in a sovereign cloud environment.
- * These need scope and endpoint verification before we are able to fully support.
+ * These still need scope and endpoint verification before we are able to fully support.
  */
 export async function createLogsQueryClient(context: ISubscriptionActionContext): Promise<LogsQueryClient> {
     const notImplementedError: string = localize('notImplemented', 'Internal error: Log query client needs implementation for use in cloud environment "{0}".', context.environment.name);
