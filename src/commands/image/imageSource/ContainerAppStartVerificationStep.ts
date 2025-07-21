@@ -57,12 +57,12 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
                 // Try to query and provide any logs to the LLM before throwing
                 await this.tryAddLogAttributes(context, parsedResource.resourceName);
-                context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'true';
+                context.telemetry.properties.addedContainerAppStartLogs = 'true';
             } catch (error) {
                 const perr: IParsedError = parseError(error);
                 ext.outputChannel.appendLog(localize('logQueryError', 'Error encountered while trying to verify container app revision logs through log query platform.'));
                 ext.outputChannel.appendLog(perr.message);
-                context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'false';
+                context.telemetry.properties.addedContainerAppStartLogs = 'false';
                 context.telemetry.properties.getLogsQueryError = maskUserInfo(perr.message, []);
             }
 

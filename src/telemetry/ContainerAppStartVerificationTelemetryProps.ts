@@ -11,7 +11,7 @@ export interface ContainerAppStartVerificationTelemetryProps {
      * 'false'   — Attempted to add logs but failed.
      * 'true'    — Successfully added logs.
      */
-    addedContainerAppStartVerificationLogs?: 'true' | 'false';
+    addedContainerAppStartLogs?: 'true' | 'false';
     getLogsQueryError?: string;
     targetCloud?: string;
 }
