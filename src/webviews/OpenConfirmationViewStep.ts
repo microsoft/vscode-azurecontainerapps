@@ -87,6 +87,8 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                         await confirmationViewButtonActions(context, result);
                     } else if (SharedState.copilotClicked && !SharedState.cancelled) {
                         resolve();
+                        context.telemetry.properties.isCopilotEvent = 'true';
+                        context.telemetry.properties.copilotClicked = 'true';
                         const message = localize('copilotMessage', 'How was your experience using Copilot and the summary view?');
                         const result = await vscode.window.showInformationMessage(message, ...buttons);
                         if (result === surveyButton) {
