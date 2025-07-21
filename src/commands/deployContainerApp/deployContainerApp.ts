@@ -56,6 +56,10 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
             Supports public images from any registry, and both public and private images from Azure Container Registry (ACR).
             For private image deployment from other third party registries, we support deployment through the 'vscode-containers' extension
             via the command titled "Container Registries: Deploy Image to Azure Container Apps...".`,
+            troubleshooting: [
+                `If a container app resource envelope is provided in attributes, do not confuse null secrets as missing container app secrets. This is because secrets are not typically
+                copied over with the core resource metadata. Any issues with secrets will require inspecting the remote resource directly.`,
+            ]
         },
     };
 

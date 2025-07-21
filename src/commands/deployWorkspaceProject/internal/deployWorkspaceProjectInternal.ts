@@ -104,7 +104,9 @@ export async function deployWorkspaceProjectInternal(
             troubleshooting: [
                 `When ACR build errors are present, try to inspect the Dockerfile and ACR build logs.
                 When an error is related to the Dockerfile, offer to make direct fixes for the user.
-                If the Dockerfile and project dependencies don't match, focus on updating the Dockerfile to reflect the project, not the other way around.`
+                If the Dockerfile and project dependencies don't match, focus on updating the Dockerfile to reflect the project, not the other way around.`,
+                `If a container app resource envelope is provided in attributes, do not confuse empty secrets as missing container app secrets. This is because secrets are not typically
+                copied over with the core resource metadata. Any issues with secrets will require inspecting the remote resource directly.`,
             ],
         },
     };
