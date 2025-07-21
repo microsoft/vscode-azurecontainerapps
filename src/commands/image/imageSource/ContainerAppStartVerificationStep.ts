@@ -20,7 +20,7 @@ import { type ImageSourceContext } from "./ImageSourceContext";
 type ContainerAppStartVerificationContext = ImageSourceContext & IngressContext & SetTelemetryProps<ContainerAppStartVerificationTelemetryProps>;
 
 /**
- * Verifies that the recently started container app did not have any startup issues.
+ * Verifies that the recently deployed container app did not have any startup issues.
  *
  * Note: Sometimes an image builds and deploys successfully but fails to run.
  * This leads to the Azure Container Apps service silently reverting to the last successful revision.
