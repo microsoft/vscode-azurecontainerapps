@@ -68,7 +68,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'The deployed container app revision "{0}" has failed to start. If you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to address startup issues.',
+                'The deployed container app revision "{0}" has failed to start. If you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to check for any known startup issues.',
                 parsedResource.resourceName,
             ));
         }
@@ -173,6 +173,11 @@ ContainerAppConsoleLogs_CL
 
         const lines: string[] = [];
         const table: LogsTable = queryResult.tables[0];
+
+        if (!table.rows) {
+            // Note: Often times we will only be able to find logs when the image source was for `RemoteAcrBuild`
+            throw new Error(localize('noQueryLogs', 'No query logs were found for revision "{0}".', revisionName));
+        }
 
         lines.push(table.columnDescriptors.map(c => c.name ?? '{columnName}').join(','));
         for (const row of table.rows) {
