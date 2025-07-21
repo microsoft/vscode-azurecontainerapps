@@ -53,12 +53,16 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
         } else if (revisionStatus !== KnownRevisionRunningState.Running) {
             try {
+                context.telemetry.properties.targetCloud = context.environment.name;
+
                 // Try to query and provide any logs to the LLM before throwing
                 await this.tryAddLogAttributes(context, parsedResource.resourceName);
+                context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'true';
             } catch (error) {
                 const perr: IParsedError = parseError(error);
                 ext.outputChannel.appendLog(localize('logQueryError', 'Error encountered while trying to verify container app revision logs through log query platform.'));
                 ext.outputChannel.appendLog(perr.message);
+                context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'false';
                 context.telemetry.properties.getLogsQueryError = maskUserInfo(perr.message, []);
             }
 
@@ -138,9 +142,6 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
      * Try to query for any logs associated with the revision and add them to the Copilot activity attributes
      */
     private async tryAddLogAttributes(context: T, revisionName: string) {
-        context.telemetry.properties.targetCloud = context.environment.name;
-        context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'false';
-
         // Basic validation check since we're including a name directly in the query
         if (revisionName.length > 54 || !/^[\w-]+$/.test(revisionName)) {
             const invalidName: string = localize('unexpectedRevisionName', 'Internal warning: Encountered an unexpected revision name format "{0}". Skipping log query for the revision status check.', revisionName);
@@ -190,6 +191,5 @@ ContainerAppConsoleLogs_CL
         context.activityAttributes ??= {};
         context.activityAttributes.logs ??= [];
         context.activityAttributes?.logs.push(logs);
-        context.telemetry.properties.addedContainerAppUpdateVerifyLogs = 'true';
     }
 }
