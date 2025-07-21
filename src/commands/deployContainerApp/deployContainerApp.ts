@@ -50,6 +50,13 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         containerApp: item.containerApp,
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
         imageSource,
+        activityAttributes: {
+            description: `Deploys an existing image from a container registry to a target Azure Container App.
+            The container registry and image must already be available for pulling.
+            Supports public images from any registry, and both public and private images from Azure Container Registry (ACR).
+            For private image deployment from other third party registries, we support deployment through the 'vscode-containers' extension
+            via the command titled "Container Registries: Deploy Image to Azure Container Apps...".`,
+        },
     };
 
     if (isAzdExtensionInstalled()) {
@@ -79,6 +86,9 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     await wizard.prompt();
     wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
     await wizard.execute();
+
+    wizardContext.activityAttributes ??= {};
+    wizardContext.activityAttributes.azureResource = wizardContext.containerApp;
 }
 
 async function promptImageSource(context: ISubscriptionActionContext): Promise<ImageSource> {

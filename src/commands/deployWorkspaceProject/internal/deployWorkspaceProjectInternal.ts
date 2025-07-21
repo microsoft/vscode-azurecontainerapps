@@ -271,5 +271,8 @@ export async function deployWorkspaceProjectInternal(
 
     ext.branchDataProvider.refresh();
 
+    wizardContext.activityAttributes ??= {};
+    wizardContext.activityAttributes.azureResource = wizardContext.containerApp;
+
     return wizardContext;
 }
