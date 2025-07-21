@@ -52,7 +52,7 @@ export async function createAuthorizationManagementClient(context: AzExtClientCo
  * These still need scope and endpoint verification before we are able to fully support.
  */
 export async function createLogsQueryClient(context: ISubscriptionActionContext): Promise<LogsQueryClient> {
-    const notImplementedError: string = localize('notImplemented', 'Internal error: Log query client needs implementation for use in cloud environment "{0}".', context.environment.name);
+    const notImplementedError: string = localize('notImplemented', 'Internal error: Log query client needs implementation before it can be used for cloud environment "{0}".', context.environment.name);
 
     // https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/monitor/monitor-query#configure-client-for-azure-sovereign-cloud
     // Todo: Add / verify sovereign cloud endpoints / scopes

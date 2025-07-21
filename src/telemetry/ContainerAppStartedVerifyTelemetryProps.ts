@@ -3,15 +3,15 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-export interface ContainerAppUpdateTelemetryProps {
+export interface ContainerAppStartedVerifyTelemetryProps {
     /**
-     * Indicates the result of attempting to add logs during container app update verification.
+     * Indicates the result of attempting to add logs during container app started verification.
      *
      * undefined — Did not attempt to add logs.
      * 'false'   — Attempted to add logs but failed.
      * 'true'    — Successfully added logs.
      */
-    addedContainerAppUpdateVerifyLogs?: 'true' | 'false';
+    addedContainerAppStartedVerifyLogs?: 'true' | 'false';
     getLogsQueryError?: string;
     targetCloud?: string;
 }
