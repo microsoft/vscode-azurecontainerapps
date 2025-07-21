@@ -5,13 +5,13 @@
 
 import { type KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type AzdTelemetryProps } from "./AzdTelemetryProps";
-import { type ContainerAppStartedVerifyTelemetryProps } from "./ContainerAppStartedVerifyTelemetryProps";
+import { type ContainerAppStartVerificationTelemetryProps } from "./ContainerAppStartVerificationTelemetryProps";
 import { type ContainerTelemetryProps } from "./ContainerTelemetryProps";
 import { type ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
 import { type IngressTelemetryProps } from "./IngressTelemetryProps";
 import { type OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 
-export interface DeployImageApiTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, ContainerAppStartedVerifyTelemetryProps {
+export interface DeployImageApiTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, ContainerAppStartVerificationTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 }
 
@@ -23,7 +23,7 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, Ov
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface ContainerEditTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, ContainerAppStartedVerifyTelemetryProps {
+export interface ContainerEditTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, ContainerAppStartVerificationTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
     skippedRegistryCredentialUpdate?: 'true' | 'false';
 }

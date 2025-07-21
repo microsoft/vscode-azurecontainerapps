@@ -11,7 +11,7 @@ import { containerAppsWebProvider, ImageSource } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
-import { ContainerAppStartedVerifyStep } from "../image/imageSource/ContainerAppStartedVerifyStep";
+import { ContainerAppStartVerificationStep } from "../image/imageSource/ContainerAppStartVerificationStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import { enabledIngressDefaults } from "../ingress/enableIngress/EnableIngressStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
@@ -66,6 +66,6 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
             return [];
         }
 
-        return [new ContainerAppStartedVerifyStep()];
+        return [new ContainerAppStartVerificationStep()];
     }
 }

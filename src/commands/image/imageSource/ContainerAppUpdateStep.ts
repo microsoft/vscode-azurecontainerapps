@@ -14,7 +14,7 @@ import { type IngressContext } from "../../ingress/IngressContext";
 import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
 import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
-import { ContainerAppStartedVerifyStep } from "./ContainerAppStartedVerifyStep";
+import { ContainerAppStartVerificationStep } from "./ContainerAppStartVerificationStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
@@ -90,6 +90,6 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
     }
 
     public addExecuteSteps(): AzureWizardExecuteStep<T>[] {
-        return [new ContainerAppStartedVerifyStep()];
+        return [new ContainerAppStartVerificationStep()];
     }
 }

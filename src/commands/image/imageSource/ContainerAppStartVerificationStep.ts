@@ -9,7 +9,7 @@ import { parseAzureResourceId, uiUtils } from "@microsoft/vscode-azext-azureutil
 import { AzureWizardExecuteStepWithActivityOutput, createSubscriptionContext, maskUserInfo, nonNullValueAndProp, parseError, type IParsedError, type LogActivityAttributes } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
-import { type ContainerAppStartedVerifyTelemetryProps } from "../../../telemetry/ContainerAppStartedVerifyTelemetryProps";
+import { type ContainerAppStartVerificationTelemetryProps } from "../../../telemetry/ContainerAppStartVerificationTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { createContainerAppsAPIClient, createLogsQueryClient } from "../../../utils/azureClients";
 import { delay } from "../../../utils/delay";
@@ -17,7 +17,7 @@ import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { type ImageSourceContext } from "./ImageSourceContext";
 
-type ContainerAppStartedVerifyContext = ImageSourceContext & IngressContext & SetTelemetryProps<ContainerAppStartedVerifyTelemetryProps>;
+type ContainerAppStartedVerifyContext = ImageSourceContext & IngressContext & SetTelemetryProps<ContainerAppStartVerificationTelemetryProps>;
 
 /**
  * Verifies that the recently started container app did not have any startup issues.
@@ -25,9 +25,9 @@ type ContainerAppStartedVerifyContext = ImageSourceContext & IngressContext & Se
  * Note: Sometimes an image builds and deploys successfully but fails to run.
  * This leads to the Azure Container Apps service silently reverting to the last successful revision.
  */
-export class ContainerAppStartedVerifyStep<T extends ContainerAppStartedVerifyContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
+export class ContainerAppStartVerificationStep<T extends ContainerAppStartedVerifyContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 681;
-    public stepName: string = 'containerAppStartedVerifyStep';
+    public stepName: string = 'containerAppStartVerificationStep';
 
     private _client: ContainerAppsAPIClient;
 
