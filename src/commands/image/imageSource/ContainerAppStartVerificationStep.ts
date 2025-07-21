@@ -17,7 +17,7 @@ import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { type ImageSourceContext } from "./ImageSourceContext";
 
-type ContainerAppStartedVerifyContext = ImageSourceContext & IngressContext & SetTelemetryProps<ContainerAppStartVerificationTelemetryProps>;
+type ContainerAppStartVerificationContext = ImageSourceContext & IngressContext & SetTelemetryProps<ContainerAppStartVerificationTelemetryProps>;
 
 /**
  * Verifies that the recently started container app did not have any startup issues.
@@ -25,7 +25,7 @@ type ContainerAppStartedVerifyContext = ImageSourceContext & IngressContext & Se
  * Note: Sometimes an image builds and deploys successfully but fails to run.
  * This leads to the Azure Container Apps service silently reverting to the last successful revision.
  */
-export class ContainerAppStartVerificationStep<T extends ContainerAppStartedVerifyContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
+export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerificationContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 681;
     public stepName: string = 'containerAppStartVerificationStep';
 
