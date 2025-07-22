@@ -174,7 +174,7 @@ ContainerAppConsoleLogs_CL
         const lines: string[] = [];
         const table: LogsTable = queryResult.tables[0];
 
-        if (!table.rows) {
+        if (!table.rows.length) {
             // Note: Often times we will only be able to find logs when the image source was for `RemoteAcrBuild`
             throw new Error(localize('noQueryLogs', 'No query logs were found for revision "{0}".', revisionName));
         }
