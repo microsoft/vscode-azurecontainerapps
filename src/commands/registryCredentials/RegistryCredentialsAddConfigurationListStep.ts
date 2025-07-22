@@ -81,6 +81,12 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         };
     }
 
+    public undo(context: RegistryCredentialsContext): void {
+        if (context.activityChildren) {
+            context.activityChildren.pop();
+        }
+    }
+
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {
         const promptSteps: AzureWizardPromptStep<RegistryCredentialsContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<RegistryCredentialsContext>[] = [];
