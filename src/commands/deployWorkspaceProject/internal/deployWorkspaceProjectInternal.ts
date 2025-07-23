@@ -12,6 +12,7 @@ import { ext } from "../../../extensionVariables";
 import { createActivityContext, prependOrInsertAfterLastInfoChild } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
 import { localize } from "../../../utils/localize";
+import { CommandAttributes } from "../../CommandAttributes";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
@@ -95,19 +96,7 @@ export async function deployWorkspaceProjectInternal(
         ...context,
         ...activityContext,
         ...startingConfiguration,
-        activityAttributes: {
-            description: `Takes a workspace project with a Dockerfile and deploys it to an Azure Container App.
-                Automatically creates any required resources (resource group, managed environment, container registry, container app, log analytics workspace).
-                Supports single repo and monorepo, with deployment settings saved and reused via local VS Code settings (.vscode/settings.json).
-                Deployment settings are saved under "containerApps.deploymentConfigurations".
-                Deployment is agnostic to project runtime and language.`,
-            troubleshooting: [
-                `When ACR build errors are present, try to inspect the Dockerfile and ACR build logs.
-                When an error is related to the Dockerfile, offer to make direct fixes for the user.`,
-                `If a container app resource envelope is provided in attributes, do not confuse empty secrets as missing container app secrets. This is because secrets are not typically
-                copied over with the core resource metadata. Any issues with secrets will require inspecting the remote resource directly.`,
-            ],
-        },
+        activityAttributes: CommandAttributes.DeployWorkspaceProjectInternal,
     };
 
     const promptSteps: AzureWizardPromptStep<DeployWorkspaceProjectInternalContext>[] = [

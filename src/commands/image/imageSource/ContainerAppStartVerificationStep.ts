@@ -122,7 +122,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
                 break;
             }
 
-            await delayWithExponentialBackoff(attempt, 2000 /** baseDelayMs */, maxWaitTimeMs);
+            await delayWithExponentialBackoff(attempt, 1000 /** baseDelayMs */, maxWaitTimeMs);
             attempt++;
 
             revision = await this._client.containerAppsRevisions.getRevision(parsedRevision.resourceGroup, containerAppName, parsedRevision.resourceName);
