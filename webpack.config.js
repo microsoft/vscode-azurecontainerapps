@@ -37,6 +37,7 @@ const nodeSrcPath = path.resolve(__dirname, 'src/node');
 
 const alias = {};
 alias[nodeSrcPath] = path.resolve(__dirname, 'src/browser');
+alias['process/browser'] = require.resolve('process/browser.js');
 
 let webConfig = dev.getDefaultWebpackConfig({
     projectRoot: __dirname,
