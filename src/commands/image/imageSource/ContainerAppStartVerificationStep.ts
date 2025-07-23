@@ -12,7 +12,7 @@ import { ext } from "../../../extensionVariables";
 import { type ContainerAppStartVerificationTelemetryProps } from "../../../telemetry/ContainerAppStartVerificationTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { createContainerAppsAPIClient, createLogsQueryClient } from "../../../utils/azureClients";
-import { delay } from "../../../utils/delay";
+import { delayWithExponentialBackoff } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { type ImageSourceContext } from "./ImageSourceContext";
@@ -26,7 +26,7 @@ type ContainerAppStartVerificationContext = ImageSourceContext & IngressContext 
  * This leads to the Azure Container Apps service silently reverting to the last successful revision.
  */
 export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerificationContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
-    public priority: number = 681;
+    public priority: number = 690;
     public stepName: string = 'containerAppStartVerificationStep';
 
     private _client: ContainerAppsAPIClient;
@@ -87,6 +87,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
         let revision: Revision | undefined;
         let revisions: Revision[];
 
+        let attempt: number = 1;
         const start: number = Date.now();
 
         while (true) {
@@ -94,7 +95,8 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
                 break;
             }
 
-            await delay(1000);
+            await delayWithExponentialBackoff(attempt, 1000 /** baseDelayMs */, maxWaitTimeMs);
+            attempt++;
 
             revisions = await uiUtils.listAllIterator(this._client.containerAppsRevisions.listRevisions(resourceGroupName, containerAppName));
             revision = revisions.find(r => r.name === context.containerApp?.latestRevisionName && r.template?.containers?.[context.containersIdx ?? 0].image === context.image);
@@ -112,6 +114,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
         const parsedRevision = parseAzureResourceId(revisionId);
 
         let revision: Revision;
+        let attempt: number = 1;
         const start: number = Date.now();
 
         while (true) {
@@ -119,7 +122,8 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
                 break;
             }
 
-            await delay(2000);
+            await delayWithExponentialBackoff(attempt, 2000 /** baseDelayMs */, maxWaitTimeMs);
+            attempt++;
 
             revision = await this._client.containerAppsRevisions.getRevision(parsedRevision.resourceGroup, containerAppName, parsedRevision.resourceName);
 
