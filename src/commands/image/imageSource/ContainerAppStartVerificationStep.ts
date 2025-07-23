@@ -11,7 +11,7 @@ import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppStartVerificationTelemetryProps } from "../../../telemetry/ContainerAppStartVerificationTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { createContainerAppsAPIClient, createLogsQueryClient } from "../../../utils/azureClients";
+import { createContainerAppsAPIClient, createLogsQueryClientPublicCloud } from "../../../utils/azureClients";
 import { delayWithExponentialBackoff } from "../../../utils/delay";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
@@ -158,7 +158,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
             return;
         }
 
-        const logsQueryClient = await createLogsQueryClient(context);
+        const logsQueryClient = await createLogsQueryClientPublicCloud(context);
         const query = `
 ContainerAppConsoleLogs_CL
 | where RevisionName_s == "${revisionName}"

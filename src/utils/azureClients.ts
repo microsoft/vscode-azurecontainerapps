@@ -9,11 +9,9 @@ import { type ContainerRegistryManagementClient, type Registry } from '@azure/ar
 import { type OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { LogsQueryClient } from "@azure/monitor-query";
-import { Environment } from "@azure/ms-rest-azure-env";
 import { createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { localize } from "./localize";
 
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript
@@ -47,34 +45,7 @@ export async function createAuthorizationManagementClient(context: AzExtClientCo
     }
 }
 
-/**
- * @throws Throws an error if logsQueryClient is created by a user in a sovereign cloud environment.
- * These still need scope and endpoint verification before we are able to fully support.
- */
-export async function createLogsQueryClient(context: ISubscriptionActionContext): Promise<LogsQueryClient> {
-    const notImplementedError: string = localize('notImplemented', 'Internal error: Log query client needs implementation before it can be used for cloud environment "{0}".', context.environment.name);
-
+export async function createLogsQueryClientPublicCloud(context: ISubscriptionActionContext): Promise<LogsQueryClient> {
     // https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/monitor/monitor-query#configure-client-for-azure-sovereign-cloud
-    // Todo: Add / verify sovereign cloud endpoints / scopes
-
-    let scope: string;
-    switch (context.environment.name) {
-        case Environment.USGovernment.name:
-            // scope = 'https://api.loganalytics.us/.default';
-            // endpoint = 'https://api.loganalytics.us/v1';
-            throw new Error(notImplementedError)
-        case Environment.GermanCloud.name:
-            // scope = 'https://api.loganalytics.de/.default';
-            // endpoint = 'https://api.loganalytics.de/v1';
-            throw new Error(notImplementedError)
-        case Environment.ChinaCloud.name:
-            // scope = 'https://api.loganalytics.azure.cn/.default';
-            // endpoint = 'https://api.loganalytics.azure.cn/v1';
-            throw new Error(notImplementedError)
-        case Environment.AzureCloud.name:
-        default:
-            scope = 'https://api.loganalytics.io/.default';
-    }
-
-    return new LogsQueryClient(await context.createCredentialsForScopes([scope]));
+    return new LogsQueryClient(await context.createCredentialsForScopes(['https://api.loganalytics.io/.default']));
 }
