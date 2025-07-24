@@ -35,6 +35,7 @@ const envFileListStepContext: string = 'envFileListStepItem';
 export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
     private hasLogged: boolean = false;
+    public addedNumberOfActivityChildren: number = 1;
 
     constructor(public readonly options?: EnvFileListStepOptions) {
         super();
@@ -81,12 +82,6 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         };
     }
 
-    public undo(context: T): void {
-        // Pop the activity children if the user goes back
-        if (context.activityChildren) {
-            context.activityChildren.pop();
-        }
-    }
 
     private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');

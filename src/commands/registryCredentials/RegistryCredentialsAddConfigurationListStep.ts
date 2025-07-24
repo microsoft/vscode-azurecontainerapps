@@ -26,6 +26,7 @@ export enum RegistryCredentialType {
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
     private requiresRegistryConfiguration: boolean;
     public pickLabel: string | undefined;
+    public addedNumberOfActivityChildren: number = 1;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
@@ -79,12 +80,6 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             value: this.pickLabel ?? '',
             contextPropertyName: 'newRegistryCredentialType',
         };
-    }
-
-    public undo(context: RegistryCredentialsContext): void {
-        if (context.activityChildren) {
-            context.activityChildren.pop();
-        }
     }
 
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {
