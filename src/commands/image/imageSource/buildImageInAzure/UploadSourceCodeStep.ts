@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityInfoContext, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullValue, type ActivityChildItemOptions, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityInfoContext, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, createContextValue, nonNullValue, type ActivityChildItemOptions, type ExecuteActivityOutput } from '@microsoft/vscode-azext-utils';
 import { randomUUID } from 'crypto';
 import { tmpdir } from 'os';
 import * as path from 'path';
@@ -132,6 +132,17 @@ export class UploadSourceCodeStep<T extends BuildImageInAzureImageSourceContext>
         return {
             item: parentTreeItem ?? new ActivityChildItem({ ...baseTreeItemOptions }),
             message: localize('uploadedSourceCodeSuccess', 'Uploaded source code from "{1}" directory to registry "{0}" for remote build.', context.registry?.name, this._sourceFilePath)
+        };
+    }
+
+    public createProgressOutput(context: T): ExecuteActivityOutput {
+        return {
+            item: new ActivityChildItem({
+                label: localize('uploadSourceCodeLabelProgress', 'Upload workspace source code to registry "{0}"', context.registry?.name),
+                contextValue: createContextValue([uploadSourceCodeStepContext, activityProgressContext]),
+                activityType: ActivityChildType.Progress,
+                iconPath: activityProgressIcon,
+            }),
         };
     }
 

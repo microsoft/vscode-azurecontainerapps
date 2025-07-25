@@ -14,6 +14,7 @@ import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { OpenConfirmationViewStep } from "../../webviews/OpenConfirmationViewStep";
+import { CommandAttributes } from "../CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
 import { editContainerCommandName } from "../editContainer/editContainer";
@@ -50,6 +51,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         containerApp: item.containerApp,
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
         imageSource,
+        activityAttributes: CommandAttributes.DeployContainerAppContainerRegistry,
     };
 
     if (isAzdExtensionInstalled()) {
@@ -79,6 +81,9 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     await wizard.prompt();
     wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
     await wizard.execute();
+
+    wizardContext.activityAttributes ??= {};
+    wizardContext.activityAttributes.azureResource = wizardContext.containerApp;
 }
 
 async function promptImageSource(context: ISubscriptionActionContext): Promise<ImageSource> {

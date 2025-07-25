@@ -5,12 +5,13 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } from "@azure/arm-appcontainers";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { containerAppsWebProvider } from "../../constants";
+import { containerAppsWebProvider, ImageSource } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { ContainerAppStartVerificationStep } from "../image/imageSource/ContainerAppStartVerificationStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
 import { enabledIngressDefaults } from "../ingress/enableIngress/EnableIngressStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
@@ -58,5 +59,13 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
 
     public shouldExecute(context: T): boolean {
         return !context.containerApp;
+    }
+
+    public addExecuteSteps(context: T): AzureWizardExecuteStep<T>[] {
+        if (context.imageSource === ImageSource.QuickstartImage) {
+            return [];
+        }
+
+        return [new ContainerAppStartVerificationStep()];
     }
 }
