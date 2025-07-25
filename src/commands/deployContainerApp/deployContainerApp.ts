@@ -58,7 +58,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
     const confirmationViewTitle: string = localize('summary', 'Summary');
-    const confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Otherwise click "Confirm" to deploy.');
+    const confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input proceeding the changed input may need to change as well');
     const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
     const title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
 
