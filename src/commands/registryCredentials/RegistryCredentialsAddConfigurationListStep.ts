@@ -26,6 +26,7 @@ export enum RegistryCredentialType {
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
     private requiresRegistryConfiguration: boolean;
     public pickLabel: string | undefined;
+    public addedNumberOfActivityChildren: number = 1;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
