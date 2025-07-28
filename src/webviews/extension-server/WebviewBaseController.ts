@@ -49,7 +49,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
 
         const filename = 'views.js';
         const uri = (...parts: string[]) => webview?.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, ...parts))).toString(true);
-        const srcUri = isProduction ? uri(filename) : `${DEV_SERVER_HOST}/${filename}`;
+        const srcUri = isProduction ? uri('dist', filename) : `${DEV_SERVER_HOST}/${filename}`;
 
         const csp = (
             isProduction
