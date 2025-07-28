@@ -26,7 +26,6 @@ export enum RegistryCredentialType {
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
     private requiresRegistryConfiguration: boolean;
     public pickLabel: string | undefined;
-    public addedNumberOfActivityChildren: number = 1;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
@@ -112,6 +111,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                         contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
                         activityType: ActivityChildType.Info,
                         iconPath: activityInfoIcon,
+                        stepId: this.id
                     })
                 );
                 ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));
