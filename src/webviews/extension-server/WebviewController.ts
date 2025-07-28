@@ -57,6 +57,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                 // Todo: these are placeholders. May change to using trpc for the webview
                 switch (message.command) {
                     case 'cancel':
+                        SharedState.cancelled = true;
                         this._panel.dispose();
                         break;
                     case 'confirm':
@@ -65,6 +66,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                         this._panel.dispose();
                         break;
                     case 'copilot':
+                        SharedState.copilotClicked = true;
                         await vscode.commands.executeCommand("workbench.action.chat.open");
                         await vscode.commands.executeCommand("workbench.action.chat.newChat");
                         await vscode.commands.executeCommand("workbench.action.chat.open", {
