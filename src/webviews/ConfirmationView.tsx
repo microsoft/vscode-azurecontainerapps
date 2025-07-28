@@ -73,8 +73,8 @@ export const ConfirmationView = (): JSX.Element => {
             minWidth: 200,
         },
         value: {
-            defaultWidth: 200,
-            minWidth: 200,
+            defaultWidth: 275,
+            minWidth: 275,
         }
     }
 
