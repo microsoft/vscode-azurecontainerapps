@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type Container, type Ingress } from "@azure/arm-appcontainers";
-import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, type AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import * as retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
@@ -14,6 +14,7 @@ import { type IngressContext } from "../../ingress/IngressContext";
 import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
 import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
+import { ContainerAppStartVerificationStep } from "./ContainerAppStartVerificationStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
 
@@ -86,5 +87,9 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
 
     public shouldExecute(context: T): boolean {
         return !!context.containerApp;
+    }
+
+    public addExecuteSteps(): AzureWizardExecuteStep<T>[] {
+        return [new ContainerAppStartVerificationStep()];
     }
 }

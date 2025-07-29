@@ -5,16 +5,18 @@
 
 import { type KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { type AzdTelemetryProps } from "./AzdTelemetryProps";
+import { type ConfirmationViewTelemetryProps } from "./ConfirmationViewTelemetryProps";
+import { type ContainerAppStartVerificationTelemetryProps } from "./ContainerAppStartVerificationTelemetryProps";
 import { type ContainerTelemetryProps } from "./ContainerTelemetryProps";
 import { type ImageSourceTelemetryProps } from "./ImageSourceTelemetryProps";
 import { type IngressTelemetryProps } from "./IngressTelemetryProps";
 import { type OverwriteConfirmTelemetryProps } from "./OverwriteConfirmTelemetryProps";
 
-export interface DeployImageApiTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps {
+export interface DeployImageApiTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, OverwriteConfirmTelemetryProps, ContainerAppStartVerificationTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
 }
 
-export type DeployContainerAppTelemetryProps = AzdTelemetryProps & ImageSourceTelemetryProps & OverwriteConfirmTelemetryProps;
+export type DeployContainerAppTelemetryProps = AzdTelemetryProps & ImageSourceTelemetryProps & OverwriteConfirmTelemetryProps & ConfirmationViewTelemetryProps;
 
 export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, OverwriteConfirmTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
@@ -22,7 +24,7 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, Ov
     directUpdatesCount?: string;  // Direct updates via 'editContainerApp' & 'editDraft'
 }
 
-export interface ContainerEditTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps {
+export interface ContainerEditTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, ContainerAppStartVerificationTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
     skippedRegistryCredentialUpdate?: 'true' | 'false';
 }

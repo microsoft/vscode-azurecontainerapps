@@ -49,7 +49,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
 
         const filename = 'views.js';
         const uri = (...parts: string[]) => webview?.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, ...parts))).toString(true);
-        const srcUri = isProduction ? uri(filename) : `${DEV_SERVER_HOST}/${filename}`;
+        const srcUri = isProduction ? uri('dist', filename) : `${DEV_SERVER_HOST}/${filename}`;
 
         const csp = (
             isProduction
@@ -75,6 +75,8 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
                 ]
         ).join(' ');
 
+        const codiconsUri = webview?.asWebviewUri(vscode.Uri.joinPath(ext.context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+
         /**
          * Note to code maintainers:
          * encodeURIComponent(JSON.stringify(this.configuration)) below is crucial
@@ -86,6 +88,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link href="${codiconsUri}" rel="stylesheet" />
                     <meta // noinspection JSAnnotator
                         http-equiv="Content-Security-Policy" content="${csp}" />
                 </head>
@@ -101,7 +104,6 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
                                 import { render } from "${srcUri}";
                                 render('${this._webviewName}', acquireVsCodeApi());
                             </script>
-
                     </body>
                 </html>`;
     }
