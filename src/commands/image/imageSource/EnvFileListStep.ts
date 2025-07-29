@@ -81,7 +81,6 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         };
     }
 
-
     private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
         const placeHolder: string = localize('setEnvVar', 'Select a {0} file to set the environment variables for the container instance', '.env');
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
