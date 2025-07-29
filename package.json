@@ -863,7 +863,7 @@
         "@fluentui/react-components": "^9.56.2",
         "@fluentui/react-icons": "^2.0.265",
         "@microsoft/vscode-azext-azureutils": "^3.3.3",
-        "@microsoft/vscode-azext-github": "^1.0.2",
+        "@microsoft/vscode-azext-github": "^1.0.4",
         "@microsoft/vscode-azext-utils": "^3.3.3",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "@vscode/codicons": "0.0.38",
