@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Button, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGridRow, TableCellLayout, Tooltip, type OnSelectionChangeData, type SelectionItemId, type TableColumnDefinition } from '@fluentui/react-components';
-import { Sparkle16Filled } from '@fluentui/react-icons';
 import * as React from 'react';
 import { useContext, useState, type JSX } from 'react';
 import './confirmationView.scss';
@@ -97,7 +96,7 @@ export const ConfirmationView = (): JSX.Element => {
                 return <TableCellLayout className='copilot'>
                     <Tooltip content='Ask Copilot' relationship='label'>
                         <Button
-                            appearance='transparent' icon={<Sparkle16Filled />} onClick={(event) => {
+                            appearance='transparent' icon={<div className='codicon codicon-copilot'></div>} onClick={(event) => {
                                 event.stopPropagation();
                                 copilotClicked(item.name, item.value);
                             }}>
