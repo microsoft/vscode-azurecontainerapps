@@ -111,6 +111,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                         contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
                         activityType: ActivityChildType.Info,
                         iconPath: activityInfoIcon,
+                        stepId: this.id
                     })
                 );
                 ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));

@@ -144,6 +144,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     contextValue: createContextValue([envFileListStepContext, setEnvironmentVariableOption, activitySuccessContext]),
                     activityType: ActivityChildType.Success,
                     iconPath: activitySuccessIcon,
+                    stepId: this.id
                 })
             );
 
@@ -160,6 +161,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
                     activityType: ActivityChildType.Success,
                     iconPath: activitySuccessIcon,
+                    stepId: this.id
                 })
             );
             ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
@@ -170,6 +172,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     contextValue: createContextValue([envFileListStepContext, activityInfoContext]),
                     activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon,
+                    stepId: this.id
                 })
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
