@@ -103,10 +103,13 @@ module.exports = (env, { mode }) => {
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: path.resolve(__dirname, 'node_modules/@vscode/codicons/dist'),
-                        to: path.resolve(__dirname, 'dist/icons'),
-                    }
-
+                        from: path.resolve(__dirname, 'node_modules/@vscode/codicons/dist/codicon.css'),
+                        to: path.resolve(__dirname, 'dist/icons/codicon.css'),
+                    },
+                    {
+                        from: path.resolve(__dirname, 'node_modules/@vscode/codicons/dist/codicon.ttf'),
+                        to: path.resolve(__dirname, 'dist/icons/codicon.ttf'),
+                    },
                 ]
             }),
             new webpack.optimize.LimitChunkCountPlugin({
