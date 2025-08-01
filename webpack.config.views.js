@@ -21,6 +21,7 @@ module.exports = (env, { mode }) => {
         },
         output: {
             path: path.resolve(__dirname, 'dist'),
+            publicPath: '/',
             filename: '[name].js',
             libraryTarget: 'module',
         },
@@ -100,7 +101,16 @@ module.exports = (env, { mode }) => {
             new webpack.ProvidePlugin({ React: 'react' }),
             isDev && new webpack.HotModuleReplacementPlugin(),
             new CopyWebpackPlugin({
-                patterns: [{ from: 'src/webviews/static', to: 'static', noErrorOnMissing: true }].filter(Boolean),
+                patterns: [
+                    {
+                        from: path.resolve(__dirname, 'node_modules/@vscode/codicons/dist/codicon.css'),
+                        to: path.resolve(__dirname, 'dist/icons/codicon.css'),
+                    },
+                    {
+                        from: path.resolve(__dirname, 'node_modules/@vscode/codicons/dist/codicon.ttf'),
+                        to: path.resolve(__dirname, 'dist/icons/codicon.ttf'),
+                    },
+                ]
             }),
             new webpack.optimize.LimitChunkCountPlugin({
                 maxChunks: 1,
