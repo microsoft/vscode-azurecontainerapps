@@ -3,6 +3,7 @@
 # 0.8.4 - 2025-04-08
 ### Added
 * [[897](https://github.com/microsoft/vscode-azurecontainerapps/pull/897)] Add new summary view at the end of the "Deploy to Container App..." command with copilot support.
+    <img alt="Summary View Screenshot"  height="350px" src="resources/changelog/0.8.4/summaryView.png"> <br />
 * [[909](https://github.com/microsoft/vscode-azurecontainerapps/pull/909)] Add new step to automatically verify if the deployed container app started successfully.
 
 ## 0.8.3 - 2025-06-17
