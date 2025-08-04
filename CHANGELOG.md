@@ -1,5 +1,10 @@
 # Change Log
 
+# 0.8.4 - 2025-04-08
+### Added
+* [[897](https://github.com/microsoft/vscode-azurecontainerapps/pull/897)] Add new summary view at the end of the "Deploy to Container App..." command with copilot support.
+* [[909](https://github.com/microsoft/vscode-azurecontainerapps/pull/909)] Add new step to automatically verify if the deployed container app started successfully.
+
 ## 0.8.3 - 2025-06-17
 ### Changed
 * [[884](https://github.com/microsoft/vscode-azurecontainerapps/pull/884)] Upgrade dependencies for various activity log updates. Activities with activity children will now be accompanied alongside a live timer.
