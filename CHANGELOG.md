@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.9.0 - 2025-08-04
+
+### Overview
+This update introduces two Copilot-powered features / enhancements for `Deploy to Container App`:
+1. When deploying an image from a container registry, you'll now be greeted by a new summary view. Click any field to quickly go back and make edits. For more info about a specific field, use the new Copilot icon on the right-hand side to ask questions and gain greater insight.
+
+    <img alt="Summary View Screenshot"  height="350px" src="resources/changelog/0.9.0/summaryView.png"> <br />
+
+2. When deploying from a workspace project, the extension now contributes custom activity log command data and metadata for use by Copilot. This is useful for diagnosing deployment errors during image building or startup, and for learning more about any deployment actions taken. The extension will now provide additional Copilot context, such as deployment logs, when errors are encountered.
+
+    <img alt="Activity Log Screenshot"  height="250px" src="resources/changelog/0.9.0/activityLogCopilotButton.png"> <br />
+
+### Added
+* [[897](https://github.com/microsoft/vscode-azurecontainerapps/pull/897)] Add new summary view at the end of the "Deploy to Container App..." command with copilot support.
+* [[909](https://github.com/microsoft/vscode-azurecontainerapps/pull/909)] Add new step to automatically verify if the deployed container app started successfully.
+
 ## 0.8.3 - 2025-06-17
 ### Changed
 * [[884](https://github.com/microsoft/vscode-azurecontainerapps/pull/884)] Upgrade dependencies for various activity log updates. Activities with activity children will now be accompanied alongside a live timer.
