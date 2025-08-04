@@ -8,7 +8,7 @@ This update introduces two Copilot-powered features / enhancements for `Deploy t
 
     <img alt="Summary View Screenshot"  height="350px" src="resources/changelog/0.9.0/summaryView.png"> <br />
 
-2. When deploying from a workspace project, the extension now contributes custom activity log command data and metadata for use by Copilot. This is useful for diagnosing deployment erros during image building or startup, and for learning more about any deployment actions taken. The extension will now provide additional Copilot context, such as deployment logs, when errors are encountered.
+2. When deploying from a workspace project, the extension now contributes custom activity log command data and metadata for use by Copilot. This is useful for diagnosing deployment errors during image building or startup, and for learning more about any deployment actions taken. The extension will now provide additional Copilot context, such as deployment logs, when errors are encountered.
 
     <img alt="Activity Log Screenshot"  height="250px" src="resources/changelog/0.9.0/activityLogCopilotButton.png"> <br />
 
