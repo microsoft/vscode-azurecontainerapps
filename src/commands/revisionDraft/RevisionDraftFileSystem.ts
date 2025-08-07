@@ -69,7 +69,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         // Branching path reasoning: https://github.com/microsoft/vscode-azurecontainerapps/blob/main/src/commands/revisionDraft/README.md
         let file: RevisionDraftFile | undefined;
         if (ContainerAppItem.isContainerAppItem(item) || item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-            const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4));
+            const revisionContent: Uint8Array = new Uint8Array(Buffer.from(JSON.stringify(nonNullValueAndProp(item.containerApp, 'template'), undefined, 4)));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
             // A trick to help the draft item appear properly when the parent isn't already expanded (covers the command palette entrypoints)
@@ -78,7 +78,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
                 localize('creatingDraft', 'Creating draft...'),
                 () => Promise.resolve());
 
-            const revisionContent: Uint8Array = Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4));
+            const revisionContent: Uint8Array = new Uint8Array(Buffer.from(JSON.stringify(nonNullValueAndProp(item.revision, 'template'), undefined, 4)));
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.revision, 'name'));
         }
 
@@ -100,7 +100,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
     readFile(uri: Uri): Uint8Array {
         const contents = this.draftStore.get(uri.path)?.contents;
-        return contents ? Buffer.from(contents) : Buffer.from('');
+        return contents ? new Uint8Array(Buffer.from(contents)) : new Uint8Array(Buffer.from(''));
     }
 
     doesContainerAppsItemHaveRevisionDraft(item: ContainerAppsItem): boolean {
@@ -140,7 +140,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
     writeFile(uri: Uri, contents: Uint8Array, options?: WriteFileOptions): void {
         const file: RevisionDraftFile | undefined = this.draftStore.get(uri.path);
-        if (!file || (Buffer.from(file.contents).equals(Buffer.from(contents)))) {
+        if (!file || (file.contents.byteLength === contents.byteLength && file.contents.every((byte, index) => byte === contents[index]))) {
             return;
         }
 
@@ -168,7 +168,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             this.createRevisionDraft(item);
         }
 
-        const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
+        const newContent: Uint8Array = new Uint8Array(Buffer.from(JSON.stringify(template, undefined, 4)));
         this.writeFile(uri, newContent, { isCommandEntrypoint: true });
     }
 
