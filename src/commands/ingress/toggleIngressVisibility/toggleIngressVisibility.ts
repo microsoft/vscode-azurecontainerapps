@@ -27,7 +27,7 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
     };
 
     const ingress: Ingress = nonNullValueAndProp(containerApp.configuration, 'ingress');
-    const title: string = localize('toggleIngressVisibility', 'Toggle ingress visibility to "{0}" for container app "{1}"', ingress.external ? IngressConstants.internal : IngressConstants.external, containerApp.name);
+    const title: string = localize('toggleIngressVisibility', 'Switch ingress visibility to "{0}" for container app "{1}"', ingress.external ? IngressConstants.internal : IngressConstants.external, containerApp.name);
 
     const executeSteps: AzureWizardExecuteStep<IngressBaseContext>[] = [
         new ToggleIngressVisibilityStep()
