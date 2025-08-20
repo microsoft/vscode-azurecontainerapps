@@ -96,6 +96,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployContainerAppWithCopilot",
+                "title": "%containerApps.deployContainerAppWithCopilot%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteContainerApp",
                 "title": "%containerApps.deleteContainerApp%",
                 "category": "Azure Container Apps"
@@ -382,6 +387,11 @@
                     "command": "containerApps.deployContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.deployContainerAppWithCopilot",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "group": "2@2"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
@@ -864,7 +874,7 @@
         "@fluentui/react-icons": "^2.0.265",
         "@microsoft/vscode-azext-azureutils": "^3.3.3",
         "@microsoft/vscode-azext-github": "^1.0.4",
-        "@microsoft/vscode-azext-utils": "^3.3.3",
+        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-3.3.3.tgz",
         "@microsoft/vscode-azureresources-api": "^2.0.2",
         "@vscode/codicons": "0.0.38",
         "buffer": "^6.0.3",

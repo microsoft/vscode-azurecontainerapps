@@ -5,6 +5,7 @@
 
 import { AzureWizardPromptStep, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
+import { type WebviewPanel } from 'vscode';
 import { localize } from "../utils/localize";
 import { ConfirmationViewController } from "./ConfirmationViewController";
 
@@ -13,6 +14,7 @@ export const SharedState = {
     cancelled: true,
     copilotClicked: false,
     editingPicks: false,
+    currentPanel: undefined as WebviewPanel | undefined,
 };
 
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
@@ -32,6 +34,11 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
     }
 
     public async prompt(context: T): Promise<void> {
+        if (SharedState.currentPanel) {
+            SharedState.currentPanel.dispose();
+            SharedState.currentPanel = undefined;
+        }
+
         const confirmationView = new ConfirmationViewController({
             title: this.title,
             tabTitle: this.tabTitle,
