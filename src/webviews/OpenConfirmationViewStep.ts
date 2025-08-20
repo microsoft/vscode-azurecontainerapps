@@ -123,7 +123,7 @@ export async function confirmationViewButtonActions(context: IActionContext, res
         } else if (result.title === 'Unhelpful') {
             context.telemetry.properties.confirmationViewNotHelpful = 'true';
         } else if (result.title === 'Provide Feedback') {
-            const confirmationViewSurveyLink = 'aka.ms/AAx0tw1'
+            const confirmationViewSurveyLink = 'https://aka.ms/AAx0tw1'
             await openUrl(confirmationViewSurveyLink);
         }
     }
