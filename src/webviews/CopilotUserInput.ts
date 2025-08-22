@@ -33,9 +33,10 @@ export class CopilotUserInput implements types.IAzureUserInput {
             const primaryPrompt: string = createPrimaryPromptForInputBox(options.prompt, this._relevantContext);
             const response = await doCopilotInteraction(primaryPrompt)
             const jsonResponse: string = JSON.parse(response) as string;
-
+            this._onDidFinishPromptEmitter.fire({ value: jsonResponse });
             return jsonResponse;
         } else if (options.value) {
+            this._onDidFinishPromptEmitter.fire({ value: options.value });
             return options.value;
         } else {
             throw new Error('No prompt or default value provided for input box'); // Todo: want to fall back to asking the user input but implement this later

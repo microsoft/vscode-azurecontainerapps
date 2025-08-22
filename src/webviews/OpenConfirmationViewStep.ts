@@ -3,11 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzExtUserInput, AzureWizardPromptStep, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
 import { type WebviewPanel } from 'vscode';
 import { localize } from "../utils/localize";
 import { ConfirmationViewController } from "./ConfirmationViewController";
+import { CopilotUserInput } from "./CopilotUserInput";
 
 export const SharedState = {
     itemsToClear: 0,
@@ -55,6 +56,9 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                     if (SharedState.itemsToClear > 0) {
                         context.telemetry.properties.editingPicks = 'true';
                         SharedState.editingPicks = true;
+                        if (context.ui instanceof CopilotUserInput) {
+                            context.ui = new AzExtUserInput(context);
+                        }
                         throw new GoBackError(SharedState.itemsToClear);
                     }
 

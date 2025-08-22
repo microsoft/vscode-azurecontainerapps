@@ -9,10 +9,12 @@ import { CommandAttributes } from "../commands/CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../commands/ContainerAppOverwriteConfirmStep";
 import { type ContainerAppDeployContext } from "../commands/deployContainerApp/ContainerAppDeployContext";
 import { ContainerAppDeployStartingResourcesLogStep } from "../commands/deployContainerApp/ContainerAppDeployStartingResourcesLogStep";
+import { ContainerAppUpdateStep } from "../commands/image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../commands/image/imageSource/ImageSourceListStep";
 import { type ContainerAppItem } from "../tree/ContainerAppItem";
 import { createActivityContext } from "../utils/activityUtils";
 import { getManagedEnvironmentFromContainerApp } from "../utils/getResourceUtils";
+import { getVerifyProvidersStep } from "../utils/getVerifyProvidersStep";
 import { localize } from "../utils/localize";
 import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
 import { CopilotUserInput } from "./CopilotUserInput";
@@ -47,7 +49,11 @@ export async function deployWithCopilot(context: IActionContext, node: Container
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
             new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
-        ]
+        ],
+        executeSteps: [
+            getVerifyProvidersStep<ContainerAppDeployContext>(),
+            new ContainerAppUpdateStep(),
+        ],
     });
 
     await wizard.prompt();
