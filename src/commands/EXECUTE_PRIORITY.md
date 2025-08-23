@@ -69,7 +69,8 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 - QuickStartImageConfigureStep: 610
 - ContainerAppCreateStep: 620
-- ContainerAppUpdateStep: 650
+- ContainerAppUpdateStep: 680
+- ContainerAppStartVerificationStep: 690
 
 ### 6. Ingress
 

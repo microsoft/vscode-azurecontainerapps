@@ -8,8 +8,9 @@ import { type AuthorizationManagementClient } from "@azure/arm-authorization";
 import { type ContainerRegistryManagementClient, type Registry } from '@azure/arm-containerregistry';
 import { type OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
+import { LogsQueryClient } from "@azure/monitor-query";
 import { createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
-import { createSubscriptionContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { createSubscriptionContext, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
 // Lazy-load @azure packages to improve startup performance.
@@ -42,4 +43,9 @@ export async function createAuthorizationManagementClient(context: AzExtClientCo
     } else {
         return createAzureClient(context, (await import('@azure/arm-authorization')).AuthorizationManagementClient);
     }
+}
+
+export async function createLogsQueryClientPublicCloud(context: ISubscriptionActionContext): Promise<LogsQueryClient> {
+    // https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/monitor/monitor-query#configure-client-for-azure-sovereign-cloud
+    return new LogsQueryClient(await context.createCredentialsForScopes(['https://api.loganalytics.io/.default']));
 }

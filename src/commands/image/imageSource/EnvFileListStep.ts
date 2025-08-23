@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
@@ -33,7 +33,6 @@ const envFileListStepContext: string = 'envFileListStepItem';
 
 export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPromptStep<T> {
     private _setEnvironmentVariableOption?: SetEnvironmentVariableOption;
-    private hasLogged: boolean = false;
 
     constructor(public readonly options?: EnvFileListStepOptions) {
         super();
@@ -43,10 +42,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         if (context.environmentVariables?.length === 0) {
             context.telemetry.properties.environmentVariableFileCount = '0';
             this._setEnvironmentVariableOption = SetEnvironmentVariableOption.NoDotEnv;
-        }
-
-        if (this._setEnvironmentVariableOption && !this.hasLogged) {
-            this.outputLogs(context, this._setEnvironmentVariableOption);
+            this.outputLogs(context, SetEnvironmentVariableOption.NoDotEnv);
         }
     }
 
@@ -70,6 +66,14 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
     public shouldPrompt(context: T): boolean {
         return context.imageSource !== ImageSource.QuickstartImage && context.environmentVariables === undefined;
+    }
+
+    public confirmationViewProperty(context: T): ConfirmationViewProperty {
+        return {
+            name: localize('environmentVariables', 'Environment Variables'),
+            value: context.envPath ?? localize('useExisting', 'Use existing configuration'),
+            contextPropertyName: 'envPath'
+        };
     }
 
     private async promptForEnvPath(context: T, showHasExistingData?: boolean): Promise<string | undefined> {
@@ -112,13 +116,6 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
     }
 
     private outputLogs(context: T, setEnvironmentVariableOption: SetEnvironmentVariableOption): void {
-        if (this.hasLogged) {
-            // Todo: Handle this with the undo method (not currently exposed in utils type def file)
-            // This path indicates user clicked the back button, so we need to undo the previous logs
-            context.activityChildren?.pop();
-            ext.outputChannel.appendLog(localize('resetEnv', 'User chose to go back a step - resetting environment variables.'));
-        }
-
         context.telemetry.properties.setEnvironmentVariableOption = setEnvironmentVariableOption;
 
         if (
@@ -135,6 +132,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     contextValue: createContextValue([envFileListStepContext, setEnvironmentVariableOption, activitySuccessContext]),
                     activityType: ActivityChildType.Success,
                     iconPath: activitySuccessIcon,
+                    stepId: this.id
                 })
             );
 
@@ -151,6 +149,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     contextValue: createContextValue([envFileListStepContext, activitySuccessContext]),
                     activityType: ActivityChildType.Success,
                     iconPath: activitySuccessIcon,
+                    stepId: this.id
                 })
             );
             ext.outputChannel.appendLog(localize('savedEnvVarsFileMessage', 'Saved environment variables using provided .env file "{0}".', context.envPath));
@@ -161,11 +160,10 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     contextValue: createContextValue([envFileListStepContext, activityInfoContext]),
                     activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon,
+                    stepId: this.id
                 }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
-
-        this.hasLogged = true;
     }
 }

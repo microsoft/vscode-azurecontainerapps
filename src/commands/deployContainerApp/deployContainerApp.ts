@@ -13,6 +13,8 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { OpenConfirmationViewStep } from "../../webviews/OpenConfirmationViewStep";
+import { CommandAttributes } from "../CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
 import { editContainerCommandName } from "../editContainer/editContainer";
@@ -49,6 +51,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         containerApp: item.containerApp,
         managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
         imageSource,
+        activityAttributes: CommandAttributes.DeployContainerAppContainerRegistry,
     };
 
     if (isAzdExtensionInstalled()) {
@@ -56,23 +59,31 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     }
     wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
+    const confirmationViewTitle: string = localize('summary', 'Summary');
+    const confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input proceeding the changed input may need to change as well');
+    const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
+    const title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
+
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
-        title: localize('deployContainerAppTitle', 'Deploy image to container app'),
+        title: title,
         promptSteps: [
             new ContainerAppDeployStartingResourcesLogStep(),
             new ImageSourceListStep(),
             new ContainerAppOverwriteConfirmStep(),
+            new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerAppDeployContext>(),
             new ContainerAppUpdateStep(),
         ],
-        showLoadingPrompt: true
     });
 
     await wizard.prompt();
     wizardContext.activityTitle = localize('deployContainerAppActivityTitle', 'Deploy image to container app "{0}"', wizardContext.containerApp?.name);
     await wizard.execute();
+
+    wizardContext.activityAttributes ??= {};
+    wizardContext.activityAttributes.azureResource = wizardContext.containerApp;
 }
 
 async function promptImageSource(context: ISubscriptionActionContext): Promise<ImageSource> {

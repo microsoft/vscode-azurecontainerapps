@@ -23,6 +23,7 @@ export class ContainerRegistryImageConfigureStep<T extends ContainerRegistryImag
         // Output logs
         context.activityChildren?.push(
             new ActivityChildItem({
+                stepId: this.id,
                 label: localize('configureTargetImageLabel', 'Configure target image "{0}"', context.image),
                 description: '0s',
                 contextValue: createContextValue(['containerRegistryImageConfigureStepItem', activitySuccessContext]),

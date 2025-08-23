@@ -5,7 +5,7 @@
 
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { noMatchingResources, noMatchingResourcesQp, registryProvider, registryResourceType } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
@@ -37,6 +37,8 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         this.options.pickUpdateStrategy ??= new AcrDefaultSortAndPrioritizationStrategy();
     }
 
+    private pickLabel: string;
+
     public async prompt(context: T): Promise<void> {
         let pick: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>;
         let result: Registry | typeof noMatchingResources | undefined;
@@ -56,11 +58,20 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             result = pick.data;
         } while (result === noMatchingResources);
 
+        this.pickLabel = pick.label;
         context.registry = result;
     }
 
     public shouldPrompt(context: T): boolean {
         return !context.registry && !context.newRegistryName;
+    }
+
+    public confirmationViewProperty(_context: T): ConfirmationViewProperty {
+        return {
+            name: localize('registry', 'Registry'),
+            value: this.pickLabel ?? '',
+            contextPropertyName: 'registry'
+        }
     }
 
     private async getPicks(context: T): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {

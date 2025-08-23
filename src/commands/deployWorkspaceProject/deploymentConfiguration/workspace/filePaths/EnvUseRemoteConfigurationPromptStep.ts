@@ -15,7 +15,7 @@ import { ContainerAppVerifyStep } from "../azureResources/ContainerAppVerifyStep
 import { ResourceGroupVerifyStep } from "../azureResources/ResourceGroupVerifyStep";
 
 export const useRemoteConfigurationKey: string = 'useRemoteConfiguration';
-export const useRemoteConfigurationLabel: string = localize('useRemoteConfiguration', 'Remote env configuration');
+export const useRemoteConfigurationLabel: string = localize('useRemoteConfiguration', 'Use remote env configuration');
 export const useRemoteConfigurationOutputMessage: string = localize('usingRemoteConfiguration', 'Using the existing remote env configuration.');
 
 export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentConfigurationContext> extends AzureWizardPromptStep<T> {

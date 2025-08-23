@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type AzureWizardExecuteStep, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
@@ -24,6 +24,7 @@ export enum RegistryCredentialType {
 
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
     private requiresRegistryConfiguration: boolean;
+    public pickLabel: string | undefined;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
@@ -66,14 +67,25 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 placeHolder = localize('selectCredentialTypeGeneric', 'Select a registry connection method');
         }
 
-        context.newRegistryCredentialType = (await context.ui.showQuickPick(this.getPicks(context), {
+        const pick = (await context.ui.showQuickPick(this.getPicks(context), {
             placeHolder,
             suppressPersistence: true,
-        })).data;
+        }));
+
+        this.pickLabel = pick.label;
+        context.newRegistryCredentialType = pick.data;
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {
         return this.requiresRegistryConfiguration && !context.newRegistryCredentialType;
+    }
+
+    public confirmationViewProperty(_context: RegistryCredentialsContext): ConfirmationViewProperty {
+        return {
+            name: localize('connectionMethod', 'Connection method'),
+            value: this.pickLabel ?? '',
+            contextPropertyName: 'newRegistryCredentialType',
+        };
     }
 
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {
@@ -106,6 +118,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                         contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
                         activityType: ActivityChildType.Info,
                         iconPath: activityInfoIcon,
+                        stepId: this.id,
                     }) as ActivityInfoChild,
                 );
                 ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));
