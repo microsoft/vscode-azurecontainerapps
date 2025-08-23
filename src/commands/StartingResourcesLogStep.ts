@@ -63,9 +63,8 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', context.resourceGroup.name));
-        } else {
-            context.telemetry.properties.existingResourceGroup = 'false';
         }
+        context.telemetry.properties.existingResourceGroup = String(!!context.resourceGroup);
 
         // Managed environment
         if (context.managedEnvironment) {
@@ -79,9 +78,8 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
-        } else {
-            context.telemetry.properties.existingEnvironment = 'false';
         }
+        context.telemetry.properties.existingEnvironment = String(!!context.managedEnvironment);
 
         // Container registry
         if (context.registry) {
@@ -95,9 +93,8 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingAcr', 'Using Azure Container Registry "{0}".', context.registry.name));
-        } else {
-            context.telemetry.properties.existingRegistry = 'false';
         }
+        context.telemetry.properties.existingRegistry = String(!!context.registry);
 
         // Container app
         if (context.containerApp) {
@@ -111,18 +108,16 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
                 }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('usingContainerApp', 'Using container app "{0}".', context.containerApp.name));
-        } else {
-            context.telemetry.properties.existingContainerApp = 'false';
         }
+        context.telemetry.properties.existingContainerApp = String(!!context.containerApp);
 
         // Location
         if (LocationListStep.hasLocation(context)) {
             context.telemetry.properties.existingLocation = 'true';
             const location: string = (await LocationListStep.getLocation(context)).name;
             ext.outputChannel.appendLog(localize('usingLocation', 'Using location: "{0}".', location));
-        } else {
-            context.telemetry.properties.existingLocation = 'false';
         }
+        context.telemetry.properties.existingLocation = String(!!LocationListStep.hasLocation(context));
 
         this.hasLogged = true;
     }
