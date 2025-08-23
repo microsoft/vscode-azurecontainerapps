@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { gulp_webpack } from '@microsoft/vscode-azext-dev';
-import * as child_process from 'child_process';
 import * as fse from 'fs-extra';
 import * as gulp from 'gulp';
 import * as path from 'path';
@@ -28,10 +27,11 @@ async function cleanReadme(): Promise<void> {
 }
 
 async function installSwcCore(): Promise<void> {
-    // Our pipelies run on Linux so we need to install the correct @swc/core package for te pipelines to pass.
-    if (process.platform === 'linux') {
-        child_process.execSync('npm install @swc/core-linux-x64-gnu --save-dev')
-    }
+    // NOTE: Commented out automatic installation per user request in PR comment
+    // Original comment: "Our pipelies run on Linux so we need to install the correct @swc/core package for te pipelines to pass."
+    // if (process.platform === 'linux') {
+    //     child_process.execSync('npm install @swc/core-linux-x64-gnu --save-dev')
+    // }
 }
 
 exports['webpack-dev'] = gulp.series(prepareForWebpack, () => gulp_webpack('development'));
