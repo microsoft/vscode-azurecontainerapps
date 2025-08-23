@@ -74,11 +74,11 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         const promptSteps: AzureWizardPromptStep<T>[] = [];
         const executeSteps: AzureWizardExecuteStep<T>[] = [];
 
+        promptSteps.push(new ManagedEnvironmentNameStep());
+
         if (!context.resourceGroup) {
             promptSteps.push(new ResourceGroupListStep());
         }
-
-        promptSteps.push(new ManagedEnvironmentNameStep());
 
         LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
         LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
@@ -106,7 +106,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
             context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
         }
-
         await LocationListStep.setAutoSelectLocation(context, managedEnvironment.location);
         context.managedEnvironment = managedEnvironment;
     }
