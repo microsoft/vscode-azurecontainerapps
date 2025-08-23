@@ -82,7 +82,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             };
         });
 
-        const picks: IAzureQuickPickItem<Registry | undefined>[] = await this.options.pickUpdateStrategy?.updatePicks(context, registryPicks) ?? [];
+        const picks: IAzureQuickPickItem<Registry | undefined>[] = await this.options.pickUpdateStrategy?.updatePicks(context, registryPicks) ?? registryPicks;
         if (!this.options?.suppressCreatePick) {
             picks.unshift(acrCreatePick);
         }
