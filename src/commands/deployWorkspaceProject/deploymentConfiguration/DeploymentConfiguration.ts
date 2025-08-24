@@ -8,9 +8,10 @@ import { type Registry } from "@azure/arm-containerregistry";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { type WorkspaceFolder } from "vscode";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { type DeploymentMode } from "./workspace/DeploymentModeListStep";
 
 export interface DeploymentConfiguration {
-    deploymentMode?: 'basic' | 'advanced';
+    deploymentMode?: DeploymentMode;
     configurationIdx?: number;
     shouldSaveDeploySettings?: boolean;
     rootFolder?: WorkspaceFolder;
