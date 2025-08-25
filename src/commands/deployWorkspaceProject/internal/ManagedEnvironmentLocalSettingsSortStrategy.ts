@@ -34,7 +34,9 @@ export class ManagedEnvironmentLocalSettingsSortStrategy<T extends DeployWorkspa
             asyncTasks.push(
                 (async () => {
                     const id: string | undefined = await getManagedEnvironmentId(client, nonNullProp(config, 'resourceGroup'), nonNullProp(config, 'containerApp'));
-                    if (id) recommendedEnvironmentIds.add(id);
+                    if (id) {
+                        recommendedEnvironmentIds.add(id);
+                    }
                 })(),
             );
         }
