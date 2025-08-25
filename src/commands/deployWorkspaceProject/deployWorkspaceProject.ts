@@ -62,7 +62,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     });
 
     const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
-        advancedCreate: deploymentConfiguration.deploymentMode === DeploymentMode.Advanced ? true : false,
+        advancedCreate: deploymentConfiguration.deploymentMode === DeploymentMode.Advanced,
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,
