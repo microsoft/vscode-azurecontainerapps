@@ -19,6 +19,10 @@ import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
 
 export type ManagedEnvironmentListStepOptions = {
+    /**
+     * Provide a custom strategy for updating the list of managed environment picks.
+     * Can be used to inject custom sorting, grouping, filtering, etc.
+     */
     pickUpdateStrategy?: ManagedEnvironmentPickUpdateStrategy;
 };
 
@@ -55,7 +59,15 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
 
     private async getPicks(context: T): Promise<ManagedEnvironmentPick[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-        const managedEnvironments: ManagedEnvironment[] = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+
+        let managedEnvironments: ManagedEnvironment[];
+        if (context.resourceGroup) {
+            managedEnvironments = await uiUtils.listAllIterator(client.managedEnvironments.listByResourceGroup(nonNullProp(context.resourceGroup, 'name')));
+        } else if (context.newResourceGroupName) {
+            managedEnvironments = [];
+        } else {
+            managedEnvironments = await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
+        }
 
         return managedEnvironments.map(env => {
             return {
