@@ -15,7 +15,7 @@ import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspacePr
 import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
-    await tryAddMissingAzureResourcesToContext(context, options);
+    await tryAddMissingAzureResourcesToContext(context);
 
     return {
         resourceGroup: context.resourceGroup,
@@ -33,19 +33,16 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
     };
 }
 
-async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<void> {
-    if (!options.advancedCreate) {
-        // For basic create, try to pre-populate most resources using inference to reduce prompting
-        if (context.containerApp && (!context.resourceGroup || !context.managedEnvironment)) {
-            const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
-            context.resourceGroup ??= resources.resourceGroup;
-            context.managedEnvironment ??= resources.managedEnvironment;
-        }
+async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
+    if (context.containerApp && (!context.resourceGroup || !context.managedEnvironment)) {
+        const resources = await getResourcesFromContainerAppHelper(context, context.containerApp);
+        context.resourceGroup ??= resources.resourceGroup;
+        context.managedEnvironment ??= resources.managedEnvironment;
+    }
 
-        if (context.managedEnvironment && !context.resourceGroup) {
-            const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
-            context.resourceGroup ??= resources.resourceGroup;
-        }
+    if (context.managedEnvironment && !context.resourceGroup) {
+        const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
+        context.resourceGroup ??= resources.resourceGroup;
     }
 
     if (context.managedEnvironment && !context.logAnalyticsWorkspace) {

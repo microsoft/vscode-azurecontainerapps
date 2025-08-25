@@ -23,6 +23,10 @@ export interface AcrListStepOptions {
 export type AcrPickItem = IAzureQuickPickItem<Registry>;
 
 export interface AcrPickUpdateStrategy {
+    /**
+     * Provide a custom strategy for updating the list of container registry picks.
+     * Can be used to inject custom sorting, grouping, filtering, etc.
+     */
     updatePicks(context: ContainerRegistryImageSourceContext, picks: AcrPickItem[]): AcrPickItem[] | Promise<AcrPickItem[]>;
 }
 
