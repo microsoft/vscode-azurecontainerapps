@@ -49,7 +49,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
     protected async logStartingResources(context: T): Promise<void> {
         // Resource group
         if (context.resourceGroup) {
-            context.telemetry.properties.existingResourceGroup = 'true';
             prependOrInsertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
@@ -65,7 +64,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
         // Managed environment
         if (context.managedEnvironment) {
-            context.telemetry.properties.existingEnvironment = 'true';
             prependOrInsertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useManagedEnvironment', 'Use managed environment "{0}"', context.managedEnvironment.name),
@@ -81,7 +79,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
         // Container registry
         if (context.registry) {
-            context.telemetry.properties.existingRegistry = 'true';
             prependOrInsertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useAcr', 'Use container registry "{0}"', context.registry.name),
@@ -97,7 +94,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
         // Container app
         if (context.containerApp) {
-            context.telemetry.properties.existingContainerApp = 'true';
             prependOrInsertAfterLastInfoChild(context,
                 new ActivityChildItem({
                     label: localize('useContainerApp', 'Use container app "{0}"', context.containerApp.name),
@@ -113,7 +109,6 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
         // Location
         if (LocationListStep.hasLocation(context)) {
-            context.telemetry.properties.existingLocation = 'true';
             const location: string = (await LocationListStep.getLocation(context)).name;
             ext.outputChannel.appendLog(localize('usingLocation', 'Using location: "{0}".', location));
         }

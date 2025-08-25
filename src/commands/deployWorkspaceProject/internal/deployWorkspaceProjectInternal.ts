@@ -116,7 +116,6 @@ export async function deployWorkspaceProjectInternal(
     LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
     LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
     LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
-    LocationListStep.addStep(wizardContext, promptSteps);
 
     if (!options.advancedCreate) {
         // Basic
@@ -159,6 +158,8 @@ export async function deployWorkspaceProjectInternal(
             promptSteps.push(new ContainerAppListStep({ updateIfExists: true }));
         }
     }
+
+    LocationListStep.addStep(wizardContext, promptSteps);
 
     if (wizardContext.containerApp) {
         executeSteps.push(new ContainerAppUpdateStep());
