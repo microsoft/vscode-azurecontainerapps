@@ -74,8 +74,6 @@ export class EnvValidateStep<T extends WorkspaceDeploymentConfigurationContext> 
         };
     }
 
-    // Todo: Verify if we need progress output
-
     public createFailOutput(): ExecuteActivityOutput {
         return {
             item: new ActivityChildItem({

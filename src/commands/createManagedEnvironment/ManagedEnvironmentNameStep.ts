@@ -14,6 +14,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<ManagedEnv
         const prompt: string = localize('containerAppNamePrompt', 'Enter a container apps environment name.');
         context.newManagedEnvironmentName = (await context.ui.showInputBox({
             prompt,
+            value: context.resourceGroup?.name ?? context.newResourceGroupName,
             validateInput: ManagedEnvironmentNameStep.validateInput,
             asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();

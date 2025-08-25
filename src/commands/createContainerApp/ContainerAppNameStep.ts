@@ -42,7 +42,12 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ContainerAppCrea
     }
 
     private async validateNameAvailable(context: ContainerAppCreateContext, name: string): Promise<string | undefined> {
-        const resourceGroupName: string = getResourceGroupFromId(nonNullValueAndProp(context.managedEnvironment, 'id'));
+        if (!context.managedEnvironment) {
+            // If there's no managed environment, a new one will be created and the container app name will be unique
+            return undefined;
+        }
+
+        const resourceGroupName: string = context.resourceGroup?.name ?? getResourceGroupFromId(nonNullValueAndProp(context.managedEnvironment, 'id'));
         if (!await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name)) {
             return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
         }

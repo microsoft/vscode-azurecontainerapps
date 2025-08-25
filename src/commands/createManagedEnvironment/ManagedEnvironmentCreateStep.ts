@@ -7,7 +7,7 @@ import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { managedEnvironmentsAppProvider } from "../../constants";
+import { managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
@@ -58,7 +58,7 @@ export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateCont
             context.activityResult = {
                 id: nonNullProp(context.managedEnvironment, 'id'),
                 name: managedEnvironmentName,
-                type: managedEnvironmentsAppProvider
+                type: managedEnvironmentResourceType
             };
         }
     }

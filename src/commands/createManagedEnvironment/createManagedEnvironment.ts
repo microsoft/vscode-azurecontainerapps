@@ -7,7 +7,7 @@ import { type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, createSubscriptionContext, nonNullProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { appProvider, managedEnvironmentsId } from "../../constants";
+import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
@@ -38,7 +38,9 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
         new LogAnalyticsCreateStep(),
         new ManagedEnvironmentCreateStep()
     );
-    LocationListStep.addProviderForFiltering(wizardContext, appProvider, managedEnvironmentsId);
+
+    LocationListStep.addProviderForFiltering(wizardContext, managedEnvironmentProvider, managedEnvironmentResourceType);
+    LocationListStep.addProviderForFiltering(wizardContext, logAnalyticsProvider, logAnalyticsResourceType);
     LocationListStep.addStep(wizardContext, promptSteps);
 
     const wizard: AzureWizard<ManagedEnvironmentCreateContext> = new AzureWizard(wizardContext, {

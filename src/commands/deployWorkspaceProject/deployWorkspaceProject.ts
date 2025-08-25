@@ -19,6 +19,7 @@ import { browseContainerApp } from "../browseContainerApp";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
 import { type DeploymentConfiguration } from "./deploymentConfiguration/DeploymentConfiguration";
 import { getTreeItemDeploymentConfiguration } from "./deploymentConfiguration/getTreeItemDeploymentConfiguration";
+import { DeploymentMode } from "./deploymentConfiguration/workspace/DeploymentModeListStep";
 import { getWorkspaceDeploymentConfiguration } from "./deploymentConfiguration/workspace/getWorkspaceDeploymentConfiguration";
 import { formatSectionHeader } from "./formatSectionHeader";
 import { getDeployWorkspaceProjectResults } from "./getDeployWorkspaceProjectResults";
@@ -28,7 +29,7 @@ import { convertV1ToV2SettingsSchema } from "./settings/convertSettings/convertV
 
 export const deployWorkspaceProjectCommandName: string = localize('deployWorkspaceProject', 'Deploy Project from Workspace...');
 
-export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem | ManagedEnvironmentItem): Promise<DeployWorkspaceProjectResults> {
+export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
     if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
         item = undefined;
@@ -55,12 +56,14 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     }
 
     context.telemetry.properties.choseExistingWorkspaceConfiguration = deploymentConfiguration.configurationIdx !== undefined ? 'true' : 'false';
+    context.telemetry.properties.deploymentMode = deploymentConfiguration.deploymentMode;
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
         ...deploymentConfiguration,
     });
 
     const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+        advancedCreate: deploymentConfiguration.deploymentMode === DeploymentMode.Advanced,
         suppressActivity: false,
         suppressConfirmation: false,
         suppressContainerAppCreation: false,

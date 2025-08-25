@@ -22,7 +22,6 @@ import { TarFileStep } from "./buildImageInAzure/TarFileStep";
 import { UploadSourceCodeStep } from "./buildImageInAzure/UploadSourceCodeStep";
 import { ContainerRegistryImageConfigureStep } from "./containerRegistry/ContainerRegistryImageConfigureStep";
 import { ContainerRegistryListStep } from "./containerRegistry/ContainerRegistryListStep";
-import { AcrListStep } from "./containerRegistry/acr/AcrListStep";
 
 interface ImageSourceListStepOptions {
     suppressEnvPrompt?: boolean;
@@ -86,11 +85,10 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
                 break;
             case ImageSource.RemoteAcrBuild:
                 promptSteps.push(
+                    new RegistryCredentialsAddConfigurationListStep(),
                     new RootFolderStep(),
                     new DockerfileItemStep(),
                     new SourcePathStep(),
-                    new AcrListStep(),
-                    new RegistryCredentialsAddConfigurationListStep(),
                     new ImageNameStep(),
                     new OSPickStep(),
                 );
