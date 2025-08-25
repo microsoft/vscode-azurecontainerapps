@@ -56,6 +56,7 @@ export async function deployWorkspaceProject(context: IActionContext & Partial<D
     }
 
     context.telemetry.properties.choseExistingWorkspaceConfiguration = deploymentConfiguration.configurationIdx !== undefined ? 'true' : 'false';
+    context.telemetry.properties.deploymentMode = deploymentConfiguration.deploymentMode;
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(containerAppContext, {
         ...deploymentConfiguration,
