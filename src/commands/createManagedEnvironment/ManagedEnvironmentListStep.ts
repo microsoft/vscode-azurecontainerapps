@@ -104,7 +104,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         return { promptSteps, executeSteps };
     }
 
-    static async getManagedEnvironments(context: ISubscriptionActionContext): Promise<ManagedEnvironment[]> {
+    static async getManagedEnvironmentsBySubscription(context: ISubscriptionActionContext): Promise<ManagedEnvironment[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         return await uiUtils.listAllIterator(client.managedEnvironments.listBySubscription());
     }
