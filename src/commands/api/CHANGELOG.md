@@ -2,8 +2,8 @@
 
 ## 1.0.0
 ### Changed
-* [[Todo: Add reference to this PR]()] Add a new resource location parameter to the `deployWorkspaceProjectApi` definition.  If no location is provided, try to infer location via other provided resources.
-* [[Todo: Add upcoming dwp pr]()] [[Todo: Add reference to this pr]()] Suppress registry prompting by default and remove flag (`suppressRegistryPrompt`)
+* [[961](https://github.com/microsoft/vscode-azurecontainerapps/pull/961)] Add a new resource location parameter to the `deployWorkspaceProjectApi` definition.  If no location is provided, try to infer location via other provided resources.
+* [[961](https://github.com/microsoft/vscode-azurecontainerapps/pull/961)] Suppress registry prompting by default and remove associated flag (`suppressRegistryPrompt`)
 
 ## 0.0.3
 ### Added
