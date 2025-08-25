@@ -33,6 +33,7 @@ export class DeploymentModeListStep extends AzureWizardPromptStep<WorkspaceDeplo
         });
 
         context.deploymentMode = pick.data;
+        context.telemetry.properties.deploymentMode = pick.data;
     }
 
     public shouldPrompt(context: WorkspaceDeploymentConfigurationContext): boolean {
