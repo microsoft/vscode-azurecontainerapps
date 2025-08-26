@@ -58,6 +58,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
         }
 
         const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+            advancedCreate: false,
             suppressActivity: true,
             suppressConfirmation,
             suppressContainerAppCreation,
