@@ -4,7 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { ImageSource } from "../../../../constants";
 import { ManagedEnvironmentListStep } from "../../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
@@ -39,17 +38,7 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
         context.managedEnvironment ??= resources.managedEnvironment;
     }
 
-    if (context.managedEnvironment && (!context.resourceGroup || !context.logAnalyticsWorkspace)) {
+    if (context.managedEnvironment) {
         await ManagedEnvironmentListStep.populateContextWithRelatedResources(context, context.managedEnvironment);
-    }
-
-    await addAutoSelectLocationContext(context);
-}
-
-async function addAutoSelectLocationContext(context: DeployWorkspaceProjectInternalContext): Promise<void> {
-    if (context.containerApp) {
-        await LocationListStep.setAutoSelectLocation(context, context.containerApp.location);
-    } else if (context.managedEnvironment) {
-        await LocationListStep.setAutoSelectLocation(context, context.managedEnvironment.location);
     }
 }
