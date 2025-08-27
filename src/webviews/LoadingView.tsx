@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ConfirmationView } from "./ConfirmationView";
-import { LoadingView } from "./LoadingView";
+import { Spinner } from "@fluentui/react-components";
+import './loadingView.scss';
 
-export const WebviewRegistry = {
-    confirmationView: ConfirmationView,
-    loadingView: LoadingView
-} as const;
+export const LoadingView = () =>
+    <div className='loadingView'>
+        <Spinner labelPosition="below" label="Generating Copilot responses..." />
+    </div>
+
