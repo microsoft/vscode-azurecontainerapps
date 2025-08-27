@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, CopilotUserInput, createSubscriptionContext, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
 import { CommandAttributes } from "../commands/CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../commands/ContainerAppOverwriteConfirmStep";
@@ -17,7 +17,6 @@ import { getManagedEnvironmentFromContainerApp } from "../utils/getResourceUtils
 import { getVerifyProvidersStep } from "../utils/getVerifyProvidersStep";
 import { localize } from "../utils/localize";
 import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
-import { CopilotUserInput } from "./CopilotUserInput";
 import { OpenConfirmationViewStep } from "./OpenConfirmationViewStep";
 import { OpenLoadingViewStep } from "./OpenLoadingViewStep";
 
@@ -35,7 +34,7 @@ export async function deployWithCopilot(context: IActionContext, node: Container
         activityAttributes: CommandAttributes.DeployContainerAppContainerRegistry,
     };
 
-    wizardContext.ui = new CopilotUserInput(vscode);
+    wizardContext.ui = new CopilotUserInput(vscode, JSON.stringify(node.viewProperties));
 
     const confirmationViewTitle: string = localize('summary', 'Copilot Summary');
     const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
@@ -59,4 +58,3 @@ export async function deployWithCopilot(context: IActionContext, node: Container
     await wizard.prompt();
     await wizard.execute();
 }
-
