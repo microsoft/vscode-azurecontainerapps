@@ -4,15 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import { type Workspace } from "@azure/arm-operationalinsights";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { ImageSource } from "../../../../constants";
-import { LogAnalyticsListStep } from "../../../createManagedEnvironment/LogAnalyticsListStep";
+import { ManagedEnvironmentListStep } from "../../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
 import { type DeployWorkspaceProjectInternalContext } from "../DeployWorkspaceProjectInternalContext";
 import { type DeployWorkspaceProjectInternalOptions } from "../deployWorkspaceProjectInternal";
-import { getResourcesFromContainerAppHelper, getResourcesFromManagedEnvironmentHelper } from "./containerAppResourceHelpers";
+import { getResourcesFromContainerAppHelper } from "./containerAppResourceHelpers";
 
 export async function getStartingConfiguration(context: DeployWorkspaceProjectInternalContext, options: DeployWorkspaceProjectInternalOptions): Promise<Partial<DeployWorkspaceProjectInternalContext>> {
     await tryAddMissingAzureResourcesToContext(context);
@@ -40,14 +39,8 @@ async function tryAddMissingAzureResourcesToContext(context: DeployWorkspaceProj
         context.managedEnvironment ??= resources.managedEnvironment;
     }
 
-    if (context.managedEnvironment && !context.resourceGroup) {
-        const resources = await getResourcesFromManagedEnvironmentHelper(context, context.managedEnvironment);
-        context.resourceGroup ??= resources.resourceGroup;
-    }
-
-    if (context.managedEnvironment && !context.logAnalyticsWorkspace) {
-        const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
-        context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === context.managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
+    if (context.managedEnvironment && (!context.resourceGroup || !context.logAnalyticsWorkspace)) {
+        await ManagedEnvironmentListStep.populateContextWithRelatedResources(context, context.managedEnvironment);
     }
 
     await addAutoSelectLocationContext(context);
