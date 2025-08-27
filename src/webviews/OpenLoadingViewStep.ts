@@ -9,8 +9,6 @@ import { localize } from "../utils/localize";
 import { LoadingViewController } from "./LoadingViewController";
 import { SharedState } from "./OpenConfirmationViewStep";
 
-
-
 export class OpenLoadingViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
     public async prompt(): Promise<void> {
         const loadingView = new LoadingViewController({ title: localize('loadingViewTitle', 'Loading...') });

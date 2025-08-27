@@ -38,7 +38,7 @@ export async function deployWithCopilot(context: IActionContext, node: Container
 
     const confirmationViewTitle: string = localize('summary', 'Copilot Summary');
     const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
-    const confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input proceeding the changed input may need to change as well');
+    const confirmationViewDescription: string = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input may need to change as well');
     const title: string = localize('deployContainerAppWithCopilotTitle', 'Deploy image to container app using copilot');
     const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
         title: title,
