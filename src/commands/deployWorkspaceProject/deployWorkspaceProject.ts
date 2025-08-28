@@ -11,7 +11,6 @@ import { ext } from "../../extensionVariables";
 import { type SetTelemetryProps } from "../../telemetry/SetTelemetryProps";
 import { type DeployWorkspaceProjectNotificationTelemetryProps as NotificationTelemetryProps } from "../../telemetry/deployWorkspaceProjectTelemetryProps";
 import { ContainerAppItem, isIngressEnabled, type ContainerAppModel } from "../../tree/ContainerAppItem";
-import { ManagedEnvironmentItem } from "../../tree/ManagedEnvironmentItem";
 import { localize } from "../../utils/localize";
 import { type IContainerAppContext } from "../IContainerAppContext";
 import { type DeployWorkspaceProjectResults } from "../api/vscode-azurecontainerapps.api";
@@ -31,7 +30,7 @@ export const deployWorkspaceProjectCommandName: string = localize('deployWorkspa
 
 export async function deployWorkspaceProject(context: IActionContext & Partial<DeployWorkspaceProjectContext>, item?: ContainerAppItem): Promise<DeployWorkspaceProjectResults> {
     // If an incompatible tree item is passed, treat it as if no item was passed
-    if (item && !ContainerAppItem.isContainerAppItem(item) && !ManagedEnvironmentItem.isManagedEnvironmentItem(item)) {
+    if (item && !ContainerAppItem.isContainerAppItem(item)) {
         item = undefined;
     }
 
