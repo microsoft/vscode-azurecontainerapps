@@ -88,12 +88,13 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
 
         promptSteps.push(new ManagedEnvironmentNameStep());
 
+        LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
+        LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
+
         if (!context.resourceGroup) {
             promptSteps.push(new ResourceGroupListStep());
         }
 
-        LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
-        LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
         LocationListStep.addStep(context, promptSteps);
 
         executeSteps.push(

@@ -90,13 +90,14 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
 
         // Create
         if (!context.containerApp) {
+            promptSteps.push(new ContainerAppNameStep());
+
+            LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
+
             if (!context.resourceGroup) {
                 promptSteps.push(new ResourceGroupListStep());
             }
 
-            promptSteps.push(new ContainerAppNameStep());
-
-            LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
             LocationListStep.addStep(context, promptSteps);
 
             executeSteps.push(new ContainerAppCreateStep());

@@ -20,7 +20,7 @@ import { type AcrPickItem, type AcrPickUpdateStrategy } from "./AcrListStep";
  * prioritizing registries in the currently selected resource group, and highlighting the registry currently deployed to the container app if it exists.
  * Registries in the same resource group are shown at the top, followed by others, and the currently deployed registry (if any) is moved to the front of the list.
  */
-export class AcrDefaultSortAndPrioritizationStrategy implements AcrPickUpdateStrategy {
+export class AcrDefaultSortStrategy implements AcrPickUpdateStrategy {
     updatePicks(context: ContainerRegistryImageSourceContext, picks: AcrPickItem[]): AcrPickItem[] {
         const registriesByGroup: Record<string, Registry[]> = {};
         for (const p of picks) {

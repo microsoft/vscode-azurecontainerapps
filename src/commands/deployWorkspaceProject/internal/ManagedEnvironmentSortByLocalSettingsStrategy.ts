@@ -16,7 +16,7 @@ import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspacePro
 /**
  * Sort and recommend managed environments that are used in local settings deployment configurations.
  */
-export class ManagedEnvironmentLocalSettingsSortStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentPickUpdateStrategy {
+export class ManagedEnvironmentSortByLocalSettingsStrategy<T extends DeployWorkspaceProjectInternalContext> implements ManagedEnvironmentPickUpdateStrategy {
     async updatePicks(context: T, picks: ManagedEnvironmentPick[]): Promise<ManagedEnvironmentPick[]> {
         const deploymentConfigurations: DeploymentConfigurationSettings[] | undefined = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(nonNullProp(context, 'rootFolder'));
         if (!deploymentConfigurations?.length) {

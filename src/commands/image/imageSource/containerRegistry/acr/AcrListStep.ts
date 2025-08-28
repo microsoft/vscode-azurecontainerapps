@@ -10,7 +10,7 @@ import { noMatchingResources, noMatchingResourcesQp, registryProvider, registryR
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
-import { AcrDefaultSortAndPrioritizationStrategy } from "./AcrDefaultSortAndPrioritizationStrategy";
+import { AcrDefaultSortStrategy } from "./AcrDefaultSortStrategy";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
 import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";
@@ -38,7 +38,7 @@ const acrCreatePick = {
 export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends AzureWizardPromptStep<T> {
     constructor(readonly options: AcrListStepOptions = {}) {
         super();
-        this.options.pickUpdateStrategy ??= new AcrDefaultSortAndPrioritizationStrategy();
+        this.options.pickUpdateStrategy ??= new AcrDefaultSortStrategy();
     }
 
     private pickLabel: string;
@@ -105,16 +105,17 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         const promptSteps: AzureWizardPromptStep<T>[] = [];
         const executeSteps: AzureWizardExecuteStep<T>[] = [];
 
-        if (!context.resourceGroup) {
-            promptSteps.push(new ResourceGroupListStep());
-        }
+        LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
 
         promptSteps.push(
             new RegistryNameStep(),
             new SkuListStep(),
         );
 
-        LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
+        if (!context.resourceGroup) {
+            promptSteps.push(new ResourceGroupListStep());
+        }
+
         LocationListStep.addStep(context, promptSteps);
 
         executeSteps.push(new RegistryCreateStep());

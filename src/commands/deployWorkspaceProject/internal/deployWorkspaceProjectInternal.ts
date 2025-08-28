@@ -21,7 +21,7 @@ import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/Manag
 import { editContainerCommandName } from "../../editContainer/editContainer";
 import { RootFolderStep } from "../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { ContainerAppUpdateStep } from "../../image/imageSource/ContainerAppUpdateStep";
-import { AcrDefaultSortAndPrioritizationStrategy } from "../../image/imageSource/containerRegistry/acr/AcrDefaultSortAndPrioritizationStrategy";
+import { AcrDefaultSortStrategy } from "../../image/imageSource/containerRegistry/acr/AcrDefaultSortStrategy";
 import { AcrListStep } from "../../image/imageSource/containerRegistry/acr/AcrListStep";
 import { RegistryCreateStep } from "../../image/imageSource/containerRegistry/acr/createAcr/RegistryCreateStep";
 import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep";
@@ -34,7 +34,7 @@ import { DeployWorkspaceProjectConfirmStep } from "./DeployWorkspaceProjectConfi
 import { type DeployWorkspaceProjectInternalContext } from "./DeployWorkspaceProjectInternalContext";
 import { DeployWorkspaceProjectSaveSettingsStep } from "./DeployWorkspaceProjectSaveSettingsStep";
 import { getStartingConfiguration } from "./getStartingConfiguration/getStartingConfiguration";
-import { ManagedEnvironmentLocalSettingsSortStrategy } from "./ManagedEnvironmentLocalSettingsSortStrategy";
+import { ManagedEnvironmentSortByLocalSettingsStrategy } from "./ManagedEnvironmentSortByLocalSettingsStrategy";
 import { SharedResourcesNameStep } from "./SharedResourcesNameStep";
 import { ShouldSaveDeploySettingsPromptStep } from "./ShouldSaveDeploySettingsPromptStep";
 
@@ -143,7 +143,7 @@ export async function deployWorkspaceProjectInternal(
         // Advanced
         if (!wizardContext.managedEnvironment) {
             promptSteps.push(new ManagedEnvironmentListStep({
-                pickUpdateStrategy: new ManagedEnvironmentLocalSettingsSortStrategy(),
+                pickUpdateStrategy: new ManagedEnvironmentSortByLocalSettingsStrategy(),
             }));
         }
         if (!wizardContext.resourceGroup) {
@@ -151,7 +151,7 @@ export async function deployWorkspaceProjectInternal(
         }
         if (!wizardContext.registry) {
             promptSteps.push(new AcrListStep({
-                pickUpdateStrategy: new AcrDefaultSortAndPrioritizationStrategy(),
+                pickUpdateStrategy: new AcrDefaultSortStrategy(),
             }));
         }
         if (!wizardContext.containerApp && !options.suppressContainerAppCreation) {
