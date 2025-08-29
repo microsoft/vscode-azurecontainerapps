@@ -17,7 +17,7 @@ export class DeploymentModeListStep extends AzureWizardPromptStep<WorkspaceDeplo
         const picks: IAzureQuickPickItem<DeploymentMode>[] = [
             {
                 label: localize('basic', 'Basic'),
-                detail: localize('basicDetails', 'Deploy a basic app with minimal customizations.'),
+                detail: localize('basicDetails', 'Deploy a basic app with minimal setup. Automatically creates all required resources.'),
                 data: DeploymentMode.Basic,
             },
             {
