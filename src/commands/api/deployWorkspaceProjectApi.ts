@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type ResourceGroup } from "@azure/arm-resources";
-import { ResourceGroupListStep, parseAzureResourceGroupId } from "@microsoft/vscode-azext-azureutils";
-import { callWithTelemetryAndErrorHandling, createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { LocationListStep, ResourceGroupListStep, parseAzureResourceGroupId } from "@microsoft/vscode-azext-azureutils";
+import { callWithTelemetryAndErrorHandling, createSubscriptionContext, nonNullValueAndProp, subscriptionExperience, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { Uri, type WorkspaceFolder } from "vscode";
 import { ext } from "../../extensionVariables";
@@ -22,10 +22,10 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
     return await callWithTelemetryAndErrorHandling('containerApps.api.deployWorkspaceProject', async (context: IActionContext): Promise<DeployWorkspaceProjectResults> => {
         const {
             resourceGroupId,
+            location,
             rootPath,
             dockerfilePath,
             srcPath,
-            suppressRegistryPrompt,
             suppressConfirmation,
             suppressContainerAppCreation,
             shouldSaveDeploySettings
@@ -52,10 +52,15 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
             shouldSaveDeploySettings: !!shouldSaveDeploySettings,
         });
 
+        if (location || deployWorkspaceProjectInternalContext.resourceGroup) {
+            const autoSelectLocation = location ?? nonNullValueAndProp(deployWorkspaceProjectInternalContext.resourceGroup, 'location');
+            await LocationListStep.setAutoSelectLocation(deployWorkspaceProjectInternalContext, autoSelectLocation);
+        }
+
         const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+            advancedCreate: false,
             suppressActivity: true,
             suppressConfirmation,
-            suppressRegistryPrompt: suppressRegistryPrompt ?? true,
             suppressContainerAppCreation,
             suppressProgress: true,
             suppressWizardTitle: true,

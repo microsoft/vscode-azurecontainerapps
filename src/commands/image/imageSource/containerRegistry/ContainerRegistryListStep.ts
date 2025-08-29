@@ -57,7 +57,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         const promptSteps: AzureWizardPromptStep<ContainerRegistryImageSourceContext>[] = [];
         switch (context.registryDomain) {
             case acrDomain:
-                promptSteps.push(new AcrListStep({ suppressCreate: true }), new AcrRepositoriesListStep(), new AcrTagListStep());
+                promptSteps.push(new AcrListStep({ suppressCreatePick: true }), new AcrRepositoriesListStep(), new AcrTagListStep());
                 break;
             case dockerHubDomain:
                 promptSteps.push(new DockerHubNamespaceInputStep(), new DockerHubContainerRepositoryListStep(), new DockerHubContainerTagListStep());

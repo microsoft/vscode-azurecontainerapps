@@ -7,19 +7,17 @@ import { type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { type QuickPickItem } from "vscode";
 import { localize } from "./utils/localize";
 
-export const managedEnvironmentsId = 'managedEnvironments';
-export const containerAppsId = 'containerApps';
-export const appProvider: string = 'Microsoft.App';
-export const webProvider: string = 'Microsoft.Web';
 export const registryProvider: string = 'Microsoft.ContainerRegistry';
-export const operationalInsightsProvider: string = 'Microsoft.OperationalInsights';
+export const registryResourceType: string = 'registries';
 
-export const containerAppsWebProvider: string = `${webProvider}/${containerAppsId}`;
-export const managedEnvironmentsAppProvider: string = `${appProvider}/${managedEnvironmentsId}`;
+export const logAnalyticsProvider: string = 'Microsoft.OperationalInsights';
+export const logAnalyticsResourceType: string = 'workspaces';
 
-export const rootFilter = {
-    type: managedEnvironmentsAppProvider
-}
+export const managedEnvironmentProvider: string = 'Microsoft.App';
+export const managedEnvironmentResourceType: string = 'managedEnvironments';
+
+export const containerAppProvider: string = 'Microsoft.App';
+export const containerAppResourceType: string = 'containerApps';
 
 export namespace IngressConstants {
     export const external: string = localize('external', 'External');

@@ -10,7 +10,7 @@ import { nonNullProp, type ISubscriptionActionContext } from "@microsoft/vscode-
 import { type ContainerAppModel } from "../../../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../../../utils/azureClients";
 
-interface ContainerAppsResources {
+export interface ContainerAppsResources {
     resourceGroup?: ResourceGroup;
     managedEnvironment?: ManagedEnvironment;
     containerApp?: ContainerAppModel;

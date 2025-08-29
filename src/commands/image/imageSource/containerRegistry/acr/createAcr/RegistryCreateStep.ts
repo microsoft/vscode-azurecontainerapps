@@ -5,13 +5,16 @@
 
 import { type ContainerRegistryManagementClient } from "@azure/arm-containerregistry";
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
 import { type CreateAcrContext } from "./CreateAcrContext";
 
-export class RegistryCreateStep<T extends CreateAcrContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
+// Made the base context partial here to help improve type compatability with some other command entrypoints
+type RegistryCreateContext = Partial<CreateAcrContext> & ISubscriptionActionContext;
+
+export class RegistryCreateStep<T extends RegistryCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 350;
     public stepName: string = 'registryCreateStep';
     protected getOutputLogSuccess = (context: T) => localize('createRegistrySuccess', 'Created container registry "{0}".', context.newRegistryName);
