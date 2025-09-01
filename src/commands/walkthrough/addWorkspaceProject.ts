@@ -23,7 +23,12 @@ export async function addWorkspaceProjectWalkthrough(context: IActionContext): P
     } catch (e) {
         const perr: IParsedError = parseError(e);
         if (/git\.clone.*not found/i.test(perr.message)) {
-            throw new Error(localize('gitCloneNotFound', 'Command "git.clone" not found. This could be due to one of the following reasons:\n\n- Git is not installed on your system.\n- Git is installed but not added to your system PATH.\n- Git is installed but is broken or permission-blocked.\n\nPlease ensure Git is installed and properly configured.'));
+            throw new Error(localize('gitCloneNotFound',
+                'Command "git.clone" not found. This could be due to one of the following reasons:\n\n' +
+                '- Git is not installed on your system.\n' +
+                '- Git is installed but not added to your system PATH.\n' +
+                '- Git is installed but is broken or permission-blocked.\n\n' +
+                'Please ensure Git is installed and properly configured.'));
         }
         throw e;
     }
