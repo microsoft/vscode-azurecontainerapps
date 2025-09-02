@@ -69,4 +69,5 @@ dist
 stats.json
 
 # Test Projects
-# /test/testProjects/advanced-js/*
+/test/testProjects/advanced-js/*
+/test/testProjects/monorepo-identity/*
