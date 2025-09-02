@@ -1,9 +1,0 @@
-{
-  "name": "aca-hello-world-app3",
-  "version": "1.0.0",
-  "description": "Simple test app for the ACA tools for VS Code extension",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  }
-}
