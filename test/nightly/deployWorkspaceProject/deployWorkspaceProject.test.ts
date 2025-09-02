@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzExtFsExtra, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Uri, workspace, type WorkspaceFolder } from "vscode";
 import { longRunningTestsEnabled } from '../../global.test';
 import { getWorkspaceFolderUri } from "../../testUtils";
@@ -47,6 +47,6 @@ async function copyTestProjectFiles(sourceFolderName: string, destinationFolderN
     const sourceUri = Uri.file(nonNullValueAndProp(sourceFolder?.uri, 'fsPath'));
     const destinationUri = Uri.file(nonNullValueAndProp(destinationFolder?.uri, 'fsPath'));
 
-    await AzExtFsExtra.emptyDir(destinationUri);
-    await AzExtFsExtra.copy(sourceUri, destinationUri);
+    await workspace.fs.delete(destinationUri, { recursive: true });
+    await workspace.fs.copy(sourceUri, destinationUri);
 }
