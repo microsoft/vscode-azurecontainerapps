@@ -6,10 +6,9 @@
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { dwpTestUtils } from "../../dwpTestUtils";
-import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestCase";
-import { generateExpectedDeploymentConfiguration } from "./generateExpectedDeploymentConfiguration";
+import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
 
-export function generateMonoRepoIdentityTestCases(): DeployWorkspaceProjectTestCase[] {
+export function generateMonorepoIdentityTests(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'monorepo-identity';
     const sharedResourceName: string = 'monorepo-id' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
@@ -45,7 +44,7 @@ export function generateMonoRepoIdentityTestCases(): DeployWorkspaceProjectTestC
             expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, appOneName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName)
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName, 'app1/src'),
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] }),
@@ -72,8 +71,8 @@ export function generateMonoRepoIdentityTestCases(): DeployWorkspaceProjectTestC
             expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, appTwoName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName),
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appTwoName),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName, 'app1/src'),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appTwoName, 'app2/src'),
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3001, env: [{ name: 'MESSAGE', value: 'container apps (app2)' }] })
@@ -99,9 +98,9 @@ export function generateMonoRepoIdentityTestCases(): DeployWorkspaceProjectTestC
             expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, appThreeName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName),
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appTwoName),
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appThreeName),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName, 'app1/src'),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appTwoName, 'app2/src'),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appThreeName, 'app3/src'),
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3002, env: [{ name: 'MESSAGE', value: 'container apps (app3)' }] }),
@@ -116,9 +115,9 @@ export function generateMonoRepoIdentityTestCases(): DeployWorkspaceProjectTestC
             expectedResults: dwpTestUtils.generateExpectedResultsWithoutCredentials(sharedResourceName, acrResourceName, appOneName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName),
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appTwoName),
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appThreeName),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appOneName, 'app1/src'),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appTwoName, 'app2/src'),
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appThreeName, 'app3/src'),
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] })

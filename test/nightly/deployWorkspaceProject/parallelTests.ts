@@ -10,7 +10,8 @@ import { workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, ext, parseError, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IParsedError } from "../../../extension.bundle";
 import { assertStringPropsMatch, getWorkspaceFolderUri } from "../../testUtils";
 import { resourceGroupsToDelete } from "../global.nightly.test";
-import { getTestScenarios, type DeployWorkspaceProjectTestScenario } from "./testScenarios";
+import { type DeployWorkspaceProjectTestScenario } from "./scenarios/DeployWorkspaceProjectTestScenario";
+import { generateTestScenarios } from "./scenarios/testScenarios";
 
 export interface DwpParallelTestScenario {
     title: string;
@@ -19,15 +20,15 @@ export interface DwpParallelTestScenario {
 }
 
 export function generateParallelTests(): DwpParallelTestScenario[] {
-    return getTestScenarios().map(scenario => {
+    return generateTestScenarios().map(scenario => {
         return {
             title: scenario.label,
-            callback: runTestCasesFromScenario(scenario),
+            callback: runTestScenario(scenario),
         };
     });
 }
 
-function runTestCasesFromScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
+function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
     return async () => {
         const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
         const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);

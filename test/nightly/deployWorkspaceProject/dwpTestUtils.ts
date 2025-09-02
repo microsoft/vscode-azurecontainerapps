@@ -11,16 +11,16 @@ import * as path from "path";
 import { createContainerAppsAPIClient, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../typeUtils";
 import { subscriptionContext } from "../global.nightly.test";
-import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
+import { type PostTestAssertion } from "./scenarios/DeployWorkspaceProjectTestScenario";
 
 export namespace dwpTestUtils {
-    export function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
+    export function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string, relativeSourcePath: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
         return {
             label: appResourceName,
             type: 'AcrDockerBuildRequest',
-            dockerfilePath: path.join('src', 'Dockerfile'),
-            srcPath: 'src',
-            envPath: '',
+            dockerfilePath: path.join(relativeSourcePath, 'Dockerfile'),
+            srcPath: relativeSourcePath,
+            envPath: path.join(relativeSourcePath, '.env.example'),
             resourceGroup: sharedResourceName,
             containerApp: appResourceName,
             containerRegistry: new RegExp(acrResourceName, 'i'),

@@ -5,43 +5,55 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { dwpTestUtils } from "../dwpTestUtils";
-import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
+import { dwpTestUtils } from "../../dwpTestUtils";
+import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
 
-export function generateAdvancedJSTestCases(): DeployWorkspaceProjectTestCase[] {
-    const folderName: string = 'advanced-js';
-    const appResourceName: string = 'a-js-app';
-    const sharedResourceName: string = 'a-js-env' + randomUtils.getRandomHexString(4);
+export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
+    const folderName: string = 'basic-js';
+    const appResourceName: string = 'b-js-app';
+    const sharedResourceName: string = 'b-js-env' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
     return [
         {
+            label: 'Should fail to deploy app (bad Dockerfile)',
+            inputs: [
+                new RegExp(folderName, 'i'),
+                'Basic',
+                sharedResourceName,
+                appResourceName,
+                'East US',
+                'Docker Login Credentials',
+                'Enable',
+                path.join('src', 'test_fail.Dockerfile'),
+                `.${path.sep}src`,
+                'Continue',
+                'Save'
+            ],
+            expectedResults: undefined,
+            expectedErrMsg: new RegExp('Failed to build image', 'i'),
+            expectedVSCodeSettings: undefined,
+            resourceGroupToDelete: sharedResourceName.slice(0, -1)
+        },
+        {
             label: 'Deploy App',
             inputs: [
                 new RegExp(folderName, 'i'),
-                'Advanced',
-                new RegExp('Create new container apps environment', 'i'),
+                'Basic',
                 sharedResourceName,
-                new RegExp('Create new resource group', 'i'),
-                sharedResourceName,
-                new RegExp('Create new container registry', 'i'),
-                acrResourceName,
-                'Standard',
-                new RegExp('Create new container app'),
                 appResourceName,
                 'East US',
                 'Docker Login Credentials',
                 'Enable',
                 path.join('src', 'Dockerfile'),
                 `.${path.sep}src`,
-                `${appResourceName}:latest`,
                 'Continue',
                 'Save'
             ],
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName, 'src'),
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined }),
@@ -57,7 +69,7 @@ export function generateAdvancedJSTestCases(): DeployWorkspaceProjectTestCase[] 
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
+                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName, 'src'),
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined })
