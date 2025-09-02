@@ -8,6 +8,7 @@ import { generateAdvancedJSTestCases } from "./testCases/advancedJSTestCases";
 import { generateBasicJSTestCases } from "./testCases/basicJSTestCases";
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
 import { generateMonoRepoAdminCredentialsTestCases } from "./testCases/monoRepoTestCases/adminCredentialsTestCases";
+import { generateMonoRepoIdentityTestCases } from "./testCases/monoRepoTestCases/identityTestCases";
 
 export interface DeployWorkspaceProjectTestScenario {
     label: string;
@@ -38,11 +39,11 @@ export function getTestScenarios(): DeployWorkspaceProjectTestScenario[] {
         // Insufficient auth privilege to test managed identity / role assignment in our manual testing subscription.
         // Therefore, limit these tests to only run locally in personal subscriptions where user has full permission to assign roles.
         // Todo: Investigate if it makes sense to elevate remote privileges such that these tests can also be automated to run remotely.
-        // dwpTestScenarios.push({
-        //     label: 'monorepo-identity',
-        //     folderName: 'monorepo-identity',
-        //     testCases: generateMonoRepoIdentityTestCases(),
-        // });
+        testScenarios.push({
+            label: 'monorepo-identity',
+            folderName: 'monorepo-identity',
+            testCases: generateMonoRepoIdentityTestCases(),
+        });
     }
 
     return testScenarios;
