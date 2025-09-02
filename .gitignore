@@ -68,6 +68,6 @@ test-results.xml
 dist
 stats.json
 
-# Test Projects
+# Copied Test Projects
 /test/testProjects/advanced-js/*
 /test/testProjects/monorepo-identity/*
