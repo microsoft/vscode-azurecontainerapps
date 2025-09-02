@@ -48,5 +48,5 @@ async function copyTestProjectFiles(sourceFolderName: string, destinationFolderN
     const destinationUri = Uri.file(nonNullValueAndProp(destinationFolder?.uri, 'fsPath'));
 
     await AzExtFsExtra.emptyDir(destinationUri);
-    await AzExtFsExtra.copy(sourceUri, destinationUri, { overwrite: true });
+    await AzExtFsExtra.copy(sourceUri, destinationUri);
 }
