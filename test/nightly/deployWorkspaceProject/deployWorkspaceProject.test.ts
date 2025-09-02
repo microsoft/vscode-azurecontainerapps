@@ -7,12 +7,12 @@ import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils"
 import { Uri, workspace, type WorkspaceFolder } from "vscode";
 import { longRunningTestsEnabled } from '../../global.test';
 import { getWorkspaceFolderUri } from "../../testUtils";
-import { generateParallelTests, type DwpParallelTestScenario } from './parallelTests';
+import { generateParallelTests, type DwpParallelTestScenario } from "./parallelTests";
 
 const testScenarios: DwpParallelTestScenario[] = generateParallelTests();
 
 suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
-    this.timeout(15 * 60 * 1000);
+    this.timeout(60 * 60 * 1000);
 
     suiteSetup(async function (this: Mocha.Context) {
         if (!longRunningTestsEnabled) {

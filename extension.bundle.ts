@@ -35,6 +35,7 @@ export { activate, deactivate } from './src/extension';
 export * from './src/extensionVariables';
 export * from './src/tree/ContainerAppItem';
 export * from './src/utils/azureClients';
+export * from './src/utils/delay';
 export * from './src/utils/imageNameUtils';
 export * from './src/utils/settingUtils';
 export * from './src/utils/validateUtils';

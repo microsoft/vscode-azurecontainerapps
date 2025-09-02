@@ -7,6 +7,7 @@ import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
+import { generateExpectedJSDeploymentConfiguration } from "./basicJSScenario";
 
 export function generateAdvancedJSTests(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'advanced-js';
@@ -41,7 +42,7 @@ export function generateAdvancedJSTests(): DeployWorkspaceProjectTestCase[] {
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName, 'src'),
+                    generateExpectedJSDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined }),
@@ -57,7 +58,7 @@ export function generateAdvancedJSTests(): DeployWorkspaceProjectTestCase[] {
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName, 'src'),
+                    generateExpectedJSDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined })

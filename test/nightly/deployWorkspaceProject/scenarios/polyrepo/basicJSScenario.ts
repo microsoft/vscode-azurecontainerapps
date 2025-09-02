@@ -5,6 +5,8 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
+import { type DeploymentConfigurationSettings } from "../../../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../../../typeUtils";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
 
@@ -53,7 +55,7 @@ export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName, 'src'),
+                    generateExpectedJSDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined }),
@@ -69,10 +71,23 @@ export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    dwpTestUtils.generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName, 'src'),
+                    generateExpectedJSDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined })
         }
     ];
+}
+
+export function generateExpectedJSDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
+    return {
+        label: appResourceName,
+        type: 'AcrDockerBuildRequest',
+        dockerfilePath: path.join('src', 'Dockerfile'),
+        srcPath: 'src',
+        envPath: '',
+        resourceGroup: sharedResourceName,
+        containerApp: appResourceName,
+        containerRegistry: new RegExp(acrResourceName, 'i'),
+    };
 }

@@ -7,26 +7,12 @@ import { type ContainerApp, type EnvironmentVar } from "@azure/arm-appcontainers
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import * as path from "path";
-import { createContainerAppsAPIClient, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
+import { createContainerAppsAPIClient, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../typeUtils";
 import { subscriptionContext } from "../global.nightly.test";
 import { type PostTestAssertion } from "./scenarios/DeployWorkspaceProjectTestScenario";
 
 export namespace dwpTestUtils {
-    export function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string, relativeSourcePath: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
-        return {
-            label: appResourceName,
-            type: 'AcrDockerBuildRequest',
-            dockerfilePath: path.join(relativeSourcePath, 'Dockerfile'),
-            srcPath: relativeSourcePath,
-            envPath: path.join(relativeSourcePath, '.env.example'),
-            resourceGroup: sharedResourceName,
-            containerApp: appResourceName,
-            containerRegistry: new RegExp(acrResourceName, 'i'),
-        };
-    }
-
     export function generateExpectedResultsWithCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
         return {
             containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
