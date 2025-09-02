@@ -7,6 +7,7 @@ import { longRunningLocalTestsEnabled } from "../../global.test";
 import { generateAdvancedJSTestCases } from "./testCases/advancedJSTestCases";
 import { generateBasicJSTestCases } from "./testCases/basicJSTestCases";
 import { type DeployWorkspaceProjectTestCase } from "./testCases/DeployWorkspaceProjectTestCase";
+import { generateMonoRepoAdminCredentialsTestCases } from "./testCases/monoRepoTestCases/adminCredentialsTestCases";
 
 export interface DeployWorkspaceProjectTestScenario {
     label: string;
@@ -14,8 +15,8 @@ export interface DeployWorkspaceProjectTestScenario {
     testCases: DeployWorkspaceProjectTestCase[];
 }
 
-export function getDwpTestScenarios(): DeployWorkspaceProjectTestScenario[] {
-    const dwpTestScenarios: DeployWorkspaceProjectTestScenario[] = [
+export function getTestScenarios(): DeployWorkspaceProjectTestScenario[] {
+    const testScenarios: DeployWorkspaceProjectTestScenario[] = [
         {
             label: 'basic-js',
             folderName: 'basic-js',
@@ -26,11 +27,11 @@ export function getDwpTestScenarios(): DeployWorkspaceProjectTestScenario[] {
             folderName: 'advanced-js',
             testCases: generateAdvancedJSTestCases(),
         },
-        // {
-        //     label: 'monorepo-admincreds',
-        //     folderName: 'monorepo-admincreds',
-        //     testCases: generateMonoRepoAdminCredentialsTestCases(),
-        // },
+        {
+            label: 'monorepo-admincreds',
+            folderName: 'monorepo-admincreds',
+            testCases: generateMonoRepoAdminCredentialsTestCases(),
+        },
     ];
 
     if (longRunningLocalTestsEnabled) {
@@ -44,5 +45,5 @@ export function getDwpTestScenarios(): DeployWorkspaceProjectTestScenario[] {
         // });
     }
 
-    return dwpTestScenarios;
+    return testScenarios;
 }

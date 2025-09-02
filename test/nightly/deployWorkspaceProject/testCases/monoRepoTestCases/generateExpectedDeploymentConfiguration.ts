@@ -11,6 +11,6 @@ export function generateExpectedDeploymentConfiguration(sharedResourceName: stri
         envPath: path.join(appResourceName, '.env.example'),
         resourceGroup: sharedResourceName,
         containerApp: appResourceName,
-        containerRegistry: new RegExp(`${acrResourceName}.{6}`, 'i'),
+        containerRegistry: new RegExp(acrResourceName, 'i'),
     };
 }
