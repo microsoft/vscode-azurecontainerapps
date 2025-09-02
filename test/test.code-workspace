@@ -1,8 +1,12 @@
 {
     "folders": [
         {
-            "name": "albumapi-js",
-            "path": "testProjects/containerapps-albumapi-javascript"
+            "name": "basic-js",
+            "path": "testProjects/basic-js"
+        },
+        {
+            "name": "advanced-js",
+            "path": "testProjects/advanced-js"
         },
         {
             "name": "dockerfiles",

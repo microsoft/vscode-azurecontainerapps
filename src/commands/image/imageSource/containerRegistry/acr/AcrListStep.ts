@@ -16,6 +16,7 @@ import { RegistryNameStep } from "./createAcr/RegistryNameStep";
 import { SkuListStep } from "./createAcr/SkuListStep";
 
 export interface AcrListStepOptions {
+    createIfNone?: boolean;
     suppressCreatePick?: boolean;
     pickUpdateStrategy?: AcrPickUpdateStrategy;
 }
@@ -48,7 +49,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         let result: Registry | typeof noMatchingResources | undefined;
         do {
             const picks: IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[] = await this.getPicks(context);
-            if (picks.length === 1 && picks[0] === acrCreatePick) {
+            if (this.options.createIfNone && picks.length === 1 && picks[0] === acrCreatePick) {
                 pick = acrCreatePick;
                 result = pick.data as typeof acrCreatePick['data'];
                 break;

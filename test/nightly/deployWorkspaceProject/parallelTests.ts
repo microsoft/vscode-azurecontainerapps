@@ -14,23 +14,21 @@ import { getDwpTestScenarios, type DeployWorkspaceProjectTestScenario } from "./
 
 export interface DwpParallelTestScenario {
     title: string;
-    callback(setupTask: Promise<void>): Promise<void>;
+    callback(): Promise<void>;
     scenario?: Promise<void>;
 }
 
-export function buildParallelTestScenarios(): DwpParallelTestScenario[] {
+export function generateParallelTests(): DwpParallelTestScenario[] {
     return getDwpTestScenarios().map(scenario => {
         return {
             title: scenario.label,
-            callback: buildParallelScenarioCallback(scenario),
+            callback: generateParallelTestCallback(scenario),
         };
     });
 }
 
-function buildParallelScenarioCallback(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
-    return async (setupTask: Promise<void>) => {
-        await setupTask;
-
+function generateParallelTestCallback(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
+    return async () => {
         const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
         const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
         assert.ok(rootFolder, 'Could not retrieve root workspace folder.');

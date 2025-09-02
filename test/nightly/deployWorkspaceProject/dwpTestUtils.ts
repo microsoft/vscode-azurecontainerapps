@@ -7,22 +7,36 @@ import { type ContainerApp, type EnvironmentVar } from "@azure/arm-appcontainers
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import { createContainerAppsAPIClient, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
+import * as path from "path";
+import { createContainerAppsAPIClient, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../typeUtils";
 import { subscriptionContext } from "../global.nightly.test";
 import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
 
 export namespace dwpTestUtils {
+    export function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
+        return {
+            label: appResourceName,
+            type: 'AcrDockerBuildRequest',
+            dockerfilePath: path.join('src', 'Dockerfile'),
+            srcPath: 'src',
+            envPath: '',
+            resourceGroup: sharedResourceName,
+            containerApp: appResourceName,
+            containerRegistry: new RegExp(acrResourceName, 'i'),
+        };
+    }
+
     export function generateExpectedResultsWithCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
         return {
             containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
             imageName: new RegExp(appResourceName, 'i'),
             logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
-            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),
-            registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
+            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
+            registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
             registryPassword: new RegExp('.*'),
-            registryUsername: new RegExp(`${acrResourceName}.{6}`, 'i'),
+            registryUsername: new RegExp(acrResourceName, 'i'),
             resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
         };
     }
@@ -33,8 +47,8 @@ export namespace dwpTestUtils {
             imageName: new RegExp(appResourceName, 'i'),
             logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
-            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),
-            registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
+            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
+            registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
             registryPassword: undefined,
             registryUsername: undefined,
             resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
