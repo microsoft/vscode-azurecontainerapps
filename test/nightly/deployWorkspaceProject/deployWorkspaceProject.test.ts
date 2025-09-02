@@ -34,7 +34,7 @@ suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
 });
 
 async function setupTestProjects() {
-    // These starting projects should be the same, so copy them over be starting.
+    // These starting projects should be the same, so copy them over before starting.
     // We do it this way so we don't need to maintain two copies of the same base project
     await copyTestProjectFiles('basic-js', 'advanced-js');
     await copyTestProjectFiles('monorepo-admincreds', 'monorepo-identity');
