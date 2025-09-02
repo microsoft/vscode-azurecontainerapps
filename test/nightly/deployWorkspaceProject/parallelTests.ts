@@ -22,12 +22,12 @@ export function generateParallelTests(): DwpParallelTestScenario[] {
     return getTestScenarios().map(scenario => {
         return {
             title: scenario.label,
-            callback: generateParallelTestCallback(scenario),
+            callback: runTestCasesFromScenario(scenario),
         };
     });
 }
 
-function generateParallelTestCallback(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
+function runTestCasesFromScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParallelTestScenario['callback'] {
     return async () => {
         const workspaceFolderUri: Uri = getWorkspaceFolderUri(scenario.folderName);
         const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
