@@ -67,3 +67,6 @@ testWorkspace
 test-results.xml
 dist
 stats.json
+
+# Test Projects
+# /test/testProjects/advanced-js/*
