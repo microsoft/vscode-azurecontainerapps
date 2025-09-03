@@ -19,6 +19,10 @@
         {
             "name": "monorepo-identity",
             "path": "testProjects/monorepo-identity"
+        },
+        {
+            "name": "containerized-functions",
+            "path": "testProjects/containerized-functions"
         }
     ]
 }

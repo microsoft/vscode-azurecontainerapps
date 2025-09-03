@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import { longRunningTestsEnabled } from '../../global.test';
+import { longRunningTestsEnabled } from "../../global.test";
 import { generateParallelTests, type DwpParallelTestScenario } from "./parallelTests";
 
 const testScenarios: DwpParallelTestScenario[] = generateParallelTests();

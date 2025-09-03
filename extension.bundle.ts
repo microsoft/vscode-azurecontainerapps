@@ -16,6 +16,7 @@
 // At runtime the tests live in dist/tests and will therefore pick up the main webpack bundle at dist/extension.bundle.js.
 export * from '@microsoft/vscode-azext-utils';
 // Export activate/deactivate for main.js
+export * from './src/commands/api/deployWorkspaceProjectApi';
 export * from './src/commands/createContainerApp/createContainerApp';
 export * from './src/commands/createManagedEnvironment/createManagedEnvironment';
 export * from './src/commands/deployWorkspaceProject/deployWorkspaceProject';
