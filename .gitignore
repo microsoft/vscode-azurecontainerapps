@@ -67,7 +67,3 @@ testWorkspace
 test-results.xml
 dist
 stats.json
-
-# Copied Test Projects
-/test/testProjects/advanced-js/*
-/test/testProjects/monorepo-identity/*
