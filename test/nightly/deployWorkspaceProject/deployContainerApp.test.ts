@@ -72,26 +72,20 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
 });
 
 async function createContainerAppItem(): Promise<ContainerAppItem> {
-    const managedEnvironment = await wrapWithTryCatch(async () => {
-        let managedEnvironment: ManagedEnvironment | undefined;
-        await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
-            const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-            await context.ui.runWithInputs([resourceName, 'East US'], async () => {
-                managedEnvironment = await createManagedEnvironment(context);
-            });
+    let managedEnvironment: ManagedEnvironment | undefined;
+    await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
+        const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
+        await context.ui.runWithInputs([resourceName, 'East US'], async () => {
+            managedEnvironment = await createManagedEnvironment(context);
         });
-        return managedEnvironment;
     });
 
-    const containerAppItem = await wrapWithTryCatch(async () => {
-        let containerAppItem: ContainerAppItem | undefined;
-        await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createContainerApp', async context => {
-            const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-            await context.ui.runWithInputs([managedEnvironment?.name ?? '', resourceName], async () => {
-                containerAppItem = await createContainerApp(context);
-            });
+    let containerAppItem: ContainerAppItem | undefined;
+    await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createContainerApp', async context => {
+        const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
+        await context.ui.runWithInputs([managedEnvironment?.name ?? '', resourceName], async () => {
+            containerAppItem = await createContainerApp(context);
         });
-        return containerAppItem;
     });
 
     if (managedEnvironment?.name) {
@@ -100,13 +94,4 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
 
     assert.ok(containerAppItem, 'Failed to setup the starting container app item.');
     return containerAppItem;
-}
-
-async function wrapWithTryCatch<T>(testAction: () => Promise<T>): Promise<T> {
-    try {
-        return await testAction();
-    } catch (e) {
-        console.error(e);
-        throw e;
-    }
 }
