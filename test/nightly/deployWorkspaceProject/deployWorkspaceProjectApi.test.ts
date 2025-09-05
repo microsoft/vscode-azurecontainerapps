@@ -27,9 +27,10 @@ suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
         // We need to start with an empty resource group to simulate the starting point for Azure Functions
         const resourceGroupId: string = await createResourceGroup();
 
-        const workspaceFolderUri: Uri = getWorkspaceFolderUri('containerized-functions');
+        const folderName: string = 'containerized-functions';
+        const workspaceFolderUri: Uri = getWorkspaceFolderUri(folderName);
         const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
-        assert.ok(rootFolder?.uri.fsPath, 'Failed to find "containerized-functions" root folder path');
+        assert.ok(rootFolder?.uri.fsPath, `Failed to find "${folderName}" root folder path.`);
 
         const deploymentSettings = {
             resourceGroupId,
