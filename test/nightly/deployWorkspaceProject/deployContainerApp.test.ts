@@ -58,7 +58,7 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
                     results = await deployContainerApp(context, containerAppItem) ?? {};
                 } catch (e) {
                     perr = parseError(e);
-                    console.log(perr);
+                    console.error(perr.message);
                 }
             });
         });
