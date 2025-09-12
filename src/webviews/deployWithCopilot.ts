@@ -17,7 +17,7 @@ import { getManagedEnvironmentFromContainerApp } from "../utils/getResourceUtils
 import { getVerifyProvidersStep } from "../utils/getVerifyProvidersStep";
 import { localize } from "../utils/localize";
 import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
-import { OpenConfirmationViewStep } from "./OpenConfirmationViewStep";
+import { OpenConfirmationViewStep, SharedState } from "./OpenConfirmationViewStep";
 import { OpenLoadingViewStep } from "./OpenLoadingViewStep";
 
 export async function deployWithCopilot(context: IActionContext, node: ContainerAppItem): Promise<void> {
@@ -34,7 +34,7 @@ export async function deployWithCopilot(context: IActionContext, node: Container
         activityAttributes: CommandAttributes.DeployContainerAppContainerRegistry,
     };
 
-    wizardContext.ui = new CopilotUserInput(vscode, JSON.stringify(node.viewProperties));
+    wizardContext.ui = new CopilotUserInput(vscode, JSON.stringify(node.viewProperties), () => SharedState.currentPanel);
 
     const confirmationViewTitle: string = localize('summary', 'Copilot Summary');
     const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
