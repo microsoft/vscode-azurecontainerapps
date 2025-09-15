@@ -1,8 +1,16 @@
 {
     "folders": [
         {
-            "name": "albumapi-js",
-            "path": "testProjects/containerapps-albumapi-javascript"
+            "name": "advanced-js",
+            "path": "testProjects/advanced-js"
+        },
+        {
+            "name": "basic-js",
+            "path": "testProjects/basic-js"
+        },
+        {
+            "name": "containerized-functions",
+            "path": "testProjects/containerized-functions"
         },
         {
             "name": "dockerfiles",
@@ -10,11 +18,11 @@
         },
         {
             "name": "monorepo-admincreds",
-            "path": "testProjects/monorepo-basic-1"
+            "path": "testProjects/monorepo-admincreds"
         },
         {
             "name": "monorepo-identity",
-            "path": "testProjects/monorepo-basic-2"
-        }
+            "path": "testProjects/monorepo-identity"
+        },
     ]
 }
