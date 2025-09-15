@@ -4,14 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
-import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../../telemetry/ImageSourceTelemetryProps";
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
-import { prependOrInsertAfterLastInfoChild } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
 import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
@@ -162,7 +161,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
                     activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon,
                     stepId: this.id
-                })
+                }) as ActivityInfoChild,
             );
             ext.outputChannel.appendLog(localize('useExistingEnvVarsMessage', 'Used existing environment variable configuration.'));
         }
