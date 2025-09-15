@@ -1,12 +1,16 @@
 {
     "folders": [
         {
+            "name": "advanced-js",
+            "path": "testProjects/advanced-js"
+        },
+        {
             "name": "basic-js",
             "path": "testProjects/basic-js"
         },
         {
-            "name": "advanced-js",
-            "path": "testProjects/advanced-js"
+            "name": "containerized-functions",
+            "path": "testProjects/containerized-functions"
         },
         {
             "name": "dockerfiles",
@@ -19,6 +23,6 @@
         {
             "name": "monorepo-identity",
             "path": "testProjects/monorepo-identity"
-        }
+        },
     ]
 }
