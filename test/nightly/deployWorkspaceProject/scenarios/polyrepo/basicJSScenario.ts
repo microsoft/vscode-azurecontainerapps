@@ -5,15 +5,15 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { type DeploymentConfigurationSettings } from "../../../../extension.bundle";
-import { type StringOrRegExpProps } from "../../../typeUtils";
-import { dwpTestUtils } from "../dwpTestUtils";
-import { type DeployWorkspaceProjectTestCase } from "./DeployWorkspaceProjectTestCase";
+import { type DeploymentConfigurationSettings } from "../../../../../extension.bundle";
+import { type StringOrRegExpProps } from "../../../../typeUtils";
+import { dwpTestUtils } from "../../dwpTestUtils";
+import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
 
-export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTestCase[] {
-    const folderName: string = 'albumapi-js';
-    const appResourceName: string = 'album-api';
-    const sharedResourceName: string = 'album-js' + randomUtils.getRandomHexString(4);
+export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
+    const folderName: string = 'basic-js';
+    const appResourceName: string = 'b-js-app';
+    const sharedResourceName: string = 'b-js-env' + randomUtils.getRandomHexString(4);
     const acrResourceName: string = sharedResourceName.replace(/[^a-zA-Z0-9]+/g, '');
 
     return [
@@ -21,16 +21,15 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
             label: 'Should fail to deploy app (bad Dockerfile)',
             inputs: [
                 new RegExp(folderName, 'i'),
-                path.join('src', 'test_fail.Dockerfile'),
-                new RegExp('Create new container apps environment', 'i'),
-                new RegExp('Create new container registry', 'i'),
-                'Continue',
-                sharedResourceName.slice(0, -1), // Isolate by using a different resource group name since we expect this case to fail
+                'Basic',
+                sharedResourceName,
                 appResourceName,
-                `.${path.sep}src`,
+                'East US',
                 'Docker Login Credentials',
                 'Enable',
-                'East US',
+                path.join('src', 'test_fail.Dockerfile'),
+                `.${path.sep}src`,
+                'Continue',
                 'Save'
             ],
             expectedResults: undefined,
@@ -42,22 +41,21 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
             label: 'Deploy App',
             inputs: [
                 new RegExp(folderName, 'i'),
-                path.join('src', 'Dockerfile'),
-                new RegExp('Create new container apps environment', 'i'),
-                new RegExp('Create new container registry', 'i'),
-                'Continue',
+                'Basic',
                 sharedResourceName,
                 appResourceName,
-                `.${path.sep}src`,
+                'East US',
                 'Docker Login Credentials',
                 'Enable',
-                'East US',
+                path.join('src', 'Dockerfile'),
+                `.${path.sep}src`,
+                'Continue',
                 'Save'
             ],
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
+                    generateExpectedJSDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined }),
@@ -73,7 +71,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
             expectedResults: dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourceName, acrResourceName, appResourceName),
             expectedVSCodeSettings: {
                 deploymentConfigurations: [
-                    generateExpectedDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
+                    generateExpectedJSDeploymentConfiguration(sharedResourceName, acrResourceName, appResourceName)
                 ]
             },
             postTestAssertion: dwpTestUtils.generatePostTestAssertion({ targetPort: 8080, env: undefined })
@@ -81,7 +79,7 @@ export function generateAlbumApiJavaScriptTestCases(): DeployWorkspaceProjectTes
     ];
 }
 
-function generateExpectedDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
+export function generateExpectedJSDeploymentConfiguration(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeploymentConfigurationSettings> {
     return {
         label: appResourceName,
         type: 'AcrDockerBuildRequest',
@@ -90,6 +88,6 @@ function generateExpectedDeploymentConfiguration(sharedResourceName: string, acr
         envPath: '',
         resourceGroup: sharedResourceName,
         containerApp: appResourceName,
-        containerRegistry: new RegExp(`${acrResourceName}.{6}`, 'i'),
+        containerRegistry: new RegExp(acrResourceName, 'i'),
     };
 }

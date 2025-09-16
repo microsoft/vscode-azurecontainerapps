@@ -6,6 +6,12 @@
 import { type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IActionContext } from "../../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../../typeUtils";
 
+export interface DeployWorkspaceProjectTestScenario {
+    label: string;
+    folderName: string;
+    testCases: DeployWorkspaceProjectTestCase[];
+}
+
 export interface DeployWorkspaceProjectTestCase {
     /**
      * Label to display when executing the test
