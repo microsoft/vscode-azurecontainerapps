@@ -53,11 +53,10 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
         let results: DeployWorkspaceProjectResults = {};
         await runWithTestActionContext('deployContainerApp.deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(testInputs, async () => {
-                let perr: IParsedError | undefined;
                 try {
                     results = await deployContainerApp(context, containerAppItem) ?? {};
                 } catch (e) {
-                    perr = parseError(e);
+                    const perr: IParsedError = parseError(e);
                     console.error(perr.message);
                 }
             });
