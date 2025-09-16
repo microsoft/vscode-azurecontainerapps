@@ -9,7 +9,7 @@ import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { createContainerApp, createManagedEnvironment, deployContainerApp, parseError, randomUtils, type ContainerAppItem, type DeployWorkspaceProjectResults, type IParsedError } from '../../../extension.bundle';
+import { createContainerApp, createManagedEnvironment, deployContainerApp, parseError, randomUtils, settingUtils, type ContainerAppItem, type DeployWorkspaceProjectResults, type IParsedError } from '../../../extension.bundle';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete } from '../global.nightly.test';
@@ -22,6 +22,7 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
         if (!longRunningTestsEnabled) {
             this.skip();
         }
+        await settingUtils.updateGlobalSetting('groupBy', 'resourceType', 'azureResourceGroups');
     });
 
     test('should deploy properly from the container app item entry-point', async function () {
