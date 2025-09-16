@@ -66,7 +66,14 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
         const expectedResults = dwpTestUtils.generateExpectedResultsWithCredentials(sharedResourcesName, acrResourceName, containerAppItem.containerApp.name);
         expectedResults.imageName = imageName;
 
-        assertStringPropsMatch(results as Partial<Record<string, string>>, expectedResults as Record<string, string | RegExp>, 'DeployWorkspaceProject results mismatch.');
+        // Verify `expectedResults`
+        assertStringPropsMatch(results as Partial<Record<string, string>>, expectedResults as Record<string, string | RegExp>, 'DeployContainerApp.DeployWorkspaceProject results mismatch.');
+
+        // Verify `postTestAssertion`
+        await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.postTestAssertion', async context => {
+            const postTestAssertion = dwpTestUtils.generatePostTestAssertion({ targetPort: 3000, env: [{ name: 'MESSAGE', value: 'container apps (app1)' }] });
+            await postTestAssertion(context, results, 'DeployContainerApp.DeployWorkspaceProject resource settings mismatch.');
+        });
     });
 });
 
