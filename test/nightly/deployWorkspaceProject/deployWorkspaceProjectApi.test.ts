@@ -35,6 +35,7 @@ suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
         const deploymentSettings = {
             resourceGroupId,
             rootPath: rootFolder.uri.fsPath,
+            srcPath: rootFolder.uri.fsPath,
             dockerfilePath: path.join(rootFolder.uri.fsPath, 'Dockerfile'),
             suppressConfirmation: true,
             suppressContainerAppCreation: true,
