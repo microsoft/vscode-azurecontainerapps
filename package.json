@@ -875,7 +875,7 @@
         "@microsoft/vscode-azext-azureutils": "^3.5.0",
         "@microsoft/vscode-azext-github": "^1.0.4",
         "@microsoft/vscode-azext-utils": "^3.5.0",
-        "@microsoft/vscode-azureresources-api": "^2.0.2",
+        "@microsoft/vscode-azureresources-api": "^2.6.2",
         "@vscode/codicons": "0.0.38",
         "buffer": "^6.0.3",
         "dayjs": "^1.11.3",
