@@ -8,7 +8,7 @@ import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { AzureWizard, deployWorkspaceProjectApi, randomUtils, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
+import { AzureWizard, deployWorkspaceProjectApi, randomUtils, settingUtils, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete, subscriptionContext } from '../global.nightly.test';
@@ -21,15 +21,17 @@ suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
         if (!longRunningTestsEnabled) {
             this.skip();
         }
+        await settingUtils.updateGlobalSetting('groupBy', 'resourceType', 'azureResourceGroups');
     });
 
     test('should be able to deploy containerized function project', async function () {
         // We need to start with an empty resource group to simulate the starting point for Azure Functions
         const resourceGroupId: string = await createResourceGroup();
 
-        const workspaceFolderUri: Uri = getWorkspaceFolderUri('containerized-functions');
+        const folderName: string = 'containerized-functions';
+        const workspaceFolderUri: Uri = getWorkspaceFolderUri(folderName);
         const rootFolder: WorkspaceFolder | undefined = workspace.getWorkspaceFolder(workspaceFolderUri);
-        assert.ok(rootFolder?.uri.fsPath, 'Failed to find "containerized-functions" root folder path');
+        assert.ok(rootFolder?.uri.fsPath, `Failed to find "${folderName}" root folder path.`);
 
         const deploymentSettings = {
             resourceGroupId,
