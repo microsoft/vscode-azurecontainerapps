@@ -5,20 +5,21 @@
 
 import { AzureWizard, CopilotUserInput, createSubscriptionContext, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
-import { CommandAttributes } from "../commands/CommandAttributes";
-import { ContainerAppOverwriteConfirmStep } from "../commands/ContainerAppOverwriteConfirmStep";
-import { type ContainerAppDeployContext } from "../commands/deployContainerApp/ContainerAppDeployContext";
-import { ContainerAppDeployStartingResourcesLogStep } from "../commands/deployContainerApp/ContainerAppDeployStartingResourcesLogStep";
-import { ContainerAppUpdateStep } from "../commands/image/imageSource/ContainerAppUpdateStep";
-import { ImageSourceListStep } from "../commands/image/imageSource/ImageSourceListStep";
-import { type ContainerAppItem } from "../tree/ContainerAppItem";
-import { createActivityContext } from "../utils/activityUtils";
-import { getManagedEnvironmentFromContainerApp } from "../utils/getResourceUtils";
-import { getVerifyProvidersStep } from "../utils/getVerifyProvidersStep";
-import { localize } from "../utils/localize";
-import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
-import { OpenConfirmationViewStep, SharedState } from "./OpenConfirmationViewStep";
-import { OpenLoadingViewStep } from "./OpenLoadingViewStep";
+import { type ContainerAppItem } from "../../tree/ContainerAppItem";
+import { createActivityContext } from "../../utils/activityUtils";
+import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
+import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
+import { localize } from "../../utils/localize";
+import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { OpenConfirmationViewStep, SharedState } from "../../webviews/OpenConfirmationViewStep";
+import { OpenLoadingViewStep } from "../../webviews/OpenLoadingViewStep";
+import { CommandAttributes } from "../CommandAttributes";
+import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
+import { type ContainerAppDeployContext } from "../deployContainerApp/ContainerAppDeployContext";
+import { ContainerAppDeployStartingResourcesLogStep } from "../deployContainerApp/ContainerAppDeployStartingResourcesLogStep";
+import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
+import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
+
 
 export async function deployWithCopilot(context: IActionContext, node: ContainerAppItem): Promise<void> {
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
