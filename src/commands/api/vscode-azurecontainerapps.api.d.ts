@@ -22,6 +22,7 @@ export interface DeployWorkspaceProjectOptionsContract {
     // Existing resources
     subscriptionId?: string;
     resourceGroupId?: string;
+    location?: string;
 
     // Workspace deployment paths (absolute fs path)
     rootPath?: string;
@@ -29,7 +30,6 @@ export interface DeployWorkspaceProjectOptionsContract {
     dockerfilePath?: string;
 
     // Options
-    suppressRegistryPrompt?: boolean;
     suppressConfirmation?: boolean;  // Suppress any [resource] confirmation prompts
     suppressContainerAppCreation?: boolean;
     shouldSaveDeploySettings?: boolean;

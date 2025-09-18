@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } f
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { containerAppsWebProvider, ImageSource } from "../../constants";
+import { ImageSource } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -37,7 +37,7 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
         } : undefined;
 
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
-            location: (await LocationListStep.getLocation(context, containerAppsWebProvider)).name,
+            location: (await LocationListStep.getLocation(context)).name,
             managedEnvironmentId: context.managedEnvironment?.id,
             configuration: {
                 ingress,

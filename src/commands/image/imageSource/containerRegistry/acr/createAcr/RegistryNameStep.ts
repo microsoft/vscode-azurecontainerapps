@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerRegistryManagementClient, type RegistryNameStatus } from "@azure/arm-containerregistry";
-import { AzureWizardPromptStep, randomUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, randomUtils, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { createContainerRegistryManagementClient } from "../../../../../../utils/azureClients";
 import { localize } from "../../../../../../utils/localize";
 import { type CreateAcrContext } from "./CreateAcrContext";
@@ -13,6 +13,9 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
     public async prompt(context: CreateAcrContext): Promise<void> {
         context.newRegistryName = await context.ui.showInputBox({
             prompt: localize('registryName', 'Enter a name for the new registry'),
+            value: context.resourceGroup?.name || context.newResourceGroupName ?
+                await RegistryNameStep.generateRelatedName(context, context.resourceGroup?.name ?? nonNullProp(context, 'newResourceGroupName')) :
+                undefined,
             validateInput: RegistryNameStep.validateInput,
             asyncValidationTask: (value: string): Promise<string | undefined> => this.validateNameAvalability(context, value)
         });

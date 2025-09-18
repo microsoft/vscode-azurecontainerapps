@@ -11,3 +11,8 @@ export interface ManagedEnvironmentRequiredContext extends ISubscriptionActionCo
     subscription: AzureSubscription;
     managedEnvironment: ManagedEnvironment;
 }
+
+export interface ManagedEnvironmentContext extends ISubscriptionActionContext {
+    subscription: AzureSubscription;
+    managedEnvironment?: ManagedEnvironment;
+}
