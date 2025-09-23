@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { prependOrInsertAfterLastInfoChild } from "../../utils/activityUtils";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
@@ -56,9 +55,17 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
     }
 
     public async prompt(context: RegistryCredentialsContext): Promise<void> {
-        const placeHolder: string = context.registry || context.newRegistryName ?
-            localize('selectCredentialTypeNamed', 'Select a connection method for registry "{0}"', context.registry?.name || context.newRegistryName) :
-            localize('selectCredentialType', 'Select a registry connection method');
+        let placeHolder: string;
+        switch (true) {
+            case !!context.registry:
+                placeHolder = localize('selectCredentialTypeExistingRegistry', 'Select a connection method for registry "{0}"', context.registry?.name);
+                break;
+            case !!context.newRegistryName:
+                placeHolder = localize('selectCredentialTypeNewRegistry', 'Select a connection method for new registry "{0}"', context.newRegistryName);
+                break;
+            default:
+                placeHolder = localize('selectCredentialTypeGeneric', 'Select a registry connection method');
+        }
 
         const pick = (await context.ui.showQuickPick(this.getPicks(context), {
             placeHolder,
@@ -111,8 +118,8 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                         contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
                         activityType: ActivityChildType.Info,
                         iconPath: activityInfoIcon,
-                        stepId: this.id
-                    })
+                        stepId: this.id,
+                    }) as ActivityInfoChild,
                 );
                 ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));
         }

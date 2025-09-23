@@ -11,6 +11,7 @@ import { type IContainerAppContext } from "../../../IContainerAppContext";
 import { RootFolderStep } from "../../../image/imageSource/buildImageInAzure/RootFolderStep";
 import { type DeploymentConfiguration } from "../DeploymentConfiguration";
 import { DeploymentConfigurationListStep } from "./DeploymentConfigurationListStep";
+import { DeploymentModeListStep } from "./DeploymentModeListStep";
 import { type WorkspaceDeploymentConfigurationContext } from "./WorkspaceDeploymentConfigurationContext";
 
 export async function getWorkspaceDeploymentConfiguration(context: IContainerAppContext & { rootFolder?: WorkspaceFolder }): Promise<DeploymentConfiguration> {
@@ -23,6 +24,7 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
         promptSteps: [
             new RootFolderStep(),
             new DeploymentConfigurationListStep(),
+            new DeploymentModeListStep(),
         ],
     });
 
@@ -39,6 +41,7 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
     await wizard.execute();
 
     return {
+        deploymentMode: wizardContext.deploymentMode,
         configurationIdx: wizardContext.configurationIdx,
         rootFolder: wizardContext.rootFolder,
         dockerfilePath: wizardContext.dockerfilePath,

@@ -10,7 +10,7 @@ import * as assert from "assert";
 import { createContainerAppsAPIClient, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
 import { type StringOrRegExpProps } from "../../typeUtils";
 import { subscriptionContext } from "../global.nightly.test";
-import { type PostTestAssertion } from "./testCases/DeployWorkspaceProjectTestCase";
+import { type PostTestAssertion } from "./scenarios/DeployWorkspaceProjectTestScenario";
 
 export namespace dwpTestUtils {
     export function generateExpectedResultsWithCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
@@ -19,10 +19,10 @@ export namespace dwpTestUtils {
             imageName: new RegExp(appResourceName, 'i'),
             logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
-            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),
-            registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
+            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
+            registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
             registryPassword: new RegExp('.*'),
-            registryUsername: new RegExp(`${acrResourceName}.{6}`, 'i'),
+            registryUsername: new RegExp(acrResourceName, 'i'),
             resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
         };
     }
@@ -33,8 +33,8 @@ export namespace dwpTestUtils {
             imageName: new RegExp(appResourceName, 'i'),
             logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
-            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}.{6}`, 'i'),
-            registryLoginServer: new RegExp(`${acrResourceName}.{6}\.azurecr\.io`, 'i'),
+            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
+            registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
             registryPassword: undefined,
             registryUsername: undefined,
             resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
