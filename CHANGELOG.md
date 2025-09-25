@@ -4,7 +4,7 @@
 
 ### Changed
 
-* [[967](https://github.com/microsoft/vscode-azurecontainerapps/pull/967)] hanges were made to support the upcoming multi-factor authentication requirements for Azure
+* [[967](https://github.com/microsoft/vscode-azurecontainerapps/pull/967)] Changes were made to support the upcoming multi-factor authentication requirements for Azure
 
 ## 0.9.0 - 2025-08-04
 
