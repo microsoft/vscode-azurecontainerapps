@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
+import { settingUtils } from "../../../extension.bundle";
 import { longRunningTestsEnabled } from '../../global.test';
 import { generateParallelTests, type DwpParallelTestScenario } from "./parallelTests";
 
@@ -16,6 +17,7 @@ suite('deployWorkspaceProject', async function (this: Mocha.Suite) {
         if (!longRunningTestsEnabled) {
             this.skip();
         }
+        await settingUtils.updateGlobalSetting('groupBy', 'resourceType', 'azureResourceGroups');
 
         for (const s of testScenarios) {
             s.scenario = s.callback();

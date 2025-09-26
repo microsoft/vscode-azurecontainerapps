@@ -17,7 +17,9 @@
 export * from '@microsoft/vscode-azext-utils';
 // Export activate/deactivate for main.js
 export * from './src/commands/api/deployWorkspaceProjectApi';
+export * from './src/commands/createContainerApp/createContainerApp';
 export * from './src/commands/createManagedEnvironment/createManagedEnvironment';
+export * from './src/commands/deployContainerApp/deployContainerApp';
 export * from './src/commands/deployWorkspaceProject/deployWorkspaceProject';
 export * from './src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
 export * from './src/commands/deployWorkspaceProject/internal/DeployWorkspaceProjectInternalContext';
@@ -33,6 +35,7 @@ export * from './src/commands/ingress/IngressPromptStep';
 export * from './src/commands/ingress/tryGetDockerfileExposePorts';
 export { activate, deactivate } from './src/extension';
 export * from './src/extensionVariables';
+export * from './src/tree/ContainerAppItem';
 export * from './src/utils/azureClients';
 export * from './src/utils/imageNameUtils';
 export * from './src/utils/settingUtils';
