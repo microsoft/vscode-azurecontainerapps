@@ -3,59 +3,13 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizard, CopilotUserInput, createSubscriptionContext, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { CopilotUserInput, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
-import { createActivityContext } from "../../utils/activityUtils";
-import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
-import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
-import { localize } from "../../utils/localize";
-import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
-import { OpenConfirmationViewStep, SharedState } from "../../webviews/OpenConfirmationViewStep";
-import { OpenLoadingViewStep } from "../../webviews/OpenLoadingViewStep";
-import { CommandAttributes } from "../CommandAttributes";
-import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
-import { type ContainerAppDeployContext } from "../deployContainerApp/ContainerAppDeployContext";
-import { ContainerAppDeployStartingResourcesLogStep } from "../deployContainerApp/ContainerAppDeployStartingResourcesLogStep";
-import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
-import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
-
+import { SharedState } from "../../webviews/OpenConfirmationViewStep";
+import { deployContainerApp } from "../deployContainerApp/deployContainerApp";
 
 export async function deployWithCopilot(context: IActionContext, node: ContainerAppItem): Promise<void> {
-    const item: ContainerAppItem = node ?? await pickContainerApp(context);
-    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
-    const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
-
-    const wizardContext: ContainerAppDeployContext = {
-        ...subscriptionActionContext,
-        ...await createActivityContext({ withChildren: true }),
-        subscription: item.subscription,
-        containerApp: item.containerApp,
-        managedEnvironment: await getManagedEnvironmentFromContainerApp(subscriptionActionContext, item.containerApp),
-        activityAttributes: CommandAttributes.DeployContainerAppContainerRegistry,
-    };
-
-    wizardContext.ui = new CopilotUserInput(vscode, JSON.stringify(node.viewProperties), () => SharedState.currentPanel);
-
-    const confirmationViewTitle: string = localize('summary', 'Copilot Summary');
-    const confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
-    const confirmationViewDescription: string = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input may need to change as well');
-    const title: string = localize('deployContainerAppWithCopilotTitle', 'Deploy image to container app using copilot');
-    const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
-        title: title,
-        promptSteps: [
-            new OpenLoadingViewStep(),
-            new ContainerAppDeployStartingResourcesLogStep(),
-            new ImageSourceListStep(),
-            new ContainerAppOverwriteConfirmStep(),
-            new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
-        ],
-        executeSteps: [
-            getVerifyProvidersStep<ContainerAppDeployContext>(),
-            new ContainerAppUpdateStep(),
-        ],
-    });
-
-    await wizard.prompt();
-    await wizard.execute();
+    context.ui = new CopilotUserInput(vscode, JSON.stringify(node.viewProperties), () => SharedState.currentPanel);
+    await deployContainerApp(context, node);
 }
