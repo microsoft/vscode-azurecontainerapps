@@ -18,6 +18,7 @@ import { OpenLoadingViewStep } from "../../webviews/OpenLoadingViewStep";
 import { CommandAttributes } from "../CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
+import { type DeployWorkspaceProjectResults } from "../deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import { editContainerCommandName } from "../editContainer/editContainer";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { ImageSourceListStep } from "../image/imageSource/ImageSourceListStep";
@@ -26,7 +27,7 @@ import { ContainerAppDeployStartingResourcesLogStep } from "./ContainerAppDeploy
 
 const deployContainerAppCommandName: string = localize('deployContainerApp', 'Deploy to Container App...');
 
-export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<void> {
+export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<DeployWorkspaceProjectResults | void> {
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
@@ -41,8 +42,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
     const imageSource: ImageSource = await promptImageSource(subscriptionActionContext);
     if (imageSource === ImageSource.RemoteAcrBuild) {
-        await deployWorkspaceProject(context, item);
-        return;
+        return await deployWorkspaceProject(context, item);
     }
 
     const wizardContext: ContainerAppDeployContext = {
