@@ -4,14 +4,18 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { createApiProvider, type apiUtils } from "@microsoft/vscode-azext-utils";
+import { receiveAzureResourcesSession } from "./azureResourcesSession";
 import { deployImageApi } from "./deployImageApi";
 import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
+export const azureContainerAppsApiVersion = '1.0.0';
+
 export function getAzureContainerAppsApiProvider(): apiUtils.AzureExtensionApiProvider {
     return createApiProvider([<api.AzureContainerAppsExtensionApi>{
-        apiVersion: '1.0.0',
+        apiVersion: azureContainerAppsApiVersion,
         deployImage: deployImageApi,
         deployWorkspaceProject: deployWorkspaceProjectApi,
+        receiveAzureResourcesSession,
     }]);
 }
