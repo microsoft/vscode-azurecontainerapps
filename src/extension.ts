@@ -9,7 +9,6 @@ import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-az
 import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github';
 import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { createAzureResourcesSession } from './commands/api/azureResourcesSession';
 import { getAzureContainerAppsApiProvider } from './commands/api/getAzureContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
@@ -40,11 +39,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         context.subscriptions.push(vscode.workspace.registerFileSystemProvider(RevisionDraftFileSystem.scheme, ext.revisionDraftFileSystem));
 
         ext.state = new TreeElementStateManager();
-        // ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
-        // ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
-
-        void createAzureResourcesSession();
     });
 
     return getAzureContainerAppsApiProvider();

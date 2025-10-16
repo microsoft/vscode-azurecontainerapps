@@ -5,7 +5,7 @@
 
 import { type AzureExtensionApi } from "@microsoft/vscode-azureresources-api";
 
-export interface AzureContainerAppsExtensionApi extends Required<AzureExtensionApi> {
+export interface AzureContainerAppsExtensionApi extends AzureExtensionApi {
     deployImage(options: DeployImageToAcaOptionsContract): Promise<void>;
     deployWorkspaceProject(options: DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults>;
 }
