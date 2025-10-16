@@ -10,7 +10,6 @@ import { deployImageApi } from "./deployImageApi";
 import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
-export const azureContainerAppsApiVersion = '1.0.0';
 const azureContainerAppsCredentialManager: AzExtCredentialManager<string> = new AzExtSignatureCredentialManager();
 
 export function getAzureContainerAppsApiProvider(): apiUtils.AzureExtensionApiProvider {
@@ -25,7 +24,7 @@ export function getAzureContainerAppsApiProvider(): apiUtils.AzureExtensionApiPr
     };
 
     const containerAppsApi: api.AzureContainerAppsExtensionApi = {
-        apiVersion: azureContainerAppsApiVersion,
+        apiVersion: '1.0.0',
         deployImage: deployImageApi,
         deployWorkspaceProject: deployWorkspaceProjectApi,
     };
