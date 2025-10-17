@@ -19,7 +19,7 @@ import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 620;
     public stepName: string = 'containerAppCreateStep';
-    protected getOutputLogSuccess = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}"', context.newContainerAppName);
+    protected getOutputLogSuccess = (context: T) => localize('createContainerAppSuccess', 'Created container app "{0}".', context.newContainerAppName);
     protected getOutputLogFail = (context: T) => localize('createContainerAppFail', 'Failed to create container app "{0}"', context.newContainerAppName);
     protected getTreeItemLabel = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
 

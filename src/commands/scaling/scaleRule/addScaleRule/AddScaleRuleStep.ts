@@ -29,7 +29,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         await this.updateRevisionDraftWithTemplate(context);
 
         const resourceName = getParentResourceFromItem(this.baseItem).name;
-        ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft)', context.newRuleType, context.newRuleName, resourceName));
+        ext.outputChannel.appendLog(localize('addedScaleRule', 'Added {0} rule "{1}" to "{2}" (draft).', context.newRuleType, context.newRuleName, resourceName));
     }
 
     public shouldExecute(context: T): boolean {
