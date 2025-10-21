@@ -8,8 +8,9 @@
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github';
 import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
+import { AzExtSignatureCredentialManager, type AzExtCredentialManager } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
-import { getAzureContainerAppsApiProvider } from './commands/api/getAzureContainerAppsApiProvider';
+import { exportAzureContainerAppsApiProvider } from './commands/api/exportAzureContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
@@ -42,7 +43,8 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
     });
 
-    return getAzureContainerAppsApiProvider();
+    const credentialManager: AzExtCredentialManager<string> = new AzExtSignatureCredentialManager();
+    return exportAzureContainerAppsApiProvider(credentialManager);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
