@@ -61,14 +61,14 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     wizardContext.telemetry.properties.revisionMode = item.containerApp.revisionsMode;
 
     const confirmationViewTitle: string = localize('summary', 'Summary');
-    let confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input proceeding the changed input may need to change as well');
+    let confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input proceeding the changed input will need to change as well');
     let confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
     let title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
 
     const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = []
     if (wizardContext.ui instanceof CopilotUserInput) {
         promptSteps.push(new OpenLoadingViewStep());
-        confirmationViewDescription = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input may need to change as well');
+        confirmationViewDescription = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input will need to change as well');
         confirmationViewTabTitle = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
         title = localize('deployContainerAppWithCopilotTitle', 'Deploy image to container app using copilot');
     }
