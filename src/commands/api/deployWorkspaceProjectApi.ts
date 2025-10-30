@@ -20,6 +20,8 @@ import type * as api from "./vscode-azurecontainerapps.api";
 
 export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
     return await callWithTelemetryAndErrorHandling('containerApps.api.deployWorkspaceProject', async (context: IActionContext): Promise<DeployWorkspaceProjectResults> => {
+        context.errorHandling.rethrow = true;
+
         const {
             resourceGroupId,
             location,
