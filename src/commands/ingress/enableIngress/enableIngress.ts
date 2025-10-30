@@ -37,7 +37,8 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
     });
 
     await wizard.prompt();
-    wizardContext.activityTitle = localize('enableIngress', 'Enable ingress on port {0} for container app "{1}"', wizardContext.targetPort, containerApp.name);
+    const visibility: string = wizardContext.enableExternal ? localize('external', 'external') : localize('internal', 'internal');
+    wizardContext.activityTitle = localize('enableIngressWithVisibility', 'Enable {0} ingress on port {1} for container app "{2}"', visibility, wizardContext.targetPort, containerApp.name);
     await wizard.execute();
 
     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
