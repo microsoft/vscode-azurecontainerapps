@@ -10,6 +10,8 @@ import { deployImageApi } from "./deployImageApi";
 import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
+let startTime: number;
+
 export function exportAzureContainerAppsApiProvider(credentialManager: AzExtCredentialManager<unknown>): apiUtils.AzureExtensionApiProvider {
     const context: AzureResourcesApiRequestContext = {
         azureResourcesApiVersions: ['2.0.0'],
@@ -22,6 +24,11 @@ export function exportAzureContainerAppsApiProvider(credentialManager: AzExtCred
             }
             ext.rgApiV2 = rgApiV2;
             ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
+
+            // Perf
+            const endTime: number = Date.now();
+            const totalTime = `${(endTime - startTime).toFixed(2)}ms`;
+            console.log(totalTime); // 54 ms
         },
         onHandshakeError: (error: AzureResourcesHandshakeError) => {
             switch (true) {
@@ -41,6 +48,8 @@ export function exportAzureContainerAppsApiProvider(credentialManager: AzExtCred
         deployImage: deployImageApi,
         deployWorkspaceProject: deployWorkspaceProjectApi,
     };
+
+    startTime = Date.now();
 
     const { clientApi, requestResourcesApis } = prepareAzureResourcesApiRequest(context, containerAppsApi);
     requestResourcesApis();
