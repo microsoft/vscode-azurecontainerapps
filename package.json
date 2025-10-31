@@ -96,6 +96,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.deployContainerAppWithCopilot",
+                "title": "%containerApps.deployContainerAppWithCopilot%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.deleteContainerApp",
                 "title": "%containerApps.deleteContainerApp%",
                 "category": "Azure Container Apps"
@@ -382,6 +387,11 @@
                     "command": "containerApps.deployContainerApp",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
                     "group": "2@1"
+                },
+                {
+                    "command": "containerApps.deployContainerAppWithCopilot",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "group": "2@2"
                 },
                 {
                     "command": "containerApps.deployRevisionDraft",
