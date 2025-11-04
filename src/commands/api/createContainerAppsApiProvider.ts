@@ -12,15 +12,15 @@ import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
 export function createContainerAppsApiProvider(activationContext: IActionContext): apiUtils.AzureExtensionApiProvider {
+    const v2: string = '^2.0.0';
     const context: AzureResourcesApiRequestContext = {
-        azureResourcesApiVersions: ['2.0.0'],
+        azureResourcesApiVersions: [v2],
         clientExtensionId: ext.context.extension.id,
         onDidReceiveAzureResourcesApis: (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
             const [rgApiV2] = azureResourcesApis;
             if (!rgApiV2) {
-                throw new Error(localize('noHostApi', 'Failed to retrieve Azure Resources API for branch data registration.'));
+                throw new Error(localize('noMatchingApi', 'Failed to find a matching Azure Resources API for version "{0}".', v2));
             }
-
             ext.rgApiV2 = rgApiV2;
             ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
         },
