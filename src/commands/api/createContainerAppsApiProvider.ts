@@ -19,7 +19,7 @@ export function createContainerAppsApiProvider(): apiUtils.AzureExtensionApiProv
         clientExtensionId: ext.context.extension.id,
 
         onDidReceiveAzureResourcesApis: async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
-            await callWithTelemetryAndErrorHandling('containerApps.apiRequestSucceeded', async (actionContext: IActionContext) => {
+            await callWithTelemetryAndErrorHandling('containerApps.hostApiRequestSucceeded', async (actionContext: IActionContext) => {
                 actionContext.errorHandling.rethrow = true;
 
                 const [rgApiV2] = azureResourcesApis;
@@ -33,7 +33,7 @@ export function createContainerAppsApiProvider(): apiUtils.AzureExtensionApiProv
         },
 
         onApiRequestError: async (error: AzureResourcesApiRequestError) => {
-            await callWithTelemetryAndErrorHandling('containerApps.apiRequestFailed', async (actionContext: IActionContext) => {
+            await callWithTelemetryAndErrorHandling('containerApps.hostApiRequestFailed', async (actionContext: IActionContext) => {
                 actionContext.telemetry.properties.apiRequestErrorCode = error.code;
                 actionContext.telemetry.properties.apiRequestError = maskUserInfo(error.message, []);
             });
