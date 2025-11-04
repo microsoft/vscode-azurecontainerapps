@@ -7,10 +7,9 @@
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github';
-import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
-import { AzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { getAzureContainerAppsApiProvider } from './commands/api/getAzureContainerAppsApiProvider';
+import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
@@ -29,7 +28,8 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
     registerAzureUtilsExtensionVariables(ext);
     registerGitHubExtensionVariables(ext);
 
-    await callWithTelemetryAndErrorHandling('containerApps.activate', async (activateContext: IActionContext) => {
+    return await callWithTelemetryAndErrorHandling('containerApps.activate', async (activateContext: IActionContext) => {
+        activateContext.errorHandling.rethrow = true;
         activateContext.telemetry.properties.isActivationEvent = 'true';
         activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
@@ -40,12 +40,11 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         context.subscriptions.push(vscode.workspace.registerFileSystemProvider(RevisionDraftFileSystem.scheme, ext.revisionDraftFileSystem));
 
         ext.state = new TreeElementStateManager();
-        ext.rgApiV2 = await getAzureResourcesExtensionApi(context, '2.0.0');
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
-        ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
-    });
 
-    return getAzureContainerAppsApiProvider();
+        return createContainerAppsApiProvider(activateContext);
+
+    }) ?? createApiProvider([]);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
