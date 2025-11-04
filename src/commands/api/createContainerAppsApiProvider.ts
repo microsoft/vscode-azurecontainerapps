@@ -34,8 +34,8 @@ export function createContainerAppsApiProvider(): apiUtils.AzureExtensionApiProv
 
         onApiRequestError: async (error: AzureResourcesApiRequestError) => {
             await callWithTelemetryAndErrorHandling('containerApps.hostApiRequestFailed', (actionContext: IActionContext) => {
-                actionContext.telemetry.properties.apiRequestErrorCode = error.code;
-                actionContext.telemetry.properties.apiRequestError = maskUserInfo(error.message, []);
+                actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
+                actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
             });
             throw error;
         },
