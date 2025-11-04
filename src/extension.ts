@@ -42,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
 
-        return createContainerAppsApiProvider(activateContext);
+        return createContainerAppsApiProvider();
 
     }) ?? createApiProvider([]);
 }
