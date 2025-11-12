@@ -5,6 +5,7 @@
 
 import { callWithTelemetryAndErrorHandling, createApiProvider, maskUserInfo, type apiUtils, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { AzExtResourceType, prepareAzureResourcesApiRequest, type AzureResourcesApiRequestContext, type AzureResourcesApiRequestError, type AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
+import * as vscode from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { deployImageApi } from "./deployImageApi";
@@ -37,7 +38,11 @@ export function createContainerAppsApiProvider(): apiUtils.AzureExtensionApiProv
                 actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
                 actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
             });
-            throw error;
+
+            // Generic for now, will improve this later
+            ext.outputChannel.appendLog('Error: Failed to connect extension to the Azure Resources host.');
+            ext.outputChannel.appendLog(`{ code: "${error.code}", message: "${error.message}" }`);
+            void vscode.window.showWarningMessage('Failed to load extension, see output log for more details.');
         },
 
     };
