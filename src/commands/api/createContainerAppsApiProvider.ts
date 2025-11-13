@@ -19,7 +19,7 @@ export function createContainerAppsApiProvider(): apiUtils.AzureExtensionApiProv
         clientExtensionId: ext.context.extension.id,
 
         onDidReceiveAzureResourcesApis: async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
-            await callWithTelemetryAndErrorHandling('containerApps.hostApiRequestSucceeded', (actionContext: IActionContext) => {
+            await callWithTelemetryAndErrorHandling('hostApiRequestSucceeded', (actionContext: IActionContext) => {
                 actionContext.errorHandling.rethrow = true;
 
                 const [rgApiV2] = azureResourcesApis;
@@ -33,14 +33,12 @@ export function createContainerAppsApiProvider(): apiUtils.AzureExtensionApiProv
         },
 
         onApiRequestError: async (error: AzureResourcesApiRequestError) => {
-            await callWithTelemetryAndErrorHandling('containerApps.hostApiRequestFailed', (actionContext: IActionContext) => {
+            await callWithTelemetryAndErrorHandling('hostApiRequestFailed', (actionContext: IActionContext) => {
                 actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
                 actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
+                ext.outputChannel.appendLog(localize('apiRequestError', 'Error: Failed to connect extension to the Azure Resources host.'));
+                ext.outputChannel.appendLog(JSON.stringify(error));
             });
-
-            // Generic for now, will improve this later
-            ext.outputChannel.appendLog('Error: Failed to connect extension to the Azure Resources host.');
-            ext.outputChannel.appendLog(`{ code: "${error.code}", message: "${error.message}" }`);
         },
 
     };
