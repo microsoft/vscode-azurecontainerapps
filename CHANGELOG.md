@@ -1,16 +1,35 @@
 # Change Log
 
-## 0.9.0 - 2025-08-04
+## 0.10.0 - 2025-11-18
+### Changed
+* [[961](https://github.com/microsoft/vscode-azurecontainerapps/pull/961)] Add distinct deployment types `Basic` vs `Advanced` for workspace project deployments
 
+    <img alt="Workspace project deployment modes"  height="150px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.10.0/workspace-project-deployment-modes.png"> <br />
+
+* [[966](https://github.com/microsoft/vscode-azurecontainerapps/pull/966)] Update workspace project deployment walkthrough
+* [[991](https://github.com/microsoft/vscode-azurecontainerapps/pull/991)] Rethrow errors for the deploy workspace project API
+* [[960](https://github.com/microsoft/vscode-azurecontainerapps/pull/960)] [[957](https://github.com/microsoft/vscode-azurecontainerapps/pull/957)] [[958](https://github.com/microsoft/vscode-azurecontainerapps/pull/958)] Improve activity log and output log wording
+* [[976](https://github.com/microsoft/vscode-azurecontainerapps/pull/976)] Improve starting resource display in the activity log when deploying a workspace project
+* [[987](https://github.com/microsoft/vscode-azurecontainerapps/pull/987)] Update Privacy Statement link
+
+### Engineering
+* [[973](https://github.com/microsoft/vscode-azurecontainerapps/pull/973)] [[974](https://github.com/microsoft/vscode-azurecontainerapps/pull/974)] Add / update workspace project deployment tests
+* [[986](https://github.com/microsoft/vscode-azurecontainerapps/pull/986)] [[985](https://github.com/microsoft/vscode-azurecontainerapps/pull/985)] [[995](https://github.com/microsoft/vscode-azurecontainerapps/pull/995)] Security: Update package dependencies
+
+## 0.9.1 - 2025-09-25
+### Changed
+* [[967](https://github.com/microsoft/vscode-azurecontainerapps/pull/967)] Changes were made to support the upcoming multi-factor authentication requirements for Azure
+
+## 0.9.0 - 2025-08-04
 ### Overview
 This update introduces two Copilot-powered features / enhancements for `Deploy to Container App`:
 1. When deploying an image from a container registry, you'll now be greeted by a new summary view. Click any field to quickly go back and make edits. For more info about a specific field, use the new Copilot icon on the right-hand side to ask questions and gain greater insight.
 
-    <img alt="Summary View Screenshot"  height="350px" src="resources/changelog/0.9.0/summaryView.png"> <br />
+    <img alt="Summary View Screenshot"  height="350px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.9.0/summaryView.png"> <br />
 
 2. When deploying from a workspace project, the extension now contributes custom activity log command data and metadata for use by Copilot. This is useful for diagnosing deployment errors during image building or startup, and for learning more about any deployment actions taken. The extension will now provide additional Copilot context, such as deployment logs, when errors are encountered.
 
-    <img alt="Activity Log Screenshot"  height="250px" src="resources/changelog/0.9.0/activityLogCopilotButton.png"> <br />
+    <img alt="Activity Log Screenshot"  height="250px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.9.0/activityLogCopilotButton.png"> <br />
 
 ### Added
 * [[897](https://github.com/microsoft/vscode-azurecontainerapps/pull/897)] Add new summary view at the end of the "Deploy to Container App..." command with copilot support.
@@ -45,22 +64,22 @@ This update introduces two Copilot-powered features / enhancements for `Deploy t
 ### Summary of Major Changes
 1. Managed identity support has been added for connecting container apps to container registries. Assuming you have sufficient privileges, this is the preferred method for securing these resources.
 
-    <img alt="Managed Identity Screenshot" height="150px" src="resources/changelog/0.8.0/managed-identity.png"> <br />
+    <img alt="Managed Identity Screenshot" height="150px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.8.0/managed-identity.png"> <br />
 
 1. A new `Container` view has been added along with a host of new commands, providing more ways to edit container images and environment variables directly.
 
-    <img alt="Container View Screenshot" height="150px" src="resources/changelog/0.8.0/container-view.png"> <br />
+    <img alt="Container View Screenshot" height="150px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.8.0/container-view.png"> <br />
 
 1. New one-click deployment method `Deploy to Container App...` added to the top-level container app node supports deployments from a workspace project or container registry. <br />
     (If wishing to manage multiple apps in a workspace project, or if wishing to leverage faster deployments using saved settings, `Deploy Project from Workspace...` still remains the preferred deployment method and can be accessed via the workspace view.)
 
-    <img alt="Deploy to Container App Screenshot" height="150px" src="resources/changelog/0.8.0/deploy-container-app.png">
-    <img alt="Deploy Workspace Project Screenshot" height="90px" src="resources/changelog/0.8.0/deploy-workspace-project.png">
+    <img alt="Deploy to Container App Screenshot" height="150px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.8.0/deploy-container-app.png">
+    <img alt="Deploy Workspace Project Screenshot" height="90px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.8.0/deploy-workspace-project.png">
     <br />
 
 1. Improved activity log output for all major commands.
 
-    <img alt="Activity Log Screenshot" height="250px" src="resources/changelog/0.8.0/activity-log.png"> <br />
+    <img alt="Activity Log Screenshot" height="250px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.8.0/activity-log.png"> <br />
 
 1. `Create container app...` now initializes with a quickstart image.
 
