@@ -7,13 +7,13 @@
     <img alt="Workspace project deployment modes"  height="150px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.10.0/workspace-project-deployment-modes.png"> <br />
 
 * [[966](https://github.com/microsoft/vscode-azurecontainerapps/pull/966)] Update workspace project deployment walkthrough
+* [[991](https://github.com/microsoft/vscode-azurecontainerapps/pull/991)] Rethrow errors for the deploy workspace project API
 * [[960](https://github.com/microsoft/vscode-azurecontainerapps/pull/960)] [[957](https://github.com/microsoft/vscode-azurecontainerapps/pull/957)] [[958](https://github.com/microsoft/vscode-azurecontainerapps/pull/958)] Improve activity log and output log wording
-* [[976](https://github.com/microsoft/vscode-azurecontainerapps/pull/976)] Improve starting resource order for `Deploy Project from Workspace...`
+* [[976](https://github.com/microsoft/vscode-azurecontainerapps/pull/976)] Improve starting resource display in the activity log when deploying a workspace project
 * [[987](https://github.com/microsoft/vscode-azurecontainerapps/pull/987)] Update Privacy Statement link
 
 ### Engineering
 * [[973](https://github.com/microsoft/vscode-azurecontainerapps/pull/973)] [[974](https://github.com/microsoft/vscode-azurecontainerapps/pull/974)] Add / update workspace project deployment tests
-* [[991](https://github.com/microsoft/vscode-azurecontainerapps/pull/991)] Rethrow errors for the deploy workspace project API
 * [[986](https://github.com/microsoft/vscode-azurecontainerapps/pull/986)] [[985](https://github.com/microsoft/vscode-azurecontainerapps/pull/985)] [[995](https://github.com/microsoft/vscode-azurecontainerapps/pull/995)] Security: Update package dependencies
 
 ## 0.9.1 - 2025-09-25
