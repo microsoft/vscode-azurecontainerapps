@@ -1,7 +1,7 @@
 # Change Log
 
 ## 0.10.0 - 2025-11-18
-### Changes
+### Changed
 * [[961](https://github.com/microsoft/vscode-azurecontainerapps/pull/961)] Add distinct deployment types `Basic` vs `Advanced` for workspace project deployments
 
     <img alt="Workspace project deployment modes"  height="150px" src="https://github.com/microsoft/vscode-azurecontainerapps/blob/main/resources/changelog/0.10.0/workspace-project-deployment-modes.png"> <br />
@@ -17,7 +17,7 @@
 * [[986](https://github.com/microsoft/vscode-azurecontainerapps/pull/986)] [[985](https://github.com/microsoft/vscode-azurecontainerapps/pull/985)] [[995](https://github.com/microsoft/vscode-azurecontainerapps/pull/995)] Security: Update package dependencies
 
 ## 0.9.1 - 2025-09-25
-### Changes
+### Changed
 * [[967](https://github.com/microsoft/vscode-azurecontainerapps/pull/967)] Changes were made to support the upcoming multi-factor authentication requirements for Azure
 
 ## 0.9.0 - 2025-08-04
