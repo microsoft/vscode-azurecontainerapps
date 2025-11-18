@@ -12,7 +12,7 @@
 * [[987](https://github.com/microsoft/vscode-azurecontainerapps/pull/987)] Update Privacy Statement link
 
 ### Engineering
-* [[973](https://github.com/microsoft/vscode-azurecontainerapps/pull/973)] [[974](https://github.com/microsoft/vscode-azurecontainerapps/pull/974)] Add / Update workspace project deployment tests
+* [[973](https://github.com/microsoft/vscode-azurecontainerapps/pull/973)] [[974](https://github.com/microsoft/vscode-azurecontainerapps/pull/974)] Add / update workspace project deployment tests
 * [[991](https://github.com/microsoft/vscode-azurecontainerapps/pull/991)] Rethrow errors for the deploy workspace project API
 * [[986](https://github.com/microsoft/vscode-azurecontainerapps/pull/986)] [[985](https://github.com/microsoft/vscode-azurecontainerapps/pull/985)] [[995](https://github.com/microsoft/vscode-azurecontainerapps/pull/995)] Security: Update package dependencies
 
