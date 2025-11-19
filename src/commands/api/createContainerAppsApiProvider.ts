@@ -10,11 +10,7 @@ import { deployImageApi } from "./deployImageApi";
 import { deployWorkspaceProjectApi } from "./deployWorkspaceProjectApi";
 import type * as api from "./vscode-azurecontainerapps.api";
 
-export function createContainerAppsApiProvider(
-    registerBranchResources: AzureResourcesApiRequestContext["onDidReceiveAzureResourcesApis"],
-    onFailedRegistration: AzureResourcesApiRequestContext["onApiRequestError"],
-): apiUtils.AzureExtensionApiProvider {
-
+export function createContainerAppsApiProvider(registerBranchResources: AzureResourcesApiRequestContext["onDidReceiveAzureResourcesApis"], onFailedRegistration: AzureResourcesApiRequestContext["onApiRequestError"]): apiUtils.AzureExtensionApiProvider {
     const context: AzureResourcesApiRequestContext = {
         azureResourcesApiVersions: ['^2.0.0'],
         clientExtensionId: ext.context.extension.id,

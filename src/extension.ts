@@ -59,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             });
         };
 
-        const onRegistrationFailed = async (error: AzureResourcesApiRequestError) => {
+        const onFailedRegistration = async (error: AzureResourcesApiRequestError) => {
             await callWithTelemetryAndErrorHandling('hostApiRequestFailed', (actionContext: IActionContext) => {
                 actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
                 actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
@@ -68,7 +68,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             });
         };
 
-        return createContainerAppsApiProvider(registerBranchResources, onRegistrationFailed);
+        return createContainerAppsApiProvider(registerBranchResources, onFailedRegistration);
 
     }) ?? createApiProvider([]);
 }
