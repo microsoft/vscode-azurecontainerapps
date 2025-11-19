@@ -7,8 +7,8 @@
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github';
-import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, maskUserInfo, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
-import { AzExtResourceType, type AzureResourcesApiRequestError, type AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, type AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
@@ -44,7 +44,6 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
 
-        // Register branch data resources with Azure Resources Host extension:
         const registerBranchResources = async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
             await callWithTelemetryAndErrorHandling('hostApiRequestSucceeded', (actionContext: IActionContext) => {
                 actionContext.errorHandling.rethrow = true;
@@ -59,16 +58,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             });
         };
 
-        const onFailedRegistration = async (error: AzureResourcesApiRequestError) => {
-            await callWithTelemetryAndErrorHandling('hostApiRequestFailed', (actionContext: IActionContext) => {
-                actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
-                actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
-                ext.outputChannel.appendLog(localize('apiRequestError', 'Error: Failed to connect extension to the Azure Resources host.'));
-                ext.outputChannel.appendLog(JSON.stringify(error));
-            });
-        };
-
-        return createContainerAppsApiProvider(registerBranchResources, onFailedRegistration);
+        return createContainerAppsApiProvider(registerBranchResources);
 
     }) ?? createApiProvider([]);
 }
