@@ -7,6 +7,7 @@ import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHa
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
+import { deployWithCopilot } from './copilot/deployWithCopilot';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -87,6 +88,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deployRevisionDraft', deployRevisionDraft);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployWorkspaceProject', deployWorkspaceProject);
     registerCommandWithTreeNodeUnwrapping('containerApps.deployContainerApp', deployContainerApp);
+    registerCommandWithTreeNodeUnwrapping('containerApps.deployContainerAppWithCopilot', deployWithCopilot);
 
     // github
     registerCommandWithTreeNodeUnwrapping('containerApps.connectToGitHub', connectToGitHub);
