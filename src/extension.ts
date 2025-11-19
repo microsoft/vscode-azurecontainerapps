@@ -7,13 +7,15 @@
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github';
-import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
+import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, maskUserInfo, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, type AzureResourcesApiRequestError, type AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
+import { localize } from './utils/localize';
 
 export async function activate(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<apiUtils.AzureExtensionApiProvider> {
     // the entry point for vscode.dev is this activate, not main.js, so we need to instantiate perfStats here
@@ -42,7 +44,31 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
 
-        return createContainerAppsApiProvider();
+        // Register branch data resources with Azure Resources Host extension:
+        const registerBranchResources = async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
+            await callWithTelemetryAndErrorHandling('hostApiRequestSucceeded', (actionContext: IActionContext) => {
+                actionContext.errorHandling.rethrow = true;
+
+                const [rgApiV2] = azureResourcesApis;
+                if (!rgApiV2 || !rgApiV2.apiVersion.match(/^2\./)) {
+                    throw new Error(localize('noMatchingApi', 'Failed to find a matching Azure Resources API for version "{0}".', '^2.0.0'));
+                }
+
+                ext.rgApiV2 = rgApiV2;
+                ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
+            });
+        };
+
+        const onRegistrationFailed = async (error: AzureResourcesApiRequestError) => {
+            await callWithTelemetryAndErrorHandling('hostApiRequestFailed', (actionContext: IActionContext) => {
+                actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
+                actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
+                ext.outputChannel.appendLog(localize('apiRequestError', 'Error: Failed to connect extension to the Azure Resources host.'));
+                ext.outputChannel.appendLog(JSON.stringify(error));
+            });
+        };
+
+        return createContainerAppsApiProvider(registerBranchResources, onRegistrationFailed);
 
     }) ?? createApiProvider([]);
 }
