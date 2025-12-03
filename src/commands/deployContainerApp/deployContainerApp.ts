@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, CopilotUserInput, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { ImageSource } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -14,7 +14,7 @@ import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
 import { OpenConfirmationViewStep } from "../../webviews/OpenConfirmationViewStep";
-import { OpenLoadingViewStep } from "../../webviews/OpenLoadingViewStep";
+import { openLoadingViewPanel } from "../../webviews/OpenLoadingViewStep";
 import { CommandAttributes } from "../CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { deployWorkspaceProject } from "../deployWorkspaceProject/deployWorkspaceProject";
@@ -28,6 +28,10 @@ import { ContainerAppDeployStartingResourcesLogStep } from "./ContainerAppDeploy
 const deployContainerAppCommandName: string = localize('deployContainerApp', 'Deploy to Container App...');
 
 export async function deployContainerApp(context: IActionContext, node?: ContainerAppItem): Promise<DeployWorkspaceProjectResults | void> {
+    if (isCopilotUserInput(context)) {
+        await openLoadingViewPanel(context);
+    }
+
     const item: ContainerAppItem = node ?? await pickContainerApp(context);
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(item.subscription);
     const subscriptionActionContext: ISubscriptionActionContext = { ...context, ...subscriptionContext };
@@ -66,8 +70,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     let title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
 
     const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = []
-    if (wizardContext.ui instanceof CopilotUserInput) {
-        promptSteps.push(new OpenLoadingViewStep());
+    if (isCopilotUserInput(wizardContext)) {
         confirmationViewDescription = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input will need to change as well');
         confirmationViewTabTitle = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
         title = localize('deployContainerAppWithCopilotTitle', 'Deploy image to container app using copilot');
@@ -104,4 +107,8 @@ async function promptImageSource(context: ISubscriptionActionContext): Promise<I
     await imageSourceStep.prompt(promptContext);
 
     return nonNullProp(promptContext, 'imageSource');
+}
+
+function isCopilotUserInput(context: IActionContext): boolean {
+    return context.ui.constructor.name === 'CopilotUserInput';
 }
