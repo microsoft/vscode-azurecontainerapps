@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, runPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, runGenericPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
 import { localize } from "../utils/localize";
 import { LoadingViewController } from "./LoadingViewController";
@@ -24,7 +24,7 @@ export class OpenLoadingViewStep<T extends IActionContext> extends AzureWizardPr
 export async function openLoadingViewPanel(context: IActionContext): Promise<void> {
     const promptSteps: AzureWizardPromptStep<IActionContext>[] = [new OpenLoadingViewStep<IActionContext>()];
 
-    return await runPromptStep(context, {
+    return await runGenericPromptStep(context, {
         promptSteps
     });
 }
