@@ -64,7 +64,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
 
     let wizardContext: ContainerAppDeployContext = {} as ContainerAppDeployContext;
 
-    if (context.subscriptionId && node && imageSource) {
+    if (node && imageSource) {
         // If this command gets re run we only want the internal portion of the command to run, so we set the callbackid
         context.callbackId = 'containerApps.deployContainerAppInternal';
         wizardContext = {
@@ -84,7 +84,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
         }
         wizardContext.telemetry.properties.revisionMode = node.containerApp.revisionsMode;
-    } else if (context.subscriptionId && subscription) {
+    } else if (subscription) {
         wizardContext = {
             ...context,
             ...await createActivityContext({ withChildren: true }),
