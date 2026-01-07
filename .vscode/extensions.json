@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "dbaeumer.vscode-eslint",
-        "ms-azuretools.vscode-azureresourcegroups"
+        "ms-azuretools.vscode-azureresourcegroups",
+        "connor4312.esbuild-problem-matchers",
     ]
 }
