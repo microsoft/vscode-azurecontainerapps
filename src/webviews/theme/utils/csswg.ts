@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -18,7 +19,7 @@ type MatrixIO = number[][] | number[];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isFlat(A: any): A is number[] {
-     
+
     return !Array.isArray(A[0]);
 }
 
@@ -28,12 +29,12 @@ export function multiplyMatrices(AMatrixOrVector: MatrixIO, BMatrixOrVector: Mat
 
     const A: number[][] = isFlat(AMatrixOrVector)
         ? // A is vector, convert to [[a, b, c, ...]]
-          [AMatrixOrVector]
+        [AMatrixOrVector]
         : AMatrixOrVector;
 
     const B: number[][] = isFlat(BMatrixOrVector)
         ? // B is vector, convert to [[a], [b], [c], ...]]
-          BMatrixOrVector.map((x) => [x])
+        BMatrixOrVector.map((x) => [x])
         : BMatrixOrVector;
 
     const p = B[0].length;

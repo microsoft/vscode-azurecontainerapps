@@ -7,7 +7,6 @@ import { type ArtifactManifestProperties } from "@azure/container-registry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import * as dayjs from 'dayjs';
-// eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { type QuickPickItem } from "vscode";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";

@@ -81,6 +81,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
         return await selectWorkspaceFile(context, placeHolder,
+            /* eslint-disable-next-line @typescript-eslint/naming-convention */
             { filters: { 'env file': ['env', 'env.*'] }, allowSkip: !this.options?.suppressSkipPick, skipLabel }, allEnvFilesGlobPattern);
     }
 

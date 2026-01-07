@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -44,7 +45,7 @@ function linearInterpolationThroughPoint(start: number, end: number, inBetween: 
     const inBetweenIndex = Math.floor((numSamples - 1) * inBetweenRatio);
 
     // Initialize the output array
-     
+
     const result: number[] = new Array(numSamples);
 
     // Set start, inBetween and end points in the result array

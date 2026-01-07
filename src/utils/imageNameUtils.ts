@@ -77,9 +77,10 @@ export function getRegistryDomainFromContext(context: Partial<ContainerRegistryI
     switch (true) {
         case !!context.registryDomain:
             return context.registryDomain;
-        case !!context.image:
+        case !!context.image: {
             const registryName: string | undefined = parseImageName(context.image).registryName;
             return registryName ? getDomainFromRegistryName(registryName) : undefined;
+        }
         case !!context.registry?.loginServer || !!context.registryName:
             return getDomainFromRegistryName(context.registry?.loginServer || nonNullProp(context, 'registryName'));
         default:

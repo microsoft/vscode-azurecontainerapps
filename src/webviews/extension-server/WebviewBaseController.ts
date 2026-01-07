@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
- 
+
 import { randomBytes } from 'crypto';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -101,7 +101,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
                             <script type="module" nonce="${nonce}">
                                 window.config = {
                                     ...window.config,
-                                    __initialData: '${encodeURIComponent(JSON.stringify(this.configuration))}'
+                                    _initialData: '${encodeURIComponent(JSON.stringify(this.configuration))}'
                             };
 
                                 import { render } from "${srcUri}";
@@ -123,7 +123,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
      */
     public dispose() {
         this._onDisposed.fire();
-         
+
         this._disposables.forEach((d) => d.dispose());
         this._isDisposed = true;
     }

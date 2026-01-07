@@ -18,7 +18,11 @@ export abstract class RevisionDraftDescendantBase implements RevisionsItemModel,
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) { }
 
     private init(): void {
-        this.hasUnsavedChanges() ? this.setDraftProperties() : this.setProperties();
+        if (this.hasUnsavedChanges()) {
+            this.setDraftProperties();
+        } else {
+            this.setProperties();
+        }
     }
 
     // Build the tree items inside a local static method first so that extra '...args' are scoped when we init `setDraftProperties` and `setProperties`
@@ -47,4 +51,4 @@ export abstract class RevisionDraftDescendantBase implements RevisionsItemModel,
     protected abstract setDraftProperties(): void;
 }
 
-type DescendantConstructor<T extends RevisionDraftDescendantBase> = new(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, ...args: unknown[]) => T;
+type DescendantConstructor<T extends RevisionDraftDescendantBase> = new (subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, ...args: unknown[]) => T;
