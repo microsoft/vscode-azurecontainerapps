@@ -55,7 +55,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     viewProperties: ViewPropertiesModel = {
         data: this.containerApp,
         label: this.containerApp.name,
-    }
+    };
 
     portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
@@ -122,7 +122,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             contextValue: this.contextValue,
             description: this.description,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     static isContainerAppItem(item: unknown): item is ContainerAppItem {
@@ -153,7 +153,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             resourceGroup: getResourceGroupFromId(nonNullProp(containerApp, 'id')),
             revisionsMode,
             ...containerApp,
-        }
+        };
     }
 
     async delete(context: IActionContext & { suppressPrompt?: boolean }): Promise<void> {
@@ -169,7 +169,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             ...await createActivityContext()
         };
 
-        const wizard: AzureWizard<IDeleteContainerAppWizardContext> = new AzureWizard(wizardContext, {
+        const wizard = new AzureWizard<IDeleteContainerAppWizardContext>(wizardContext, {
             promptSteps: [new DeleteConfirmationStep(confirmMessage)],
             executeSteps: [new DeleteAllContainerAppsStep()]
         });

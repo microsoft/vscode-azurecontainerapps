@@ -31,7 +31,7 @@ export class IngressEnabledItem implements ContainerAppsItem {
     viewProperties: ViewPropertiesModel = {
         data: this.ingress,
         label: `${this.containerApp.name} ${label}`,
-    }
+    };
 
     getTreeItem(): TreeItem {
         return {
@@ -81,7 +81,7 @@ export class IngressDisabledItem implements TreeElementBase {
             description: localize('disabled', 'Disabled'),
             contextValue: IngressDisabledItem.contextValue,
             iconPath: new ThemeIcon('debug-disconnect'),
-        }
+        };
     }
 }
 

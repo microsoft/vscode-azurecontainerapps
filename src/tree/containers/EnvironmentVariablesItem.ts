@@ -43,7 +43,7 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
             iconPath: new ThemeIcon('settings'),
             contextValue: EnvironmentVariablesItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {

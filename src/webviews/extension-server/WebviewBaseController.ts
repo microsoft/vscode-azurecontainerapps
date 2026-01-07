@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */
+ 
 import { randomBytes } from 'crypto';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -123,7 +123,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
      */
     public dispose() {
         this._onDisposed.fire();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+         
         this._disposables.forEach((d) => d.dispose());
         this._isDisposed = true;
     }

@@ -51,7 +51,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
                     queueName: context.newQueueName,
                     queueLength: context.newQueueLength,
                     auth: [{ secretRef: context.secretName, triggerParameter: context.newQueueTriggerParameter }]
-                }
+                };
                 break;
             default:
         }

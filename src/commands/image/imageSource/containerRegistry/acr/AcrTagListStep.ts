@@ -24,9 +24,9 @@ export class AcrTagListStep extends RepositoryTagListStepBase {
         const manifests: ArtifactManifestProperties[] = await uiUtils.listAllIterator(repoClient.listManifestProperties());
 
         const tags = manifests.reduce((allTags: { tag: string, date: Date }[], m) => {
-            const tagsWithDates = m.tags.map(t => { return { tag: t, date: m.lastUpdatedOn } });
+            const tagsWithDates = m.tags.map(t => { return { tag: t, date: m.lastUpdatedOn }; });
             return allTags.concat(tagsWithDates);
         }, []);
-        return tags.map((t) => { { return { label: t.tag, description: dayjs(t.date).fromNow() } } });
+        return tags.map((t) => { { return { label: t.tag, description: dayjs(t.date).fromNow() }; } });
     }
 }

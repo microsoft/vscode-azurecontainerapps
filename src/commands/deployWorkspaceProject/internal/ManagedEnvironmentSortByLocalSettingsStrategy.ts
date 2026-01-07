@@ -24,7 +24,7 @@ export class ManagedEnvironmentSortByLocalSettingsStrategy<T extends DeployWorks
         }
 
         const asyncTasks: Promise<void>[] = [];
-        const recommendedEnvironmentIds: Set<string> = new Set();
+        const recommendedEnvironmentIds = new Set<string>();
 
         const client = await createContainerAppsAPIClient(context);
         for (const config of deploymentConfigurations) {

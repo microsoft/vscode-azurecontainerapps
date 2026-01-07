@@ -9,5 +9,5 @@ import './loadingView.scss';
 export const LoadingView = () =>
     <div className='loadingView'>
         <Spinner labelPosition="below" label="Generating Copilot responses..." />
-    </div>
+    </div>;
 
