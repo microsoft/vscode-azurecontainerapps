@@ -19,7 +19,6 @@ type MatrixIO = number[][] | number[];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isFlat(A: any): A is number[] {
-
     return !Array.isArray(A[0]);
 }
 

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { randomBytes } from 'crypto';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -123,7 +122,6 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
      */
     public dispose() {
         this._onDisposed.fire();
-
         this._disposables.forEach((d) => d.dispose());
         this._isDisposed = true;
     }
