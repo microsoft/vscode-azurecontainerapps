@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getAutoBuildSettings } from '@microsoft/vscode-azext-eng/esbuild';
+import { isAutoDebug, isAutoWatch } from '@microsoft/vscode-azext-eng/esbuild';
 import esbuild from 'esbuild';
 import copy from 'esbuild-plugin-copy';
 import path from 'path';
@@ -11,8 +11,6 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const { isAutoDebug, isAutoWatch } = getAutoBuildSettings()
 
 const outdir = './dist';
 
