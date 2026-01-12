@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Container, type EnvironmentVar, type Revision } from "@azure/arm-appcontainers";
 import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { ThemeIcon, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";

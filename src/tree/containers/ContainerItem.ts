@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
 import { nonNullProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
