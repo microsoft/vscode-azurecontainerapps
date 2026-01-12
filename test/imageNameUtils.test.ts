@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
-import { getImageNameWithoutTag } from "../extension.bundle";
+import { getImageNameWithoutTag } from "src/utils/imageNameUtils";
 
 suite('imageNameUtils', () => {
     test('getImageNameWithoutTag', () => {

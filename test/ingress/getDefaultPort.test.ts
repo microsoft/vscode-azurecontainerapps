@@ -4,7 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
-import { PortRange, getDefaultPort, type IngressContext } from "../../extension.bundle";
+import { getDefaultPort } from "src/commands/ingress/editTargetPort/getDefaultPort";
+import { IngressContext } from "src/commands/ingress/IngressContext";
+import { PortRange } from "src/commands/ingress/tryGetDockerfileExposePorts";
 import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
 import { type MockIngressContext } from "./MockIngressContext";
 

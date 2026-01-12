@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { TestOutputChannel, TestUserInput } from '@microsoft/vscode-azext-dev';
+import { registerOnActionStartHandler, registerUIExtensionVariables, TestOutputChannel, TestUserInput } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
+import { ext } from 'node_modules/@microsoft/vscode-azext-github/out/src';
 import * as vscode from 'vscode';
-import { ext, registerOnActionStartHandler, registerUIExtensionVariables } from '../extension.bundle';
 
 export const longRunningLocalTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_EnableLongRunningTestsLocal || '');
 export const longRunningRemoteTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
