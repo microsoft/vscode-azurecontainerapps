@@ -20,18 +20,17 @@ const configuration: string = localize('configuration', 'Configuration');
 export class ConfigurationItem implements ContainerAppsItem {
     static readonly contextValue: string = 'configurationItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ConfigurationItem.contextValue);
-
+    readonly viewProperties: ViewPropertiesModel;
     id: string;
 
     // this is called "Settings" in the Portal
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
         this.id = `${containerApp.id}/Configurations`;
+        this.viewProperties = {
+            data: nonNullProp(containerApp, 'configuration'),
+            label: `${containerApp.name} ${configuration}`,
+        };
     }
-
-    viewProperties: ViewPropertiesModel = {
-        data: nonNullProp(this.containerApp, 'configuration'),
-        label: `${this.containerApp.name} ${configuration}`,
-    };
 
     async getChildren(): Promise<TreeElementBase[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (_context) => {

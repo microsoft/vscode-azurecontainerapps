@@ -21,16 +21,17 @@ const visibilityItemContextValue: string = 'visibilityItem';
 export class IngressEnabledItem implements ContainerAppsItem {
     static readonly contextValue: string = 'ingressEnabledItem';
     static readonly contextValueRegExp: RegExp = new RegExp(IngressEnabledItem.contextValue);
+    readonly viewProperties: ViewPropertiesModel;
+    id: string;
+    ingress: Ingress;
 
-    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) { }
-
-    id: string = `${this.containerApp.id}/ingress`;
-
-    ingress: Ingress = this.containerApp.configuration?.ingress ?? {};
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.ingress,
-        label: `${this.containerApp.name} ${label}`,
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) {
+        this.id = `${containerApp.id}/ingress`;
+        this.ingress = containerApp.configuration?.ingress ?? {};
+        this.viewProperties = {
+            data: this.ingress,
+            label: `${containerApp.name} ${label}`,
+        };
     }
 
     getTreeItem(): TreeItem {
@@ -81,7 +82,7 @@ export class IngressDisabledItem implements TreeElementBase {
             description: localize('disabled', 'Disabled'),
             contextValue: IngressDisabledItem.contextValue,
             iconPath: new ThemeIcon('debug-disconnect'),
-        }
+        };
     }
 }
 

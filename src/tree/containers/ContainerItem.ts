@@ -18,6 +18,7 @@ import { ImageItem } from "./ImageItem";
 export class ContainerItem extends RevisionDraftDescendantBase {
     id: string;
     label: string;
+    viewProperties: ViewPropertiesModel;
 
     static readonly contextValue: string = 'containerItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerItem.contextValue);
@@ -33,6 +34,10 @@ export class ContainerItem extends RevisionDraftDescendantBase {
     ) {
         super(subscription, containerApp, revision);
         this.id = `${this.parentResource.id}/${container.name}`;
+        this.viewProperties = {
+            data: this.container,
+            label: nonNullProp(this.container, 'name'),
+        };
     }
 
     getTreeItem(): TreeItem {
@@ -41,7 +46,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
             label: this.label,
             contextValue: ContainerItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {
@@ -53,11 +58,6 @@ export class ContainerItem extends RevisionDraftDescendantBase {
 
     private get parentResource(): ContainerAppModel | Revision {
         return getParentResource(this.containerApp, this.revision);
-    }
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.container,
-        label: nonNullProp(this.container, 'name'),
     }
 
     protected setProperties(): void {

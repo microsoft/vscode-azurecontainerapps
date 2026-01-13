@@ -20,6 +20,8 @@ const environmentVariables: string = localize('environmentVariables', 'Environme
 export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'environmentVariablesItem';
     static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariablesItem.contextValue);
+    id: string;
+    label: string;
 
     constructor(
         subscription: AzureSubscription,
@@ -31,10 +33,8 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
         readonly container: Container,
     ) {
         super(subscription, containerApp, revision);
+        this.id = `${this.parentResource.id}/environmentVariables/${container.image}`;
     }
-
-    id: string = `${this.parentResource.id}/environmentVariables/${this.container.image}`;
-    label: string;
 
     getTreeItem(): TreeItem {
         return {
@@ -43,7 +43,7 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
             iconPath: new ThemeIcon('settings'),
             contextValue: EnvironmentVariablesItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {

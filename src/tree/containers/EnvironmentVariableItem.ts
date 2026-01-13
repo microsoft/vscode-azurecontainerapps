@@ -21,7 +21,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'environmentVariableItem';
     static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariableItem.contextValue);
 
-    id: string = `${this.parentResource.id}/${this.container.image}/${this.envVariable.name}`;
+    id: string;
 
     private hideValue: boolean = true;
     private hiddenMessage: string; // Shown when 'hideValue' is true
@@ -38,6 +38,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
         readonly envVariable: EnvironmentVar,
     ) {
         super(subscription, containerApp, revision);
+        this.id = `${this.parentResource.id}/${container.image}/${envVariable.name}`;
     }
 
     getTreeItem(): TreeItem {
@@ -51,7 +52,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
                 title: localize('commandtitle', 'Toggle Environment Variable Visibility'),
                 arguments: [this, this.hideValue,]
             }
-        }
+        };
     }
 
     public async toggleValueVisibility(_: IActionContext): Promise<void> {

@@ -52,9 +52,9 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
 
     private readonly emitter: EventEmitter<FileChangeEvent[]> = new EventEmitter<FileChangeEvent[]>();
     private readonly bufferedEvents: FileChangeEvent[] = [];
-    private fireSoonHandle?: NodeJS.Timer;
+    private fireSoonHandle?: NodeJS.Timeout;;
 
-    private draftStore: Map<string, RevisionDraftFile> = new Map();
+    private draftStore = new Map<string, RevisionDraftFile>();
 
     get onDidChangeFile(): Event<FileChangeEvent[]> {
         return this.emitter.event;
