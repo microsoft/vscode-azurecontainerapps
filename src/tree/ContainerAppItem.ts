@@ -38,6 +38,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
     portalUrl: Uri;
     id: string;
+    viewProperties: ViewPropertiesModel;
 
     private resourceGroup: string;
     private name: string;
@@ -51,12 +52,11 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
         this.portalUrl = createPortalUrl(subscription, _containerApp.id);
+        this.viewProperties = {
+            data: this.containerApp,
+            label: this.containerApp.name,
+        };
     }
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.containerApp,
-        label: this.containerApp.name,
-    };
 
     private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];

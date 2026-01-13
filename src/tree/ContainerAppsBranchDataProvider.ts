@@ -39,7 +39,7 @@ export class ContainerAppsBranchDataProvider extends vscode.Disposable implement
     async getChildren(element: TreeElementBase): Promise<TreeElementBase[] | null | undefined> {
         return (await element.getChildren?.())?.map((child) => {
             if (child.id) {
-                return ext.state.wrapItemInStateHandling(child as TreeElementBase & { id: string }, () => this.refresh(child))
+                return ext.state.wrapItemInStateHandling(child as TreeElementBase & { id: string }, () => this.refresh(child));
             }
             return child;
         });
