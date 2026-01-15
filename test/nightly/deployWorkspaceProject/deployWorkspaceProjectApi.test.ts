@@ -4,11 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, parseAzureResourceGroupId, ResourceGroupCreateStep, type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
+import { AzureWizard, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
+import { deployWorkspaceProjectApi } from 'src/commands/api/deployWorkspaceProjectApi';
+import { DeployWorkspaceProjectResults } from 'src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
+import { settingUtils } from 'src/utils/settingUtils';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { AzureWizard, deployWorkspaceProjectApi, randomUtils, settingUtils, type DeployWorkspaceProjectResults } from '../../../extension.bundle';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete, subscriptionContext } from '../global.nightly.test';
@@ -67,10 +69,10 @@ async function createResourceGroup(): Promise<ResourceGroupId> {
             ...context,
             ...subscriptionContext,
             newResourceGroupName,
-        }
+        };
         await LocationListStep.setLocation(wizardContext, 'eastus');
 
-        const wizard: AzureWizard<IResourceGroupWizardContext> = new AzureWizard(wizardContext, {
+        const wizard = new AzureWizard<IResourceGroupWizardContext>(wizardContext, {
             executeSteps: [new ResourceGroupCreateStep()],
         });
         await wizard.execute();

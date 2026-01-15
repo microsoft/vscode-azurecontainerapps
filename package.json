@@ -811,7 +811,7 @@
         "build:webview": "node esbuild.views.mjs",
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --max-warnings 0",
-        "test": "node ./out/test/runTest.js"
+        "test": "vscode-test"
     },
     "devDependencies": {
         "@azure/ms-rest-azure-env": "^2.0.0",

@@ -5,11 +5,16 @@
 
 import { type ManagedEnvironment } from '@azure/arm-appcontainers';
 import { parseAzureResourceId } from '@microsoft/vscode-azext-azureutils';
-import { runWithTestActionContext } from '@microsoft/vscode-azext-dev';
+import { IParsedError, parseError, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
+import { createContainerApp } from 'src/commands/createContainerApp/createContainerApp';
+import { createManagedEnvironment } from 'src/commands/createManagedEnvironment/createManagedEnvironment';
+import { deployContainerApp } from 'src/commands/deployContainerApp/deployContainerApp';
+import { DeployWorkspaceProjectResults } from 'src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
+import { ContainerAppItem } from 'src/tree/ContainerAppItem';
+import { settingUtils } from 'src/utils/settingUtils';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { createContainerApp, createManagedEnvironment, deployContainerApp, parseError, randomUtils, settingUtils, type ContainerAppItem, type DeployWorkspaceProjectResults, type IParsedError } from '../../../extension.bundle';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete } from '../global.nightly.test';

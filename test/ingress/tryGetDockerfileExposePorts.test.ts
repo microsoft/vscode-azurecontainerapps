@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
+import { AzExtFsExtra } from "node_modules/@microsoft/vscode-azext-utils";
+import { PortRange, tryGetDockerfileExposePorts } from "src/commands/ingress/tryGetDockerfileExposePorts";
 import { type Uri } from "vscode";
-import { AzExtFsExtra, PortRange, tryGetDockerfileExposePorts } from "../../extension.bundle";
 import { getWorkspaceFolderUri } from "../testUtils";
 
 /**
