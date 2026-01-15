@@ -47,4 +47,4 @@ export abstract class RevisionDraftDescendantBase implements RevisionsItemModel,
     protected abstract setDraftProperties(): void;
 }
 
-type DescendantConstructor<T extends RevisionDraftDescendantBase> = { new(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, ...args: unknown[]): T };
+type DescendantConstructor<T extends RevisionDraftDescendantBase> = new(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision, ...args: unknown[]) => T;

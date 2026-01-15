@@ -65,7 +65,7 @@ export class ScaleItem extends RevisionDraftDescendantBase {
             contextValue: ScaleItem.contextValue,
             iconPath: treeUtils.getIconPath('scaling'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {

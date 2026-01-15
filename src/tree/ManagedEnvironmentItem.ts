@@ -28,7 +28,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     viewProperties: ViewPropertiesModel = {
         data: this.managedEnvironment,
         label: this.managedEnvironment.name,
-    }
+    };
 
     private get contextValue(): string {
         const values: string[] = [];
@@ -67,7 +67,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
             iconPath: treeUtils.getIconPath('managed-environment'),
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     static isManagedEnvironmentItem(item: unknown): item is ManagedEnvironmentItem {
@@ -106,5 +106,5 @@ function createAzureResourceModel<T extends Resource>(resource: T): T & Resource
         name: nonNullProp(resource, 'name'),
         resourceGroup: getResourceGroupFromId(id),
         ...resource,
-    }
+    };
 }

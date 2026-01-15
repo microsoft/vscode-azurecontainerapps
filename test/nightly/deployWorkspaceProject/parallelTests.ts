@@ -84,7 +84,7 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
         }
 
         await cleanWorkspaceFolderSettings(rootFolder);
-    }
+    };
 }
 
 async function cleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {

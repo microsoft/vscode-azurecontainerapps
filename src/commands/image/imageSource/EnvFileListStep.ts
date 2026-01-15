@@ -101,7 +101,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
         const data: string = await AzExtFsExtra.readFile(envPath);
         const envData: DotenvParseOutput = parse(data);
-        return Object.keys(envData).map(name => { return { name, value: envData[name] } });
+        return Object.keys(envData).map(name => { return { name, value: envData[name] }; });
     }
 
     public static async workspaceHasEnvFile(rootFolder?: WorkspaceFolder): Promise<boolean> {

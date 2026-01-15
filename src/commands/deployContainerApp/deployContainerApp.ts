@@ -65,7 +65,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     let confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
     let title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
 
-    const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = []
+    const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = [];
     if (wizardContext.ui instanceof CopilotUserInput) {
         promptSteps.push(new OpenLoadingViewStep());
         confirmationViewDescription = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input will need to change as well');
@@ -80,7 +80,7 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
     );
 
-    const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ContainerAppDeployContext>(wizardContext, {
         title: title,
         promptSteps: promptSteps,
         executeSteps: [

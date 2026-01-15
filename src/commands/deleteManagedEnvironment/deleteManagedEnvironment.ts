@@ -33,7 +33,7 @@ export async function deleteManagedEnvironment(context: IActionContext, node?: M
         containerAppNames: containerApps.map(ca => ca.name),
     };
 
-    const wizard: AzureWizard<IDeleteManagedEnvironmentContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IDeleteManagedEnvironmentContext>(wizardContext, {
         title: localize('deleteManagedEnvironment', 'Delete container apps environment "{0}"', managedEnvironment.name),
         promptSteps: [new DeleteEnvironmentConfirmationStep()],
         executeSteps: [new DeleteAllContainerAppsStep(), new DeleteManagedEnvironmentStep()]

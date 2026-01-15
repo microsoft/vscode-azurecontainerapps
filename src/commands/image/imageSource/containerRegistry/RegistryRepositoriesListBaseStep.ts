@@ -22,7 +22,7 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
             } else {
                 result = await context.ui.showQuickPick(this.getPicks(context, picksCache), { placeHolder });
             }
-        } while (result === noMatchingResourcesQp || result === loadMoreQp)
+        } while (result === noMatchingResourcesQp || result === loadMoreQp);
 
         context.repositoryName = result.label;
     }
@@ -36,7 +36,7 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
             name: localize('repository', 'Repository'),
             value: context.repositoryName ?? '',
             contextPropertyName: 'repositoryName'
-        }
+        };
     }
 
     public abstract getPicks(context: ContainerRegistryImageSourceContext, picksCache: QuickPicksCache | undefined): Promise<QuickPickItem[]>

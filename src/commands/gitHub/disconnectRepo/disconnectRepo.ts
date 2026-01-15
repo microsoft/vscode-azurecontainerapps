@@ -45,7 +45,7 @@ export async function disconnectRepo(context: ITreeItemPickerContext, node?: Con
         new GitHubRepositoryDisconnectStep()
     ];
 
-    const wizard: AzureWizard<IDisconnectRepoContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IDisconnectRepoContext>(wizardContext, {
         title: localize('disconnectRepository', 'Disconnect "{0}" from a GitHub repository', containerApp.name),
         promptSteps,
         executeSteps,

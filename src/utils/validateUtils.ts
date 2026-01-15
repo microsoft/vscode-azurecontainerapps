@@ -40,7 +40,7 @@ export namespace validateUtils {
         } else {
             return localize('invalidBetweenInputLength', 'The input value must be between {0} and {1} characters long.', lowerLimitIncl, upperLimitIncl);
         }
-    }
+    };
 
     /**
      * Validates that the given input string consists of lower case alphanumeric characters,

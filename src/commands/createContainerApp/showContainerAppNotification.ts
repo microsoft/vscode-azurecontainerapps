@@ -19,9 +19,9 @@ export async function showContainerAppNotification(containerApp: ContainerApp, i
         const browse: MessageItem = { title: localize('browse', 'Browse') };
         const buttons: MessageItem[] = [];
         if (isIngressEnabled(containerApp)) {
-            buttons.push(browse)
+            buttons.push(browse);
         }
-        const result = await window.showInformationMessage(message, ...buttons)
+        const result = await window.showInformationMessage(message, ...buttons);
 
         context.telemetry.properties.clicked = 'canceled';
         if (result === browse) {

@@ -27,7 +27,7 @@ export async function stopStreamingLogs(context: IActionContext, node?: Containe
         containerApp: containerApp,
         resourceGroupName: containerApp.resourceGroup,
         ...(await createActivityContext()),
-    }
+    };
 
     const title: string = localize('stopStreamLogs', 'Stop Streaming Logs');
 
@@ -36,10 +36,10 @@ export async function stopStreamingLogs(context: IActionContext, node?: Containe
         new StreamListStep(),
     ];
 
-    const wizard: AzureWizard<IStreamLogsContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IStreamLogsContext>(wizardContext, {
         title,
         promptSteps,
-    })
+    });
 
     await wizard.prompt();
 

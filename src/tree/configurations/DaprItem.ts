@@ -28,7 +28,7 @@ export class DaprEnabledItem implements TreeElementBase {
     viewProperties: ViewPropertiesModel = {
         data: this.dapr,
         label: localize('daprProperties', '{0} Dapr', this.containerApp.name),
-    }
+    };
 
     getTreeItem(): TreeItem {
         return {
@@ -41,7 +41,7 @@ export class DaprEnabledItem implements TreeElementBase {
                 dark: treeUtils.getIconPath('dapr-dark'),
             },
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
@@ -62,7 +62,7 @@ export class DaprEnabledItem implements TreeElementBase {
                 description: 'app port',
                 iconPath: new ThemeIcon('dash'),
                 label: String(this.dapr.appPort),
-            }))
+            }));
         }
 
         if (this.dapr.appProtocol) {

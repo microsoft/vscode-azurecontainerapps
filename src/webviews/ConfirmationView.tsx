@@ -53,18 +53,18 @@ export const ConfirmationView = (): JSX.Element => {
             value: value,
             commandName: commandName
         });
-    }
+    };
 
     const cancelClicked = () => {
         vscodeApi.postMessage({
             command: ConfirmationViewCommands.Cancel
-        })
+        });
     };
 
     const onChange = (_ev: React.MouseEvent<HTMLInputElement, MouseEvent>, data: OnSelectionChangeData) => {
         setName(data.selectedItems.size > 0 ? 'Edit' : 'Confirm');
         setSelectedItems(data.selectedItems.size > 0 ? createNewSetWithItem(data.selectedItems, false) : createNewSetWithItem(data.selectedItems, true));
-    }
+    };
 
     const columnSizingOptions = {
         name: {
@@ -75,7 +75,7 @@ export const ConfirmationView = (): JSX.Element => {
             defaultWidth: 275,
             minWidth: 275,
         }
-    }
+    };
 
     const columns: TableColumnDefinition<Item>[] = [
         createTableColumn<Item>({
@@ -105,7 +105,7 @@ export const ConfirmationView = (): JSX.Element => {
                 </TableCellLayout >;
             },
         })
-    ]
+    ];
 
     const DataGridComponent: React.FC<{
         context: ConfirmationViewControllerType,
@@ -158,4 +158,4 @@ export const ConfirmationView = (): JSX.Element => {
             </div>
         </div>
     );
-}
+};

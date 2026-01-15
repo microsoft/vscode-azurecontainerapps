@@ -35,11 +35,11 @@ export class ImageItem extends RevisionDraftDescendantBase {
     viewProperties: ViewPropertiesModel = {
         data: nonNullValueAndProp(this.container, 'image'),
         label: this.container.name ?? '',
-    }
+    };
 
     private getImageName(image?: string): string {
         const loginServer: string = this.getLoginServer(image);
-        if (!loginServer) return '';
+        if (!loginServer) {return '';}
 
         return image?.substring(nonNullValue(loginServer.length) + 1, image?.length) ?? '';
     }
@@ -55,7 +55,7 @@ export class ImageItem extends RevisionDraftDescendantBase {
             iconPath: new ThemeIcon('window'),
             contextValue: ImageItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     async getChildren(): Promise<TreeElementBase[]> {

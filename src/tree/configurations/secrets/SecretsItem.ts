@@ -27,7 +27,7 @@ export class SecretsItem implements ContainerAppsItem {
     viewProperties: ViewPropertiesModel = {
         data: this.containerApp.configuration?.secrets ?? [],
         label: `${this.containerApp.name} ${secrets}`,
-    }
+    };
 
     async getChildren(): Promise<TreeElementBase[]> {
         const secrets: Secret[] = this.containerApp.configuration?.secrets ?? [];

@@ -41,7 +41,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
             label: this.label,
             contextValue: ContainerItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {
@@ -58,7 +58,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
     viewProperties: ViewPropertiesModel = {
         data: this.container,
         label: nonNullProp(this.container, 'name'),
-    }
+    };
 
     protected setProperties(): void {
         this.label = this.container.name ?? '';

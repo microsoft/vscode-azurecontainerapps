@@ -31,7 +31,7 @@ export class ConfigurationItem implements ContainerAppsItem {
     viewProperties: ViewPropertiesModel = {
         data: nonNullProp(this.containerApp, 'configuration'),
         label: `${this.containerApp.name} ${configuration}`,
-    }
+    };
 
     async getChildren(): Promise<TreeElementBase[]> {
         const result = await callWithTelemetryAndErrorHandling('getChildren', async (_context) => {
@@ -52,6 +52,6 @@ export class ConfigurationItem implements ContainerAppsItem {
             iconPath: new ThemeIcon('gear'),
             contextValue: ConfigurationItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
-        }
+        };
     }
 }

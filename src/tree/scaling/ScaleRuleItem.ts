@@ -70,7 +70,7 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
             contextValue: ScaleRuleItem.contextValue,
             iconPath: new ThemeIcon('dash'),
             description: this.description
-        }
+        };
     }
 
     hasUnsavedChanges(): boolean {

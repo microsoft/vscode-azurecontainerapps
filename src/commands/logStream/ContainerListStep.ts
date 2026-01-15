@@ -21,6 +21,6 @@ export class ContainerListStep extends AzureWizardPromptStep<IStreamLogsContext>
     private async getPicks(context: IStreamLogsContext): Promise<IAzureQuickPickItem<ReplicaContainer>[]> {
         return nonNullValue(context.replica?.containers).map((c) => {
             return { label: nonNullProp(c, 'name'), data: c, suppressPersistance: true };
-        })
+        });
     }
 }

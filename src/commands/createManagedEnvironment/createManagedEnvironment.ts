@@ -43,7 +43,7 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     LocationListStep.addProviderForFiltering(wizardContext, logAnalyticsProvider, logAnalyticsResourceType);
     LocationListStep.addStep(wizardContext, promptSteps);
 
-    const wizard: AzureWizard<ManagedEnvironmentCreateContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ManagedEnvironmentCreateContext>(wizardContext, {
         title,
         promptSteps,
         executeSteps,

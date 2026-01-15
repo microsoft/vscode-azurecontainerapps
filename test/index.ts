@@ -48,7 +48,7 @@ function addEnvVarsToMochaOptions(options: Mocha.MochaOptions): void {
             if (typeof value === 'string' && !isNaN(parseInt(value))) {
                 value = parseInt(value);
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (<any>options)[option] = value;
         }
     }

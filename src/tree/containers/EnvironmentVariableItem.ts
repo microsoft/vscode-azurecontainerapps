@@ -51,7 +51,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
                 title: localize('commandtitle', 'Toggle Environment Variable Visibility'),
                 arguments: [this, this.hideValue,]
             }
-        }
+        };
     }
 
     public async toggleValueVisibility(_: IActionContext): Promise<void> {
