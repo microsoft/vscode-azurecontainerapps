@@ -5,7 +5,6 @@
 
 import { PortRange } from "src/commands/ingress/tryGetDockerfileExposePorts";
 
-
 export interface MockIngressContext {
     containerApp?: { configuration: { ingress: { targetPort: number } } };
 
