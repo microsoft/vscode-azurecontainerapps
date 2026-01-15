@@ -3,13 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call */
 import { randomBytes } from 'crypto';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { ext } from "../../extensionVariables";
-
-const DEV_SERVER_HOST = 'http://localhost:8080';
 
 /**
  * WebviewBaseController is a class that manages a vscode.Webview and provides
@@ -44,41 +41,24 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
     }
 
     protected getDocumentTemplate(webview?: vscode.Webview) {
-        const isProduction = ext.context.extensionMode === vscode.ExtensionMode.Production;
         const nonce = randomBytes(16).toString('base64');
 
         const filename = 'views.js';
         const uri = (...parts: string[]) => webview?.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, ...parts))).toString(true);
-        const srcUri = isProduction ? uri('dist', filename) : `${DEV_SERVER_HOST}/${filename}`;
+        const srcUri = uri('dist', filename);
+        const cssUri = uri('dist', 'views.css');
 
-        const codiconsUri = (...parts: string[]) => webview?.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, ...parts))).toString(true);
-        const codiconsSrcUri = isProduction ? codiconsUri('dist', 'icons', 'codicon.css') : codiconsUri('node_modules', '@vscode', 'codicons', 'dist', 'codicon.css');
-        console.log(`codiconsSrcUri: ${codiconsSrcUri}`);
-        console.log(`srcUri: ${srcUri}`);
-
-        const csp = (
-            isProduction
-                ? [
-                    `form-action 'none';`,
-                    `default-src ${webview?.cspSource};`,
-                    `script-src ${webview?.cspSource} 'nonce-${nonce}';`,
-                    `style-src ${webview?.cspSource} vscode-resource: 'unsafe-inline';`,
-                    `img-src ${webview?.cspSource} data: vscode-resource:;`,
-                    `connect-src ${webview?.cspSource} ws:;`,
-                    `font-src ${webview?.cspSource};`,
-                    `worker-src ${webview?.cspSource} blob:;`,
-                ]
-                : [
-                    `form-action 'none';`,
-                    `default-src ${webview?.cspSource} ${DEV_SERVER_HOST};`,
-                    `script-src ${webview?.cspSource} ${DEV_SERVER_HOST} 'nonce-${nonce}';`,
-                    `style-src ${webview?.cspSource} ${DEV_SERVER_HOST} vscode-resource: 'unsafe-inline';`,
-                    `img-src ${webview?.cspSource} ${DEV_SERVER_HOST} data: vscode-resource:;`,
-                    `connect-src ${webview?.cspSource} ${DEV_SERVER_HOST} ws:;`,
-                    `font-src ${webview?.cspSource} ${DEV_SERVER_HOST};`,
-                    `worker-src ${webview?.cspSource} ${DEV_SERVER_HOST} blob:;`,
-                ]
-        ).join(' ');
+        const csp = [
+            `form-action 'none';`,
+            `default-src ${webview?.cspSource};`,
+            `script-src ${webview?.cspSource} 'nonce-${nonce}';`,
+            `style-src ${webview?.cspSource} vscode-resource: 'unsafe-inline';`,
+            `img-src ${webview?.cspSource} data: vscode-resource:;`,
+            `connect-src ${webview?.cspSource} ws:;`,
+            `font-src ${webview?.cspSource} data:;`,
+            `worker-src ${webview?.cspSource} blob:;`,
+        ]
+            .join(' ');
 
         /**
          * Note to code maintainers:
@@ -91,7 +71,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link href="${codiconsSrcUri}" rel="stylesheet" />
+                    <link href="${cssUri}" rel="stylesheet" />
                     <meta // noinspection JSAnnotator
                         http-equiv="Content-Security-Policy" content="${csp}" />
                 </head>
@@ -123,7 +103,6 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
      */
     public dispose() {
         this._onDisposed.fire();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         this._disposables.forEach((d) => d.dispose());
         this._isDisposed = true;
     }

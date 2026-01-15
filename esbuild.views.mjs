@@ -5,14 +5,13 @@
 
 import { isAutoDebug, isAutoWatch } from '@microsoft/vscode-azext-eng/esbuild';
 import esbuild from 'esbuild';
-import copy from 'esbuild-plugin-copy';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const outdir = './dist';
+const outdir = path.resolve(__dirname, 'dist');
 
 const commonConfig = {
     entryPoints: {
@@ -20,8 +19,8 @@ const commonConfig = {
     },
 
     bundle: true,
-    outdir: './dist', //check if this is correct (may be diff now since we are using esbuild)
-    format: 'cjs',
+    outdir: outdir,
+    format: 'esm',
     platform: 'browser', //todo: remove (platform is auto browser if not specified)
     target: 'es2022',
     sourcemap: isAutoWatch,
@@ -29,76 +28,49 @@ const commonConfig = {
     metafile: isAutoDebug,
     splitting: false,
 
-    inject: [path.resolve(__dirname, 'react-shim.js')], //todo: gotta create this react-shim.js
+    inject: [path.resolve(__dirname, 'react-shim.js')],
 
-    // todo: may need to check these
     loader: {
         '.ts': 'ts',
         '.tsx': 'tsx',
         '.css': 'css',
         '.scss': 'css',
-        '.sass': 'css',
-        '.ttf': 'file',
+        '.ttf': 'dataurl',
+        '.woff': 'dataurl',
+        '.woff2': 'dataurl',
     },
 
     plugins: [
-        // todo do we need this? Added since esbuild does not support sass so we need to add the plugin but not sure if sass is needed
         {
             name: 'sass',
             setup(build) {
-                import('sass').then((sass) => {
-                    build.onLoad({ filter: /\.s[ac]ss$/ }, async (args) => {
-                        const result = sass.compile(args.path);
-                        return {
-                            contents: result.css,
-                            loader: 'css',
-                        };
-                    });
+                build.onLoad({ filter: /\.s[ac]ss$/ }, async (args) => {
+                    const sass = await import('sass');
+                    const result = sass.compile(args.path);
+                    return {
+                        contents: result.css,
+                        loader: 'css',
+                    };
                 });
             },
         },
-
-        // todo: make sure these file paths are still correct. They may be different now with using esbuild
-        copy({
-            assets: {
-                from: [
-                    path.resolve(__dirname, 'node_modules/@vscode/codicons/dist/codicon.css'),
-                    path.resolve(__dirname, 'node_modules/@vscode/codicons/dist/codicon.ttf'),
-                ],
-                to: [
-                    path.resolve(outdir, 'icons/codicon.css'),
-                    path.resolve(outdir, 'icons/codicon.ttf'),
-                ],
-            },
-        }),
     ],
-
     logLevel: 'info'
 };
 
+const ctx = await esbuild.context({
+    ...commonConfig,
+    outdir,
+});
+
+// Always do an initial rebuild to ensure views.js exists
+await ctx.rebuild();
+
 if (isAutoWatch) {
-    esbuild
-        .serve(
-            {
-                servedir: outdir, // todo esbuild only serves one directory so in order to copy the static then we would need to copy over into dist/static (this is done in webpack)
-                port: 8080,
-                host: '127.0.0.1',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-                    'Access-Control-Allow-Headers':
-                        'X-Requested-With, content-type, Authorization',
-                },
-            },
-            {
-                ...commonConfig,
-                publicPath: '/',
-            }
-        )
-        .then(() => {
-            console.log('Dev server running at http://127.0.0.1:8080');
-        })
-        .catch(() => process.exit(1));
+    await ctx.watch();
+    console.log('Watching webview bundle...');
+    await new Promise(() => { });
 } else {
-    esbuild.build(commonConfig).catch(() => process.exit(1));
+    await ctx.rebuild();
+    await ctx.dispose();
 }
