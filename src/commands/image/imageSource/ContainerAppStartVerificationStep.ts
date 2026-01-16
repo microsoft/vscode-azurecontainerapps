@@ -153,7 +153,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
             throw new Error(invalidName);
         }
 
-        const workspaceId = context.managedEnvironment.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
+        const workspaceId = context.managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
         if (!workspaceId) {
             return;
         }
