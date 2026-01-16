@@ -36,10 +36,10 @@ async function main(): Promise<void> {
                 DEBUGTELEMETRY: 'v'
             }
         });
-    } catch (err) {
+    } catch (_err) {
         console.error('Failed to run tests');
         process.exit(1);
     }
 }
 
-main();
+void main();

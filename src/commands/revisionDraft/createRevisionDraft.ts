@@ -7,7 +7,6 @@ import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Revision } 
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import * as dayjs from "dayjs";
-// eslint-disable-next-line import/no-internal-modules
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { ext } from "../../extensionVariables";
 import { type RevisionItem } from "../../tree/revisionManagement/RevisionItem";

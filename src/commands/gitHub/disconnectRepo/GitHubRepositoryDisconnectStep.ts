@@ -26,6 +26,7 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
 
         const requestOptions = {
             customHeaders: {
+                /* eslint-disable-next-line @typescript-eslint/naming-convention */
                 'x-ms-github-auxiliary': nonNullProp(context, 'gitHubAccessToken')
             }
         };

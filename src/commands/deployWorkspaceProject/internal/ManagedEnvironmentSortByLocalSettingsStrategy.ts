@@ -69,7 +69,7 @@ async function getManagedEnvironmentId(client: ContainerAppsAPIClient, resourceG
         const containerApp: ContainerApp = await client.containerApps.get(resourceGroupName, containerAppName);
         return containerApp.managedEnvironmentId;
     }
-    catch (these_hands) {
+    catch (_these_hands) {
         return undefined;
     }
 }
