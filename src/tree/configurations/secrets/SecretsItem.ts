@@ -19,14 +19,15 @@ export class SecretsItem implements ContainerAppsItem {
     static readonly idSuffix: string = 'secrets';
     static readonly contextValue: string = 'secretsItem';
     static readonly contextValueRegExp: RegExp = new RegExp(SecretsItem.contextValue);
+    id: string;
+    viewProperties: ViewPropertiesModel;
 
-    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) { }
-
-    id: string = `${this.containerApp.id}/${SecretsItem.idSuffix}`;
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.containerApp.configuration?.secrets ?? [],
-        label: `${this.containerApp.name} ${secrets}`,
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) {
+        this.id = `${containerApp.id}/${SecretsItem.idSuffix}`;
+        this.viewProperties = {
+            data: containerApp.configuration?.secrets ?? [],
+            label: `${containerApp.name} ${secrets}`,
+        };
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
