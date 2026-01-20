@@ -7,8 +7,8 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
-import { ext } from 'src/extensionVariables';
 import * as vscode from 'vscode';
+import { ext } from '../../src/extensionVariables';
 import { longRunningTestsEnabled } from '../global.test';
 
 export let subscriptionContext: ISubscriptionContext;

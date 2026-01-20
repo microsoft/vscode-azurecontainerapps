@@ -7,10 +7,10 @@ import { LocationListStep, parseAzureResourceGroupId, ResourceGroupCreateStep, t
 import { AzureWizard, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
-import { deployWorkspaceProjectApi } from 'src/commands/api/deployWorkspaceProjectApi';
-import { DeployWorkspaceProjectResults } from 'src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
-import { settingUtils } from 'src/utils/settingUtils';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
+import { deployWorkspaceProjectApi } from '../../../src/commands/api/deployWorkspaceProjectApi';
+import { DeployWorkspaceProjectResults } from '../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
+import { settingUtils } from '../../../src/utils/settingUtils';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { resourceGroupsToDelete, subscriptionContext } from '../global.nightly.test';

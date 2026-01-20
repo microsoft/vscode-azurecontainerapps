@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PortRange } from "src/commands/ingress/tryGetDockerfileExposePorts";
+import { PortRange } from "../../src/commands/ingress/tryGetDockerfileExposePorts";
 
 export interface MockIngressContext {
     containerApp?: { configuration: { ingress: { targetPort: number } } };

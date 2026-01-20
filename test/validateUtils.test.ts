@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import { validateUtils } from 'src/utils/validateUtils';
+import { validateUtils } from '../src/utils/validateUtils';
 
 type LowerCaseAlphanumericWithSymbolsParams = {
     value: string;

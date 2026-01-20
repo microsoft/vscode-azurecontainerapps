@@ -5,7 +5,7 @@
 
 import { randomUtils } from "@microsoft/vscode-azext-utils";
 import * as path from "path";
-import { DeploymentConfigurationSettings } from "src/commands/deployWorkspaceProject/settings/DeployWorkspaceProjectSettingsV2";
+import { DeploymentConfigurationSettings } from "../../../../../src/commands/deployWorkspaceProject/settings/DeployWorkspaceProjectSettingsV2";
 import { type StringOrRegExpProps } from "../../../../typeUtils";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";

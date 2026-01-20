@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
-import { getDefaultPort } from "src/commands/ingress/editTargetPort/getDefaultPort";
-import { IngressContext } from "src/commands/ingress/IngressContext";
-import { PortRange } from "src/commands/ingress/tryGetDockerfileExposePorts";
+import { getDefaultPort } from "../../src/commands/ingress/editTargetPort/getDefaultPort";
+import { IngressContext } from "../../src/commands/ingress/IngressContext";
+import { PortRange } from "../../src/commands/ingress/tryGetDockerfileExposePorts";
 import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
 import { type MockIngressContext } from "./MockIngressContext";
 
