@@ -32,9 +32,17 @@ export class SharedResourcesNameStep extends AzureWizardPromptStep<DeployWorkspa
 
         ext.outputChannel.appendLog(localize('usingSharedName', 'User provided the name "{0}" for the container app environment.', resourceName));
 
-        !context.resourceGroup && (context.newResourceGroupName = resourceName);
-        !context.managedEnvironment && (context.newManagedEnvironmentName = resourceName);
-        !context.registry && (context.newRegistryName = await RegistryNameStep.generateRelatedName(context, resourceName));
+        if (!context.resourceGroup) {
+            context.newResourceGroupName = resourceName;
+        }
+
+        if (!context.managedEnvironment) {
+            context.newManagedEnvironmentName = resourceName;
+        }
+
+        if (!context.registry) {
+            context.newRegistryName = await RegistryNameStep.generateRelatedName(context, resourceName);
+        }
     }
 
     public shouldPrompt(context: DeployWorkspaceProjectInternalContext): boolean {
