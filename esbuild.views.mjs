@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-const path = require('path');
-const esbuild = require('esbuild');
-const copy = require('esbuild-plugin-copy');
-import { getAutoBuildSettings } from '@microsoft/vscode-azext-eng/esbuild';
+import { isAutoDebug, isAutoWatch } from '@microsoft/vscode-azext-eng/esbuild';
+import esbuild from 'esbuild';
+import copy from 'esbuild-plugin-copy';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const { isAutoDebug, isAutoWatch } = getAutoBuildSettings()
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Todo: const outdir = path.resolve(__dirname, 'dist'); see if this is still needed below just directly put in the dist folder not sure if we need the __dirnsame before
+const outdir = './dist';
 
 const commonConfig = {
     entryPoints: {
@@ -44,13 +46,14 @@ const commonConfig = {
         {
             name: 'sass',
             setup(build) {
-                const sass = require('sass');
-                build.onLoad({ filter: /\.s[ac]ss$/ }, async (args) => {
-                    const result = sass.renderSync({ file: args.path });
-                    return {
-                        contents: result.css.toString(),
-                        loader: 'css',
-                    };
+                import('sass').then((sass) => {
+                    build.onLoad({ filter: /\.s[ac]ss$/ }, async (args) => {
+                        const result = sass.compile(args.path);
+                        return {
+                            contents: result.css,
+                            loader: 'css',
+                        };
+                    });
                 });
             },
         },
