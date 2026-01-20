@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as React from 'react';
-// eslint-disable-next-line import/no-internal-modules
 import { createRoot } from 'react-dom/client';
 import { type WebviewApi } from 'vscode-webview';
 import { DynamicThemeProvider } from './theme/DynamicThemeProvider';
