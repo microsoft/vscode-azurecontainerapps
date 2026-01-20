@@ -41,20 +41,29 @@
             "isBackground": true,
         },
         {
-            "label": "Watch: ESBuild with Web View",
+            "label": "Watch: Webview",
             "type": "shell",
-            "command": "npx",
+            "command": "npm",
             "args": [
-                "concurrently",
-                "\"npm:build:esbuild -- --watch\"",
-                "\"npm:build:webview -- --watch\""
+                "run",
+                "build:webview",
+                "--",
+                "--watch"
             ],
             "isBackground": true,
             "problemMatcher": "$esbuild-watch",
             "presentation": {
-                "reveal": "always",
-                "focus": true
+                "reveal": "silent"
             }
+        },
+        {
+            "label": "Watch: ESBuild with Web View",
+            "dependsOn": [
+                "Watch: ESBuild",
+                "Watch: Webview"
+            ],
+            "dependsOrder": "parallel",
+            "problemMatcher": []
         }
     ]
 }
