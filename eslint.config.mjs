@@ -7,6 +7,9 @@ import { azExtEslintRecommended } from '@microsoft/vscode-azext-eng/eslint'; // 
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
+    {
+        ignores: ['react-shim.js']
+    },
     azExtEslintRecommended,
     {
         rules: {
