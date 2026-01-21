@@ -830,7 +830,7 @@
     "devDependencies": {
         "@azure/ms-rest-azure-env": "^2.0.0",
         "@microsoft/eslint-config-azuretools": "^0.2.2",
-        "@microsoft/vscode-azext-dev": "^2.1.0",
+        "@microsoft/vscode-azext-dev": "^2.1.2",
         "@swc/core": "^1.7.36",
         "@types/deep-eql": "^4.0.0",
         "@types/fs-extra": "^8.1.1",
@@ -893,7 +893,7 @@
         "sass": "~1.79.6",
         "sass-loader": "^16.0.2",
         "semver": "^7.5.2",
-        "tar": "^6.2.1",
+        "tar": "^7.5.5",
         "uuid": "^10.0.0",
         "vscode-nls": "^4.1.1",
         "vscode-uri": "^3.0.2"
