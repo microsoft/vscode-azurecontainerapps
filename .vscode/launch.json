@@ -18,6 +18,21 @@
             }
         },
         {
+            "name": "Launch Extension + web view",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.{js,mjs,cjs}",
+            ],
+            "preLaunchTask": "Watch: ESBuild with Web View",
+            "env": {
+                "DEBUGTELEMETRY": "v"
+            }
+        },
+        {
             "name": "Launch Extension + Docker",
             "type": "extensionHost",
             "request": "launch",

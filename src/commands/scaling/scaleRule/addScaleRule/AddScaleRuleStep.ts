@@ -51,7 +51,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
                     queueName: context.newQueueName,
                     queueLength: context.newQueueLength,
                     auth: [{ secretRef: context.secretName, triggerParameter: context.newQueueTriggerParameter }]
-                }
+                };
                 break;
             default:
         }
@@ -60,13 +60,14 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
 
     private integrateRule(context: T, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
         switch (context.newRuleType) {
-            case ScaleRuleTypes.HTTP:
+            case ScaleRuleTypes.HTTP: {
                 // Portal only allows one HTTP rule per revision
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
                     scaleRules.splice(idx, 1);
                 }
                 break;
+            }
             case ScaleRuleTypes.Queue:
             default:
         }

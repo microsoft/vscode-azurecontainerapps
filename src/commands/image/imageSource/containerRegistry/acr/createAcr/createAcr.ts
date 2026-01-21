@@ -40,7 +40,7 @@ export async function createAcr(context: IActionContext, node?: { subscription: 
 
     LocationListStep.addStep(wizardContext, promptSteps);
 
-    const wizard: AzureWizard<CreateAcrContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<CreateAcrContext>(wizardContext, {
         title,
         promptSteps,
         executeSteps,

@@ -33,7 +33,7 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
         new ToggleIngressVisibilityStep()
     ];
 
-    const wizard: AzureWizard<IngressBaseContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IngressBaseContext>(wizardContext, {
         title,
         executeSteps,
         showLoadingPrompt: true

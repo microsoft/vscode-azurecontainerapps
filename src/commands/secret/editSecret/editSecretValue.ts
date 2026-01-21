@@ -35,7 +35,7 @@ export async function editSecretValue(context: IActionContext, node?: SecretItem
         new SecretValueUpdateStep()
     ];
 
-    const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ISecretContext>(wizardContext, {
         title: localize('updateSecret', 'Update secret value for "{0}" in container app "{1}"', wizardContext.secretName, containerApp.name),
         promptSteps,
         executeSteps,

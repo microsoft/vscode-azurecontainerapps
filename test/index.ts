@@ -27,7 +27,11 @@ export async function run(): Promise<void> {
 
     const files: string[] = await new Promise((resolve, reject) => {
         glob('**/**.test.js', { cwd: __dirname }, (err, result) => {
-            err ? reject(err) : resolve(result);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
         });
     });
 
@@ -48,7 +52,7 @@ function addEnvVarsToMochaOptions(options: Mocha.MochaOptions): void {
             if (typeof value === 'string' && !isNaN(parseInt(value))) {
                 value = parseInt(value);
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (<any>options)[option] = value;
         }
     }

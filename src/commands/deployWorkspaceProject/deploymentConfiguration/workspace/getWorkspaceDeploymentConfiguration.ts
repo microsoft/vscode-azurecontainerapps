@@ -19,7 +19,7 @@ export async function getWorkspaceDeploymentConfiguration(context: IContainerApp
         ...await createActivityContext(),
     });
 
-    const wizard: AzureWizard<WorkspaceDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<WorkspaceDeploymentConfigurationContext>(wizardContext, {
         title: localize('selectWorkspaceDeploymentConfigurationTitle', 'Select a workspace deployment configuration'),
         promptSteps: [
             new RootFolderStep(),

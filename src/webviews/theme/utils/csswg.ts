@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+/* eslint-disable @typescript-eslint/naming-convention */
 // The following is a combination of several files retrieved from CSSWG’s
 // CSS Color 4 module. It was modified to support TypeScript types adapted for
 // the Fluent Blocks `colors` package and formatted to meet its style criteria.
@@ -18,7 +19,6 @@ type MatrixIO = number[][] | number[];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isFlat(A: any): A is number[] {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !Array.isArray(A[0]);
 }
 
@@ -28,12 +28,12 @@ export function multiplyMatrices(AMatrixOrVector: MatrixIO, BMatrixOrVector: Mat
 
     const A: number[][] = isFlat(AMatrixOrVector)
         ? // A is vector, convert to [[a, b, c, ...]]
-          [AMatrixOrVector]
+        [AMatrixOrVector]
         : AMatrixOrVector;
 
     const B: number[][] = isFlat(BMatrixOrVector)
         ? // B is vector, convert to [[a], [b], [c], ...]]
-          BMatrixOrVector.map((x) => [x])
+        BMatrixOrVector.map((x) => [x])
         : BMatrixOrVector;
 
     const p = B[0].length;

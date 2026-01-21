@@ -8,7 +8,7 @@ import { useState } from 'react';
 declare global {
     interface Window {
         config?: {
-            __initialData?: string;
+            _initialData?: string;
             [key: string]: unknown; // Optional: Allows any other properties in config
         };
     }
@@ -21,7 +21,7 @@ declare global {
  */
 export function useConfiguration<T>(): T {
     const [configuration] = useState<T>(() => {
-        const configString = decodeURIComponent(window.config?.__initialData ?? '{}');
+        const configString = decodeURIComponent(window.config?._initialData ?? '{}');
         return JSON.parse(configString) as T;
     });
 

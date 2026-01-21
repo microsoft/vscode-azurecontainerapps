@@ -62,7 +62,7 @@ export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
             contextValue: ScaleRuleGroupItem.contextValue,
             iconPath: new ThemeIcon('symbol-constant'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {
