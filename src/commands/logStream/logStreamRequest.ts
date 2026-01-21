@@ -72,7 +72,7 @@ export async function logStreamRequest(context: IStreamLogsContext): Promise<ILo
                 const genericClient: ServiceClient = await createGenericClient(context, undefined);
                 const headers = createHttpHeaders({
                     authorization: `Bearer ${token.token}`
-                })
+                });
 
                 const logsResponse = await genericClient.sendRequest(createPipelineRequest({
                     method: "GET",

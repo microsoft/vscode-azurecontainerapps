@@ -43,7 +43,7 @@ export async function editEnvironmentVariableValue(context: IActionContext, node
     const editDraftStepOutputs: EnvironmentVariableEditOutputs = {};
 
     const title: string = localize('editEnvironmentVariableValue', 'Edit environment variable value for "{0}" (draft)', wizardContext.environmentVariable.name);
-    const wizard: AzureWizard<EnvironmentVariableEditContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<EnvironmentVariableEditContext>(wizardContext, {
         title,
         promptSteps: [
             new EnvironmentVariableTypeListStep(),

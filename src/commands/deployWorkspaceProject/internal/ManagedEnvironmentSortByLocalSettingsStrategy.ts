@@ -24,7 +24,7 @@ export class ManagedEnvironmentSortByLocalSettingsStrategy<T extends DeployWorks
         }
 
         const asyncTasks: Promise<void>[] = [];
-        const recommendedEnvironmentIds: Set<string> = new Set();
+        const recommendedEnvironmentIds = new Set<string>();
 
         const client = await createContainerAppsAPIClient(context);
         for (const config of deploymentConfigurations) {
@@ -69,7 +69,7 @@ async function getManagedEnvironmentId(client: ContainerAppsAPIClient, resourceG
         const containerApp: ContainerApp = await client.containerApps.get(resourceGroupName, containerAppName);
         return containerApp.managedEnvironmentId;
     }
-    catch (these_hands) {
+    catch (_these_hands) {
         return undefined;
     }
 }

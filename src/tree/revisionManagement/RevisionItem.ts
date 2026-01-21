@@ -107,7 +107,7 @@ export class RevisionItem implements RevisionsItemModel {
                     colorId = 'testing.iconFailed';
                     break;
                 case KnownRevisionProvisioningState.Provisioned:
-                    id = 'pass'
+                    id = 'pass';
                     colorId = 'testing.iconPassed';
                     break;
                 case KnownRevisionProvisioningState.Deprovisioned:

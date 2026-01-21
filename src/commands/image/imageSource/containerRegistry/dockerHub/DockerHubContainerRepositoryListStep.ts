@@ -47,7 +47,7 @@ export class DockerHubContainerRepositoryListStep extends RegistryRepositoriesLi
         const picks: QuickPickItem[] = response.results.map((r) => {
             return !!suggestedRepository && r.name === suggestedRepository ?
                 { label: r.name, description: r.description ? `${r.description} ${currentlyDeployedPickDescription}` : currentlyDeployedPickDescription, suppressPersistence: true } :
-                { label: r.name, description: r.description, suppressPersistence: srExists }
+                { label: r.name, description: r.description, suppressPersistence: srExists };
         });
         cachedPicks.cache.push(...picks);
 

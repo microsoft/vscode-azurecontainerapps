@@ -10,7 +10,7 @@ import { localize } from '../utils/localize';
 import { pickContainerApp } from '../utils/pickItem/pickContainerApp';
 
 export async function browseContainerAppNode(context: IActionContext, node?: ContainerAppItem): Promise<void> {
-    node ??= await pickContainerApp(context)
+    node ??= await pickContainerApp(context);
     await browseContainerApp(node.containerApp);
 }
 

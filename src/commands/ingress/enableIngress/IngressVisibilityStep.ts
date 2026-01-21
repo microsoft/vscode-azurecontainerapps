@@ -30,6 +30,6 @@ export class IngressVisibilityStep<T extends IngressContext> extends AzureWizard
             name: localize('ingressVisibility', 'Ingress Visibility'),
             value: context.enableExternal ? 'External' : 'Internal',
             contextPropertyName: 'enableExternal'
-        }
+        };
     }
 }
