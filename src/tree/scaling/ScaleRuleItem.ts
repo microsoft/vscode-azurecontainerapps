@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, type Revision, type ScaleRule } from "@azure/arm-appcontainers";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { ThemeIcon, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
@@ -18,6 +18,9 @@ const scaleRuleLabel: string = localize('scaleRule', 'Scale Rule');
 export class ScaleRuleItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'scaleRuleItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ScaleRuleItem.contextValue);
+    id: string;
+    label: string;
+    viewProperties: ViewPropertiesModel;
 
     constructor(
         subscription: AzureSubscription,
@@ -29,15 +32,12 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
         readonly isDraft: boolean
     ) {
         super(subscription, containerApp, revision);
+        this.id = `${this.parentResource.id}/scalerules/${scaleRule.name}`;
+        this.viewProperties = {
+            data: this.scaleRule,
+            label: `${this.parentResource.name} ${scaleRuleLabel} ${this.scaleRule.name}`,
+        };
     }
-
-    id: string = `${this.parentResource.id}/scalerules/${this.scaleRule.name}`;
-    label: string;
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.scaleRule,
-        label: `${this.parentResource.name} ${scaleRuleLabel} ${this.scaleRule.name}`,
-    };
 
     private get description(): string {
         if (this.scaleRule.http) {

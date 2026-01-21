@@ -18,17 +18,17 @@ type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 export class ManagedEnvironmentItem implements TreeElementBase {
     static readonly contextValue: string = 'managedEnvironmentItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentItem.contextValue);
-
+    viewProperties: ViewPropertiesModel;
     id: string;
+
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
         this.id = managedEnvironment.id;
+        this.viewProperties = {
+            data: managedEnvironment,
+            label: managedEnvironment.name,
+        };
     }
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.managedEnvironment,
-        label: this.managedEnvironment.name,
-    };
 
     private get contextValue(): string {
         const values: string[] = [];

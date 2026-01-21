@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode, type ContainerApp, type ContainerAppsAPIClien
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, DeleteConfirmationStep, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem, type Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
@@ -36,8 +36,9 @@ export interface ContainerAppModel extends ContainerApp {
 export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel {
     static readonly contextValue: string = 'containerAppItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ContainerAppItem.contextValue);
-
+    portalUrl: Uri;
     id: string;
+    viewProperties: ViewPropertiesModel;
 
     private resourceGroup: string;
     private name: string;
@@ -50,14 +51,12 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
+        this.portalUrl = createPortalUrl(subscription, _containerApp.id);
+        this.viewProperties = {
+            data: this.containerApp,
+            label: this.containerApp.name,
+        };
     }
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.containerApp,
-        label: this.containerApp.name,
-    };
-
-    portalUrl: Uri = createPortalUrl(this.subscription, this.containerApp.id);
 
     private get contextValue(): string {
         const values: string[] = [ContainerAppItem.contextValue];

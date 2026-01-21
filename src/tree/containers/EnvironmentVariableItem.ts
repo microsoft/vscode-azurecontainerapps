@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Container, type EnvironmentVar, type Revision } from "@azure/arm-appcontainers";
 import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { ThemeIcon, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
@@ -21,7 +21,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'environmentVariableItem';
     static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariableItem.contextValue);
 
-    id: string = `${this.parentResource.id}/${this.container.image}/${this.envVariable.name}`;
+    id: string;
 
     private hideValue: boolean = true;
     private hiddenMessage: string; // Shown when 'hideValue' is true
@@ -38,6 +38,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
         readonly envVariable: EnvironmentVar,
     ) {
         super(subscription, containerApp, revision);
+        this.id = `${this.parentResource.id}/${container.image}/${envVariable.name}`;
     }
 
     getTreeItem(): TreeItem {

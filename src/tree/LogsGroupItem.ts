@@ -17,10 +17,11 @@ const logsItemContextValue: string = 'logsItem';
 export class LogsGroupItem implements TreeElementBase {
     static readonly contextValue: string = 'logsGroupItem';
     static readonly contextValueRegExp: RegExp = new RegExp(LogsGroupItem.contextValue);
+    id: string;
 
-    constructor(private readonly subscription: AzureSubscription, private readonly containerApp: ContainerApp) { }
-
-    id: string = `${this.containerApp.id}/Logs`;
+    constructor(private readonly subscription: AzureSubscription, private readonly containerApp: ContainerApp) {
+        this.id = `${containerApp.id}/Logs`;
+    }
 
     getTreeItem(): TreeItem {
         return {

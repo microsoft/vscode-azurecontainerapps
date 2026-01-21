@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
 import { createGenericElement, nonNullValue, nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
-import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
+import { ViewPropertiesModel, type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
@@ -16,6 +16,9 @@ import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 export class ImageItem extends RevisionDraftDescendantBase {
     static readonly contextValue: string = 'imageItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ImageItem.contextValue);
+    id: string;
+    label: string;
+    viewProperties: ViewPropertiesModel;
 
     constructor(
         subscription: AzureSubscription,
@@ -27,19 +30,16 @@ export class ImageItem extends RevisionDraftDescendantBase {
         readonly container: Container,
     ) {
         super(subscription, containerApp, revision);
+        this.id = `${this.parentResource.id}/image/${container.image}`;
+        this.viewProperties = {
+            data: nonNullValueAndProp(container, 'image'),
+            label: this.container.name ?? '',
+        };
     }
-
-    id: string = `${this.parentResource.id}/image/${this.container.image}`;
-    label: string;
-
-    viewProperties: ViewPropertiesModel = {
-        data: nonNullValueAndProp(this.container, 'image'),
-        label: this.container.name ?? '',
-    };
 
     private getImageName(image?: string): string {
         const loginServer: string = this.getLoginServer(image);
-        if (!loginServer) {return '';}
+        if (!loginServer) { return ''; }
 
         return image?.substring(nonNullValue(loginServer.length) + 1, image?.length) ?? '';
     }

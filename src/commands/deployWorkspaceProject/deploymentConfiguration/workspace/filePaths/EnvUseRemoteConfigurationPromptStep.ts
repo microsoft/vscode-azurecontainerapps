@@ -5,7 +5,7 @@
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { ActivityChildItem, ActivityChildType, activityInfoContext, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import * as path from "path";
 import { ext } from "../../../../../extensionVariables";
 import { localize } from "../../../../../utils/localize";

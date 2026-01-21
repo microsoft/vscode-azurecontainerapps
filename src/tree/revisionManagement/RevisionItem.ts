@@ -26,13 +26,17 @@ const revisionStateInactiveContextValue: string = 'revisionState:inactive';
 export class RevisionItem implements RevisionsItemModel {
     static readonly contextValue: string = 'revisionItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionItem.contextValue);
-
+    viewProperties: ViewPropertiesModel;
     id: string;
     revisionsMode: KnownActiveRevisionsMode;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
         this.id = nonNullProp(this.revision, 'id');
         this.revisionsMode = containerApp.revisionsMode;
+        this.viewProperties = {
+            data: revision,
+            label: nonNullProp(revision, 'name'),
+        };
     }
 
     private get contextValue(): string {
@@ -60,11 +64,6 @@ export class RevisionItem implements RevisionsItemModel {
             return localize('active', 'Active');
         }
     }
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.revision,
-        label: nonNullProp(this.revision, 'name'),
-    };
 
     static getTemplateChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
         return [
