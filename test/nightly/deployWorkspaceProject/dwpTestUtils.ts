@@ -7,7 +7,8 @@ import { type ContainerApp, type EnvironmentVar } from "@azure/arm-appcontainers
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import { createContainerAppsAPIClient, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
+import { DeployWorkspaceProjectResults } from "../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults";
+import { createContainerAppsAPIClient } from "../../../src/utils/azureClients";
 import { type StringOrRegExpProps } from "../../typeUtils";
 import { subscriptionContext } from "../global.nightly.test";
 import { type PostTestAssertion } from "./scenarios/DeployWorkspaceProjectTestScenario";
