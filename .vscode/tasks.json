@@ -40,5 +40,30 @@
             },
             "isBackground": true,
         },
+        {
+            "label": "Watch: Webview",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build:webview",
+                "--",
+                "--watch"
+            ],
+            "isBackground": true,
+            "problemMatcher": "$esbuild-watch",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "Watch: ESBuild with Web View",
+            "dependsOn": [
+                "Watch: ESBuild",
+                "Watch: Webview"
+            ],
+            "dependsOrder": "parallel",
+            "problemMatcher": []
+        }
     ]
 }
