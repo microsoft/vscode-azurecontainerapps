@@ -35,7 +35,7 @@ export async function deleteSecret(context: IActionContext, node?: SecretItem): 
         new SecretDeleteStep()
     ];
 
-    const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ISecretContext>(wizardContext, {
         title: localize('deleteSecret', 'Delete secret from container app "{0}"', containerApp.name),
         promptSteps,
         executeSteps,

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Lab_to_LCH, LAB_to_sRGB, LCH_to_Lab, snap_into_gamut, sRGB_to_LCH } from './csswg';
 import { getPointsOnCurvePath } from './geometry';
 import { hexToHue, hueToSnappingPointsMap } from './hueMap';
@@ -44,7 +45,6 @@ function linearInterpolationThroughPoint(start: number, end: number, inBetween: 
     const inBetweenIndex = Math.floor((numSamples - 1) * inBetweenRatio);
 
     // Initialize the output array
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const result: number[] = new Array(numSamples);
 
     // Set start, inBetween and end points in the result array

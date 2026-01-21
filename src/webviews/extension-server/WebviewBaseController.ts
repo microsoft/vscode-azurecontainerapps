@@ -81,7 +81,7 @@ export abstract class WebviewBaseController<Configuration> implements vscode.Dis
                             <script type="module" nonce="${nonce}">
                                 window.config = {
                                     ...window.config,
-                                    __initialData: '${encodeURIComponent(JSON.stringify(this.configuration))}'
+                                    _initialData: '${encodeURIComponent(JSON.stringify(this.configuration))}'
                             };
 
                                 import { render } from "${srcUri}";

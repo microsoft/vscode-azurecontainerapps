@@ -17,7 +17,7 @@ export class ToggleIngressVisibilityStep extends IngressUpdateStepBase<IngressBa
         const containerApp = nonNullProp(context, 'containerApp');
         const ingress = nonNullValueAndProp(containerApp.configuration, 'ingress');
 
-        const warningPrompt = localize('visibilityWarning', 'This will change the ingress visibility from "{0}" to "{1}".', ingress.external ? IngressConstants.external : IngressConstants.internal, !ingress.external ? IngressConstants.external : IngressConstants.internal)
+        const warningPrompt = localize('visibilityWarning', 'This will change the ingress visibility from "{0}" to "{1}".', ingress.external ? IngressConstants.external : IngressConstants.internal, !ingress.external ? IngressConstants.external : IngressConstants.internal);
         await context.ui.showWarningMessage(warningPrompt, { modal: true }, { title: localize('continue', 'Continue') });
         ingress.external = !ingress.external;
 

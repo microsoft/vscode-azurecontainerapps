@@ -28,7 +28,7 @@ export async function startStreamingLogs(context: IActionContext, item?: Pick<Co
         containerApp: containerApp,
         resourceGroupName: containerApp.resourceGroup,
         ...(await createActivityContext()),
-    }
+    };
 
     const title: string = localize('startStreamLogs', 'Start Streaming Logs');
 
@@ -38,7 +38,7 @@ export async function startStreamingLogs(context: IActionContext, item?: Pick<Co
         new ContainerListStep(),
     ];
 
-    const wizard: AzureWizard<IStreamLogsContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IStreamLogsContext>(wizardContext, {
         title,
         promptSteps,
     });

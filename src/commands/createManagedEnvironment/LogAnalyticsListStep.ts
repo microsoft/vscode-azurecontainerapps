@@ -32,7 +32,7 @@ export class LogAnalyticsListStep extends AzureWizardPromptStep<ManagedEnvironme
 
         const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
         return picks.concat(workspaces.map(ws => {
-            return { label: nonNullProp(ws, 'name'), data: ws }
+            return { label: nonNullProp(ws, 'name'), data: ws };
         }));
     }
 

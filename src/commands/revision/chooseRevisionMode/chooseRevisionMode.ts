@@ -45,7 +45,7 @@ export async function chooseRevisionMode(context: IActionContext, item?: Contain
         new ChangeRevisionModeStep()
     ];
 
-    const wizard: AzureWizard<IChooseRevisionModeContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IChooseRevisionModeContext>(wizardContext, {
         title: localize('changeRevisionModeTitle', 'Change container app revision mode.'),
         promptSteps,
         executeSteps
