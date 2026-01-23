@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export interface AzureContainerAppsExtensionApi {
+import { type AzureExtensionApi } from "@microsoft/vscode-azureresources-api";
+
+export interface AzureContainerAppsExtensionApi extends AzureExtensionApi {
     apiVersion: string;
     deployImage(options: DeployImageToAcaOptionsContract): Promise<void>;
     deployWorkspaceProject(options: DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults>;
