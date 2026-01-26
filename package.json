@@ -613,6 +613,10 @@
                     "when": "never"
                 },
                 {
+                    "command": "containerApps.deployContainerAppWithCopilot",
+                    "when": "never"
+                },
+                {
                     "command": "containerApps.openAcrBuildLogs",
                     "when": "never"
                 },
