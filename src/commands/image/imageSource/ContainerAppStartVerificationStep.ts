@@ -47,11 +47,12 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
         // Estimated time (n=1): 20s
         const revisionStatus: string | undefined = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
+        context.telemetry.properties.revisionStatus = revisionStatus;
 
         const parsedResource = parseAzureResourceId(revisionId);
         if (!revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
-        } else if (revisionStatus !== KnownRevisionRunningState.Running) {
+        } else if (!/running/i.test(revisionStatus)) {
             try {
                 context.telemetry.properties.targetCloud = context.environment.name;
 
@@ -68,8 +69,9 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'The deployed container app revision "{0}" has failed to start. If you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to check for any known startup issues.',
+                'The deployed container app revision "{0}" has failed to start.  The revision status is "{1}". If you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to check for any known startup issues.',
                 parsedResource.resourceName,
+                revisionStatus,
             ));
         }
     }
