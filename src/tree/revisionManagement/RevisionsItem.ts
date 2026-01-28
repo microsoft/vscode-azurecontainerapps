@@ -49,7 +49,7 @@ export class RevisionsItem implements ContainerAppsItem {
                 if (revision.name === revisionDraftBaseName) {
                     revisionDraftBase = revision;
                 }
-                return new RevisionItem(this.subscription, this.containerApp, revision)
+                return new RevisionItem(this.subscription, this.containerApp, revision);
             });
         }))?.reverse() ?? [];
 

@@ -41,7 +41,7 @@ export async function createContainerApp(context: IActionContext, item?: Managed
         wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
     }
 
-    const wizard: AzureWizard<ContainerAppCreateContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ContainerAppCreateContext>(wizardContext, {
         title: localize('createContainerApp', 'Create container app'),
         promptSteps: [
             new ContainerAppCreateStartingResourcesLogStep(item),

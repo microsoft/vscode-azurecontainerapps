@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Spinner } from "@fluentui/react-components";
-import './loadingView.scss';
+import './styles/loadingView.scss';
 
 export const LoadingView = () =>
     <div className='loadingView'>
         <Spinner labelPosition="below" label="Generating Copilot responses..." />
-    </div>
+    </div>;
 

@@ -12,10 +12,11 @@ import { SecretsItem } from "./SecretsItem";
 export class SecretItem implements ContainerAppsItem {
     static readonly contextValue: string = 'secretItem';
     static readonly contextValueRegExp: RegExp = new RegExp(SecretItem.contextValue);
+    id: string;
 
-    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly secretName: string) { }
-
-    id: string = `${this.containerApp.id}/${SecretsItem.idSuffix}/${this.secretName}`;
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly secretName: string) {
+        this.id = `${containerApp.id}/${SecretsItem.idSuffix}/${secretName}`;
+    }
 
     getTreeItem(): TreeItem {
         return {

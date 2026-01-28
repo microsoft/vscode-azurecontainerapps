@@ -178,7 +178,7 @@ export async function deployWorkspaceProjectInternal(
         new DeployWorkspaceProjectSaveSettingsStep()
     );
 
-    const wizard: AzureWizard<DeployWorkspaceProjectInternalContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<DeployWorkspaceProjectInternalContext>(wizardContext, {
         title: options.suppressWizardTitle ?
             undefined :
             localize('deployWorkspaceProjectTitle', 'Deploy workspace project to a container app'),

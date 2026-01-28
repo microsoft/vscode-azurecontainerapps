@@ -21,7 +21,7 @@ export async function createContainerAppsClient(context: IActionContext, subscri
 }
 
 export async function createContainerAppsAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
-    return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient)
+    return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient);
 }
 
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {

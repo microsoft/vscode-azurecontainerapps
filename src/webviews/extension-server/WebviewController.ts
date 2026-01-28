@@ -2,6 +2,7 @@
 *  Copyright (c) Microsoft Corporation. All rights reserved.
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
+
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { SharedState } from '../OpenConfirmationViewStep';
@@ -114,5 +115,5 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
 }
 
 export function createCopilotPromptForConfirmationViewButton(name: string, value: string, commandName: string, extension: string): string {
-    return `Help explain what ${name}: ${value} means in the context of the "${commandName}" command using the ${extension} extension for VS Code.`
+    return `Help explain what ${name}: ${value} means in the context of the "${commandName}" command using the ${extension} extension for VS Code.`;
 }

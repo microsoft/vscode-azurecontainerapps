@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Revision, type ScaleRule } from "@azure/arm-appcontainers";
 import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
@@ -62,7 +62,7 @@ export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
             contextValue: ScaleRuleGroupItem.contextValue,
             iconPath: new ThemeIcon('symbol-constant'),
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     getChildren(): TreeElementBase[] {

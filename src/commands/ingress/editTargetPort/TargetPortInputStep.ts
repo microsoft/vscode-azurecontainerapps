@@ -40,7 +40,7 @@ export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {
     private validateInput(val: string): string | undefined {
         const num = Number(val);
         if (isNaN(num)) {
-            return localize('enterNumber', 'Enter a valid port number')
+            return localize('enterNumber', 'Enter a valid port number');
         } else if (!Number.isInteger(num)) {
             return localize('integersOnly', 'Enter only whole integer values');
         } else if (num < 1 || num > 65535) {

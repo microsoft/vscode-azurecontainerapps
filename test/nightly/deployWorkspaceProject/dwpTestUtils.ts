@@ -7,7 +7,8 @@ import { type ContainerApp, type EnvironmentVar } from "@azure/arm-appcontainers
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import { createContainerAppsAPIClient, type DeployWorkspaceProjectResults } from "../../../extension.bundle";
+import { DeployWorkspaceProjectResults } from "../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults";
+import { createContainerAppsAPIClient } from "../../../src/utils/azureClients";
 import { type StringOrRegExpProps } from "../../typeUtils";
 import { subscriptionContext } from "../global.nightly.test";
 import { type PostTestAssertion } from "./scenarios/DeployWorkspaceProjectTestScenario";
@@ -50,6 +51,6 @@ export namespace dwpTestUtils {
             assert.strictEqual(containerApp.configuration?.ingress?.targetPort, expectedContainerAppSettings.targetPort, errMsg ? errMsg + ' (container app target port)' : undefined);
             assert.strictEqual(containerApp.template?.containers?.[0].image, `${resources.registryLoginServer}/${resources.imageName}`, errMsg ? errMsg + ' (container image name)' : undefined);
             assert.deepStrictEqual(containerApp.template?.containers?.[0].env, expectedContainerAppSettings.env, errMsg ? errMsg + ' (container environment variables)' : undefined);
-        }
+        };
     }
 }

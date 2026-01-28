@@ -13,7 +13,7 @@ export namespace treeUtils {
     }
 
     function getResourcesUri(): Uri {
-        return Uri.joinPath(ext.context.extensionUri, 'resources')
+        return Uri.joinPath(ext.context.extensionUri, 'resources');
     }
 
     export function sortById(a: TreeElementBase, b: TreeElementBase): number {

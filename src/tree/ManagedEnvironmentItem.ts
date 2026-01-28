@@ -18,16 +18,16 @@ type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 export class ManagedEnvironmentItem implements TreeElementBase {
     static readonly contextValue: string = 'managedEnvironmentItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentItem.contextValue);
-
+    viewProperties: ViewPropertiesModel;
     id: string;
+
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
         this.id = managedEnvironment.id;
-    }
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.managedEnvironment,
-        label: this.managedEnvironment.name,
+        this.viewProperties = {
+            data: managedEnvironment,
+            label: managedEnvironment.name,
+        };
     }
 
     private get contextValue(): string {
@@ -67,7 +67,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
             iconPath: treeUtils.getIconPath('managed-environment'),
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     static isManagedEnvironmentItem(item: unknown): item is ManagedEnvironmentItem {
@@ -106,5 +106,5 @@ function createAzureResourceModel<T extends Resource>(resource: T): T & Resource
         name: nonNullProp(resource, 'name'),
         resourceGroup: getResourceGroupFromId(id),
         ...resource,
-    }
+    };
 }

@@ -34,7 +34,7 @@ export class EnableIngressStep<T extends IngressBaseContext> extends AzureWizard
             ...containerApp.configuration?.ingress ?? {},
             targetPort: context.targetPort,
             external: context.enableExternal,
-        }
+        };
 
         context.containerApp = await updateContainerApp(context, context.subscription, containerApp, { configuration: { ingress: ingress as Ingress | undefined } });
     }

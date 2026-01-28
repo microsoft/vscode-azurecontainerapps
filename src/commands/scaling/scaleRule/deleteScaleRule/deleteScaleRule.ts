@@ -29,10 +29,10 @@ export async function deleteScaleRule(context: IActionContext, node?: ScaleRuleI
         subscription,
         scaleRule: item.scaleRule,
         isDraftCommand: true,
-    }
+    };
 
     const confirmMessage = localize('confirmMessage', 'Are you sure you want to delete this scale rule?');
-    const wizard: AzureWizard<ScaleRuleContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ScaleRuleContext>(wizardContext, {
         title: localize('deleteScaleRuleTitle', 'Delete scale rule from "{0}" (draft)', parentResource.name),
         promptSteps: [
             new DeleteConfirmationStep(confirmMessage),

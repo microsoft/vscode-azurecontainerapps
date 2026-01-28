@@ -57,7 +57,7 @@ export class ImageSourceListStep extends AzureWizardPromptStep<ImageSourceContex
 
         const isVirtualWorkspace = !!workspace.workspaceFolders?.length && workspace.workspaceFolders.every(f => f.uri.scheme !== 'file');
         if (env.uiKind === UIKind.Desktop && !isVirtualWorkspace) {
-            picks.push({ label: imageSourceLabels[2], detail: imageSourceDetails[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true })
+            picks.push({ label: imageSourceLabels[2], detail: imageSourceDetails[2], data: ImageSource.RemoteAcrBuild, suppressPersistence: true });
         }
 
         context.imageSource = (await context.ui.showQuickPick(picks, { placeHolder })).data;

@@ -12,7 +12,7 @@ export function getLoginServer(context: ContainerRegistryImageSourceContext): st
         case acrDomain:
             return nonNullValue(context.registry?.loginServer);
         case dockerHubDomain:
-            return `${dockerHubDomain}/${context.dockerHubNamespace}`
+            return `${dockerHubDomain}/${context.dockerHubNamespace}`;
         default:
             return context.registryDomain || '';
     }

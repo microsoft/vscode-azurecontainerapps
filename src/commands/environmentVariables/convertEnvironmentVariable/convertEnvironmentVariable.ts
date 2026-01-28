@@ -52,7 +52,7 @@ export async function convertEnvironmentVariable(context: IActionContext, node?:
     // Create an output reference to pass to the draft step so we can edit after prompting
     const editDraftStepOutputs: EnvironmentVariableEditOutputs = {};
 
-    const wizard: AzureWizard<EnvironmentVariableConvertContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<EnvironmentVariableConvertContext>(wizardContext, {
         title: localize('convertEnvironmentVariableTitle', 'Convert environment variable "{0}" to use a secret (draft)', wizardContext.environmentVariable.name),
         promptSteps: [
             new SecretNameStep(),

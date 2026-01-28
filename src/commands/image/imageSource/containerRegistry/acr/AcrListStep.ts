@@ -76,7 +76,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
             name: localize('registry', 'Registry'),
             value: this.pickLabel ?? '',
             contextPropertyName: 'registry'
-        }
+        };
     }
 
     private async getPicks(context: T): Promise<IAzureQuickPickItem<Registry | typeof noMatchingResources | undefined>[]> {

@@ -14,6 +14,6 @@ export class DockerfileValidateStep extends FilePathsVerifyStep {
     fileType = 'dockerfile';
 
     public shouldExecute(context: WorkspaceDeploymentConfigurationContext): boolean {
-        return !context.dockerfilePath
+        return !context.dockerfilePath;
     }
 }

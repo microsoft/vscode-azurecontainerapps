@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
-import { settingUtils } from "../../../extension.bundle";
+import { settingUtils } from "../../../src/utils/settingUtils";
 import { longRunningTestsEnabled } from '../../global.test';
 import { generateParallelTests, type DwpParallelTestScenario } from "./parallelTests";
 

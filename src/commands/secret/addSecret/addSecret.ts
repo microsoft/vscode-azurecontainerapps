@@ -34,7 +34,7 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
         new SecretCreateStep()
     ];
 
-    const wizard: AzureWizard<ISecretContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ISecretContext>(wizardContext, {
         title: localize('addSecret', 'Add secret to container app "{0}"', containerApp.name),
         promptSteps,
         executeSteps,

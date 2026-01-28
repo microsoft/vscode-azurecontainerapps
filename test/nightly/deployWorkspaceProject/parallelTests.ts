@@ -3,11 +3,16 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { runWithTestActionContext } from "@microsoft/vscode-azext-dev";
+import { AzExtFsExtra, IParsedError, parseError, runWithTestActionContext } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
 import * as path from "path";
 import { workspace, type Uri, type WorkspaceFolder } from "vscode";
-import { AzExtFsExtra, deployWorkspaceProject, dwpSettingUtilsV2, ext, parseError, settingUtils, type DeploymentConfigurationSettings, type DeployWorkspaceProjectResults, type IParsedError } from "../../../extension.bundle";
+import { deployWorkspaceProject } from "../../../src/commands/deployWorkspaceProject/deployWorkspaceProject";
+import { DeployWorkspaceProjectResults } from "../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults";
+import { DeploymentConfigurationSettings } from "../../../src/commands/deployWorkspaceProject/settings/DeployWorkspaceProjectSettingsV2";
+import { dwpSettingUtilsV2 } from "../../../src/commands/deployWorkspaceProject/settings/dwpSettingUtilsV2";
+import { ext } from "../../../src/extensionVariables";
+import { settingUtils } from "../../../src/utils/settingUtils";
 import { assertStringPropsMatch, getWorkspaceFolderUri } from "../../testUtils";
 import { resourceGroupsToDelete } from "../global.nightly.test";
 import { type DeployWorkspaceProjectTestScenario } from "./scenarios/DeployWorkspaceProjectTestScenario";
@@ -84,7 +89,7 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
         }
 
         await cleanWorkspaceFolderSettings(rootFolder);
-    }
+    };
 }
 
 async function cleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {

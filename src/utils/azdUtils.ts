@@ -12,7 +12,6 @@ const azureYamlFile: string = 'azure.yaml';
 
 export function isAzdExtensionInstalled(): boolean {
     const azdExtension: Extension<unknown> | undefined = extensions.getExtension(azdExtensionId);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !!azdExtension?.packageJSON?.version;
 }
 

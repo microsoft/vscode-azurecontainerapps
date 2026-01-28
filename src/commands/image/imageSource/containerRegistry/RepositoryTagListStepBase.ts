@@ -17,7 +17,7 @@ export abstract class RepositoryTagListStepBase extends AzureWizardPromptStep<Co
 
         do {
             result = await context.ui.showQuickPick(this.getPicks(context, picksCache), { placeHolder });
-        } while (result === loadMoreQp)
+        } while (result === loadMoreQp);
 
         context.tag = result.label;
     }

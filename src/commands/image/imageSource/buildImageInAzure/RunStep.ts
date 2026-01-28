@@ -5,7 +5,7 @@
 
 import { type DockerBuildRequest as AcrDockerBuildRequest } from "@azure/arm-containerregistry";
 import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardExecuteStep, activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, createContextValue, type ExecuteActivityOutput } from "@microsoft/vscode-azext-utils";
-import * as retry from 'p-retry';
+import retry from 'p-retry';
 import * as path from 'path';
 import { TreeItemCollapsibleState, type Progress } from "vscode";
 import { ext } from "../../../../extensionVariables";

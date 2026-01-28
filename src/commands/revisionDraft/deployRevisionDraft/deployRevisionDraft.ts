@@ -58,7 +58,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         new DeployRevisionDraftStep()
     ];
 
-    const wizard: AzureWizard<DeployRevisionDraftContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<DeployRevisionDraftContext>(wizardContext, {
         title: localize('deploy', 'Deploy changes to container app "{0}"', containerApp.name),
         promptSteps,
         executeSteps,

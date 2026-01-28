@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
 import { nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from 'deep-eql';
+import deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
@@ -58,7 +58,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
             iconPath: treeUtils.getIconPath('containers'),
             contextValue: this.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
-        }
+        };
     }
 
     private get contextValue(): string {
@@ -82,9 +82,9 @@ export class ContainersItem extends RevisionDraftDescendantBase {
     viewProperties: ViewPropertiesModel = {
         label: 'Containers',
         getData: async () => {
-            return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers)
+            return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers);
         }
-    }
+    };
 
     static isContainersItem(item: unknown): item is ContainersItem {
         return typeof item === 'object' &&

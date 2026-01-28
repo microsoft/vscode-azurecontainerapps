@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
 import { type Uri } from "vscode";
-import { AzExtFsExtra, PortRange, tryGetDockerfileExposePorts } from "../../extension.bundle";
+import { PortRange, tryGetDockerfileExposePorts } from "../../src/commands/ingress/tryGetDockerfileExposePorts";
 import { getWorkspaceFolderUri } from "../testUtils";
 
 /**
