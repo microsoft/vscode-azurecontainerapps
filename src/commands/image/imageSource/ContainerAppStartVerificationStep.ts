@@ -33,7 +33,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
     private _revisionStatus?: string;
 
     protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Container app "{0}" deployment started with revision status of "{1}".', context.containerApp?.name, this._revisionStatus);
-    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify container app "{0}" deployment started successfully.', context.containerApp?.name);
+    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify if container app "{0}" started successfully after deployment.', context.containerApp?.name);
     protected getTreeItemLabel = (): string => this._revisionStatus ?
         localize('verifyContainerAppLabel', 'Container app deployed with revision status of "{0}"', this._revisionStatus) :
         localize('verifyContainerAppLabelDefault', 'Verify container app deployment started successfully');
@@ -49,13 +49,13 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
         }
 
         // Estimated time (n=1): 20s
-        const revisionStatus: string | undefined = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
-        context.telemetry.properties.revisionStatus = revisionStatus;
+        this._revisionStatus = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
+        context.telemetry.properties.revisionStatus = this._revisionStatus;
 
         const parsedResource = parseAzureResourceId(revisionId);
-        if (!revisionStatus) {
+        if (!this._revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
-        } else if (!/running/i.test(revisionStatus)) { // There are some revision statuses that are not properly captured on the SDK enum, so match using a more flexible RegExp instead
+        } else if (!/running/i.test(this._revisionStatus)) { // There are some revision statuses that are not properly captured on the SDK enum, so match using a more flexible RegExp instead
             try {
                 context.telemetry.properties.targetCloud = context.environment.name;
 
@@ -74,7 +74,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
                 'unexpectedRevisionState',
                 'The container app revision "{0}" successfully deployed but has an unexpected status of "{1}". Please verify the deployment manually. If it failed at runtime and you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to verify if there were any startup issues.',
                 parsedResource.resourceName,
-                revisionStatus,
+                this._revisionStatus,
             ));
         }
     }
