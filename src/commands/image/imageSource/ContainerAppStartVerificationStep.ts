@@ -30,10 +30,13 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
     public stepName: string = 'containerAppStartVerificationStep';
 
     private _client: ContainerAppsAPIClient;
+    private _revisionStatus?: string;
 
-    protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Verified container app "{0}" deployment started successfully.', context.containerApp?.name);
+    protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Container app "{0}" deployment started with revision status of "{1}".', context.containerApp?.name, this._revisionStatus);
     protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify container app "{0}" deployment started successfully.', context.containerApp?.name);
-    protected getTreeItemLabel = (): string => localize('verifyContainerAppLabel', 'Verify container app deployment started successfully');
+    protected getTreeItemLabel = (): string => this._revisionStatus ?
+        localize('verifyContainerAppLabel', 'Container app deployed with revision status of "{0}"', this._revisionStatus) :
+        localize('verifyContainerAppLabelDefault', 'Verify container app deployment started successfully');
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('verifyingContainerApp', 'Verifying container app startup status...') });
