@@ -69,7 +69,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'The deployed container app revision "{0}" has failed to start.  The revision status is "{1}". If you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to check for any known startup issues.',
+                'The container app revision "{0}" successfully deployed but has an unexpected status of "{1}". Please verify the deployment manually. If it failed to start and you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to verify if there were any known startup issues.',
                 parsedResource.resourceName,
                 revisionStatus,
             ));
