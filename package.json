@@ -819,7 +819,7 @@
     },
     "devDependencies": {
         "@azure/ms-rest-azure-env": "^2.0.0",
-        "@microsoft/vscode-azext-eng": "1.0.0-alpha.10",
+        "@microsoft/vscode-azext-eng": "1.0.0-alpha.11",
         "@types/deep-eql": "^4.0.0",
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",
