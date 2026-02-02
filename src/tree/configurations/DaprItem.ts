@@ -20,14 +20,15 @@ const daprAppProtocolItemContextValue: string = 'daprAppProtocolItem';
 export class DaprEnabledItem implements TreeElementBase {
     static readonly contextValue: string = 'daprEnabledItem';
     static readonly contextValueRegExp: RegExp = new RegExp(DaprEnabledItem.contextValue);
+    readonly viewProperties: ViewPropertiesModel;
+    id: string;
 
-    constructor(private readonly containerApp: ContainerAppModel, private readonly dapr: Dapr) { }
-
-    id: string = `${this.containerApp.id}/DaprEnabled`;
-
-    viewProperties: ViewPropertiesModel = {
-        data: this.dapr,
-        label: localize('daprProperties', '{0} Dapr', this.containerApp.name),
+    constructor(containerApp: ContainerAppModel, private readonly dapr: Dapr) {
+        this.id = `${containerApp.id}/DaprEnabled`;
+        this.viewProperties = {
+            data: this.dapr,
+            label: localize('daprProperties', '{0} Dapr', containerApp.name),
+        };
     }
 
     getTreeItem(): TreeItem {
@@ -41,7 +42,7 @@ export class DaprEnabledItem implements TreeElementBase {
                 dark: treeUtils.getIconPath('dapr-dark'),
             },
             collapsibleState: TreeItemCollapsibleState.Collapsed,
-        }
+        };
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
@@ -62,7 +63,7 @@ export class DaprEnabledItem implements TreeElementBase {
                 description: 'app port',
                 iconPath: new ThemeIcon('dash'),
                 label: String(this.dapr.appPort),
-            }))
+            }));
         }
 
         if (this.dapr.appProtocol) {

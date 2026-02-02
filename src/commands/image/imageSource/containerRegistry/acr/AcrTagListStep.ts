@@ -6,9 +6,8 @@
 import { type ArtifactManifestProperties } from "@azure/container-registry";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
-import * as dayjs from 'dayjs';
-// eslint-disable-next-line import/no-internal-modules
-import * as relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { type QuickPickItem } from "vscode";
 import { createContainerRegistryClient } from "../../../../../utils/azureClients";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
@@ -24,9 +23,9 @@ export class AcrTagListStep extends RepositoryTagListStepBase {
         const manifests: ArtifactManifestProperties[] = await uiUtils.listAllIterator(repoClient.listManifestProperties());
 
         const tags = manifests.reduce((allTags: { tag: string, date: Date }[], m) => {
-            const tagsWithDates = m.tags.map(t => { return { tag: t, date: m.lastUpdatedOn } });
+            const tagsWithDates = m.tags.map(t => { return { tag: t, date: m.lastUpdatedOn }; });
             return allTags.concat(tagsWithDates);
         }, []);
-        return tags.map((t) => { { return { label: t.tag, description: dayjs(t.date).fromNow() } } });
+        return tags.map((t) => { { return { label: t.tag, description: dayjs(t.date).fromNow() }; } });
     }
 }

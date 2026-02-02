@@ -5,7 +5,7 @@
 
 import { type Container, type Ingress } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, type AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
-import * as retry from "p-retry";
+import retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";

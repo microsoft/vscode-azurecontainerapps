@@ -7,7 +7,7 @@ import { type ContainerAppsAPIClient, type KnownActiveRevisionsMode, type Revisi
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, type IActionContext, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
