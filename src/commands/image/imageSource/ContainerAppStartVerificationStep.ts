@@ -30,10 +30,13 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
     public stepName: string = 'containerAppStartVerificationStep';
 
     private _client: ContainerAppsAPIClient;
+    private _revisionStatus?: string;
 
-    protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Verified container app "{0}" deployment started successfully.', context.containerApp?.name);
-    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify container app "{0}" deployment started successfully.', context.containerApp?.name);
-    protected getTreeItemLabel = (): string => localize('verifyContainerAppLabel', 'Verify container app deployment started successfully');
+    protected getOutputLogSuccess = (context: T): string => localize('verifyContainerAppSuccess', 'Container app "{0}" deployment started with revision status of "{1}".', context.containerApp?.name, this._revisionStatus);
+    protected getOutputLogFail = (context: T): string => localize('updateContainerAppFail', 'Failed to verify if container app "{0}" started successfully after deployment.', context.containerApp?.name);
+    protected getTreeItemLabel = (): string => this._revisionStatus ?
+        localize('verifyContainerAppLabel', 'Container app deployed with revision status of "{0}"', this._revisionStatus) :
+        localize('verifyContainerAppLabelDefault', 'Verify container app deployment started successfully');
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         progress.report({ message: localize('verifyingContainerApp', 'Verifying container app startup status...') });
@@ -46,12 +49,13 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
         }
 
         // Estimated time (n=1): 20s
-        const revisionStatus: string | undefined = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
+        this._revisionStatus = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
+        context.telemetry.properties.revisionStatus = this._revisionStatus;
 
         const parsedResource = parseAzureResourceId(revisionId);
-        if (!revisionStatus) {
+        if (!this._revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
-        } else if (revisionStatus !== KnownRevisionRunningState.Running) {
+        } else if (!/running/i.test(this._revisionStatus)) { // There are some revision statuses that are not properly captured on the SDK enum, so match using a more flexible RegExp instead
             try {
                 context.telemetry.properties.targetCloud = context.environment.name;
 
@@ -68,8 +72,9 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
             throw new Error(localize(
                 'unexpectedRevisionState',
-                'The deployed container app revision "{0}" has failed to start. If you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to check for any known startup issues.',
+                'The container app revision "{0}" successfully deployed but has an unexpected status of "{1}". Please verify the deployment manually. If it failed at runtime and you are updating an existing container app, the service will try to revert to the previous working revision. Inspect the application logs to verify if there were any startup issues.',
                 parsedResource.resourceName,
+                this._revisionStatus,
             ));
         }
     }

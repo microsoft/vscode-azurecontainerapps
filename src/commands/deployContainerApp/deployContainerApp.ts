@@ -91,7 +91,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             subscription: subscription,
             //at the moment we are only supporting re run with container registry image source
             imageSource: ImageSource.ContainerRegistry
-        }
+        };
     }
 
     const confirmationViewTitle: string = localize('summary', 'Summary');
@@ -112,7 +112,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
         new OpenConfirmationViewStep(confirmationViewTitle, confirmationViewTabTitle, confirmationViewDescription, title, () => wizard.confirmationViewProperties)
     );
 
-    const wizard: AzureWizard<ContainerAppDeployContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ContainerAppDeployContext>(wizardContext, {
         title: title,
         promptSteps: promptSteps,
         executeSteps: [

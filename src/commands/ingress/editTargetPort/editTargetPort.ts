@@ -35,7 +35,7 @@ export async function editTargetPort(context: IActionContext, node?: IngressEnab
         new TargetPortUpdateStep()
     ];
 
-    const wizard: AzureWizard<IngressContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IngressContext>(wizardContext, {
         title,
         promptSteps,
         executeSteps,

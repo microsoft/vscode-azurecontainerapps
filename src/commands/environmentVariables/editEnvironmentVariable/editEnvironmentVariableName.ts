@@ -45,7 +45,7 @@ export async function editEnvironmentVariableName(context: IActionContext, node?
     // Create an output reference to pass to the draft step so we can edit after prompting
     const editDraftStepOutputs: EnvironmentVariableEditOutputs = {};
 
-    const wizard: AzureWizard<EnvironmentVariableEditContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<EnvironmentVariableEditContext>(wizardContext, {
         title: localize('editNameTitle', 'Edit environment variable name in "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvironmentVariableNameStep(item),

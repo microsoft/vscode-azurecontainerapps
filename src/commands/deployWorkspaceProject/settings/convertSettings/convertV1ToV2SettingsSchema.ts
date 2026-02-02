@@ -12,7 +12,7 @@ import { ConvertSettingsStep } from "./ConvertSettingsStep";
 export async function convertV1ToV2SettingsSchema(context: IContainerAppContext): Promise<ConvertSettingsContext> {
     const wizardContext: ConvertSettingsContext = context;
 
-    const wizard: AzureWizard<ConvertSettingsContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<ConvertSettingsContext>(wizardContext, {
         promptSteps: [new RootFolderStep()],
         executeSteps: [new ConvertSettingsStep()]
     });

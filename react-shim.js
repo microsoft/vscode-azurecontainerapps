@@ -3,4 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export const fse = {};
+import React from 'react';
+export default React;
+export { React };
+

@@ -26,7 +26,7 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
     public constructor(title: string, tabTitle: string, description: string, commandName: string, viewConfig: () => ConfirmationViewProperty[]) {
         super();
         this.title = title;
-        this.tabTitle = tabTitle
+        this.tabTitle = tabTitle;
         this.description = description;
         this.viewConfig = viewConfig;
         this.commandName = commandName;
@@ -69,14 +69,14 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                 } finally {
                     const greatButton: vscode.MessageItem = {
                         title: 'Great',
-                    }
+                    };
                     const notHelpfulButton: vscode.MessageItem = {
                         title: 'Unhelpful'
-                    }
+                    };
                     const surveyButton: vscode.MessageItem = {
                         title: localize('provideFeedback', 'Provide Feedback'),
 
-                    }
+                    };
                     const buttons = [greatButton, notHelpfulButton, surveyButton];
 
                     if (SharedState.editingPicks && SharedState.itemsToClear === 0 && SharedState.copilotClicked) {
@@ -132,7 +132,7 @@ export async function confirmationViewButtonActions(context: IActionContext, res
         } else if (result.title === 'Unhelpful') {
             context.telemetry.properties.confirmationViewNotHelpful = 'true';
         } else if (result.title === 'Provide Feedback') {
-            const confirmationViewSurveyLink = 'https://aka.ms/AAx0tw1'
+            const confirmationViewSurveyLink = 'https://aka.ms/AAx0tw1';
             await openUrl(confirmationViewSurveyLink);
         }
     }
