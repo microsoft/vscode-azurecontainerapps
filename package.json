@@ -824,7 +824,6 @@
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",
         "@types/semver": "^7.3.8",
-        "@types/tar": "^6.1.11",
         "@types/uuid": "^10.0.0",
         "@types/vscode": "^1.104.0",
         "@types/vscode-webview": "^1.57.5",
