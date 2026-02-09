@@ -5,7 +5,7 @@
 
 import { type RegistryCredentials, type Secret } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStepWithActivityOutput, nonNullProp } from "@microsoft/vscode-azext-utils";
-import * as deepEqual from "deep-eql";
+import deepEqual from "deep-eql";
 import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../tree/ContainerAppItem";

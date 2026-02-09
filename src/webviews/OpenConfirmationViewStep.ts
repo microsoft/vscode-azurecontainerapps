@@ -3,8 +3,9 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzExtUserInput, AzureWizardPromptStep, CopilotUserInput, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
+import { type WebviewPanel } from 'vscode';
 import { localize } from "../utils/localize";
 import { ConfirmationViewController } from "./ConfirmationViewController";
 
@@ -13,6 +14,7 @@ export const SharedState = {
     cancelled: true,
     copilotClicked: false,
     editingPicks: false,
+    currentPanel: undefined as WebviewPanel | undefined,
 };
 
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
@@ -25,13 +27,18 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
     public constructor(title: string, tabTitle: string, description: string, commandName: string, viewConfig: () => ConfirmationViewProperty[]) {
         super();
         this.title = title;
-        this.tabTitle = tabTitle
+        this.tabTitle = tabTitle;
         this.description = description;
         this.viewConfig = viewConfig;
         this.commandName = commandName;
     }
 
     public async prompt(context: T): Promise<void> {
+        if (SharedState.currentPanel) {
+            SharedState.currentPanel.dispose();
+            SharedState.currentPanel = undefined;
+        }
+
         const confirmationView = new ConfirmationViewController({
             title: this.title,
             tabTitle: this.tabTitle,
@@ -48,6 +55,9 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                     if (SharedState.itemsToClear > 0) {
                         context.telemetry.properties.editingPicks = 'true';
                         SharedState.editingPicks = true;
+                        if (context.ui instanceof CopilotUserInput) {
+                            context.ui = new AzExtUserInput(context);
+                        }
                         throw new GoBackError(SharedState.itemsToClear);
                     }
 
@@ -60,14 +70,14 @@ export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWiz
                 } finally {
                     const greatButton: vscode.MessageItem = {
                         title: 'Great',
-                    }
+                    };
                     const notHelpfulButton: vscode.MessageItem = {
                         title: 'Unhelpful'
-                    }
+                    };
                     const surveyButton: vscode.MessageItem = {
                         title: localize('provideFeedback', 'Provide Feedback'),
 
-                    }
+                    };
                     const buttons = [greatButton, notHelpfulButton, surveyButton];
 
                     if (SharedState.editingPicks && SharedState.itemsToClear === 0 && SharedState.copilotClicked) {
@@ -123,7 +133,7 @@ export async function confirmationViewButtonActions(context: IActionContext, res
         } else if (result.title === 'Unhelpful') {
             context.telemetry.properties.confirmationViewNotHelpful = 'true';
         } else if (result.title === 'Provide Feedback') {
-            const confirmationViewSurveyLink = 'https://aka.ms/AAx0tw1'
+            const confirmationViewSurveyLink = 'https://aka.ms/AAx0tw1';
             await openUrl(confirmationViewSurveyLink);
         }
     }

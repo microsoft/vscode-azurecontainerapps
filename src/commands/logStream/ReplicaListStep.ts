@@ -5,7 +5,7 @@
 
 import { type ContainerAppsAPIClient, type Replica } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, createSubscriptionContext, nonNullProp, nonNullValue, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { type IStreamLogsContext } from "./IStreamLogsContext";

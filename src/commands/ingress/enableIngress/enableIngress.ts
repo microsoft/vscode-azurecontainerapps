@@ -30,7 +30,7 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
         new IngressPromptStep()
     ];
 
-    const wizard: AzureWizard<IngressBaseContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IngressBaseContext>(wizardContext, {
         title,
         promptSteps,
         showLoadingPrompt: true

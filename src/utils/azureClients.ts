@@ -9,7 +9,7 @@ import { type ContainerRegistryManagementClient, type Registry } from '@azure/ar
 import { type OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { LogsQueryClient } from "@azure/monitor-query";
-import { createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
+import { AzExtClientType, createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, type IActionContext, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 
@@ -21,7 +21,7 @@ export async function createContainerAppsClient(context: IActionContext, subscri
 }
 
 export async function createContainerAppsAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
-    return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient)
+    return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient as unknown as AzExtClientType<ContainerAppsAPIClient>);
 }
 
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {

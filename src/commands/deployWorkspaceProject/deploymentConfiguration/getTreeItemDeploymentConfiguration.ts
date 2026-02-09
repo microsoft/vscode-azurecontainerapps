@@ -18,7 +18,7 @@ type TreeItemDeploymentConfigurationContext = IContainerAppContext & DeploymentC
 export async function getTreeItemDeploymentConfiguration(context: IContainerAppContext, item: ContainerAppItem): Promise<DeploymentConfiguration> {
     const wizardContext: TreeItemDeploymentConfigurationContext = context;
 
-    const wizard: AzureWizard<TreeItemDeploymentConfigurationContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<TreeItemDeploymentConfigurationContext>(wizardContext, {
         promptSteps: [new RootFolderStep()],
     });
 

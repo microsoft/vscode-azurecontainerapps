@@ -81,6 +81,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         const skipLabel: string | undefined = showHasExistingData ? localize('useExisting', 'Use existing configuration') : undefined;
 
         return await selectWorkspaceFile(context, placeHolder,
+            /* eslint-disable-next-line @typescript-eslint/naming-convention */
             { filters: { 'env file': ['env', 'env.*'] }, allowSkip: !this.options?.suppressSkipPick, skipLabel }, allEnvFilesGlobPattern);
     }
 
@@ -101,7 +102,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
 
         const data: string = await AzExtFsExtra.readFile(envPath);
         const envData: DotenvParseOutput = parse(data);
-        return Object.keys(envData).map(name => { return { name, value: envData[name] } });
+        return Object.keys(envData).map(name => { return { name, value: envData[name] }; });
     }
 
     public static async workspaceHasEnvFile(rootFolder?: WorkspaceFolder): Promise<boolean> {

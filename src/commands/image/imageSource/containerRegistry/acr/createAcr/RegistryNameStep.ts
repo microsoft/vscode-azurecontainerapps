@@ -73,7 +73,7 @@ export class RegistryNameStep extends AzureWizardPromptStep<CreateAcrContext> {
 
             generatedName = generateRelatedName(name);
             registryAvailable = !!(await RegistryNameStep.isNameAvailable(context, generatedName)).nameAvailable;
-        } while (!registryAvailable)
+        } while (!registryAvailable);
 
         if (!registryAvailable) {
             throw new Error(localize('failedToGenerateName', 'Failed to generate an available container registry name.'));

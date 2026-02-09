@@ -20,17 +20,16 @@ const configuration: string = localize('configuration', 'Configuration');
 export class ConfigurationItem implements ContainerAppsItem {
     static readonly contextValue: string = 'configurationItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ConfigurationItem.contextValue);
-
+    readonly viewProperties: ViewPropertiesModel;
     id: string;
 
     // this is called "Settings" in the Portal
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
         this.id = `${containerApp.id}/Configurations`;
-    }
-
-    viewProperties: ViewPropertiesModel = {
-        data: nonNullProp(this.containerApp, 'configuration'),
-        label: `${this.containerApp.name} ${configuration}`,
+        this.viewProperties = {
+            data: nonNullProp(containerApp, 'configuration'),
+            label: `${containerApp.name} ${configuration}`,
+        };
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
@@ -52,6 +51,6 @@ export class ConfigurationItem implements ContainerAppsItem {
             iconPath: new ThemeIcon('gear'),
             contextValue: ConfigurationItem.contextValue,
             collapsibleState: TreeItemCollapsibleState.Collapsed
-        }
+        };
     }
 }

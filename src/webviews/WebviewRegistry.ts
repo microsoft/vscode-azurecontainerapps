@@ -4,7 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ConfirmationView } from "./ConfirmationView";
+import { LoadingView } from "./LoadingView";
 
 export const WebviewRegistry = {
-    confirmationView: ConfirmationView
+    confirmationView: ConfirmationView,
+    loadingView: LoadingView
 } as const;

@@ -42,7 +42,7 @@ export async function addEnvironmentVariable(context: IActionContext, node?: Env
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
-    const wizard: AzureWizard<EnvironmentVariableAddContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<EnvironmentVariableAddContext>(wizardContext, {
         title: localize('updateEnvironmentVariables', 'Add environment variable to "{0}" (draft)', parentResource.name),
         promptSteps: [
             new EnvironmentVariableNameStep(item),
