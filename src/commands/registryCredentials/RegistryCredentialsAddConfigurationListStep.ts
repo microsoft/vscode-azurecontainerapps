@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
@@ -74,6 +75,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         this.pickLabel = pick.label;
         context.newRegistryCredentialType = pick.data;
+        updateLoadingViewProgress(localize('connectionMethod', 'Connection method'));
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {

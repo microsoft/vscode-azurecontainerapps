@@ -6,6 +6,7 @@
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
@@ -62,6 +63,8 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         if (this._setEnvironmentVariableOption) {
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
+
+        updateLoadingViewProgress(localize('environmentVariables', 'Environment Variables'));
     }
 
     public shouldPrompt(context: T): boolean {
