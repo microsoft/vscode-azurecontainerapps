@@ -59,10 +59,10 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
 
     public confirmationViewProperty(context: T): ConfirmationViewProperty {
         return {
-            name: "Container Apps Environment",
+            name: localize('containerAppEnvironment', 'Container Apps Environment'),
             value: nonNullValueAndProp(context.managedEnvironment, 'name'),
             contextPropertyName: 'managedEnvironment',
-        }
+        };
     }
 
     private async getPicks(context: T): Promise<ManagedEnvironmentPick[]> {

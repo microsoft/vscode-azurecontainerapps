@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, CopilotUserInput, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ImageSource } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -95,12 +95,12 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
     }
 
     const confirmationViewTitle: string = localize('summary', 'Summary');
-    let confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input proceeding the changed input will need to change as well');
+    let confirmationViewDescription: string = localize('viewDescription', 'Please select an input you would like to change. Note: Any input preceding the changed input will need to change as well');
     let confirmationViewTabTitle: string = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App');
     let title: string = localize('deployContainerAppTitle', 'Deploy image to container app');
 
     if (isCopilotUserInput(wizardContext)) {
-        confirmationViewDescription = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input proceeding the modified input will need to change as well');
+        confirmationViewDescription = localize('viewDescription', 'Please review AI generated inputs and select any you would like to modify. Note: Any input preceding the modified input will need to change as well');
         confirmationViewTabTitle = localize('deployContainerAppTabTitle', 'Summary - Deploy Image to Container App using Copilot');
         title = localize('deployContainerAppWithCopilotTitle', 'Deploy image to container app using copilot');
     }
@@ -139,5 +139,5 @@ async function promptImageSource(context: ISubscriptionActionContext): Promise<I
 }
 
 function isCopilotUserInput(context: IActionContext): boolean {
-    return context.ui.constructor.name === 'CopilotUserInput';
+    return context.ui instanceof CopilotUserInput;
 }
