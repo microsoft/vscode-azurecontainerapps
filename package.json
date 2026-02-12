@@ -849,7 +849,7 @@
         "@microsoft/vscode-azext-azureutils": "^3.5.2",
         "@microsoft/vscode-azext-github": "^1.0.7",
         "@microsoft/vscode-azext-utils": "^4.0.2",
-        "@microsoft/vscode-azureresources-api": "^2.6.3",
+        "@microsoft/vscode-azureresources-api": "^3.1.0",
         "@vscode/codicons": "0.0.38",
         "dayjs": "^1.11.3",
         "deep-eql": "^4.1.3",
