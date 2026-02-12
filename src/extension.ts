@@ -51,7 +51,6 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
         const registerBranchResources = async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
             await callWithTelemetryAndErrorHandling('hostApiRequestSucceeded', (actionContext: IActionContext) => {
-                console.log('authHandshakeDuration: ' + (Date.now() - authHandshakeStartMs) / 1000);
                 actionContext.telemetry.properties.authHandshakeDuration = String((Date.now() - authHandshakeStartMs) / 1000);
                 actionContext.telemetry.properties.authHandshakeId = authHandshakeId;
                 actionContext.telemetry.properties.isActivationEvent = 'true';
