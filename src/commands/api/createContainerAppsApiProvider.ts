@@ -27,7 +27,7 @@ export function createContainerAppsApiProvider(registerBranchResources: AzureRes
     };
 
     const containerAppsApi: api.AzureContainerAppsExtensionApi = {
-        apiVersion: '1.0.0',
+        apiVersion: '1.0.1',
         deployImage: deployImageApi,
         deployWorkspaceProject: deployWorkspaceProjectApi,
     };
