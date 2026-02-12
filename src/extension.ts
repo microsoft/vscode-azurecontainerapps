@@ -9,6 +9,7 @@ import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-az
 import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github';
 import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
 import { AzExtResourceType, type AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import { v4 as uuid } from 'uuid';
 import * as vscode from 'vscode';
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
 import { registerCommands } from './commands/registerCommands';
@@ -44,8 +45,15 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
 
+        const authHandshakeId = uuid();
+        const authHandshakeStartMs = Date.now();
+        activateContext.telemetry.properties.authHandshakeId = authHandshakeId;
+
         const registerBranchResources = async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
             await callWithTelemetryAndErrorHandling('hostApiRequestSucceeded', (actionContext: IActionContext) => {
+                actionContext.telemetry.properties.authHandshakeDurationMs = String(Date.now() - authHandshakeStartMs);
+                actionContext.telemetry.properties.authHandshakeId = authHandshakeId;
+                actionContext.telemetry.properties.isActivationEvent = 'true';
                 actionContext.errorHandling.rethrow = true;
 
                 const [rgApiV2] = azureResourcesApis;
