@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.0.1
+## 1.1.0
 ### Changed
 * [[992](https://github.com/microsoft/vscode-azurecontainerapps/pull/992)] Update extension to use the new Azure Resources auth API (v4)
 
