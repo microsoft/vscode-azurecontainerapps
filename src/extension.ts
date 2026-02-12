@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
     registerAzureUtilsExtensionVariables(ext);
     registerGitHubExtensionVariables(ext);
 
-    return await callWithTelemetryAndErrorHandling('activate', async (activateContext: IActionContext) => {
+    return await callWithTelemetryAndErrorHandling('containerApps.activate', async (activateContext: IActionContext) => {
         activateContext.errorHandling.rethrow = true;
         activateContext.telemetry.properties.isActivationEvent = 'true';
         activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
