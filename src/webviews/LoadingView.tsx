@@ -40,16 +40,23 @@ export const LoadingView = () => {
         <div className='loadingView'>
             <div className='loadingContent'>
                 <Spinner labelPosition="below" label="Generating Copilot responses..." />
-                {progressItems.length > 0 && (
-                    <div className='progressList'>
-                        {progressItems.map((item, index) => (
+                <div className='progressList'>
+                    {progressItems.length > 0 ? (
+                        progressItems.map((item, index) => (
                             <div key={index} className='progressItem'>
                                 <span className='checkmark codicon codicon-check'></span>
                                 <span className='itemName'>{item.name}</span>
                             </div>
-                        ))}
-                    </div>
-                )}
+                        ))
+                    ) : (
+                        Array.from({ length: 3 }).map((_, index) => (
+                            <div key={index} className='progressItemPlaceholder'>
+                                <span className='placeholderIcon' />
+                                <span className='placeholderText' style={{ width: `${60 + index * 15}%` }} />
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

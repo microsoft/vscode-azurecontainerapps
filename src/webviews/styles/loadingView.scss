@@ -6,9 +6,10 @@
 .loadingView {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     height: 100vh;
     padding: 20px;
+    padding-top: 15vh;
 
     .loadingContent {
         display: flex;
@@ -22,13 +23,39 @@
     .progressList {
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 8px;
-        width: 100%;
         margin-top: 16px;
         padding: 16px;
-        background-color: var(--vscode-editor-background);
         border-radius: 4px;
-        border: 1px solid var(--vscode-widget-border);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .progressItemPlaceholder {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        width: 100%;
+
+        .placeholderIcon {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: var(--vscode-descriptionForeground, rgba(128, 128, 128, 0.3));
+            opacity: 0.3;
+            flex-shrink: 0;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        .placeholderText {
+            height: 12px;
+            border-radius: 4px;
+            background-color: var(--vscode-descriptionForeground, rgba(128, 128, 128, 0.3));
+            opacity: 0.3;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
     }
 
     .progressItem {
@@ -68,5 +95,17 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.6;
     }
 }
