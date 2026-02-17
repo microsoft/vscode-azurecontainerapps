@@ -18,6 +18,7 @@ export function createContainerAppsApiProvider(registerBranchResources: AzureRes
         onDidReceiveAzureResourcesApis: registerBranchResources,
         onApiRequestError: async (error: AzureResourcesApiRequestError) => {
             await callWithTelemetryAndErrorHandling('hostApiRequestFailed', (actionContext: IActionContext) => {
+                actionContext.telemetry.properties.isActivationEvent = 'true';
                 actionContext.telemetry.properties.hostApiRequestErrorCode = error.code;
                 actionContext.telemetry.properties.hostApiRequestError = maskUserInfo(error.message, []);
                 ext.outputChannel.appendLog(localize('apiRequestError', 'Error: Failed to connect extension to the Azure Resources host.'));
