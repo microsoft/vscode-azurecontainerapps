@@ -4,12 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, CopilotUserInput, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { ImageSource } from "../../constants";
+import { acrDomain, ImageSource, SupportedRegistries } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { isAzdExtensionInstalled } from "../../utils/azdUtils";
+import { isCopilotUserInput } from "../../utils/copilotUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
@@ -42,16 +43,24 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
     }
 
-    // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
-    const imageSource: ImageSource = await promptImageSource(subscriptionActionContext);
-    if (imageSource === ImageSource.RemoteAcrBuild) {
-        return await deployWorkspaceProject(context, item);
-    }
 
-    return await deployContainerAppInternal(subscriptionActionContext, item, imageSource);
+    let imageSource: ImageSource | undefined;
+    let registryDomain: SupportedRegistries | undefined;
+    if (isCopilotUserInput(context)) {
+        // If the input is coming from Copilot we want to default to Container Registry as we don't support 'deployWorkspaceProject' flow with Copilot at the moment
+        imageSource = ImageSource.ContainerRegistry;
+        registryDomain = acrDomain;
+    } else {
+        // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
+        imageSource = await promptImageSource(subscriptionActionContext);
+        if (imageSource === ImageSource.RemoteAcrBuild) {
+            return await deployWorkspaceProject(context, item);
+        }
+    }
+    return await deployContainerAppInternal(subscriptionActionContext, item, imageSource, registryDomain);
 }
 
-export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem, imageSource?: ImageSource, subscription?: AzureSubscription): Promise<void> {
+export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem, imageSource?: ImageSource, registryDomain?: SupportedRegistries, subscription?: AzureSubscription): Promise<void> {
     if (isCopilotUserInput(context)) {
         await openLoadingViewPanel(context);
     }
@@ -74,6 +83,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             containerApp: node.containerApp,
             managedEnvironment: await getManagedEnvironmentFromContainerApp(context, node.containerApp),
             imageSource,
+            registryDomain,
             activityAttributes: {
                 ...CommandAttributes.DeployContainerAppContainerRegistry,
                 subscription: node.subscription,
@@ -136,8 +146,4 @@ async function promptImageSource(context: ISubscriptionActionContext): Promise<I
     await imageSourceStep.prompt(promptContext);
 
     return nonNullProp(promptContext, 'imageSource');
-}
-
-function isCopilotUserInput(context: IActionContext): boolean {
-    return context.ui instanceof CopilotUserInput;
 }

@@ -848,7 +848,7 @@
         "@fluentui/react-icons": "^2.0.265",
         "@microsoft/vscode-azext-azureutils": "^3.5.2",
         "@microsoft/vscode-azext-github": "^1.0.7",
-        "@microsoft/vscode-azext-utils": "^4.0.2",
+        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-4.0.4.tgz",
         "@microsoft/vscode-azureresources-api": "^2.6.3",
         "@vscode/codicons": "0.0.38",
         "dayjs": "^1.11.3",
