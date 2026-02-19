@@ -64,7 +64,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
 
-        updateLoadingViewProgress(localize('environmentVariables', 'Environment Variables'));
+        updateLoadingViewProgress(localize('environmentVariables', 'Resolved environment variables'));
     }
 
     public shouldPrompt(context: T): boolean {

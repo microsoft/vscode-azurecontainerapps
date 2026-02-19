@@ -21,7 +21,7 @@ export class IngressVisibilityStep<T extends IngressContext> extends AzureWizard
             { placeHolder: localize('ingressVisibility', 'Select the HTTP traffic that the endpoint will accept.') })).data;
         context.telemetry.properties.enableExternal = context.enableExternal ? 'true' : 'false';
 
-        updateLoadingViewProgress(localize('ingressVisibility', 'Ingress Visibility'));
+        updateLoadingViewProgress(localize('ingressVisibility', 'Set ingress visibility'));
     }
 
     public shouldPrompt(context: T): boolean {

@@ -20,7 +20,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
         context.enableIngress = (await context.ui.showQuickPick([{ label: localize('enable', 'Enable'), data: true }, { label: localize('disable', 'Disable'), data: false }],
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
 
-        updateLoadingViewProgress(localize('ingress', 'Ingress'));
+        updateLoadingViewProgress(localize('ingress', 'Configured ingress settings'));
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {

@@ -37,7 +37,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         this.pickLabel = pick?.label;
         context.registryDomain = pick.data;
 
-        updateLoadingViewProgress(localize('containerRegistryDomain', 'Container Registry Domain'));
+        updateLoadingViewProgress(localize('containerRegistryDomain', 'Selected container registry provider'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

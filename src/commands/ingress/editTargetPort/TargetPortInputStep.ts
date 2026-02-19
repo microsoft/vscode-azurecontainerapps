@@ -19,7 +19,7 @@ export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {
 
         context.telemetry.properties.targetPort = String(context.targetPort);
 
-        updateLoadingViewProgress(localize('targetPort', 'Target Port'));
+        updateLoadingViewProgress(localize('targetPort', 'Configured target port'));
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {

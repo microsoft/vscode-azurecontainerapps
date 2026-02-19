@@ -27,7 +27,7 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
 
         context.repositoryName = result.label;
 
-        updateLoadingViewProgress(localize('repository', 'Repository'));
+        updateLoadingViewProgress(localize('repository', 'Selected repository'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

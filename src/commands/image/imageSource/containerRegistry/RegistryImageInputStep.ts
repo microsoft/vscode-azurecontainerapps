@@ -35,7 +35,7 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegis
 
         context.valuesToMask.push(context.image);
 
-        updateLoadingViewProgress(localize('registryImage', 'Registry Image'));
+        updateLoadingViewProgress(localize('registryImage', 'Resolved registry image'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

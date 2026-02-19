@@ -23,7 +23,7 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
 
         context.valuesToMask.push(context.dockerHubNamespace);
 
-        updateLoadingViewProgress(localize('dockerHubNamespace', 'Docker Hub Namespace'));
+        updateLoadingViewProgress(localize('dockerHubNamespace', 'Resolved Docker Hub namespace'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

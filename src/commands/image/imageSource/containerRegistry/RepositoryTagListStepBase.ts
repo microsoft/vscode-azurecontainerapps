@@ -22,7 +22,7 @@ export abstract class RepositoryTagListStepBase extends AzureWizardPromptStep<Co
 
         context.tag = result.label;
 
-        updateLoadingViewProgress(localize('selectedTag', 'Selected tag'));
+        updateLoadingViewProgress(localize('selectedTag', 'Selected image tag'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

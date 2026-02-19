@@ -75,7 +75,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         this.pickLabel = pick.label;
         context.newRegistryCredentialType = pick.data;
-        updateLoadingViewProgress(localize('connectionMethod', 'Connection method'));
+        updateLoadingViewProgress(localize('connectionMethod', 'Selected connection method'));
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {

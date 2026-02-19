@@ -67,7 +67,7 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
         this.pickLabel = pick.label;
         context.registry = result;
 
-        updateLoadingViewProgress(localize('registry', 'Registry'));
+        updateLoadingViewProgress(localize('registry', 'Selected container registry'));
     }
 
     public shouldPrompt(context: T): boolean {
