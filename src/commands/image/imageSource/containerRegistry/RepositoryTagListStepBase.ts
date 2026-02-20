@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { type QuickPickItem } from "vscode";
 import { loadMoreQp, type QuickPicksCache } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
@@ -20,6 +21,8 @@ export abstract class RepositoryTagListStepBase extends AzureWizardPromptStep<Co
         } while (result === loadMoreQp);
 
         context.tag = result.label;
+
+        updateLoadingViewProgress(localize('selectedTag', 'Selected image tag'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

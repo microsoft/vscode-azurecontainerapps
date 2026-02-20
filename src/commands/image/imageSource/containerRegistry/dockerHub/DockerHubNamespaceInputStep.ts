@@ -5,6 +5,7 @@
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { dockerHubDomain } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
@@ -21,6 +22,8 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
         })).toLowerCase();
 
         context.valuesToMask.push(context.dockerHubNamespace);
+
+        updateLoadingViewProgress(localize('dockerHubNamespace', 'Resolved Docker Hub namespace'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

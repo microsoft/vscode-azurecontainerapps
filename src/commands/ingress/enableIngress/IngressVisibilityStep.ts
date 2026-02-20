@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { IngressConstants } from "../../../constants";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../IngressContext";
@@ -19,6 +20,8 @@ export class IngressVisibilityStep<T extends IngressContext> extends AzureWizard
             { label: localize('internal', 'Internal'), description: IngressConstants.internalDesc, data: false }],
             { placeHolder: localize('ingressVisibility', 'Select the HTTP traffic that the endpoint will accept.') })).data;
         context.telemetry.properties.enableExternal = context.enableExternal ? 'true' : 'false';
+
+        updateLoadingViewProgress(localize('ingressVisibility', 'Set ingress visibility'));
     }
 
     public shouldPrompt(context: T): boolean {

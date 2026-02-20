@@ -6,6 +6,7 @@
 import { type ContainerRegistryManagementClient, type Registry } from "@azure/arm-containerregistry";
 import { LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { noMatchingResources, noMatchingResourcesQp, registryProvider, registryResourceType } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
@@ -65,6 +66,8 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
         this.pickLabel = pick.label;
         context.registry = result;
+
+        updateLoadingViewProgress(localize('registry', 'Selected container registry'));
     }
 
     public shouldPrompt(context: T): boolean {
