@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { nonNullValue, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { UserCancelledError, nonNullValue, type IActionContext, type IAzureQuickPickItem, type IAzureQuickPickOptions } from "@microsoft/vscode-azext-utils";
 import { basename, relative } from "path";
 import { RelativePattern, Uri, workspace, type OpenDialogOptions, type WorkspaceFolder } from "vscode";
 import { browseItem, dockerfileGlobPattern, envFileGlobPattern } from "../constants";
@@ -80,11 +80,38 @@ export async function selectWorkspaceFile(
         });
     }
 
-    const input: string | undefined = (await context.ui.showQuickPick(quickPicks, { placeHolder })).data;
-    if (input === skipForNow) {
-        return undefined;
-    } else {
-        return input || (await context.ui.showOpenDialog(options))[0].fsPath;
+    return await quickPickWithBrowse(context, quickPicks, { placeHolder }, options, skipForNow);
+}
+
+/**
+ * Shows a quick pick that includes a "Browse..." option. If the user selects "Browse..." and then
+ * cancels the native file picker dialog, re-prompts the quick pick instead of exiting the wizard.
+ *
+ * @param skipValue - If the selected item's data matches this value, returns `undefined` (used for "Skip for now")
+ */
+export async function quickPickWithBrowse(
+    context: IActionContext,
+    picks: IAzureQuickPickItem<string | undefined>[],
+    quickPickOptions: IAzureQuickPickOptions,
+    openDialogOptions: OpenDialogOptions,
+    skipValue?: string,
+): Promise<string | undefined> {
+    while (true) {
+        const input: string | undefined = (await context.ui.showQuickPick(picks, quickPickOptions)).data;
+        if (input === skipValue) {
+            return undefined;
+        } else if (input) {
+            return input;
+        } else {
+            try {
+                return (await context.ui.showOpenDialog(openDialogOptions))[0].fsPath;
+            } catch (e) {
+                if (e instanceof UserCancelledError) {
+                    continue;
+                }
+                throw e;
+            }
+        }
     }
 }
 

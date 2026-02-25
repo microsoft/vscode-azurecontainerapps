@@ -3,7 +3,6 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AbortController } from '@azure/abort-controller';
 import { type ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 import { type ServiceClient } from '@azure/core-client';
 import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
