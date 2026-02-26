@@ -5,14 +5,11 @@
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
-import { ProgressLocation, window, type Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
-import { type ContainerAppItem } from "../../tree/ContainerAppItem";
-import { type RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
+import { RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
-import { localize } from "../../utils/localize";
-import { pickContainerAppWithoutPrompt } from "../../utils/pickItem/pickContainerApp";
-import { pickRevisionDraft } from "../../utils/pickItem/pickRevision";
 import { getParentResourceFromItem } from "../../utils/revisionDraftUtils";
 import { deployRevisionDraft } from "./deployRevisionDraft/deployRevisionDraft";
 import { type RevisionDraftContext } from "./RevisionDraftContext";
@@ -52,23 +49,20 @@ export abstract class RevisionDraftUpdateBaseStep<T extends RevisionDraftContext
     }
 
     /**
-     * A deployment quick pick to show after executing a revision draft command
-     * (Used to be an informational deployment pop-up)
+     * Directly deploys the revision draft without picking from the tree.
+     * Constructs items from `baseItem` data to avoid a race condition where
+     * concurrent tree access (from `revealResource`) can cancel the subscription
+     * loading and cause "No subscriptions found" errors.
      */
-    private async deployRevisionDraftTemplate(context: T): Promise<void> {
-        const item: ContainerAppItem | RevisionDraftItem = await window.withProgress({
-            location: ProgressLocation.Notification,
-            cancellable: false,
-            title: localize('preparingForDeployment', 'Preparing for deployment...')
-        }, async () => {
-            const containerAppItem: ContainerAppItem = await pickContainerAppWithoutPrompt(context, this.baseItem.containerApp, { showLoadingPrompt: false });
+    private async deployRevisionDraftTemplate(_context: T): Promise<void> {
+        let item: ContainerAppItem | RevisionDraftItem;
 
-            if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
-                return containerAppItem;
-            } else {
-                return await pickRevisionDraft(context, containerAppItem, { showLoadingPrompt: false });
-            }
-        });
+        if (this.baseItem.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
+            item = new ContainerAppItem(this.baseItem.subscription, this.baseItem.containerApp);
+        } else {
+            const revisionsItem = this.baseItem as RevisionsItemModel;
+            item = new RevisionDraftItem(this.baseItem.subscription, this.baseItem.containerApp, revisionsItem.revision);
+        }
 
         // Pass the deploy command a fresh context
         await callWithTelemetryAndErrorHandling('revisionDraftUpdateBaseStep.deploy',
