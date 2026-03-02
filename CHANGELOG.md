@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.11.0 - 2026-03-02
+### Added
+* [[965](https://github.com/microsoft/vscode-azurecontainerapps/pull/965)] Deploy to Container App with Copilot command
+### Fixed
+* [[1037](https://github.com/microsoft/vscode-azurecontainerapps/pull/1037)] Return to quick pick when cancelling file picker dialog
+* [[1023](https://github.com/microsoft/vscode-azurecontainerapps/pull/1023)] Use a more flexible revision status check when verifying container app deployments
+
 ## 0.10.0 - 2025-11-18
 ### Changed
 * [[961](https://github.com/microsoft/vscode-azurecontainerapps/pull/961)] Add distinct deployment types `Basic` vs `Advanced` for workspace project deployments
