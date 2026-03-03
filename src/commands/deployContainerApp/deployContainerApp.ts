@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, createSubscriptionContext, isCopilotUserInput, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzExtUserInput, AzureWizard, createSubscriptionContext, isCopilotUserInput, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { acrDomain, ImageSource, SupportedRegistries } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -59,10 +59,20 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
     return await deployContainerAppInternal(subscriptionActionContext, item, imageSource, registryDomain);
 }
 
-export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem, imageSource?: ImageSource, registryDomain?: SupportedRegistries, subscription?: AzureSubscription): Promise<void> {
+export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem, imageSource?: ImageSource, registryDomain?: SupportedRegistries): Promise<void> {
     if (isCopilotUserInput(context)) {
         await openLoadingViewPanel(context);
     }
+
+    const subscription = (context as { azureSubscription?: AzureSubscription }).azureSubscription;
+
+    if (!subscription && !node) {
+        // If subscription does not exist revert to regular deploy flow
+        context.ui = new AzExtUserInput(context);
+        await deployContainerApp(context);
+        return;
+    }
+
 
     const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = [];
 
@@ -98,7 +108,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             ...context,
             ...await createActivityContext({ withChildren: true }),
             subscription: subscription,
-            //at the moment we are only supporting re run with container registry image source
+            // at the moment we are only supporting re run with container registry image source
             imageSource: ImageSource.ContainerRegistry
         };
     }

@@ -11,6 +11,6 @@ import { deployContainerApp } from "../deployContainerApp/deployContainerApp";
 
 export async function deployWithCopilot(context: IActionContext, node: ContainerAppItem): Promise<void> {
     context.ui = new CopilotUserInput(vscode, JSON.stringify(node.viewProperties), () => SharedState.currentPanel);
-    markAsCopilotUserInput(context);
+    markAsCopilotUserInput(context, JSON.stringify(node.viewProperties), () => SharedState.currentPanel);
     await deployContainerApp(context, node);
 }
