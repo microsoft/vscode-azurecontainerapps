@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.11.0 - 2026-03-02
+## 0.11.0 - 2026-03-03
 ### Added
 * [[965](https://github.com/microsoft/vscode-azurecontainerapps/pull/965)] Deploy to Container App with Copilot command
 ### Fixed
