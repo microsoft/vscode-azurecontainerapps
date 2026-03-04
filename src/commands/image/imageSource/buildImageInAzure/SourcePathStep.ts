@@ -7,20 +7,28 @@ import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vsco
 import * as path from 'path';
 import { browseItem } from '../../../../constants';
 import { localize } from '../../../../utils/localize';
+import { quickPickWithBrowse } from '../../../../utils/workspaceUtils';
 import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureImageSourceContext';
 
 export class SourcePathStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const srcPath: string | undefined = (await context.ui.showQuickPick(this.getPicks(context), {
-            placeHolder: localize('sourceDirectoryPick', 'Choose your source code directory'),
-            suppressPersistence: true
-        })).data;
+        const srcPath = await quickPickWithBrowse(
+            context,
+            this.getPicks(context),
+            {
+                placeHolder: localize('sourceDirectoryPick', 'Choose your source code directory'),
+                suppressPersistence: true,
+            },
+            {
+                defaultUri: context.rootFolder?.uri,
+                canSelectFiles: false,
+                canSelectFolders: true,
+            },
+        );
 
-        context.srcPath = srcPath ?? (await context.ui.showOpenDialog({
-            defaultUri: context.rootFolder?.uri,
-            canSelectFiles: false,
-            canSelectFolders: true
-        }))[0].fsPath;
+        if (srcPath) {
+            context.srcPath = srcPath;
+        }
     }
 
     public async configureBeforePrompt(context: BuildImageInAzureImageSourceContext): Promise<void> {

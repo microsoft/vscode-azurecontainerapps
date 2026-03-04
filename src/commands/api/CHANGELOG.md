@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.0
+### Changed
+* [[992](https://github.com/microsoft/vscode-azurecontainerapps/pull/992)] Update extension to use the new Azure Resources auth API (v4)
+
 ## 1.0.0
 ### Changed
 * [[961](https://github.com/microsoft/vscode-azurecontainerapps/pull/961)] Add a new resource location parameter to the `deployWorkspaceProjectApi` definition.  If no location is provided, try to infer location via other provided resources.
