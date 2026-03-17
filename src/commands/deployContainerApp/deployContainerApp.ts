@@ -42,27 +42,24 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
     }
 
-
-    let imageSource: ImageSource | undefined;
-    let registryDomain: SupportedRegistries | undefined;
-    if (isCopilotUserInput(context)) {
-        // If the input is coming from Copilot we want to default to Container Registry as we don't support 'deployWorkspaceProject' flow with Copilot at the moment
-        imageSource = ImageSource.ContainerRegistry;
-        registryDomain = acrDomain;
-    } else {
-        // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
-        imageSource = await promptImageSource(subscriptionActionContext);
-        if (imageSource === ImageSource.RemoteAcrBuild) {
-            return await deployWorkspaceProject(context, item);
-        }
-    }
-    await deployContainerAppInternal(subscriptionActionContext, item, imageSource, registryDomain);
+    await deployContainerAppInternal(subscriptionActionContext, item);
 }
 
-export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem, imageSource?: ImageSource, registryDomain?: SupportedRegistries): Promise<void> {
+export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem): Promise<DeployWorkspaceProjectResults | void> {
     try {
+        let imageSource: ImageSource | undefined;
+        let registryDomain: SupportedRegistries | undefined;
         if (isCopilotUserInput(context)) {
+            // If the input is coming from Copilot we want to default to Container Registry as we don't support 'deployWorkspaceProject' flow with Copilot at the moment
+            imageSource = ImageSource.ContainerRegistry;
+            registryDomain = acrDomain;
             await openLoadingViewPanel(context);
+        } else {
+            // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
+            imageSource = await promptImageSource(context);
+            if (imageSource === ImageSource.RemoteAcrBuild) {
+                return await deployWorkspaceProject(context, node);
+            }
         }
 
         const subscription = (context as { azureSubscription?: AzureSubscription }).azureSubscription;
@@ -74,13 +71,8 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             return;
         }
 
-        const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = [];
-
-        if (!node) {
-            promptSteps.push(new ManagedEnvironmentListStep(), new ContainerAppListStep());
-        }
-
         let wizardContext: ContainerAppDeployContext = {} as ContainerAppDeployContext;
+        const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = [];
 
         if (node && imageSource) {
             // If this command gets re run we only want the internal portion of the command to run, so we set the callbackid
@@ -104,6 +96,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             }
             wizardContext.telemetry.properties.revisionMode = node.containerApp.revisionsMode;
         } else if (subscription) {
+            promptSteps.push(new ManagedEnvironmentListStep(), new ContainerAppListStep());
             wizardContext = {
                 ...context,
                 ...await createActivityContext({ withChildren: true }),
@@ -147,6 +140,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
         wizardContext.activityAttributes ??= {};
         wizardContext.activityAttributes.azureResource = wizardContext.containerApp;
     } catch (_error) {
+        // Because rg does not have web views we need to catch the error here and dispose of the web view if it exists
         if (SharedState.currentPanel?.viewType === 'react-webview-loadingView') {
             SharedState.currentPanel.dispose();
             SharedState.currentPanel = undefined;
