@@ -63,9 +63,10 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
         }
 
         const subscription = (context as { azureSubscription?: AzureSubscription }).azureSubscription;
+        const runFromCopilot: boolean = !!subscription;
 
-        if (!subscription && !node) {
-            // If subscription does not exist revert to regular deploy flow
+        if (!runFromCopilot && !node) {
+            // If the subscription does not exist revert to regular deploy flow
             context.ui = new AzExtUserInput(context);
             await deployContainerApp(context);
             return;
@@ -74,7 +75,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
         let wizardContext: ContainerAppDeployContext = {} as ContainerAppDeployContext;
         const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = [];
 
-        if (node && imageSource) {
+        if (node) {
             // If this command gets re run we only want the internal portion of the command to run, so we set the callbackid
             context.callbackId = 'containerApps.deployContainerAppInternal';
             wizardContext = {
@@ -95,12 +96,12 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
                 wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
             }
             wizardContext.telemetry.properties.revisionMode = node.containerApp.revisionsMode;
-        } else if (subscription) {
+        } else if (runFromCopilot) {
             promptSteps.push(new ManagedEnvironmentListStep(), new ContainerAppListStep());
             wizardContext = {
                 ...context,
                 ...await createActivityContext({ withChildren: true }),
-                subscription: subscription,
+                subscription: nonNullProp(context as { azureSubscription?: AzureSubscription }, 'azureSubscription'),
                 // at the moment we are only supporting re run with container registry image source
                 imageSource: ImageSource.ContainerRegistry
             };
