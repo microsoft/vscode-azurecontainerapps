@@ -4,10 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, type IActionContext } from '@microsoft/vscode-azext-utils';
+import * as vscode from 'vscode';
 import { type EnvironmentVariableItem } from '../tree/containers/EnvironmentVariableItem';
 import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
 import { deployWithCopilot } from './copilot/deployWithCopilot';
+import { createProjectWithCopilot } from './copilot/createProjectWithCopilot';
+import { openPlanView, openPlanViewFromWorkspace } from './copilot/openPlanView';
+import { openLocalPlanView, openLocalPlanViewFromWorkspace } from './copilot/openLocalPlanView';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -140,4 +144,31 @@ export function registerCommands(): void {
     registerCommand('containerApps.walkthrough.azureSignIn', azureSignInWalkthrough);
     registerCommand('containerApps.walkthrough.deployWorkspaceProject', deployWorkspaceProjectWalkthrough);
     registerCommand('containerApps.walkthrough.cleanUpResources', cleanUpResourcesWalkthrough);
+
+    // copilot
+    registerCommand('containerApps.createProjectWithCopilot', createProjectWithCopilot);
+    registerCommand('containerApps.openPlanView', (_context: IActionContext, uri: vscode.Uri) => openPlanView(uri));
+    registerCommand('containerApps.openPlanViewFromWorkspace', () => openPlanViewFromWorkspace());
+    registerCommand('containerApps.openLocalPlanView', (_context: IActionContext, uri: vscode.Uri) => openLocalPlanView(uri));
+    registerCommand('containerApps.openLocalPlanViewFromWorkspace', () => openLocalPlanViewFromWorkspace());
+    registerCommand('containerApps.showProjectCreation', async () => {
+        await vscode.commands.executeCommand('azureProjectCreation.show');
+    });
+    registerCommand('containerApps.startLocalDev', async () => {
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+            mode: 'agent',
+            query: '/local-dev',
+        });
+    });
+    registerCommand('containerApps.testScaffoldComplete', async () => {
+        const mcpServerId = 'ms-azuretools.vscode-azurecontainerapps/Azure Container Apps Assistant';
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+            mode: 'agent',
+        });
+        await vscode.commands.executeCommand('workbench.mcp.startServer', mcpServerId, { waitForLiveTools: true });
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+            mode: 'agent',
+            query: 'My project has been scaffolded. Show me the next steps.',
+        });
+    });
 }

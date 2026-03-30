@@ -7,7 +7,7 @@ import { AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-az
 import * as vscode from 'vscode';
 import { localize } from "../utils/localize";
 import { LoadingViewController } from "./LoadingViewController";
-import { SharedState } from "./OpenConfirmationViewStep";
+import { SharedState } from "./SharedState";
 
 export class OpenLoadingViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
     public async prompt(): Promise<void> {

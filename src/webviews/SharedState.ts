@@ -3,13 +3,12 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-export const enum ConfirmationViewCommands {
-    Confirm = 'confirm',
-    Cancel = 'cancel',
-    Copilot = 'copilot',
-}
+import { type WebviewPanel } from 'vscode';
 
-export const enum CreateProjectViewCommands {
-    Plan = 'plan',
-    Build = 'build',
-}
+export const SharedState = {
+    itemsToClear: 0,
+    cancelled: true,
+    copilotClicked: false,
+    editingPicks: false,
+    currentPanel: undefined as WebviewPanel | undefined,
+};

@@ -4,9 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ConfirmationView } from "./ConfirmationView";
+import { CreateProjectView } from "./CreateProjectView";
 import { LoadingView } from "./LoadingView";
+import { LocalPlanView } from "./LocalPlanView";
+import { PlanView } from "./PlanView";
 
 export const WebviewRegistry = {
     confirmationView: ConfirmationView,
-    loadingView: LoadingView
+    createProjectView: CreateProjectView,
+    loadingView: LoadingView,
+    localPlanView: LocalPlanView,
+    planView: PlanView,
 } as const;

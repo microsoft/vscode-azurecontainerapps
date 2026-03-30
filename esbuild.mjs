@@ -4,4 +4,30 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { autoEsbuildOrWatch, autoSelectEsbuildConfig } from '@microsoft/vscode-azext-eng/esbuild';
-await autoEsbuildOrWatch(autoSelectEsbuildConfig());
+
+const configs = autoSelectEsbuildConfig();
+
+// Add the MCP server as an additional entry point
+configs.extensionConfig = {
+    ...configs.extensionConfig,
+    entryPoints: [
+        ...configs.extensionConfig.entryPoints,
+        {
+            in: './src/chat/mcpApps/scaffoldCompleteServer.ts',
+            out: 'scaffoldCompleteServer',
+        },
+    ],
+    plugins: [
+        ...configs.extensionConfig.plugins,
+        (await import('esbuild-plugin-copy')).copy({
+            assets: [
+                {
+                    from: './src/chat/mcpApps/scaffoldCompleteApp.html',
+                    to: '.',
+                },
+            ],
+        }),
+    ],
+};
+
+await autoEsbuildOrWatch(configs);

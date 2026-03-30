@@ -29,6 +29,7 @@
         "node_modules",
         ".vscode-test",
         "gulpfile.ts",
-        "test/testProject"
+        "test/testProject",
+        "src/chat/mcpApps/scaffoldCompleteServer.ts"
     ]
 }

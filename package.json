@@ -30,6 +30,12 @@
     "activationEvents": [],
     "main": "./main.js",
     "contributes": {
+        "mcpServerDefinitionProviders": [
+            {
+                "id": "containerAppsMcp",
+                "label": "Azure Container Apps Assistant"
+            }
+        ],
         "x-azResources": {
             "azure": {
                 "branches": [
@@ -97,6 +103,36 @@
             {
                 "command": "containerApps.deployContainerAppWithCopilot",
                 "title": "%containerApps.deployContainerAppWithCopilot%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.createProjectWithCopilot",
+                "title": "%containerApps.createProjectWithCopilot%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.openPlanViewFromWorkspace",
+                "title": "Open Project Plan View",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.openLocalPlanViewFromWorkspace",
+                "title": "Open Local Dev Plan View",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.showProjectCreation",
+                "title": "Show Azure Project Creation View",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.startLocalDev",
+                "title": "Set Up Local Development",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.testScaffoldComplete",
+                "title": "Test: Simulate Scaffold Complete",
                 "category": "Azure Container Apps"
             },
             {
@@ -850,6 +886,8 @@
         "@microsoft/vscode-azext-github": "^2.0.1",
         "@microsoft/vscode-azext-utils": "^4.0.4",
         "@microsoft/vscode-azureresources-api": "^3.1.0",
+        "@modelcontextprotocol/ext-apps": "^1.3.1",
+        "@modelcontextprotocol/sdk": "^1.28.0",
         "@vscode/codicons": "0.0.38",
         "dayjs": "^1.11.3",
         "deep-eql": "^4.1.3",
@@ -865,7 +903,8 @@
         "tar": "^7.5.8",
         "uuid": "^10.0.0",
         "vscode-nls": "^4.1.1",
-        "vscode-uri": "^3.0.2"
+        "vscode-uri": "^3.0.2",
+        "zod": "^4.3.6"
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"

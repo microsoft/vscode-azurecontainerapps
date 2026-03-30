@@ -5,17 +5,9 @@
 
 import { AzExtUserInput, AzureWizardPromptStep, CopilotUserInput, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as vscode from 'vscode';
-import { type WebviewPanel } from 'vscode';
 import { localize } from "../utils/localize";
 import { ConfirmationViewController } from "./ConfirmationViewController";
-
-export const SharedState = {
-    itemsToClear: 0,
-    cancelled: true,
-    copilotClicked: false,
-    editingPicks: false,
-    currentPanel: undefined as WebviewPanel | undefined,
-};
+import { SharedState } from "./SharedState";
 
 export class OpenConfirmationViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
     private readonly viewConfig: () => ConfirmationViewProperty[];
