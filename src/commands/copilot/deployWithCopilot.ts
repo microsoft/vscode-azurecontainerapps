@@ -3,7 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { CopilotUserInput, type IActionContext, markAsCopilotUserInput } from "@microsoft/vscode-azext-utils";
+import { type IActionContext, } from "@microsoft/vscode-azext-utils";
+import { CopilotUserInput, markAsCopilotUserInput } from "@microsoft/vscode-azext-utils/copilot";
 import * as vscode from 'vscode';
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { SharedState } from "../../webviews/OpenConfirmationViewStep";

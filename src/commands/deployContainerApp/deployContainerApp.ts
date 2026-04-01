@@ -42,24 +42,23 @@ export async function deployContainerApp(context: IActionContext, node?: Contain
         throw new Error(localize('multipleContainersNotSupported', 'The container app cannot be updated using "{0}" while having more than one active container. Navigate to the specific container instance and execute "{1}" instead.', deployContainerAppCommandName, editContainerCommandName));
     }
 
-    await deployContainerAppInternal(subscriptionActionContext, item);
+    // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
+    const imageSource = await promptImageSource(subscriptionActionContext);
+    if (imageSource === ImageSource.RemoteAcrBuild) {
+        return await deployWorkspaceProject(subscriptionActionContext, item);
+    }
+
+    await deployContainerAppInternal(subscriptionActionContext, item, imageSource);
 }
 
-export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem): Promise<DeployWorkspaceProjectResults | void> {
+export async function deployContainerAppInternal(context: ISubscriptionActionContext, node?: ContainerAppItem, imageSource?: ImageSource): Promise<DeployWorkspaceProjectResults | void> {
     try {
-        let imageSource: ImageSource | undefined;
         let registryDomain: SupportedRegistries | undefined;
         if (isCopilotUserInput(context)) {
             // If the input is coming from Copilot we want to default to Container Registry as we don't support 'deployWorkspaceProject' flow with Copilot at the moment
             imageSource = ImageSource.ContainerRegistry;
             registryDomain = acrDomain;
             await openLoadingViewPanel(context);
-        } else {
-            // Prompt for image source before initializing the wizard in case we need to redirect the call to 'deployWorkspaceProject' instead
-            imageSource = await promptImageSource(context);
-            if (imageSource === ImageSource.RemoteAcrBuild) {
-                return await deployWorkspaceProject(context, node);
-            }
         }
 
         const subscription = (context as { azureSubscription?: AzureSubscription }).azureSubscription;

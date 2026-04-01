@@ -847,6 +847,7 @@
         "@azure/storage-blob": "^12.4.1",
         "@fluentui/react-components": "^9.56.2",
         "@fluentui/react-icons": "^2.0.265",
+        "@github/copilot-sdk": "*",
         "@microsoft/vscode-azext-azureutils": "^4.0.1",
         "@microsoft/vscode-azext-github": "^2.0.1",
         "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-4.0.6.tgz",
