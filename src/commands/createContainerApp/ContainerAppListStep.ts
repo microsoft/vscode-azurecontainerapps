@@ -64,7 +64,7 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
             name: localize('containerApp', 'Container App'),
             value: nonNullValueAndProp(context.containerApp, 'name'),
             contextPropertyName: 'containerApp',
-        }
+        };
     }
 
     private async getPicks(context: T): Promise<IAzureQuickPickItem<ContainerApp>[]> {
