@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Button } from '@fluentui/react-components';
-import { CheckmarkRegular, DismissRegular } from '@fluentui/react-icons';
+import { CheckmarkRegular } from '@fluentui/react-icons';
 import mermaid from 'mermaid';
 import { useState, useEffect, useContext, useCallback, useRef, type JSX } from 'react';
 import './styles/deploymentPlanView.scss';
@@ -19,8 +19,10 @@ export interface DeploymentPlanData {
     status: string;
     mode: string;
     subscription: string;
+    availableSubscriptions?: string[];
     location: string;
     locationCode: string;
+    availableLocations?: { name: string; code: string }[];
     mermaidDiagram: string;
     workspaceScan: DeploymentPlanTable;
     decisions: DeploymentPlanTable;
@@ -47,8 +49,26 @@ export const DeploymentPlanView = (): JSX.Element => {
         vscodeApi.postMessage({ command: 'approve', data: plan });
     }, [vscodeApi, plan]);
 
-    const handleReject = useCallback(() => {
-        vscodeApi.postMessage({ command: 'reject' });
+    const handleSubscriptionChange = useCallback((value: string) => {
+        setPlan(prev => {
+            if (!prev) return prev;
+            return { ...prev, subscription: value };
+        });
+        vscodeApi.postMessage({ command: 'subscriptionChanged', data: value });
+    }, [vscodeApi]);
+
+    const handleLocationChange = useCallback((value: string) => {
+        setPlan(prev => {
+            if (!prev) return prev;
+            const locations = prev.availableLocations ?? [];
+            const selected = locations.find(l => l.code === value);
+            return {
+                ...prev,
+                location: selected?.name ?? value,
+                locationCode: value,
+            };
+        });
+        vscodeApi.postMessage({ command: 'locationChanged', data: value });
     }, [vscodeApi]);
 
     const handleResourceSkuChange = useCallback((rowIdx: number, value: string) => {
@@ -78,13 +98,6 @@ export const DeploymentPlanView = (): JSX.Element => {
                     </div>
                     <div className='headerActions'>
                         <Button
-                            appearance='subtle'
-                            icon={<DismissRegular />}
-                            onClick={handleReject}
-                        >
-                            Reject
-                        </Button>
-                        <Button
                             appearance='primary'
                             icon={<CheckmarkRegular />}
                             onClick={handleApprove}
@@ -98,28 +111,64 @@ export const DeploymentPlanView = (): JSX.Element => {
             <div className='infoCards'>
                 <div className='infoCard'>
                     <span className='infoLabel'>Subscription</span>
-                    <span className='infoValue'>{plan.subscription}</span>
+                    {plan.availableSubscriptions && plan.availableSubscriptions.length > 0 ? (
+                        <select
+                            className='cellDropdown'
+                            value={plan.subscription}
+                            onChange={(e) => handleSubscriptionChange(e.target.value)}
+                        >
+                            {!plan.subscription && (
+                                <option value='' disabled>Select a subscription...</option>
+                            )}
+                            {plan.subscription && !plan.availableSubscriptions.includes(plan.subscription) && (
+                                <option value={plan.subscription}>{plan.subscription}</option>
+                            )}
+                            {plan.availableSubscriptions.map(sub => (
+                                <option key={sub} value={sub}>{sub}</option>
+                            ))}
+                        </select>
+                    ) : (
+                        <span className='infoValue'>{plan.subscription}</span>
+                    )}
                 </div>
                 <div className='infoCard'>
                     <span className='infoLabel'>Location</span>
-                    <span className='infoValue'>{plan.location} <code>{plan.locationCode}</code></span>
+                    {plan.availableLocations && plan.availableLocations.length > 0 ? (
+                        <select
+                            className='cellDropdown'
+                            value={plan.locationCode}
+                            onChange={(e) => handleLocationChange(e.target.value)}
+                        >
+                            {!plan.locationCode && (
+                                <option value='' disabled>Select a location...</option>
+                            )}
+                            {plan.locationCode && !plan.availableLocations.some(l => l.code === plan.locationCode) && (
+                                <option value={plan.locationCode}>{plan.location} ({plan.locationCode})</option>
+                            )}
+                            {plan.availableLocations.map(loc => (
+                                <option key={loc.code} value={loc.code}>{loc.name} ({loc.code})</option>
+                            ))}
+                        </select>
+                    ) : (
+                        <span className='infoValue'>{plan.location} <code>{plan.locationCode}</code></span>
+                    )}
                 </div>
             </div>
 
-            <div className='sectionCard'>
-                <h2>Architecture Diagram</h2>
+            <details className='sectionCard'>
+                <summary><h2>Architecture Diagram</h2></summary>
                 <MermaidDiagram definition={plan.mermaidDiagram} />
-            </div>
+            </details>
 
-            <div className='sectionCard'>
-                <h2>Workspace Scan</h2>
+            <details className='sectionCard'>
+                <summary><h2>Workspace Scan</h2></summary>
                 <PlanTable table={plan.workspaceScan} />
-            </div>
+            </details>
 
-            <div className='sectionCard'>
-                <h2>Decisions</h2>
+            <details className='sectionCard'>
+                <summary><h2>Decisions</h2></summary>
                 <PlanTable table={plan.decisions} />
-            </div>
+            </details>
 
             <div className='sectionCard'>
                 <h2>Azure Resources</h2>
@@ -134,6 +183,12 @@ const MermaidDiagram = ({ definition }: { definition: string }): JSX.Element => 
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // If the definition is empty or doesn't look like mermaid syntax, skip rendering
+        if (!definition.trim() || !isMermaidSyntax(definition)) {
+            setError('not-mermaid');
+            return;
+        }
+
         let cancelled = false;
 
         mermaid.initialize({
@@ -181,12 +236,18 @@ const MermaidDiagram = ({ definition }: { definition: string }): JSX.Element => 
         return () => { cancelled = true; };
     }, [definition]);
 
-    if (error) {
-        return <pre className='mermaidBlock'><code>{definition}</code></pre>;
+    if (error || !definition.trim()) {
+        return <pre className='mermaidBlock'><code>{definition || 'No diagram available'}</code></pre>;
     }
 
     return <div className='mermaidRendered' ref={containerRef} />;
 };
+
+const mermaidKeywords = /^\s*(graph|flowchart|sequenceDiagram|classDiagram|stateDiagram|erDiagram|gantt|pie|gitGraph|mindmap|timeline|journey)\b/m;
+
+function isMermaidSyntax(text: string): boolean {
+    return mermaidKeywords.test(text);
+}
 
 const PlanTable = ({ table }: { table: DeploymentPlanTable }): JSX.Element => (
     <table className='planTable'>

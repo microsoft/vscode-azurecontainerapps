@@ -13,7 +13,7 @@ export class DeploymentPlanViewController extends WebviewController<Record<strin
     constructor(planData: DeploymentPlanData) {
         super(ext.context, 'Azure Deployment Plan', 'deploymentPlanView', {}, ViewColumn.Active);
 
-        this.panel.webview.onDidReceiveMessage((message: { command: string }) => {
+        this.panel.webview.onDidReceiveMessage((message: { command: string; data?: unknown }) => {
             switch (message.command) {
                 case 'ready':
                     void this.panel.webview.postMessage({ command: 'setDeploymentPlanData', data: planData });
@@ -22,9 +22,11 @@ export class DeploymentPlanViewController extends WebviewController<Record<strin
                     void vscode.window.showInformationMessage('Deployment plan approved.');
                     this.panel.dispose();
                     break;
-                case 'reject':
-                    void vscode.window.showInformationMessage('Deployment plan rejected.');
-                    this.panel.dispose();
+                case 'subscriptionChanged':
+                    void vscode.window.showInformationMessage(`Subscription changed to: ${message.data as string}`);
+                    break;
+                case 'locationChanged':
+                    void vscode.window.showInformationMessage(`Location changed to: ${message.data as string}`);
                     break;
             }
         });

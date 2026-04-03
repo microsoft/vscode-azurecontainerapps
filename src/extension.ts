@@ -13,6 +13,7 @@ import * as path from 'path';
 import { v4 as uuid } from 'uuid';
 import * as vscode from 'vscode';
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
+import { openDeploymentPlanView, refreshDeploymentPlanView } from './commands/copilot/openDeploymentPlanView';
 import { openLocalPlanView, refreshLocalPlanView } from './commands/copilot/openLocalPlanView';
 import { openPlanView, refreshPlanView } from './commands/copilot/openPlanView';
 import { registerCommands } from './commands/registerCommands';
@@ -92,6 +93,26 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         });
         context.subscriptions.push(localPlanWatcher);
 
+        // Watch for .azure/plan.md creation to open the deployment plan view
+        const deploymentPlanWatcher = vscode.workspace.createFileSystemWatcher('**/.azure/plan.md');
+        let deploymentPlanViewDebounceTimer: ReturnType<typeof setTimeout> | undefined;
+        const debounceDeploymentPlanViewOpen = (uri: vscode.Uri) => {
+            if (deploymentPlanViewDebounceTimer) { clearTimeout(deploymentPlanViewDebounceTimer); }
+            deploymentPlanViewDebounceTimer = setTimeout(() => {
+                deploymentPlanViewDebounceTimer = undefined;
+                openDeploymentPlanView(uri);
+            }, 2000);
+        };
+        deploymentPlanWatcher.onDidCreate((uri) => debounceDeploymentPlanViewOpen(uri));
+        deploymentPlanWatcher.onDidChange((uri) => {
+            if (deploymentPlanViewDebounceTimer) {
+                debounceDeploymentPlanViewOpen(uri);
+            } else {
+                refreshDeploymentPlanView(uri);
+            }
+        });
+        context.subscriptions.push(deploymentPlanWatcher);
+
         // Fallback: detect plan files via workspace file creation events
         // (fires when files are created via VS Code API, e.g. WorkspaceEdit / Copilot tools)
         context.subscriptions.push(
@@ -102,7 +123,23 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                         debouncePlanViewOpen(file);
                     } else if (filename === 'local-dev.plan.md') {
                         debounceLocalPlanViewOpen(file);
+                    } else if (filename === 'plan.md' && file.path.includes('.azure/')) {
+                        debounceDeploymentPlanViewOpen(file);
                     }
+                }
+            }),
+        );
+
+        // Fallback: detect .azure/plan.md creation and changes for dot-directory watcher reliability
+        context.subscriptions.push(
+            vscode.workspace.onDidSaveTextDocument((doc) => {
+                if (doc.fileName.replace(/\\/g, '/').includes('.azure/plan.md')) {
+                    refreshDeploymentPlanView(doc.uri);
+                }
+            }),
+            vscode.workspace.onDidOpenTextDocument((doc) => {
+                if (doc.fileName.replace(/\\/g, '/').includes('.azure/plan.md')) {
+                    debounceDeploymentPlanViewOpen(doc.uri);
                 }
             }),
         );

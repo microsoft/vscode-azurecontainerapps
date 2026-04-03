@@ -12,6 +12,7 @@ import { deployWithCopilot } from './copilot/deployWithCopilot';
 import { createProjectWithCopilot } from './copilot/createProjectWithCopilot';
 import { openPlanView, openPlanViewFromWorkspace } from './copilot/openPlanView';
 import { openLocalPlanView, openLocalPlanViewFromWorkspace } from './copilot/openLocalPlanView';
+import { openDeploymentPlanView, openDeploymentPlanViewFromWorkspace } from './copilot/openDeploymentPlanView';
 import { createContainerApp } from './createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './createManagedEnvironment/createManagedEnvironment';
 import { deleteContainerApp } from './deleteContainerApp/deleteContainerApp';
@@ -151,9 +152,14 @@ export function registerCommands(): void {
     registerCommand('containerApps.openPlanViewFromWorkspace', () => openPlanViewFromWorkspace());
     registerCommand('containerApps.openLocalPlanView', (_context: IActionContext, uri: vscode.Uri) => openLocalPlanView(uri));
     registerCommand('containerApps.openLocalPlanViewFromWorkspace', () => openLocalPlanViewFromWorkspace());
-    registerCommand('containerApps.showProjectCreation', async () => {
-        await vscode.commands.executeCommand('azureProjectCreation.show');
+    registerCommand('azureProjectCreation.openDeployPlan', (_context: IActionContext, uri?: vscode.Uri) => {
+        if (uri) {
+            openDeploymentPlanView(uri);
+        } else {
+            void openDeploymentPlanViewFromWorkspace();
+        }
     });
+    registerCommand('containerApps.showProjectCreation', () => openDeploymentPlanViewFromWorkspace());
     registerCommand('containerApps.startLocalDev', async () => {
         await vscode.commands.executeCommand('workbench.action.chat.open', {
             mode: 'agent',
