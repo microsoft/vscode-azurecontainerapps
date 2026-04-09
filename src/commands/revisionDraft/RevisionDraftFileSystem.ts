@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { parseAzureResourceId, type ParsedAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Disposable, EventEmitter, FileChangeType, FileType, commands, window, workspace, type Event, type FileChangeEvent, type FileStat, type FileSystemProvider, type TextDocument, type Uri } from "vscode";
+import { Disposable, EventEmitter, FileChangeType, FileType, TabInputText, commands, window, workspace, type Event, type FileChangeEvent, type FileStat, type FileSystemProvider, type TextDocument, type Uri } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
@@ -179,6 +179,15 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         }
 
         this.delete(uri);
+        this.closeEditorForUri(uri);
+    }
+
+    private closeEditorForUri(uri: Uri): void {
+        const tabsToClose = window.tabGroups.all
+            .flatMap(tabGroup => tabGroup.tabs)
+            .filter(tab => tab.input instanceof TabInputText && tab.input.uri.scheme === uri.scheme && tab.input.uri.path === uri.path);
+
+        void window.tabGroups.close(tabsToClose);
     }
 
     delete(uri: Uri): void {
