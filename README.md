@@ -2,8 +2,7 @@
 
 <!-- region exclude-from-marketplace -->
 
-[![Version](https://img.shields.io/visual-studio-marketplace/v/ms-azuretools.vscode-azurecontainerapps.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps) [![Installs](https://img.shields.io/visual-studio-marketplace/i/ms-azuretools.vscode-azurecontainerapps.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps) [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurecontainerapps?branchName=main)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=39&branchName=main)
-
+[![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurecontainerapps?branchName=main)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=39&branchName=main)
 
 <!-- endregion exclude-from-marketplace -->
 
