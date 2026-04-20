@@ -43,13 +43,13 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
         const containerAppName: string = nonNullValueAndProp(context.containerApp, 'name');
 
         // Estimated time (n=1): 1s
-        const revisionId: string | undefined = await this.waitAndGetRevisionId(context, 1000 * 10 /** maxWaitTimeMs */);
+        const revisionId: string | undefined = await this.waitAndGetRevisionId(context, 1000 * 15 /** maxWaitTimeMs */);
         if (!revisionId) {
             throw new Error(localize('revisionCheckTimeout', 'Status check timed out before retrieving the latest deployed container app revision.'));
         }
 
         // Estimated time (n=1): 20s
-        this._revisionStatus = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 60 /** maxWaitTimeMs */);
+        this._revisionStatus = await this.waitAndGetRevisionStatus(context, revisionId, containerAppName, 1000 * 120 /** maxWaitTimeMs */);
         context.telemetry.properties.revisionStatus = this._revisionStatus;
 
         const parsedResource = parseAzureResourceId(revisionId);
