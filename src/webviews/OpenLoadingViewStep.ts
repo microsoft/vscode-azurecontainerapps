@@ -7,13 +7,14 @@ import { AzureWizardPromptStep, runGenericPromptStep, type IActionContext } from
 import * as vscode from 'vscode';
 import { localize } from "../utils/localize";
 import { LoadingViewController } from "./LoadingViewController";
-import { SharedState } from "./OpenConfirmationViewStep";
+import { SharedState } from "./SharedViewState";
 
 export class OpenLoadingViewStep<T extends IActionContext> extends AzureWizardPromptStep<T> {
     public async prompt(): Promise<void> {
         const loadingView = new LoadingViewController({ title: localize('loadingViewTitle', 'Loading...') });
         loadingView.revealToForeground(vscode.ViewColumn.Active);
         SharedState.currentPanel = loadingView.panel;
+        SharedState.loadingViewController = loadingView;
     }
 
     public shouldPrompt(): boolean {

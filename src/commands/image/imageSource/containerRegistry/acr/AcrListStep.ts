@@ -9,6 +9,7 @@ import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type C
 import { noMatchingResources, noMatchingResourcesQp, registryProvider, registryResourceType } from "../../../../../constants";
 import { createContainerRegistryManagementClient } from "../../../../../utils/azureClients";
 import { localize } from "../../../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../../../webviews/SharedViewState";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { AcrDefaultSortStrategy } from "./AcrDefaultSortStrategy";
 import { RegistryCreateStep } from "./createAcr/RegistryCreateStep";
@@ -65,6 +66,8 @@ export class AcrListStep<T extends ContainerRegistryImageSourceContext> extends 
 
         this.pickLabel = pick.label;
         context.registry = result;
+
+        updateLoadingViewProgress(localize('selectedContainerRegistry', 'Selected container registry'));
     }
 
     public shouldPrompt(context: T): boolean {

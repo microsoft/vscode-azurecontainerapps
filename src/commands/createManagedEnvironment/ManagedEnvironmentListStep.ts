@@ -11,6 +11,7 @@ import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type AzureWiza
 import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
 import { LogAnalyticsListStep } from "./LogAnalyticsListStep";
@@ -51,6 +52,8 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             enableGrouping: true,
             suppressPersistence: true,
         })).data;
+
+        updateLoadingViewProgress(localize('selectedManagedEnvironment', 'Selected managed environment'));
     }
 
     public shouldPrompt(context: T): boolean {

@@ -10,6 +10,7 @@ import { containerAppProvider, containerAppResourceType } from "../../constants"
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { ContainerAppUpdateStep } from "../image/imageSource/ContainerAppUpdateStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 import { ContainerAppCreateStep } from "./ContainerAppCreateStep";
@@ -53,6 +54,8 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         if (containerApp) {
             context.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
         }
+
+        updateLoadingViewProgress(localize('selectedContainerApp', 'Selected container app'));
     }
 
     public shouldPrompt(context: T): boolean {
