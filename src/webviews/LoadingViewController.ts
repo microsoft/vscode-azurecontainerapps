@@ -10,7 +10,6 @@ import { LoadingViewCommands } from "./webviewConstants";
 
 export type LoadingViewProgressItem = {
     name: string;
-    completed: boolean;
 }
 
 export type LoadingViewControllerType = {

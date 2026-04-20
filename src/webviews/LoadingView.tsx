@@ -5,13 +5,9 @@
 
 import { Spinner } from "@fluentui/react-components";
 import { useEffect, useState } from 'react';
+import { LoadingViewProgressItem } from "./LoadingViewController";
 import './styles/loadingView.scss';
 import { LoadingViewCommands } from './webviewConstants';
-
-type LoadingViewProgressItem = {
-    name: string;
-    completed: boolean;
-}
 
 type ProgressMessage = {
     command: LoadingViewCommands.AddProgressItem;
@@ -27,7 +23,7 @@ export const LoadingView = () => {
             if (message.command === LoadingViewCommands.AddProgressItem) {
                 setProgressItems(prev => [
                     ...prev,
-                    { name: message.name, completed: true }
+                    { name: message.name }
                 ]);
             }
         };
@@ -43,7 +39,7 @@ export const LoadingView = () => {
                 <div className='progressList'>
                     {progressItems.length > 0 ? (
                         progressItems.map((item, index) => (
-                            <div key={index} className='progressItem'>
+                            <div key={`${item.name}-${index}`} className='progressItem'>
                                 <span className='checkmark codicon codicon-check'></span>
                                 <span className='itemName'>{item.name}</span>
                             </div>
