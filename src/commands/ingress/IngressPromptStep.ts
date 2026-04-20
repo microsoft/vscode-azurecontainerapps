@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
+import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { type IngressContext } from "./IngressContext";
 import { DisableIngressStep } from "./disableIngress/DisableIngressStep";
 import { TargetPortInputStep } from "./editTargetPort/TargetPortInputStep";
@@ -20,7 +20,7 @@ export class IngressPromptStep extends AzureWizardPromptStep<IngressContext> {
         context.enableIngress = (await context.ui.showQuickPick([{ label: localize('enable', 'Enable'), data: true }, { label: localize('disable', 'Disable'), data: false }],
             { placeHolder: localize('enableIngress', 'Enable ingress for applications that need an HTTP endpoint.') })).data;
 
-        updateLoadingViewProgress(localize('ingress', 'Configured ingress settings'));
+        updateLoadingViewProgress(localize('configuredIngress', 'Configured ingress settings'));
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {

@@ -8,10 +8,10 @@ import { type Workspace } from "@azure/arm-operationalinsights";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { getResourceGroupFromId, LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
+import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
 import { LogAnalyticsListStep } from "./LogAnalyticsListStep";
@@ -53,7 +53,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
             suppressPersistence: true,
         })).data;
 
-        updateLoadingViewProgress(localize('ManagedEnvironment', 'Selected managed environment'));
+        updateLoadingViewProgress(localize('selectedManagedEnvironment', 'Selected managed environment'));
     }
 
     public shouldPrompt(context: T): boolean {

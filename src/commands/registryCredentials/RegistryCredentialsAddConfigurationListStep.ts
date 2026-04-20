@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
+import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
@@ -75,7 +75,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         this.pickLabel = pick.label;
         context.newRegistryCredentialType = pick.data;
-        updateLoadingViewProgress(localize('connectionMethod', 'Selected connection method'));
+        updateLoadingViewProgress(localize('selectedConnectionMethod', 'Selected connection method'));
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {

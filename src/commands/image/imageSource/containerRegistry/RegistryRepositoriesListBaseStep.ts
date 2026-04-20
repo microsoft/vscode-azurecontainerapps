@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
-import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { type QuickPickItem } from "vscode";
 import { loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../../webviews/SharedViewState";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 
 export abstract class RegistryRepositoriesListStepBase extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
@@ -27,7 +27,7 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
 
         context.repositoryName = result.label;
 
-        updateLoadingViewProgress(localize('repository', 'Selected repository'));
+        updateLoadingViewProgress(localize('selectedRepository', 'Selected repository'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

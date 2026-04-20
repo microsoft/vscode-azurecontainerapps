@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { UIKind, env } from "vscode";
 import { acrDomain, dockerHubDomain, type SupportedRegistries } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../../webviews/SharedViewState";
 import { AcrListStep } from "./acr/AcrListStep";
 import { AcrRepositoriesListStep } from "./acr/AcrRepositoriesListStep";
 import { AcrTagListStep } from "./acr/AcrTagListStep";
@@ -37,7 +37,7 @@ export class ContainerRegistryListStep extends AzureWizardPromptStep<ContainerRe
         this.pickLabel = pick?.label;
         context.registryDomain = pick.data;
 
-        updateLoadingViewProgress(localize('containerRegistryDomain', 'Selected container registry provider'));
+        updateLoadingViewProgress(localize('selectedContainerRegistryDomain', 'Selected container registry provider'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

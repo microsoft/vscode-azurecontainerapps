@@ -6,7 +6,6 @@
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { ActivityChildItem, ActivityChildType, AzExtFsExtra, AzureWizardPromptStep, activityInfoContext, activityInfoIcon, activitySuccessContext, activitySuccessIcon, createContextValue, prependOrInsertAfterLastInfoChild, type ActivityInfoChild, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { parse, type DotenvParseOutput } from "dotenv";
-import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { RelativePattern, workspace, type Uri, type WorkspaceFolder } from "vscode";
 import { ImageSource, envFileGlobPattern } from "../../../constants";
 import { ext } from "../../../extensionVariables";
@@ -14,6 +13,7 @@ import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
+import { updateLoadingViewProgress } from "../../../webviews/SharedViewState";
 import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
 
 export interface EnvFileListStepOptions {
@@ -64,7 +64,7 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
 
-        updateLoadingViewProgress(localize('environmentVariables', 'Resolved environment variables'));
+        updateLoadingViewProgress(localize('resolvedEnvironmentVariables', 'Resolved environment variables'));
     }
 
     public shouldPrompt(context: T): boolean {
