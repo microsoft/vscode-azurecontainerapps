@@ -6,6 +6,7 @@
 import { type ContainerApp, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { LocationListStep, parseAzureResourceId, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { updateLoadingViewProgress } from "src/webviews/SharedViewState";
 import { containerAppProvider, containerAppResourceType } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -53,6 +54,8 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
         if (containerApp) {
             context.containerApp = ContainerAppItem.CreateContainerAppModel(containerApp);
         }
+
+        updateLoadingViewProgress(localize('containerApp', 'Selected container app'));
     }
 
     public shouldPrompt(context: T): boolean {
