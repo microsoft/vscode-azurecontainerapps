@@ -231,77 +231,79 @@ export const PlanView = (): JSX.Element => {
 
     return (
         <div className={`planView ${drawerOpen ? 'drawerOpen' : ''} ${isAwaitingRevision ? 'revising' : ''}`}>
-            <div className='planMain'>
-                <div className='planHeader'>
-                    <div className='headerTop'>
-                        <div>
-                            <h1>Project Plan</h1>
-                            <div className='metadataBadges'>
-                                <span className='badge'>{plan.status}</span>
-                                <span className='badge subtle'>{plan.mode}</span>
-                                <span className='created'>Created: {plan.created}</span>
-                            </div>
-                        </div>
-                        <div className='headerActions'>
-                            <Button
-                                appearance='secondary'
-                                icon={<CommentEditRegular />}
-                                disabled={isAwaitingRevision}
-                                onClick={() => setDrawerOpen(v => !v)}
-                            >
-                                Feedback{hasEdits ? ` (${feedbackItems.length + (freeformDraft.trim() ? 1 : 0)})` : ''}
-                            </Button>
-                            <Button
-                                appearance='primary'
-                                icon={hasEdits ? <CommentEditRegular /> : <CheckmarkRegular />}
-                                disabled={isAwaitingRevision}
-                                onClick={handleApprove}
-                            >
-                                {hasEdits ? 'Review & Submit' : 'Approve Plan'}
-                            </Button>
+            <div className='planHeader'>
+                <div className='headerTop'>
+                    <div>
+                        <h1>Project Plan</h1>
+                        <div className='metadataBadges'>
+                            <span className='badge'>{plan.status}</span>
+                            <span className='badge subtle'>{plan.mode}</span>
+                            <span className='created'>Created: {plan.created}</span>
                         </div>
                     </div>
-                </div>
-
-                {isAwaitingRevision && (
-                    <div className='revisionBanner' role='status' aria-live='polite'>
-                        <Spinner size='tiny' />
-                        <span>Copilot is revising the plan…</span>
+                    <div className='headerActions'>
+                        <Button
+                            appearance='secondary'
+                            icon={<CommentEditRegular />}
+                            disabled={isAwaitingRevision}
+                            onClick={() => setDrawerOpen(v => !v)}
+                        >
+                            Feedback{hasEdits ? ` (${feedbackItems.length + (freeformDraft.trim() ? 1 : 0)})` : ''}
+                        </Button>
+                        <Button
+                            appearance='primary'
+                            icon={hasEdits ? <CommentEditRegular /> : <CheckmarkRegular />}
+                            disabled={isAwaitingRevision}
+                            onClick={handleApprove}
+                        >
+                            {hasEdits ? 'Review & Submit' : 'Approve Plan'}
+                        </Button>
                     </div>
-                )}
-
-                {overviewSection && <OverviewCard section={overviewSection} />}
-
-                <div className='sectionsRow'>
-                    {detailSections.map((section) => {
-                        const sectionIdx = sections.indexOf(section);
-                        return (
-                            <SectionCard
-                                key={section.number}
-                                section={section}
-                                sectionIdx={sectionIdx}
-                                disabled={isAwaitingRevision}
-                                onTableCellChange={handleTableCellChange}
-                            />
-                        );
-                    })}
                 </div>
-
-                {structureSection && <ProjectStructureCard section={structureSection} />}
             </div>
 
-            {drawerOpen && !isAwaitingRevision && (
-                <FeedbackDrawer
-                    items={feedbackItems}
-                    freeformDraft={freeformDraft}
-                    onFreeformChange={setFreeformDraft}
-                    onAddNote={handleAddNote}
-                    onRemoveItem={handleRemoveFeedback}
-                    onSubmit={handleSubmitFeedback}
-                    onDiscardAll={handleDiscardAll}
-                    onClose={() => setDrawerOpen(false)}
-                />
-            )}
+            <div className='planBody'>
+                <div className='planMain'>
+                    {isAwaitingRevision && (
+                        <div className='revisionBanner' role='status' aria-live='polite'>
+                            <Spinner size='tiny' />
+                            <span>Copilot is revising the plan…</span>
+                        </div>
+                    )}
+
+                    {overviewSection && <OverviewCard section={overviewSection} />}
+
+                    <div className='sectionsRow'>
+                        {detailSections.map((section) => {
+                            const sectionIdx = sections.indexOf(section);
+                            return (
+                                <SectionCard
+                                    key={section.number}
+                                    section={section}
+                                    sectionIdx={sectionIdx}
+                                    disabled={isAwaitingRevision}
+                                    onTableCellChange={handleTableCellChange}
+                                />
+                            );
+                        })}
+                    </div>
+
+                    {structureSection && <ProjectStructureCard section={structureSection} />}
+                </div>
+
+                {drawerOpen && !isAwaitingRevision && (
+                    <FeedbackDrawer
+                        items={feedbackItems}
+                        freeformDraft={freeformDraft}
+                        onFreeformChange={setFreeformDraft}
+                        onAddNote={handleAddNote}
+                        onRemoveItem={handleRemoveFeedback}
+                        onSubmit={handleSubmitFeedback}
+                        onDiscardAll={handleDiscardAll}
+                        onClose={() => setDrawerOpen(false)}
+                    />
+                )}
+            </div>
         </div>
     );
 };

@@ -5,10 +5,16 @@
 
 .planView {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 16px;
     padding: 20px 28px;
-    align-items: flex-start;
+
+    .planBody {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        align-items: flex-start;
+    }
 
     .planMain {
         flex: 1;
@@ -451,13 +457,12 @@
 }
 
 @media (max-width: 900px) {
-    .planView {
+    .planView .planBody {
         flex-direction: column;
-
-        .feedbackDrawer {
-            width: 100%;
-            position: static;
-            max-height: none;
-        }
+    }
+    .planView .feedbackDrawer {
+        width: 100%;
+        position: static;
+        max-height: none;
     }
 }
