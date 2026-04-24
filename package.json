@@ -118,6 +118,12 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.openPlanSourceFile",
+                "title": "Open Source",
+                "category": "Azure Container Apps",
+                "icon": "$(go-to-file)"
+            },
+            {
                 "command": "containerApps.openLocalPlanViewFromWorkspace",
                 "title": "Open Local Dev Plan View",
                 "category": "Azure Container Apps"
@@ -394,6 +400,13 @@
                     "group": "navigation@4"
                 }
             ],
+            "editor/title": [
+                {
+                    "command": "containerApps.openPlanSourceFile",
+                    "when": "activeWebviewPanelId == 'react-webview-planView'",
+                    "group": "navigation"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "containerApps.createManagedEnvironment",
@@ -645,6 +658,10 @@
                 {
                     "command": "containerApps.deployWorkspaceProjectApi",
                     "when": "never"
+                },
+                {
+                    "command": "containerApps.openPlanSourceFile",
+                    "when": "activeWebviewPanelId == 'react-webview-planView'"
                 },
                 {
                     "command": "containerApps.deployImageApi",

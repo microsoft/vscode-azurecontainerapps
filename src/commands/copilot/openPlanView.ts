@@ -8,9 +8,18 @@ import { parsePlanMarkdown } from "../../utils/parsePlanMarkdown";
 import { PlanViewController } from "../../webviews/PlanViewController";
 
 let currentPlanViewController: PlanViewController | undefined;
+let currentPlanUri: vscode.Uri | undefined;
 
 export function isPlanViewOpen(): boolean {
     return currentPlanViewController !== undefined;
+}
+
+export async function openPlanSourceFile(): Promise<void> {
+    if (!currentPlanUri) {
+        void vscode.window.showInformationMessage('No plan source file is available.');
+        return;
+    }
+    await vscode.commands.executeCommand('vscode.open', currentPlanUri, vscode.ViewColumn.Active);
 }
 
 export function openPlanView(uri: vscode.Uri): void {
@@ -53,20 +62,24 @@ async function openPlanViewAsync(uri: vscode.Uri): Promise<void> {
 
     // If a plan view is already open, just refresh its data
     if (currentPlanViewController) {
+        currentPlanUri = uri;
         currentPlanViewController.updatePlanData(planData);
         return;
     }
 
+    currentPlanUri = uri;
     currentPlanViewController = new PlanViewController(planData);
     currentPlanViewController.revealToForeground(vscode.ViewColumn.Active);
 
     currentPlanViewController.panel.onDidDispose(() => {
         currentPlanViewController = undefined;
+        currentPlanUri = undefined;
     });
 }
 
 async function refreshPlanViewAsync(uri: vscode.Uri): Promise<void> {
     const content = Buffer.from(await vscode.workspace.fs.readFile(uri)).toString('utf-8');
     const planData = parsePlanMarkdown(content);
+    currentPlanUri = uri;
     currentPlanViewController?.updatePlanData(planData);
 }

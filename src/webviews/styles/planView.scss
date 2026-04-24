@@ -462,7 +462,11 @@
     }
     .planView .feedbackDrawer {
         width: 100%;
-        position: static;
-        max-height: none;
+        position: sticky;
+        top: auto;
+        bottom: 0;
+        max-height: 60vh;
+        z-index: 2;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
     }
 }

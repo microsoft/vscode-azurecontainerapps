@@ -10,7 +10,7 @@ import { deployImageApiCompat } from './api/deployImageApi';
 import { browseContainerAppNode } from './browseContainerApp';
 import { deployWithCopilot } from './copilot/deployWithCopilot';
 import { createProjectWithCopilot } from './copilot/createProjectWithCopilot';
-import { openPlanView, openPlanViewFromWorkspace } from './copilot/openPlanView';
+import { openPlanSourceFile, openPlanView, openPlanViewFromWorkspace } from './copilot/openPlanView';
 import { openLocalPlanView, openLocalPlanViewFromWorkspace } from './copilot/openLocalPlanView';
 import { openDeploymentPlanView, openDeploymentPlanViewFromWorkspace } from './copilot/openDeploymentPlanView';
 import { createContainerApp } from './createContainerApp/createContainerApp';
@@ -150,6 +150,7 @@ export function registerCommands(): void {
     registerCommand('containerApps.createProjectWithCopilot', createProjectWithCopilot);
     registerCommand('containerApps.openPlanView', (_context: IActionContext, uri: vscode.Uri) => openPlanView(uri));
     registerCommand('containerApps.openPlanViewFromWorkspace', () => openPlanViewFromWorkspace());
+    registerCommand('containerApps.openPlanSourceFile', () => openPlanSourceFile());
     registerCommand('containerApps.openLocalPlanView', (_context: IActionContext, uri: vscode.Uri) => openLocalPlanView(uri));
     registerCommand('containerApps.openLocalPlanViewFromWorkspace', () => openLocalPlanViewFromWorkspace());
     registerCommand('azureProjectCreation.openDeployPlan', (_context: IActionContext, uri?: vscode.Uri) => {
