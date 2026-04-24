@@ -6,7 +6,9 @@
 import { Button, Spinner, Textarea } from '@fluentui/react-components';
 import { CheckmarkRegular, CommentEditRegular, DismissRegular, SendRegular } from '@fluentui/react-icons';
 import { useState, useEffect, useContext, useCallback, useMemo, useRef, type JSX } from 'react';
+import { type IconThemePayload } from '../utils/iconTheme/types';
 import { type PlanContent, type PlanData, type PlanSection, type TreeNode } from '../utils/parsePlanMarkdown';
+import { IconThemeProvider, ThemedNodeIcon } from './IconThemeContext';
 import './styles/planView.scss';
 import { WebviewContext } from './WebviewContext';
 
@@ -56,6 +58,7 @@ function buildFeedbackPrompt(items: FeedbackItem[], freeform: string): string {
 
 export const PlanView = (): JSX.Element => {
     const [plan, setPlan] = useState<PlanData | null>(null);
+    const [iconTheme, setIconTheme] = useState<IconThemePayload | null>(null);
     const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
     const [freeformDraft, setFreeformDraft] = useState('');
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -86,6 +89,8 @@ export const PlanView = (): JSX.Element => {
                 setDrawerOpen(false);
             } else if (message?.command === 'revisionComplete') {
                 setIsAwaitingRevision(false);
+            } else if (message?.command === 'setIconTheme') {
+                setIconTheme(message.data as IconThemePayload);
             }
         };
         window.addEventListener('message', handler);
@@ -230,6 +235,7 @@ export const PlanView = (): JSX.Element => {
     const structureSection = sections.find(s => s.title.toLowerCase().includes('project structure'));
 
     return (
+        <IconThemeProvider payload={iconTheme}>
         <div className={`planView ${drawerOpen ? 'drawerOpen' : ''} ${isAwaitingRevision ? 'revising' : ''}`}>
             <div className='planHeader'>
                 <div className='headerTop'>
@@ -305,6 +311,7 @@ export const PlanView = (): JSX.Element => {
                 )}
             </div>
         </div>
+        </IconThemeProvider>
     );
 };
 
@@ -506,11 +513,11 @@ const TreeNodeItem = ({ node, depth, defaultOpen }: { node: TreeNode; depth: num
                 onClick={() => hasChildren && setOpen(!open)}
             >
                 {hasChildren ? (
-                    <span className={`treeChevron ${open ? 'open' : ''}`}>▶</span>
+                    <span className={`treeChevron codicon codicon-chevron-right ${open ? 'open' : ''}`} />
                 ) : (
                     <span className='treeChevronSpacer' />
                 )}
-                <span className={`treeIcon codicon ${node.isFolder ? 'codicon-folder' : 'codicon-file'}`} />
+                <ThemedNodeIcon name={node.name} isFolder={node.isFolder} isOpen={open} />
                 <span className='treeName'>{node.name}</span>
                 {node.comment && <span className='treeComment'>{node.comment}</span>}
             </div>

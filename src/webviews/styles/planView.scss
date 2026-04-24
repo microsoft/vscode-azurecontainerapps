@@ -291,13 +291,15 @@
         }
 
         .treeChevron {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 16px;
-            text-align: center;
-            font-size: 0.6em;
+            height: 16px;
             color: var(--vscode-foreground);
             transition: transform 0.1s;
             flex-shrink: 0;
+            font-size: 14px;
 
             &.open {
                 transform: rotate(90deg);
@@ -312,7 +314,23 @@
 
         .treeIcon {
             flex-shrink: 0;
-            font-size: 1em;
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 16px;
+
+            &.themedIcon {
+                object-fit: contain;
+            }
+
+            &.themedFontIcon {
+                font-style: normal;
+                font-weight: normal;
+                text-align: center;
+            }
         }
 
         .treeName {

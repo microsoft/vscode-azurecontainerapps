@@ -27,6 +27,8 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
      * @param initialState The initial state object that the webview will use on startup.
      * @param viewColumn   The view column in which to show the new webview panel.
      * @param _iconPath    An optional icon to display in the tab of the webview.
+     * @param extraResourceRoots Optional additional folders the webview is allowed to load resources from
+     *                           (e.g. an installed icon-theme extension's folder).
      */
     constructor(
         context: vscode.ExtensionContext,
@@ -40,6 +42,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
                 readonly light: vscode.Uri;
                 readonly dark: vscode.Uri;
             },
+        extraResourceRoots: vscode.Uri[] = [],
     ) {
         super(context, webviewName, initialState);
 
@@ -47,7 +50,7 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
         this._panel = vscode.window.createWebviewPanel('react-webview-' + webviewName, title, viewColumn, {
             enableScripts: true,
             retainContextWhenHidden: true,
-            localResourceRoots: [vscode.Uri.file(this.extensionContext.extensionPath)],
+            localResourceRoots: [vscode.Uri.file(this.extensionContext.extensionPath), ...extraResourceRoots],
         });
 
         this._panel.webview.html = this.getDocumentTemplate(this._panel.webview);
@@ -111,6 +114,17 @@ export class WebviewController<Configuration> extends WebviewBaseController<Conf
      */
     public revealToForeground(viewColumn: vscode.ViewColumn = vscode.ViewColumn.One): void {
         this._panel.reveal(viewColumn, true);
+    }
+
+    /**
+     * Replace the set of extra local-resource roots allowed for the webview.
+     * Useful when a dependency (e.g. the active icon-theme extension) changes after the panel is created.
+     */
+    public setExtraResourceRoots(extraResourceRoots: vscode.Uri[]): void {
+        this._panel.webview.options = {
+            ...this._panel.webview.options,
+            localResourceRoots: [vscode.Uri.file(this.extensionContext.extensionPath), ...extraResourceRoots],
+        };
     }
 }
 
