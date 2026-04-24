@@ -61,14 +61,13 @@ export const generateAdaptiveLightTheme = (): Theme => {
 
     return {
         ...createLightTheme(brandVSCode),
-        ...{
-            colorNeutralForeground1: 'var(--vscode-editor-foreground)',
-            colorNeutralForeground1Hover: 'var(--vscode-editor-foreground)',
-            colorNeutralForeground1Pressed: 'var(--vscode-editor-foreground)',
-            colorNeutralForeground1Selected: 'var(--vscode-editor-foreground)',
+        ...sharedVSCodeTokenOverrides(),
+        colorNeutralForeground1: 'var(--vscode-editor-foreground)',
+        colorNeutralForeground1Hover: 'var(--vscode-editor-foreground)',
+        colorNeutralForeground1Pressed: 'var(--vscode-editor-foreground)',
+        colorNeutralForeground1Selected: 'var(--vscode-editor-foreground)',
 
-            colorNeutralBackground1: 'var(--vscode-editor-background)',
-        },
+        colorNeutralBackground1: 'var(--vscode-editor-background)',
     };
 };
 
@@ -79,20 +78,47 @@ export const generateAdaptiveDarkTheme = (): Theme => {
 
     return {
         ...createDarkTheme(brandVSCode),
-        ...{
-            colorNeutralForeground1: 'var(--vscode-button-foreground)',
-            colorNeutralForeground1Hover: 'var(--vscode-button-foreground)',
-            colorNeutralForeground1Pressed: 'var(--vscode-button-foreground)',
-            colorNeutralForeground1Selected: 'var(--vscode-button-foreground)',
-            colorNeutralForeground2: 'var(--vscode-button-secondaryForeground)',
-            colorNeutralForeground2Hover: 'var(--vscode-button-secondaryForeground)',
-            colorNeutralForeground2Pressed: 'var(--vscode-button-secondaryForeground)',
-            colorNeutralForeground2Selected: 'var(--vscode-button-secondaryForeground)',
+        ...sharedVSCodeTokenOverrides(),
+        colorNeutralForeground1: 'var(--vscode-button-foreground)',
+        colorNeutralForeground1Hover: 'var(--vscode-button-foreground)',
+        colorNeutralForeground1Pressed: 'var(--vscode-button-foreground)',
+        colorNeutralForeground1Selected: 'var(--vscode-button-foreground)',
+        colorNeutralForeground2: 'var(--vscode-button-secondaryForeground)',
+        colorNeutralForeground2Hover: 'var(--vscode-button-secondaryForeground)',
+        colorNeutralForeground2Pressed: 'var(--vscode-button-secondaryForeground)',
+        colorNeutralForeground2Selected: 'var(--vscode-button-secondaryForeground)',
 
-            colorNeutralBackground1: 'var(--vscode-editor-background)',
-        },
+        colorNeutralBackground1: 'var(--vscode-editor-background)',
     };
 };
+
+/**
+ * VS Code token overrides that are safe to apply theme-wide (not Button-specific).
+ *
+ * Fluent v9 collapses many semantic surfaces into shared neutral tokens, so a
+ * global override for things like `colorNeutralBackground1` would bleed into
+ * Textarea / Card / Menu / etc. These overrides are limited to tokens whose
+ * VS Code mapping is appropriate across all components that consume them:
+ * brand/accent surfaces, the focus ring, and disabled foreground.
+ *
+ * Button-specific neutral surface/stroke overrides live in `global.scss`
+ * scoped to `.fui-Button` because they would conflict with other components
+ * if applied globally.
+ */
+const sharedVSCodeTokenOverrides = (): Partial<Theme> => ({
+    // Accent surface (primary Button, Link, Checkbox, Switch, selected Tab indicator, ...)
+    colorBrandBackground: 'var(--vscode-button-background)',
+    colorBrandBackgroundHover: 'var(--vscode-button-hoverBackground, var(--vscode-button-background))',
+    colorBrandBackgroundPressed: 'var(--vscode-button-hoverBackground, var(--vscode-button-background))',
+    colorBrandBackgroundSelected: 'var(--vscode-button-background)',
+    colorNeutralForegroundOnBrand: 'var(--vscode-button-foreground)',
+
+    // Focus ring
+    colorStrokeFocus2: 'var(--vscode-focusBorder)',
+
+    // Disabled foreground (safe globally; disabled surface/stroke stay scoped to Button)
+    colorNeutralForegroundDisabled: 'var(--vscode-disabledForeground, var(--vscode-button-foreground))',
+});
 
 export const generateMonacoTheme = (baseTheme: MonacoBuiltinTheme): MonacoThemeData => {
     const style = getComputedStyle(document.documentElement);

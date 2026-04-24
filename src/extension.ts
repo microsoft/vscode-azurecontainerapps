@@ -13,9 +13,9 @@ import * as path from 'path';
 import { v4 as uuid } from 'uuid';
 import * as vscode from 'vscode';
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
-import { openDeploymentPlanView, refreshDeploymentPlanView } from './commands/copilot/openDeploymentPlanView';
-import { openLocalPlanView, refreshLocalPlanView } from './commands/copilot/openLocalPlanView';
-import { openPlanView, refreshPlanView } from './commands/copilot/openPlanView';
+import { refreshDeploymentPlanView } from './commands/copilot/openDeploymentPlanView';
+import { refreshLocalPlanView } from './commands/copilot/openLocalPlanView';
+import { refreshPlanView } from './commands/copilot/openPlanView';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
@@ -50,96 +50,34 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
 
-        // Watch for project-plan.md changes to detect plan creation and scaffold completion
+        // Watch for project-plan.md changes to refresh the plan view if already open
+        // and to detect scaffold completion.
         const planWatcher = vscode.workspace.createFileSystemWatcher('**/project-plan.md');
-        let planViewDebounceTimer: ReturnType<typeof setTimeout> | undefined;
-        const debouncePlanViewOpen = (uri: vscode.Uri) => {
-            if (planViewDebounceTimer) { clearTimeout(planViewDebounceTimer); }
-            planViewDebounceTimer = setTimeout(() => {
-                planViewDebounceTimer = undefined;
-                openPlanView(uri);
-            }, 2000);
-        };
-        planWatcher.onDidCreate((uri) => debouncePlanViewOpen(uri));
         planWatcher.onDidChange((uri) => {
-            if (planViewDebounceTimer) {
-                // Still waiting for initial content to settle
-                debouncePlanViewOpen(uri);
-            } else {
-                // Refresh view content if it's already open
-                refreshPlanView(uri);
-                void handlePlanChanged(uri, planWatcher);
-            }
+            refreshPlanView(uri);
+            void handlePlanChanged(uri, planWatcher);
         });
         context.subscriptions.push(planWatcher);
 
-        // Watch for local-dev.plan.md creation to open the local plan view
+        // Watch for local-dev.plan.md changes to refresh the local plan view if already open.
         const localPlanWatcher = vscode.workspace.createFileSystemWatcher('**/local-dev.plan.md');
-        let localPlanViewDebounceTimer: ReturnType<typeof setTimeout> | undefined;
-        const debounceLocalPlanViewOpen = (uri: vscode.Uri) => {
-            if (localPlanViewDebounceTimer) { clearTimeout(localPlanViewDebounceTimer); }
-            localPlanViewDebounceTimer = setTimeout(() => {
-                localPlanViewDebounceTimer = undefined;
-                openLocalPlanView(uri);
-            }, 2000);
-        };
-        localPlanWatcher.onDidCreate((uri) => debounceLocalPlanViewOpen(uri));
         localPlanWatcher.onDidChange((uri) => {
-            if (localPlanViewDebounceTimer) {
-                debounceLocalPlanViewOpen(uri);
-            } else {
-                refreshLocalPlanView(uri);
-            }
+            refreshLocalPlanView(uri);
         });
         context.subscriptions.push(localPlanWatcher);
 
-        // Watch for .azure/plan.md creation to open the deployment plan view
+        // Watch for .azure/plan.md changes to refresh the deployment plan view if already open.
         const deploymentPlanWatcher = vscode.workspace.createFileSystemWatcher('**/.azure/plan.md');
-        let deploymentPlanViewDebounceTimer: ReturnType<typeof setTimeout> | undefined;
-        const debounceDeploymentPlanViewOpen = (uri: vscode.Uri) => {
-            if (deploymentPlanViewDebounceTimer) { clearTimeout(deploymentPlanViewDebounceTimer); }
-            deploymentPlanViewDebounceTimer = setTimeout(() => {
-                deploymentPlanViewDebounceTimer = undefined;
-                openDeploymentPlanView(uri);
-            }, 2000);
-        };
-        deploymentPlanWatcher.onDidCreate((uri) => debounceDeploymentPlanViewOpen(uri));
         deploymentPlanWatcher.onDidChange((uri) => {
-            if (deploymentPlanViewDebounceTimer) {
-                debounceDeploymentPlanViewOpen(uri);
-            } else {
-                refreshDeploymentPlanView(uri);
-            }
+            refreshDeploymentPlanView(uri);
         });
         context.subscriptions.push(deploymentPlanWatcher);
 
-        // Fallback: detect plan files via workspace file creation events
-        // (fires when files are created via VS Code API, e.g. WorkspaceEdit / Copilot tools)
-        context.subscriptions.push(
-            vscode.workspace.onDidCreateFiles((e) => {
-                for (const file of e.files) {
-                    const filename = file.path.split('/').pop();
-                    if (filename === 'project-plan.md') {
-                        debouncePlanViewOpen(file);
-                    } else if (filename === 'local-dev.plan.md') {
-                        debounceLocalPlanViewOpen(file);
-                    } else if (filename === 'plan.md' && file.path.includes('.azure/')) {
-                        debounceDeploymentPlanViewOpen(file);
-                    }
-                }
-            }),
-        );
-
-        // Fallback: detect .azure/plan.md creation and changes for dot-directory watcher reliability
+        // Fallback: refresh the deployment plan view on save for dot-directory watcher reliability.
         context.subscriptions.push(
             vscode.workspace.onDidSaveTextDocument((doc) => {
                 if (doc.fileName.replace(/\\/g, '/').includes('.azure/plan.md')) {
                     refreshDeploymentPlanView(doc.uri);
-                }
-            }),
-            vscode.workspace.onDidOpenTextDocument((doc) => {
-                if (doc.fileName.replace(/\\/g, '/').includes('.azure/plan.md')) {
-                    debounceDeploymentPlanViewOpen(doc.uri);
                 }
             }),
         );
