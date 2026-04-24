@@ -492,9 +492,9 @@ const ProjectStructureCard = ({ section }: { section: PlanSection }): JSX.Elemen
     }
 
     return (
-        <div className='sectionCard'>
+        <div className='sectionCard projectStructureCard'>
             <h2>{section.title}</h2>
-            <div className='treeView'>
+            <div className='treeView' role='tree'>
                 <TreeNodeItem node={{ name: treeContent.root, isFolder: true, children: treeContent.nodes }} depth={0} defaultOpen={true} />
             </div>
         </div>
@@ -509,20 +509,24 @@ const TreeNodeItem = ({ node, depth, defaultOpen }: { node: TreeNode; depth: num
         <div className='treeNode'>
             <div
                 className={`treeRow ${hasChildren ? 'clickable' : ''}`}
-                style={{ paddingLeft: `${depth * 16}px` }}
+                role='treeitem'
+                aria-expanded={hasChildren ? open : undefined}
                 onClick={() => hasChildren && setOpen(!open)}
+                title={node.name}
             >
                 {hasChildren ? (
-                    <span className={`treeChevron codicon codicon-chevron-right ${open ? 'open' : ''}`} />
+                    <span className={`treeChevron codicon codicon-chevron-right ${open ? 'open' : ''}`} aria-hidden='true' />
                 ) : (
-                    <span className='treeChevronSpacer' />
+                    <span className='treeChevronSpacer' aria-hidden='true' />
                 )}
                 <ThemedNodeIcon name={node.name} isFolder={node.isFolder} isOpen={open} />
-                <span className='treeName'>{node.name}</span>
-                {node.comment && <span className='treeComment'>{node.comment}</span>}
+                <span className='treeLabel'>
+                    <span className='treeName'>{node.name}</span>
+                    {node.comment && <span className='treeComment'>{node.comment}</span>}
+                </span>
             </div>
             {open && hasChildren && (
-                <div className='treeChildren'>
+                <div className='treeChildren' role='group'>
                     {node.children.map((child, i) => (
                         <TreeNodeItem key={i} node={child} depth={depth + 1} />
                     ))}

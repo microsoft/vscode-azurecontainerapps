@@ -263,23 +263,37 @@
         color: var(--vscode-descriptionForeground);
     }
 
-    // Tree view
+    // Tree view — mirrors VS Code Explorer look & feel (font, row height, hover, indent guides).
+    .projectStructureCard {
+        // Let the tree bleed to the card edges so hover/selection are full-width.
+        padding-left: 0;
+        padding-right: 0;
+
+        h2 {
+            margin-left: 18px;
+            margin-right: 18px;
+        }
+    }
+
     .treeView {
-        font-size: 0.82em;
-        font-family: var(--vscode-editor-font-family), monospace;
+        font-family: var(--vscode-font-family);
+        font-size: var(--vscode-font-size);
         max-height: 400px;
         overflow-y: auto;
+        padding: 2px 0;
     }
 
     .treeNode {
         .treeRow {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 1px 4px;
-            border-radius: 3px;
+            height: 22px;
+            line-height: 22px;
+            padding: 0 12px 0 4px;
             white-space: nowrap;
             user-select: none;
+            color: var(--vscode-foreground);
 
             &.clickable {
                 cursor: pointer;
@@ -287,7 +301,19 @@
 
             &:hover {
                 background: var(--vscode-list-hoverBackground);
+                color: var(--vscode-list-hoverForeground, var(--vscode-foreground));
             }
+
+            &:focus-visible {
+                outline: 1px solid var(--vscode-list-focusOutline);
+                outline-offset: -1px;
+            }
+        }
+
+        // Nested children are indented 8px with an indent guide line, matching Explorer.
+        .treeChildren {
+            padding-left: 8px;
+            box-shadow: inset 1px 0 0 0 var(--vscode-tree-indentGuidesStroke);
         }
 
         .treeChevron {
@@ -295,11 +321,11 @@
             align-items: center;
             justify-content: center;
             width: 16px;
-            height: 16px;
-            color: var(--vscode-foreground);
-            transition: transform 0.1s;
+            height: 22px;
+            color: var(--vscode-icon-foreground, var(--vscode-foreground));
+            transition: transform 0.1s ease;
             flex-shrink: 0;
-            font-size: 14px;
+            font-size: 16px;
 
             &.open {
                 transform: rotate(90deg);
@@ -309,21 +335,26 @@
         .treeChevronSpacer {
             display: inline-block;
             width: 16px;
+            height: 22px;
             flex-shrink: 0;
         }
 
         .treeIcon {
             flex-shrink: 0;
             width: 16px;
-            height: 16px;
+            height: 22px;
+            margin-right: 6px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            line-height: 16px;
+            line-height: 22px;
 
             &.themedIcon {
                 object-fit: contain;
+                // Explorer renders file icons at 16x16, vertically centered.
+                width: 16px;
+                height: 16px;
             }
 
             &.themedFontIcon {
@@ -333,15 +364,27 @@
             }
         }
 
+        .treeLabel {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .treeName {
-            color: var(--vscode-foreground);
+            color: inherit;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .treeComment {
             color: var(--vscode-descriptionForeground);
-            font-style: italic;
-            margin-left: 8px;
             font-size: 0.9em;
+            opacity: 0.8;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 
