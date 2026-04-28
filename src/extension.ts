@@ -32,7 +32,8 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
     registerUIExtensionVariables(ext);
     registerAzureUtilsExtensionVariables(ext);
     registerGitHubExtensionVariables(ext);
-    registerWebviewExtensionVariables(context, {
+    registerWebviewExtensionVariables({
+        context,
         webviewAssetsDir: path.join(context.extensionPath, 'dist', 'webview-assets'),
     });
 
