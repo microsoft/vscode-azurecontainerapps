@@ -27,7 +27,7 @@ interface MaybeContainerAppRaw {
  * `expand: true` so the user immediately sees the target app under it.
  */
 export async function revealInEnvironment(context: IActionContext, item: ContainerAppResourceItem): Promise<void> {
-    if (!item || typeof (item as ContainerAppResourceItem).containerAppId !== 'string') {
+    if (!ContainerAppResourceItem.isContainerAppResourceItem(item)) {
         return;
     }
 
