@@ -10,6 +10,7 @@ import { registerGitHubExtensionVariables } from '@microsoft/vscode-azext-github
 import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createExperimentationService, registerUIExtensionVariables, type IActionContext, type apiUtils } from '@microsoft/vscode-azext-utils';
 import { registerWebviewExtensionVariables } from '@microsoft/vscode-azext-webview';
 import { AzExtResourceType, type AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
+import * as path from 'path';
 import { v4 as uuid } from 'uuid';
 import * as vscode from 'vscode';
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
@@ -31,7 +32,9 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
     registerUIExtensionVariables(ext);
     registerAzureUtilsExtensionVariables(ext);
     registerGitHubExtensionVariables(ext);
-    registerWebviewExtensionVariables(context);
+    registerWebviewExtensionVariables(context, {
+        webviewAssetsDir: path.join(context.extensionPath, 'dist', 'webview-assets'),
+    });
 
     return await callWithTelemetryAndErrorHandling('containerApps.activate', async (activateContext: IActionContext) => {
         activateContext.errorHandling.rethrow = true;
