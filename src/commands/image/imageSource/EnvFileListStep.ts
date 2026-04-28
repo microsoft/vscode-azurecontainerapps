@@ -13,6 +13,7 @@ import { type EnvironmentVariableTelemetryProps as TelemetryProps } from "../../
 import { type SetTelemetryProps } from "../../../telemetry/SetTelemetryProps";
 import { localize } from "../../../utils/localize";
 import { selectWorkspaceFile } from "../../../utils/workspaceUtils";
+import { updateLoadingViewProgress } from "../../../webviews/SharedViewState";
 import { type EnvironmentVariablesContext } from "../../environmentVariables/EnvironmentVariablesContext";
 
 export interface EnvFileListStepOptions {
@@ -62,6 +63,8 @@ export class EnvFileListStep<T extends EnvFileListContext> extends AzureWizardPr
         if (this._setEnvironmentVariableOption) {
             this.outputLogs(context, this._setEnvironmentVariableOption);
         }
+
+        updateLoadingViewProgress(localize('resolvedEnvironmentVariables', 'Resolved environment variables'));
     }
 
     public shouldPrompt(context: T): boolean {

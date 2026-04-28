@@ -8,6 +8,7 @@ import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft
 import { dockerHubDomain } from "../../../../../constants";
 import { parseImageName } from "../../../../../utils/imageNameUtils";
 import { localize } from "../../../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../../../webviews/SharedViewState";
 import { type ContainerRegistryImageSourceContext } from "../ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "../getLatestContainerImage";
 
@@ -21,6 +22,8 @@ export class DockerHubNamespaceInputStep extends AzureWizardPromptStep<Container
         })).toLowerCase();
 
         context.valuesToMask.push(context.dockerHubNamespace);
+
+        updateLoadingViewProgress(localize('resolvedDockerHubNamespace', 'Resolved Docker Hub namespace'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

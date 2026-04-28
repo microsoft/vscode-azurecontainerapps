@@ -8,6 +8,7 @@ import { acrDomain, activityInfoContext, type SupportedRegistries } from "../../
 import { ext } from "../../extensionVariables";
 import { getRegistryDomainFromContext } from "../../utils/imageNameUtils";
 import { localize } from "../../utils/localize";
+import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserConfirmStep";
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
@@ -74,6 +75,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         this.pickLabel = pick.label;
         context.newRegistryCredentialType = pick.data;
+        updateLoadingViewProgress(localize('selectedConnectionMethod', 'Selected connection method'));
     }
 
     public shouldPrompt(context: RegistryCredentialsContext): boolean {

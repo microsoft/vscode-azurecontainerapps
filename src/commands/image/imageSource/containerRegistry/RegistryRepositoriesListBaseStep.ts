@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft
 import { type QuickPickItem } from "vscode";
 import { loadMoreQp, noMatchingResourcesQp, type QuickPicksCache } from "../../../../constants";
 import { localize } from "../../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../../webviews/SharedViewState";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 
 export abstract class RegistryRepositoriesListStepBase extends AzureWizardPromptStep<ContainerRegistryImageSourceContext> {
@@ -25,6 +26,8 @@ export abstract class RegistryRepositoriesListStepBase extends AzureWizardPrompt
         } while (result === noMatchingResourcesQp || result === loadMoreQp);
 
         context.repositoryName = result.label;
+
+        updateLoadingViewProgress(localize('selectedRepository', 'Selected repository'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

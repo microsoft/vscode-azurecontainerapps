@@ -7,6 +7,7 @@ import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft
 import { acrDomain, quickStartImageName } from "../../../../constants";
 import { parseImageName } from "../../../../utils/imageNameUtils";
 import { localize } from "../../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../../webviews/SharedViewState";
 import { type ContainerRegistryImageSourceContext } from "./ContainerRegistryImageSourceContext";
 import { getLatestContainerAppImage } from "./getLatestContainerImage";
 
@@ -33,6 +34,8 @@ export class RegistryImageInputStep extends AzureWizardPromptStep<ContainerRegis
         })).trim();
 
         context.valuesToMask.push(context.image);
+
+        updateLoadingViewProgress(localize('resolvedRegistryImage', 'Resolved registry image'));
     }
 
     public shouldPrompt(context: ContainerRegistryImageSourceContext): boolean {

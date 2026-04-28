@@ -5,6 +5,7 @@
 
 import { AzureWizardPromptStep, type ConfirmationViewProperty } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../../utils/localize";
+import { updateLoadingViewProgress } from "../../../webviews/SharedViewState";
 import { type IngressContext } from "../IngressContext";
 import { getDefaultPort } from "./getDefaultPort";
 
@@ -17,6 +18,8 @@ export class TargetPortInputStep extends AzureWizardPromptStep<IngressContext> {
         }));
 
         context.telemetry.properties.targetPort = String(context.targetPort);
+
+        updateLoadingViewProgress(localize('configuredTargetPort', 'Configured target port'));
     }
 
     public async configureBeforePrompt(context: IngressContext): Promise<void> {
