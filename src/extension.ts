@@ -15,6 +15,7 @@ import { createContainerAppsApiProvider } from './commands/api/createContainerAp
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
+import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { localize } from './utils/localize';
 
@@ -44,6 +45,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
+        ext.containerAppsResourceBranchDataProvider = new ContainerAppsResourceBranchDataProvider();
 
         const authHandshakeId = uuid();
         const authHandshakeStartMs = Date.now();
@@ -63,6 +65,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
                 ext.rgApiV2 = rgApiV2;
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
+                ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerApps, ext.containerAppsResourceBranchDataProvider);
             });
         };
 
