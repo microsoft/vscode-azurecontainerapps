@@ -35,12 +35,16 @@
                 "branches": [
                     {
                         "type": "ContainerAppsEnvironment"
+                    },
+                    {
+                        "type": "ContainerApps"
                     }
                 ]
             },
             "activation": {
                 "onResolve": [
-                    "microsoft.app/managedenvironments"
+                    "microsoft.app/managedenvironments",
+                    "microsoft.app/containerapps"
                 ]
             },
             "commands": [
@@ -190,6 +194,11 @@
             {
                 "command": "containerApps.browse",
                 "title": "%containerApps.browse%",
+                "category": "Azure Container Apps"
+            },
+            {
+                "command": "containerApps.revealInEnvironment",
+                "title": "%containerApps.revealInEnvironment%",
                 "category": "Azure Container Apps"
             },
             {
@@ -376,6 +385,11 @@
                     "command": "containerApps.browse",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "1@1"
+                },
+                {
+                    "command": "containerApps.revealInEnvironment",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppResourceItem/i",
+                    "group": "1_navigate@1"
                 },
                 {
                     "command": "containerApps.restartRevision",
