@@ -17,5 +17,4 @@ copyFileSync(join(pkgDist, 'views.js'), join(outDir, 'views.js'));
 copyFileSync(join(pkgDist, 'views.css'), join(outDir, 'views.css'));
 
 const configs = autoSelectEsbuildConfig();
-configs.extensionConfig.plugins.unshift(fixTasClientPlugin);
 await autoEsbuildOrWatch(configs);
