@@ -823,10 +823,9 @@
         }
     },
     "scripts": {
-        "build": "npm run build:esbuild & npm run build:check & npm run build:webview",
+        "build": "npm run build:esbuild & npm run build:check",
         "build:esbuild": "node esbuild.mjs",
         "build:check": "tsc --noEmit",
-        "build:webview": "node esbuild.views.mjs",
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --max-warnings 0",
         "test": "vscode-test"
@@ -865,6 +864,7 @@
         "@microsoft/vscode-azext-azureutils": "^4.0.1",
         "@microsoft/vscode-azext-github": "^2.0.1",
         "@microsoft/vscode-azext-utils": "^4.0.7",
+        "@microsoft/vscode-azext-webview": "^1.0.0",
         "@microsoft/vscode-azureresources-api": "^3.1.0",
         "@vscode/codicons": "0.0.38",
         "dayjs": "^1.11.3",
