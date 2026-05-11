@@ -5,7 +5,7 @@
 
 import { type ContainerApp, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { LocationListStep, parseAzureResourceId, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { containerAppProvider, containerAppResourceType } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -63,9 +63,11 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
     }
 
     public confirmationViewProperty(context: T): ConfirmationViewProperty {
+        // Use optional chaining instead of nonNullValueAndProp because containerApp is undefined
+        // when the user picks "Create new container app" (the create-new option)
         return {
             name: localize('containerApp', 'Container App'),
-            value: nonNullValueAndProp(context.containerApp, 'name'),
+            value: context.containerApp?.name ?? context.newContainerAppName ?? '',
             contextPropertyName: 'containerApp',
         };
     }

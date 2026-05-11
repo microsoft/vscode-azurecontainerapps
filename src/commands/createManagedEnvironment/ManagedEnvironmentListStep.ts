@@ -7,7 +7,7 @@ import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm
 import { type Workspace } from "@azure/arm-operationalinsights";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { getResourceGroupFromId, LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -61,9 +61,11 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     public confirmationViewProperty(context: T): ConfirmationViewProperty {
+        // Use optional chaining instead of nonNullValueAndProp because managedEnvironment is undefined
+        // when the user picks "Create new container apps environment" (the create-new option)
         return {
             name: localize('containerAppEnvironment', 'Container Apps Environment'),
-            value: nonNullValueAndProp(context.managedEnvironment, 'name'),
+            value: context.managedEnvironment?.name ?? context.newManagedEnvironmentName ?? '',
             contextPropertyName: 'managedEnvironment',
         };
     }
