@@ -7,13 +7,12 @@ import { AzExtFsExtra, IParsedError, parseError, runWithTestActionContext } from
 import * as assert from "assert";
 import * as path from "path";
 import { workspace, type Uri, type WorkspaceFolder } from "vscode";
-import { deployWorkspaceProject } from "../../../src/commands/deployWorkspaceProject/deployWorkspaceProject";
 import { DeployWorkspaceProjectResults } from "../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import { DeploymentConfigurationSettings } from "../../../src/commands/deployWorkspaceProject/settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../../src/commands/deployWorkspaceProject/settings/dwpSettingUtilsV2";
-import { ext } from "../../../src/extensionVariables";
 import { settingUtils } from "../../../src/utils/settingUtils";
 import { assertStringPropsMatch, getWorkspaceFolderUri } from "../../testUtils";
+import { getCachedTestApi } from "../../utils/testApiAccess";
 import { resourceGroupsToDelete } from "../global.nightly.test";
 import { type DeployWorkspaceProjectTestScenario } from "./scenarios/DeployWorkspaceProjectTestScenario";
 import { generateTestScenarios } from "./scenarios/testScenarios";
@@ -42,13 +41,13 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
         await cleanWorkspaceFolderSettings(rootFolder);
 
         for (const testCase of scenario.testCases) {
-            ext.outputChannel.appendLog(`[[[ *** ${scenario.label} - ${testCase.label} *** ]]]`);
+            console.log(`[[[ *** ${scenario.label} - ${testCase.label} *** ]]]`);
             await runWithTestActionContext('deployWorkspaceProject', async context => {
                 await context.ui.runWithInputs(testCase.inputs, async () => {
                     let results: DeployWorkspaceProjectResults;
                     let perr: IParsedError | undefined;
                     try {
-                        results = await deployWorkspaceProject(context);
+                        results = await (await getCachedTestApi()).deployWorkspaceProjectPrivate(context);
                     } catch (e) {
                         results = {};
 

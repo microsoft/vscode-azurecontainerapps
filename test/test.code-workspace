@@ -23,6 +23,6 @@
         {
             "name": "monorepo-identity",
             "path": "testProjects/monorepo-identity"
-        },
+        }
     ]
 }

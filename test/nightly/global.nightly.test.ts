@@ -8,8 +8,8 @@ import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
-import { ext } from '../../src/extensionVariables';
 import { longRunningTestsEnabled } from '../global.test';
+import { getCachedTestApi } from '../utils/testApiAccess';
 
 export let subscriptionContext: ISubscriptionContext;
 export const resourceGroupsToDelete = new Set<string>();
@@ -22,8 +22,10 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
+    const testApi = await getCachedTestApi();
+    const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
     const context: TestActionContext = await createTestActionContext();
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscription: AzureSubscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);
     subscriptionContext = createSubscriptionContext(subscription);
 });
 

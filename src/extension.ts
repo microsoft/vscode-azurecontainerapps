@@ -11,12 +11,21 @@ import { TreeElementStateManager, callWithTelemetryAndErrorHandling, createApiPr
 import { AzExtResourceType, type AzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
 import { v4 as uuid } from 'uuid';
 import * as vscode from 'vscode';
+import * as api from "../src/commands/api/vscode-azurecontainerapps.api";
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
+import { deployImageApi } from './commands/api/deployImageApi';
+import { deployWorkspaceProjectApi } from './commands/api/deployWorkspaceProjectApi';
+import { createContainerApp } from './commands/createContainerApp/createContainerApp';
+import { createManagedEnvironment } from './commands/createManagedEnvironment/createManagedEnvironment';
+import { deployContainerApp } from './commands/deployContainerApp/deployContainerApp';
+import { deployWorkspaceProject } from './commands/deployWorkspaceProject/deployWorkspaceProject';
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
+import { AzureContainerAppsTestApi } from './testApi';
 import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
+import { delay } from './utils/delay';
 import { localize } from './utils/localize';
 
 export async function activate(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<apiUtils.AzureExtensionApiProvider> {
@@ -69,7 +78,38 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             });
         };
 
-        return createContainerAppsApiProvider(registerBranchResources);
+        const coreExtensionMethods = {
+            deployImage: deployImageApi,
+            deployWorkspaceProject: deployWorkspaceProjectApi,
+        };
+
+        let coreExtensionApi: api.AzureContainerAppsExtensionApi | AzureContainerAppsTestApi;
+        if (process.env.VSCODE_RUNNING_TESTS) {
+            // Provide test API when running tests
+            // This allows tests to access internal extension state
+            coreExtensionApi = {
+                apiVersion: '99.0.0',
+                ...coreExtensionMethods,
+                extensionVariables: {
+                    getOutputChannel: async () => { await delay(5000); return ext.outputChannel; },
+                    getRgApiV2: async () => { await delay(5000); return ext.rgApiV2; },
+                    getState: async () => { await delay(5000); return ext.state; },
+                    getBranchDataProvider: async () => { await delay(5000); return ext.branchDataProvider; },
+                },
+                // Export internal methods with the testApi so that we can test them directly
+                createContainerAppPrivate: createContainerApp,
+                createManagedEnvironmentPrivate: createManagedEnvironment,
+                deployContainerAppPrivate: deployContainerApp,
+                deployWorkspaceProjectPrivate: deployWorkspaceProject,
+            } satisfies AzureContainerAppsTestApi;
+        } else {
+            coreExtensionApi = {
+                apiVersion: '1.1.0',
+                ...coreExtensionMethods,
+            };
+        }
+
+        return createContainerAppsApiProvider(registerBranchResources, coreExtensionApi);
 
     }) ?? createApiProvider([]);
 }
