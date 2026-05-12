@@ -6,8 +6,8 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
@@ -35,7 +35,7 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<DeployRevisi
 
         const id: string = containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? containerApp.id : RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
 
-        await ext.state.runWithTemporaryDescription(id, description, async () => {
+        await containerAppRegistry.runWithTemporaryDescription(id, description, async () => {
             await updateContainerApp(context, context.subscription, containerAppEnvelope);
             const updatedContainerApp = await ContainerAppItem.Get(context, context.subscription, containerApp.resourceGroup, containerApp.name);
 

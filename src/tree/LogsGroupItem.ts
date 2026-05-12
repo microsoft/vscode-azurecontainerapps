@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerApp } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
+import { type ContainerAppModel } from "./ContainerAppItem";
 import { type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
 const logStreamItemContextValue: string = 'logStreamItem';
@@ -19,8 +19,8 @@ export class LogsGroupItem implements TreeElementBase {
     static readonly contextValueRegExp: RegExp = new RegExp(LogsGroupItem.contextValue);
     id: string;
 
-    constructor(private readonly subscription: AzureSubscription, private readonly containerApp: ContainerApp) {
-        this.id = `${containerApp.id}/Logs`;
+    constructor(private readonly subscription: AzureSubscription, private readonly containerApp: ContainerAppModel) {
+        this.id = `${containerApp.treeIdPrefix}${containerApp.id}/Logs`;
     }
 
     getTreeItem(): TreeItem {
@@ -52,7 +52,7 @@ export class LogsGroupItem implements TreeElementBase {
                 contextValue: logsItemContextValue,
                 commandId: openInPortal,
                 iconPath: new ThemeIcon('link-external'),
-                id: `${this.containerApp.id}/logs`,
+                id: `${this.id}/openLogs`,
                 label: localize('openLogs', 'Open Logs'),
                 commandArgs: [{
                     portalUrl: createPortalUrl(this.subscription, `${this.containerApp.id}/logs`),

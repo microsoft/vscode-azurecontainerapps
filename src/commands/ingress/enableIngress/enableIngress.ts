@@ -6,6 +6,7 @@
 import { AzureWizard, createSubscriptionContext, type AzureWizardPromptStep, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../extensionVariables';
 import { type ContainerAppsItem } from "../../../tree/ContainerAppsBranchDataProvider";
+import { containerAppRegistry } from '../../../tree/containerAppRegistry';
 import { createActivityContext } from '../../../utils/activityUtils';
 import { localize } from '../../../utils/localize';
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
@@ -42,4 +43,5 @@ export async function enableIngress(context: IActionContext, node?: ContainerApp
     await wizard.execute();
 
     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+    containerAppRegistry.notifyChildrenChanged(containerApp.id);
 }

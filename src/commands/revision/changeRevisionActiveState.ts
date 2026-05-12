@@ -5,8 +5,8 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { nonNullProp, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
-import { ext } from "../../extensionVariables";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
+import { containerAppRegistry } from "../../tree/containerAppRegistry";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -23,12 +23,13 @@ export async function executeRevisionOperation(context: IActionContext, node: Co
     }
 
     const item: ContainerAppItem | RevisionItem = nonNullValue(node);
+    const canonicalId: string = item instanceof RevisionItem ? nonNullProp(item.revision, 'id') : item.containerApp.id;
 
-    await ext.state.runWithTemporaryDescription(item.id, revisionOperationDescriptions[operation], async () => {
+    await containerAppRegistry.runWithTemporaryDescription(canonicalId, revisionOperationDescriptions[operation], async () => {
         const appClient: ContainerAppsAPIClient = await createContainerAppsClient(context, item.subscription);
         const revisionName: string = item instanceof RevisionItem ? nonNullProp(item.revision, 'name') : nonNullProp(item.containerApp, 'latestRevisionName');
         await appClient.containerAppsRevisions[operation](item.containerApp.resourceGroup, item.containerApp.name, revisionName);
-        ext.state.notifyChildrenChanged(item.containerApp.id);
+        containerAppRegistry.notifyChildrenChanged(item.containerApp.id);
     });
 }
 

@@ -197,11 +197,6 @@
                 "category": "Azure Container Apps"
             },
             {
-                "command": "containerApps.revealInEnvironment",
-                "title": "%containerApps.revealInEnvironment%",
-                "category": "Azure Container Apps"
-            },
-            {
                 "command": "containerApps.openConsoleInPortal",
                 "title": "%containerApps.openConsoleInPortal%",
                 "category": "Azure Container Apps"
@@ -385,11 +380,6 @@
                     "command": "containerApps.browse",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "1@1"
-                },
-                {
-                    "command": "containerApps.revealInEnvironment",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppResourceItem/i",
-                    "group": "1_navigate@1"
                 },
                 {
                     "command": "containerApps.restartRevision",

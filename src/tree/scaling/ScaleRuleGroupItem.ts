@@ -30,7 +30,7 @@ export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
         super(subscription, containerApp, revision);
     }
 
-    id: string = `${this.parentResource.id}/scalerules`;
+    id: string = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/scalerules`;
     label: string;
 
     // Use getter here because some properties aren't available until after the constructor is run

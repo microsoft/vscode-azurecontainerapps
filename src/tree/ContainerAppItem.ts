@@ -13,12 +13,14 @@ import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/Delet
 import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
+import { containerAppRegistry } from "./containerAppRegistry";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { type ContainerAppsItem, type TreeElementBase } from "./ContainerAppsBranchDataProvider";
+import { CONTAINER_APP_NAMESPACE_ENV, type ContainerAppNamespace } from "./containerAppNamespace";
 import { LogsGroupItem } from "./LogsGroupItem";
 import { ConfigurationItem } from "./configurations/ConfigurationItem";
 import { type RevisionsDraftModel } from "./revisionManagement/RevisionDraftItem";
@@ -31,6 +33,11 @@ export interface ContainerAppModel extends ContainerApp {
     resourceGroup: string;
     managedEnvironmentId: string;
     revisionsMode: KnownActiveRevisionsMode;
+    /**
+     * Namespace prefix applied to tree-element ids in this app's subtree. See
+     * `ContainerAppNamespace`. Does not affect any ARM-facing field (`id`, etc.).
+     */
+    treeIdPrefix: ContainerAppNamespace;
 }
 
 export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel {
@@ -48,7 +55,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     constructor(public readonly subscription: AzureSubscription, private _containerApp: ContainerAppModel) {
-        this.id = this.containerApp.id;
+        this.id = `${_containerApp.treeIdPrefix}${_containerApp.id}`;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
         this.portalUrl = createPortalUrl(subscription, _containerApp.id);
@@ -130,28 +137,29 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             ContainerAppItem.contextValueRegExp.test((item as ContainerAppItem).contextValue);
     }
 
-    static async List(context: IActionContext, subscription: AzureSubscription, managedEnvironmentId: string): Promise<ContainerAppModel[]> {
+    static async List(context: IActionContext, subscription: AzureSubscription, managedEnvironmentId: string, treeIdPrefix: ContainerAppNamespace = CONTAINER_APP_NAMESPACE_ENV): Promise<ContainerAppModel[]> {
         const subContext = createSubscriptionContext(subscription);
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);
         return (await uiUtils.listAllIterator(client.containerApps.listBySubscription()))
             .filter(ca => ca.managedEnvironmentId && ca.managedEnvironmentId === managedEnvironmentId)
-            .map(ContainerAppItem.CreateContainerAppModel);
+            .map(ca => ContainerAppItem.CreateContainerAppModel(ca, treeIdPrefix));
     }
 
-    static async Get(context: IActionContext, subscription: AzureSubscription, resourceGroupName: string, containerAppName: string): Promise<ContainerAppModel> {
+    static async Get(context: IActionContext, subscription: AzureSubscription, resourceGroupName: string, containerAppName: string, treeIdPrefix: ContainerAppNamespace = CONTAINER_APP_NAMESPACE_ENV): Promise<ContainerAppModel> {
         const client: ContainerAppsAPIClient = await createContainerAppsClient(context, subscription);
-        return ContainerAppItem.CreateContainerAppModel(await client.containerApps.get(resourceGroupName, containerAppName));
+        return ContainerAppItem.CreateContainerAppModel(await client.containerApps.get(resourceGroupName, containerAppName), treeIdPrefix);
     }
 
-    static CreateContainerAppModel(containerApp: ContainerApp): ContainerAppModel {
+    static CreateContainerAppModel(containerApp: ContainerApp, treeIdPrefix: ContainerAppNamespace = CONTAINER_APP_NAMESPACE_ENV): ContainerAppModel {
         const revisionsMode = containerApp.configuration?.activeRevisionsMode as KnownActiveRevisionsMode ?? KnownActiveRevisionsMode.Single;
         return {
+            ...containerApp,
             id: nonNullProp(containerApp, 'id'),
             name: nonNullProp(containerApp, 'name'),
             managedEnvironmentId: nonNullProp(containerApp, 'managedEnvironmentId'),
             resourceGroup: getResourceGroupFromId(nonNullProp(containerApp, 'id')),
             revisionsMode,
-            ...containerApp,
+            treeIdPrefix,
         };
     }
 
@@ -177,10 +185,11 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
             await wizard.prompt();
         }
 
-        await ext.state.showDeleting(this.containerApp.id, async () => {
+        await containerAppRegistry.showDeleting(this.containerApp.id, async () => {
             await wizard.execute();
         });
         ext.state.notifyChildrenChanged(this.containerApp.managedEnvironmentId);
+        containerAppRegistry.notifyChildrenChanged(this.containerApp.id);
     }
 
     hasUnsavedChanges(): boolean {
@@ -196,7 +205,9 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 export async function getContainerEnvelopeWithSecrets(context: IActionContext, subscription: AzureSubscription, containerApp: ContainerAppModel): Promise<Required<ContainerApp>> {
     // anytime you want to update the container app, you need to include the secrets but that is not retrieved by default
     // make a deep copy, we don't want to modify the one that is cached
-    const containerAppEnvelope = <ContainerApp>JSON.parse(JSON.stringify(containerApp));
+    const containerAppEnvelope = <ContainerApp & { treeIdPrefix?: string }>JSON.parse(JSON.stringify(containerApp));
+    // `treeIdPrefix` is a tree-side annotation, not part of the ARM contract.
+    delete containerAppEnvelope.treeIdPrefix;
 
     // verify all top-level properties
     for (const key of Object.keys(containerAppEnvelope)) {

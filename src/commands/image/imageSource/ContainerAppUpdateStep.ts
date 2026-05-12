@@ -9,6 +9,7 @@ import retry from "p-retry";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
@@ -68,9 +69,10 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         const retries = 4;
         await retry(
             async (): Promise<void> => {
-                await ext.state.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
+                await containerAppRegistry.runWithTemporaryDescription(containerApp.id, localize('updating', 'Updating...'), async () => {
                     context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
                     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+                    containerAppRegistry.notifyChildrenChanged(containerApp.id);
                 });
             },
             {
