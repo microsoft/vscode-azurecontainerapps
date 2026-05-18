@@ -25,7 +25,6 @@ import { ext } from './extensionVariables';
 import { AzureContainerAppsTestApi } from './testApi';
 import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
-import { delay } from './utils/delay';
 import { localize } from './utils/localize';
 
 export async function activate(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<apiUtils.AzureExtensionApiProvider> {
@@ -78,7 +77,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             });
         };
 
-        const coreExtensionMethods = {
+        const coreApiEndpoints = {
             deployImage: deployImageApi,
             deployWorkspaceProject: deployWorkspaceProjectApi,
         };
@@ -89,12 +88,12 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             // This allows tests to access internal extension state
             coreExtensionApi = {
                 apiVersion: '99.0.0',
-                ...coreExtensionMethods,
+                ...coreApiEndpoints,
                 extensionVariables: {
-                    getOutputChannel: async () => { await delay(5000); return ext.outputChannel; },
-                    getRgApiV2: async () => { await delay(5000); return ext.rgApiV2; },
-                    getState: async () => { await delay(5000); return ext.state; },
-                    getBranchDataProvider: async () => { await delay(5000); return ext.branchDataProvider; },
+                    getOutputChannel: async () => { await registerBranchResources; return ext.outputChannel; },
+                    getRgApiV2: async () => { await registerBranchResources; return ext.rgApiV2; },
+                    getState: async () => { await registerBranchResources; return ext.state; },
+                    getBranchDataProvider: async () => { await registerBranchResources; return ext.branchDataProvider; },
                 },
                 // Export internal methods with the testApi so that we can test them directly
                 createContainerAppInternal: createContainerApp,
@@ -105,7 +104,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         } else {
             coreExtensionApi = {
                 apiVersion: '1.1.0',
-                ...coreExtensionMethods,
+                ...coreApiEndpoints,
             };
         }
 

@@ -13,5 +13,7 @@
         "out": true,
         "**/node_modules": true,
         ".vscode-test": true
-    }
+    },
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
+    "js/ts.tsdk.promptToUseWorkspaceVersion": true
 }
