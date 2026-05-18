@@ -59,6 +59,10 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         const authHandshakeStartMs = Date.now();
         activateContext.telemetry.properties.authHandshakeId = authHandshakeId;
 
+        // Deferred promise: extracts `resolve` so `registerBranchResources` can signal completion to awaiting callers
+        let resolveHandshake: () => void;
+        const handshakePromise = new Promise<void>((resolve) => { resolveHandshake = resolve; });
+
         const registerBranchResources = async (azureResourcesApis: (AzureResourcesExtensionApi | undefined)[]) => {
             await callWithTelemetryAndErrorHandling('hostApiRequestSucceeded', (actionContext: IActionContext) => {
                 actionContext.telemetry.measurements.authHandshakeDuration = (Date.now() - authHandshakeStartMs) / 1000;
@@ -75,6 +79,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerApps, ext.containerAppsResourceBranchDataProvider);
             });
+            resolveHandshake();
         };
 
         const coreApiEndpoints = {
@@ -90,10 +95,10 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                 apiVersion: '99.0.0',
                 ...coreApiEndpoints,
                 extensionVariables: {
-                    getOutputChannel: async () => { await registerBranchResources; return ext.outputChannel; },
-                    getRgApiV2: async () => { await registerBranchResources; return ext.rgApiV2; },
-                    getState: async () => { await registerBranchResources; return ext.state; },
-                    getBranchDataProvider: async () => { await registerBranchResources; return ext.branchDataProvider; },
+                    getOutputChannel: async () => { await handshakePromise; return ext.outputChannel; },
+                    getRgApiV2: async () => { await handshakePromise; return ext.rgApiV2; },
+                    getState: async () => { await handshakePromise; return ext.state; },
+                    getBranchDataProvider: async () => { await handshakePromise; return ext.branchDataProvider; },
                 },
                 // Export internal methods with the testApi so that we can test them directly
                 createContainerAppInternal: createContainerApp,
