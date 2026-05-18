@@ -22,7 +22,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
-    const testApi = await getCachedTestApi();
+    const testApi = getCachedTestApi();
     const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
     const context: TestActionContext = await createTestActionContext();
     const subscription: AzureSubscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);

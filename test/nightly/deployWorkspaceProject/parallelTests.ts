@@ -47,7 +47,7 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
                     let results: DeployWorkspaceProjectResults;
                     let perr: IParsedError | undefined;
                     try {
-                        results = await getCachedTestApi().deployWorkspaceProjectPrivate(context);
+                        results = await (getCachedTestApi().deployWorkspaceProjectInternal(context));
                     } catch (e) {
                         results = {};
 

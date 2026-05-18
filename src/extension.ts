@@ -97,10 +97,10 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                     getBranchDataProvider: async () => { await delay(5000); return ext.branchDataProvider; },
                 },
                 // Export internal methods with the testApi so that we can test them directly
-                createContainerAppPrivate: createContainerApp,
-                createManagedEnvironmentPrivate: createManagedEnvironment,
-                deployContainerAppPrivate: deployContainerApp,
-                deployWorkspaceProjectPrivate: deployWorkspaceProject,
+                createContainerAppInternal: createContainerApp,
+                createManagedEnvironmentInternal: createManagedEnvironment,
+                deployContainerAppInternal: deployContainerApp,
+                deployWorkspaceProjectInternal: deployWorkspaceProject,
             } satisfies AzureContainerAppsTestApi;
         } else {
             coreExtensionApi = {

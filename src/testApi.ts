@@ -25,8 +25,12 @@ export interface AzureContainerAppsTestApi extends api.AzureContainerAppsExtensi
         getState(): Promise<TreeElementStateManager>;
         getBranchDataProvider(): Promise<ContainerAppsBranchDataProvider>;
     };
-    createContainerAppPrivate: typeof createContainerApp;
-    createManagedEnvironmentPrivate: typeof createManagedEnvironment;
-    deployContainerAppPrivate: typeof deployContainerApp;
-    deployWorkspaceProjectPrivate: typeof deployWorkspaceProject;
+    /** A private test export for {@link createContainerApp} */
+    createContainerAppInternal: typeof createContainerApp;
+    /** A private test export for {@link createManagedEnvironment} */
+    createManagedEnvironmentInternal: typeof createManagedEnvironment;
+    /** A private test export for {@link deployContainerApp} */
+    deployContainerAppInternal: typeof deployContainerApp;
+    /** A private test export for {@link deployWorkspaceProject} */
+    deployWorkspaceProjectInternal: typeof deployWorkspaceProject;
 }
