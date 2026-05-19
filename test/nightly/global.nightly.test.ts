@@ -34,6 +34,20 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     const tdp = rgApiV2.resources.azureResourceTreeDataProvider;
     console.log(`[nightly-setup] Got tree data provider: ${!!tdp}`);
 
+    // Enumerate root children to see if subscriptions are available
+    try {
+        const rootChildren = await tdp.getChildren(undefined) as { id?: string; name?: string; subscription?: { subscriptionId?: string } }[];
+        console.log(`[nightly-setup] Tree root children count: ${rootChildren?.length ?? 'null/undefined'}`);
+        if (rootChildren) {
+            for (const child of rootChildren) {
+                const subId = child.subscription?.subscriptionId ?? child.id ?? 'unknown';
+                console.log(`[nightly-setup]   child: id=${child.id}, name=${(child as { name?: string }).name}, subscriptionId=${subId}`);
+            }
+        }
+    } catch (e) {
+        console.log(`[nightly-setup] Failed to enumerate tree children: ${e}`);
+    }
+
     const context: TestActionContext = await createTestActionContext();
     console.log('[nightly-setup] Created test action context, calling subscriptionExperience...');
 
