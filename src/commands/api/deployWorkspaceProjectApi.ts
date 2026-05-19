@@ -25,7 +25,7 @@ export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: a
     }) ?? {};
 }
 
-// Separated from `deployWorkspaceProjectApi` so tests can provide their own test action context via `runWithTestActionContext`.
+// Separated from `deployWorkspaceProjectApi` so tests can inject their own test action context via `runWithTestActionContext`.
 export async function deployWorkspaceProjectApiInternal(context: IActionContext, deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
     const {
         resourceGroupId,
