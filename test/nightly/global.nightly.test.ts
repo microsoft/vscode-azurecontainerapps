@@ -20,13 +20,32 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     }
 
     this.timeout(2 * 60 * 1000);
+
+    console.log('[nightly-setup] Executing azureResourceGroups.logIn...');
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
+    console.log('[nightly-setup] azureResourceGroups.logIn completed');
 
     const testApi = getCachedTestApi();
+    console.log('[nightly-setup] Got test API');
+
     const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
+    console.log('[nightly-setup] Got rgApiV2');
+
+    const tdp = rgApiV2.resources.azureResourceTreeDataProvider;
+    console.log(`[nightly-setup] Got tree data provider: ${!!tdp}`);
+
     const context: TestActionContext = await createTestActionContext();
-    const subscription: AzureSubscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);
-    subscriptionContext = createSubscriptionContext(subscription);
+    console.log('[nightly-setup] Created test action context, calling subscriptionExperience...');
+
+    try {
+        const subscription: AzureSubscription = await subscriptionExperience(context, tdp);
+        console.log(`[nightly-setup] Got subscription: ${subscription.subscriptionId} (${subscription.name})`);
+        subscriptionContext = createSubscriptionContext(subscription);
+        console.log('[nightly-setup] subscriptionContext created successfully');
+    } catch (error) {
+        console.log(`[nightly-setup] subscriptionExperience failed: ${error}`);
+        throw error;
+    }
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
@@ -36,6 +55,11 @@ suiteTeardown(async function (this: Mocha.Context): Promise<void> {
 
     // Account for the fact that it can take an extremely long time to delete managed environment resources
     this.timeout(60 * 60 * 1000);
+    console.log(`[nightly-teardown] subscriptionContext defined: ${!!subscriptionContext}`);
+    if (!subscriptionContext) {
+        console.log('[nightly-teardown] Skipping resource group cleanup — subscriptionContext was never set (suiteSetup likely failed)');
+        return;
+    }
     await deleteResourceGroups();
 });
 
