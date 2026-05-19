@@ -45,16 +45,13 @@ export async function deployWorkspaceProjectApiInternal(context: IActionContext,
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
 
     const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
-
     const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId({ ...context, ...subscriptionContext }, resourceGroupId) : undefined;
-
-    const newManagedEnvironmentName = await tryGetNewManagedEnvironmentName({ ...context, ...subscriptionContext }, resourceGroup?.name, resourceGroup?.name);
 
     const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
         ...subscriptionContext,
         subscription,
         resourceGroup,
-        newManagedEnvironmentName,
+        newManagedEnvironmentName: await tryGetNewManagedEnvironmentName({ ...context, ...subscriptionContext }, resourceGroup?.name, resourceGroup?.name),
         rootFolder,
         srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
         dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
