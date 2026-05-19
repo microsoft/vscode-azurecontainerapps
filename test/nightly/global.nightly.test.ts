@@ -49,7 +49,6 @@ async function deleteResourceGroups(): Promise<void> {
         }
 
         console.log(`Deleting resource group "${resourceGroup}"...`);
-        await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
-        console.log(`Successfully deleted resource group "${resourceGroup}".`);
+        void rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
     }));
 }

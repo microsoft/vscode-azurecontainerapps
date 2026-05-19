@@ -6,6 +6,7 @@
 import { type IAzExtOutputChannel, type TreeElementStateManager } from "@microsoft/vscode-azext-utils";
 import { type AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
 import * as api from "../src/commands/api/vscode-azurecontainerapps.api";
+import { type deployWorkspaceProjectApiInternal } from "./commands/api/deployWorkspaceProjectApi";
 import { createContainerApp } from "./commands/createContainerApp/createContainerApp";
 import { createManagedEnvironment } from "./commands/createManagedEnvironment/createManagedEnvironment";
 import { deployContainerApp } from "./commands/deployContainerApp/deployContainerApp";
@@ -33,4 +34,6 @@ export interface AzureContainerAppsTestApi extends api.AzureContainerAppsExtensi
     deployContainerAppInternal: typeof deployContainerApp;
     /** A private test export for {@link deployWorkspaceProject} */
     deployWorkspaceProjectInternal: typeof deployWorkspaceProject;
+    /** A private test export for {@link deployWorkspaceProjectApiInternal} */
+    deployWorkspaceProjectApiInternal: typeof deployWorkspaceProjectApiInternal;
 }

@@ -14,7 +14,7 @@ import * as vscode from 'vscode';
 import * as api from "../src/commands/api/vscode-azurecontainerapps.api";
 import { createContainerAppsApiProvider } from './commands/api/createContainerAppsApiProvider';
 import { deployImageApi } from './commands/api/deployImageApi';
-import { deployWorkspaceProjectApi } from './commands/api/deployWorkspaceProjectApi';
+import { deployWorkspaceProjectApi, deployWorkspaceProjectApiInternal } from './commands/api/deployWorkspaceProjectApi';
 import { createContainerApp } from './commands/createContainerApp/createContainerApp';
 import { createManagedEnvironment } from './commands/createManagedEnvironment/createManagedEnvironment';
 import { deployContainerApp } from './commands/deployContainerApp/deployContainerApp';
@@ -105,6 +105,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                 createManagedEnvironmentInternal: createManagedEnvironment,
                 deployContainerAppInternal: deployContainerApp,
                 deployWorkspaceProjectInternal: deployWorkspaceProject,
+                deployWorkspaceProjectApiInternal: deployWorkspaceProjectApiInternal,
             } satisfies AzureContainerAppsTestApi;
         } else {
             coreExtensionApi = {

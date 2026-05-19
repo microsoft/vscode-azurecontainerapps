@@ -21,55 +21,65 @@ import type * as api from "./vscode-azurecontainerapps.api";
 export async function deployWorkspaceProjectApi(deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
     return await callWithTelemetryAndErrorHandling('containerApps.api.deployWorkspaceProject', async (context: IActionContext): Promise<DeployWorkspaceProjectResults> => {
         context.errorHandling.rethrow = true;
-
-        const {
-            resourceGroupId,
-            location,
-            rootPath,
-            dockerfilePath,
-            srcPath,
-            suppressConfirmation,
-            suppressContainerAppCreation,
-            shouldSaveDeploySettings
-        } = deployWorkspaceProjectOptions;
-
-        const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-            selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
-            showLoadingPrompt: false
-        });
-        const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
-
-        const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
-        const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId({ ...context, ...subscriptionContext }, resourceGroupId) : undefined;
-
-        const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
-            ...subscriptionContext,
-            subscription,
-            resourceGroup,
-            newManagedEnvironmentName: await tryGetNewManagedEnvironmentName({ ...context, ...subscriptionContext }, resourceGroup?.name, resourceGroup?.name),
-            rootFolder,
-            srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
-            dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
-            newRegistryCredentialType: RegistryCredentialType.DockerLogin,
-            shouldSaveDeploySettings: !!shouldSaveDeploySettings,
-        });
-
-        if (location || deployWorkspaceProjectInternalContext.resourceGroup) {
-            const autoSelectLocation = location ?? nonNullValueAndProp(deployWorkspaceProjectInternalContext.resourceGroup, 'location');
-            await LocationListStep.setAutoSelectLocation(deployWorkspaceProjectInternalContext, autoSelectLocation);
-        }
-
-        const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
-            advancedCreate: false,
-            suppressActivity: true,
-            suppressConfirmation,
-            suppressContainerAppCreation,
-            suppressProgress: true,
-            suppressWizardTitle: true,
-        });
-
-        return await getDeployWorkspaceProjectResults(deployWorkspaceProjectContext);
+        return await deployWorkspaceProjectApiInternal(context, deployWorkspaceProjectOptions);
     }) ?? {};
+}
+
+// Separated from `deployWorkspaceProjectApi` so tests can provide their own action context via `runWithTestActionContext`.
+// The extension's esbuild bundle has its own `@microsoft/vscode-azext-utils` instance, so calling `deployWorkspaceProjectApi`
+// directly from tests bypasses the test's `registerOnActionStartHandler` and hangs waiting for user input.
+export async function deployWorkspaceProjectApiInternal(context: IActionContext, deployWorkspaceProjectOptions: api.DeployWorkspaceProjectOptionsContract): Promise<DeployWorkspaceProjectResults> {
+    const {
+        resourceGroupId,
+        location,
+        rootPath,
+        dockerfilePath,
+        srcPath,
+        suppressConfirmation,
+        suppressContainerAppCreation,
+        shouldSaveDeploySettings
+    } = deployWorkspaceProjectOptions;
+
+    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+        selectBySubscriptionId: getSubscriptionIdFromOptions(deployWorkspaceProjectOptions),
+        showLoadingPrompt: false
+    });
+    const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+
+    const rootFolder: WorkspaceFolder | undefined = rootPath ? getWorkspaceFolderFromPath(rootPath) : undefined;
+
+    const resourceGroup: ResourceGroup | undefined = resourceGroupId ? await getResourceGroupFromId({ ...context, ...subscriptionContext }, resourceGroupId) : undefined;
+
+    const newManagedEnvironmentName = await tryGetNewManagedEnvironmentName({ ...context, ...subscriptionContext }, resourceGroup?.name, resourceGroup?.name);
+
+    const deployWorkspaceProjectInternalContext: DeployWorkspaceProjectInternalContext = Object.assign(context, {
+        ...subscriptionContext,
+        subscription,
+        resourceGroup,
+        newManagedEnvironmentName,
+        rootFolder,
+        srcPath: srcPath ? Uri.file(srcPath).fsPath : undefined,
+        dockerfilePath: dockerfilePath ? Uri.file(dockerfilePath).fsPath : undefined,
+        newRegistryCredentialType: RegistryCredentialType.DockerLogin,
+        shouldSaveDeploySettings: !!shouldSaveDeploySettings,
+    });
+
+    if (location || deployWorkspaceProjectInternalContext.resourceGroup) {
+        const autoSelectLocation = location ?? nonNullValueAndProp(deployWorkspaceProjectInternalContext.resourceGroup, 'location');
+        await LocationListStep.setAutoSelectLocation(deployWorkspaceProjectInternalContext, autoSelectLocation);
+    }
+
+    const deployWorkspaceProjectContext: DeployWorkspaceProjectContext = await deployWorkspaceProjectInternal(deployWorkspaceProjectInternalContext, {
+        advancedCreate: false,
+        suppressActivity: true,
+        suppressConfirmation,
+        suppressContainerAppCreation,
+        suppressProgress: true,
+        suppressWizardTitle: true,
+    });
+
+    const results = await getDeployWorkspaceProjectResults(deployWorkspaceProjectContext);
+    return results;
 }
 
 async function tryGetNewManagedEnvironmentName(context: ISubscriptionActionContext, resourceGroupName?: string, newEnvironmentName?: string): Promise<string | undefined> {
