@@ -95,9 +95,9 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                 apiVersion: '99.0.0',
                 ...coreApiEndpoints,
                 extensionVariables: {
-                    getOutputChannel: async () => { await handshakePromise; return ext.outputChannel; },
+                    getState: () => { return ext.state; },
+                    getOutputChannel: () => { return ext.outputChannel; },
                     getRgApiV2: async () => { await handshakePromise; return ext.rgApiV2; },
-                    getState: async () => { await handshakePromise; return ext.state; },
                     getBranchDataProvider: async () => { await handshakePromise; return ext.branchDataProvider; },
                 },
                 // Export internal methods with the testApi so that we can test them directly

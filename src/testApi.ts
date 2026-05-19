@@ -21,9 +21,9 @@ import { type ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranch
 export interface AzureContainerAppsTestApi extends api.AzureContainerAppsExtensionApi {
     apiVersion: '99.0.0';
     extensionVariables: {
-        getOutputChannel(): Promise<IAzExtOutputChannel>;
+        getState(): TreeElementStateManager;
+        getOutputChannel(): IAzExtOutputChannel;
         getRgApiV2(): Promise<AzureResourcesExtensionApi>;
-        getState(): Promise<TreeElementStateManager>;
         getBranchDataProvider(): Promise<ContainerAppsBranchDataProvider>;
     };
     /** A private test export for {@link createContainerApp} */

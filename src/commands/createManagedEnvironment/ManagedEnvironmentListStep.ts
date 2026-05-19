@@ -61,8 +61,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     public confirmationViewProperty(context: T): ConfirmationViewProperty {
-        // Use optional chaining instead of nonNullValueAndProp because managedEnvironment is undefined
-        // when the user picks "Create new container apps environment" (the create-new option)
         return {
             name: localize('containerAppEnvironment', 'Container Apps Environment'),
             value: context.managedEnvironment?.name ?? context.newManagedEnvironmentName ?? '',

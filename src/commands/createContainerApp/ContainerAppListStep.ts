@@ -63,8 +63,6 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
     }
 
     public confirmationViewProperty(context: T): ConfirmationViewProperty {
-        // Use optional chaining instead of nonNullValueAndProp because containerApp is undefined
-        // when the user picks "Create new container app" (the create-new option)
         return {
             name: localize('containerApp', 'Container App'),
             value: context.containerApp?.name ?? context.newContainerAppName ?? '',
