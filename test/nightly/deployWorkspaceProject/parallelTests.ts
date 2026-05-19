@@ -94,6 +94,16 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
 async function cleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
     const vscodeFolderPath: string = path.dirname(settingsPath);
+
+    // Clear the setting via VS Code API first so the in-memory config cache is updated.
+    // Deleting the .vscode folder from disk alone is no longer sufficient — VS Code may still
+    // serve stale cached values from `workspace.getConfiguration()` if the API cache
+    // isn't explicitly invalidated.
+    const existingConfigs = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder);
+    if (existingConfigs?.length) {
+        await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(rootFolder, []);
+    }
+
     if (await AzExtFsExtra.pathExists(vscodeFolderPath)) {
         await AzExtFsExtra.deleteResource(vscodeFolderPath, { recursive: true });
     }
