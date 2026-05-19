@@ -10,7 +10,8 @@ import { ext } from '../src/extensionVariables';
 import { getTestApi } from './utils/testApiAccess';
 
 export const longRunningLocalTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_EnableLongRunningTestsLocal || '');
-export const longRunningRemoteTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
+export const longRunningRemoteTestsEnabled: boolean = !!process.env.FC_SERVICE_CONNECTION_NAME
+    || !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
 
 export const longRunningTestsEnabled: boolean = longRunningLocalTestsEnabled || longRunningRemoteTestsEnabled;
 
