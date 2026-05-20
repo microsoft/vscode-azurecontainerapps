@@ -6,7 +6,6 @@
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
-import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { longRunningTestsEnabled } from '../global.test';
 import { getCachedTestApi } from '../utils/testApiAccess';
@@ -20,46 +19,18 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     }
 
     this.timeout(2 * 60 * 1000);
-
-    console.log('[nightly-setup] Executing azureResourceGroups.logIn...');
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
-    console.log('[nightly-setup] azureResourceGroups.logIn completed');
+
+    // The logIn command fires an async tree refresh. Wait for it to settle
+    // to avoid a race where getChildren() is cancelled by the in-progress refresh.
+    await vscode.commands.executeCommand('azureResourceGroups.refresh');
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     const testApi = getCachedTestApi();
-    console.log('[nightly-setup] Got test API');
-
     const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
-    console.log('[nightly-setup] Got rgApiV2');
-
-    const tdp = rgApiV2.resources.azureResourceTreeDataProvider;
-    console.log(`[nightly-setup] Got tree data provider: ${!!tdp}`);
-
-    // Enumerate root children to see if subscriptions are available
-    try {
-        const rootChildren = await tdp.getChildren(undefined) as { id?: string; name?: string; subscription?: { subscriptionId?: string } }[];
-        console.log(`[nightly-setup] Tree root children count: ${rootChildren?.length ?? 'null/undefined'}`);
-        if (rootChildren) {
-            for (const child of rootChildren) {
-                const subId = child.subscription?.subscriptionId ?? child.id ?? 'unknown';
-                console.log(`[nightly-setup]   child: id=${child.id}, name=${(child as { name?: string }).name}, subscriptionId=${subId}`);
-            }
-        }
-    } catch (e) {
-        console.log(`[nightly-setup] Failed to enumerate tree children: ${e}`);
-    }
-
     const context: TestActionContext = await createTestActionContext();
-    console.log('[nightly-setup] Created test action context, calling subscriptionExperience...');
-
-    try {
-        const subscription: AzureSubscription = await subscriptionExperience(context, tdp);
-        console.log(`[nightly-setup] Got subscription: ${subscription.subscriptionId} (${subscription.name})`);
-        subscriptionContext = createSubscriptionContext(subscription);
-        console.log('[nightly-setup] subscriptionContext created successfully');
-    } catch (error) {
-        console.log(`[nightly-setup] subscriptionExperience failed: ${error}`);
-        throw error;
-    }
+    const subscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);
+    subscriptionContext = createSubscriptionContext(subscription);
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
