@@ -23,7 +23,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 
     if (longRunningRemoteTestsEnabled) {
         // TODO: Remove once vscode-azureresourcegroups releases with FC_* env var support
-        // After that release, `logIn` will handle federated credentials natively and we can
+        // After that, `logIn` will handle federated credentials natively and we can
         // stop using the RG test api to override the subscription provider.
         await setupAzureDevOpsSubscriptionProvider();
     }
@@ -48,11 +48,6 @@ suiteTeardown(async function (this: Mocha.Context): Promise<void> {
 
     // Account for the fact that it can take an extremely long time to delete managed environment resources
     this.timeout(60 * 60 * 1000);
-    console.log(`[nightly-teardown] subscriptionContext defined: ${!!subscriptionContext}`);
-    if (!subscriptionContext) {
-        console.log('[nightly-teardown] Skipping resource group cleanup — subscriptionContext was never set (suiteSetup likely failed)');
-        return;
-    }
     await deleteResourceGroups();
 });
 
