@@ -81,7 +81,7 @@ async function createResourceGroup(): Promise<ResourceGroupId> {
             ...subscriptionContext,
             newResourceGroupName,
         };
-        await LocationListStep.setLocation(wizardContext, 'eastus');
+        await LocationListStep.setLocation(wizardContext, 'westus2');
 
         const wizard = new AzureWizard<IResourceGroupWizardContext>(wizardContext, {
             executeSteps: [new ResourceGroupCreateStep()],

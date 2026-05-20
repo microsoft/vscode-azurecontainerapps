@@ -30,7 +30,7 @@ export function generateAdvancedJSTests(): DeployWorkspaceProjectTestCase[] {
                 'Standard',
                 new RegExp('Create new container app'),
                 appResourceName,
-                'East US',
+                'West US 2',
                 'Docker Login Credentials',
                 'Enable',
                 path.join('src', 'Dockerfile'),

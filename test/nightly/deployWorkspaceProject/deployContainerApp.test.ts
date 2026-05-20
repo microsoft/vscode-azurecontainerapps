@@ -85,7 +85,7 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
     let managedEnvironment: ManagedEnvironment | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
         const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-        await context.ui.runWithInputs([resourceName, 'East US'], async () => {
+        await context.ui.runWithInputs([resourceName, 'West US 2'], async () => {
             managedEnvironment = await (getCachedTestApi().createManagedEnvironmentInternal(context));
         });
     });

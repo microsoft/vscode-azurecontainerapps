@@ -33,7 +33,7 @@ export function generateMonorepoIdentityTests(): DeployWorkspaceProjectTestCase[
                 'Standard',
                 new RegExp('Create new container app'),
                 appOneName,
-                'East US',
+                'West US 2',
                 'Managed Identity',
                 path.join('app1', 'Dockerfile'),
                 `.${path.sep}app1`,

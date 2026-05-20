@@ -7,7 +7,7 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { longRunningTestsEnabled, longRunningRemoteTestsEnabled } from '../global.test';
+import { longRunningRemoteTestsEnabled, longRunningTestsEnabled } from '../global.test';
 import { setupAzureDevOpsSubscriptionProvider } from '../utils/azureDevOpsSubscriptionProvider';
 import { getCachedTestApi } from '../utils/testApiAccess';
 
@@ -22,23 +22,15 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);
 
     if (longRunningRemoteTestsEnabled) {
-        // In CI, set up the AzDO subscription provider and install it as the override
-        // on the RG extension. This ensures the tree is authenticated with federated
-        // credentials for both this setup and downstream subscriptionExperience calls
-        // inside extension commands.
-        //
         // TODO: Remove once vscode-azureresourcegroups releases with FC_* env var support
-        // (https://github.com/microsoft/vscode-azureresourcegroups/pull/1447).
-        // After that release, `logIn` will handle federated credentials natively.
+        // After that release, `logIn` will handle federated credentials natively and we can
+        // stop using the RG test api to override the subscription provider.
         await setupAzureDevOpsSubscriptionProvider();
     }
 
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
     // Refresh the tree and wait for any pending tree operations to settle.
-    // This avoids a race condition where a background tree refresh (triggered by
-    // the logIn command) cancels our getChildren() call via the shared cancellation
-    // token in AzureResourceTreeDataProvider.
     await vscode.commands.executeCommand('azureResourceGroups.refresh');
     await new Promise(resolve => setTimeout(resolve, 2000));
 

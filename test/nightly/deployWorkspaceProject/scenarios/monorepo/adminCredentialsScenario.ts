@@ -34,7 +34,7 @@ export function generateMonorepoAdminCredentialsTests(): DeployWorkspaceProjectT
                 'Standard',
                 new RegExp('Create new container app'),
                 appOneName,
-                'East US',
+                'West US 2',
                 'Docker Login Credentials',
                 'Enable',
                 path.join('app1', 'Dockerfile'),
