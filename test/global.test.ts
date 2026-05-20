@@ -15,8 +15,6 @@ export const longRunningRemoteTestsEnabled: boolean = !!process.env.FC_SERVICE_C
 
 export const longRunningTestsEnabled: boolean = longRunningLocalTestsEnabled || longRunningRemoteTestsEnabled;
 
-console.log(`[test-setup] longRunningTestsEnabled=${longRunningTestsEnabled} (local=${longRunningLocalTestsEnabled}, remote=${longRunningRemoteTestsEnabled}, FC_SERVICE_CONNECTION_NAME=${process.env.FC_SERVICE_CONNECTION_NAME}, AzCode_UseAzureFederatedCredentials=${process.env.AzCode_UseAzureFederatedCredentials})`);
-
 // Runs before all tests
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);

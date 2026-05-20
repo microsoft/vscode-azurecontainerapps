@@ -7,7 +7,8 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { longRunningTestsEnabled } from '../global.test';
+import { longRunningTestsEnabled, longRunningRemoteTestsEnabled } from '../global.test';
+import { setupAzureDevOpsSubscriptionProvider } from '../utils/azureDevOpsSubscriptionProvider';
 import { getCachedTestApi } from '../utils/testApiAccess';
 
 export let subscriptionContext: ISubscriptionContext;
@@ -19,18 +20,30 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     }
 
     this.timeout(2 * 60 * 1000);
-    await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
-    // The logIn command fires an async tree refresh. Wait for it to settle
-    // to avoid a race where getChildren() is cancelled by the in-progress refresh.
-    await vscode.commands.executeCommand('azureResourceGroups.refresh');
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    if (longRunningRemoteTestsEnabled) {
+        // In CI, use the AzDO subscription provider to authenticate via federated credentials
+        // and get subscriptions directly — bypassing the tree data provider and quick pick UI.
+        // Modeled after the pattern in vscode-azureresourcegroups crud.test.ts.
+        const subscription = await setupAzureDevOpsSubscriptionProvider();
+        subscriptionContext = createSubscriptionContext(subscription);
+    } else {
+        // For local long-running tests, use the normal login + tree flow
+        await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
-    const testApi = getCachedTestApi();
-    const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
-    const context: TestActionContext = await createTestActionContext();
-    const subscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);
-    subscriptionContext = createSubscriptionContext(subscription);
+        // Refresh the tree and wait for any pending tree operations to settle.
+        // This avoids a race condition where a background tree refresh (triggered by
+        // the logIn command) cancels our getChildren() call via the shared cancellation
+        // token in AzureResourceTreeDataProvider.
+        await vscode.commands.executeCommand('azureResourceGroups.refresh');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const testApi = getCachedTestApi();
+        const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
+        const context: TestActionContext = await createTestActionContext();
+        const subscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);
+        subscriptionContext = createSubscriptionContext(subscription);
+    }
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
