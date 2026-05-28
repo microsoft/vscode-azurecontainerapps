@@ -3,7 +3,8 @@
 *  Licensed under the MIT License. See License.md in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzExtUserInput, AzureWizardPromptStep, CopilotUserInput, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzExtUserInput, AzureWizardPromptStep, GoBackError, openUrl, UserCancelledError, type ConfirmationViewProperty, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { CopilotUserInput } from "@microsoft/vscode-azext-utils/copilot";
 import * as vscode from 'vscode';
 import { type WebviewPanel } from 'vscode';
 import { localize } from "../utils/localize";

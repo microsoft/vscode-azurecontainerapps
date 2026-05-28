@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
-import { AzureWizard, CopilotUserInput, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, createSubscriptionContext, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { CopilotUserInput } from "@microsoft/vscode-azext-utils/copilot";
 import { ImageSource } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
