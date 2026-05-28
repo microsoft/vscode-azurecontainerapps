@@ -8,111 +8,107 @@ import { createGenericElement, nonNullValue, nonNullValueAndProp, type TreeEleme
 import { ViewPropertiesModel, type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
-import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 
 export class ImageItem extends RevisionDraftDescendantBase {
-    static readonly contextValue: string = 'imageItem';
-    static readonly contextValueRegExp: RegExp = new RegExp(ImageItem.contextValue);
-    id: string;
-    label: string;
-    viewProperties: ViewPropertiesModel;
+   static readonly contextValue: string = 'imageItem';
+   static readonly contextValueRegExp: RegExp = new RegExp(ImageItem.contextValue);
+   label: string;
+   viewProperties: ViewPropertiesModel;
 
-    constructor(
-        subscription: AzureSubscription,
-        containerApp: ContainerAppModel,
-        revision: Revision,
-        readonly containersIdx: number,
+   constructor(
+       subscription: AzureSubscription,
+       containerApp: ContainerAppModel,
+       revision: Revision,
+       readonly containersIdx: number,
 
-        // Used as the basis for the view; can reflect either the original or the draft changes
-        readonly container: Container,
-    ) {
-        super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/image/${container.image}`;
-        this.viewProperties = {
-            data: nonNullValueAndProp(container, 'image'),
-            label: this.container.name ?? '',
-        };
-    }
+       // Used as the basis for the view; can reflect either the original or the draft changes
+       readonly container: Container,
+   ) {
+       super(subscription, containerApp, revision);
+       this.viewProperties = {
+           data: nonNullValueAndProp(container, 'image'),
+           label: this.container.name ?? '',
+       };
+   }
 
-    private getImageName(image?: string): string {
-        const loginServer: string = this.getLoginServer(image);
-        if (!loginServer) { return ''; }
+   get id(): string {
+       return this.buildId(`image/${this.container.image}`);
+   }
 
-        return image?.substring(nonNullValue(loginServer.length) + 1, image?.length) ?? '';
-    }
+   private getImageName(image?: string): string {
+       const loginServer: string = this.getLoginServer(image);
+       if (!loginServer) { return ''; }
 
-    private getLoginServer(image?: string): string {
-        return image?.split('/')[0] ?? '';
-    }
+       return image?.substring(nonNullValue(loginServer.length) + 1, image?.length) ?? '';
+   }
 
-    getTreeItem(): TreeItem {
-        return {
-            id: this.id,
-            label: this.label,
-            iconPath: new ThemeIcon('window'),
-            contextValue: ImageItem.contextValue,
-            collapsibleState: TreeItemCollapsibleState.Collapsed,
-        };
-    }
+   private getLoginServer(image?: string): string {
+       return image?.split('/')[0] ?? '';
+   }
 
-    async getChildren(): Promise<TreeElementBase[]> {
-        const { imageNameItem: isImageNameUnsaved, imageRegistryItem: isImageRegistryUnsaved } = this.doChildrenHaveUnsavedChanges();
+   getTreeItem(): TreeItem {
+       return {
+           id: this.id,
+           label: this.label,
+           iconPath: new ThemeIcon('window'),
+           contextValue: ImageItem.contextValue,
+           collapsibleState: TreeItemCollapsibleState.Collapsed,
+       };
+   }
 
-        return [
-            createGenericElement({
-                id: `${this.id}/imageName`,
-                label: isImageNameUnsaved ? localize('imageNameDraft', 'Name*:') : localize('imageName', 'Name:'),
-                contextValue: 'containerImageNameItem',
-                description: `${this.getImageName(this.container.image)}`,
-            }),
-            createGenericElement({
-                id: `${this.id}/imageRegistry`,
-                label: isImageRegistryUnsaved ? localize('imageRegistryDraft', 'Registry*:') : localize('imageRegistry', 'Registry:'),
-                contextValue: 'containerImageRegistryItem',
-                description: `${this.getLoginServer(this.container.image)}`,
-            })
-        ];
-    }
+   async getChildren(): Promise<TreeElementBase[]> {
+       const { imageNameItem: isImageNameUnsaved, imageRegistryItem: isImageRegistryUnsaved } = this.doChildrenHaveUnsavedChanges();
 
-    private get parentResource(): ContainerAppModel | Revision {
-        return getParentResource(this.containerApp, this.revision);
-    }
+       return [
+           createGenericElement({
+               id: `${this.id}/imageName`,
+               label: isImageNameUnsaved ? localize('imageNameDraft', 'Name*:') : localize('imageName', 'Name:'),
+               contextValue: 'containerImageNameItem',
+               description: `${this.getImageName(this.container.image)}`,
+           }),
+           createGenericElement({
+               id: `${this.id}/imageRegistry`,
+               label: isImageRegistryUnsaved ? localize('imageRegistryDraft', 'Registry*:') : localize('imageRegistry', 'Registry:'),
+               contextValue: 'containerImageRegistryItem',
+               description: `${this.getLoginServer(this.container.image)}`,
+           })
+       ];
+   }
 
-    protected setProperties(): void {
-        this.label = 'Image';
-    }
+   protected setProperties(): void {
+       this.label = 'Image';
+   }
 
-    protected setDraftProperties(): void {
-        this.label = 'Image*';
-    }
+   protected setDraftProperties(): void {
+       this.label = 'Image*';
+   }
 
-    private doChildrenHaveUnsavedChanges(): { imageNameItem: boolean, imageRegistryItem: boolean } {
-        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
-            return { imageNameItem: false, imageRegistryItem: false };
-        }
+   private doChildrenHaveUnsavedChanges(): { imageNameItem: boolean, imageRegistryItem: boolean } {
+       // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+           return { imageNameItem: false, imageRegistryItem: false };
+       }
 
-        const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container | undefined = currentContainers[this.containersIdx];
+       const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
+       const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
-        return {
-            imageNameItem: this.getImageName(currentContainer?.image) !== this.getImageName(this.container.image),
-            imageRegistryItem: this.getLoginServer(currentContainer?.image) !== this.getLoginServer(this.container.image),
-        };
-    }
+       return {
+           imageNameItem: this.getImageName(currentContainer?.image) !== this.getImageName(this.container.image),
+           imageRegistryItem: this.getLoginServer(currentContainer?.image) !== this.getLoginServer(this.container.image),
+       };
+   }
 
-    hasUnsavedChanges(): boolean {
-        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
-            return false;
-        }
+   hasUnsavedChanges(): boolean {
+       // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+           return false;
+       }
 
-        const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container | undefined = currentContainers[this.containersIdx];
+       const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
+       const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
-        return this.container.image !== currentContainer?.image;
-    }
+       return this.container.image !== currentContainer?.image;
+   }
 }

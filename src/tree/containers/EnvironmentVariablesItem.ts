@@ -9,68 +9,64 @@ import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import deepEqual from "deep-eql";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
-import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { EnvironmentVariableItem } from "./EnvironmentVariableItem";
 
 const environmentVariables: string = localize('environmentVariables', 'Environment Variables');
 
 export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
-    static readonly contextValue: string = 'environmentVariablesItem';
-    static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariablesItem.contextValue);
-    id: string;
-    label: string;
+   static readonly contextValue: string = 'environmentVariablesItem';
+   static readonly contextValueRegExp: RegExp = new RegExp(EnvironmentVariablesItem.contextValue);
+   label: string;
 
-    constructor(
-        subscription: AzureSubscription,
-        containerApp: ContainerAppModel,
-        revision: Revision,
-        readonly containersIdx: number,
+   constructor(
+       subscription: AzureSubscription,
+       containerApp: ContainerAppModel,
+       revision: Revision,
+       readonly containersIdx: number,
 
-        // Used as the basis for the view; can reflect either the original or the draft changes
-        readonly container: Container,
-    ) {
-        super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/environmentVariables/${container.image}`;
-    }
+       // Used as the basis for the view; can reflect either the original or the draft changes
+       readonly container: Container,
+   ) {
+       super(subscription, containerApp, revision);
+   }
 
-    getTreeItem(): TreeItem {
-        return {
-            id: this.id,
-            label: this.label,
-            iconPath: new ThemeIcon('settings'),
-            contextValue: EnvironmentVariablesItem.contextValue,
-            collapsibleState: TreeItemCollapsibleState.Collapsed
-        };
-    }
+   get id(): string {
+       return this.buildId(`environmentVariables/${this.container.image}`);
+   }
 
-    getChildren(): TreeElementBase[] {
-        return this.container.env?.map(env => RevisionDraftDescendantBase.createTreeItem(EnvironmentVariableItem, this.subscription, this.containerApp, this.revision, this.containersIdx, this.container, env)) ?? [];
-    }
+   getTreeItem(): TreeItem {
+       return {
+           id: this.id,
+           label: this.label,
+           iconPath: new ThemeIcon('settings'),
+           contextValue: EnvironmentVariablesItem.contextValue,
+           collapsibleState: TreeItemCollapsibleState.Collapsed
+       };
+   }
 
-    private get parentResource(): ContainerAppModel | Revision {
-        return getParentResource(this.containerApp, this.revision);
-    }
+   getChildren(): TreeElementBase[] {
+       return this.container.env?.map(env => this.createChildItem(EnvironmentVariableItem, this.containersIdx, this.container, env)) ?? [];
+   }
 
-    protected setProperties(): void {
-        this.label = environmentVariables;
-    }
+   protected setProperties(): void {
+       this.label = environmentVariables;
+   }
 
-    protected setDraftProperties(): void {
-        this.label = `${environmentVariables}*`;
-    }
+   protected setDraftProperties(): void {
+       this.label = `${environmentVariables}*`;
+   }
 
-    hasUnsavedChanges(): boolean {
-        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
-            return false;
-        }
+   hasUnsavedChanges(): boolean {
+       // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+           return false;
+       }
 
-        const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
-        const currentContainer: Container | undefined = currentContainers[this.containersIdx];
+       const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
+       const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
-        return !deepEqual(this.container.env ?? [], currentContainer?.env ?? []);
-    }
+       return !deepEqual(this.container.env ?? [], currentContainer?.env ?? []);
+   }
 }

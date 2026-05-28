@@ -9,7 +9,7 @@ import { callWithTelemetryAndErrorHandling, createContextValue, createSubscripti
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
+import { revisionDraftIdSuffix, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -23,7 +23,7 @@ export interface RevisionsDraftModel {
 }
 
 export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftModel {
-    static readonly idSuffix: string = 'revisionDraft';
+    static readonly idSuffix: string = revisionDraftIdSuffix;
     static readonly contextValue: string = 'revisionDraftItem';
     static readonly contextValueRegExp: RegExp = new RegExp(RevisionDraftItem.contextValue);
 
@@ -63,12 +63,8 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
     }
 
     static hasDescendant(item: RevisionsItemModel): boolean {
-        if (RevisionDraftItem.isRevisionDraftItem(item)) {
-            return false;
-        }
-
-        const revisionDraftBaseName: string | undefined = ext.revisionDraftFileSystem.getRevisionDraftFile(item)?.baseRevisionName;
-        return item.revision.name === revisionDraftBaseName;
+        const draftItemId = RevisionDraftItem.getRevisionDraftItemId(item.containerApp.id);
+        return (item.id ?? '').startsWith(`${draftItemId}/`);
     }
 
     async getTreeItem(): Promise<TreeItem> {
@@ -85,7 +81,7 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
     }
 
     getChildren(): TreeElementBase[] {
-        return RevisionItem.getTemplateChildren(this.subscription, this.containerApp, this.revision);
+        return RevisionItem.getTemplateDraftChildren(this.subscription, this.containerApp, this.revision);
     }
 
     async hasUnsavedChanges(): Promise<boolean> {

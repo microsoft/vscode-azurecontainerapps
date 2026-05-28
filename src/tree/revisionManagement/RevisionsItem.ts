@@ -55,7 +55,7 @@ export class RevisionsItem implements ContainerAppsItem {
 
         return revisionDraftBase ? [
             new RevisionDraftItem(this.subscription, this.containerApp, revisionDraftBase),
-            ...result.filter(item => item.revision.name !== revisionDraftBaseName)
+            ...result
         ] : result;
     }
 

@@ -72,6 +72,13 @@ export class RevisionItem implements RevisionsItemModel {
         ];
     }
 
+    static getTemplateDraftChildren(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision): TreeElementBase[] {
+        return [
+            RevisionDraftDescendantBase.createDraftTreeItem(ContainersItem, subscription, containerApp, revision),
+            RevisionDraftDescendantBase.createDraftTreeItem(ScaleItem, subscription, containerApp, revision)
+        ];
+    }
+
     getChildren(): TreeElementBase[] {
         return RevisionItem.getTemplateChildren(this.subscription, this.containerApp, this.revision);
     }

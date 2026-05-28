@@ -10,12 +10,10 @@ import deepEqual from 'deep-eql';
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
-import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
 import { type TreeElementBase } from "../ContainerAppsBranchDataProvider";
 import { RevisionDraftDescendantBase } from "../revisionManagement/RevisionDraftDescendantBase";
-import { RevisionDraftItem } from "../revisionManagement/RevisionDraftItem";
 import { ScaleRuleGroupItem } from "./ScaleRuleGroupItem";
 
 const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
@@ -23,92 +21,91 @@ const minMaxReplicaItemContextValue: string = 'minMaxReplicaItem';
 const scaling: string = localize('scaling', 'Scaling');
 
 export class ScaleItem extends RevisionDraftDescendantBase {
-    static readonly contextValue: string = 'scaleItem';
-    static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
+   static readonly contextValue: string = 'scaleItem';
+   static readonly contextValueRegExp: RegExp = new RegExp(ScaleItem.contextValue);
 
-    // Used as the basis for the view; can reflect either the original or the draft changes
-    private scale: Scale;
+   // Used as the basis for the view; can reflect either the original or the draft changes
+   private scale: Scale;
 
-    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
-        super(subscription, containerApp, revision);
-    }
+   constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
+       super(subscription, containerApp, revision);
+   }
 
-    id: string = `${this.parentResource.id}/scale`;
-    label: string;
+   get id(): string {
+       return this.buildId('scale');
+   }
 
-    // Use getter here because some properties aren't available until after the constructor is run
-    get viewProperties(): ViewPropertiesModel {
-        return {
-            data: this.scale,
-            label: `${this.parentResource.name} Scaling`,
-        };
-    }
+   label: string;
 
-    private get parentResource(): ContainerAppModel | Revision {
-        return getParentResource(this.containerApp, this.revision);
-    }
+   // Use getter here because some properties aren't available until after the constructor is run
+   get viewProperties(): ViewPropertiesModel {
+       return {
+           data: this.scale,
+           label: `${this.parentResource.name} Scaling`,
+       };
+   }
 
-    protected setProperties(): void {
-        this.label = scaling;
-        this.scale = nonNullValueAndProp(this.parentResource.template, 'scale');
-    }
+   protected setProperties(): void {
+       this.label = scaling;
+       this.scale = nonNullValueAndProp(this.parentResource.template, 'scale');
+   }
 
-    protected setDraftProperties(): void {
-        this.label = `${scaling}*`;
-        this.scale = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'scale');
-    }
+   protected setDraftProperties(): void {
+       this.label = `${scaling}*`;
+       this.scale = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'scale');
+   }
 
-    getTreeItem(): TreeItem {
-        return {
-            id: this.id,
-            label: this.label,
-            contextValue: ScaleItem.contextValue,
-            iconPath: treeUtils.getIconPath('scaling'),
-            collapsibleState: TreeItemCollapsibleState.Collapsed,
-        };
-    }
+   getTreeItem(): TreeItem {
+       return {
+           id: this.id,
+           label: this.label,
+           contextValue: ScaleItem.contextValue,
+           iconPath: treeUtils.getIconPath('scaling'),
+           collapsibleState: TreeItemCollapsibleState.Collapsed,
+       };
+   }
 
-    getChildren(): TreeElementBase[] {
-        const replicasLabel: string = localize('minMax', 'Min / max replicas');
-        return [
-            createGenericElement({
-                label: this.replicasHaveUnsavedChanges() ? `${replicasLabel}*` : replicasLabel,
-                description: `${this.scale?.minReplicas ?? 0} / ${this.scale?.maxReplicas ?? 0}`,
-                contextValue: minMaxReplicaItemContextValue,
-                iconPath: new ThemeIcon('dash'),
-            }),
-            RevisionDraftDescendantBase.createTreeItem(ScaleRuleGroupItem, this.subscription, this.containerApp, this.revision)
-        ];
-    }
+   getChildren(): TreeElementBase[] {
+       const replicasLabel: string = localize('minMax', 'Min / max replicas');
+       return [
+           createGenericElement({
+               label: this.replicasHaveUnsavedChanges() ? `${replicasLabel}*` : replicasLabel,
+               description: `${this.scale?.minReplicas ?? 0} / ${this.scale?.maxReplicas ?? 0}`,
+               contextValue: minMaxReplicaItemContextValue,
+               iconPath: new ThemeIcon('dash'),
+           }),
+           this.createChildItem(ScaleRuleGroupItem)
+       ];
+   }
 
-    hasUnsavedChanges(): boolean {
-        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
-            return false;
-        }
+   hasUnsavedChanges(): boolean {
+       // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+           return false;
+       }
 
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
-        const currentTemplate = this.parentResource.template?.scale;
+       const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+       const currentTemplate = this.parentResource.template?.scale;
 
-        if (!draftTemplate) {
-            return false;
-        }
+       if (!draftTemplate) {
+           return false;
+       }
 
-        return !deepEqual(currentTemplate, draftTemplate);
-    }
+       return !deepEqual(currentTemplate, draftTemplate);
+   }
 
-    replicasHaveUnsavedChanges(): boolean {
-        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !RevisionDraftItem.hasDescendant(this)) {
-            return false;
-        }
+   replicasHaveUnsavedChanges(): boolean {
+       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+           return false;
+       }
 
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
-        const currentTemplate = this.parentResource.template?.scale;
+       const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+       const currentTemplate = this.parentResource.template?.scale;
 
-        if (!draftTemplate) {
-            return false;
-        }
+       if (!draftTemplate) {
+           return false;
+       }
 
-        return draftTemplate.minReplicas !== currentTemplate?.minReplicas || draftTemplate.maxReplicas !== currentTemplate?.maxReplicas;
-    }
+       return draftTemplate.minReplicas !== currentTemplate?.minReplicas || draftTemplate.maxReplicas !== currentTemplate?.maxReplicas;
+   }
 }
