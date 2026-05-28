@@ -37,7 +37,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
    }
 
    get id(): string {
-       return this.buildId(this.container.name ?? 'container');
+       return this.buildId(this.container.name ?? `container-${this.containersIdx}`);
    }
 
    getTreeItem(): TreeItem {
