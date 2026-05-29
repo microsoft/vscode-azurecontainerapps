@@ -21,86 +21,86 @@ export const container: string = localize('container', 'Container');
 export const containers: string = localize('containers', 'Containers');
 
 export class ContainersItem extends RevisionDraftDescendantBase {
-   label: string;
+    label: string;
 
-   static readonly contextValue: string = 'containersItem';
-   static readonly contextValueRegExp: RegExp = new RegExp(ContainersItem.contextValue);
+    static readonly contextValue: string = 'containersItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ContainersItem.contextValue);
 
-   constructor(
-       subscription: AzureSubscription,
-       containerApp: ContainerAppModel,
-       revision: Revision,
+    constructor(
+        subscription: AzureSubscription,
+        containerApp: ContainerAppModel,
+        revision: Revision,
 
-       // Used as the basis for the view; can reflect either the original or the draft changes
-       private containers: Container[],
-   ) {
-       super(subscription, containerApp, revision);
-   }
+        // Used as the basis for the view; can reflect either the original or the draft changes
+        private containers: Container[],
+    ) {
+        super(subscription, containerApp, revision);
+    }
 
-   get id(): string {
-       return this.buildId('containers');
-   }
+    get id(): string {
+        return this.buildId('containers');
+    }
 
-   getChildren(): TreeElementBase[] {
-       if (this.containers.length === 1) {
-           return [
-               this.createChildItem(ImageItem, 0, this.containers[0]),
-               this.createChildItem(EnvironmentVariablesItem, 0, this.containers[0]),
-           ];
-       }
-       return this.containers?.map((c, idx) => this.createChildItem(ContainerItem, idx, c)) ?? [];
-   }
+    getChildren(): TreeElementBase[] {
+        if (this.containers.length === 1) {
+            return [
+                this.createChildItem(ImageItem, 0, this.containers[0]),
+                this.createChildItem(EnvironmentVariablesItem, 0, this.containers[0]),
+            ];
+        }
+        return this.containers?.map((c, idx) => this.createChildItem(ContainerItem, idx, c)) ?? [];
+    }
 
-   getTreeItem(): TreeItem {
-       return {
-           id: this.id,
-           label: this.label,
-           iconPath: treeUtils.getIconPath('containers'),
-           contextValue: this.contextValue,
-           collapsibleState: TreeItemCollapsibleState.Collapsed
-       };
-   }
+    getTreeItem(): TreeItem {
+        return {
+            id: this.id,
+            label: this.label,
+            iconPath: treeUtils.getIconPath('containers'),
+            contextValue: this.contextValue,
+            collapsibleState: TreeItemCollapsibleState.Collapsed
+        };
+    }
 
-   private get contextValue(): string {
-       return this.parentResource.template?.containers?.length === 1 ? ContainerItem.contextValue : ContainersItem.contextValue;
-   }
+    private get contextValue(): string {
+        return this.parentResource.template?.containers?.length === 1 ? ContainerItem.contextValue : ContainersItem.contextValue;
+    }
 
-   protected setProperties(): void {
-       this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
-       this.label = this.containers.length === 1 ? container : containers;
-   }
+    protected setProperties(): void {
+        this.containers = nonNullValueAndProp(this.parentResource.template, 'containers');
+        this.label = this.containers.length === 1 ? container : containers;
+    }
 
-   protected setDraftProperties(): void {
-       this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
-       this.label = this.containers.length === 1 ? `${container}*` : `${containers}*`;
-   }
+    protected setDraftProperties(): void {
+        this.containers = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'containers');
+        this.label = this.containers.length === 1 ? `${container}*` : `${containers}*`;
+    }
 
-   viewProperties: ViewPropertiesModel = {
-       label: 'Containers',
-       getData: async () => {
-           return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers);
-       }
-   };
+    viewProperties: ViewPropertiesModel = {
+        label: 'Containers',
+        getData: async () => {
+            return this.containers.length === 1 ? this.containers[0] : JSON.stringify(this.containers);
+        }
+    };
 
-   static isContainersItem(item: unknown): item is ContainersItem {
-       return typeof item === 'object' &&
-           typeof (item as ContainersItem).id === 'string' &&
-           (item as ContainersItem).id.endsWith('/containers');
-   }
+    static isContainersItem(item: unknown): item is ContainersItem {
+        return typeof item === 'object' &&
+            typeof (item as ContainersItem).id === 'string' &&
+            (item as ContainersItem).id.endsWith('/containers');
+    }
 
-   hasUnsavedChanges(): boolean {
-       // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
-           return false;
-       }
+    hasUnsavedChanges(): boolean {
+        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+            return false;
+        }
 
-       const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.containers;
-       const currentTemplate = this.parentResource.template?.containers;
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.containers;
+        const currentTemplate = this.parentResource.template?.containers;
 
-       if (!draftTemplate) {
-           return false;
-       }
+        if (!draftTemplate) {
+            return false;
+        }
 
-       return !deepEqual(currentTemplate, draftTemplate);
-   }
+        return !deepEqual(currentTemplate, draftTemplate);
+    }
 }

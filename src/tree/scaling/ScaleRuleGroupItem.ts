@@ -18,69 +18,69 @@ import { ScaleRuleItem } from "./ScaleRuleItem";
 const scaleRulesLabel: string = localize('scaleRules', 'Scale Rules');
 
 export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
-   static readonly contextValue: string = 'scaleRuleGroupItem';
-   static readonly contextValueRegExp: RegExp = new RegExp(ScaleRuleGroupItem.contextValue);
+    static readonly contextValue: string = 'scaleRuleGroupItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(ScaleRuleGroupItem.contextValue);
 
-   // Used as the basis for the view; can reflect either the original or the draft changes
-   private scaleRules: ScaleRule[];
+    // Used as the basis for the view; can reflect either the original or the draft changes
+    private scaleRules: ScaleRule[];
 
-   constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
-       super(subscription, containerApp, revision);
-   }
+    constructor(subscription: AzureSubscription, containerApp: ContainerAppModel, revision: Revision) {
+        super(subscription, containerApp, revision);
+    }
 
-   get id(): string {
-       return this.buildId('scalerules');
-   }
+    get id(): string {
+        return this.buildId('scalerules');
+    }
 
-   label: string;
+    label: string;
 
-   // Use getter here because some properties aren't available until after the constructor is run
-   get viewProperties(): ViewPropertiesModel {
-       return {
-           data: this.scaleRules,
-           label: `${this.parentResource.name} ${scaleRulesLabel}`,
-       };
-   }
+    // Use getter here because some properties aren't available until after the constructor is run
+    get viewProperties(): ViewPropertiesModel {
+        return {
+            data: this.scaleRules,
+            label: `${this.parentResource.name} ${scaleRulesLabel}`,
+        };
+    }
 
-   protected setProperties(): void {
-       this.label = scaleRulesLabel;
-       this.scaleRules = this.parentResource.template?.scale?.rules ?? [];
-   }
+    protected setProperties(): void {
+        this.label = scaleRulesLabel;
+        this.scaleRules = this.parentResource.template?.scale?.rules ?? [];
+    }
 
-   protected setDraftProperties(): void {
-       this.label = `${scaleRulesLabel}*`;
-       this.scaleRules = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules ?? [];
-   }
+    protected setDraftProperties(): void {
+        this.label = `${scaleRulesLabel}*`;
+        this.scaleRules = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules ?? [];
+    }
 
-   getTreeItem(): TreeItem {
-       return {
-           id: this.id,
-           label: this.label,
-           contextValue: ScaleRuleGroupItem.contextValue,
-           iconPath: new ThemeIcon('symbol-constant'),
-           collapsibleState: TreeItemCollapsibleState.Collapsed,
-       };
-   }
+    getTreeItem(): TreeItem {
+        return {
+            id: this.id,
+            label: this.label,
+            contextValue: ScaleRuleGroupItem.contextValue,
+            iconPath: new ThemeIcon('symbol-constant'),
+            collapsibleState: TreeItemCollapsibleState.Collapsed,
+        };
+    }
 
-   getChildren(): TreeElementBase[] {
-       return this.scaleRules
-           .map(scaleRule => this.createChildItem(ScaleRuleItem, scaleRule, this.hasUnsavedChanges()))
-           .sort((a, b) => treeUtils.sortById(a, b));
-   }
+    getChildren(): TreeElementBase[] {
+        return this.scaleRules
+            .map(scaleRule => this.createChildItem(ScaleRuleItem, scaleRule, this.hasUnsavedChanges()))
+            .sort((a, b) => treeUtils.sortById(a, b));
+    }
 
-   hasUnsavedChanges(): boolean {
-       // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
-       if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
-           return false;
-       }
+    hasUnsavedChanges(): boolean {
+        // We only care about showing changes to descendants of the revision draft item when in multiple revisions mode
+        if (this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple && !this.isDraftDescendant) {
+            return false;
+        }
 
-       const draftTemplate: ScaleRule[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules;
-       const currentTemplate: ScaleRule[] | undefined = this.parentResource.template?.scale?.rules;
+        const draftTemplate: ScaleRule[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules;
+        const currentTemplate: ScaleRule[] | undefined = this.parentResource.template?.scale?.rules;
 
-       if (!draftTemplate) {
-           return false;
-       }
+        if (!draftTemplate) {
+            return false;
+        }
 
-       return !deepEqual(currentTemplate, draftTemplate);
-   }
+        return !deepEqual(currentTemplate, draftTemplate);
+    }
 }
