@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
-import { ext } from "../../../extensionVariables";
 import { type SecretItem } from "../../../tree/configurations/secrets/SecretItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickSecret } from "../../../utils/pickItem/pickSecret";
@@ -44,5 +44,5 @@ export async function deleteSecret(context: IActionContext, node?: SecretItem): 
     await wizard.prompt();
     await wizard.execute();
 
-    ext.state.notifyChildrenChanged(containerApp.id);
+    containerAppRegistry.notifyChildrenChanged(containerApp.id);
 }

@@ -5,6 +5,7 @@
 
 import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -46,9 +47,10 @@ export async function addSecret(context: IActionContext, node?: SecretsItem): Pr
     wizardContext.activityTitle = localize('addSecret', 'Add secret "{0}" to container app "{1}"', wizardContext.newSecretName, containerApp.name);
 
     const parentId: string = `${containerApp.id}/${SecretsItem.idSuffix}`;
-    await ext.state.showCreatingChild(parentId, localize('creatingSecret', 'Creating secret...'), async () => {
+    await containerAppRegistry.showCreatingChild(parentId, localize('creatingSecret', 'Creating secret...'), async () => {
         await wizard.execute();
     });
 
     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+    containerAppRegistry.notifyChildrenChanged(containerApp.id);
 }

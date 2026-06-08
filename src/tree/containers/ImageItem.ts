@@ -30,7 +30,7 @@ export class ImageItem extends RevisionDraftDescendantBase {
         readonly container: Container,
     ) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/image/${container.image}`;
+        this.id = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/image/${container.image}`;
         this.viewProperties = {
             data: nonNullValueAndProp(container, 'image'),
             label: this.container.name ?? '',

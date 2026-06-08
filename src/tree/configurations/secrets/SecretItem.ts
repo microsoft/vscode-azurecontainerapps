@@ -15,7 +15,7 @@ export class SecretItem implements ContainerAppsItem {
     id: string;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly secretName: string) {
-        this.id = `${containerApp.id}/${SecretsItem.idSuffix}/${secretName}`;
+        this.id = `${containerApp.treeIdPrefix}${containerApp.id}/${SecretsItem.idSuffix}/${secretName}`;
     }
 
     getTreeItem(): TreeItem {

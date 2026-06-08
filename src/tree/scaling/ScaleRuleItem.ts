@@ -32,7 +32,7 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
         readonly isDraft: boolean
     ) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/scalerules/${scaleRule.name}`;
+        this.id = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/scalerules/${scaleRule.name}`;
         this.viewProperties = {
             data: this.scaleRule,
             label: `${this.parentResource.name} ${scaleRuleLabel} ${this.scaleRule.name}`,

@@ -7,6 +7,7 @@ import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-uti
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
@@ -27,6 +28,7 @@ export class ChangeRevisionModeStep extends AzureWizardExecuteStep<IChooseRevisi
         ext.outputChannel.appendLog(changed);
 
         ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+        containerAppRegistry.notifyChildrenChanged(containerApp.id);
     }
 
     public shouldExecute(context: IChooseRevisionModeContext): boolean {

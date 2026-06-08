@@ -7,6 +7,7 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, nonNullValue, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
@@ -70,7 +71,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
     if (item.containerApp.revisionsMode === KnownActiveRevisionsMode.Single) {
         ext.revisionDraftFileSystem.discardRevisionDraft(item);
     } else {
-        await ext.state.showDeleting(
+        await containerAppRegistry.showDeleting(
             RevisionDraftItem.getRevisionDraftItemId(item.containerApp.id),
             async () => {
                 // Add a short delay to display the deleting message
@@ -81,4 +82,5 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
     }
 
     ext.state.notifyChildrenChanged(item.containerApp.managedEnvironmentId);
+    containerAppRegistry.notifyChildrenChanged(item.containerApp.id);
 }

@@ -15,7 +15,7 @@ import { createContainerAppsApiProvider } from './commands/api/createContainerAp
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
-import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
+import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppsResourceBranchDataProvider';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { localize } from './utils/localize';
 

@@ -26,7 +26,7 @@ export class IngressEnabledItem implements ContainerAppsItem {
     ingress: Ingress;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) {
-        this.id = `${containerApp.id}/ingress`;
+        this.id = `${containerApp.treeIdPrefix}${containerApp.id}/ingress`;
         this.ingress = containerApp.configuration?.ingress ?? {};
         this.viewProperties = {
             data: this.ingress,
