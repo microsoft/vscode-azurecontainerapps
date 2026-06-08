@@ -4,4 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { autoEsbuildOrWatch, autoSelectEsbuildConfig } from '@microsoft/vscode-azext-eng/esbuild';
-await autoEsbuildOrWatch(autoSelectEsbuildConfig());
+import { copyFileSync, mkdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+
+const require = createRequire(import.meta.url);
+
+const pkgDist = dirname(require.resolve('@microsoft/vscode-azext-webview/package.json')) + '/dist';
+const outDir = 'dist/webview-assets';
+mkdirSync(outDir, { recursive: true });
+copyFileSync(join(pkgDist, 'views.js'), join(outDir, 'views.js'));
+copyFileSync(join(pkgDist, 'views.css'), join(outDir, 'views.css'));
+
+const configs = autoSelectEsbuildConfig();
+await autoEsbuildOrWatch(configs);
