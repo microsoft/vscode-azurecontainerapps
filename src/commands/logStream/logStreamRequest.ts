@@ -68,7 +68,12 @@ export async function logStreamRequest(context: IStreamLogsContext): Promise<ILo
             void callWithTelemetryAndErrorHandling('containerApps.streamingLogs', async (_context) => {
                 const abortController: AbortController = new AbortController();
 
-                const genericClient: ServiceClient = await createGenericClient(context, undefined);
+                // The log-stream endpoint is a cross-origin data-plane host (*.azurecontainerapps.io).
+                // @azure/core-rest-pipeline >= 1.23.0 drops cross-origin redirects by default, so opt in
+                // to keep following them. See https://github.com/microsoft/vscode-azurecontainerapps/issues/1083
+                const genericClient: ServiceClient = await createGenericClient(context, undefined, {
+                    redirectOptions: { allowCrossOriginRedirects: true }
+                });
                 const headers = createHttpHeaders({
                     authorization: `Bearer ${token.token}`
                 });
