@@ -55,7 +55,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
         const parsedResource = parseAzureResourceId(revisionId);
         if (!this._revisionStatus) {
             throw new Error(localize('revisionStatusTimeout', 'Status check timed out for the deployed container app revision "{0}".', parsedResource.resourceName));
-        } else if (!/running/i.test(this._revisionStatus)) { // There are some revision statuses that are not properly captured on the SDK enum, so match using a more flexible RegExp instead
+        } else if (!/running|scaledtozero/i.test(this._revisionStatus)) { // There are some revision statuses that are not properly captured on the SDK enum, so match using a more flexible RegExp instead
             try {
                 context.telemetry.properties.targetCloud = context.environment.name;
 

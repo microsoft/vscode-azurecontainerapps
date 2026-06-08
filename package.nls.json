@@ -6,6 +6,7 @@
     "containerApps.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
     "containerApps.showDraftCommandDeployPopup": "Prompt to deploy revision draft whenever a draft command is run.",
     "containerApps.browse": "Browse",
+    "containerApps.revealInEnvironment": "Reveal in Container Apps Environments",
     "containerApps.createContainerApp": "Create Container App...",
     "containerApps.editContainerApp": "Edit Container App (Advanced)...",
     "containerApps.editContainer": "Edit Container...",

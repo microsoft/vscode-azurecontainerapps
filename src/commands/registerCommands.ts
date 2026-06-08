@@ -35,6 +35,7 @@ import { toggleIngressVisibility } from './ingress/toggleIngressVisibility/toggl
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
+import { revealInEnvironment } from './revealInEnvironment';
 import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
@@ -66,6 +67,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
+    registerCommandWithTreeNodeUnwrapping('containerApps.revealInEnvironment', revealInEnvironment);
     registerCommandWithTreeNodeUnwrapping('containerApps.toggleEnvironmentVariableVisibility',
         async (context: IActionContext, item: EnvironmentVariableItem) => {
             await item.toggleValueVisibility(context);
