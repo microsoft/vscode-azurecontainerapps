@@ -6,10 +6,10 @@
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
-import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
-import { ext } from '../../src/extensionVariables';
-import { longRunningTestsEnabled } from '../global.test';
+import { longRunningRemoteTestsEnabled, longRunningTestsEnabled } from '../global.test';
+import { setupAzureDevOpsSubscriptionProvider } from '../utils/azureDevOpsSubscriptionProvider';
+import { getCachedTestApi } from '../utils/testApiAccess';
 
 export let subscriptionContext: ISubscriptionContext;
 export const resourceGroupsToDelete = new Set<string>();
@@ -20,10 +20,24 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     }
 
     this.timeout(2 * 60 * 1000);
+
+    if (longRunningRemoteTestsEnabled) {
+        // TODO: Remove once vscode-azureresourcegroups releases with FC_* env var support
+        // After that, `logIn` will handle federated credentials natively and we can
+        // stop using the RG test api to override the subscription provider.
+        await setupAzureDevOpsSubscriptionProvider();
+    }
+
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
+    // Refresh the tree and wait for any pending tree operations to settle.
+    await vscode.commands.executeCommand('azureResourceGroups.refresh');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const testApi = getCachedTestApi();
+    const rgApiV2 = await testApi.extensionVariables.getRgApiV2();
     const context: TestActionContext = await createTestActionContext();
-    const subscription: AzureSubscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider);
+    const subscription = await subscriptionExperience(context, rgApiV2.resources.azureResourceTreeDataProvider);
     subscriptionContext = createSubscriptionContext(subscription);
 });
 
@@ -41,13 +55,13 @@ async function deleteResourceGroups(): Promise<void> {
     const context: TestActionContext = await createTestActionContext();
     const rgClient: ResourceManagementClient = createAzureClient([context, subscriptionContext], ResourceManagementClient);
 
-    await Promise.allSettled(Array.from(resourceGroupsToDelete).map(async resourceGroup => {
+    await Promise.all(Array.from(resourceGroupsToDelete).map(async resourceGroup => {
         if (!(await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
             return;
         }
 
         console.log(`Deleting resource group "${resourceGroup}"...`);
-        await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
-        console.log(`Successfully deleted resource group "${resourceGroup}".`);
+        // Don't await, it takes an obscenely long time to delete managed environment resources
+        void rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
     }));
 }

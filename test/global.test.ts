@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { registerOnActionStartHandler, TestOutputChannel, TestUserInput } from '@microsoft/vscode-azext-utils';
-import * as assert from 'assert';
+import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
+import { registerOnActionStartHandler, testGlobalSetup, TestUserInput } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ext } from '../src/extensionVariables';
+import { getTestApi } from './utils/testApiAccess';
 
 export const longRunningLocalTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_EnableLongRunningTestsLocal || '');
 export const longRunningRemoteTestsEnabled: boolean = !!process.env.FC_SERVICE_CONNECTION_NAME
@@ -18,15 +19,10 @@ export const longRunningTestsEnabled: boolean = longRunningLocalTestsEnabled || 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);
 
-    const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurecontainerapps');
-    if (!extension) {
-        assert.fail('Failed to find extension.');
-    } else {
-        await extension.activate();
-    }
+    await getTestApi();
+    Object.assign(ext, { prefix: 'containerApps', ...testGlobalSetup() });
 
-    ext.outputChannel = new TestOutputChannel();
-
+    registerAzureUtilsExtensionVariables(ext);
     registerOnActionStartHandler(context => {
         // Use `TestUserInput` by default so we get an error if an unexpected call to `context.ui` occurs, rather than timing out
         context.ui = new TestUserInput(vscode);

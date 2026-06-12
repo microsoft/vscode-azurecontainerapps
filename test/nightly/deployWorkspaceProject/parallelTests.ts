@@ -7,13 +7,12 @@ import { AzExtFsExtra, IParsedError, parseError, runWithTestActionContext } from
 import * as assert from "assert";
 import * as path from "path";
 import { workspace, type Uri, type WorkspaceFolder } from "vscode";
-import { deployWorkspaceProject } from "../../../src/commands/deployWorkspaceProject/deployWorkspaceProject";
 import { DeployWorkspaceProjectResults } from "../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import { DeploymentConfigurationSettings } from "../../../src/commands/deployWorkspaceProject/settings/DeployWorkspaceProjectSettingsV2";
 import { dwpSettingUtilsV2 } from "../../../src/commands/deployWorkspaceProject/settings/dwpSettingUtilsV2";
-import { ext } from "../../../src/extensionVariables";
 import { settingUtils } from "../../../src/utils/settingUtils";
 import { assertStringPropsMatch, getWorkspaceFolderUri } from "../../testUtils";
+import { getCachedTestApi } from "../../utils/testApiAccess";
 import { resourceGroupsToDelete } from "../global.nightly.test";
 import { type DeployWorkspaceProjectTestScenario } from "./scenarios/DeployWorkspaceProjectTestScenario";
 import { generateTestScenarios } from "./scenarios/testScenarios";
@@ -42,13 +41,13 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
         await cleanWorkspaceFolderSettings(rootFolder);
 
         for (const testCase of scenario.testCases) {
-            ext.outputChannel.appendLog(`[[[ *** ${scenario.label} - ${testCase.label} *** ]]]`);
+            console.log(`[[[ *** ${scenario.label} - ${testCase.label} *** ]]]`);
             await runWithTestActionContext('deployWorkspaceProject', async context => {
                 await context.ui.runWithInputs(testCase.inputs, async () => {
                     let results: DeployWorkspaceProjectResults;
                     let perr: IParsedError | undefined;
                     try {
-                        results = await deployWorkspaceProject(context);
+                        results = await (getCachedTestApi().deployWorkspaceProjectInternal(context));
                     } catch (e) {
                         results = {};
 
@@ -95,6 +94,16 @@ function runTestScenario(scenario: DeployWorkspaceProjectTestScenario): DwpParal
 async function cleanWorkspaceFolderSettings(rootFolder: WorkspaceFolder) {
     const settingsPath: string = settingUtils.getDefaultRootWorkspaceSettingsPath(rootFolder);
     const vscodeFolderPath: string = path.dirname(settingsPath);
+
+    // Clear the setting via VS Code API first so the in-memory config cache is updated.
+    // Deleting the .vscode folder from disk alone is no longer sufficient — VS Code may still
+    // serve stale cached values from `workspace.getConfiguration()` if the API cache
+    // isn't explicitly invalidated.
+    const existingConfigs = await dwpSettingUtilsV2.getWorkspaceDeploymentConfigurations(rootFolder);
+    if (existingConfigs?.length) {
+        await dwpSettingUtilsV2.setWorkspaceDeploymentConfigurations(rootFolder, []);
+    }
+
     if (await AzExtFsExtra.pathExists(vscodeFolderPath)) {
         await AzExtFsExtra.deleteResource(vscodeFolderPath, { recursive: true });
     }
