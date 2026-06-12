@@ -6,6 +6,7 @@
 import { execFile } from 'child_process';
 import { localize } from '../utils/localize';
 import { type AutoSuspendPolicy, type Sandbox, type SandboxGroup, type SandboxGroupRef, type SandboxLifecycle, type SandboxRef, type Subscription } from './acaSandboxTypes';
+import { augmentedPath, resolveExecutable } from './cliPath';
 
 export const acaCliInstallUrl: string = 'https://aka.ms/aca-cli-install';
 
@@ -37,7 +38,11 @@ export interface AcaSandboxCliOptions {
 
 const defaultRunner: ProcessRunner = (file: string, args: string[]): Promise<ProcessResult> => {
     return new Promise<ProcessResult>((resolve, reject) => {
-        execFile(file, args, { shell: false, maxBuffer: 1024 * 1024 * 64 }, (error, stdout, stderr) => {
+        // GUI-launched VS Code (e.g. from the Dock) does not inherit the shell PATH, so resolve
+        // the executable against common install locations and pass an augmented PATH to the child.
+        const resolvedFile = resolveExecutable(file);
+        const env = { ...process.env, PATH: augmentedPath() };
+        execFile(resolvedFile, args, { shell: false, env, maxBuffer: 1024 * 1024 * 64 }, (error, stdout, stderr) => {
             if (error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
                 reject(error);
                 return;
