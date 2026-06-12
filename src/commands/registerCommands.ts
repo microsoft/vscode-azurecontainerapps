@@ -39,6 +39,8 @@ import { revealInEnvironment } from './revealInEnvironment';
 import { copySandboxId, openSandboxInPortal } from './sandboxes/sandboxMisc';
 import { createSandbox } from './sandboxes/createSandbox';
 import { deleteSandbox } from './sandboxes/deleteSandbox';
+import { openSandboxShell } from './sandboxes/openSandboxShell';
+import { runSandboxCommand } from './sandboxes/runSandboxCommand';
 import { setAutoSuspend } from './sandboxes/setAutoSuspend';
 import { snapshotSandbox } from './sandboxes/snapshotSandbox';
 import { resumeSandbox, stopSandbox } from './sandboxes/stopResumeSandbox';
@@ -137,6 +139,8 @@ export function registerCommands(): void {
 
     // sandboxes
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.create', createSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openShell', openSandboxShell);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.runCommand', runSandboxCommand);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.stop', stopSandbox);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.resume', resumeSandbox);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.snapshot', snapshotSandbox);

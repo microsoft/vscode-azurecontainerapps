@@ -149,6 +149,18 @@ export class AcaSandboxCli {
     }
 
     /**
+     * Runs a one-shot command inside a sandbox via `aca sandbox exec -c <command>` and returns
+     * its stdout. An optional `workingDirectory` is passed through as `--working-directory`.
+     */
+    public async exec(ref: SandboxRef, command: string, options?: { workingDirectory?: string }): Promise<string> {
+        const args: string[] = ['sandbox', 'exec', ...sandboxArgs(ref), '-c', command];
+        if (options?.workingDirectory) {
+            args.push('--working-directory', options.workingDirectory);
+        }
+        return this.runAca(args);
+    }
+
+    /**
      * Sets the auto-suspend policy via `aca sandbox lifecycle set`.
      * Pass `enabled: false` to disable; otherwise an `idleTimeoutSeconds` is required.
      */

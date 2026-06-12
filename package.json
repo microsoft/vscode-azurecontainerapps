@@ -68,6 +68,18 @@
                 "icon": "$(add)"
             },
             {
+                "command": "containerApps.sandboxes.openShell",
+                "title": "%containerApps.sandboxes.openShell%",
+                "category": "Azure Container Apps Sandboxes",
+                "icon": "$(terminal)"
+            },
+            {
+                "command": "containerApps.sandboxes.runCommand",
+                "title": "%containerApps.sandboxes.runCommand%",
+                "category": "Azure Container Apps Sandboxes",
+                "icon": "$(run)"
+            },
+            {
                 "command": "containerApps.sandboxes.stop",
                 "title": "%containerApps.sandboxes.stop%",
                 "category": "Azure Container Apps Sandboxes",
@@ -427,6 +439,21 @@
                     "group": "1@1"
                 },
                 {
+                    "command": "containerApps.sandboxes.openShell",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
+                    "group": "0@1"
+                },
+                {
+                    "command": "containerApps.sandboxes.runCommand",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
+                    "group": "0@2"
+                },
+                {
+                    "command": "containerApps.sandboxes.openShell",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
+                    "group": "inline@0"
+                },
+                {
                     "command": "containerApps.sandboxes.resume",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/ && viewItem =~ /suspended/",
                     "group": "inline@1"
@@ -728,6 +755,10 @@
                     "when": "never"
                 },
                 {
+                    "command": "containerApps.sandboxes.openShell",
+                    "when": "never"
+                },
+                {
                     "command": "containerApps.sandboxes.stop",
                     "when": "never"
                 },
@@ -790,6 +821,15 @@
                 {
                     "command": "containerApps.walkthrough.cleanUpResources",
                     "when": "never"
+                }
+            ]
+        },
+        "terminal": {
+            "profiles": [
+                {
+                    "id": "containerApps.sandboxes.terminalProfile",
+                    "title": "%containerApps.sandboxes.terminalProfile%",
+                    "icon": "terminal"
                 }
             ]
         },

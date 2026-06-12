@@ -83,6 +83,21 @@ suite('AcaSandboxCli', () => {
         assert.deepStrictEqual(calls[5].args, ['sandbox', 'lifecycle', 'set', ...base, '--auto-suspend', 'disable']);
     });
 
+    test('exec builds expected arg array and returns stdout', async () => {
+        const calls: RecordedCall[] = [];
+        const cli = makeCli({ stdout: 'hi\n' }, calls);
+        const out = await cli.exec(sandboxRef, 'echo hi');
+        assert.strictEqual(out, 'hi\n');
+        assert.deepStrictEqual(calls[0].args, ['sandbox', 'exec', '-s', 'sub1', '-g', 'rg1', '--group', 'grp1', '--id', 'sb-uuid', '-c', 'echo hi']);
+    });
+
+    test('exec appends --working-directory when provided', async () => {
+        const calls: RecordedCall[] = [];
+        const cli = makeCli({ stdout: '' }, calls);
+        await cli.exec(sandboxRef, 'ls', { workingDirectory: '/work' });
+        assert.deepStrictEqual(calls[0].args, ['sandbox', 'exec', '-s', 'sub1', '-g', 'rg1', '--group', 'grp1', '--id', 'sb-uuid', '-c', 'ls', '--working-directory', '/work']);
+    });
+
     test('maps ENOENT to an actionable aca-not-found error', async () => {
         const cli = makeCli(() => {
             const err = new Error('spawn aca ENOENT') as NodeJS.ErrnoException;
