@@ -15,6 +15,8 @@ import { createContainerAppsApiProvider } from './commands/api/createContainerAp
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
+import { acaPathSettingKey, createAcaSandboxCli } from './sandboxes/createAcaSandboxCli';
+import { SandboxesTreeDataProvider } from './sandboxes/tree/SandboxesTreeDataProvider';
 import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { localize } from './utils/localize';
@@ -46,6 +48,18 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.state = new TreeElementStateManager();
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
         ext.containerAppsResourceBranchDataProvider = new ContainerAppsResourceBranchDataProvider();
+
+        ext.sandboxesTreeDataProvider = new SandboxesTreeDataProvider();
+        context.subscriptions.push(vscode.window.createTreeView('containerApps.sandboxesView', {
+            treeDataProvider: ext.sandboxesTreeDataProvider,
+            showCollapseAll: true,
+        }));
+        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration(acaPathSettingKey)) {
+                ext.sandboxesTreeDataProvider.setCli(createAcaSandboxCli());
+                ext.sandboxesTreeDataProvider.refresh();
+            }
+        }));
 
         const authHandshakeId = uuid();
         const authHandshakeStartMs = Date.now();

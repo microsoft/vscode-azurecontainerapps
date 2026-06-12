@@ -7,6 +7,7 @@ import { type IAzExtOutputChannel, type IExperimentationServiceAdapter, type Tre
 import { type AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
 import { type ExtensionContext } from "vscode";
 import { type RevisionDraftFileSystem } from "./commands/revisionDraft/RevisionDraftFileSystem";
+import { type SandboxesTreeDataProvider } from "./sandboxes/tree/SandboxesTreeDataProvider";
 import { type ContainerAppsResourceBranchDataProvider } from "./tree/ContainerAppResourceItem";
 import { type ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
 
@@ -25,4 +26,5 @@ export namespace ext {
     export let state: TreeElementStateManager;
     export let branchDataProvider: ContainerAppsBranchDataProvider;
     export let containerAppsResourceBranchDataProvider: ContainerAppsResourceBranchDataProvider;
+    export let sandboxesTreeDataProvider: SandboxesTreeDataProvider;
 }

@@ -36,6 +36,12 @@ import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
 import { revealInEnvironment } from './revealInEnvironment';
+import { copySandboxId, openSandboxInPortal } from './sandboxes/sandboxMisc';
+import { deleteSandbox } from './sandboxes/deleteSandbox';
+import { refreshSandboxes } from './sandboxes/refreshSandboxes';
+import { setAutoSuspend } from './sandboxes/setAutoSuspend';
+import { snapshotSandbox } from './sandboxes/snapshotSandbox';
+import { resumeSandbox, stopSandbox } from './sandboxes/stopResumeSandbox';
 import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
@@ -128,6 +134,16 @@ export function registerCommands(): void {
     // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
+
+    // sandboxes
+    registerCommand('containerApps.sandboxes.refresh', refreshSandboxes);
+    registerCommand('containerApps.sandboxes.stop', stopSandbox);
+    registerCommand('containerApps.sandboxes.resume', resumeSandbox);
+    registerCommand('containerApps.sandboxes.snapshot', snapshotSandbox);
+    registerCommand('containerApps.sandboxes.delete', deleteSandbox);
+    registerCommand('containerApps.sandboxes.setAutoSuspend', setAutoSuspend);
+    registerCommand('containerApps.sandboxes.copyId', copySandboxId);
+    registerCommand('containerApps.sandboxes.openInPortal', openSandboxInPortal);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
