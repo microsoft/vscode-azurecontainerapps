@@ -15,8 +15,8 @@ import { createContainerAppsApiProvider } from './commands/api/createContainerAp
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
-import { acaPathSettingKey, createAcaSandboxCli } from './sandboxes/createAcaSandboxCli';
-import { SandboxesTreeDataProvider } from './sandboxes/tree/SandboxesTreeDataProvider';
+import { acaPathSettingKey } from './sandboxes/createAcaSandboxCli';
+import { SandboxGroupBranchDataProvider } from './sandboxes/tree/SandboxGroupResourceItem';
 import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
 import { localize } from './utils/localize';
@@ -49,15 +49,11 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
         ext.containerAppsResourceBranchDataProvider = new ContainerAppsResourceBranchDataProvider();
 
-        ext.sandboxesTreeDataProvider = new SandboxesTreeDataProvider();
-        context.subscriptions.push(vscode.window.createTreeView('containerApps.sandboxesView', {
-            treeDataProvider: ext.sandboxesTreeDataProvider,
-            showCollapseAll: true,
-        }));
+        ext.sandboxGroupBranchDataProvider = new SandboxGroupBranchDataProvider();
+        context.subscriptions.push(ext.sandboxGroupBranchDataProvider);
         context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
             if (e.affectsConfiguration(acaPathSettingKey)) {
-                ext.sandboxesTreeDataProvider.setCli(createAcaSandboxCli());
-                ext.sandboxesTreeDataProvider.refresh();
+                ext.sandboxGroupBranchDataProvider.refresh();
             }
         }));
 
@@ -80,6 +76,10 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                 ext.rgApiV2 = rgApiV2;
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerApps, ext.containerAppsResourceBranchDataProvider);
+                // The published @microsoft/vscode-azureresources-api does not yet expose the
+                // ContainerAppsSandboxGroups enum value; it is added in the companion
+                // vscode-azureresourcegroups change and must be released before this ships.
+                ext.rgApiV2.resources.registerAzureResourceBranchDataProvider('ContainerAppsSandboxGroups' as AzExtResourceType, ext.sandboxGroupBranchDataProvider);
             });
         };
 

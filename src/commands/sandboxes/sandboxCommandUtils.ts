@@ -14,12 +14,12 @@ import { localize } from '../../utils/localize';
  */
 export function requireSandboxItem(node: SandboxItem | undefined): SandboxItem {
     if (!node) {
-        throw new Error(localize('selectSandbox', 'Select a sandbox in the Sandboxes view to run this command.'));
+        throw new Error(localize('selectSandbox', 'Select a sandbox in the Azure Resources view to run this command.'));
     }
     return node;
 }
 
-/** Refreshes the sandboxes tree after a mutation. */
+/** Refreshes the sandbox group branch in the Azure Resources view after a mutation. */
 export function refreshSandboxesTree(): void {
-    ext.sandboxesTreeDataProvider?.refresh();
+    ext.sandboxGroupBranchDataProvider?.refresh();
 }

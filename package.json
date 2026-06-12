@@ -27,34 +27,9 @@
         "multi-root ready"
     ],
     "preview": true,
-    "activationEvents": [
-        "onView:containerApps.sandboxesView"
-    ],
+    "activationEvents": [],
     "main": "./main.js",
     "contributes": {
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "containerAppsSandboxes",
-                    "title": "%containerApps.sandboxes.viewContainer%",
-                    "icon": "resources/azure-containerapps.svg"
-                }
-            ]
-        },
-        "views": {
-            "containerAppsSandboxes": [
-                {
-                    "id": "containerApps.sandboxesView",
-                    "name": "%containerApps.sandboxes.viewName%"
-                }
-            ]
-        },
-        "viewsWelcome": [
-            {
-                "view": "containerApps.sandboxesView",
-                "contents": "%containerApps.sandboxes.viewWelcome%"
-            }
-        ],
         "x-azResources": {
             "azure": {
                 "branches": [
@@ -63,13 +38,17 @@
                     },
                     {
                         "type": "ContainerApps"
+                    },
+                    {
+                        "type": "ContainerAppsSandboxGroups"
                     }
                 ]
             },
             "activation": {
                 "onResolve": [
                     "microsoft.app/managedenvironments",
-                    "microsoft.app/containerapps"
+                    "microsoft.app/containerapps",
+                    "microsoft.app/sandboxgroups"
                 ]
             },
             "commands": [
@@ -82,12 +61,6 @@
             ]
         },
         "commands": [
-            {
-                "command": "containerApps.sandboxes.refresh",
-                "title": "%containerApps.sandboxes.refresh%",
-                "category": "Azure Container Apps Sandboxes",
-                "icon": "$(refresh)"
-            },
             {
                 "command": "containerApps.sandboxes.stop",
                 "title": "%containerApps.sandboxes.stop%",
@@ -434,57 +407,52 @@
                     "submenu": "containerApps.submenus.workspaceActions",
                     "when": "view == azureWorkspace",
                     "group": "navigation@4"
-                },
-                {
-                    "command": "containerApps.sandboxes.refresh",
-                    "when": "view == containerApps.sandboxesView",
-                    "group": "navigation@1"
                 }
             ],
             "view/item/context": [
                 {
                     "command": "containerApps.sandboxes.resume",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/ && viewItem =~ /suspended/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/ && viewItem =~ /suspended/",
                     "group": "inline@1"
                 },
                 {
                     "command": "containerApps.sandboxes.stop",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/ && viewItem =~ /running/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/ && viewItem =~ /running/",
                     "group": "inline@2"
                 },
                 {
                     "command": "containerApps.sandboxes.resume",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/ && viewItem =~ /suspended/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/ && viewItem =~ /suspended/",
                     "group": "1@1"
                 },
                 {
                     "command": "containerApps.sandboxes.stop",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/ && viewItem =~ /running/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/ && viewItem =~ /running/",
                     "group": "1@2"
                 },
                 {
                     "command": "containerApps.sandboxes.snapshot",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
                     "group": "2@1"
                 },
                 {
                     "command": "containerApps.sandboxes.setAutoSuspend",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
                     "group": "2@2"
                 },
                 {
                     "command": "containerApps.sandboxes.delete",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
                     "group": "3@1"
                 },
                 {
                     "command": "containerApps.sandboxes.copyId",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
                     "group": "4@1"
                 },
                 {
                     "command": "containerApps.sandboxes.openInPortal",
-                    "when": "view == containerApps.sandboxesView && viewItem =~ /sandboxItem/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/",
                     "group": "4@2"
                 },
                 {

@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
+import { type TreeElementBase } from '../../tree/ContainerAppsBranchDataProvider';
 import { localize } from '../../utils/localize';
 import { type AcaSandboxCli } from '../AcaSandboxCli';
-import { type Sandbox, type SandboxRef, type Subscription } from '../acaSandboxTypes';
-import { type SandboxTreeItem } from './SandboxTreeItem';
+import { type Sandbox, type SandboxRef } from '../acaSandboxTypes';
 
 /** Normalized lifecycle category derived from the open-set `state` string. */
 export type SandboxStateCategory = 'running' | 'suspended' | 'transitional' | 'unknown';
@@ -31,15 +32,19 @@ export function categorizeSandboxState(state: string | undefined): SandboxStateC
 }
 
 /** Item representing a single sandbox microVM. */
-export class SandboxItem implements SandboxTreeItem {
+export class SandboxItem implements TreeElementBase {
     static readonly contextValue: string = 'sandboxItem';
 
     constructor(
         public readonly cli: AcaSandboxCli,
-        public readonly subscription: Subscription,
+        public readonly subscription: AzureSubscription,
         public readonly ref: SandboxRef,
         public readonly sandbox: Sandbox,
     ) { }
+
+    public get id(): string {
+        return `sandbox/${this.sandbox.id}`;
+    }
 
     public get stateCategory(): SandboxStateCategory {
         return categorizeSandboxState(this.sandbox.state);
@@ -52,7 +57,7 @@ export class SandboxItem implements SandboxTreeItem {
 
     getTreeItem(): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(this.label, vscode.TreeItemCollapsibleState.None);
-        treeItem.id = `sandbox/${this.sandbox.id}`;
+        treeItem.id = this.id;
         treeItem.contextValue = `${SandboxItem.contextValue};${this.stateCategory}`;
         treeItem.iconPath = this.iconForState();
         treeItem.description = this.buildDescription();
@@ -60,7 +65,7 @@ export class SandboxItem implements SandboxTreeItem {
         return treeItem;
     }
 
-    async getChildren(): Promise<SandboxTreeItem[]> {
+    async getChildren(): Promise<TreeElementBase[]> {
         return [];
     }
 

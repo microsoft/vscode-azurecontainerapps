@@ -38,7 +38,6 @@ import { openConsoleInPortal } from './openConsoleInPortal';
 import { revealInEnvironment } from './revealInEnvironment';
 import { copySandboxId, openSandboxInPortal } from './sandboxes/sandboxMisc';
 import { deleteSandbox } from './sandboxes/deleteSandbox';
-import { refreshSandboxes } from './sandboxes/refreshSandboxes';
 import { setAutoSuspend } from './sandboxes/setAutoSuspend';
 import { snapshotSandbox } from './sandboxes/snapshotSandbox';
 import { resumeSandbox, stopSandbox } from './sandboxes/stopResumeSandbox';
@@ -136,14 +135,13 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 
     // sandboxes
-    registerCommand('containerApps.sandboxes.refresh', refreshSandboxes);
-    registerCommand('containerApps.sandboxes.stop', stopSandbox);
-    registerCommand('containerApps.sandboxes.resume', resumeSandbox);
-    registerCommand('containerApps.sandboxes.snapshot', snapshotSandbox);
-    registerCommand('containerApps.sandboxes.delete', deleteSandbox);
-    registerCommand('containerApps.sandboxes.setAutoSuspend', setAutoSuspend);
-    registerCommand('containerApps.sandboxes.copyId', copySandboxId);
-    registerCommand('containerApps.sandboxes.openInPortal', openSandboxInPortal);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.stop', stopSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.resume', resumeSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.snapshot', snapshotSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.delete', deleteSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.setAutoSuspend', setAutoSuspend);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.copyId', copySandboxId);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openInPortal', openSandboxInPortal);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
