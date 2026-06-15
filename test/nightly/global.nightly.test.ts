@@ -47,13 +47,12 @@ async function deleteResourceGroups(): Promise<void> {
     const context: TestActionContext = await createTestActionContext();
     const rgClient: ResourceManagementClient = createAzureClient([context, subscriptionContext], ResourceManagementClient);
 
-    await Promise.all(Array.from(resourceGroupsToDelete).map(async resourceGroup => {
+    for (const resourceGroup of resourceGroupsToDelete) {
         if (!(await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
-            return;
+            continue;
         }
 
         console.log(`Deleting resource group "${resourceGroup}"...`);
-        // Don't await, it takes an obscenely long time to delete managed environment resources
         void rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
-    }));
+    }
 }
