@@ -7,8 +7,7 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { longRunningRemoteTestsEnabled, longRunningTestsEnabled } from '../global.test';
-import { setupAzureDevOpsSubscriptionProvider } from '../utils/azureDevOpsSubscriptionProvider';
+import { longRunningTestsEnabled } from '../global.test';
 import { getCachedTestApi } from '../utils/testApiAccess';
 
 export let subscriptionContext: ISubscriptionContext;
@@ -20,13 +19,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     }
 
     this.timeout(2 * 60 * 1000);
-
-    if (longRunningRemoteTestsEnabled) {
-        // TODO: Remove once vscode-azureresourcegroups releases with FC_* env var support
-        // After that, `logIn` will handle federated credentials natively and we can
-        // stop using the RG test api to override the subscription provider.
-        await setupAzureDevOpsSubscriptionProvider();
-    }
 
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
