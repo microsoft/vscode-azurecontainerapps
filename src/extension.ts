@@ -59,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         const authHandshakeStartMs = Date.now();
         activateContext.telemetry.properties.authHandshakeId = authHandshakeId;
 
-        // Deferred promise: extracts `resolve` so `registerBranchResources` can signal completion to awaiting callers
+        // Deferred promise that extracts `resolve` so `registerBranchResources` can signal completion to awaiting callers
         let resolveHandshake: () => void;
         const handshakePromise = new Promise<void>((resolve) => { resolveHandshake = resolve; });
 
@@ -100,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                     getRgApiV2: async () => { await handshakePromise; return ext.rgApiV2; },
                     getBranchDataProvider: async () => { await handshakePromise; return ext.branchDataProvider; },
                 },
-                // Export internal methods with the testApi so that we can test them directly
+                // Export internal methods so that we can test them directly
                 createContainerAppInternal: createContainerApp,
                 createManagedEnvironmentInternal: createManagedEnvironment,
                 deployContainerAppInternal: deployContainerApp,

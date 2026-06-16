@@ -22,9 +22,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(2 * 60 * 1000);
 
     if (longRunningRemoteTestsEnabled) {
-        // The RG extension's `logIn` command path doesn't work reliably for tests due to
-        // tree data provider caching and timing issues with the alpha auth dependency.
-        // See: <TODO: link PR>
         await setupAzureDevOpsSubscriptionProvider();
     }
 
