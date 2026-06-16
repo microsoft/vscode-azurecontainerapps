@@ -7,7 +7,8 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { createAzureClient } from '@microsoft/vscode-azext-azureutils';
 import { createSubscriptionContext, createTestActionContext, subscriptionExperience, type ISubscriptionContext, type TestActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { longRunningTestsEnabled } from '../global.test';
+import { longRunningRemoteTestsEnabled, longRunningTestsEnabled } from '../global.test';
+import { setupAzureDevOpsSubscriptionProvider } from '../utils/azureDevOpsSubscriptionProvider';
 import { getCachedTestApi } from '../utils/testApiAccess';
 
 export let subscriptionContext: ISubscriptionContext;
@@ -19,6 +20,13 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     }
 
     this.timeout(2 * 60 * 1000);
+
+    if (longRunningRemoteTestsEnabled) {
+        // The RG extension's `logIn` command path doesn't work reliably for tests due to
+        // tree data provider caching and timing issues with the alpha auth dependency.
+        // See: <TODO: link PR>
+        await setupAzureDevOpsSubscriptionProvider();
+    }
 
     await vscode.commands.executeCommand('azureResourceGroups.logIn');
 
