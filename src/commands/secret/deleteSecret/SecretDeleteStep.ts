@@ -22,11 +22,11 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const secretName: string = nonNullProp(context, 'secretName');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
-        const activeRevisions = containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple
-            ? await this.getActiveRevisions(context, containerApp)
+        const revisions = containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple
+            ? await this.getRevisions(context, containerApp)
             : [];
         const references = getSecretReferenceLocations(secretName, containerAppEnvelope, {
-            activeRevisions,
+            activeRevisions: revisions,
             includeCurrentTemplate: containerApp.revisionsMode === KnownActiveRevisionsMode.Single
         });
 
@@ -60,9 +60,8 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
         return !!context.secretName;
     }
 
-    private async getActiveRevisions(context: ISecretContext, containerApp: ContainerAppModel) {
+    private async getRevisions(context: ISecretContext, containerApp: ContainerAppModel) {
         const client = await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
-        return (await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(containerApp.resourceGroup, containerApp.name)))
-            .filter(revision => revision.active);
+        return uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(containerApp.resourceGroup, containerApp.name));
     }
 }

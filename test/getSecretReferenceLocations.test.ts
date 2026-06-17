@@ -7,7 +7,7 @@ import * as assert from "assert";
 import { type ContainerApp, KnownActiveRevisionsMode, type Revision } from "@azure/arm-appcontainers";
 import { getSecretReferenceLocations } from "../src/commands/secret/deleteSecret/getSecretReferenceLocations";
 
-suite('getSecretReferenceLocations', async () => {
+suite('getSecretReferenceLocations', () => {
     const secretName = 'queue-secret';
 
     test('single mode referenced secret is discovered', async () => {
@@ -51,6 +51,18 @@ suite('getSecretReferenceLocations', async () => {
                     containers: [
                         {
                             name: 'api',
+                            env: [{ name: 'QUEUE_CONNECTION', secretRef: secretName }]
+                        }
+                    ]
+                }
+            },
+            {
+                name: 'app--000000',
+                active: false,
+                template: {
+                    containers: [
+                        {
+                            name: 'ignored',
                             env: [{ name: 'QUEUE_CONNECTION', secretRef: secretName }]
                         }
                     ]
