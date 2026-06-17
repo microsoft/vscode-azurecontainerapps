@@ -3,13 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardExecuteStep, createSubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { createContainerAppsAPIClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ISecretContext } from "../ISecretContext";
+import { getSecretReferenceLocations } from "./getSecretReferenceLocations";
 
 export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
     public priority: number = 200;
@@ -18,6 +22,23 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const secretName: string = nonNullProp(context, 'secretName');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
+        const activeRevisions = containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple
+            ? await this.getActiveRevisions(context, containerApp)
+            : [];
+        const references = getSecretReferenceLocations(secretName, containerAppEnvelope, {
+            activeRevisions,
+            includeCurrentTemplate: containerApp.revisionsMode === KnownActiveRevisionsMode.Single
+        });
+
+        if (references.length) {
+            throw new Error(localize(
+                'secretCannotBeDeleted',
+                'Cannot delete secret "{0}" for container app "{1}" because it is referenced by: {2}. Remove those references and try again.',
+                secretName,
+                containerApp.name,
+                references.join(', ')
+            ));
+        }
 
         containerAppEnvelope.configuration.secrets ||= [];
         containerAppEnvelope.configuration.secrets = containerAppEnvelope.configuration.secrets.filter((secret) => secret.name !== secretName);
@@ -37,5 +58,11 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
 
     public shouldExecute(context: ISecretContext): boolean {
         return !!context.secretName;
+    }
+
+    private async getActiveRevisions(context: ISecretContext, containerApp: ContainerAppModel) {
+        const client = await createContainerAppsAPIClient([context, createSubscriptionContext(context.subscription)]);
+        return (await uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(containerApp.resourceGroup, containerApp.name)))
+            .filter(revision => revision.active);
     }
 }
