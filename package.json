@@ -834,7 +834,8 @@
     "devDependencies": {
         "@azure/ms-rest-azure-env": "^2.0.0",
         "@github/copilot-sdk": "0.1.32",
-        "@microsoft/vscode-azext-eng": "1.0.0-alpha.11",
+        "@microsoft/vscode-azext-eng": "1.1.0-alpha.1",
+    "tsx": "*",
         "@types/deep-eql": "^4.0.0",
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",

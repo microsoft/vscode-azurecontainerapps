@@ -65,7 +65,7 @@ export class ContainerItemPickSteps<T extends AzureResourceQuickPickWizardContex
         const lastNode: unknown = context.pickedNodes.at(-1);
         const lastItem: unknown = (lastNode as { branchItem?: ResourceModelBase })?.branchItem ?? lastNode;
 
-        let containers: Container[] = [];
+        let containers: Container[];
         if (ContainerAppItem.isContainerAppItem(lastItem)) {
             containers = lastItem.containerApp.template?.containers ?? [];
         } else if (RevisionItem.isRevisionItem(lastItem)) {
