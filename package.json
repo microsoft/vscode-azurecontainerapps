@@ -848,7 +848,7 @@
         "esbuild": "*",
         "esbuild-plugin-copy": "*",
         "fs-extra": "^8.1.0",
-        "tsx": "^4.22.4"
+        "tsx": "*"
     },
     "dependencies": {
         "@azure/arm-appcontainers": "^2.1.0-beta.1",
