@@ -73,7 +73,7 @@ export class ContainerAppListStep<T extends ContainerAppCreateContext> extends A
     private async getPicks(context: T): Promise<IAzureQuickPickItem<ContainerApp>[]> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
 
-        let containerApps: ContainerApp[] = [];
+        let containerApps: ContainerApp[];
         if (context.resourceGroup) {
             containerApps = await uiUtils.listAllIterator(client.containerApps.listByResourceGroup(nonNullProp(context.resourceGroup, 'name')));
         } else if (context.newResourceGroupName) {
