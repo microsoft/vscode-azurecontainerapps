@@ -25,7 +25,7 @@ export class RevisionsItem implements ContainerAppsItem {
     id: string;
 
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
-        this.id = RevisionsItem.getRevisionsItemId(containerApp.id);
+        this.id = `${containerApp.treeIdPrefix}${RevisionsItem.getRevisionsItemId(containerApp.id)}`;
     }
 
     private get contextValue(): string {

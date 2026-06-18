@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerApp, type Dapr } from "@azure/arm-appcontainers";
+import { type Dapr } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
@@ -24,7 +24,7 @@ export class DaprEnabledItem implements TreeElementBase {
     id: string;
 
     constructor(containerApp: ContainerAppModel, private readonly dapr: Dapr) {
-        this.id = `${containerApp.id}/DaprEnabled`;
+        this.id = `${containerApp.treeIdPrefix}${containerApp.id}/DaprEnabled`;
         this.viewProperties = {
             data: this.dapr,
             label: localize('daprProperties', '{0} Dapr', containerApp.name),
@@ -79,9 +79,9 @@ export class DaprEnabledItem implements TreeElementBase {
     }
 }
 
-export function createDaprDisabledItem(containerApp: ContainerApp): TreeElementBase {
+export function createDaprDisabledItem(containerApp: ContainerAppModel): TreeElementBase {
     return createGenericElement({
-        id: `${containerApp.id}/DaprDisabled`,
+        id: `${containerApp.treeIdPrefix}${containerApp.id}/DaprDisabled`,
         label: localize('dapr', 'Dapr'),
         description: localize('disabled', 'Disabled'),
         contextValue: daprDisabledItemContextValue,

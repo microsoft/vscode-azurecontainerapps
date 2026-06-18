@@ -8,6 +8,7 @@ import { gitHubUrlParse } from "@microsoft/vscode-azext-github";
 import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { createContainerAppsClient } from "../../../utils/azureClients";
 import { localize } from "../../../utils/localize";
 import { type IDisconnectRepoContext } from "./IDisconnectRepoContext";
@@ -35,7 +36,7 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
         progress.report({ message: disconnecting });
 
         await client.containerAppsSourceControls.beginDeleteAndWait(rgName, caName, scName, { requestOptions });
-        ext.state.notifyChildrenChanged(context.containerApp.id);
+        containerAppRegistry.notifyChildrenChanged(context.containerApp.id);
 
         const disconnected: string = localize('disconnectedRepository', 'Disconnected repository "{0}" from container app "{1}".', `${owner}/${repo}`, context.containerApp.name);
         ext.outputChannel.appendLog(disconnected);

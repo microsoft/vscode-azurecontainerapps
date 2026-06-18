@@ -33,7 +33,7 @@ export class ScaleItem extends RevisionDraftDescendantBase {
         super(subscription, containerApp, revision);
     }
 
-    id: string = `${this.parentResource.id}/scale`;
+    id: string = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/scale`;
     label: string;
 
     // Use getter here because some properties aren't available until after the constructor is run

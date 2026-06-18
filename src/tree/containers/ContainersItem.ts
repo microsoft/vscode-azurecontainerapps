@@ -38,7 +38,7 @@ export class ContainersItem extends RevisionDraftDescendantBase {
         private containers: Container[],
     ) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/containers`;
+        this.id = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/containers`;
     }
 
     getChildren(): TreeElementBase[] {

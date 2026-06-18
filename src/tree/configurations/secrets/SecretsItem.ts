@@ -23,7 +23,7 @@ export class SecretsItem implements ContainerAppsItem {
     viewProperties: ViewPropertiesModel;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel) {
-        this.id = `${containerApp.id}/${SecretsItem.idSuffix}`;
+        this.id = `${containerApp.treeIdPrefix}${containerApp.id}/${SecretsItem.idSuffix}`;
         this.viewProperties = {
             data: containerApp.configuration?.secrets ?? [],
             label: `${containerApp.name} ${secrets}`,

@@ -9,6 +9,7 @@ import { IngressConstants } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { type IngressEnabledItem } from "../../../tree/configurations/IngressItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickContainerApp } from "../../../utils/pickItem/pickContainerApp";
@@ -44,4 +45,5 @@ export async function toggleIngressVisibility(context: IActionContext, node?: In
     await wizard.execute();
 
     ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+    containerAppRegistry.notifyChildrenChanged(containerApp.id);
 }

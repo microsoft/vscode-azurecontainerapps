@@ -25,7 +25,7 @@ export class ConfigurationItem implements ContainerAppsItem {
 
     // this is called "Settings" in the Portal
     constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
-        this.id = `${containerApp.id}/Configurations`;
+        this.id = `${containerApp.treeIdPrefix}${containerApp.id}/Configurations`;
         this.viewProperties = {
             data: nonNullProp(containerApp, 'configuration'),
             label: `${containerApp.name} ${configuration}`,

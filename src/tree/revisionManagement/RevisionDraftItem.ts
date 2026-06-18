@@ -31,7 +31,7 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
     revisionsMode: KnownActiveRevisionsMode;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
-        this.id = RevisionDraftItem.getRevisionDraftItemId(containerApp.id);
+        this.id = `${containerApp.treeIdPrefix}${RevisionDraftItem.getRevisionDraftItemId(containerApp.id)}`;
         this.revisionsMode = containerApp.revisionsMode;
     }
 

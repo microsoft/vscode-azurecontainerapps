@@ -7,6 +7,7 @@ import { AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-uti
 import { type Progress } from "vscode";
 import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type ISecretContext } from "../ISecretContext";
@@ -33,6 +34,7 @@ export class SecretDeleteStep extends AzureWizardExecuteStep<ISecretContext> {
         const deletedSecret: string = localize('deletedSecret', 'Deleted secret "{0}" for container app "{1}"', secretName, containerApp.name);
         ext.outputChannel.appendLog(deletedSecret);
         ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+        containerAppRegistry.notifyChildrenChanged(containerApp.id);
     }
 
     public shouldExecute(context: ISecretContext): boolean {

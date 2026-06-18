@@ -7,8 +7,8 @@ import { type IAzExtOutputChannel, type IExperimentationServiceAdapter, type Tre
 import { type AzureResourcesExtensionApi } from "@microsoft/vscode-azureresources-api";
 import { type ExtensionContext } from "vscode";
 import { type RevisionDraftFileSystem } from "./commands/revisionDraft/RevisionDraftFileSystem";
-import { type ContainerAppsResourceBranchDataProvider } from "./tree/ContainerAppResourceItem";
 import { type ContainerAppsBranchDataProvider } from "./tree/ContainerAppsBranchDataProvider";
+import { type ContainerAppsResourceBranchDataProvider } from "./tree/ContainerAppsResourceBranchDataProvider";
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts

@@ -33,7 +33,7 @@ export class ContainerItem extends RevisionDraftDescendantBase {
         readonly container: Container,
     ) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/${container.name}`;
+        this.id = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/${container.name}`;
         this.viewProperties = {
             data: this.container,
             label: nonNullProp(this.container, 'name'),

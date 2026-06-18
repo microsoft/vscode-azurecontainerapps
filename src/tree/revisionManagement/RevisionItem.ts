@@ -31,7 +31,7 @@ export class RevisionItem implements RevisionsItemModel {
     revisionsMode: KnownActiveRevisionsMode;
 
     constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
-        this.id = nonNullProp(this.revision, 'id');
+        this.id = `${containerApp.treeIdPrefix}${nonNullProp(this.revision, 'id')}`;
         this.revisionsMode = containerApp.revisionsMode;
         this.viewProperties = {
             data: revision,

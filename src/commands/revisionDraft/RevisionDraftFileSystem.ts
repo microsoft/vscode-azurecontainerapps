@@ -11,6 +11,7 @@ import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { type ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvider";
+import { containerAppRegistry } from "../../tree/containerAppRegistry";
 import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
@@ -73,7 +74,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
             file = new RevisionDraftFile(revisionContent, item.containerApp, nonNullValueAndProp(item.containerApp, 'latestRevisionName'));
         } else {
             // A trick to help the draft item appear properly when the parent isn't already expanded (covers the command palette entrypoints)
-            void ext.state.showCreatingChild(
+            void containerAppRegistry.showCreatingChild(
                 RevisionsItem.getRevisionsItemId(item.containerApp.id),
                 localize('creatingDraft', 'Creating draft...'),
                 () => Promise.resolve());
@@ -160,6 +161,7 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         // Currently the container app id reveals only the hidden container app resources, so we'll have to make due with expanding the parent for now
         void commands.executeCommand('azureResourceGroups.revealResource', file.containerApp.managedEnvironmentId, { select: false, expand: true });
         ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
+        containerAppRegistry.notifyChildrenChanged(file.containerApp.id);
     }
 
     updateRevisionDraftWithTemplate(item: ContainerAppItem | RevisionsItemModel, template: Template): void {

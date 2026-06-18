@@ -6,6 +6,8 @@
 import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
 import { type SecretItem } from "../../../tree/configurations/secrets/SecretItem";
+import { SecretsItem } from "../../../tree/configurations/secrets/SecretsItem";
+import { containerAppRegistry } from "../../../tree/containerAppRegistry";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
 import { pickSecret } from "../../../utils/pickItem/pickSecret";
@@ -43,8 +45,10 @@ export async function editSecretValue(context: IActionContext, node?: SecretItem
 
     await wizard.prompt();
 
-    await ext.state.runWithTemporaryDescription(item.id, localize('updating', 'Updating...'), async () => {
+    const canonicalId: string = `${containerApp.id}/${SecretsItem.idSuffix}/${item.secretName}`;
+    await containerAppRegistry.runWithTemporaryDescription(canonicalId, localize('updating', 'Updating...'), async () => {
         await wizard.execute();
         ext.state.notifyChildrenChanged(containerApp.managedEnvironmentId);
+        containerAppRegistry.notifyChildrenChanged(containerApp.id);
     });
 }

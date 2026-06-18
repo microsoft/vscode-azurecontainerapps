@@ -38,7 +38,7 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
         readonly envVariable: EnvironmentVar,
     ) {
         super(subscription, containerApp, revision);
-        this.id = `${this.parentResource.id}/${container.image}/${envVariable.name}`;
+        this.id = `${this.containerApp.treeIdPrefix}${this.parentResource.id}/${container.image}/${envVariable.name}`;
     }
 
     getTreeItem(): TreeItem {
