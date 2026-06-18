@@ -37,6 +37,7 @@ import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
 import { revealInEnvironment } from './revealInEnvironment';
 import { copySandboxId, openSandboxInPortal } from './sandboxes/sandboxMisc';
+import { createSandbox } from './sandboxes/createSandbox';
 import { deleteSandbox } from './sandboxes/deleteSandbox';
 import { setAutoSuspend } from './sandboxes/setAutoSuspend';
 import { snapshotSandbox } from './sandboxes/snapshotSandbox';
@@ -135,6 +136,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 
     // sandboxes
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.create', createSandbox);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.stop', stopSandbox);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.resume', resumeSandbox);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.snapshot', snapshotSandbox);

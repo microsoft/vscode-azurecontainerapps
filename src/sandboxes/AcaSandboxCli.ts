@@ -5,7 +5,7 @@
 
 import { execFile } from 'child_process';
 import { localize } from '../utils/localize';
-import { type AutoSuspendPolicy, type Sandbox, type SandboxGroup, type SandboxGroupRef, type SandboxLifecycle, type SandboxRef, type Subscription } from './acaSandboxTypes';
+import { type AutoSuspendPolicy, type CreateSandboxOptions, type PublicDiskImage, type Sandbox, type SandboxGroup, type SandboxGroupRef, type SandboxLifecycle, type SandboxRef, type Subscription } from './acaSandboxTypes';
 import { augmentedPath, resolveExecutable } from './cliPath';
 
 export const acaCliInstallUrl: string = 'https://aka.ms/aca-cli-install';
@@ -91,6 +91,29 @@ export class AcaSandboxCli {
     public async listSandboxes(group: SandboxGroupRef): Promise<Sandbox[]> {
         const stdout = await this.runAca(['sandbox', 'list', ...groupArgs(group), '-o', 'json']);
         return parseJsonArray<Sandbox>(stdout);
+    }
+
+    /** Lists public disk images available to a group via `aca sandboxgroup disk list-public`. */
+    public async listPublicDiskImages(group: SandboxGroupRef): Promise<PublicDiskImage[]> {
+        const stdout = await this.runAca(['sandboxgroup', 'disk', 'list-public', ...groupArgs(group), '-o', 'json']);
+        return parseJsonArray<PublicDiskImage>(stdout);
+    }
+
+    /**
+     * Creates a sandbox in a group via `aca sandbox create`. Returns the created sandbox when the
+     * CLI emits JSON, or `undefined` when it returns a non-object response.
+     */
+    public async createSandbox(group: SandboxGroupRef, options: CreateSandboxOptions): Promise<Sandbox | undefined> {
+        const args: string[] = ['sandbox', 'create', ...groupArgs(group), '--disk', options.disk];
+        if (options.cpu) {
+            args.push('--cpu', options.cpu);
+        }
+        if (options.memory) {
+            args.push('--memory', options.memory);
+        }
+        args.push('-o', 'json');
+        const stdout = await this.runAca(args);
+        return tryParseJsonObject<Sandbox>(stdout);
     }
 
     /** Gets a single sandbox via `aca sandbox get`. */
@@ -207,6 +230,42 @@ function parseJsonObject<T>(stdout: string): T {
     return value as T;
 }
 
+/**
+ * Like {@link parseJsonObject} but never throws: returns `undefined` when the output is not a
+ * JSON object. Tolerates leading/trailing non-JSON noise (e.g. progress or log lines that some
+ * `aca` commands print before the JSON payload) by extracting the embedded object.
+ */
+function tryParseJsonObject<T>(stdout: string): T | undefined {
+    const value = tryParseJson(stdout);
+    if (value === undefined || value === null || typeof value !== 'object' || Array.isArray(value)) {
+        return undefined;
+    }
+    return value as T;
+}
+
+/** Best-effort JSON parse that returns `undefined` instead of throwing, tolerating surrounding noise. */
+function tryParseJson(stdout: string): unknown {
+    const trimmed = (stdout ?? '').trim();
+    if (!trimmed) {
+        return undefined;
+    }
+    try {
+        return JSON.parse(trimmed);
+    } catch {
+        // Fall back to extracting an embedded object/array when the CLI emits extra text.
+        const start = trimmed.search(/[[{]/);
+        const end = Math.max(trimmed.lastIndexOf(']'), trimmed.lastIndexOf('}'));
+        if (start !== -1 && end > start) {
+            try {
+                return JSON.parse(trimmed.slice(start, end + 1));
+            } catch {
+                return undefined;
+            }
+        }
+        return undefined;
+    }
+}
+
 function parseJson(stdout: string): unknown {
     const trimmed = (stdout ?? '').trim();
     if (!trimmed) {
@@ -235,4 +294,4 @@ export function parseSandboxGroupId(id: string): SandboxGroupRef | undefined {
     };
 }
 
-export { type AutoSuspendPolicy, type Sandbox, type SandboxGroup, type SandboxGroupRef, type SandboxLifecycle, type SandboxRef, type Subscription };
+export { type AutoSuspendPolicy, type CreateSandboxOptions, type PublicDiskImage, type Sandbox, type SandboxGroup, type SandboxGroupRef, type SandboxLifecycle, type SandboxRef, type Subscription };

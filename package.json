@@ -62,6 +62,12 @@
         },
         "commands": [
             {
+                "command": "containerApps.sandboxes.create",
+                "title": "%containerApps.sandboxes.create%",
+                "category": "Azure Container Apps Sandboxes",
+                "icon": "$(add)"
+            },
+            {
                 "command": "containerApps.sandboxes.stop",
                 "title": "%containerApps.sandboxes.stop%",
                 "category": "Azure Container Apps Sandboxes",
@@ -411,6 +417,16 @@
             ],
             "view/item/context": [
                 {
+                    "command": "containerApps.sandboxes.create",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxGroupItem/",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "containerApps.sandboxes.create",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxGroupItem/",
+                    "group": "1@1"
+                },
+                {
                     "command": "containerApps.sandboxes.resume",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxItem/ && viewItem =~ /suspended/",
                     "group": "inline@1"
@@ -707,6 +723,10 @@
                 }
             ],
             "commandPalette": [
+                {
+                    "command": "containerApps.sandboxes.create",
+                    "when": "never"
+                },
                 {
                     "command": "containerApps.sandboxes.stop",
                     "when": "never"

@@ -5,6 +5,7 @@
 
 import { ext } from '../../extensionVariables';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
+import { type SandboxGroupResourceItem } from '../../sandboxes/tree/SandboxGroupResourceItem';
 import { localize } from '../../utils/localize';
 
 /**
@@ -15,6 +16,17 @@ import { localize } from '../../utils/localize';
 export function requireSandboxItem(node: SandboxItem | undefined): SandboxItem {
     if (!node) {
         throw new Error(localize('selectSandbox', 'Select a sandbox in the Azure Resources view to run this command.'));
+    }
+    return node;
+}
+
+/**
+ * Resolves the {@link SandboxGroupResourceItem} a group-level command should act on. Group
+ * commands are only surfaced from the group's context menu, so the node is supplied by VS Code.
+ */
+export function requireSandboxGroupItem(node: SandboxGroupResourceItem | undefined): SandboxGroupResourceItem {
+    if (!node) {
+        throw new Error(localize('selectSandboxGroup', 'Select a sandbox group in the Azure Resources view to run this command.'));
     }
     return node;
 }

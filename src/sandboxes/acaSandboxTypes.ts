@@ -69,6 +69,29 @@ export interface SandboxGroup {
 }
 
 /**
+ * Public disk image as returned by `aca sandboxgroup disk list-public`. The preview CLI
+ * may vary field names, so all are optional and parsing stays tolerant.
+ */
+export interface PublicDiskImage {
+    name?: string;
+    displayName?: string;
+    description?: string;
+    id?: string;
+}
+
+/**
+ * Options for creating a sandbox via `aca sandbox create`.
+ */
+export interface CreateSandboxOptions {
+    /** Public disk image name (`--disk`). */
+    disk: string;
+    /** Optional CPU request, e.g. "1000m" (`--cpu`). */
+    cpu?: string;
+    /** Optional memory request, e.g. "2048Mi" (`--memory`). */
+    memory?: string;
+}
+
+/**
  * Single sandbox as returned by `aca sandbox list/get`.
  *
  * The preview CLI may add or omit fields; only the documented fields are typed and

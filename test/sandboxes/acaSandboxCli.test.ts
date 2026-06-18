@@ -106,4 +106,40 @@ suite('AcaSandboxCli', () => {
         const cli = makeCli({ stdout: '[]' });
         await assert.rejects(() => cli.getSandbox(sandboxRef), /unexpected/i);
     });
+
+    test('listPublicDiskImages builds group args and parses array', async () => {
+        const calls: RecordedCall[] = [];
+        const cli = makeCli({ stdout: JSON.stringify([{ name: 'ubuntu' }, { name: 'alpine' }]) }, calls);
+        const images = await cli.listPublicDiskImages(groupRef);
+        assert.deepStrictEqual(images.map(i => i.name), ['ubuntu', 'alpine']);
+        assert.deepStrictEqual(calls[0].args, ['sandboxgroup', 'disk', 'list-public', '-s', 'sub1', '-g', 'rg1', '--group', 'grp1', '-o', 'json']);
+    });
+
+    test('createSandbox builds args with disk and optional cpu/memory', async () => {
+        const calls: RecordedCall[] = [];
+        const cli = makeCli({ stdout: JSON.stringify({ id: 'sb-new', state: 'Running' }) }, calls);
+        const created = await cli.createSandbox(groupRef, { disk: 'ubuntu', cpu: '1000m', memory: '2048Mi' });
+        assert.strictEqual(created?.id, 'sb-new');
+        assert.deepStrictEqual(calls[0].args, ['sandbox', 'create', '-s', 'sub1', '-g', 'rg1', '--group', 'grp1', '--disk', 'ubuntu', '--cpu', '1000m', '--memory', '2048Mi', '-o', 'json']);
+    });
+
+    test('createSandbox omits cpu/memory when not provided', async () => {
+        const calls: RecordedCall[] = [];
+        const cli = makeCli({ stdout: '' }, calls);
+        const created = await cli.createSandbox(groupRef, { disk: 'ubuntu' });
+        assert.strictEqual(created, undefined);
+        assert.deepStrictEqual(calls[0].args, ['sandbox', 'create', '-s', 'sub1', '-g', 'rg1', '--group', 'grp1', '--disk', 'ubuntu', '-o', 'json']);
+    });
+
+    test('createSandbox tolerates noisy non-JSON output without throwing', async () => {
+        const cli = makeCli({ stdout: 'Creating sandbox...\nDone.\n{"id":"sb-noisy","state":"Running"}\n' });
+        const created = await cli.createSandbox(groupRef, { disk: 'ubuntu' });
+        assert.strictEqual(created?.id, 'sb-noisy');
+    });
+
+    test('createSandbox returns undefined when output has no JSON object', async () => {
+        const cli = makeCli({ stdout: 'Sandbox created successfully.\n' });
+        const created = await cli.createSandbox(groupRef, { disk: 'ubuntu' });
+        assert.strictEqual(created, undefined);
+    });
 });

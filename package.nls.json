@@ -89,6 +89,7 @@
     "containerApps.walkthrough.cleanUpResources.title": "Clean up resources",
     "containerApps.walkthrough.cleanUpResources.description": "Remove the resources created in this walkthrough by deleting the containing resource group using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Delete Resource Group](command:containerApps.walkthrough.cleanUpResources)",
     "containerApps.sandboxes.acaPath": "Path to the 'aca' CLI executable used to manage Container Apps sandboxes. Leave empty to search the system PATH.",
+    "containerApps.sandboxes.create": "Create Sandbox...",
     "containerApps.sandboxes.stop": "Suspend Sandbox",
     "containerApps.sandboxes.resume": "Resume Sandbox",
     "containerApps.sandboxes.snapshot": "Snapshot Sandbox...",
