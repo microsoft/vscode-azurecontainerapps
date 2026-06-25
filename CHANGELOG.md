@@ -5,6 +5,8 @@
 
 ### Engineering
 * [[1081](https://github.com/microsoft/vscode-azurecontainerapps/pull/1081)] Fix long running tests in support of migration to esbuild
+* [[1093](https://github.com/microsoft/vscode-azurecontainerapps/pull/1093)] Add `feedBaseUrl` passthrough to 1ES build template parameters
+* [[1094](https://github.com/microsoft/vscode-azurecontainerapps/pull/1094)] Remove redundant `npmFeed` parameter from AzDO build pipeline
 
 ## 0.11.1 - 2026-05-28
 ### Added
