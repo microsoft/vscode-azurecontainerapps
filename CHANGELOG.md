@@ -1,4 +1,11 @@
 # Change Log
+## 0.11.2 - 2026-06-29
+### Fixed
+* [[1099](https://github.com/microsoft/vscode-azurecontainerapps/issues/1099)] Fixed an internal error that appeared on some deployments when creating new container app resources
+
+### Engineering
+* [[1081](https://github.com/microsoft/vscode-azurecontainerapps/pull/1081)] Fix long running tests in support of migration to esbuild
+
 ## 0.11.1 - 2026-05-28
 ### Added
 * [[1069](https://github.com/microsoft/vscode-azurecontainerapps/pull/1069)] Add ACA "flat" tree item provider and "reveal app" command
