@@ -1,5 +1,5 @@
 # Change Log
-## 0.11.2 - 2026-06-29
+## 0.11.2 - 2026-06-25
 ### Fixed
 * [[1099](https://github.com/microsoft/vscode-azurecontainerapps/issues/1099)] Fixed an internal error that appeared on some deployments when creating new container app resources
 
