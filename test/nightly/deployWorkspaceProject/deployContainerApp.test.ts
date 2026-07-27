@@ -16,6 +16,7 @@ import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { getCachedTestApi } from '../../utils/testApiAccess';
 import { resourceGroupsToDelete } from '../global.nightly.test';
+import { testRegion } from '../testRegion';
 import { dwpTestUtils } from './dwpTestUtils';
 
 suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.Suite) {
@@ -85,7 +86,7 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
     let managedEnvironment: ManagedEnvironment | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
         const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-        await context.ui.runWithInputs([resourceName, 'East US'], async () => {
+        await context.ui.runWithInputs([resourceName, testRegion.displayName], async () => {
             managedEnvironment = await (getCachedTestApi().createManagedEnvironmentInternal(context));
         });
     });
