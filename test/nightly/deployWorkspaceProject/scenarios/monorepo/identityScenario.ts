@@ -8,7 +8,6 @@ import * as path from "path";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
 import { generateExpectedMonorepoDeploymentConfiguration } from "./adminCredentialsScenario";
-import { testRegion } from "../../../testRegion";
 
 export function generateMonorepoIdentityTests(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'monorepo-identity';
@@ -34,7 +33,7 @@ export function generateMonorepoIdentityTests(): DeployWorkspaceProjectTestCase[
                 'Standard',
                 new RegExp('Create new container app'),
                 appOneName,
-                testRegion.displayName,
+                'West US 2',
                 'Managed Identity',
                 path.join('app1', 'Dockerfile'),
                 `.${path.sep}app1`,

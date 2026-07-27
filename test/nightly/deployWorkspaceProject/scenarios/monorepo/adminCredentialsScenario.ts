@@ -9,7 +9,6 @@ import { DeploymentConfigurationSettings } from "../../../../../src/commands/dep
 import { type StringOrRegExpProps } from "../../../../typeUtils";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
-import { testRegion } from "../../../testRegion";
 
 export function generateMonorepoAdminCredentialsTests(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'monorepo-admincreds';
@@ -35,7 +34,7 @@ export function generateMonorepoAdminCredentialsTests(): DeployWorkspaceProjectT
                 'Standard',
                 new RegExp('Create new container app'),
                 appOneName,
-                testRegion.displayName,
+                'West US 2',
                 'Docker Login Credentials',
                 'Enable',
                 path.join('app1', 'Dockerfile'),
