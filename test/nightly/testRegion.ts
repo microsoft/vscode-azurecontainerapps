@@ -24,7 +24,7 @@ function readEnv(name: string): string | undefined {
 
 /**
  * Display names for regions that may be selected when running the long-running (nightly) tests.
- * Add an entry here (or set `ACA_TESTREGION_DISPLAYNAME`) when targeting a region not listed below.
+ * Add an entry here when targeting a region not listed below.
  */
 const regionDisplayNames: Record<string, string> = {
     centralus: 'Central US',
@@ -48,12 +48,12 @@ const defaultRegionId: string = 'westus2';
 
 function resolveTestRegion(): TestRegion {
     const id: string = (readEnv('ACA_TESTREGION') || defaultRegionId).toLowerCase();
-    const displayName: string | undefined = readEnv('ACA_TESTREGION_DISPLAYNAME') || regionDisplayNames[id];
+    const displayName: string | undefined = regionDisplayNames[id];
 
     if (!displayName) {
         throw new Error(
             `Unknown display name for test region "${id}". ` +
-            `Add it to "regionDisplayNames" in test/nightly/testRegion.ts or set the "ACA_TESTREGION_DISPLAYNAME" variable.`
+            `Add it to "regionDisplayNames" in test/nightly/testRegion.ts.`
         );
     }
 
@@ -65,7 +65,6 @@ function resolveTestRegion(): TestRegion {
  *
  * Defaults to `westus2`. A different region can be selected at queue-time by setting the pipeline's
  * `ACA_TESTREGION` variable, or locally by exporting the `ACA_TESTREGION` environment variable to the
- * desired region id (e.g. `eastus`). If the region id is not present in `regionDisplayNames`, its
- * display name can be provided via the `ACA_TESTREGION_DISPLAYNAME` variable.
+ * desired region id (e.g. `eastus`). The region id must be present in `regionDisplayNames`.
  */
 export const testRegion: TestRegion = resolveTestRegion();
