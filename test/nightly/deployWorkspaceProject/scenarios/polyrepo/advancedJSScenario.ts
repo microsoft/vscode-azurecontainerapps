@@ -8,6 +8,7 @@ import * as path from "path";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
 import { generateExpectedJSDeploymentConfiguration } from "./basicJSScenario";
+import { testRegion } from "../../../testRegion";
 
 export function generateAdvancedJSTests(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'advanced-js';
@@ -30,7 +31,7 @@ export function generateAdvancedJSTests(): DeployWorkspaceProjectTestCase[] {
                 'Standard',
                 new RegExp('Create new container app'),
                 appResourceName,
-                'West US 2',
+                testRegion.displayName,
                 'Docker Login Credentials',
                 'Enable',
                 path.join('src', 'Dockerfile'),
