@@ -15,6 +15,24 @@ interface TestRegion {
 }
 
 /**
+ * Reads the first defined/non-empty environment variable from the provided names.
+ *
+ * Azure DevOps exposes pipeline variables to the test process as environment variables using an
+ * upper-cased name (e.g. the `AzCode_TestRegion` variable becomes `AZCODE_TESTREGION`), whereas a
+ * developer running locally typically exports the variable using its literal, mixed-case name.
+ * Checking both forms keeps the helper working in either context.
+ */
+function readEnv(...names: string[]): string | undefined {
+    for (const name of names) {
+        const value: string | undefined = process.env[name]?.trim();
+        if (value) {
+            return value;
+        }
+    }
+    return undefined;
+}
+
+/**
  * Display names for regions that may be selected when running the long-running (nightly) tests.
  * Add an entry here (or set `AzCode_TestRegionDisplayName`) when targeting a region not listed below.
  */
@@ -39,8 +57,8 @@ const regionDisplayNames: Record<string, string> = {
 const defaultRegionId: string = 'westus2';
 
 function resolveTestRegion(): TestRegion {
-    const id: string = (process.env.AzCode_TestRegion || defaultRegionId).trim().toLowerCase();
-    const displayName: string | undefined = process.env.AzCode_TestRegionDisplayName?.trim() || regionDisplayNames[id];
+    const id: string = (readEnv('AzCode_TestRegion', 'AZCODE_TESTREGION') || defaultRegionId).toLowerCase();
+    const displayName: string | undefined = readEnv('AzCode_TestRegionDisplayName', 'AZCODE_TESTREGIONDISPLAYNAME') || regionDisplayNames[id];
 
     if (!displayName) {
         throw new Error(
@@ -55,8 +73,9 @@ function resolveTestRegion(): TestRegion {
 /**
  * The Azure region used by the long-running (nightly) tests when creating resources.
  *
- * Defaults to `westus2`. A different region can be selected at queue-time by setting the
- * `AzCode_TestRegion` build variable / environment variable to the desired region id (e.g. `eastus`).
+ * Defaults to `westus2`. A different region can be selected at queue-time by setting the pipeline's
+ * `Test Region` parameter (surfaced to the test process via the `AzCode_TestRegion` variable), or
+ * locally by exporting the `AzCode_TestRegion` environment variable to the desired region id (e.g. `eastus`).
  * If the region id is not present in `regionDisplayNames`, its display name can be provided via the
  * `AzCode_TestRegionDisplayName` variable.
  */

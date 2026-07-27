@@ -20,6 +20,14 @@ parameters:
     displayName: Enable Long Running Tests
     type: boolean
     default: true
+  - name: testRegion
+    displayName: Test Region (region id, e.g. westus2)
+    type: string
+    default: westus2
+  - name: testRegionDisplayName
+    displayName: Test Region Display Name (only needed for regions not built into the tests, e.g. West US 2)
+    type: string
+    default: ""
 
 resources:
   repositories:
@@ -33,6 +41,13 @@ resources:
 variables:
   # Pick up shared AZCode variables
   - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
+  # Surface the queue-time test region selection to the test process. Azure DevOps automatically
+  # exposes pipeline variables to scripts as environment variables (upper-cased), so the tests read
+  # these as AZCODE_TESTREGION / AZCODE_TESTREGIONDISPLAYNAME (see test/nightly/testRegion.ts).
+  - name: AzCode_TestRegion
+    value: ${{ parameters.testRegion }}
+  - name: AzCode_TestRegionDisplayName
+    value: ${{ parameters.testRegionDisplayName }}
 
 extends:
   template: azdo-pipelines/1es-mb-main.yml@azExtTemplates # Use the main build template
