@@ -9,6 +9,7 @@ import { DeploymentConfigurationSettings } from "../../../../../src/commands/dep
 import { type StringOrRegExpProps } from "../../../../typeUtils";
 import { dwpTestUtils } from "../../dwpTestUtils";
 import { type DeployWorkspaceProjectTestCase } from "../DeployWorkspaceProjectTestScenario";
+import { testRegion } from "../../../testRegion";
 
 export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
     const folderName: string = 'basic-js';
@@ -24,7 +25,7 @@ export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
                 'Basic',
                 sharedResourceName,
                 appResourceName,
-                'East US',
+                testRegion.displayName,
                 'Docker Login Credentials',
                 'Enable',
                 path.join('src', 'test_fail.Dockerfile'),
@@ -44,7 +45,7 @@ export function generateBasicJSTests(): DeployWorkspaceProjectTestCase[] {
                 'Basic',
                 sharedResourceName,
                 appResourceName,
-                'East US',
+                testRegion.displayName,
                 'Docker Login Credentials',
                 'Enable',
                 path.join('src', 'Dockerfile'),

@@ -14,6 +14,7 @@ import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
 import { getCachedTestApi } from '../../utils/testApiAccess';
 import { resourceGroupsToDelete, subscriptionContext } from '../global.nightly.test';
+import { testRegion } from '../testRegion';
 import { dwpTestUtils } from './dwpTestUtils';
 
 suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
@@ -81,7 +82,7 @@ async function createResourceGroup(): Promise<ResourceGroupId> {
             ...subscriptionContext,
             newResourceGroupName,
         };
-        await LocationListStep.setLocation(wizardContext, 'eastus');
+        await LocationListStep.setLocation(wizardContext, testRegion.id);
 
         const wizard = new AzureWizard<IResourceGroupWizardContext>(wizardContext, {
             executeSteps: [new ResourceGroupCreateStep()],
