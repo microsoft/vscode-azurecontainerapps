@@ -5,6 +5,7 @@
 
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzExtUserInput, AzureWizard, createSubscriptionContext, isCopilotUserInput, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { OpenConfirmationViewStep, openLoadingViewPanel, SharedState } from '@microsoft/vscode-azext-webview';
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { acrDomain, ImageSource, SupportedRegistries } from "../../constants";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
@@ -14,8 +15,6 @@ import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUt
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
-import { OpenConfirmationViewStep, SharedState } from "../../webviews/OpenConfirmationViewStep";
-import { openLoadingViewPanel } from "../../webviews/OpenLoadingViewStep";
 import { CommandAttributes } from "../CommandAttributes";
 import { ContainerAppOverwriteConfirmStep } from "../ContainerAppOverwriteConfirmStep";
 import { ContainerAppListStep } from "../createContainerApp/ContainerAppListStep";
