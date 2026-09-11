@@ -16,7 +16,7 @@ import { getParentResourceFromItem, isTemplateItemEditable, TemplateItemNotEdita
 import { EnvFileListStep } from "../../image/imageSource/EnvFileListStep";
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type EnvironmentVariablesEditContext } from "./EnvironmentVariablesEditContext";
-import { EnvironmentVariablesEditDraftStep } from "./EnvironmentVariablesEditDraftStep";
+import { EnvironmentVariablesEditDraftStep, type EnvironmentVariablesEditDraftStepOutputs } from "./EnvironmentVariablesEditDraftStep";
 
 export async function editEnvironmentVariables(context: IActionContext, node?: EnvironmentVariablesItem): Promise<void> {
     const item: EnvironmentVariablesItem = node ?? await pickEnvironmentVariables(context, { autoSelectDraft: true });
@@ -41,6 +41,9 @@ export async function editEnvironmentVariables(context: IActionContext, node?: E
     };
     wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
 
+    // Create an output reference to pass to the draft step so we can edit after prompting
+    const editDraftStepOutputs: EnvironmentVariablesEditDraftStepOutputs = {};
+
     const wizard = new AzureWizard<EnvironmentVariablesEditContext>(wizardContext, {
         title: localize('editEnvironmentVariables', 'Edit environment variables for "{0}" (draft)', parentResource.name),
         promptSteps: [
@@ -49,10 +52,15 @@ export async function editEnvironmentVariables(context: IActionContext, node?: E
         ],
         executeSteps: [
             getVerifyProvidersStep<EnvironmentVariablesEditContext>(),
-            new EnvironmentVariablesEditDraftStep(item),
+            new EnvironmentVariablesEditDraftStep(item, editDraftStepOutputs),
         ],
     });
 
     await wizard.prompt();
+    if (wizardContext.envPath) {
+        wizardContext.activityTitle = localize('editEnvVarsFromFileActivityTitle', 'Edit environment variables for "{0}" from provided .env file (draft)', parentResource.name);
+        editDraftStepOutputs.treeItemLabel = localize('saveEnvVarsToDraftLabel', 'Save environment variables from provided .env file to draft');
+        editDraftStepOutputs.outputLogFailMessage = localize('editEnvVarsFileFail', 'Failed to edit environment variables for "{0}" from provided .env file (draft).', parentResource.name);
+    }
     await wizard.execute();
 }
