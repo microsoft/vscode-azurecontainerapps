@@ -5,9 +5,9 @@
 
 import { type IActionContext, } from "@microsoft/vscode-azext-utils";
 import { CopilotUserInput, markAsCopilotUserInput } from "@microsoft/vscode-azext-utils/copilot";
+import { SharedState } from '@microsoft/vscode-azext-webview';
 import * as vscode from 'vscode';
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
-import { SharedState } from "../../webviews/OpenConfirmationViewStep";
 import { deployContainerApp } from "../deployContainerApp/deployContainerApp";
 
 export async function deployWithCopilot(context: IActionContext, node: ContainerAppItem): Promise<void> {
