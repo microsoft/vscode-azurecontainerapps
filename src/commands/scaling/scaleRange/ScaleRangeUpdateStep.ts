@@ -11,6 +11,16 @@ import { getParentResourceFromItem } from "../../../utils/revisionDraftUtils";
 import { RevisionDraftUpdateBaseStep } from "../../revisionDraft/RevisionDraftUpdateBaseStep";
 import { type ScaleRangeContext } from "./ScaleRangeContext";
 
+export function shouldUpdateScaleRange(context: Pick<ScaleRangeContext, 'newMinRange' | 'newMaxRange' | 'scaleMinRange' | 'scaleMaxRange'>): boolean {
+    return context.newMinRange !== undefined &&
+        context.newMaxRange !== undefined &&
+        (context.newMinRange !== context.scaleMinRange || context.newMaxRange !== context.scaleMaxRange);
+}
+
+export function shouldPreserveNullMinReplicas(context: Pick<ScaleRangeContext, 'newMinRange' | 'scaleMinRange' | 'wasMinReplicasNull'>): boolean {
+    return context.wasMinReplicasNull === true && context.newMinRange === context.scaleMinRange;
+}
+
 export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionDraftUpdateBaseStep<T> {
     public priority: number = 1110;
 
@@ -20,7 +30,9 @@ export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionD
 
     public async execute(context: T): Promise<void> {
         this.revisionDraftTemplate.scale ||= {};
-        this.revisionDraftTemplate.scale.minReplicas = context.newMinRange;
+        if (!shouldPreserveNullMinReplicas(context)) {
+            this.revisionDraftTemplate.scale.minReplicas = context.newMinRange;
+        }
         this.revisionDraftTemplate.scale.maxReplicas = context.newMaxRange;
 
         await this.updateRevisionDraftWithTemplate(context);
@@ -33,6 +45,6 @@ export class ScaleRangeUpdateStep<T extends ScaleRangeContext> extends RevisionD
     }
 
     public shouldExecute(context: T): boolean {
-        return context.newMinRange !== undefined && context.newMaxRange !== undefined;
+        return shouldUpdateScaleRange(context);
     }
 }

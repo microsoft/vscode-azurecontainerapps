@@ -12,4 +12,5 @@ export interface ScaleRangeContext extends RevisionDraftContext, ExecuteActivity
 
     scaleMinRange: number;
     scaleMaxRange: number;
+    wasMinReplicasNull?: boolean;
 }
