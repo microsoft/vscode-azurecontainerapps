@@ -886,5 +886,8 @@
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
-    ]
+    ],
+    "overrides": {
+        "@github/copilot": "1.0.88"
+    }
 }
