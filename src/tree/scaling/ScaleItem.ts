@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Revision, type Scale } from "@azure/arm-appcontainers";
-import { createGenericElement, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import deepEqual from 'deep-eql';
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
@@ -50,12 +50,12 @@ export class ScaleItem extends RevisionDraftDescendantBase {
 
     protected setProperties(): void {
         this.label = scaling;
-        this.scale = nonNullValueAndProp(this.parentResource.template, 'scale');
+        this.scale = this.parentResource.template?.scale ?? {};
     }
 
     protected setDraftProperties(): void {
         this.label = `${scaling}*`;
-        this.scale = nonNullValueAndProp(ext.revisionDraftFileSystem.parseRevisionDraft(this), 'scale');
+        this.scale = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale ?? {};
     }
 
     getTreeItem(): TreeItem {

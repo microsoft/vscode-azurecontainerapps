@@ -207,6 +207,11 @@
                 "category": "Azure Container Apps"
             },
             {
+                "command": "containerApps.openExpressPortal",
+                "title": "%containerApps.openExpressPortal%",
+                "category": "Azure Container Apps"
+            },
+            {
                 "command": "containerApps.editContainer",
                 "title": "%containerApps.editContainer%",
                 "category": "Azure Container Apps"
@@ -450,6 +455,11 @@
                     "command": "containerApps.chooseRevisionMode",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
                     "group": "6@2"
+                },
+                {
+                    "command": "containerApps.openExpressPortal",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)express/i",
+                    "group": "9@2"
                 },
                 {
                     "command": "containerApps.openConsoleInPortal",
