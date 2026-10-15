@@ -823,17 +823,16 @@
         }
     },
     "scripts": {
-        "build": "npm run build:esbuild & npm run build:check & npm run build:webview",
+        "build": "npm run build:esbuild && npm run build:check",
         "build:esbuild": "node esbuild.mjs",
-        "build:check": "tsc --noEmit",
-        "build:webview": "node esbuild.views.mjs",
+        "build:check": "tsgo --noEmit",
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --max-warnings 0",
         "test": "vscode-test"
     },
     "devDependencies": {
         "@azure/ms-rest-azure-env": "^2.0.0",
-        "@microsoft/vscode-azext-eng": "1.1.0-alpha.1",
+        "@microsoft/vscode-azext-eng": "^1.2.0",
         "@types/deep-eql": "^4.0.0",
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",
@@ -845,7 +844,6 @@
         "@vscode/test-electron": "*",
         "@vscode/vsce": "*",
         "esbuild": "*",
-        "esbuild-plugin-copy": "*",
         "fs-extra": "^8.1.0",
         "tsx": "*"
     },
@@ -875,7 +873,7 @@
         "p-retry": "^4.6.2",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "sass": "~1.79.6",
+        "sass": "^1.105.1",
         "sass-loader": "^16.0.2",
         "semver": "^7.5.2",
         "tar": "^7.5.16",
