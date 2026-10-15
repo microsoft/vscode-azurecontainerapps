@@ -825,7 +825,7 @@
     "scripts": {
         "build": "npm run build:esbuild && npm run build:check",
         "build:esbuild": "node esbuild.mjs",
-        "build:check": "node ./node_modules/@typescript/native/bin/tsc --noEmit",
+        "build:check": "tsgo --noEmit",
         "package": "vsce package --githubBranch main --no-dependencies",
         "lint": "eslint --max-warnings 0",
         "test": "vscode-test"
