@@ -67,3 +67,5 @@ testWorkspace
 test-results.xml
 dist
 stats.json
+esbuild.meta.json
+esbuild.*.meta.json
