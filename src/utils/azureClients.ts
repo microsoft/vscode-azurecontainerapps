@@ -26,15 +26,14 @@ export async function createContainerAppsAPIClient(context: AzExtClientContext):
 
 const previewApiVersion = '2026-03-02-preview';
 
-export async function createContainerAppsPreviewAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
-    const client = await createContainerAppsAPIClient(context);
-    client.apiVersion = previewApiVersion;
+export async function createContainerAppsPreviewAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient & { apiVersion: string }> {
+    const client = Object.assign(await createContainerAppsAPIClient(context), { apiVersion: previewApiVersion });
     client.pipeline.addPolicy({
         name: 'PreviewApiVersionPolicy',
         sendRequest(request, next) {
             const [base, query] = request.url.split('?');
             if (query) {
-                const newQuery = query.split('&').map(p => p.startsWith('api-version=') ? `api-version=${previewApiVersion}` : p).join('&');
+                const newQuery = query.split('&').map(p => p.startsWith('api-version=') ? `api-version=${client.apiVersion}` : p).join('&');
                 request.url = `${base}?${newQuery}`;
             }
             return next(request);

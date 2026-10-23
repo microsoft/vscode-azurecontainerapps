@@ -35,7 +35,7 @@ export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateCont
             getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
             nonNullProp(logAnalyticsWorkspace, 'name'));
 
-        context.managedEnvironment = await client.managedEnvironments.beginCreateOrUpdateAndWait(resourceGroupName, managedEnvironmentName,
+        context.managedEnvironment = await client.managedEnvironments.createOrUpdate(resourceGroupName, managedEnvironmentName,
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 appLogsConfiguration: {
