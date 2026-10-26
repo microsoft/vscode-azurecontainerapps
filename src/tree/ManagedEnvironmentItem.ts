@@ -8,15 +8,13 @@ import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureut
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureResource, type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { createContainerAppsAPIClient, createContainerAppsPreviewAPIClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppItem } from "./ContainerAppItem";
 import { type ContainerAppsItem, type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
-type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel & {
-    environmentMode?: string;
-};
+type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
 
 export class ManagedEnvironmentItem implements TreeElementBase {
     static readonly contextValue: string = 'managedEnvironmentItem';
@@ -90,21 +88,8 @@ export class ManagedEnvironmentItem implements TreeElementBase {
 
     static async Get(context: IActionContext, subscription: AzureSubscription, resourceGroup: string, name: string): Promise<ManagedEnvironmentModel> {
         const subContext = createSubscriptionContext(subscription);
-        const client: ContainerAppsAPIClient = await createContainerAppsPreviewAPIClient([context, subContext]);
-
-        let environmentMode: string | undefined;
-        const result = await client.managedEnvironments.get(resourceGroup, name, {
-            onResponse: (response) => {
-                const rawBody = response.bodyAsText;
-                if (rawBody) {
-                    environmentMode = (JSON.parse(rawBody) as { properties?: { environmentMode?: string } })?.properties?.environmentMode;
-                }
-            },
-        });
-
-        const model = ManagedEnvironmentItem.CreateManagedEnvironmentModel(result);
-        model.environmentMode = environmentMode;
-        return model;
+        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);
+        return ManagedEnvironmentItem.CreateManagedEnvironmentModel(await client.managedEnvironments.get(resourceGroup, name));
     }
 
     private static CreateManagedEnvironmentModel(managedEnvironment: ManagedEnvironment): ManagedEnvironmentModel {

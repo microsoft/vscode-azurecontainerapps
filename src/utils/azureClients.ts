@@ -24,24 +24,6 @@ export async function createContainerAppsAPIClient(context: AzExtClientContext):
     return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient as unknown as AzExtClientType<ContainerAppsAPIClient>);
 }
 
-const previewApiVersion = '2026-03-02-preview';
-
-export async function createContainerAppsPreviewAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient & { apiVersion: string }> {
-    const client = Object.assign(await createContainerAppsAPIClient(context), { apiVersion: previewApiVersion });
-    client.pipeline.addPolicy({
-        name: 'PreviewApiVersionPolicy',
-        sendRequest(request, next) {
-            const [base, query] = request.url.split('?');
-            if (query) {
-                const newQuery = query.split('&').map(p => p.startsWith('api-version=') ? `api-version=${client.apiVersion}` : p).join('&');
-                request.url = `${base}?${newQuery}`;
-            }
-            return next(request);
-        },
-    });
-    return client;
-}
-
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
     return createAzureClient(context, (await import('@azure/arm-containerregistry')).ContainerRegistryManagementClient);
 }
