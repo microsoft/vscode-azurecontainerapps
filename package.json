@@ -870,7 +870,7 @@
         "@fluentui/react-components": "^9.56.2",
         "@fluentui/react-icons": "^2.0.265",
         "@github/copilot-sdk": "^1.0.14",
-        "@microsoft/vscode-azext-azureutils": "file:../vscode-azuretools/azure/microsoft-vscode-azext-azureutils-5.0.0.tgz",
+        "@microsoft/vscode-azext-azureutils": "5.1.0",
         "@microsoft/vscode-azext-github": "^2.0.1",
         "@microsoft/vscode-azext-utils": "^4.3.0",
         "@microsoft/vscode-azureresources-api": "^3.1.0",
