@@ -4,16 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, parseAzureResourceGroupId, ResourceGroupCreateStep, type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizard, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, IParsedError, parseError, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { deployWorkspaceProjectApi } from '../../../src/commands/api/deployWorkspaceProjectApi';
 import { DeployWorkspaceProjectResults } from '../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
 import { settingUtils } from '../../../src/utils/settingUtils';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
+import { getCachedTestApi } from '../../utils/testApiAccess';
 import { resourceGroupsToDelete, subscriptionContext } from '../global.nightly.test';
+import { testRegion } from '../testRegion';
 import { dwpTestUtils } from './dwpTestUtils';
 
 suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
@@ -44,7 +45,18 @@ suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
             suppressContainerAppCreation: true,
             shouldSaveDeploySettings: true,
         };
-        const results: DeployWorkspaceProjectResults = await deployWorkspaceProjectApi(deploymentSettings);
+
+        let results: DeployWorkspaceProjectResults = {};
+        await runWithTestActionContext('deployWorkspaceProjectApi', async context => {
+            await context.ui.runWithInputs([], async () => {
+                try {
+                    results = await (getCachedTestApi().deployWorkspaceProjectApiInternal(context, deploymentSettings));
+                } catch (e) {
+                    const perr: IParsedError = parseError(e);
+                    console.error(perr.message);
+                }
+            });
+        });
 
         const parsedResourceGroup = parseAzureResourceGroupId(resourceGroupId);
         const sharedResourceName = parsedResourceGroup.resourceGroup;
@@ -70,7 +82,7 @@ async function createResourceGroup(): Promise<ResourceGroupId> {
             ...subscriptionContext,
             newResourceGroupName,
         };
-        await LocationListStep.setLocation(wizardContext, 'eastus');
+        await LocationListStep.setLocation(wizardContext, testRegion.id);
 
         const wizard = new AzureWizard<IResourceGroupWizardContext>(wizardContext, {
             executeSteps: [new ResourceGroupCreateStep()],

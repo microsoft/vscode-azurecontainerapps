@@ -16,6 +16,8 @@ node_modules/**
 out/**
 src/**
 stats.json
+esbuild.meta.json
+esbuild.*.meta.json
 test-results.xml
 test/**
 testWorkspace/**

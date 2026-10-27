@@ -5,8 +5,8 @@
 
 import { AzExtFsExtra } from "@microsoft/vscode-azext-utils";
 import * as assert from "assert";
-import { IngressContext } from "src/commands/ingress/IngressContext";
 import { type Uri } from "vscode";
+import type { IngressContext } from "../../src/commands/ingress/IngressContext";
 import { tryConfigureIngressUsingDockerfile } from "../../src/commands/ingress/IngressPromptStep";
 import { getWorkspaceFolderUri } from "../testUtils";
 import { wrapWithMockTelemetry } from "../wrapWithMockTelemetry";
