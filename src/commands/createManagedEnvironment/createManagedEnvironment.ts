@@ -12,6 +12,7 @@ import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
+import { AppTypeListStep } from "./AppTypeListStep";
 import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
@@ -31,7 +32,10 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const promptSteps: AzureWizardPromptStep<ManagedEnvironmentCreateContext>[] = [];
     const executeSteps: AzureWizardExecuteStep<ManagedEnvironmentCreateContext>[] = [];
 
-    promptSteps.push(new ManagedEnvironmentNameStep());
+    promptSteps.push(
+        new AppTypeListStep(),
+        new ManagedEnvironmentNameStep(),
+    );
     executeSteps.push(
         getVerifyProvidersStep<ManagedEnvironmentCreateContext>(),
         new ResourceGroupCreateStep(),

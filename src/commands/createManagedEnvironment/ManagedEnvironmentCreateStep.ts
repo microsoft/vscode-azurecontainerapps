@@ -7,11 +7,16 @@ import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { managedEnvironmentResourceType } from "../../constants";
+import { EnvironmentAppType, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
+
+const environmentModeMap = new Map<EnvironmentAppType, string>([
+    [EnvironmentAppType.Express, 'Express'],
+    [EnvironmentAppType.Standard, 'WorkloadProfiles'],
+]);
 
 export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 250;
@@ -38,11 +43,13 @@ export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateCont
         context.managedEnvironment = await client.managedEnvironments.createOrUpdate(resourceGroupName, managedEnvironmentName,
             {
                 location: (await LocationListStep.getLocation(context)).name,
+                environmentMode: environmentModeMap.get(nonNullProp(context, 'newManagedEnvironmentAppType')),
+                // Todo: What to do with this?
                 appLogsConfiguration: {
-                    "destination": "log-analytics",
-                    "logAnalyticsConfiguration": {
-                        "customerId": logAnalyticsWorkspace.customerId,
-                        "sharedKey": sharedKeys.primarySharedKey
+                    destination: "log-analytics",
+                    logAnalyticsConfiguration: {
+                        customerId: logAnalyticsWorkspace.customerId,
+                        sharedKey: sharedKeys.primarySharedKey
                     }
                 },
                 workloadProfiles: [
