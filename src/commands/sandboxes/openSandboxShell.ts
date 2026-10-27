@@ -9,9 +9,8 @@ import { openSandboxTerminal } from '../../sandboxes/sandboxTerminal';
 import { requireSandboxItem } from './sandboxCommandUtils';
 
 /**
- * Opens an interactive shell into the selected sandbox by launching `aca sandbox shell` in a
- * VS Code terminal. The CLI auto-resumes a suspended sandbox on connect, so no pre-resume is
- * required here.
+ * Opens a real interactive shell through `aca sandbox shell`. All non-terminal sandbox
+ * operations use the SDK; the CLI remains necessary only because the SDK has no streaming shell.
  */
 export async function openSandboxShell(_context: IActionContext, node?: SandboxItem): Promise<void> {
     const item = requireSandboxItem(node);

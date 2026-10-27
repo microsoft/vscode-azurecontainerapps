@@ -3,34 +3,31 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
+import { createSubscriptionContext, nonNullValue, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../extensionVariables';
-import { type AcaSandboxCli } from '../../sandboxes/AcaSandboxCli';
-import { type SandboxRef } from '../../sandboxes/acaSandboxTypes';
-import { createAcaSandboxCli } from '../../sandboxes/createAcaSandboxCli';
+import { createSandboxService, ensureSandboxRunning, type SandboxService } from '../../sandboxes/SandboxService';
+import { type ExecResult, type SandboxRef } from '../../sandboxes/sandboxTypes';
 import { pickSandbox } from '../../sandboxes/pickSandbox';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
+import { runSandboxActivity } from './sandboxCommandUtils';
 
 /**
- * Prompts for a command to run inside a sandbox via `aca sandbox exec`, then streams the
- * command and its stdout/stderr to the extension output channel. When invoked without a tree
- * node (e.g. from the command palette) the user is walked through a sandbox picker.
+ * Prompts for a command to run inside a sandbox, then writes its result to the output channel.
  */
 export async function runSandboxCommand(context: IActionContext, node?: SandboxItem): Promise<void> {
-    let cli: AcaSandboxCli;
+    let service: SandboxService;
     let ref: SandboxRef;
     let label: string;
     if (node) {
-        cli = node.cli;
         ref = node.ref;
         label = node.label;
+        service = createSandboxService([context, createSubscriptionContext(node.subscription)], ref);
     } else {
-        cli = createAcaSandboxCli();
-        const picked = await pickSandbox(context, cli);
+        const picked = await pickSandbox(context);
         ref = picked.ref;
         label = picked.label;
+        service = createSandboxService([context, createSubscriptionContext(picked.subscription)], ref);
     }
 
     const command = await context.ui.showInputBox({
@@ -44,16 +41,26 @@ export async function runSandboxCommand(context: IActionContext, node?: SandboxI
         },
     }).then(value => value.trim());
 
-    const stdout = await vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: localize('runningCommand', 'Running command in sandbox "{0}"...', label),
-    }, async () => {
-        return cli.exec(ref, command);
-    });
+    let result: ExecResult | undefined;
+    await runSandboxActivity(
+        localize('executeSandboxCommandActivity', 'Execute command in sandbox "{0}"', label),
+        localize('runningCommand', 'Running command in sandbox "{0}"...', label),
+        async () => {
+            await ensureSandboxRunning(service, ref.sandboxId);
+            result = await service.exec(ref.sandboxId, command);
+        },
+    );
 
+    result = nonNullValue(result);
     ext.outputChannel.appendLine(localize('runCommandHeader', '$ [{0}] {1}', label, command));
-    if (stdout) {
-        ext.outputChannel.appendLine(stdout.replace(/\s+$/, ''));
+    if (result.stdout) {
+        ext.outputChannel.appendLine(result.stdout.replace(/\s+$/, ''));
+    }
+    if (result.stderr) {
+        ext.outputChannel.appendLine(result.stderr.replace(/\s+$/, ''));
+    }
+    if (result.exitCode !== 0) {
+        ext.outputChannel.appendLine(localize('runCommandExitCode', 'Command exited with code {0}.', result.exitCode));
     }
     ext.outputChannel.show();
 }

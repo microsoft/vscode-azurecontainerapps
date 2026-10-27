@@ -3,23 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { createContextValue } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureResource, type AzureResourceBranchDataProvider, type AzureSubscription, type ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
 import { type TreeElementBase } from '../../tree/ContainerAppsBranchDataProvider';
 import { createPortalUrl } from '../../utils/createPortalUrl';
 import { localize } from '../../utils/localize';
-import { parseSandboxGroupId, type AcaSandboxCli } from '../AcaSandboxCli';
-import { type SandboxGroupRef } from '../acaSandboxTypes';
-import { createAcaSandboxCli } from '../createAcaSandboxCli';
+import { createSandboxService } from '../SandboxService';
+import { parseSandboxGroupId, type SandboxGroupRef } from '../sandboxTypes';
 import { SandboxItem } from './SandboxItem';
 
 /**
  * Tree item for a `Microsoft.App/sandboxGroups` resource shown first-class under the
  * subscription in the Azure Resources view. Its children are the individual sandboxes
- * within the group, listed via the `aca` CLI ({@link AcaSandboxCli}) — sandboxes are a
- * data-plane concept and are not returned by ARM, so they cannot be enumerated by the host.
+ * within the group. Sandboxes are data-plane resources and are not returned by the ARM host.
  */
 export class SandboxGroupResourceItem implements TreeElementBase {
     static readonly contextValue: string = 'sandboxGroupItem';
@@ -30,15 +28,15 @@ export class SandboxGroupResourceItem implements TreeElementBase {
     readonly portalUrl: vscode.Uri;
 
     constructor(
-        public readonly cli: AcaSandboxCli,
         public readonly subscription: AzureSubscription,
         public readonly resource: AzureResource,
     ) {
         this.id = resource.id;
-        this.ref = parseSandboxGroupId(resource.id) ?? {
+        this.ref = parseSandboxGroupId(resource.id, resource.location ?? '') ?? {
             subscriptionId: subscription.subscriptionId,
             resourceGroup: resource.resourceGroup ?? '',
             groupName: resource.name,
+            region: resource.location ?? '',
         };
         this.portalUrl = createPortalUrl(subscription, resource.id);
         this.viewProperties = {
@@ -63,11 +61,15 @@ export class SandboxGroupResourceItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        const sandboxes = await this.cli.listSandboxes(this.ref);
-        return sandboxes.map(sandbox => new SandboxItem(this.cli, this.subscription, {
-            ...this.ref,
-            sandboxId: sandbox.id,
-        }, sandbox));
+        const result = await callWithTelemetryAndErrorHandling('containerApps.sandboxes.list', async (context: IActionContext) => {
+            const service = createSandboxService([context, createSubscriptionContext(this.subscription)], this.ref);
+            const sandboxes = await service.listSandboxes();
+            return sandboxes.map(sandbox => new SandboxItem(this.subscription, {
+                ...this.ref,
+                sandboxId: sandbox.id,
+            }, sandbox));
+        });
+        return result ?? [];
     }
 }
 
@@ -88,7 +90,7 @@ export class SandboxGroupBranchDataProvider extends vscode.Disposable implements
     }
 
     getResourceItem(element: AzureResource): TreeElementBase {
-        const item = new SandboxGroupResourceItem(createAcaSandboxCli(), element.subscription, element);
+        const item = new SandboxGroupResourceItem(element.subscription, element);
         return ext.state.wrapItemInStateHandling(item as TreeElementBase & { id: string }, () => this.refresh(item));
     }
 

@@ -5,35 +5,45 @@
 
 import * as vscode from 'vscode';
 import { localize } from '../utils/localize';
-import { type Sandbox, type SandboxRef } from './acaSandboxTypes';
-import { resolveAcaPath } from './createAcaSandboxCli';
+import { augmentedPath, resolveExecutable } from './cliPath';
+import { type Sandbox, type SandboxRef } from './sandboxTypes';
 
-/**
- * Builds the `aca sandbox shell` argument vector that opens an interactive shell into a
- * sandbox microVM. Shared by the "Open Sandbox Shell" command and the terminal profile
- * provider so both spawn the CLI identically.
- */
+/** Configuration key for the ACA executable used only by the interactive terminal. */
+export const acaTerminalPathSettingKey: string = 'containerApps.sandboxes.acaPath';
+
 export function buildSandboxShellArgs(ref: SandboxRef): string[] {
-    return ['sandbox', 'shell', '-s', ref.subscriptionId, '-g', ref.resourceGroup, '--group', ref.groupName, '--id', ref.sandboxId];
+    return [
+        'sandbox',
+        'shell',
+        '-s',
+        ref.subscriptionId,
+        '-g',
+        ref.resourceGroup,
+        '--group',
+        ref.groupName,
+        '--region',
+        ref.region,
+        '--id',
+        ref.sandboxId,
+    ];
 }
 
-/**
- * Builds the {@link vscode.TerminalOptions} used to launch an interactive sandbox shell.
- * Uses the resolved `aca` executable as the terminal's `shellPath` so VS Code owns the PTY;
- * no custom pseudoterminal or native dependency is required.
- */
-export function buildSandboxTerminalOptions(label: string, ref: SandboxRef): vscode.TerminalOptions {
+export function createSandboxTerminalOptions(label: string, ref: SandboxRef): vscode.TerminalOptions {
+    const configuredPath = vscode.workspace.getConfiguration().get<string>(acaTerminalPathSettingKey)?.trim();
     return {
         name: localize('sandboxTerminalName', 'Sandbox: {0}', label),
-        shellPath: resolveAcaPath(),
+        shellPath: configuredPath || resolveExecutable(process.platform === 'win32' ? 'aca.exe' : 'aca'),
         shellArgs: buildSandboxShellArgs(ref),
         iconPath: new vscode.ThemeIcon('terminal'),
+        env: {
+            PATH: augmentedPath(),
+        },
     };
 }
 
-/** Creates and reveals an interactive terminal connected to the given sandbox. */
+/** Creates a real interactive terminal using `aca sandbox shell`. */
 export function openSandboxTerminal(label: string, ref: SandboxRef): vscode.Terminal {
-    const terminal = vscode.window.createTerminal(buildSandboxTerminalOptions(label, ref));
+    const terminal = vscode.window.createTerminal(createSandboxTerminalOptions(label, ref));
     terminal.show();
     return terminal;
 }

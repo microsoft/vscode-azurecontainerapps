@@ -15,7 +15,6 @@ import { createContainerAppsApiProvider } from './commands/api/createContainerAp
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
-import { acaPathSettingKey } from './sandboxes/createAcaSandboxCli';
 import { sandboxTerminalProfileId, sandboxTerminalProfileProvider } from './sandboxes/sandboxTerminalProfileProvider';
 import { SandboxGroupBranchDataProvider } from './sandboxes/tree/SandboxGroupResourceItem';
 import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
@@ -52,11 +51,6 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
 
         ext.sandboxGroupBranchDataProvider = new SandboxGroupBranchDataProvider();
         context.subscriptions.push(ext.sandboxGroupBranchDataProvider);
-        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
-            if (e.affectsConfiguration(acaPathSettingKey)) {
-                ext.sandboxGroupBranchDataProvider.refresh();
-            }
-        }));
         context.subscriptions.push(vscode.window.registerTerminalProfileProvider(sandboxTerminalProfileId, sandboxTerminalProfileProvider));
 
         const authHandshakeId = uuid();

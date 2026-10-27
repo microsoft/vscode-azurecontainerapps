@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { createSandboxService } from '../../sandboxes/SandboxService';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
-import { refreshSandboxesTree, requireSandboxItem } from './sandboxCommandUtils';
+import { refreshSandboxesTree, requireSandboxItem, runSandboxActivity } from './sandboxCommandUtils';
 
 export async function setAutoSuspend(context: IActionContext, node?: SandboxItem): Promise<void> {
     const item = requireSandboxItem(node);
+    const service = createSandboxService([context, createSubscriptionContext(item.subscription)], item.ref);
 
     const picks: (vscode.QuickPickItem & { seconds?: number; disable?: boolean })[] = [
         { label: localize('autoSuspend5m', '5 minutes'), seconds: 300 },
@@ -46,12 +48,20 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
         policy = { enabled: true, idleTimeoutSeconds: seconds };
     }
 
-    await vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: localize('updatingAutoSuspend', 'Updating auto-suspend for sandbox "{0}"...', item.label),
-    }, async () => {
-        await item.cli.setAutoSuspend(item.ref, policy);
-    });
+    await runSandboxActivity(
+        localize('updateAutoSuspendActivity', 'Update auto-suspend for sandbox "{0}"', item.label),
+        localize('updatingAutoSuspend', 'Updating auto-suspend for sandbox "{0}"...', item.label),
+        async () => {
+            const sandbox = await service.getSandbox(item.ref.sandboxId);
+            await service.setLifecyclePolicy(item.ref.sandboxId, {
+                ...sandbox.lifecycle,
+                autoSuspend: {
+                    enabled: policy.enabled,
+                    interval: policy.idleTimeoutSeconds,
+                },
+            });
+        },
+    );
 
     refreshSandboxesTree();
 }

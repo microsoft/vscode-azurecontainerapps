@@ -7,8 +7,7 @@ import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { type TreeElementBase } from '../../tree/ContainerAppsBranchDataProvider';
 import { localize } from '../../utils/localize';
-import { type AcaSandboxCli } from '../AcaSandboxCli';
-import { type Sandbox, type SandboxRef } from '../acaSandboxTypes';
+import { type Sandbox, type SandboxRef } from '../sandboxTypes';
 
 /** Normalized lifecycle category derived from the open-set `state` string. */
 export type SandboxStateCategory = 'running' | 'suspended' | 'transitional' | 'unknown';
@@ -36,7 +35,6 @@ export class SandboxItem implements TreeElementBase {
     static readonly contextValue: string = 'sandboxItem';
 
     constructor(
-        public readonly cli: AcaSandboxCli,
         public readonly subscription: AzureSubscription,
         public readonly ref: SandboxRef,
         public readonly sandbox: Sandbox,
@@ -84,12 +82,12 @@ export class SandboxItem implements TreeElementBase {
 
     private buildDescription(): string {
         const state = this.sandbox.state || localize('unknownState', 'Unknown');
-        const resources = this.sandbox.resources ?? {};
+        const resources = this.sandbox.resources;
         const cpuMem: string[] = [];
-        if (resources.cpu) {
+        if (resources?.cpu) {
             cpuMem.push(resources.cpu);
         }
-        if (resources.memory) {
+        if (resources?.memory) {
             cpuMem.push(resources.memory);
         }
         return cpuMem.length ? `${state} · ${cpuMem.join('/')}` : state;
@@ -98,7 +96,7 @@ export class SandboxItem implements TreeElementBase {
     private buildTooltip(): vscode.MarkdownString {
         const labels = this.sandbox.labels ?? {};
         const labelEntries = Object.entries(labels);
-        const autoSuspend = this.sandbox.lifecycle?.autoSuspendPolicy;
+        const autoSuspend = this.sandbox.lifecycle?.autoSuspend;
         let autoSuspendText: string;
         if (!autoSuspend || autoSuspend.enabled === undefined) {
             autoSuspendText = localize('unknownState', 'Unknown');

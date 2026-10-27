@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { createSandboxService } from '../../sandboxes/SandboxService';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
-import { refreshSandboxesTree, requireSandboxItem } from './sandboxCommandUtils';
+import { refreshSandboxesTree, requireSandboxItem, runSandboxActivity } from './sandboxCommandUtils';
 
 /** Prompts for a snapshot name and validates it. Returns the trimmed name. */
 export async function promptForSnapshotName(context: IActionContext): Promise<string> {
@@ -28,14 +29,16 @@ export async function promptForSnapshotName(context: IActionContext): Promise<st
 
 export async function snapshotSandbox(context: IActionContext, node?: SandboxItem): Promise<void> {
     const item = requireSandboxItem(node);
+    const service = createSandboxService([context, createSubscriptionContext(item.subscription)], item.ref);
     const snapshotName = await promptForSnapshotName(context);
 
-    await vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: localize('snapshottingSandbox', 'Creating snapshot "{0}" of sandbox "{1}"...', snapshotName, item.label),
-    }, async () => {
-        await item.cli.snapshot(item.ref, snapshotName);
-    });
+    await runSandboxActivity(
+        localize('createSandboxSnapshotActivity', 'Create snapshot "{0}" of sandbox "{1}"', snapshotName, item.label),
+        localize('snapshottingSandbox', 'Creating snapshot "{0}" of sandbox "{1}"...', snapshotName, item.label),
+        async () => {
+            await service.createSnapshot(item.ref.sandboxId, snapshotName);
+        },
+    );
 
     void vscode.window.showInformationMessage(localize('snapshotCreated', 'Created snapshot "{0}" of sandbox "{1}".', snapshotName, item.label));
     refreshSandboxesTree();

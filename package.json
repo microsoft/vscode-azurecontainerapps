@@ -83,7 +83,7 @@
                 "command": "containerApps.sandboxes.stop",
                 "title": "%containerApps.sandboxes.stop%",
                 "category": "Azure Container Apps Sandboxes",
-                "icon": "$(debug-pause)"
+                "icon": "$(debug-stop)"
             },
             {
                 "command": "containerApps.sandboxes.resume",
@@ -1039,6 +1039,7 @@
         "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.2.0",
         "@azure/container-registry": "^1.1.2",
+        "@azure/containerapps-sandbox": "1.0.0-beta.1",
         "@azure/core-rest-pipeline": "^1.23.0",
         "@azure/monitor-query": "^1.2.0",
         "@azure/storage-blob": "^12.4.1",

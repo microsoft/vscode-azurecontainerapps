@@ -3,42 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as vscode from 'vscode';
+import { DialogResponses, createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { createSandboxService } from '../../sandboxes/SandboxService';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
-import { refreshSandboxesTree, requireSandboxItem } from './sandboxCommandUtils';
-import { promptForSnapshotName } from './snapshotSandbox';
+import { refreshSandboxesTree, requireSandboxItem, runSandboxActivity } from './sandboxCommandUtils';
 
 export async function deleteSandbox(context: IActionContext, node?: SandboxItem): Promise<void> {
     const item = requireSandboxItem(node);
+    const service = createSandboxService([context, createSubscriptionContext(item.subscription)], item.ref);
 
     const deleteMessage = localize('confirmDeleteSandbox', 'Are you sure you want to delete sandbox "{0}"? This cannot be undone.', item.label);
     await context.ui.showWarningMessage(deleteMessage, { modal: true }, DialogResponses.deleteResponse);
 
-    const snapshotFirst = localize('snapshotFirst', 'Snapshot first');
-    const skipSnapshot = localize('deleteWithoutSnapshot', 'Delete without snapshot');
-    const snapshotChoice = await context.ui.showWarningMessage(
-        localize('snapshotBeforeDelete', 'Take a snapshot before deleting "{0}"?', item.label),
-        { modal: true },
-        { title: snapshotFirst },
-        { title: skipSnapshot },
+    await runSandboxActivity(
+        localize('deleteSandboxActivity', 'Delete sandbox "{0}"', item.label),
+        localize('deletingSandbox', 'Deleting sandbox "{0}"...', item.label),
+        async () => service.deleteSandbox(item.ref.sandboxId),
     );
-
-    let snapshotName: string | undefined;
-    if (snapshotChoice.title === snapshotFirst) {
-        snapshotName = await promptForSnapshotName(context);
-    }
-
-    await vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: localize('deletingSandbox', 'Deleting sandbox "{0}"...', item.label),
-    }, async () => {
-        if (snapshotName) {
-            await item.cli.snapshot(item.ref, snapshotName);
-        }
-        await item.cli.delete(item.ref);
-    });
 
     refreshSandboxesTree();
 }
