@@ -458,7 +458,7 @@
                 },
                 {
                     "command": "containerApps.openExpressPortal",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)express/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /(containerAppItem|managedEnvironmentItem)/i && viewItem =~ /(^|;)express(;|$)/i",
                     "group": "9@2"
                 },
                 {

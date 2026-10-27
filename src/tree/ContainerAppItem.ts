@@ -84,7 +84,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         }
 
         if (this.isExpress) {
-            return localize('express', '(Express)');
+            return localize('express', 'Express');
         }
 
         return undefined;

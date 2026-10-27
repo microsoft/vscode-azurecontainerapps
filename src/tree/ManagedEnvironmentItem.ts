@@ -8,6 +8,7 @@ import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureut
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureResource, type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { expressContextValue } from "../constants";
 import { createContainerAppsAPIClient } from "../utils/azureClients";
 import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
@@ -22,7 +23,6 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     viewProperties: ViewPropertiesModel;
     id: string;
     readonly isExpress: boolean;
-
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
         this.isExpress = managedEnvironment.environmentMode === 'Express';
@@ -40,6 +40,10 @@ export class ManagedEnvironmentItem implements TreeElementBase {
         values.push(nonNullValueAndProp(this.managedEnvironment, 'name'));
 
         values.push(ManagedEnvironmentItem.contextValue);
+        if (this.isExpress) {
+            values.push(expressContextValue);
+        }
+
         return createContextValue(values);
     }
 
@@ -66,7 +70,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     getTreeItem(): TreeItem {
         return {
             label: this.managedEnvironment.name,
-            description: this.isExpress ? localize('express', '(Express)') : undefined,
+            description: this.isExpress ? localize('express', 'Express') : undefined,
             id: this.id,
             iconPath: treeUtils.getIconPath('managed-environment'),
             contextValue: this.contextValue,
