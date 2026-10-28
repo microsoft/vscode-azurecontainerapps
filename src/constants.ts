@@ -56,7 +56,7 @@ export enum ImageSource {
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';
-export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
+export const quickStartImageName = 'mcr.microsoft.com/k8se/quickstart:express';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
 

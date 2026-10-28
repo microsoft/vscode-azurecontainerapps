@@ -7,14 +7,14 @@ import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Ingress } f
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp, type AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ImageSource } from "../../constants";
+import { quickStartImageName } from "../../constants";
 import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { ContainerAppStartVerificationStep } from "../image/imageSource/ContainerAppStartVerificationStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
-import { enabledIngressDefaults } from "../ingress/enableIngress/EnableIngressStep";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
+import { getContainerAppDefaults } from "./containerAppDefaults";
 
 export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 620;
@@ -24,14 +24,16 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
     protected getTreeItemLabel = (context: T) => localize('createContainerAppLabel', 'Create container app "{0}"', context.newContainerAppName);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        const defaults = getContainerAppDefaults(context.managedEnvironment?.environmentMode);
         progress.report({ message: localize('creatingContainerApp', 'Creating container app...') });
 
         const appClient: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
         const resourceGroupName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const containerAppName: string = nonNullProp(context, 'newContainerAppName');
+        const image = nonNullProp(context, 'image');
 
         const ingress: Ingress | undefined = context.enableIngress ? {
-            ...enabledIngressDefaults,
+            ...defaults.ingress,
             external: context.enableExternal,
             targetPort: context.targetPort,
         } : undefined;
@@ -48,11 +50,13 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
             template: {
                 containers: [
                     {
-                        image: context.image,
-                        name: getContainerNameForImage(nonNullProp(context, 'image')),
+                        image,
+                        name: getContainerNameForImage(image),
+                        resources: defaults.resources,
                         env: context.environmentVariables
                     }
-                ]
+                ],
+                scale: defaults.scale,
             },
         }));
     }
@@ -62,7 +66,7 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
     }
 
     public addExecuteSteps(context: T): AzureWizardExecuteStep<T>[] {
-        if (context.imageSource === ImageSource.QuickstartImage) {
+        if (context.image === quickStartImageName) {
             return [];
         }
 

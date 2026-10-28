@@ -11,7 +11,7 @@ import { ext } from "../../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
-import { enabledIngressDefaults } from "../../ingress/enableIngress/EnableIngressStep";
+import { enabledIngressDefaults } from "../../ingress/ingressDefaults";
 import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { updateContainerApp } from "../../updateContainerApp";
 import { ContainerAppStartVerificationStep } from "./ContainerAppStartVerificationStep";
