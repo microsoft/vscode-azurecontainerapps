@@ -861,7 +861,6 @@
         "@azure/arm-appcontainers": "^4.0.0",
         "@azure/arm-authorization": "^9.0.0",
         "@azure/arm-containerregistry": "^10.0.0",
-        "@azure/arm-operationalinsights": "^8.0.0",
         "@azure/arm-resources": "^5.2.0",
         "@azure/container-registry": "^1.1.2",
         "@azure/core-rest-pipeline": "^1.23.0",

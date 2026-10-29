@@ -17,7 +17,6 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
 
     return {
         resourceGroup: context.resourceGroup,
-        logAnalyticsWorkspace: context.logAnalyticsWorkspace,
         managedEnvironment: context.managedEnvironment,
         newManagedEnvironmentAppType: context.newManagedEnvironmentAppType ?? EnvironmentAppType.Standard,
         containerApp: context.containerApp,

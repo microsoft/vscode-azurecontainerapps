@@ -39,6 +39,9 @@ export interface DeployWorkspaceProjectOptionsContract {
 
 export interface DeployWorkspaceProjectResults {
     resourceGroupId?: string;
+    /**
+     * @deprecated Default behavior no longer attaches a log analytics workspace to new environments
+     */
     logAnalyticsWorkspaceId?: string;
     managedEnvironmentId?: string;
     containerAppId?: string;

@@ -4,17 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerAppsAPIClient, type ManagedEnvironment } from "@azure/arm-appcontainers";
-import { type Workspace } from "@azure/arm-operationalinsights";
 import { type ResourceGroup } from "@azure/arm-resources";
 import { getResourceGroupFromId, LocationListStep, ResourceGroupListStep, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, nonNullProp, type AzureWizardExecuteStep, type ConfirmationViewProperty, type IAzureQuickPickItem, type ISubscriptionActionContext, type IWizardOptions } from "@microsoft/vscode-azext-utils";
-import { EnvironmentAppType, logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
+import { EnvironmentAppType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { type ManagedEnvironmentContext } from "../ManagedEnvironmentContext";
-import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
-import { LogAnalyticsListStep } from "./LogAnalyticsListStep";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
@@ -102,7 +99,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         promptSteps.push(new ManagedEnvironmentNameStep());
 
         LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
-        LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
 
         if (!context.resourceGroup) {
             promptSteps.push(new ResourceGroupListStep());
@@ -111,7 +107,6 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         LocationListStep.addStep(context, promptSteps);
 
         executeSteps.push(
-            new LogAnalyticsCreateStep(),
             new ManagedEnvironmentCreateStep(),
         );
 
@@ -124,16 +119,12 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     static async populateContextWithRelatedResources(
-        context: ManagedEnvironmentContext & Pick<ManagedEnvironmentCreateContext, 'resourceGroup' | 'logAnalyticsWorkspace'>,
+        context: ManagedEnvironmentContext & Pick<ManagedEnvironmentCreateContext, 'resourceGroup'>,
         managedEnvironment: ManagedEnvironment
     ): Promise<void> {
         if (!context.resourceGroup) {
             const resourceGroups: ResourceGroup[] = await ResourceGroupListStep.getResourceGroups(context);
             context.resourceGroup = resourceGroups.find(rg => rg.name === getResourceGroupFromId(nonNullProp(managedEnvironment, 'id')));
-        }
-        if (!context.logAnalyticsWorkspace) {
-            const workspaces: Workspace[] = await LogAnalyticsListStep.getLogAnalyticsWorkspaces(context);
-            context.logAnalyticsWorkspace = workspaces.find(w => w.customerId && w.customerId === managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId);
         }
         await LocationListStep.setAutoSelectLocation(context, managedEnvironment.location);
         context.managedEnvironment = managedEnvironment;

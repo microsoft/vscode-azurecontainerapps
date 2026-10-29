@@ -18,7 +18,6 @@ export namespace dwpTestUtils {
         return {
             containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
             imageName: new RegExp(appResourceName, 'i'),
-            logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
             registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
             registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
@@ -32,7 +31,6 @@ export namespace dwpTestUtils {
         return {
             containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
             imageName: new RegExp(appResourceName, 'i'),
-            logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
             managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
             registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
             registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),

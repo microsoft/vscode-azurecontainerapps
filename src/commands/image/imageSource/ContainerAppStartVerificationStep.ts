@@ -60,8 +60,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
                 context.telemetry.properties.targetCloud = context.environment.name;
 
                 // Try to query and provide any logs to the LLM before throwing
-                await this.tryAddLogAttributes(context, parsedResource.resourceName);
-                context.telemetry.properties.addedContainerAppStartLogs = 'true';
+                context.telemetry.properties.addedContainerAppStartLogs = await this.tryAddLogAttributes(context, parsedResource.resourceName) ? 'true' : 'false';
             } catch (error) {
                 const perr: IParsedError = parseError(error);
                 ext.outputChannel.appendLog(localize('logQueryError', 'Error encountered while trying to verify container app revision logs through log query platform.'));
@@ -150,7 +149,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
     /**
      * Try to query for any logs associated with the revision and add them to the Copilot activity attributes
      */
-    private async tryAddLogAttributes(context: T, revisionName: string) {
+    private async tryAddLogAttributes(context: T, revisionName: string): Promise<boolean> {
         // Basic validation check since we're including a name directly in the query
         if (revisionName.length > 54 || !/^[\w-]+$/.test(revisionName)) {
             const invalidName: string = localize('unexpectedRevisionName', 'Internal warning: Encountered an unexpected revision name format "{0}". Skipping log query for the revision status check.', revisionName);
@@ -160,7 +159,7 @@ export class ContainerAppStartVerificationStep<T extends ContainerAppStartVerifi
 
         const workspaceId = context.managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
         if (!workspaceId) {
-            return;
+            return false;
         }
 
         const logsQueryClient = await createLogsQueryClientPublicCloud(context);
@@ -177,7 +176,7 @@ ContainerAppConsoleLogs_CL
         });
 
         if (queryResult.status !== LogsQueryResultStatus.Success) {
-            return;
+            return false;
         }
 
         const lines: string[] = [];
@@ -205,5 +204,6 @@ ContainerAppConsoleLogs_CL
         context.activityAttributes ??= {};
         context.activityAttributes.logs ??= [];
         context.activityAttributes?.logs.push(logs);
+        return true;
     }
 }

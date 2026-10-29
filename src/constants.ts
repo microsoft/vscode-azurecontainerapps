@@ -10,9 +10,6 @@ import { localize } from "./utils/localize";
 export const registryProvider: string = 'Microsoft.ContainerRegistry';
 export const registryResourceType: string = 'registries';
 
-export const logAnalyticsProvider: string = 'Microsoft.OperationalInsights';
-export const logAnalyticsResourceType: string = 'workspaces';
-
 export const managedEnvironmentProvider: string = 'Microsoft.App';
 export const managedEnvironmentResourceType: string = 'managedEnvironments';
 

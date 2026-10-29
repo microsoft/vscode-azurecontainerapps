@@ -11,7 +11,6 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 #### Steps
 
-- LogAnalyticsCreateStep: 220
 - ManagedEnvironmentCreateStep: 250
 
 ### 2. Azure Container Registry
