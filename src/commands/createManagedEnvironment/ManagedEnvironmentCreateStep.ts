@@ -37,9 +37,6 @@ export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateCont
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 environmentMode: environmentModeMap.get(nonNullProp(context, 'newManagedEnvironmentAppType')),
-                appLogsConfiguration: {
-                    destination: 'none',
-                },
                 workloadProfiles: [
                     {
                         name: "Consumption",
