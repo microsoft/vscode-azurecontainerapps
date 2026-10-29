@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
-import { getResourceGroupFromId, LocationListStep } from "@microsoft/vscode-azext-azureutils";
+import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStepWithActivityOutput } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { EnvironmentAppType, managedEnvironmentResourceType } from "../../constants";
-import { createContainerAppsAPIClient, createOperationalInsightsManagementClient } from '../../utils/azureClients';
+import { createContainerAppsAPIClient } from '../../utils/azureClients';
 import { localize } from "../../utils/localize";
 import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
@@ -27,30 +27,18 @@ export class ManagedEnvironmentCreateStep<T extends ManagedEnvironmentCreateCont
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const client: ContainerAppsAPIClient = await createContainerAppsAPIClient(context);
-        const opClient = await createOperationalInsightsManagementClient(context);
-
         const resourceGroupName = nonNullValueAndProp(context.resourceGroup, 'name');
         const managedEnvironmentName = nonNullProp(context, 'newManagedEnvironmentName');
-        const logAnalyticsWorkspace = nonNullProp(context, 'logAnalyticsWorkspace');
 
         const creating: string = localize('creatingManagedEnvironment', 'Creating environment...');
         progress.report({ message: creating });
-
-        const sharedKeys = await opClient.sharedKeysOperations.getSharedKeys(
-            getResourceGroupFromId(nonNullProp(logAnalyticsWorkspace, 'id')),
-            nonNullProp(logAnalyticsWorkspace, 'name'));
 
         context.managedEnvironment = await client.managedEnvironments.createOrUpdate(resourceGroupName, managedEnvironmentName,
             {
                 location: (await LocationListStep.getLocation(context)).name,
                 environmentMode: environmentModeMap.get(nonNullProp(context, 'newManagedEnvironmentAppType')),
-                // Todo: What to do with this?
                 appLogsConfiguration: {
-                    destination: "log-analytics",
-                    logAnalyticsConfiguration: {
-                        customerId: logAnalyticsWorkspace.customerId,
-                        sharedKey: sharedKeys.primarySharedKey
-                    }
+                    destination: 'none',
                 },
                 workloadProfiles: [
                     {
