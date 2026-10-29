@@ -1,7 +1,7 @@
 # Change Log
 
 ## 1.2.0
-### Deprecated
+### Changed
 * `DeployWorkspaceProjectResults.logAnalyticsWorkspaceId` has been deprecated. New environments will no longer provision a Log Analytics workspace by default.
 
 ## 1.1.0
