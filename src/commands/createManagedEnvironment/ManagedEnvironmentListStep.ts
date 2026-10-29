@@ -124,7 +124,7 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
     }
 
     static async populateContextWithRelatedResources(
-        context: ManagedEnvironmentContext & Pick<ManagedEnvironmentCreateContext, 'resourceGroup' | 'logAnalyticsWorkspace' | 'newManagedEnvironmentAppType'>,
+        context: ManagedEnvironmentContext & Pick<ManagedEnvironmentCreateContext, 'resourceGroup' | 'logAnalyticsWorkspace'>,
         managedEnvironment: ManagedEnvironment
     ): Promise<void> {
         if (!context.resourceGroup) {
@@ -137,6 +137,5 @@ export class ManagedEnvironmentListStep<T extends ManagedEnvironmentCreateContex
         }
         await LocationListStep.setAutoSelectLocation(context, managedEnvironment.location);
         context.managedEnvironment = managedEnvironment;
-        context.newManagedEnvironmentAppType = managedEnvironment.environmentMode === 'Express' ? EnvironmentAppType.Express : EnvironmentAppType.Standard;
     }
 }
