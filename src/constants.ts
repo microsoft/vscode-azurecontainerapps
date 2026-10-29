@@ -56,9 +56,14 @@ export enum ImageSource {
 export const acrDomain = 'azurecr.io';
 export const dockerHubDomain = 'docker.io';
 export const dockerHubRegistry = 'index.docker.io';
-export const quickStartImageName = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest';
+export const quickStartImageName = 'mcr.microsoft.com/k8se/quickstart:express';
 
 export type SupportedRegistries = 'azurecr.io' | 'docker.io';
+
+export enum EnvironmentAppType {
+    Express = 'express',
+    Standard = 'standard',
+}
 
 export const browseItem: IAzureQuickPickItem<undefined> = { label: `$(file-directory) ${localize('browse', 'Browse...')}`, description: '', data: undefined };
 export const loadMoreQp: IAzureQuickPickItem = { label: '$(sync) Load More', data: undefined, suppressPersistence: true };
@@ -93,4 +98,4 @@ export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
 export const activityInfoContext: string = 'activity:info';
 
 export const expressContextValue: string = 'express';
-export const expressPortalBaseUrl: string = 'https://containerapps.azure.com/apps';
+export const expressPortalBaseUrl: string = 'https://containerapps.azure.com';
