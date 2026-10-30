@@ -10,7 +10,7 @@ import { type ExecResult, type SandboxRef } from '../../sandboxes/sandboxTypes';
 import { pickSandbox } from '../../sandboxes/pickSandbox';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
-import { runSandboxActivity } from './sandboxCommandUtils';
+import { refreshSandboxesTree, runSandboxActivity } from './sandboxCommandUtils';
 
 /**
  * Prompts for a command to run inside a sandbox, then writes its result to the output channel.
@@ -47,6 +47,7 @@ export async function runSandboxCommand(context: IActionContext, node?: SandboxI
         localize('runningCommand', 'Running command in sandbox "{0}"...', label),
         async () => {
             await ensureSandboxRunning(service, ref.sandboxId);
+            refreshSandboxesTree();
             result = await service.exec(ref.sandboxId, command);
         },
     );

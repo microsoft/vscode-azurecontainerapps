@@ -53,11 +53,13 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
         localize('updatingAutoSuspend', 'Updating auto-suspend for sandbox "{0}"...', item.label),
         async () => {
             const sandbox = await service.getSandbox(item.ref.sandboxId);
+            const currentAutoSuspend = sandbox.lifecycle?.autoSuspend;
             await service.setLifecyclePolicy(item.ref.sandboxId, {
                 ...sandbox.lifecycle,
                 autoSuspend: {
+                    ...currentAutoSuspend,
                     enabled: policy.enabled,
-                    interval: policy.idleTimeoutSeconds,
+                    interval: policy.idleTimeoutSeconds ?? currentAutoSuspend?.interval,
                 },
             });
         },

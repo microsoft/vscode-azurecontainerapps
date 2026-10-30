@@ -6,6 +6,7 @@
 import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
+import { createPortalUrl } from '../../utils/createPortalUrl';
 import { localize } from '../../utils/localize';
 import { requireSandboxItem } from './sandboxCommandUtils';
 
@@ -18,5 +19,5 @@ export async function copySandboxId(_context: IActionContext, node?: SandboxItem
 export async function openSandboxInPortal(_context: IActionContext, node?: SandboxItem): Promise<void> {
     const item = requireSandboxItem(node);
     const groupId = `/subscriptions/${item.ref.subscriptionId}/resourceGroups/${item.ref.resourceGroup}/providers/Microsoft.App/sandboxGroups/${item.ref.groupName}`;
-    await openUrl(`https://portal.azure.com/#@/resource${groupId}`);
+    await openUrl(createPortalUrl(item.subscription, groupId).toString(true));
 }
