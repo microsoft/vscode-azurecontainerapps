@@ -88,5 +88,17 @@
     "containerApps.walkthrough.exploreDetails.title": "Explore details",
     "containerApps.walkthrough.exploreDetails.description": "Let's explore what we've accomplished so far.\nIn this walkthrough, the commands were provided to you directly in each step.  In practice, most of these commands will need to be accessed via the Azure Resources and Workspace pane.\nUse the provided table to review and discover the real location of each command.",
     "containerApps.walkthrough.cleanUpResources.title": "Clean up resources",
-    "containerApps.walkthrough.cleanUpResources.description": "Remove the resources created in this walkthrough by deleting the containing resource group using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Delete Resource Group](command:containerApps.walkthrough.cleanUpResources)"
+    "containerApps.walkthrough.cleanUpResources.description": "Remove the resources created in this walkthrough by deleting the containing resource group using the button below.\nYou will be prompted by Visual Studio Code at the top of the page. Answer using the provided table values.\n[Delete Resource Group](command:containerApps.walkthrough.cleanUpResources)",
+    "containerApps.sandboxes.acaPath": "Path to the 'aca' CLI executable used only for the interactive sandbox terminal. Leave empty to search the system PATH.",
+    "containerApps.sandboxes.create": "Create Sandbox...",
+    "containerApps.sandboxes.openShell": "Open Sandbox Shell",
+    "containerApps.sandboxes.runCommand": "Execute Command in Sandbox...",
+    "containerApps.sandboxes.terminalProfile": "Azure Container Apps Sandbox",
+    "containerApps.sandboxes.stop": "Stop Sandbox",
+    "containerApps.sandboxes.resume": "Resume Sandbox",
+    "containerApps.sandboxes.snapshot": "Snapshot Sandbox...",
+    "containerApps.sandboxes.delete": "Delete Sandbox",
+    "containerApps.sandboxes.setAutoSuspend": "Set Auto-Suspend...",
+    "containerApps.sandboxes.copyId": "Copy Sandbox ID",
+    "containerApps.sandboxes.openInPortal": "Open in Portal"
 }

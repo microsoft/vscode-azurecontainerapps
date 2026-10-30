@@ -37,6 +37,14 @@ import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
 import { openExpressPortal } from './openExpressPortal';
 import { revealInEnvironment } from './revealInEnvironment';
+import { copySandboxId, openSandboxInPortal } from './sandboxes/sandboxMisc';
+import { createSandbox } from './sandboxes/createSandbox';
+import { deleteSandbox } from './sandboxes/deleteSandbox';
+import { openSandboxShell } from './sandboxes/openSandboxShell';
+import { runSandboxCommand } from './sandboxes/runSandboxCommand';
+import { setAutoSuspend } from './sandboxes/setAutoSuspend';
+import { snapshotSandbox } from './sandboxes/snapshotSandbox';
+import { resumeSandbox, stopSandbox } from './sandboxes/stopResumeSandbox';
 import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
@@ -130,6 +138,18 @@ export function registerCommands(): void {
     // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
+
+    // sandboxes
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.create', createSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openShell', openSandboxShell);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.runCommand', runSandboxCommand);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.stop', stopSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.resume', resumeSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.snapshot', snapshotSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.delete', deleteSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.setAutoSuspend', setAutoSuspend);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.copyId', copySandboxId);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openInPortal', openSandboxInPortal);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);

@@ -22,6 +22,8 @@ import { deployWorkspaceProject } from './commands/deployWorkspaceProject/deploy
 import { registerCommands } from './commands/registerCommands';
 import { RevisionDraftFileSystem } from './commands/revisionDraft/RevisionDraftFileSystem';
 import { ext } from './extensionVariables';
+import { sandboxTerminalProfileId, sandboxTerminalProfileProvider } from './sandboxes/sandboxTerminalProfileProvider';
+import { SandboxGroupBranchDataProvider } from './sandboxes/tree/SandboxGroupResourceItem';
 import { AzureContainerAppsTestApi } from './testApi';
 import { ContainerAppsResourceBranchDataProvider } from './tree/ContainerAppResourceItem';
 import { ContainerAppsBranchDataProvider } from './tree/ContainerAppsBranchDataProvider';
@@ -55,6 +57,10 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
         ext.branchDataProvider = new ContainerAppsBranchDataProvider();
         ext.containerAppsResourceBranchDataProvider = new ContainerAppsResourceBranchDataProvider();
 
+        ext.sandboxGroupBranchDataProvider = new SandboxGroupBranchDataProvider();
+        context.subscriptions.push(ext.sandboxGroupBranchDataProvider);
+        context.subscriptions.push(vscode.window.registerTerminalProfileProvider(sandboxTerminalProfileId, sandboxTerminalProfileProvider));
+
         const authHandshakeId = uuid();
         const authHandshakeStartMs = Date.now();
         activateContext.telemetry.properties.authHandshakeId = authHandshakeId;
@@ -78,6 +84,10 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
                 ext.rgApiV2 = rgApiV2;
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerAppsEnvironment, ext.branchDataProvider);
                 ext.rgApiV2.resources.registerAzureResourceBranchDataProvider(AzExtResourceType.ContainerApps, ext.containerAppsResourceBranchDataProvider);
+                // The published @microsoft/vscode-azureresources-api does not yet expose the
+                // ContainerAppsSandboxGroups enum value; it is added in the companion
+                // vscode-azureresourcegroups change and must be released before this ships.
+                ext.rgApiV2.resources.registerAzureResourceBranchDataProvider('ContainerAppsSandboxGroups' as AzExtResourceType, ext.sandboxGroupBranchDataProvider);
             });
             resolveHandshake();
         };
