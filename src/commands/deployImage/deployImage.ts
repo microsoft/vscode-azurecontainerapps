@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, createSubscriptionContext, nonNullValueAndProp, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { type ContainerItem } from "../../tree/containers/ContainerItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { isAzdExtensionInstalled } from "../../utils/azdUtils";
@@ -20,8 +21,9 @@ import { type ContainerRegistryImageSourceContext } from "../image/imageSource/c
 import { type DeployImageContext } from "./DeployImageContext";
 
 export async function deployImage(context: IActionContext & Partial<ContainerRegistryImageSourceContext>, node: ContainerItem): Promise<void> {
-    const { subscription, containerApp } = node;
+    const { subscription } = node;
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+    const containerApp = await ContainerAppItem.Get(context, subscription, node.containerApp.resourceGroup, node.containerApp.name);
 
     const wizardContext: DeployImageContext = {
         ...context,

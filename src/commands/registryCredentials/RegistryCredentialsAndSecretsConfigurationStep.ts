@@ -23,6 +23,7 @@ export class RegistryCredentialsAndSecretsConfigurationStep extends AzureWizardE
         }
 
         if (context.newRegistryCredential) {
+            registryCredentials = registryCredentials.filter(credential => credential.server?.toLowerCase() !== context.newRegistryCredential?.server?.toLowerCase());
             registryCredentials.push(context.newRegistryCredential);
         }
 
@@ -35,6 +36,6 @@ export class RegistryCredentialsAndSecretsConfigurationStep extends AzureWizardE
     }
 
     public shouldExecute(context: RegistryCredentialsContext): boolean {
-        return !context.registryCredentials || !context.secrets;
+        return !!context.newRegistryCredential || !!context.newRegistrySecret || !context.registryCredentials || !context.secrets;
     }
 }

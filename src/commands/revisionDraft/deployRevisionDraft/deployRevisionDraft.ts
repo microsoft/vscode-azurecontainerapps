@@ -6,7 +6,7 @@
 import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, nonNullValue, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../../extensionVariables";
-import { type ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { ContainerAppItem } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { addAzdTelemetryToContext } from "../../../utils/azdUtils";
@@ -26,7 +26,8 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
     }
 
     const item: ContainerAppItem | RevisionDraftItem = nonNullValue(node);
-    const { subscription, containerApp } = item;
+    const { subscription } = item;
+    const containerApp = await ContainerAppItem.Get(context, subscription, item.containerApp.resourceGroup, item.containerApp.name);
 
     const wizardContext: DeployRevisionDraftContext = {
         ...context,

@@ -5,7 +5,7 @@
 
 import { type Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type ContainerAppModel } from "../../../tree/ContainerAppItem";
+import { ContainerAppItem, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { type ImageItem } from "../../../tree/containers/ImageItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { isAzdExtensionInstalled } from "../../../utils/azdUtils";
@@ -26,13 +26,14 @@ export type ContainerEditUpdateContext = ContainerEditContext;
 // Edits only the 'image' portion of the container profile
 export async function editContainerImage(context: IActionContext, node?: ImageItem): Promise<void> {
     const item: ImageItem = node ?? await pickImage(context, { autoSelectDraft: true });
-    const { subscription, containerApp } = item;
+    const { subscription } = item;
 
     if (!isTemplateItemEditable(item)) {
         throw new TemplateItemNotEditableError(item);
     }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+    const containerApp = await ContainerAppItem.Get(context, subscription, item.containerApp.resourceGroup, item.containerApp.name);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
     const wizardContext: ContainerEditUpdateContext = {

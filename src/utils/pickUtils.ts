@@ -10,5 +10,5 @@ export const recommendedPickDescription: string = localize('recommended', '(reco
 export const currentlyDeployedPickDescription: string = localize('currentlyDeployed', '(currently deployed)');
 
 export function hasMatchingPickDescription(pick: IAzureQuickPickItem<unknown>, pickDescription: string): boolean {
-    return new RegExp(pickDescription, 'i').test(pick.description ?? '');
+    return (pick.description ?? '').toLowerCase().includes(pickDescription.toLowerCase());
 }

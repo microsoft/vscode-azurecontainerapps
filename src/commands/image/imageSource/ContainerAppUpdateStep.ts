@@ -13,6 +13,7 @@ import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { enabledIngressDefaults } from "../../ingress/ingressDefaults";
 import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
+import { getContainerAppIdentity } from "../../registryCredentials/identity/getContainerAppIdentity";
 import { updateContainerApp } from "../../updateContainerApp";
 import { ContainerAppStartVerificationStep } from "./ContainerAppStartVerificationStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
@@ -49,6 +50,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         containerAppEnvelope.configuration.ingress = ingress;
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
+        containerAppEnvelope.identity = getContainerAppIdentity(context, containerAppEnvelope.identity) ?? containerAppEnvelope.identity;
 
         containerAppEnvelope.template = context.template ?? containerAppEnvelope.template ?? {};
         containerAppEnvelope.template.containers ||= [];

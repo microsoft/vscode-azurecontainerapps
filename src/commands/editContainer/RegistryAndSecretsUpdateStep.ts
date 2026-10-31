@@ -10,6 +10,7 @@ import { type Progress } from "vscode";
 import { ext } from "../../extensionVariables";
 import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../../utils/localize";
+import { getContainerAppIdentity } from "../registryCredentials/identity/getContainerAppIdentity";
 import { updateContainerApp } from "../updateContainerApp";
 import { type ContainerEditContext } from "./ContainerEditContext";
 
@@ -26,9 +27,10 @@ export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extend
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
 
-        // If the credentials have not changed, we can skip this update
+        // Skip only if credentials and identity attachment are already up to date.
         if (
             context.secrets && context.registryCredentials &&
+            deepEqual(containerAppEnvelope.identity, getContainerAppIdentity(context, containerAppEnvelope.identity)) &&
             this.areSecretsDeepEqual(containerAppEnvelope.configuration.secrets, context.secrets) &&
             this.areRegistriesDeepEqual(containerAppEnvelope.configuration.registries, context.registryCredentials)
         ) {
@@ -48,8 +50,9 @@ export class RegistryAndSecretsUpdateStep<T extends ContainerEditContext> extend
         progress.report({ message: localize('configuringSecrets', 'Configuring registry secrets...') });
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
+        containerAppEnvelope.identity = getContainerAppIdentity(context, containerAppEnvelope.identity) ?? containerAppEnvelope.identity;
 
-        await updateContainerApp(context, context.subscription, containerAppEnvelope);
+        context.containerApp = await updateContainerApp(context, context.subscription, containerAppEnvelope);
         ext.outputChannel.appendLog(localize('updatedSecrets', 'Updated container app "{0}" with new registry secrets.', containerApp.name));
     }
 

@@ -13,29 +13,35 @@ import { AcrEnableAdminUserConfirmStep } from "./dockerLogin/AcrEnableAdminUserC
 import { AcrEnableAdminUserStep } from "./dockerLogin/AcrEnableAdminUserStep";
 import { DockerLoginRegistryCredentialsAddConfigurationStep } from "./dockerLogin/DockerLoginRegistryCredentialsAddConfigurationStep";
 import { AcrPullEnableStep } from "./identity/AcrPullEnableStep";
-import { ManagedEnvironmentIdentityEnableStep } from "./identity/ManagedEnvironmentIdentityEnableStep";
+import { AcrPullManagedIdentityDefaultSortStrategy } from './identity/AcrPullManagedIdentityDefaultSortStrategy';
+import { AcrPullManagedIdentityListStep } from './identity/AcrPullManagedIdentityListStep';
+import { assessRegistryPullAccess, type RegistryPullAccess } from "./identity/assessRegistryPullAccess";
 import { ManagedIdentityRegistryCredentialsAddConfigurationStep } from "./identity/ManagedIdentityRegistryCredentialsAddConfigurationStep";
 import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCredentialsAndSecretsConfigurationStep";
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
 export enum RegistryCredentialType {
-    SystemAssigned = 'system-assigned',
+    UserAssigned = 'user-assigned',
     DockerLogin = 'docker-login',
 }
 
 export class RegistryCredentialsAddConfigurationListStep extends AzureWizardPromptStep<RegistryCredentialsContext> {
     private requiresRegistryConfiguration: boolean;
+    private registryPullAccess: RegistryPullAccess | undefined;
     public pickLabel: string | undefined;
 
     public async configureBeforePrompt(context: RegistryCredentialsContext): Promise<void> {
+        this.registryPullAccess = undefined;
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
-        const hasExistingConfiguration: boolean = !!context.containerApp?.configuration?.registries?.some(r => {
+
+        // 1. See if we have any saved credentials for the target registry; an identity reference still needs its AcrPull access verified.
+        const existingRegistryCredential = context.containerApp?.configuration?.registries?.find(r => {
             if (!r.server) {
                 return false;
             }
 
             if (registryDomain === acrDomain) {
-                return r.server === context.registry?.loginServer;
+                return r.server.toLowerCase() === context.registry?.loginServer?.toLowerCase();
             } else if (context.registryName) {
                 return r.server === DockerLoginRegistryCredentialsAddConfigurationStep.getThirdPartyLoginServer(
                     registryDomain,
@@ -50,9 +56,26 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             return false;
         });
 
-        // Rule 1: If we're configuring a new ACR and don't have an existing configuration, we need to create one
-        // Rule 2: If we're configuring a new third party registry and don't have an existing configuration -- only do so if it's not a public repository.  We can detect this with the registryName, username, and secret
-        this.requiresRegistryConfiguration = (registryDomain === acrDomain || (!!context.registryName && !!context.username && !!context.secret)) && !hasExistingConfiguration;
+        // 2. If it's a public third-party image, do not require registry credentials, else do.
+        if (registryDomain !== acrDomain) {
+            this.requiresRegistryConfiguration = !!context.registryName
+                && !!context.username
+                && !!context.secret
+                && !existingRegistryCredential;
+            return;
+        }
+
+        // 3. Reuse any existing ACR password-based credentials.
+        if (existingRegistryCredential && !existingRegistryCredential.identity) {
+            this.requiresRegistryConfiguration = false;
+            return;
+        }
+
+        // 4. The matching registry credential either references an identity or is undefined.
+        // Even without a saved credential, an eligible attached identity may already have AcrPull on this registry.
+        // Check for existing access before falling back to the preset method; reuse may only need a registry reference.
+        this.registryPullAccess = await assessRegistryPullAccess(context, existingRegistryCredential);
+        this.requiresRegistryConfiguration = this.registryPullAccess.status === 'none';
     }
 
     public async prompt(context: RegistryCredentialsContext): Promise<void> {
@@ -91,15 +114,42 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
     }
 
     public async getSubWizard(context: RegistryCredentialsContext): Promise<IWizardOptions<RegistryCredentialsContext> | undefined> {
+        if (!this.requiresRegistryConfiguration) {
+            if (this.registryPullAccess?.status === 'available') {
+                context.newRegistryCredential = {
+                    server: nonNullProp(nonNullProp(context, 'registry'), 'loginServer'),
+                    identity: this.registryPullAccess.identity,
+                    username: '',
+                    passwordSecretRef: '',
+                };
+            }
+
+            context.telemetry.properties.newRegistryCredentialType = 'useExisting';
+            prependOrInsertAfterLastInfoChild(context,
+                new ActivityChildItem({
+                    label: localize('useExistingRegistryCredentials', 'Use existing registry credentials'),
+                    contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
+                    activityType: ActivityChildType.Info,
+                    iconPath: activityInfoIcon,
+                    stepId: this.id,
+                }) as ActivityInfoChild,
+            );
+            const message = this.registryPullAccess
+                ? localize('verifiedRegistryIdentity', 'Verified existing managed identity registry access.')
+                : localize('usingRegistryCredentials', 'Using existing registry credentials.');
+            ext.outputChannel.appendLog(message);
+            return { executeSteps: [new RegistryCredentialsAndSecretsConfigurationStep()] };
+        }
+
         const promptSteps: AzureWizardPromptStep<RegistryCredentialsContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<RegistryCredentialsContext>[] = [];
 
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         switch (context.newRegistryCredentialType) {
-            case RegistryCredentialType.SystemAssigned:
-                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.SystemAssigned;
+            case RegistryCredentialType.UserAssigned:
+                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.UserAssigned;
+                promptSteps.push(new AcrPullManagedIdentityListStep({ pickUpdateStrategy: new AcrPullManagedIdentityDefaultSortStrategy() }));
                 executeSteps.push(
-                    new ManagedEnvironmentIdentityEnableStep(),
                     new AcrPullEnableStep(),
                     new ManagedIdentityRegistryCredentialsAddConfigurationStep(registryDomain),
                 );
@@ -112,18 +162,6 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                     new DockerLoginRegistryCredentialsAddConfigurationStep(registryDomain),
                 );
                 break;
-            default:
-                context.telemetry.properties.newRegistryCredentialType = 'useExisting';
-                prependOrInsertAfterLastInfoChild(context,
-                    new ActivityChildItem({
-                        label: localize('useExistingRegistryCredentials', 'Use existing registry credentials'),
-                        contextValue: createContextValue(['registryCredentialsAddConfigurationListStepItem', activityInfoContext]),
-                        activityType: ActivityChildType.Info,
-                        iconPath: activityInfoIcon,
-                        stepId: this.id,
-                    }) as ActivityInfoChild,
-                );
-                ext.outputChannel.appendLog(localize('usingRegistryCredentials', 'Using existing registry credentials.'));
         }
 
         executeSteps.push(new RegistryCredentialsAndSecretsConfigurationStep());
@@ -140,10 +178,10 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         if (registryDomain === acrDomain) {
             picks.push({
-                label: 'Managed Identity',
+                label: localize('userAssignedIdentity', 'User-assigned Managed Identity'),
                 description: localize('recommended', '(recommended)'),
-                detail: localize('systemIdentityDetails', 'Setup "{0}" access for container environment resources via a system-assigned identity', 'acrPull'),
-                data: RegistryCredentialType.SystemAssigned,
+                detail: localize('selectUserIdentityDetails', 'Use an existing user-assigned identity or create one with "{0}" access to the registry', 'AcrPull'),
+                data: RegistryCredentialType.UserAssigned,
             });
         }
 

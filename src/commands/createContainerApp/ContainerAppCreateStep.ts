@@ -13,6 +13,7 @@ import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { ContainerAppStartVerificationStep } from "../image/imageSource/ContainerAppStartVerificationStep";
 import { getContainerNameForImage } from "../image/imageSource/containerRegistry/getContainerNameForImage";
+import { getContainerAppIdentity } from "../registryCredentials/identity/getContainerAppIdentity";
 import { type ContainerAppCreateContext } from "./ContainerAppCreateContext";
 import { getContainerAppDefaults } from "./containerAppDefaults";
 
@@ -41,6 +42,7 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context)).name,
             managedEnvironmentId: context.managedEnvironment?.id,
+            identity: getContainerAppIdentity(context),
             configuration: {
                 ingress,
                 secrets: context.secrets,

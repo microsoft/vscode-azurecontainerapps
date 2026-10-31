@@ -11,9 +11,9 @@ import { type ManagedIdentityRegistryCredentialsContext } from "./ManagedIdentit
 export class ManagedIdentityRegistryCredentialsAddConfigurationStep<T extends ManagedIdentityRegistryCredentialsContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 470;
     public stepName: string = 'managedIdentityRegistryCredentialsAddConfigurationStep';
-    protected getOutputLogSuccess = (context: T) => localize('createRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (system-assigned identity).', context.newRegistryCredential?.server);
-    protected getOutputLogFail = () => localize('createRegistryCredentialFail', 'Failed to add registry credential (system-assigned identity).');
-    protected getTreeItemLabel = (context: T) => localize('createRegistryCredentialLabel', 'Add registry credential for "{0}" (system-assigned identity)', context.newRegistryCredential?.server);
+    protected getOutputLogSuccess = (context: T) => localize('createUserIdentityRegistryCredentialSuccess', 'Successfully added registry credential for "{0}" (user-assigned identity).', context.newRegistryCredential?.server);
+    protected getOutputLogFail = () => localize('createUserIdentityRegistryCredentialFail', 'Failed to add registry credential (user-assigned identity).');
+    protected getTreeItemLabel = (context: T) => localize('createUserIdentityRegistryCredentialLabel', 'Add registry credential for "{0}" (user-assigned identity)', context.newRegistryCredential?.server);
 
     constructor(private readonly supportedRegistryDomain: SupportedRegistries | undefined) {
         super();
@@ -26,7 +26,7 @@ export class ManagedIdentityRegistryCredentialsAddConfigurationStep<T extends Ma
 
         const registry = nonNullProp(context, 'registry');
         context.newRegistryCredential = {
-            identity: 'system-environment',
+            identity: nonNullProp(nonNullProp(context, 'managedIdentity'), 'id'),
             server: registry.loginServer,
             username: '',
             passwordSecretRef: '',

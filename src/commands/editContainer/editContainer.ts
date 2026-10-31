@@ -5,7 +5,7 @@
 
 import { type Revision } from "@azure/arm-appcontainers";
 import { AzureWizard, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
-import { type ContainerAppModel } from "../../tree/ContainerAppItem";
+import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { type ContainerItem } from "../../tree/containers/ContainerItem";
 import { ContainersItem } from "../../tree/containers/ContainersItem";
 import { createActivityContext } from "../../utils/activityUtils";
@@ -27,13 +27,14 @@ export const editContainerCommandName: string = localize('editContainer', 'Edit 
 // Edits both the 'image' and 'environmentVariables' portion of the container profile (draft)
 export async function editContainer(context: IActionContext, node?: ContainersItem | ContainerItem): Promise<void> {
     const item: ContainerItem | ContainersItem = node ?? await pickContainer(context, { autoSelectDraft: true });
-    const { containerApp, subscription } = item;
+    const { subscription } = item;
 
     if (!isTemplateItemEditable(item)) {
         throw new TemplateItemNotEditableError(item);
     }
 
     const subscriptionContext: ISubscriptionContext = createSubscriptionContext(subscription);
+    const containerApp = await ContainerAppItem.Get(context, subscription, item.containerApp.resourceGroup, item.containerApp.name);
     const parentResource: ContainerAppModel | Revision = getParentResourceFromItem(item);
 
     let containersIdx: number;
