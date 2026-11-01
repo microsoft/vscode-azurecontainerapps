@@ -73,7 +73,9 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         // 4. The matching registry credential either references an identity or is undefined.
         // Even without a saved credential, an eligible attached identity may already have AcrPull on this registry.
-        // Check for existing access before falling back to the preset method; reuse may only need a registry reference.
+        // Check for existing access we can reuse before falling back to the preset method; reuse may only need a registry reference.
+        // The goal is to reuse access already provided by an app or environment identity, when eligible,
+        // rather than ask the user to select or create a duplicated identity or grant AcrPull again.
         this.registryPullAccess = await assessRegistryPullAccess(context, existingRegistryCredential);
         this.requiresRegistryConfiguration = this.registryPullAccess.status === 'none';
     }

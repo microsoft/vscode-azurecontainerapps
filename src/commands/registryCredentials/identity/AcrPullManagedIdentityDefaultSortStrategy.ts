@@ -33,7 +33,7 @@ export class AcrPullManagedIdentityDefaultSortStrategy implements ManagedIdentit
             const isSameResourceGroup = !!resourceGroup && identityResourceGroup.toLowerCase() === resourceGroup.toLowerCase();
 
             if (hasMatchingPickDescription(pick, acrPullPickDescription)) {
-                pick.group = localize('hasAcrPullIdentityGroup', 'Has AcrPull');
+                pick.group = localize('hasAcrPullIdentityGroup', 'Has AcrPull access');
                 if (isSameResourceGroup) {
                     sameResourceGroupAcrPullPicks.push(pick);
                 } else {
