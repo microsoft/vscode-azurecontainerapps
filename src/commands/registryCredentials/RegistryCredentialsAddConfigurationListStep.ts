@@ -21,7 +21,7 @@ import { RegistryCredentialsAndSecretsConfigurationStep } from "./RegistryCreden
 import { type RegistryCredentialsContext } from "./RegistryCredentialsContext";
 
 export enum RegistryCredentialType {
-    UserAssigned = 'user-assigned',
+    UserAssignedIdentity = 'user-assigned',
     DockerLogin = 'docker-login',
 }
 
@@ -148,8 +148,8 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
 
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
         switch (context.newRegistryCredentialType) {
-            case RegistryCredentialType.UserAssigned:
-                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.UserAssigned;
+            case RegistryCredentialType.UserAssignedIdentity:
+                context.telemetry.properties.newRegistryCredentialType = RegistryCredentialType.UserAssignedIdentity;
                 promptSteps.push(new AcrPullManagedIdentityListStep({ pickUpdateStrategy: new AcrPullManagedIdentityDefaultSortStrategy() }));
                 executeSteps.push(
                     new AcrPullEnableStep(),
@@ -183,7 +183,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                 label: localize('userAssignedIdentity', 'User-assigned Managed Identity'),
                 description: localize('recommended', '(recommended)'),
                 detail: localize('selectUserIdentityDetails', 'Use an existing user-assigned identity or create one with "{0}" access to the registry', 'AcrPull'),
-                data: RegistryCredentialType.UserAssigned,
+                data: RegistryCredentialType.UserAssignedIdentity,
             });
         }
 
