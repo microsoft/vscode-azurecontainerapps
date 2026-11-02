@@ -34,7 +34,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
         this.registryPullAccess = undefined;
         const registryDomain: SupportedRegistries | undefined = getRegistryDomainFromContext(context);
 
-        // 1. See if we have any saved credentials for the target registry; an identity reference still needs its AcrPull access verified.
+        // 1. See if we have any saved credentials for the target registry.
         const existingRegistryCredential = context.containerApp?.configuration?.registries?.find(r => {
             if (!r.server) {
                 return false;
@@ -71,11 +71,8 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
             return;
         }
 
-        // 4. The matching registry credential either references an identity or is undefined.
-        // Even without a saved credential, an eligible attached identity may already have AcrPull on this registry.
-        // Check for existing access we can reuse before falling back to the preset method; reuse may only need a registry reference.
-        // The goal is to reuse access already provided by an app or environment identity, when eligible,
-        // rather than ask the user to select or create a duplicated identity or grant AcrPull again.
+        // 4. Preserve eligible identity credentials without revalidating permissions;
+        // otherwise, look for attached identities with confirmed AcrPull access.
         this.registryPullAccess = await assessRegistryPullAccess(context, existingRegistryCredential);
         this.requiresRegistryConfiguration = this.registryPullAccess.status === 'none';
     }
@@ -136,7 +133,7 @@ export class RegistryCredentialsAddConfigurationListStep extends AzureWizardProm
                     stepId: this.id,
                 }) as ActivityInfoChild,
             );
-            const message = this.registryPullAccess
+            const message = this.registryPullAccess?.status === 'available'
                 ? localize('verifiedRegistryIdentity', 'Verified existing managed identity registry access.')
                 : localize('usingRegistryCredentials', 'Using existing registry credentials.');
             ext.outputChannel.appendLog(message);

@@ -30,16 +30,11 @@ export class AcrPullManagedIdentityListStep<T extends ManagedIdentityRegistryCre
     public async prompt(context: T): Promise<void> {
         const picks = await this.getPicks(context);
 
-        let pick: IdentityPick;
-        if (picks.length === 1 && picks[0].data === undefined) {
-            pick = picks[0];
-        } else {
-            pick = await context.ui.showQuickPick(picks, {
-                placeHolder: localize('selectRegistryIdentity', 'Select a user-assigned identity for registry access'),
-                enableGrouping: true,
-                suppressPersistence: true,
-            });
-        }
+        const pick = await context.ui.showQuickPick(picks, {
+            placeHolder: localize('selectRegistryIdentity', 'Select a user-assigned identity for registry access'),
+            enableGrouping: true,
+            suppressPersistence: true,
+        });
 
         context.managedIdentity = pick.data?.identity;
         updateLoadingViewProgress(localize('selectedRegistryIdentity', 'Selected registry identity'));

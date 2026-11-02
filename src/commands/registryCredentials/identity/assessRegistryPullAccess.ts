@@ -7,7 +7,9 @@ import { KnownManagedServiceIdentityType, type ManagedEnvironment, type ManagedS
 import { isRestError } from '@azure/core-rest-pipeline';
 import { createManagedServiceIdentityClient, parseAzureResourceId } from '@microsoft/vscode-azext-azureutils';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
+import { ext } from '../../../extensionVariables';
 import { createContainerAppsAPIClient } from '../../../utils/azureClients';
+import { localize } from '../../../utils/localize';
 import { AcrPullEnableStep } from './AcrPullEnableStep';
 import { type ManagedIdentityRegistryCredentialsContext } from './ManagedIdentityRegistryCredentialsContext';
 
@@ -21,15 +23,15 @@ interface RegistryIdentity {
 }
 
 /**
- * Looks for an identity with the AcrPull role on the registry or an inherited scope.
+ * Preserves configured credentials or looks for an identity with AcrPull on the registry or an inherited scope.
  * Standard apps can use app or environment identities; Express apps can only use app-attached UAIDs.
  * This check does not create identities, attach them, or assign roles.
  *
- * - configured: The app's registry credentials already reference an eligible identity with AcrPull. No change is needed.
+ * - configured: The app's registry credentials already reference an eligible identity. Access is not revalidated.
  * - available: An eligible identity has AcrPull, but the registry credentials must be added or updated to reference it.
- * - none: No eligible identity with AcrPull was found, so the caller should offer UAID creation or selection.
+ * - none: No reusable configuration or confirmed AcrPull access was found.
  *
- * This is not a complete permissions check - group membership, custom roles, and ACR repository permissions are not evaluated.
+ * This is not a complete permissions check - AcrPush, group membership, custom roles, and ACR repository permissions are not evaluated.
  */
 export async function assessRegistryPullAccess(context: ManagedIdentityRegistryCredentialsContext, registryCredentials: RegistryCredentials | undefined): Promise<RegistryPullAccess> {
     if (!context.registry?.id) {
@@ -37,26 +39,29 @@ export async function assessRegistryPullAccess(context: ManagedIdentityRegistryC
     }
 
     const environment = await getManagedEnvironment(context);
+    const configuredReference = registryCredentials?.identity;
+    // Missing AcrPull does not disprove configured access. Reuse must not require extra role or identity read permissions.
+    // Express still requires the configured identity to be an app-attached UAID.
+    if (configuredReference && (environment?.environmentMode !== 'Express'
+        || Object.keys(context.containerApp?.identity?.userAssignedIdentities ?? {}).some(id => id.toLowerCase() === configuredReference.toLowerCase()))) {
+        return { status: 'configured', identity: configuredReference };
+    }
+
+    // Prefer app identities, then fall back to standard-app environment identities without checking shared UAIDs twice.
     const containerAppIdentities = getContainerAppIdentities(context.containerApp?.identity, environment?.environmentMode);
     const environmentIdentities = getEnvironmentIdentities(environment).filter(identity => !containerAppIdentities.some(appIdentity => appIdentity.reference.toLowerCase() === identity.reference.toLowerCase()));
-    const configuredReference = registryCredentials?.identity?.toLowerCase();
-
-    // 1. Keep the configured identity if it is still eligible and has AcrPull.
-    const configuredIdentity = await findIdentityWithAcrPull(context, [...containerAppIdentities, ...environmentIdentities].filter(identity => identity.reference.toLowerCase() === configuredReference));
-    if (configuredIdentity) {
-        return { status: 'configured', identity: configuredIdentity.reference };
+    const identities = [...containerAppIdentities, ...environmentIdentities];
+    if (!identities.length) {
+        return { status: 'none' };
     }
 
-    // 2. Try other identities attached directly to the app.
-    const appIdentity = await findIdentityWithAcrPull(context, containerAppIdentities.filter(identity => identity.reference.toLowerCase() !== configuredReference));
-    if (appIdentity) {
-        return { status: 'available', identity: appIdentity.reference };
-    }
-
-    // 3. Fall back to environment identities, which are eligible only for standard apps.
-    const environmentIdentity = await findIdentityWithAcrPull(context, environmentIdentities.filter(identity => identity.reference.toLowerCase() !== configuredReference));
-    if (environmentIdentity) {
-        return { status: 'available', identity: environmentIdentity.reference };
+    // Share one paginated role-assignment scan across all candidates.
+    const acrPullPrincipalIds = await AcrPullEnableStep.getPrincipalIdsWithRole(context, context.registry.id);
+    for (const identity of identities) {
+        const principalId = await getIdentityPrincipalId(context, identity);
+        if (principalId && acrPullPrincipalIds.has(principalId.toLowerCase())) {
+            return { status: 'available', identity: identity.reference };
+        }
     }
 
     return { status: 'none' };
@@ -109,16 +114,6 @@ function getUserAssignedIdentities(identity: ManagedServiceIdentity | undefined)
         .map(reference => ({ reference }));
 }
 
-async function findIdentityWithAcrPull(context: ManagedIdentityRegistryCredentialsContext, identities: RegistryIdentity[]): Promise<RegistryIdentity | undefined> {
-    for (const identity of identities) {
-        const principalId = await getIdentityPrincipalId(context, identity);
-        if (principalId && await AcrPullEnableStep.hasRole(context, context.registry?.id, principalId)) {
-            return identity;
-        }
-    }
-    return undefined;
-}
-
 async function getIdentityPrincipalId(context: ManagedIdentityRegistryCredentialsContext, identity: RegistryIdentity): Promise<string | undefined> {
     if (identity.principalId) {
         return identity.principalId;
@@ -130,8 +125,9 @@ async function getIdentityPrincipalId(context: ManagedIdentityRegistryCredential
     try {
         return nonNullProp(await client.userAssignedIdentities.get(parsedId.resourceGroup, parsedId.resourceName), 'principalId');
     } catch (error) {
-        // Skip deleted identities, but propagate other failures instead of incorrectly offering identity creation.
-        if (isRestError(error) && error.statusCode === 404) {
+        // Skip denied or deleted candidates; authentication, network, and service failures must still surface.
+        if (isRestError(error) && (error.statusCode === 403 || error.statusCode === 404)) {
+            ext.outputChannel.appendLog(localize('skipUnavailableRegistryIdentity', 'Skipping unavailable managed identity "{0}" ({1}) while checking registry access.', identity.reference, error.statusCode));
             return undefined;
         }
         throw error;
