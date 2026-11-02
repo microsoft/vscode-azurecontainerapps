@@ -7,10 +7,10 @@ import { type ContainerAppsAPIClient, type KnownActiveRevisionsMode, type Revisi
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, type IActionContext, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
 import { treeUtils } from "../../utils/treeUtils";
@@ -89,6 +89,11 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
     }
 
     async hasUnsavedChanges(): Promise<boolean> {
+        // Staged credentials are outside the template JSON and can be draft-cached as well.
+        if (ext.revisionDraftFileSystem.getRevisionDraftFile(this)?.registryConfiguration) {
+            return true;
+        }
+
         const revisions: Revision[] | undefined = await callWithTelemetryAndErrorHandling('revisionDraftItem.hasUnsavedChanges.getRevisions', async (context: IActionContext) => {
             const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, createSubscriptionContext(this.subscription)]);
             return uiUtils.listAllIterator(client.containerAppsRevisions.listRevisions(this.containerApp.resourceGroup, this.containerApp.name));
@@ -102,6 +107,6 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
             return false;
         }
 
-        return !deepEqual(baseRevision.template, draftTemplate);
+        return !areTemplateValuesEqual(baseRevision.template, draftTemplate);
     }
 }

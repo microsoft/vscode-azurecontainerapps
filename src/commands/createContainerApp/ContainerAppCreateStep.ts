@@ -42,7 +42,7 @@ export class ContainerAppCreateStep<T extends ContainerAppCreateContext> extends
         context.containerApp = ContainerAppItem.CreateContainerAppModel(await appClient.containerApps.beginCreateOrUpdateAndWait(resourceGroupName, containerAppName, {
             location: (await LocationListStep.getLocation(context)).name,
             managedEnvironmentId: context.managedEnvironment?.id,
-            identity: getContainerAppIdentity(context),
+            identity: getContainerAppIdentity(context.managedIdentity?.id),
             configuration: {
                 ingress,
                 secrets: context.secrets,

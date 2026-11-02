@@ -18,7 +18,6 @@ import { ImageSourceListStep } from "../../image/imageSource/ImageSourceListStep
 import { RevisionDraftDeployPromptStep } from "../../revisionDraft/RevisionDraftDeployPromptStep";
 import { type ContainerEditContext } from "../ContainerEditContext";
 import { ContainerEditStartingResourcesLogStep } from "../ContainerEditStartingResourcesLogStep";
-import { RegistryAndSecretsUpdateStep } from "../RegistryAndSecretsUpdateStep";
 import { ContainerImageEditDraftStep } from "./ContainerImageEditDraftStep";
 
 export type ContainerEditUpdateContext = ContainerEditContext;
@@ -64,7 +63,6 @@ export async function editContainerImage(context: IActionContext, node?: ImageIt
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerEditUpdateContext>(),
-            new RegistryAndSecretsUpdateStep(),
             new ContainerImageEditDraftStep(item),
         ],
         showLoadingPrompt: true,

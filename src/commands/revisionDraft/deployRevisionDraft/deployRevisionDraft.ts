@@ -36,6 +36,7 @@ export async function deployRevisionDraft(context: IActionContext, node?: Contai
         subscription,
         containerApp,
         template: ext.revisionDraftFileSystem.parseRevisionDraft(item),
+        registryConfiguration: ext.revisionDraftFileSystem.getRevisionDraftFile(item)?.registryConfiguration,
     };
 
     wizardContext.valuesToMask.push(containerApp.name);

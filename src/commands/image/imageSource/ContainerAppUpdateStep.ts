@@ -50,7 +50,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
         containerAppEnvelope.configuration.ingress = ingress;
         containerAppEnvelope.configuration.secrets = context.secrets;
         containerAppEnvelope.configuration.registries = context.registryCredentials;
-        containerAppEnvelope.identity = getContainerAppIdentity(context, containerAppEnvelope.identity) ?? containerAppEnvelope.identity;
+        containerAppEnvelope.identity = getContainerAppIdentity(context.managedIdentity?.id, containerAppEnvelope.identity) ?? containerAppEnvelope.identity;
 
         containerAppEnvelope.template = context.template ?? containerAppEnvelope.template ?? {};
         containerAppEnvelope.template.containers ||= [];

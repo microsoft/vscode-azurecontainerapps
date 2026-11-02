@@ -6,8 +6,8 @@
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
 import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import deepEqual from "deep-eql";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -71,6 +71,6 @@ export class EnvironmentVariablesItem extends RevisionDraftDescendantBase {
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
         const currentContainer: Container | undefined = currentContainers[this.containersIdx];
 
-        return !deepEqual(this.container.env ?? [], currentContainer?.env ?? []);
+        return !areTemplateValuesEqual(this.container.env ?? [], currentContainer?.env ?? []);
     }
 }

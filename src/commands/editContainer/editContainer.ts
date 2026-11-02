@@ -20,7 +20,6 @@ import { RevisionDraftDeployPromptStep } from "../revisionDraft/RevisionDraftDep
 import { type ContainerEditContext } from "./ContainerEditContext";
 import { ContainerEditDraftStep } from "./ContainerEditDraftStep";
 import { ContainerEditStartingResourcesLogStep } from "./ContainerEditStartingResourcesLogStep";
-import { RegistryAndSecretsUpdateStep } from "./RegistryAndSecretsUpdateStep";
 
 export const editContainerCommandName: string = localize('editContainer', 'Edit Container...');
 
@@ -73,7 +72,6 @@ export async function editContainer(context: IActionContext, node?: ContainersIt
         ],
         executeSteps: [
             getVerifyProvidersStep<ContainerEditContext>(),
-            new RegistryAndSecretsUpdateStep(),
             new ContainerEditDraftStep(item),
         ],
         showLoadingPrompt: true,

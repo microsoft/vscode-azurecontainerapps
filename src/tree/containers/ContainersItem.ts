@@ -6,9 +6,9 @@
 import { KnownActiveRevisionsMode, type Container, type Revision } from "@azure/arm-appcontainers";
 import { nonNullValueAndProp, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import deepEqual from 'deep-eql';
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
@@ -105,6 +105,6 @@ export class ContainersItem extends RevisionDraftDescendantBase {
             return false;
         }
 
-        return !deepEqual(currentTemplate, draftTemplate);
+        return !areTemplateValuesEqual(currentTemplate, draftTemplate);
     }
 }

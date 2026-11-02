@@ -5,8 +5,8 @@
 
 import { KnownActiveRevisionsMode, type Revision, type ScaleRule } from "@azure/arm-appcontainers";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import deepEqual from "deep-eql";
 import { ThemeIcon, type TreeItem } from "vscode";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -86,6 +86,6 @@ export class ScaleRuleItem extends RevisionDraftDescendantBase {
         const currentRules: ScaleRule[] = this.parentResource.template?.scale?.rules ?? [];
         const currentRule: ScaleRule | undefined = currentRules.find(rule => rule.name === this.scaleRule.name);
 
-        return !currentRule || !deepEqual(this.scaleRule, currentRule);
+        return !currentRule || !areTemplateValuesEqual(this.scaleRule, currentRule);
     }
 }

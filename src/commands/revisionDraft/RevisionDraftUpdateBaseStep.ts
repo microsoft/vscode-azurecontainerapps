@@ -44,7 +44,7 @@ export abstract class RevisionDraftUpdateBaseStep<T extends RevisionDraftContext
      * Call this method to upload `revisionDraftTemplate` changes to the container app revision draft
      */
     protected async updateRevisionDraftWithTemplate(context: T): Promise<void> {
-        ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate);
+        ext.revisionDraftFileSystem.updateRevisionDraftWithTemplate(this.baseItem, this.revisionDraftTemplate, context.registryConfiguration);
 
         if (context.shouldDeployRevisionDraft) {
             void this.deployRevisionDraftTemplate(context);

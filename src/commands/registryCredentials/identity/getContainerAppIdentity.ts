@@ -4,14 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownManagedServiceIdentityType, type ManagedServiceIdentity } from '@azure/arm-appcontainers';
-import { type ManagedIdentityRegistryCredentialsContext } from './ManagedIdentityRegistryCredentialsContext';
 
-export function getContainerAppIdentity(
-    context: Pick<ManagedIdentityRegistryCredentialsContext, 'managedIdentity'>,
-    identity?: ManagedServiceIdentity,
-): ManagedServiceIdentity | undefined {
-    const identityId = context.managedIdentity?.id;
-    if (!identityId || Object.keys(identity?.userAssignedIdentities ?? {}).some(id => id.toLowerCase() === identityId.toLowerCase())) {
+/**
+ * Attach a user-assigned identity without removing existing user-assigned or system-assigned identities.
+ * Accept only the identity ID because revision drafts store IDs rather than full Azure identity resources.
+ *
+ * @param managedIdentityId Resource ID of the user-assigned identity to attach, not its clientId or principalId.
+ * @param identity The app's existing identity configuration. Its userAssignedIdentities keys are resource IDs
+ * of identities already attached to the app; their values may contain clientId and principalId.
+ * @returns The existing configuration if no attachment is needed, or a new configuration with the identity added.
+ */
+export function getContainerAppIdentity(managedIdentityId: string | undefined, identity?: ManagedServiceIdentity): ManagedServiceIdentity | undefined {
+    // Azure resource IDs are case-insensitive, so a casing difference must not add a duplicate attachment.
+    if (!managedIdentityId || Object.keys(identity?.userAssignedIdentities ?? {}).some(id => id.toLowerCase() === managedIdentityId.toLowerCase())) {
         return identity;
     }
 
@@ -22,7 +27,7 @@ export function getContainerAppIdentity(
             : KnownManagedServiceIdentityType.UserAssigned,
         userAssignedIdentities: {
             ...identity?.userAssignedIdentities,
-            [identityId]: {},
+            [managedIdentityId]: {},
         },
     };
 }
