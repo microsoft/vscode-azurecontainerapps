@@ -6,6 +6,7 @@
 import { createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { createSandboxService } from '../../sandboxes/SandboxService';
+import { updateAutoSuspendPolicy } from '../../sandboxes/lifecyclePolicy';
 import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
 import { refreshSandboxesTree, requireSandboxItem, runSandboxActivity } from './sandboxCommandUtils';
@@ -53,15 +54,10 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
         localize('updatingAutoSuspend', 'Updating auto-suspend for sandbox "{0}"...', item.label),
         async () => {
             const sandbox = await service.getSandbox(item.ref.sandboxId);
-            const currentAutoSuspend = sandbox.lifecycle?.autoSuspend;
-            await service.setLifecyclePolicy(item.ref.sandboxId, {
-                ...sandbox.lifecycle,
-                autoSuspend: {
-                    ...currentAutoSuspend,
-                    enabled: policy.enabled,
-                    interval: policy.idleTimeoutSeconds ?? currentAutoSuspend?.interval,
-                },
-            });
+            await service.setLifecyclePolicy(item.ref.sandboxId, updateAutoSuspendPolicy(sandbox.lifecycle, {
+                enabled: policy.enabled,
+                interval: policy.idleTimeoutSeconds,
+            }));
         },
     );
 

@@ -20,6 +20,9 @@ export interface SandboxServiceClient {
         beginCreateSnapshot(sandboxId: string, options: { name: string }): { pollUntilDone(): Promise<Snapshot> };
         setLifecyclePolicy(sandboxId: string, policy: LifecyclePolicy): Promise<LifecyclePolicy>;
     };
+    snapshots: {
+        list(): AsyncIterable<Snapshot>;
+    };
     diskImages: {
         listPublic(): AsyncIterable<PublicDiskImage>;
     };
@@ -98,6 +101,15 @@ export class AzureSandboxService implements SandboxService {
 
     public async createSnapshot(sandboxId: string, name: string): Promise<Snapshot> {
         return this.run(async () => {
+            const snapshots = await collectPaged(this.client.snapshots.list());
+            if (snapshots.some(snapshot => snapshot.sandboxId === sandboxId && snapshot.labels.name === name)) {
+                throw new Error(localize(
+                    'sandboxSnapshotNameExists',
+                    'A snapshot named "{0}" already exists for this sandbox. Choose a different name.',
+                    name,
+                ));
+            }
+
             const poller = this.client.sandboxes.beginCreateSnapshot(sandboxId, { name });
             return poller.pollUntilDone();
         });

@@ -8,6 +8,7 @@ import * as path from 'path';
 
 const isWindows: boolean = process.platform === 'win32';
 const pathSeparator: string = isWindows ? ';' : ':';
+export type ExecutableCheck = (fullPath: string) => boolean;
 
 function extraBinDirs(): string[] {
     if (isWindows) {
@@ -45,7 +46,7 @@ function candidateNames(name: string): string[] {
     return [`${name}.exe`, `${name}.cmd`, `${name}.bat`, name];
 }
 
-function isExecutable(fullPath: string): boolean {
+export function isExecutable(fullPath: string): boolean {
     try {
         accessSync(fullPath, isWindows ? constants.F_OK : constants.X_OK);
         return true;
@@ -54,17 +55,21 @@ function isExecutable(fullPath: string): boolean {
     }
 }
 
-export function resolveExecutable(name: string): string {
+export function resolveExecutable(
+    name: string,
+    searchDirs: readonly string[] = augmentedPath().split(pathSeparator).filter(Boolean),
+    executableCheck: ExecutableCheck = isExecutable,
+): string | undefined {
     if (path.isAbsolute(name) || name.includes('/') || (isWindows && name.includes('\\'))) {
-        return name;
+        return executableCheck(name) ? name : undefined;
     }
-    for (const dir of augmentedPath().split(pathSeparator).filter(Boolean)) {
+    for (const dir of searchDirs) {
         for (const candidate of candidateNames(name)) {
             const full = path.join(dir, candidate);
-            if (isExecutable(full)) {
+            if (executableCheck(full)) {
                 return full;
             }
         }
     }
-    return name;
+    return undefined;
 }

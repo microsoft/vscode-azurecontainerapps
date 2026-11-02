@@ -45,6 +45,9 @@ function createClient(overrides: Partial<SandboxServiceClient['sandboxes']> = {}
             setLifecyclePolicy: async () => lifecycle,
             ...overrides,
         },
+        snapshots: {
+            list: () => asyncItems([]),
+        },
         diskImages: {
             listPublic: () => asyncItems<PublicDiskImage>([
                 { id: 'ubuntu', name: 'ubuntu', description: 'Ubuntu', tags: {} },
@@ -131,6 +134,26 @@ suite('AzureSandboxService', () => {
         await service.createSnapshot('sandbox-1', 'checkpoint');
         await service.deleteSandbox('sandbox-1');
         assert.deepStrictEqual(completed, ['stop', 'resume', 'snapshot', 'delete']);
+    });
+
+    test('rejects a duplicate snapshot name for the same sandbox before creation', async () => {
+        let created = false;
+        const client = createClient({
+            beginCreateSnapshot: () => {
+                created = true;
+                return { pollUntilDone: async () => snapshot };
+            },
+        });
+        client.snapshots.list = () => asyncItems([
+            { ...snapshot, sandboxId: 'sandbox-1', labels: { name: 'checkpoint' } },
+        ]);
+        const service = new AzureSandboxService(client);
+
+        await assert.rejects(
+            () => service.createSnapshot('sandbox-1', 'checkpoint'),
+            /already exists[\s\S]*different name/,
+        );
+        assert.strictEqual(created, false);
     });
 
     test('resumes stopped sandboxes before command execution', async () => {
