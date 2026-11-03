@@ -32,6 +32,7 @@ import { disableIngress } from './ingress/disableIngress/disableIngress';
 import { editTargetPort } from './ingress/editTargetPort/editTargetPort';
 import { enableIngress } from './ingress/enableIngress/enableIngress';
 import { toggleIngressVisibility } from './ingress/toggleIngressVisibility/toggleIngressVisibility';
+import { connectLogAnalytics } from './logAnalytics/connectLogAnalytics';
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
@@ -130,6 +131,7 @@ export function registerCommands(): void {
     // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
+    registerCommandWithTreeNodeUnwrapping('containerApps.connectLogAnalytics', connectLogAnalytics);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);

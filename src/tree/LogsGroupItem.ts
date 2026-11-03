@@ -4,10 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { type ContainerApp } from "@azure/arm-appcontainers";
-import { createGenericElement } from "@microsoft/vscode-azext-utils";
+import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
+import { callWithTelemetryAndErrorHandling, createGenericElement, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
+import { createContainerAppsClient } from '../utils/azureClients';
 import { createPortalUrl } from "../utils/createPortalUrl";
+import { hasLogDestination } from '../utils/hasLogDestination';
 import { localize } from "../utils/localize";
 import { type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
@@ -34,6 +37,17 @@ export class LogsGroupItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
+        const result = await callWithTelemetryAndErrorHandling('logsGroupItem.getChildren', async context => {
+            const environmentId = nonNullProp(this.containerApp, 'managedEnvironmentId');
+            context.valuesToMask.push(this.subscription.subscriptionId, environmentId, nonNullProp(this.containerApp, 'id'));
+            const client = await createContainerAppsClient(context, this.subscription);
+            const environment = await client.managedEnvironments.get(getResourceGroupFromId(environmentId), nonNullValue(environmentId.split('/').pop(), 'environmentName'));
+            return this.getLogItems(hasLogDestination(environment.appLogsConfiguration));
+        });
+        return result ?? [];
+    }
+
+    private getLogItems(hasLogDestination: boolean): TreeElementBase[] {
         const openInPortal = 'azureResourceGroups.openInPortal';
         const startStreamingLogs = 'containerApps.startStreamingLogs';
         return [
@@ -50,12 +64,15 @@ export class LogsGroupItem implements TreeElementBase {
             }),
             createGenericElement({
                 contextValue: logsItemContextValue,
-                commandId: openInPortal,
-                iconPath: new ThemeIcon('link-external'),
+                commandId: hasLogDestination ? openInPortal : 'containerApps.connectLogAnalytics',
+                iconPath: new ThemeIcon(hasLogDestination ? 'link-external' : 'plug'),
                 id: `${this.containerApp.id}/logs`,
-                label: localize('openLogs', 'Open Logs'),
-                commandArgs: [{
+                label: hasLogDestination ? localize('openLogs', 'Open Logs') : localize('connectLogAnalytics', 'Attach Log Analytics Workspace...'),
+                commandArgs: [hasLogDestination ? {
                     portalUrl: createPortalUrl(this.subscription, `${this.containerApp.id}/logs`),
+                } : {
+                    subscription: this.subscription,
+                    containerApp: this.containerApp,
                 }]
             }),
 
