@@ -9,7 +9,7 @@ export namespace validateUtils {
     const thirtyTwoBitMaxSafeInteger: number = 2147483647;
     // Estimated using UTF-8 encoding, where a character can be up to ~4 bytes long
     const maxSafeCharacterLength: number = thirtyTwoBitMaxSafeInteger / 32;
-    const allowedSymbols: string = '[-\/\\^$*+?.()|[\]{}]';
+    const allowedSymbols: RegExp = /[.*+?^${}()|[\]\\-]/g;
 
     /**
      * Validates that the given input string is the appropriate length as determined by the optional lower and upper limit parameters
@@ -57,7 +57,7 @@ export namespace validateUtils {
     export function isLowerCaseAlphanumericWithSymbols(value: string, symbols: string = '-', canSymbolsRepeat: boolean = true): boolean {
         // Search through the passed symbols and match any allowed symbols
         // If we find a match, escape the symbol using '\\$&'
-        const symbolPattern: string = symbols.replace(new RegExp(allowedSymbols, 'g'), '\\$&');
+        const symbolPattern: string = symbols.replace(allowedSymbols, '\\$&');
         const pattern: RegExp = new RegExp(`^[a-z0-9](?:[a-z0-9${symbolPattern}]*[a-z0-9])?$`);
         const symbolsRepeatPattern: RegExp = new RegExp('[^a-z0-9]{2}', 'g');
         return pattern.test(value) && (!!canSymbolsRepeat || !symbolsRepeatPattern.test(value));

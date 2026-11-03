@@ -50,4 +50,24 @@ suite('validateUtils', () => {
             assert.equal(validateUtils.isLowerCaseAlphanumericWithSymbols(value, symbols, canSymbolsRepeat), false);
         }
     });
+
+    test('treats custom symbols as literal characters', () => {
+        const symbols = '[]\\^-.*+?${}()|/';
+        for (const symbol of symbols) {
+            assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols(`a${symbol}z`, symbols), true, symbol);
+            assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols(`${symbol}az`, symbols), false, symbol);
+            assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols(`az${symbol}`, symbols), false, symbol);
+        }
+
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('a@z', '!-~'), false);
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('aBz', 'A-Z'), false);
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('a_z', '[]'), false);
+    });
+
+    test('rejects adjacent mixed symbols only when repetition is disabled', () => {
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('a-.z', '-.'), true);
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('a-.z', '-.', false), false);
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('a-b.z', '-.', false), true);
+        assert.strictEqual(validateUtils.isLowerCaseAlphanumericWithSymbols('a--z'), true);
+    });
 });

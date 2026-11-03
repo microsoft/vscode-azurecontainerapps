@@ -16,30 +16,34 @@ import { type PostTestAssertion } from "./scenarios/DeployWorkspaceProjectTestSc
 export namespace dwpTestUtils {
     export function generateExpectedResultsWithCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
         return {
-            containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
-            imageName: new RegExp(appResourceName, 'i'),
-            logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
-            managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
-            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
-            registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
+            containerAppId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.App/containerApps/${appResourceName}`), 'i'),
+            imageName: new RegExp(escapeRegExp(appResourceName), 'i'),
+            logAnalyticsWorkspaceId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.OperationalInsights/workspaces/${sharedResourceName}`), 'i'),
+            managedEnvironmentId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.App/managedEnvironments/${sharedResourceName}`), 'i'),
+            registryId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.ContainerRegistry/registries/${acrResourceName}`), 'i'),
+            registryLoginServer: new RegExp(`${escapeRegExp(acrResourceName)}(?:.{6})?\\.azurecr\\.io`, 'i'),
             registryPassword: new RegExp('.*'),
-            registryUsername: new RegExp(acrResourceName, 'i'),
-            resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
+            registryUsername: new RegExp(escapeRegExp(acrResourceName), 'i'),
+            resourceGroupId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}`), 'i')
         };
     }
 
     export function generateExpectedResultsWithoutCredentials(sharedResourceName: string, acrResourceName: string, appResourceName: string): StringOrRegExpProps<DeployWorkspaceProjectResults> {
         return {
-            containerAppId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/containerApps\/${appResourceName}`, 'i'),
-            imageName: new RegExp(appResourceName, 'i'),
-            logAnalyticsWorkspaceId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.OperationalInsights\/workspaces\/${sharedResourceName}`, 'i'),
-            managedEnvironmentId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.App\/managedEnvironments\/${sharedResourceName}`, 'i'),
-            registryId: new RegExp(`\/resourceGroups\/${sharedResourceName}\/providers\/Microsoft\.ContainerRegistry\/registries\/${acrResourceName}`, 'i'),
-            registryLoginServer: new RegExp(`${acrResourceName}(?:.{6})?\.azurecr\.io`, 'i'),
+            containerAppId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.App/containerApps/${appResourceName}`), 'i'),
+            imageName: new RegExp(escapeRegExp(appResourceName), 'i'),
+            logAnalyticsWorkspaceId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.OperationalInsights/workspaces/${sharedResourceName}`), 'i'),
+            managedEnvironmentId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.App/managedEnvironments/${sharedResourceName}`), 'i'),
+            registryId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}/providers/Microsoft.ContainerRegistry/registries/${acrResourceName}`), 'i'),
+            registryLoginServer: new RegExp(`${escapeRegExp(acrResourceName)}(?:.{6})?\\.azurecr\\.io`, 'i'),
             registryPassword: undefined,
             registryUsername: undefined,
-            resourceGroupId: new RegExp(`\/resourceGroups\/${sharedResourceName}`, 'i')
+            resourceGroupId: new RegExp(escapeRegExp(`/resourceGroups/${sharedResourceName}`), 'i')
         };
+    }
+
+    function escapeRegExp(value: string): string {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     export function generatePostTestAssertion(expectedContainerAppSettings: { targetPort: number | undefined, env: EnvironmentVar[] | undefined }): PostTestAssertion {
