@@ -3,32 +3,30 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { createSubscriptionContext, nonNullValue, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, nonNullValue, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import { ext } from '../../extensionVariables';
-import { createSandboxService, ensureSandboxRunning, type SandboxService } from '../../sandboxes/SandboxService';
-import { type ExecResult, type SandboxRef } from '../../sandboxes/sandboxTypes';
-import { pickSandbox } from '../../sandboxes/pickSandbox';
-import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
+import { createSandboxService, ensureSandboxRunning } from '../../sandboxes/SandboxService';
+import { type ExecResult } from '../../sandboxes/sandboxTypes';
+import { SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
+import { pickSandbox } from '../../utils/pickItem/pickSandbox';
 import { refreshSandboxesTree, runSandboxActivity } from './sandboxCommandUtils';
 
 /**
  * Prompts for a command to run inside a sandbox, then writes its result to the output channel.
  */
 export async function runSandboxCommand(context: IActionContext, node?: SandboxItem): Promise<void> {
-    let service: SandboxService;
-    let ref: SandboxRef;
-    let label: string;
-    if (node) {
-        ref = node.ref;
-        label = node.label;
-        service = createSandboxService([context, createSubscriptionContext(node.subscription)], ref);
-    } else {
-        const picked = await pickSandbox(context);
-        ref = picked.ref;
-        label = picked.label;
-        service = createSandboxService([context, createSubscriptionContext(picked.subscription)], ref);
+    if (node && !SandboxItem.isSandboxItem(node)) {
+        node = undefined;
     }
+    node ??= await pickSandbox(context);
+
+    const subscriptionContext: IActionContext & ISubscriptionContext & { subscription: AzureSubscription } = Object.assign(context, {
+        ...createSubscriptionContext(node.subscription),
+        subscription: node.subscription,
+    });
+    const service = createSandboxService(subscriptionContext, node.ref);
 
     const command = await context.ui.showInputBox({
         prompt: localize('runCommandPrompt', 'Enter a command to run in the sandbox'),
@@ -43,17 +41,17 @@ export async function runSandboxCommand(context: IActionContext, node?: SandboxI
 
     let result: ExecResult | undefined;
     await runSandboxActivity(
-        localize('executeSandboxCommandActivity', 'Execute command in sandbox "{0}"', label),
-        localize('runningCommand', 'Running command in sandbox "{0}"...', label),
+        localize('executeSandboxCommandActivity', 'Execute command in sandbox "{0}"', node.label),
+        localize('runningCommand', 'Running command in sandbox "{0}"...', node.label),
         async () => {
-            await ensureSandboxRunning(service, ref.sandboxId);
+            await ensureSandboxRunning(service, node.ref.sandboxId);
             refreshSandboxesTree();
-            result = await service.exec(ref.sandboxId, command);
+            result = await service.exec(node.ref.sandboxId, command);
         },
     );
 
     result = nonNullValue(result);
-    ext.outputChannel.appendLine(localize('runCommandHeader', '$ [{0}] {1}', label, command));
+    ext.outputChannel.appendLine(localize('runCommandHeader', '$ [{0}] {1}', node.label, command));
     if (result.stdout) {
         ext.outputChannel.appendLine(result.stdout.replace(/\s+$/, ''));
     }

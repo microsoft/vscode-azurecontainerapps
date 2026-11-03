@@ -5,7 +5,7 @@
 
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { pickSandbox } from './pickSandbox';
+import { pickSandbox } from '../utils/pickItem/pickSandbox';
 import { createSandboxTerminalOptions, promptForAcaExecutable } from './sandboxTerminal';
 
 /** Profile id contributed via `contributes.terminal.profiles` in package.json. */
@@ -22,8 +22,8 @@ export const sandboxTerminalProfileProvider: vscode.TerminalProfileProvider = {
             if (!executable) {
                 return undefined;
             }
-            const picked = await pickSandbox(context);
-            return new vscode.TerminalProfile(createSandboxTerminalOptions(picked.label, picked.ref, executable));
+            const item = await pickSandbox(context);
+            return new vscode.TerminalProfile(createSandboxTerminalOptions(item.label, item.ref, executable));
         });
     },
 };

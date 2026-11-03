@@ -3,17 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { createSandboxService } from '../../sandboxes/SandboxService';
 import { updateAutoSuspendPolicy } from '../../sandboxes/lifecyclePolicy';
-import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
+import { SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
-import { refreshSandboxesTree, requireSandboxItem, runSandboxActivity } from './sandboxCommandUtils';
+import { pickSandbox } from '../../utils/pickItem/pickSandbox';
+import { refreshSandboxesTree, runSandboxActivity } from './sandboxCommandUtils';
 
 export async function setAutoSuspend(context: IActionContext, node?: SandboxItem): Promise<void> {
-    const item = requireSandboxItem(node);
-    const service = createSandboxService([context, createSubscriptionContext(item.subscription)], item.ref);
+    if (node && !SandboxItem.isSandboxItem(node)) {
+        node = undefined;
+    }
+    node ??= await pickSandbox(context);
+
+    const subscriptionContext: IActionContext & ISubscriptionContext & { subscription: AzureSubscription } = Object.assign(context, {
+        ...createSubscriptionContext(node.subscription),
+        subscription: node.subscription,
+    });
+    const service = createSandboxService(subscriptionContext, node.ref);
 
     const picks: (vscode.QuickPickItem & { seconds?: number; disable?: boolean })[] = [
         { label: localize('autoSuspend5m', '5 minutes'), seconds: 300 },
@@ -50,11 +60,11 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
     }
 
     await runSandboxActivity(
-        localize('updateAutoSuspendActivity', 'Update auto-suspend for sandbox "{0}"', item.label),
-        localize('updatingAutoSuspend', 'Updating auto-suspend for sandbox "{0}"...', item.label),
+        localize('updateAutoSuspendActivity', 'Update auto-suspend for sandbox "{0}"', node.label),
+        localize('updatingAutoSuspend', 'Updating auto-suspend for sandbox "{0}"...', node.label),
         async () => {
-            const sandbox = await service.getSandbox(item.ref.sandboxId);
-            await service.setLifecyclePolicy(item.ref.sandboxId, updateAutoSuspendPolicy(sandbox.lifecycle, {
+            const sandbox = await service.getSandbox(node.ref.sandboxId);
+            await service.setLifecyclePolicy(node.ref.sandboxId, updateAutoSuspendPolicy(sandbox.lifecycle, {
                 enabled: policy.enabled,
                 interval: policy.idleTimeoutSeconds,
             }));

@@ -761,42 +761,6 @@
             ],
             "commandPalette": [
                 {
-                    "command": "containerApps.sandboxes.create",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.openShell",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.stop",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.resume",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.snapshot",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.delete",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.setAutoSuspend",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.copyId",
-                    "when": "never"
-                },
-                {
-                    "command": "containerApps.sandboxes.openInPortal",
-                    "when": "never"
-                },
-                {
                     "command": "containerApps.deployWorkspaceProjectApi",
                     "when": "never"
                 },

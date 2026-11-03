@@ -3,23 +3,33 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DialogResponses, createSubscriptionContext, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, createSubscriptionContext, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import { createSandboxService } from '../../sandboxes/SandboxService';
-import { type SandboxItem } from '../../sandboxes/tree/SandboxItem';
+import { SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { localize } from '../../utils/localize';
-import { refreshSandboxesTree, requireSandboxItem, runSandboxActivity } from './sandboxCommandUtils';
+import { pickSandbox } from '../../utils/pickItem/pickSandbox';
+import { refreshSandboxesTree, runSandboxActivity } from './sandboxCommandUtils';
 
 export async function deleteSandbox(context: IActionContext, node?: SandboxItem): Promise<void> {
-    const item = requireSandboxItem(node);
-    const service = createSandboxService([context, createSubscriptionContext(item.subscription)], item.ref);
+    if (node && !SandboxItem.isSandboxItem(node)) {
+        node = undefined;
+    }
+    node ??= await pickSandbox(context);
 
-    const deleteMessage = localize('confirmDeleteSandbox', 'Are you sure you want to delete sandbox "{0}"? This cannot be undone.', item.label);
+    const subscriptionContext: IActionContext & ISubscriptionContext & { subscription: AzureSubscription } = Object.assign(context, {
+        ...createSubscriptionContext(node.subscription),
+        subscription: node.subscription,
+    });
+    const service = createSandboxService(subscriptionContext, node.ref);
+
+    const deleteMessage = localize('confirmDeleteSandbox', 'Are you sure you want to delete sandbox "{0}"? This cannot be undone.', node.label);
     await context.ui.showWarningMessage(deleteMessage, { modal: true }, DialogResponses.deleteResponse);
 
     await runSandboxActivity(
-        localize('deleteSandboxActivity', 'Delete sandbox "{0}"', item.label),
-        localize('deletingSandbox', 'Deleting sandbox "{0}"...', item.label),
-        async () => service.deleteSandbox(item.ref.sandboxId),
+        localize('deleteSandboxActivity', 'Delete sandbox "{0}"', node.label),
+        localize('deletingSandbox', 'Deleting sandbox "{0}"...', node.label),
+        async () => service.deleteSandbox(node.ref.sandboxId),
     );
 
     refreshSandboxesTree();

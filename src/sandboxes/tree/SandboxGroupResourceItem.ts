@@ -21,6 +21,13 @@ import { SandboxItem } from './SandboxItem';
  */
 export class SandboxGroupResourceItem implements TreeElementBase {
     static readonly contextValue: string = 'sandboxGroupItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(SandboxGroupResourceItem.contextValue, 'i');
+
+    static isSandboxGroupResourceItem(item: unknown): item is SandboxGroupResourceItem {
+        return typeof item === 'object' &&
+            typeof (item as SandboxGroupResourceItem).contextValue === 'string' &&
+            SandboxGroupResourceItem.contextValueRegExp.test((item as SandboxGroupResourceItem).contextValue);
+    }
 
     readonly id: string;
     readonly ref: SandboxGroupRef;
@@ -45,12 +52,16 @@ export class SandboxGroupResourceItem implements TreeElementBase {
         };
     }
 
+    get contextValue(): string {
+        return createContextValue([SandboxGroupResourceItem.contextValue]);
+    }
+
     getTreeItem(): vscode.TreeItem {
         return {
             id: this.id,
             label: this.resource.name,
             iconPath: new vscode.ThemeIcon('symbol-namespace'),
-            contextValue: createContextValue([SandboxGroupResourceItem.contextValue]),
+            contextValue: this.contextValue,
             collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
             tooltip: new vscode.MarkdownString(
                 localize('sandboxGroupTooltip', '**Sandbox group:** {0}\n\n**Resource group:** {1}\n\n**Location:** {2}',

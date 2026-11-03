@@ -33,6 +33,13 @@ export function categorizeSandboxState(state: string | undefined): SandboxStateC
 /** Item representing a single sandbox microVM. */
 export class SandboxItem implements TreeElementBase {
     static readonly contextValue: string = 'sandboxItem';
+    static readonly contextValueRegExp: RegExp = new RegExp(SandboxItem.contextValue, 'i');
+
+    static isSandboxItem(item: unknown): item is SandboxItem {
+        return typeof item === 'object' &&
+            typeof (item as SandboxItem).contextValue === 'string' &&
+            SandboxItem.contextValueRegExp.test((item as SandboxItem).contextValue);
+    }
 
     constructor(
         public readonly subscription: AzureSubscription,
@@ -42,6 +49,10 @@ export class SandboxItem implements TreeElementBase {
 
     public get id(): string {
         return `sandbox/${this.sandbox.id}`;
+    }
+
+    public get contextValue(): string {
+        return `${SandboxItem.contextValue};${this.stateCategory}`;
     }
 
     public get stateCategory(): SandboxStateCategory {
@@ -56,7 +67,7 @@ export class SandboxItem implements TreeElementBase {
     getTreeItem(): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(this.label, vscode.TreeItemCollapsibleState.None);
         treeItem.id = this.id;
-        treeItem.contextValue = `${SandboxItem.contextValue};${this.stateCategory}`;
+        treeItem.contextValue = this.contextValue;
         treeItem.iconPath = this.iconForState();
         treeItem.description = this.buildDescription();
         treeItem.tooltip = this.buildTooltip();
