@@ -57,10 +57,28 @@
                     "title": "%containerApps.createManagedEnvironment%",
                     "type": "ContainerAppsEnvironment",
                     "detail": "%containerApps.createManagedEnvironmentDetail%"
+                },
+                {
+                    "command": "containerApps.sandboxes.createGroup",
+                    "title": "%containerApps.sandboxes.createGroup%",
+                    "type": "ContainerAppsSandboxGroups",
+                    "detail": "%containerApps.sandboxes.createGroupDetail%"
                 }
             ]
         },
         "commands": [
+            {
+                "command": "containerApps.sandboxes.createGroup",
+                "title": "%containerApps.sandboxes.createGroup%",
+                "category": "Azure Container Apps Sandboxes",
+                "icon": "$(add)"
+            },
+            {
+                "command": "containerApps.sandboxes.deleteGroup",
+                "title": "%containerApps.sandboxes.deleteGroup%",
+                "category": "Azure Container Apps Sandboxes",
+                "icon": "$(trash)"
+            },
             {
                 "command": "containerApps.sandboxes.create",
                 "title": "%containerApps.sandboxes.create%",
@@ -433,6 +451,21 @@
                 }
             ],
             "view/item/context": [
+                {
+                    "command": "containerApps.sandboxes.createGroup",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /ContainerAppsSandboxGroups/i",
+                    "group": "inline@0"
+                },
+                {
+                    "command": "containerApps.sandboxes.createGroup",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /azureResourceTypeGroup/i && viewItem =~ /ContainerAppsSandboxGroups/i",
+                    "group": "1@1"
+                },
+                {
+                    "command": "containerApps.sandboxes.deleteGroup",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxGroupItem/",
+                    "group": "3@1"
+                },
                 {
                     "command": "containerApps.sandboxes.create",
                     "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /sandboxGroupItem/",

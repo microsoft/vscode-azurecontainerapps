@@ -3,46 +3,31 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { createSubscriptionContext, subscriptionExperience, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, nonNullValue, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
-import { ext } from '../../extensionVariables';
 import { createSandboxService, type SandboxService } from '../../sandboxes/SandboxService';
 import { SandboxGroupResourceItem } from '../../sandboxes/tree/SandboxGroupResourceItem';
-import { createSandboxGroupRef, isCreateSandboxCommandInput, sandboxResourceTiers, type CreateSandboxCommandInput, type PublicDiskImage, type SandboxGroupRef, type SandboxResourceTier } from '../../sandboxes/sandboxTypes';
+import { sandboxResourceTiers, type PublicDiskImage, type Sandbox, type SandboxGroupRef, type SandboxResourceTier } from '../../sandboxes/sandboxTypes';
 import { localize } from '../../utils/localize';
 import { pickSandboxGroup } from '../../utils/pickItem/pickSandbox';
 import { recommendedPickDescription } from '../../utils/pickUtils';
-import { refreshSandboxesTree, runSandboxActivity } from './sandboxCommandUtils';
-
-type CreateSandboxTarget = SandboxGroupResourceItem | CreateSandboxCommandInput;
+import { refreshSandboxesTree, revealSandbox, runSandboxActivity } from './sandboxCommandUtils';
 
 /**
  * Creates a new sandbox within the right-clicked sandbox group. Prompts the user to pick a
  * public disk image, creates the sandbox through the data-plane SDK, and refreshes the tree.
  */
-export async function createSandbox(context: IActionContext, target?: CreateSandboxTarget): Promise<void> {
-    if (target && !SandboxGroupResourceItem.isSandboxGroupResourceItem(target) && !isCreateSandboxCommandInput(target)) {
+export async function createSandbox(context: IActionContext, target?: SandboxGroupResourceItem): Promise<void> {
+    if (target && !SandboxGroupResourceItem.isSandboxGroupResourceItem(target)) {
         target = undefined;
     }
 
-    let subscription: AzureSubscription;
-    let ref: SandboxGroupRef;
-    if (SandboxGroupResourceItem.isSandboxGroupResourceItem(target)) {
-        subscription = target.subscription;
-        ref = target.ref;
-    } else if (isCreateSandboxCommandInput(target)) {
-        ref = createSandboxGroupRef(target);
-        subscription = await subscriptionExperience(context, ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-            selectBySubscriptionId: ref.subscriptionId,
-            showLoadingPrompt: false,
-        });
-    } else {
-        const selectedGroup = await pickSandboxGroup(context);
-        subscription = selectedGroup.subscription;
-        ref = selectedGroup.ref;
-    }
+    target ??= await pickSandboxGroup(context);
+    await createSandboxInGroup(context, target.subscription, target.ref);
+}
 
+export async function createSandboxInGroup(context: IActionContext, subscription: AzureSubscription, ref: SandboxGroupRef): Promise<void> {
     const subscriptionContext: IActionContext & ISubscriptionContext & { subscription: AzureSubscription } = Object.assign(context, {
         ...createSubscriptionContext(subscription),
         subscription,
@@ -51,16 +36,21 @@ export async function createSandbox(context: IActionContext, target?: CreateSand
     const disk = await promptForDiskImage(context, service);
     const resourceTier = await promptForResourceTier(context);
 
+    let sandbox: Sandbox | undefined;
     await runSandboxActivity(
         localize('createSandboxActivity', 'Create sandbox in group "{0}"', ref.groupName),
         localize('creatingSandbox', 'Creating sandbox in group "{0}"...', ref.groupName),
         async () => {
-            await service.createSandbox({ disk, resources: resourceTier.resources });
+            sandbox = await service.createSandbox({ disk, resources: resourceTier.resources });
         },
     );
 
-    void vscode.window.showInformationMessage(localize('sandboxCreated', 'Created a new sandbox in group "{0}".', ref.groupName));
     refreshSandboxesTree();
+    await revealSandbox({
+        ...ref,
+        sandboxId: nonNullValue(sandbox).id,
+    });
+    void vscode.window.showInformationMessage(localize('sandboxCreated', 'Created a new sandbox in group "{0}".', ref.groupName));
 }
 
 /** Lets the user choose one of the resource tiers supported by the sandbox service. */

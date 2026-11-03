@@ -40,7 +40,9 @@ import { revealInEnvironment } from './revealInEnvironment';
 import { copySandboxId } from './sandboxes/copySandboxId';
 import { openSandboxInPortal } from './sandboxes/openSandboxInPortal';
 import { createSandbox } from './sandboxes/createSandbox';
+import { createSandboxGroup } from './sandboxes/createSandboxGroup';
 import { deleteSandbox } from './sandboxes/deleteSandbox';
+import { deleteSandboxGroup } from './sandboxes/deleteSandboxGroup';
 import { openSandboxShell } from './sandboxes/openSandboxShell';
 import { runSandboxCommand } from './sandboxes/runSandboxCommand';
 import { setAutoSuspend } from './sandboxes/setAutoSuspend';
@@ -141,6 +143,8 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
 
     // sandboxes
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.createGroup', createSandboxGroup);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.deleteGroup', deleteSandboxGroup);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.create', createSandbox);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openShell', openSandboxShell);
     registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.runCommand', runSandboxCommand);

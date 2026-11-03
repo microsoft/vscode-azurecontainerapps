@@ -7,7 +7,7 @@ import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
 import { type TreeElementBase } from '../../tree/ContainerAppsBranchDataProvider';
 import { localize } from '../../utils/localize';
-import { type Sandbox, type SandboxRef } from '../sandboxTypes';
+import { getSandboxResourceId, type Sandbox, type SandboxRef } from '../sandboxTypes';
 
 /** Normalized lifecycle category derived from the open-set `state` string. */
 export type SandboxStateCategory = 'running' | 'suspended' | 'transitional' | 'unknown';
@@ -48,7 +48,7 @@ export class SandboxItem implements TreeElementBase {
     ) { }
 
     public get id(): string {
-        return `sandbox/${this.sandbox.id}`;
+        return getSandboxResourceId(this.ref);
     }
 
     public get contextValue(): string {

@@ -13,6 +13,10 @@ import { localize } from '../localize';
 const sandboxGroupResourceType = 'ContainerAppsSandboxGroups' as AzExtResourceType;
 type SandboxStateFilter = 'running' | 'suspended';
 
+export function getSandboxContextValueFilter(stateFilter?: SandboxStateFilter): RegExp {
+    return stateFilter ? new RegExp(`^${stateFilter}$`, 'i') : SandboxItem.contextValueRegExp;
+}
+
 function getPickSandboxGroupSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     const treeDataProvider: ResourceGroupsTreeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
 
@@ -41,7 +45,7 @@ export async function pickSandbox(context: IActionContext, stateFilter?: Sandbox
         ...getPickSandboxGroupSteps(),
         new ContextValueQuickPickStep(treeDataProvider, {
             contextValueFilter: {
-                include: new RegExp(`${SandboxItem.contextValue}${stateFilter ? `.*${stateFilter}` : ''}`, 'i'),
+                include: getSandboxContextValueFilter(stateFilter),
             },
         }, {
             placeHolder: localize('selectSandbox', 'Select a sandbox'),

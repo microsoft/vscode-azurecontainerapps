@@ -6,11 +6,35 @@
 import { ExecuteActivity } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
+import { getSandboxGroupResourceId, getSandboxResourceId, type SandboxRef } from '../../sandboxes/sandboxTypes';
 import { createActivityContext } from '../../utils/activityUtils';
 
 /** Refreshes the sandbox group branch in the Azure Resources view after a mutation. */
 export function refreshSandboxesTree(): void {
     ext.sandboxGroupBranchDataProvider?.refresh();
+}
+
+/** Refreshes both Azure resource views after creating or deleting a sandbox group. */
+export async function refreshSandboxGroups(): Promise<void> {
+    refreshSandboxesTree();
+    await Promise.all([
+        vscode.commands.executeCommand('azureResourceGroups.refreshTree'),
+        vscode.commands.executeCommand('azureFocusView.refreshTree'),
+    ]);
+}
+
+/** Expands the sandbox group and selects a sandbox in the Azure Resources view. */
+export async function revealSandbox(ref: SandboxRef): Promise<void> {
+    await vscode.commands.executeCommand('azureResourceGroups.focus');
+    await ext.rgApiV2.resources.revealAzureResource(getSandboxGroupResourceId(ref), {
+        select: false,
+        focus: true,
+        expand: true,
+    });
+    await ext.rgApiV2.resources.revealAzureResource(getSandboxResourceId(ref), {
+        select: true,
+        focus: true,
+    });
 }
 
 /** Runs a sandbox operation with both an Azure Activity entry and a progress notification. */

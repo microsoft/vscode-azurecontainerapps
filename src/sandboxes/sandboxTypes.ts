@@ -14,36 +14,19 @@ export interface SandboxGroupRef {
     region: string;
 }
 
-/** Serializable argument accepted by the create-sandbox VS Code command. */
-export interface CreateSandboxCommandInput {
-    resourceId: string;
-    location: string;
-}
-
-export function isCreateSandboxCommandInput(value: unknown): value is CreateSandboxCommandInput {
-    if (!value || typeof value !== 'object') {
-        return false;
-    }
-
-    const input = value as Partial<CreateSandboxCommandInput>;
-    return isNonEmptyString(input.resourceId) &&
-        isNonEmptyString(input.location) &&
-        parseSandboxGroupId(input.resourceId, input.location) !== undefined;
-}
-
-export function createSandboxGroupRef(input: CreateSandboxCommandInput): SandboxGroupRef {
-    const ref = parseSandboxGroupId(input.resourceId, input.location);
-    if (!ref) {
-        throw new Error('Invalid sandbox group resource ID.');
-    }
-    return ref;
-}
-
 /**
  * Reference to a single sandbox within a sandbox group.
  */
 export interface SandboxRef extends SandboxGroupRef {
     sandboxId: string;
+}
+
+export function getSandboxGroupResourceId(ref: SandboxGroupRef): string {
+    return `/subscriptions/${ref.subscriptionId}/resourceGroups/${ref.resourceGroup}/providers/Microsoft.App/sandboxGroups/${ref.groupName}`;
+}
+
+export function getSandboxResourceId(ref: SandboxRef): string {
+    return `${getSandboxGroupResourceId(ref)}/sandboxes/${ref.sandboxId}`;
 }
 
 /** Options for creating a sandbox from a public disk image. */
@@ -82,10 +65,6 @@ export function parseSandboxGroupId(id: string, region: string): SandboxGroupRef
         groupName: match[3],
         region,
     };
-}
-
-function isNonEmptyString(value: unknown): value is string {
-    return typeof value === 'string' && value.trim().length > 0;
 }
 
 export { type ExecResult, type LifecyclePolicy, type PublicDiskImage, type Sandbox, type SandboxGroup, type Snapshot };
