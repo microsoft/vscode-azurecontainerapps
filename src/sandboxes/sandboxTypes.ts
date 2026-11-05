@@ -33,6 +33,8 @@ export function getSandboxResourceId(ref: SandboxRef): string {
 export interface CreateSandboxOptions {
     disk: string;
     resources: SandboxResources;
+    /** Optional display name stored as the `name` label. */
+    name?: string;
 }
 
 /** A supported sandbox resource tier. */
