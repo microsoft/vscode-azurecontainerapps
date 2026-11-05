@@ -12,7 +12,7 @@ import { type CreateSandboxOptions, type SandboxGroupRef } from './sandboxTypes'
 export interface SandboxServiceClient {
     sandboxes: {
         list(): AsyncIterable<Sandbox>;
-        beginCreate(body: { sourcesRef: { diskImage: { name: string; isPublic: boolean } }; resources: SandboxResources }): { pollUntilDone(): Promise<Sandbox> };
+        beginCreate(body: { sourcesRef: { diskImage: { name: string; isPublic: boolean } }; resources: SandboxResources; labels?: Record<string, string> }): { pollUntilDone(): Promise<Sandbox> };
         get(sandboxId: string): Promise<Sandbox>;
         exec(sandboxId: string, body: { command: string; workingDirectory?: string }): Promise<ExecResult>;
         beginDelete(sandboxId: string): { pollUntilDone(): Promise<void> };
@@ -66,6 +66,7 @@ export class AzureSandboxService implements SandboxService {
                     },
                 },
                 resources: options.resources,
+                ...(options.name ? { labels: { name: options.name } } : {}),
             });
             return poller.pollUntilDone();
         });
