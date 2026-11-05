@@ -9,17 +9,27 @@ import { localize } from "../../utils/localize";
 import { updateLoadingViewProgress } from "../../webviews/SharedViewState";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 
+const appTypeLabels: Record<EnvironmentAppType, string> = {
+    [EnvironmentAppType.Express]: 'Express',
+    [EnvironmentAppType.Standard]: 'Standard',
+};
+
+const environmentModeAppTypes = new Map<string, EnvironmentAppType>([
+    ['Express', EnvironmentAppType.Express],
+    ['WorkloadProfiles', EnvironmentAppType.Standard],
+]);
+
 export class AppTypeListStep<T extends ManagedEnvironmentCreateContext> extends AzureWizardPromptStep<T> {
     public async prompt(context: T): Promise<void> {
         const expressInfo: string = localize('expressInfo', '$(link-external) Learn more about express apps');
         const picks: IAzureQuickPickItem<EnvironmentAppType | undefined>[] = [
             {
-                label: 'Express',
+                label: appTypeLabels[EnvironmentAppType.Express],
                 detail: localize('expressDetails', 'Quick setup with platform-managed scaling defaults.'),
                 data: EnvironmentAppType.Express,
             },
             {
-                label: 'Standard',
+                label: appTypeLabels[EnvironmentAppType.Standard],
                 detail: localize('standardDetails', 'Full control over environment settings and features.'),
                 data: EnvironmentAppType.Standard,
             },
@@ -54,12 +64,12 @@ export class AppTypeListStep<T extends ManagedEnvironmentCreateContext> extends 
         return !context.newManagedEnvironmentAppType;
     }
 
-    // Todo:
     public confirmationViewProperty(context: T): ConfirmationViewProperty {
+        const appType = environmentModeAppTypes.get(context.managedEnvironment?.environmentMode ?? '') ?? context.newManagedEnvironmentAppType;
         return {
             name: localize('environmentAppType', 'Environment App Type'),
-            value: context.managedEnvironment?.name ?? context.newManagedEnvironmentName ?? '',
-            contextPropertyName: 'environmentAppType',
+            value: appType ? appTypeLabels[appType] : '',
+            contextPropertyName: 'newManagedEnvironmentAppType',
         };
     }
 }
