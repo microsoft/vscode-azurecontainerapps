@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep, ResourceGroupListStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, type AzureWizardExecuteStep, type AzureWizardPromptStep, type ExecuteActivityContext } from "@microsoft/vscode-azext-utils";
 import { ProgressLocation, window } from "vscode";
-import { containerAppProvider, containerAppResourceType, logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType, registryProvider, registryResourceType } from "../../../constants";
+import { containerAppProvider, containerAppResourceType, managedEnvironmentProvider, managedEnvironmentResourceType, registryProvider, registryResourceType } from "../../../constants";
 import { ext } from "../../../extensionVariables";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../../utils/getVerifyProvidersStep";
@@ -15,7 +15,6 @@ import { localize } from "../../../utils/localize";
 import { CommandAttributes } from "../../CommandAttributes";
 import { ContainerAppCreateStep } from "../../createContainerApp/ContainerAppCreateStep";
 import { ContainerAppListStep } from "../../createContainerApp/ContainerAppListStep";
-import { LogAnalyticsCreateStep } from "../../createManagedEnvironment/LogAnalyticsCreateStep";
 import { ManagedEnvironmentCreateStep } from "../../createManagedEnvironment/ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentListStep } from "../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { editContainerCommandName } from "../../editContainer/editContainer";
@@ -113,7 +112,6 @@ export async function deployWorkspaceProjectInternal(
     const executeSteps: AzureWizardExecuteStep<DeployWorkspaceProjectInternalContext>[] = [];
 
     LocationListStep.addProviderForFiltering(context, managedEnvironmentProvider, managedEnvironmentResourceType);
-    LocationListStep.addProviderForFiltering(context, logAnalyticsProvider, logAnalyticsResourceType);
     LocationListStep.addProviderForFiltering(context, registryProvider, registryResourceType);
     LocationListStep.addProviderForFiltering(context, containerAppProvider, containerAppResourceType);
 
@@ -124,7 +122,6 @@ export async function deployWorkspaceProjectInternal(
         }
         if (!wizardContext.managedEnvironment) {
             executeSteps.push(
-                new LogAnalyticsCreateStep(),
                 new ManagedEnvironmentCreateStep(),
             );
         }

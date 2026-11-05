@@ -5,6 +5,7 @@
 
 import { type ContainerApp, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { type Registry } from "@azure/arm-containerregistry";
+import { type Workspace } from '@azure/arm-operationalinsights';
 import { type ResourceGroup } from "@azure/arm-resources";
 import { LocationListStep, type ILocationWizardContext } from "@microsoft/vscode-azext-azureutils";
 import { ActivityChildItem, ActivityChildType, activityInfoIcon, AzureWizardPromptStep, createContextValue, type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
@@ -16,6 +17,7 @@ type StartingResourcesLogContext = IActionContext & Partial<ExecuteActivityConte
     resourceGroup?: ResourceGroup,
     managedEnvironment?: ManagedEnvironment,
     registry?: Registry;
+    logAnalyticsWorkspace?: Workspace;
     containerApp?: ContainerApp
 };
 
@@ -27,6 +29,10 @@ const startingResourcesContext: string = 'startingResourcesLogStepItem';
  */
 export class StartingResourcesLogStep<T extends StartingResourcesLogContext> extends AzureWizardPromptStep<T> {
     public hideStepCount: boolean = true;
+
+    constructor(private readonly options: { suppressManagedEnvironmentItem?: boolean; suppressResourceGroupItem?: boolean } = {}) {
+        super();
+    }
 
     /**
      * Implement if you require additional context loading before resource logging
@@ -51,33 +57,50 @@ export class StartingResourcesLogStep<T extends StartingResourcesLogContext> ext
 
         // Resource group
         if (context.resourceGroup) {
-            startingResources.push(
-                new ActivityChildItem({
-                    contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
-                    label: localize('useResourceGroup', 'Use resource group "{0}"', context.resourceGroup.name),
-                    activityType: ActivityChildType.Info,
-                    iconPath: activityInfoIcon,
-                    stepId: this.id,
-                })
-            );
+            if (!this.options.suppressResourceGroupItem) {
+                startingResources.push(
+                    new ActivityChildItem({
+                        contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                        label: localize('useResourceGroup', 'Use resource group "{0}"', context.resourceGroup.name),
+                        activityType: ActivityChildType.Info,
+                        iconPath: activityInfoIcon,
+                        stepId: this.id,
+                    })
+                );
+            }
             ext.outputChannel.appendLog(localize('usingResourceGroup', 'Using resource group "{0}".', context.resourceGroup.name));
         }
         context.telemetry.properties.existingResourceGroup = String(!!context.resourceGroup);
 
         // Managed environment
         if (context.managedEnvironment) {
+            if (!this.options.suppressManagedEnvironmentItem) {
+                startingResources.push(
+                    new ActivityChildItem({
+                        label: localize('useManagedEnvironment', 'Use managed environment "{0}"', context.managedEnvironment.name),
+                        contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
+                        activityType: ActivityChildType.Info,
+                        iconPath: activityInfoIcon,
+                        stepId: this.id,
+                    })
+                );
+            }
+            ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
+        }
+        context.telemetry.properties.existingEnvironment = String(!!context.managedEnvironment);
+
+        if (context.logAnalyticsWorkspace) {
             startingResources.push(
                 new ActivityChildItem({
-                    label: localize('useManagedEnvironment', 'Use managed environment "{0}"', context.managedEnvironment.name),
+                    label: localize('useLogAnalyticsWorkspace', 'Use log analytics workspace "{0}"', context.logAnalyticsWorkspace.name),
                     contextValue: createContextValue([startingResourcesContext, activityInfoContext]),
                     activityType: ActivityChildType.Info,
                     iconPath: activityInfoIcon,
                     stepId: this.id,
                 })
             );
-            ext.outputChannel.appendLog(localize('usingManagedEnvironment', 'Using managed environment "{0}".', context.managedEnvironment.name));
+            ext.outputChannel.appendLog(localize('usingLogAnalyticsWorkspace', 'Using Log Analytics workspace "{0}".', context.logAnalyticsWorkspace.name));
         }
-        context.telemetry.properties.existingEnvironment = String(!!context.managedEnvironment);
 
         // Container registry
         if (context.registry) {

@@ -109,7 +109,7 @@ export async function activate(context: vscode.ExtensionContext, perfStats: { lo
             } satisfies AzureContainerAppsTestApi;
         } else {
             coreExtensionApi = {
-                apiVersion: '1.1.0',
+                apiVersion: '1.2.0',
                 ...coreApiEndpoints,
             };
         }

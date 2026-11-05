@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode, type Template } from "@azure/arm-appcontainers";
 import { parseAzureResourceId, type ParsedAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import { nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullValue, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Disposable, EventEmitter, FileChangeType, FileType, TabInputText, commands, window, workspace, type Event, type FileChangeEvent, type FileStat, type FileSystemProvider, type TextDocument, type Uri } from "vscode";
 import { URI } from "vscode-uri";
 import { ext } from "../../extensionVariables";
@@ -14,6 +14,7 @@ import { type ContainerAppsItem } from "../../tree/ContainerAppsBranchDataProvid
 import { type RevisionsItemModel } from "../../tree/revisionManagement/RevisionItem";
 import { RevisionsItem } from "../../tree/revisionManagement/RevisionsItem";
 import { localize } from "../../utils/localize";
+import { mergeRegistryConfiguration, type RegistryConfiguration } from "../registryCredentials/mergeRegistryConfiguration";
 
 const notSupported: string = localize('notSupported', 'This operation is not currently supported.');
 
@@ -33,6 +34,9 @@ export class RevisionDraftFile implements FileStat {
 
     commandUpdatesCount: number = 0;  // Updates via revision draft commands
     directUpdatesCount: number = 0;  // Direct updates via 'editContainerApp' & 'editDraft'
+
+    // Registry secrets stay in memory, outside the editable template contents.
+    registryConfiguration?: RegistryConfiguration;
 
     constructor(contents: Uint8Array, readonly containerApp: ContainerAppModel, readonly baseRevisionName: string) {
         this.contents = contents;
@@ -162,13 +166,25 @@ export class RevisionDraftFileSystem implements FileSystemProvider {
         ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
     }
 
-    updateRevisionDraftWithTemplate(item: ContainerAppItem | RevisionsItemModel, template: Template): void {
+    updateRevisionDraftWithTemplate(item: ContainerAppItem | RevisionsItemModel, template: Template, registryConfiguration?: RegistryConfiguration): void {
         const uri: Uri = this.buildUriFromItem(item);
         if (!this.draftStore.has(uri.path)) {
             this.createRevisionDraft(item);
         }
 
+        const file = nonNullValue(this.draftStore.get(uri.path));
+        if (registryConfiguration) {
+            file.registryConfiguration = mergeRegistryConfiguration(file.registryConfiguration, registryConfiguration);
+        }
+
         const newContent: Uint8Array = Buffer.from(JSON.stringify(template, undefined, 4));
+        if (registryConfiguration && Buffer.from(file.contents).equals(newContent)) {
+            file.commandUpdatesCount++;
+            file.mtime = Date.now();
+            this.fireSoon({ type: FileChangeType.Changed, uri });
+            ext.state.notifyChildrenChanged(file.containerApp.managedEnvironmentId);
+            return;
+        }
         this.writeFile(uri, newContent, { isCommandEntrypoint: true });
     }
 

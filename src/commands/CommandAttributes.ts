@@ -21,7 +21,7 @@ export class CommandAttributes {
 
     static readonly DeployWorkspaceProjectInternal: ActivityAttributes = {
         description: `Takes a workspace project with a Dockerfile and deploys it to an Azure Container App.
-            Automatically creates any required resources (resource group, managed environment, container registry, container app, log analytics workspace).
+            Automatically creates any required resources (resource group, managed environment, container registry, container app).
             Supports single repo and monorepo, with deployment settings saved and reused via local VS Code settings (.vscode/settings.json).
             Deployment settings are saved under "containerApps.deploymentConfigurations".
             Deployment is agnostic to project runtime and language.`,

@@ -453,7 +453,7 @@
                 },
                 {
                     "command": "containerApps.chooseRevisionMode",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem/i && !(viewItem =~ /(^|;)express(;|$)/i)",
                     "group": "6@2"
                 },
                 {

@@ -33,16 +33,16 @@ export function createContainerRegistryClient(context: AzExtClientContext, regis
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
 }
 
-export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
-    return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
-}
-
 export async function createAuthorizationManagementClient(context: AzExtClientContext): Promise<AuthorizationManagementClient> {
     if (parseClientContext(context).isCustomCloud) {
         return <AuthorizationManagementClient><unknown>createAzureClient(context, (await import('@azure/arm-authorization-profile-2020-09-01-hybrid')).AuthorizationManagementClient);
     } else {
         return createAzureClient(context, (await import('@azure/arm-authorization')).AuthorizationManagementClient);
     }
+}
+
+export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
+    return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
 }
 
 export async function createLogsQueryClientPublicCloud(context: ISubscriptionActionContext): Promise<LogsQueryClient> {

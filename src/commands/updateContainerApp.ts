@@ -15,6 +15,13 @@ export async function updateContainerApp(context: IActionContext, subscription: 
     const resourceGroupName = getResourceGroupFromId(nonNullProp(containerApp, 'id'));
     const name = nonNullProp(containerApp, 'name');
     // If no update setting is provided, just use the original containerApp; otherwise, merge the update settings with the original containerApp
-    const updatedApp: ContainerApp = !updatedSetting ? containerApp : { ...updatedSetting, location: containerApp.location };
+    const updatedApp: ContainerApp = !updatedSetting ? { ...containerApp } : { ...updatedSetting, location: containerApp.location };
+    if (updatedApp.identity?.userAssignedIdentities) {
+        // Client and principal IDs returned by ARM are not writable identity attachment properties.
+        updatedApp.identity = {
+            ...updatedApp.identity,
+            userAssignedIdentities: Object.fromEntries(Object.keys(updatedApp.identity.userAssignedIdentities).map(id => [id, {}])),
+        };
+    }
     return ContainerAppItem.CreateContainerAppModel(await client.containerApps.beginUpdateAndWait(resourceGroupName, name, updatedApp));
 }

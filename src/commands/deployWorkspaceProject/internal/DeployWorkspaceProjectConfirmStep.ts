@@ -21,7 +21,6 @@ export class DeployWorkspaceProjectConfirmStep extends OverwriteConfirmStepBase<
         }
 
         if (!context.managedEnvironment) {
-            resourcesToCreate.push('log analytics workspace');
             resourcesToCreate.push('container app environment');
         }
 
