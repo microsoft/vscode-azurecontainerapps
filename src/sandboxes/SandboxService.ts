@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ContainerAppsSandboxManagementClient, SandboxGroupClient, endpointForRegion, type ExecResult, type LifecyclePolicy, type PublicDiskImage, type Sandbox, type SandboxGroup, type SandboxResources, type Snapshot } from '@azure/containerapps-sandbox';
+import { RestError, type PipelinePolicy } from '@azure/core-rest-pipeline';
 import { parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
 import { localize } from '../utils/localize';
 import { type CreateSandboxOptions, type SandboxGroupRef } from './sandboxTypes';
@@ -143,6 +144,7 @@ export function createSandboxService(context: AzExtClientContext, ref: SandboxGr
         ref.subscriptionId,
         ref.resourceGroup,
         ref.groupName,
+        { additionalPolicies: [{ policy: sandboxErrorResponsePolicy, position: 'perCall' }] },
     );
     return new AzureSandboxService(client, ref.groupName);
 }
@@ -180,10 +182,35 @@ export async function ensureSandboxRunning(service: SandboxService, sandboxId: s
     }
 }
 
+export const sandboxErrorResponsePolicy: PipelinePolicy = {
+    name: 'sandboxErrorResponsePolicy',
+    async sendRequest(request, next) {
+        const response = await next(request);
+        if (response.status >= 400) {
+            const body = parseSandboxErrorBody(response.bodyAsText);
+            const detail = getStringProperty(body, 'detail')?.trim();
+            if (detail) {
+                // The SDK drops problem-details bodies when converting them to RestError.
+                throw Object.assign(new RestError(detail, {
+                    statusCode: response.status,
+                    code: getStringProperty(body, 'errorCode'),
+                    request,
+                    response,
+                }), {
+                    requestId: getStringProperty(body, 'requestId') ?? response.headers.get('x-ms-request-id'),
+                });
+            }
+        }
+        return response;
+    },
+};
+
 function normalizeSandboxError(error: unknown, groupName?: string): Error {
     const statusCode = getNumberProperty(error, 'statusCode');
     const requestId = getStringProperty(error, 'requestId');
-    const suffix = requestId ? localize('sandboxRequestId', '\n\nRequest ID: {0}', requestId) : '';
+    const serviceMessage = getServiceErrorMessage(error);
+    const details = serviceMessage ? localize('sandboxServiceMessage', '\n\nDetails: {0}', serviceMessage) : '';
+    const suffix = details + (requestId ? localize('sandboxRequestId', '\n\nRequest ID: {0}', requestId) : '');
 
     if (statusCode === 401) {
         return new Error(localize('sandboxUnauthorized', 'Your Azure session is not authorized for sandbox operations. Sign in to Azure again and retry.{0}', suffix), { cause: error });
@@ -200,7 +227,46 @@ function normalizeSandboxError(error: unknown, groupName?: string): Error {
     if (statusCode === 429) {
         return new Error(localize('sandboxThrottled', 'Sandbox requests are being throttled. Wait and retry.{0}', suffix), { cause: error });
     }
+    if (serviceMessage) {
+        return new Error(serviceMessage + (requestId ? localize('sandboxRequestId', '\n\nRequest ID: {0}', requestId) : ''), { cause: error });
+    }
     return error instanceof Error ? error : new Error(String(error));
+}
+
+function getServiceErrorMessage(error: unknown): string | undefined {
+    const response = getProperty(error, 'response');
+    const message = getResponseErrorMessage(getProperty(error, 'details'))
+        ?? getResponseErrorMessage(getProperty(response, 'parsedBody'));
+    if (message) {
+        return message;
+    }
+
+    // The REST SDK retains string response bodies as bodyAsText, not parsedBody.
+    return getResponseErrorMessage(parseSandboxErrorBody(getStringProperty(response, 'bodyAsText')));
+}
+
+function parseSandboxErrorBody(bodyAsText: string | null | undefined): unknown {
+    if (bodyAsText) {
+        try {
+            return JSON.parse(bodyAsText);
+        } catch (parseError) {
+            if (!(parseError instanceof SyntaxError)) {
+                throw parseError;
+            }
+        }
+    }
+    return undefined;
+}
+
+function getResponseErrorMessage(body: unknown): string | undefined {
+    return getStringProperty(getProperty(body, 'error'), 'message')?.trim()
+        || getStringProperty(body, 'message')?.trim()
+        || getStringProperty(body, 'detail')?.trim()
+        || undefined;
+}
+
+function getProperty(value: unknown, property: string): unknown {
+    return typeof value === 'object' && value !== null ? Reflect.get(value, property) : undefined;
 }
 
 function getNumberProperty(value: unknown, property: string): number | undefined {
