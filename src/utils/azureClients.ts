@@ -7,6 +7,7 @@ import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { type AuthorizationManagementClient } from "@azure/arm-authorization";
 import { type ContainerRegistryManagementClient, type Registry } from '@azure/arm-containerregistry';
 import { type OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
+import { type ResourceManagementClient } from '@azure/arm-resources';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { LogsQueryClient } from "@azure/monitor-query";
 import { AzExtClientType, createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
@@ -31,6 +32,10 @@ export async function createContainerRegistryManagementClient(context: AzExtClie
 export function createContainerRegistryClient(context: AzExtClientContext, registry: Registry): ContainerRegistryClient {
     return new ContainerRegistryClient(`https://${registry.loginServer}`, parseClientContext(context).credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
+}
+
+export async function createResourceManagementClient(context: AzExtClientContext): Promise<ResourceManagementClient> {
+    return createAzureClient(context, (await import('@azure/arm-resources')).ResourceManagementClient);
 }
 
 export async function createAuthorizationManagementClient(context: AzExtClientContext): Promise<AuthorizationManagementClient> {
