@@ -29,8 +29,7 @@ export class AppTypeListStep<T extends ManagedEnvironmentCreateContext> extends 
             }
         ];
 
-        // Todo: Get the real aka.ms link
-        const learnMoreLink: string = 'https://aka.ms/Cfqnrc';
+        const learnMoreLink: string = 'https://aka.ms/aca-express-overview';
         let pick: EnvironmentAppType | undefined;
 
         while (!pick) {
