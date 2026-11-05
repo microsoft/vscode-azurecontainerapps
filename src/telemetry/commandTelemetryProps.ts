@@ -26,7 +26,6 @@ export interface DeployRevisionDraftTelemetryProps extends AzdTelemetryProps, Ov
 
 export interface ContainerEditTelemetryProps extends AzdTelemetryProps, ContainerTelemetryProps, ImageSourceTelemetryProps, ContainerAppStartVerificationTelemetryProps {
     revisionMode?: KnownActiveRevisionsMode;
-    skippedRegistryCredentialUpdate?: 'true' | 'false';
 }
 
 export type CreateContainerAppTelemetryProps = AzdTelemetryProps & ImageSourceTelemetryProps & IngressTelemetryProps;

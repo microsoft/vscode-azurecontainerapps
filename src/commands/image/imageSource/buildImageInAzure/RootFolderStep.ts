@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { commands, type WorkspaceFolder } from 'vscode';
-import { browseItem } from '../../../../constants';
+import { commands, RelativePattern, workspace, type WorkspaceFolder } from 'vscode';
+import { browseItem, dockerfileGlobPattern } from '../../../../constants';
 import { addAzdTelemetryToContext } from '../../../../utils/azdUtils';
 import { localize } from '../../../../utils/localize';
 import { getRootWorkspaceFolder } from '../../../../utils/workspaceUtils';
@@ -13,13 +13,22 @@ import { type BuildImageInAzureImageSourceContext } from './BuildImageInAzureIma
 
 export class RootFolderStep extends AzureWizardPromptStep<BuildImageInAzureImageSourceContext> {
     public async prompt(context: BuildImageInAzureImageSourceContext): Promise<void> {
-        const prompt: string = localize('selectRootWorkspace', 'Select the project\'s root directory (browsing to a folder will reload VS Code)');
+        const prompt: string = localize('selectRootWorkspace', 'Select a project with a dockerfile (browsing to a folder will reload VS Code)');
         const rootFolder: WorkspaceFolder | undefined = await getRootWorkspaceFolder(context, prompt);
 
-        if (!rootFolder) {
-            context.telemetry.properties.hasWorkspaceProjectOpen = 'false';
+        let hasDockerfile = false;
+        if (rootFolder) {
+            const dockerfiles = await workspace.findFiles(new RelativePattern(rootFolder, `**/${dockerfileGlobPattern}`), undefined, 1);
+            hasDockerfile = dockerfiles.length > 0;
+        }
 
-            await context.ui.showQuickPick([browseItem], { placeHolder: prompt });
+        if (!rootFolder || !hasDockerfile) {
+            context.telemetry.properties.hasWorkspaceProjectOpen = rootFolder ? 'true' : 'false';
+            const browsePrompt = rootFolder
+                ? localize('selectWorkspaceWithDockerfile', 'No Dockerfile found in "{0}". Open a workspace project with a Dockerfile to continue (this will reload VS Code).', rootFolder.name)
+                : prompt;
+
+            await context.ui.showQuickPick([browseItem], { placeHolder: browsePrompt });
             await commands.executeCommand('vscode.openFolder');
 
             // Silently throw an exception to exit the command while VS Code reloads the new workspace

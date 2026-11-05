@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownPrincipalType, type AuthorizationManagementClient, type RoleAssignment, type RoleAssignmentCreateParameters } from "@azure/arm-authorization";
-import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { uiUtils, type AzExtClientContext } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardExecuteStepWithActivityOutput, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import * as crypto from "crypto";
 import { type Progress } from "vscode";
@@ -19,26 +19,13 @@ export class AcrPullEnableStep<T extends ManagedIdentityRegistryCredentialsConte
     public priority: number = 460;
     public stepName: string = 'acrPullEnableStep';
 
-    protected getOutputLogSuccess = () => localize('enableAcrPullSuccess', 'Successfully granted "{0}" access to container environment identity.', 'acrPull');
-    protected getOutputLogFail = () => localize('enableAcrPullFail', 'Failed to grant "{0}" access to container environment identity.', 'acrPull');
-    protected getTreeItemLabel = () => localize('enableAcrPull', 'Grant "{0}" access to container environment identity', 'acrPull');
+    protected getOutputLogSuccess = (context: T) => localize('grantRegistryIdentityRoleSuccess', 'Granted AcrPull on registry "{0}" to identity "{1}".', context.registry?.name, context.managedIdentity?.name);
+    protected getOutputLogFail = (context: T) => localize('grantRegistryIdentityRoleFail', 'Failed to grant AcrPull on registry "{0}" to identity "{1}".', context.registry?.name, context.managedIdentity?.name);
+    protected getTreeItemLabel = (context: T) => localize('grantRegistryIdentityRole', 'Grant AcrPull on registry "{0}" to identity "{1}"', context.registry?.name, context.managedIdentity?.name);
     private hasAcrPullRole: boolean;
 
-    // Check for AcrPullRole
     public async configureBeforeExecute(context: T): Promise<void> {
-        const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
-        const registryId: string = nonNullValueAndProp(context.registry, 'id');
-        const managedEnvironmentIdentity: string = nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId');
-
-        const roleAssignments: RoleAssignment[] = await uiUtils.listAllIterator(client.roleAssignments.listForScope(
-            registryId,
-            {
-                // $filter=principalId eq {id}
-                filter: `principalId eq '{${managedEnvironmentIdentity}}'`,
-            }
-        ));
-
-        this.hasAcrPullRole = roleAssignments.some(r => !!r.roleDefinitionId?.endsWith(acrPullRoleId));
+        this.hasAcrPullRole = await AcrPullEnableStep.hasRole(context, context.registry?.id, nonNullValueAndProp(context.managedIdentity, 'principalId'));
         if (this.hasAcrPullRole) {
             ext.outputChannel.appendLog(localize('verifyAcrPullSuccess', 'Successfully verified "{0}" access on container registry "{1}".', 'acrPull', context.registry?.name));
         }
@@ -49,7 +36,7 @@ export class AcrPullEnableStep<T extends ManagedIdentityRegistryCredentialsConte
         const roleCreateParams: RoleAssignmentCreateParameters = {
             description: 'acr pull',
             roleDefinitionId: `/providers/Microsoft.Authorization/roleDefinitions/${acrPullRoleId}`,
-            principalId: nonNullValueAndProp(context.managedEnvironment?.identity, 'principalId'),
+            principalId: nonNullValueAndProp(context.managedIdentity, 'principalId'),
             principalType: KnownPrincipalType.ServicePrincipal,
         };
 
@@ -63,5 +50,25 @@ export class AcrPullEnableStep<T extends ManagedIdentityRegistryCredentialsConte
 
     public shouldExecute(context: T): boolean {
         return !!context.registry && !this.hasAcrPullRole;
+    }
+
+    public static async hasRole(context: AzExtClientContext, registryId: string | undefined, principalId: string): Promise<boolean> {
+        const principalIds = await AcrPullEnableStep.getPrincipalIdsWithRole(context, registryId);
+        return principalIds.has(principalId.toLowerCase());
+    }
+
+    public static async getPrincipalIdsWithRole(context: AzExtClientContext, registryId: string | undefined): Promise<Set<string>> {
+        if (!registryId) {
+            return new Set<string>();
+        }
+
+        const client: AuthorizationManagementClient = await createAuthorizationManagementClient(context);
+        const roleAssignments: RoleAssignment[] = await uiUtils.listAllIterator(client.roleAssignments.listForScope(
+            registryId.toLowerCase(),
+            { filter: 'atScope()' },
+        ));
+        return new Set(roleAssignments
+            .filter(assignment => assignment.principalId && assignment.roleDefinitionId?.toLowerCase().endsWith(`/${acrPullRoleId}`))
+            .map(assignment => nonNullValueAndProp(assignment, 'principalId').toLowerCase()));
     }
 }

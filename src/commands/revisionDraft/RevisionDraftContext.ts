@@ -4,8 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type IContainerAppContext } from "../IContainerAppContext";
+import { type RegistryConfiguration } from "../registryCredentials/mergeRegistryConfiguration";
 
 export interface RevisionDraftContext extends IContainerAppContext {
     isDraftCommand?: boolean;
     shouldDeployRevisionDraft?: boolean;
+    registryConfiguration?: RegistryConfiguration;
 }
