@@ -20,6 +20,7 @@ export class ManagedEnvironmentNameStep extends AzureWizardPromptStep<ManagedEnv
         })).trim();
 
         context.valuesToMask.push(context.newManagedEnvironmentName);
+        context.relatedNameTask ??= Promise.resolve(context.newManagedEnvironmentName);
     }
 
     public shouldPrompt(context: ManagedEnvironmentCreateContext): boolean {
