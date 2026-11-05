@@ -4,9 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import * as vscode from 'vscode';
 import { SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { openSandboxTerminal, promptForAcaExecutable } from '../../sandboxes/sandboxTerminal';
 import { pickSandbox } from '../../utils/pickItem/pickSandbox';
+import { refreshSandboxesTree } from './sandboxCommandUtils';
+
+const resumeRefreshIntervalMs: number = 5 * 1000;
+const resumeRefreshMaxAttempts: number = 12;
 
 /**
  * Opens a real interactive shell through `aca sandbox shell`. All non-terminal sandbox
@@ -20,6 +25,31 @@ export async function openSandboxShell(context: IActionContext, node?: SandboxIt
 
     const executable = await promptForAcaExecutable(context);
     if (executable) {
-        openSandboxTerminal(node.label, node.ref, executable);
+        const terminal = openSandboxTerminal(node.label, node.ref, executable);
+        watchSandboxStateChanges(terminal);
     }
+}
+
+/**
+ * The CLI may resume a stopped sandbox after the terminal opens, so briefly refresh the tree
+ * until the terminal closes to pick up the new state.
+ */
+function watchSandboxStateChanges(terminal: vscode.Terminal): void {
+    let attempts = 0;
+    const stop = (): void => {
+        clearInterval(timer);
+        closeListener.dispose();
+    };
+    const timer = setInterval(() => {
+        refreshSandboxesTree();
+        if (++attempts >= resumeRefreshMaxAttempts) {
+            stop();
+        }
+    }, resumeRefreshIntervalMs);
+    const closeListener = vscode.window.onDidCloseTerminal(closed => {
+        if (closed === terminal) {
+            stop();
+            refreshSandboxesTree();
+        }
+    });
 }
