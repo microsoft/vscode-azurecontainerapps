@@ -31,7 +31,7 @@ export async function createSandboxGroup(context: IActionContext, node?: { subsc
     const wizardContext: CreateSandboxGroupContext = {
         ...context,
         ...createSubscriptionContext(subscription),
-        ...await createActivityContext(),
+        ...await createActivityContext({ withChildren: true }),
         subscription,
         suppress403Handling: true,
         suppressProgress: true,
