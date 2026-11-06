@@ -25,13 +25,14 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
     });
     const service = createSandboxService(subscriptionContext, node.ref);
 
-    const picks: (vscode.QuickPickItem & { seconds: number })[] = [
+    const picks: (vscode.QuickPickItem & { seconds?: number })[] = [
         { label: localize('autoSuspend1m', '1 minute'), seconds: 60 },
         { label: localize('autoSuspend2m', '2 minutes'), seconds: 120 },
         { label: localize('autoSuspend5m', '5 minutes'), seconds: 300 },
         { label: localize('autoSuspend10m', '10 minutes'), seconds: 600 },
         { label: localize('autoSuspend30m', '30 minutes'), seconds: 1800 },
         { label: localize('autoSuspend60m', '60 minutes'), seconds: 3600 },
+        { label: localize('autoSuspendDisable', 'Disable auto-suspend') }
     ];
 
     const pick = await context.ui.showQuickPick(picks, {
@@ -44,7 +45,7 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
         async () => {
             const sandbox = await service.getSandbox(node.ref.sandboxId);
             await service.setLifecyclePolicy(node.ref.sandboxId, updateAutoSuspendPolicy(sandbox.lifecycle, {
-                enabled: true,
+                enabled: pick.seconds !== undefined,
                 interval: pick.seconds,
             }));
         },
