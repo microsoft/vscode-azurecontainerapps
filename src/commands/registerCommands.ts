@@ -36,7 +36,7 @@ import { connectLogAnalytics } from './logAnalytics/connectLogAnalytics';
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
-import { openExpressPortal } from './openExpressPortal';
+import { openContainerAppsPortal } from './openContainerAppsPortal';
 import { revealInEnvironment } from './revealInEnvironment';
 import { copySandboxId } from './sandboxes/copySandboxId';
 import { openSandboxInPortal } from './sandboxes/openSandboxInPortal';
@@ -80,7 +80,9 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
-    registerCommandWithTreeNodeUnwrapping('containerApps.openExpressPortal', openExpressPortal);
+    registerCommandWithTreeNodeUnwrapping('containerApps.openContainerAppsPortal', openContainerAppsPortal);
+    // Preserve the old command ID for existing keybindings and callers.
+    registerCommandWithTreeNodeUnwrapping('containerApps.openExpressPortal', openContainerAppsPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.revealInEnvironment', revealInEnvironment);
     registerCommandWithTreeNodeUnwrapping('containerApps.toggleEnvironmentVariableVisibility',
         async (context: IActionContext, item: EnvironmentVariableItem) => {

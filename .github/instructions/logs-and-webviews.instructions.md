@@ -1,5 +1,5 @@
 ---
-applyTo: "src/commands/logStream/**/*.ts,src/commands/openConsoleInPortal.ts,src/commands/openExpressPortal.ts,src/tree/LogsGroupItem.ts,src/webviews/**/*.ts,src/webviews/**/*.tsx,src/webviews/**/*.scss,src/commands/copilot/**/*.ts"
+applyTo: "src/commands/logStream/**/*.ts,src/commands/openConsoleInPortal.ts,src/commands/openContainerAppsPortal.ts,src/tree/LogsGroupItem.ts,src/webviews/**/*.ts,src/webviews/**/*.tsx,src/webviews/**/*.scss,src/commands/copilot/**/*.ts"
 ---
 
 # Log streams, confirmation views, and Copilot

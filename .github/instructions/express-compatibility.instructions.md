@@ -84,7 +84,7 @@ See [ContainerAppItem](../../src/tree/ContainerAppItem.ts), [RevisionDraftItem](
 
 ## Log Analytics is optional
 
-Express portal apps no longer attach a Log Analytics workspace by default, to reduce base cost. Missing `appLogsConfiguration`, `logAnalyticsConfiguration`, or `customerId` is valid and must not block creation, deployment, or startup verification.
+Express apps created in the Azure Container Apps portal no longer attach a Log Analytics workspace by default, to reduce base cost. Missing `appLogsConfiguration`, `logAnalyticsConfiguration`, or `customerId` is valid and must not block creation, deployment, or startup verification.
 
 The extension's shared environment creation flows also no longer create or attach a workspace by default, including for Standard. Do not restore automatic workspace creation, workspace-name prompts, workspace provider registration, or logging-based location filtering as an incidental dependency of app deployment.
 

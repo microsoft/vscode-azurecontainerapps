@@ -5,16 +5,23 @@
 
 import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { env, Uri } from "vscode";
-import { expressPortalBaseUrl } from "../constants";
-import { type ContainerAppItem } from "../tree/ContainerAppItem";
+import { containerAppsPortalBaseUrl } from "../constants";
+import { ContainerAppItem } from "../tree/ContainerAppItem";
 import { ManagedEnvironmentItem } from "../tree/ManagedEnvironmentItem";
+import { localize } from "../utils/localize";
 import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
 
-export async function openExpressPortal(context: IActionContext, node?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
+export async function openContainerAppsPortal(context: IActionContext, node?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
     const item = node ?? await pickContainerApp(context);
+
     const isEnvironment = ManagedEnvironmentItem.isManagedEnvironmentItem(item);
+    const isContainerApp = ContainerAppItem.isContainerAppItem(item);
+    if (!isEnvironment && !isContainerApp) {
+        throw new Error(localize('invalidContainerAppsPortalItem', 'Select a container app or managed environment to open in the Container Apps portal.'));
+    }
+
     const resource = isEnvironment ? item.managedEnvironment : item.containerApp;
     const resourceType = isEnvironment ? 'environments' : 'apps';
-    const url = `${expressPortalBaseUrl}/${resourceType}/${item.subscription.subscriptionId}/${resource.resourceGroup}/${resource.name}/overview`;
+    const url = `${containerAppsPortalBaseUrl}/${resourceType}/${item.subscription.subscriptionId}/${resource.resourceGroup}/${resource.name}/overview`;
     await env.openExternal(Uri.parse(url));
 }
