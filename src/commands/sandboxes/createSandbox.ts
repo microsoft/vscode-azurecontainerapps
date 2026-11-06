@@ -39,8 +39,12 @@ export async function createSandboxInGroup(context: IActionContext, subscription
 
     let sandbox: Sandbox | undefined;
     await runSandboxActivity(
-        localize('createSandboxActivity', 'Create sandbox in group "{0}"', ref.groupName),
-        localize('creatingSandbox', 'Creating sandbox in group "{0}"...', ref.groupName),
+        name
+            ? localize('createSandboxNamedActivity', 'Create sandbox "{0}" in group "{1}"', name, ref.groupName)
+            : localize('createSandboxActivity', 'Create sandbox in group "{0}"', ref.groupName),
+        name
+            ? localize('creatingSandboxNamed', 'Creating sandbox "{0}" in group "{1}"...', name, ref.groupName)
+            : localize('creatingSandbox', 'Creating sandbox in group "{0}"...', ref.groupName),
         async () => {
             sandbox = await service.createSandbox({ disk, resources: resourceTier.resources, name });
         },
