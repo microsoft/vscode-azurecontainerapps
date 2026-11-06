@@ -3,9 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import { createSubscriptionContext, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as vscode from 'vscode';
-import { SandboxItem } from '../../sandboxes/tree/SandboxItem';
+import { createSandboxService } from '../../sandboxes/SandboxService';
+import { categorizeSandboxState, SandboxItem } from '../../sandboxes/tree/SandboxItem';
 import { openSandboxTerminal, promptForAcaExecutable } from '../../sandboxes/sandboxTerminal';
 import { pickSandbox } from '../../utils/pickItem/pickSandbox';
 import { refreshSandboxesTree } from './sandboxCommandUtils';
@@ -26,22 +28,48 @@ export async function openSandboxShell(context: IActionContext, node?: SandboxIt
     const executable = await promptForAcaExecutable(context);
     if (executable) {
         const terminal = openSandboxTerminal(node.label, node.ref, executable);
-        watchSandboxStateChanges(terminal);
+        watchSandboxStateChanges(context, node, terminal);
     }
 }
 
 /**
- * The CLI may resume a stopped sandbox after the terminal opens, so briefly refresh the tree
- * until the terminal closes to pick up the new state.
+ * The CLI may resume a stopped sandbox after the terminal opens, so poll the sandbox state and
+ * refresh the tree once when it changes, then stop watching.
  */
-function watchSandboxStateChanges(terminal: vscode.Terminal): void {
+function watchSandboxStateChanges(context: IActionContext, node: SandboxItem, terminal: vscode.Terminal): void {
+    const subscriptionContext: IActionContext & ISubscriptionContext & { subscription: AzureSubscription } = Object.assign(context, {
+        ...createSubscriptionContext(node.subscription),
+        subscription: node.subscription,
+    });
+    const service = createSandboxService(subscriptionContext, node.ref);
+    const initialState = node.stateCategory;
+
     let attempts = 0;
+    let checking = false;
     const stop = (): void => {
         clearInterval(timer);
         closeListener.dispose();
     };
-    const timer = setInterval(() => {
-        refreshSandboxesTree();
+    const timer = setInterval(async () => {
+        if (checking) {
+            return;
+        }
+        checking = true;
+        try {
+            const sandbox = await service.getSandbox(node.ref.sandboxId);
+            const category = categorizeSandboxState(sandbox.state);
+            if (category !== initialState) {
+                refreshSandboxesTree();
+                if (category !== 'transitional') {
+                    stop();
+                    return;
+                }
+            }
+        } catch {
+            // Best-effort polling; the next tick or terminal close will retry.
+        } finally {
+            checking = false;
+        }
         if (++attempts >= resumeRefreshMaxAttempts) {
             stop();
         }
