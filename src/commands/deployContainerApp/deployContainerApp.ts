@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode } from "@azure/arm-appcontainers";
 import { AzExtUserInput, AzureWizard, createSubscriptionContext, isCopilotUserInput, nonNullProp, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { acrDomain, ImageSource, SupportedRegistries } from "../../constants";
-import { type ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ContainerAppItem } from "../../tree/ContainerAppItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { isAzdExtensionInstalled } from "../../utils/azdUtils";
 import { getManagedEnvironmentFromContainerApp } from "../../utils/getResourceUtils";
@@ -75,14 +75,15 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
         const promptSteps: AzureWizardPromptStep<ContainerAppDeployContext>[] = [];
 
         if (node) {
+            const containerApp = await ContainerAppItem.Get(context, node.subscription, node.containerApp.resourceGroup, node.containerApp.name);
             // If this command gets re run we only want the internal portion of the command to run, so we set the callbackid
             context.callbackId = 'containerApps.deployContainerAppInternal';
             wizardContext = {
                 ...context,
                 ...await createActivityContext({ withChildren: true }),
                 subscription: node.subscription,
-                containerApp: node.containerApp,
-                managedEnvironment: await getManagedEnvironmentFromContainerApp(context, node.containerApp),
+                containerApp,
+                managedEnvironment: await getManagedEnvironmentFromContainerApp(context, containerApp),
                 imageSource,
                 registryDomain,
                 activityAttributes: {
@@ -94,7 +95,7 @@ export async function deployContainerAppInternal(context: ISubscriptionActionCon
             if (isAzdExtensionInstalled()) {
                 wizardContext.telemetry.properties.isAzdExtensionInstalled = 'true';
             }
-            wizardContext.telemetry.properties.revisionMode = node.containerApp.revisionsMode;
+            wizardContext.telemetry.properties.revisionMode = containerApp.revisionsMode;
         } else if (runFromCopilot) {
             promptSteps.push(new ManagedEnvironmentListStep(), new ContainerAppListStep());
             wizardContext = {

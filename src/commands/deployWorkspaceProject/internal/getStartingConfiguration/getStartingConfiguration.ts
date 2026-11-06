@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { KnownSkuName } from "@azure/arm-containerregistry";
-import { ImageSource } from "../../../../constants";
+import { EnvironmentAppType, ImageSource } from "../../../../constants";
 import { ManagedEnvironmentListStep } from "../../../createManagedEnvironment/ManagedEnvironmentListStep";
 import { EnvFileListStep } from "../../../image/imageSource/EnvFileListStep";
 import { AcrBuildSupportedOS } from "../../../image/imageSource/buildImageInAzure/OSPickStep";
@@ -17,8 +17,8 @@ export async function getStartingConfiguration(context: DeployWorkspaceProjectIn
 
     return {
         resourceGroup: context.resourceGroup,
-        logAnalyticsWorkspace: context.logAnalyticsWorkspace,
         managedEnvironment: context.managedEnvironment,
+        newManagedEnvironmentAppType: context.newManagedEnvironmentAppType ?? EnvironmentAppType.Standard,
         containerApp: context.containerApp,
         suppressEnableAdminUserPrompt: options.suppressConfirmation,
         imageSource: ImageSource.RemoteAcrBuild,

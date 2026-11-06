@@ -9,17 +9,7 @@ import { type Progress } from "vscode";
 import { localize } from "../../../utils/localize";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type IngressBaseContext } from "../IngressContext";
-
-export const enabledIngressDefaults = {
-    transport: 'auto',
-    allowInsecure: false,
-    traffic: [
-        {
-            weight: 100,
-            latestRevision: true
-        }
-    ],
-};
+import { enabledIngressDefaults } from "../ingressDefaults";
 
 export class EnableIngressStep<T extends IngressBaseContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 750;

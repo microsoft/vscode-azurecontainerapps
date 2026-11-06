@@ -7,13 +7,13 @@ import { KnownActiveRevisionsMode, type ContainerApp, type ContainerAppsAPIClien
 import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, DeleteConfirmationStep, callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValue, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem, type Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
 import { expressContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
+import { areTemplateValuesEqual } from "../utils/areTemplateValuesEqual";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
 import { createPortalUrl } from "../utils/createPortalUrl";
 import { localize } from "../utils/localize";
@@ -84,7 +84,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         }
 
         if (this.isExpress) {
-            return localize('express', '(Express)');
+            return localize('express', 'Express');
         }
 
         return undefined;
@@ -192,12 +192,17 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
     }
 
     hasUnsavedChanges(): boolean {
+        // Staged credentials are outside the template JSON and can be draft-cached as well.
+        if (ext.revisionDraftFileSystem.getRevisionDraftFile(this)?.registryConfiguration) {
+            return true;
+        }
+
         const draftTemplate: Template | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this);
         if (!draftTemplate) {
             return false;
         }
 
-        return !deepEqual(this.containerApp.template, draftTemplate);
+        return !areTemplateValuesEqual(this.containerApp.template, draftTemplate);
     }
 }
 

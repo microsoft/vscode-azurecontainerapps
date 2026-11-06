@@ -6,9 +6,9 @@
 import { KnownActiveRevisionsMode, type Revision, type Scale } from "@azure/arm-appcontainers";
 import { createGenericElement } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import deepEqual from 'deep-eql';
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
@@ -87,14 +87,14 @@ export class ScaleItem extends RevisionDraftDescendantBase {
             return false;
         }
 
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
         const currentTemplate = this.parentResource.template?.scale;
 
         if (!draftTemplate) {
             return false;
         }
 
-        return !deepEqual(currentTemplate, draftTemplate);
+        return !areTemplateValuesEqual(currentTemplate, draftTemplate.scale);
     }
 
     replicasHaveUnsavedChanges(): boolean {
@@ -102,13 +102,13 @@ export class ScaleItem extends RevisionDraftDescendantBase {
             return false;
         }
 
-        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale;
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
         const currentTemplate = this.parentResource.template?.scale;
 
         if (!draftTemplate) {
             return false;
         }
 
-        return draftTemplate.minReplicas !== currentTemplate?.minReplicas || draftTemplate.maxReplicas !== currentTemplate?.maxReplicas;
+        return draftTemplate.scale?.minReplicas !== currentTemplate?.minReplicas || draftTemplate.scale?.maxReplicas !== currentTemplate?.maxReplicas;
     }
 }

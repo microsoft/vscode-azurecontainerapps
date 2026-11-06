@@ -10,6 +10,8 @@ import { ext } from "../../../extensionVariables";
 import { ContainerAppItem, getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../../tree/ContainerAppItem";
 import { RevisionDraftItem } from "../../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../../utils/localize";
+import { getContainerAppIdentity } from "../../registryCredentials/identity/getContainerAppIdentity";
+import { mergeRegistryConfiguration } from "../../registryCredentials/mergeRegistryConfiguration";
 import { updateContainerApp } from "../../updateContainerApp";
 import { type DeployRevisionDraftContext } from "./DeployRevisionDraftContext";
 
@@ -20,6 +22,16 @@ export class DeployRevisionDraftStep extends AzureWizardExecuteStep<DeployRevisi
         const containerApp: ContainerAppModel = nonNullProp(context, 'containerApp');
         const containerAppEnvelope = await getContainerEnvelopeWithSecrets(context, context.subscription, containerApp);
         containerAppEnvelope.template = nonNullProp(context, 'template');
+
+        if (context.registryConfiguration) {
+            const configuration = mergeRegistryConfiguration(containerAppEnvelope.configuration, context.registryConfiguration);
+            containerAppEnvelope.configuration.registries = configuration.registries;
+            containerAppEnvelope.configuration.secrets = configuration.secrets;
+
+            for (const id of configuration.managedIdentityIds ?? []) {
+                containerAppEnvelope.identity = getContainerAppIdentity(id, containerAppEnvelope.identity) ?? containerAppEnvelope.identity;
+            }
+        }
 
         let updating: string | undefined;
         let description: string | undefined;

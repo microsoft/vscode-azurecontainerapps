@@ -7,12 +7,12 @@ import { type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { LocationListStep, ResourceGroupCreateStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, createSubscriptionContext, nonNullProp, subscriptionExperience, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import { logAnalyticsProvider, logAnalyticsResourceType, managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
+import { managedEnvironmentProvider, managedEnvironmentResourceType } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { createActivityContext } from "../../utils/activityUtils";
 import { getVerifyProvidersStep } from "../../utils/getVerifyProvidersStep";
 import { localize } from "../../utils/localize";
-import { LogAnalyticsCreateStep } from "./LogAnalyticsCreateStep";
+import { AppTypeListStep } from "./AppTypeListStep";
 import { type ManagedEnvironmentCreateContext } from "./ManagedEnvironmentCreateContext";
 import { ManagedEnvironmentCreateStep } from "./ManagedEnvironmentCreateStep";
 import { ManagedEnvironmentNameStep } from "./ManagedEnvironmentNameStep";
@@ -31,16 +31,17 @@ export async function createManagedEnvironment(context: IActionContext, node?: {
     const promptSteps: AzureWizardPromptStep<ManagedEnvironmentCreateContext>[] = [];
     const executeSteps: AzureWizardExecuteStep<ManagedEnvironmentCreateContext>[] = [];
 
-    promptSteps.push(new ManagedEnvironmentNameStep());
+    promptSteps.push(
+        new AppTypeListStep(),
+        new ManagedEnvironmentNameStep(),
+    );
     executeSteps.push(
         getVerifyProvidersStep<ManagedEnvironmentCreateContext>(),
         new ResourceGroupCreateStep(),
-        new LogAnalyticsCreateStep(),
         new ManagedEnvironmentCreateStep()
     );
 
     LocationListStep.addProviderForFiltering(wizardContext, managedEnvironmentProvider, managedEnvironmentResourceType);
-    LocationListStep.addProviderForFiltering(wizardContext, logAnalyticsProvider, logAnalyticsResourceType);
     LocationListStep.addStep(wizardContext, promptSteps);
 
     const wizard = new AzureWizard<ManagedEnvironmentCreateContext>(wizardContext, {

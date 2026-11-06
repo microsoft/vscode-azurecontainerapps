@@ -5,9 +5,6 @@
 
 import { type RegistryCredentials } from "@azure/arm-appcontainers";
 import { type RegistryPassword } from "@azure/arm-containerregistry";
-import { type Workspace } from "@azure/arm-operationalinsights";
-import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { createOperationalInsightsManagementClient } from "../../utils/azureClients";
 import type * as api from "../api/vscode-azurecontainerapps.api";
 import { listCredentialsFromAcr } from "../registryCredentials/dockerLogin/listCredentialsFromAcr";
 import { type DeployWorkspaceProjectContext } from "./DeployWorkspaceProjectContext";
@@ -22,11 +19,8 @@ export async function getDeployWorkspaceProjectResults(context: DeployWorkspaceP
         listedCredentials = await listCredentialsFromAcr(context);
     }
 
-    context.logAnalyticsWorkspace ??= await tryGetLogAnalyticsWorkspace(context);
-
     return {
         resourceGroupId: context.resourceGroup?.id,
-        logAnalyticsWorkspaceId: context.logAnalyticsWorkspace?.id,
         managedEnvironmentId: context.managedEnvironment?.id,
         containerAppId: context.containerApp?.id,
         registryId: context.registry?.id,
@@ -35,17 +29,4 @@ export async function getDeployWorkspaceProjectResults(context: DeployWorkspaceP
         registryPassword: listedCredentials?.password.value,
         imageName: context.imageName
     };
-}
-
-export async function tryGetLogAnalyticsWorkspace(context: DeployWorkspaceProjectContext): Promise<Workspace | undefined> {
-    const resourceGroupName = context.resourceGroup?.name;
-    const logAnalyticsCustomerId = context.managedEnvironment?.appLogsConfiguration?.logAnalyticsConfiguration?.customerId;
-
-    if (!resourceGroupName || !logAnalyticsCustomerId) {
-        return undefined;
-    }
-
-    const client = await createOperationalInsightsManagementClient(context);
-    const workspaces: Workspace[] = await uiUtils.listAllIterator(client.workspaces.listByResourceGroup(resourceGroupName));
-    return workspaces.find(w => w.customerId === logAnalyticsCustomerId);
 }

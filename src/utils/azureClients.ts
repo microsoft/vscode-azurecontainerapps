@@ -25,25 +25,6 @@ export async function createContainerAppsAPIClient(context: AzExtClientContext):
     return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient as unknown as AzExtClientType<ContainerAppsAPIClient>);
 }
 
-const previewApiVersion = '2026-03-02-preview';
-
-export async function createContainerAppsPreviewAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
-    const client = await createContainerAppsAPIClient(context);
-    client.apiVersion = previewApiVersion;
-    client.pipeline.addPolicy({
-        name: 'PreviewApiVersionPolicy',
-        sendRequest(request, next) {
-            const [base, query] = request.url.split('?');
-            if (query) {
-                const newQuery = query.split('&').map(p => p.startsWith('api-version=') ? `api-version=${previewApiVersion}` : p).join('&');
-                request.url = `${base}?${newQuery}`;
-            }
-            return next(request);
-        },
-    });
-    return client;
-}
-
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
     return createAzureClient(context, (await import('@azure/arm-containerregistry')).ContainerRegistryManagementClient);
 }
@@ -51,10 +32,6 @@ export async function createContainerRegistryManagementClient(context: AzExtClie
 export function createContainerRegistryClient(context: AzExtClientContext, registry: Registry): ContainerRegistryClient {
     return new ContainerRegistryClient(`https://${registry.loginServer}`, parseClientContext(context).credentials,
         { audience: KnownContainerRegistryAudience.AzureResourceManagerPublicCloud });
-}
-
-export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
-    return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
 }
 
 export async function createResourceManagementClient(context: AzExtClientContext): Promise<ResourceManagementClient> {
@@ -67,6 +44,10 @@ export async function createAuthorizationManagementClient(context: AzExtClientCo
     } else {
         return createAzureClient(context, (await import('@azure/arm-authorization')).AuthorizationManagementClient);
     }
+}
+
+export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
+    return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
 }
 
 export async function createLogsQueryClientPublicCloud(context: ISubscriptionActionContext): Promise<LogsQueryClient> {

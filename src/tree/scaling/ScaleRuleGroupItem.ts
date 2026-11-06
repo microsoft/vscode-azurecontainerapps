@@ -6,9 +6,9 @@
 import { KnownActiveRevisionsMode, type Revision, type ScaleRule } from "@azure/arm-appcontainers";
 import { type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
-import deepEqual from "deep-eql";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { treeUtils } from "../../utils/treeUtils";
@@ -77,13 +77,13 @@ export class ScaleRuleGroupItem extends RevisionDraftDescendantBase {
             return false;
         }
 
-        const draftTemplate: ScaleRule[] | undefined = ext.revisionDraftFileSystem.parseRevisionDraft(this)?.scale?.rules;
+        const draftTemplate = ext.revisionDraftFileSystem.parseRevisionDraft(this);
         const currentTemplate: ScaleRule[] | undefined = this.parentResource.template?.scale?.rules;
 
         if (!draftTemplate) {
             return false;
         }
 
-        return !deepEqual(currentTemplate, draftTemplate);
+        return !areTemplateValuesEqual(currentTemplate, draftTemplate.scale?.rules);
     }
 }
