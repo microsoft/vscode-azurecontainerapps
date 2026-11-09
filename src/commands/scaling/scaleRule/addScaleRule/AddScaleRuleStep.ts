@@ -4,9 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ScaleRule } from "@azure/arm-appcontainers";
+import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ScaleRuleTypes } from "../../../../constants";
 import { ext } from "../../../../extensionVariables";
+import { ManagedEnvironmentItem } from "../../../../tree/ManagedEnvironmentItem";
 import { type RevisionsItemModel } from "../../../../tree/revisionManagement/RevisionItem";
 import { localize } from "../../../../utils/localize";
 import { getParentResourceFromItem } from "../../../../utils/revisionDraftUtils";
@@ -25,7 +27,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         this.revisionDraftTemplate.scale.rules ||= [];
 
         context.scaleRule = this.buildRule(context);
-        this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
+        await this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
         await this.updateRevisionDraftWithTemplate(context);
 
         const resourceName = getParentResourceFromItem(this.baseItem).name;
@@ -58,13 +60,16 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         return scaleRule;
     }
 
-    private integrateRule(context: T, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
+    private async integrateRule(context: T, scaleRules: ScaleRule[], scaleRule: ScaleRule): Promise<void> {
         switch (context.newRuleType) {
             case ScaleRuleTypes.HTTP: {
-                // Portal only allows one HTTP rule per revision
                 const idx: number = scaleRules.findIndex((rule) => rule.http);
                 if (idx !== -1) {
-                    scaleRules.splice(idx, 1);
+                    const { resourceGroup, resourceName } = parseAzureResourceId(context.containerApp.managedEnvironmentId);
+                    const environment = await ManagedEnvironmentItem.Get(context, context.subscription, resourceGroup, resourceName);
+                    if (environment.environmentMode !== 'Express') {
+                        scaleRules.splice(idx, 1);
+                    }
                 }
                 break;
             }
@@ -74,5 +79,4 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         scaleRules.push(scaleRule);
     }
 }
-
 
