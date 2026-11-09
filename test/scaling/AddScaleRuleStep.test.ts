@@ -14,7 +14,6 @@ import { type IAddScaleRuleContext } from '../../src/commands/scaling/scaleRule/
 import { ScaleRuleTypes } from '../../src/constants';
 import { ext } from '../../src/extensionVariables';
 import { type ContainerAppModel } from '../../src/tree/ContainerAppItem';
-import { ManagedEnvironmentItem } from '../../src/tree/ManagedEnvironmentItem';
 import { type RevisionsItemModel } from '../../src/tree/revisionManagement/RevisionItem';
 import { createActivityContext } from '../../src/utils/activityUtils';
 
@@ -45,33 +44,14 @@ suite('AddScaleRuleStep', () => {
     const queueRule: ScaleRule = { name: 'queue', azureQueue: { queueName: 'queue', queueLength: 10 } };
     const customRule: ScaleRule = { name: 'custom', custom: { type: 'cpu', metadata: { value: '70' } } };
     let originalFileSystem: RevisionDraftFileSystem;
-    let originalGet: typeof ManagedEnvironmentItem.Get;
-    let environmentMode: string | undefined;
-    let environmentRequests: number;
-    let environmentError: Error | undefined;
 
     setup(() => {
         originalFileSystem = ext.revisionDraftFileSystem;
-        originalGet = ManagedEnvironmentItem.Get;
         ext.revisionDraftFileSystem = new RevisionDraftFileSystem();
-        environmentMode = 'Express';
-        environmentRequests = 0;
-        environmentError = undefined;
-        ManagedEnvironmentItem.Get = async (_context, targetSubscription, resourceGroup, name) => {
-            environmentRequests++;
-            assert.strictEqual(targetSubscription, subscription);
-            assert.strictEqual(resourceGroup, 'environments');
-            assert.strictEqual(name, 'environment');
-            if (environmentError) {
-                throw environmentError;
-            }
-            return { id: environmentId, name, resourceGroup, location: 'eastus', environmentMode };
-        };
     });
 
     teardown(() => {
         ext.revisionDraftFileSystem = originalFileSystem;
-        ManagedEnvironmentItem.Get = originalGet;
     });
 
     function createItem(rules: ScaleRule[] | undefined, revisionsMode = KnownActiveRevisionsMode.Single): RevisionsItemModel {
@@ -109,77 +89,77 @@ suite('AddScaleRuleStep', () => {
         });
     }
 
-    test('preserves existing Express rules in Single revision mode', async () => {
-        const rules = [httpRule('rule1'), queueRule, httpRule('rule2'), customRule];
-        const item = createItem(rules);
-        const originalItem = JSON.parse(JSON.stringify(item.containerApp));
-        const step = new TestAddScaleRuleStep(item);
+    for (const revisionsMode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
+        test(`preserves existing HTTP and unrelated rules in ${revisionsMode} revision mode`, async () => {
+            const rules = [httpRule('rule1'), queueRule, httpRule('rule2'), customRule];
+            const item = createItem(rules, revisionsMode);
+            const originalApp = structuredClone(item.containerApp);
+            const originalRevision = structuredClone(item.revision);
+            const step = new TestAddScaleRuleStep(item);
 
-        await step.execute(await createContext(item));
+            await step.execute(await createContext(item));
 
-        assert.deepStrictEqual(step.updatedTemplate?.scale, {
-            minReplicas: 0,
-            maxReplicas: 10,
-            rules: [...rules, { name: 'rule3', http: { metadata: { concurrentRequests: '30' } } }]
-        });
-        assert.deepStrictEqual(step.updatedTemplate?.containers, item.revision.template?.containers);
-        assert.deepStrictEqual(item.containerApp, originalItem);
-        assert.strictEqual(environmentRequests, 1);
-    });
-
-    for (const mode of ['WorkloadProfiles', undefined]) {
-        for (const revisionsMode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
-            test(`preserves HTTP replacement in ${revisionsMode} revision mode when environment mode is ${mode}`, async () => {
-                environmentMode = mode;
-                const item = createItem([httpRule('rule1'), queueRule, customRule], revisionsMode);
-                const step = new TestAddScaleRuleStep(item);
-
-                await step.execute(await createContext(item));
-
-                assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['queue', 'custom', 'rule3']);
-                assert.deepStrictEqual(step.updatedTemplate?.containers, item.revision.template?.containers);
-                assert.strictEqual(environmentRequests, 1);
+            assert.deepStrictEqual(step.updatedTemplate?.scale, {
+                minReplicas: 0,
+                maxReplicas: 10,
+                rules: [...rules, { name: 'rule3', http: { metadata: { concurrentRequests: '30' } } }]
             });
-        }
+            assert.deepStrictEqual(step.updatedTemplate?.containers, item.revision.template?.containers);
+            assert.deepStrictEqual(item.containerApp, originalApp);
+            assert.deepStrictEqual(item.revision, originalRevision);
+        });
+
+        test(`preserves accumulated draft rules and settings in ${revisionsMode} revision mode`, async () => {
+            const item = createItem([httpRule('rule1')], revisionsMode);
+            const originalApp = structuredClone(item.containerApp);
+            const draft: Template = {
+                containers: item.revision.template?.containers,
+                scale: { minReplicas: 2, maxReplicas: 5, rules: [httpRule('rule1'), httpRule('rule2')] }
+            };
+            ext.revisionDraftFileSystem.parseRevisionDraft = () => structuredClone(draft);
+            const step = new TestAddScaleRuleStep(item);
+
+            await step.execute(await createContext(item));
+
+            assert.deepStrictEqual(step.updatedTemplate?.scale, {
+                minReplicas: 2,
+                maxReplicas: 5,
+                rules: [...draft.scale?.rules ?? [], { name: 'rule3', http: { metadata: { concurrentRequests: '30' } } }]
+            });
+            assert.deepStrictEqual(item.containerApp, originalApp);
+            assert.deepStrictEqual(draft.scale?.rules?.map(rule => rule.name), ['rule1', 'rule2']);
+        });
+
+        test(`retains the first HTTP rule when adding a second in ${revisionsMode} revision mode`, async () => {
+            const item = createItem([httpRule('rule1')], revisionsMode);
+            const step = new TestAddScaleRuleStep(item);
+
+            await step.execute(await createContext(item));
+
+            assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['rule1', 'rule3']);
+        });
     }
 
-    test('does not request the environment for the first HTTP rule', async () => {
+    for (const rules of [undefined, []]) {
+        test(`adds the first HTTP rule with ${rules === undefined ? 'missing' : 'empty'} rules`, async () => {
+            const item = createItem(rules);
+            const step = new TestAddScaleRuleStep(item);
+
+            await step.execute(await createContext(item));
+
+            assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['rule3']);
+        });
+    }
+
+    test('initializes missing scale settings for the first HTTP rule', async () => {
         const item = createItem(undefined);
+        delete item.containerApp.template?.scale;
         const step = new TestAddScaleRuleStep(item);
 
         await step.execute(await createContext(item));
 
         assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['rule3']);
-        assert.strictEqual(environmentRequests, 0);
-    });
-
-    test('preserves rules already added to an Express draft', async () => {
-        const item = createItem([httpRule('rule1')]);
-        const draft: Template = {
-            containers: item.containerApp.template?.containers,
-            scale: { minReplicas: 2, maxReplicas: 5, rules: [httpRule('rule1'), httpRule('rule2')] }
-        };
-        ext.revisionDraftFileSystem.parseRevisionDraft = () => structuredClone(draft);
-        const step = new TestAddScaleRuleStep(item);
-
-        await step.execute(await createContext(item));
-
-        assert.deepStrictEqual(step.updatedTemplate?.scale, {
-            minReplicas: 2,
-            maxReplicas: 5,
-            rules: [...draft.scale?.rules ?? [], { name: 'rule3', http: { metadata: { concurrentRequests: '30' } } }]
-        });
-        assert.deepStrictEqual(item.containerApp.template?.scale?.rules?.map(rule => rule.name), ['rule1']);
-        assert.deepStrictEqual(draft.scale?.rules?.map(rule => rule.name), ['rule1', 'rule2']);
-    });
-
-    test('retains the first Express HTTP rule when adding a second', async () => {
-        const item = createItem([httpRule('rule1')]);
-        const step = new TestAddScaleRuleStep(item);
-
-        await step.execute(await createContext(item));
-
-        assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['rule1', 'rule3']);
+        assert.strictEqual(item.containerApp.template?.scale, undefined);
     });
 
     test('does not change queue rule additions', async () => {
@@ -200,17 +180,5 @@ suite('AddScaleRuleStep', () => {
             queueLength: 10,
             auth: [{ secretRef: 'queue-secret', triggerParameter: 'connection' }]
         });
-        assert.strictEqual(environmentRequests, 0);
-    });
-
-    test('does not write a draft if environment lookup fails', async () => {
-        const item = createItem([httpRule('rule1'), httpRule('rule2')]);
-        const step = new TestAddScaleRuleStep(item);
-        environmentError = new Error('Environment unavailable');
-
-        await assert.rejects(step.execute(await createContext(item)), environmentError);
-
-        assert.strictEqual(step.updatedTemplate, undefined);
-        assert.deepStrictEqual(item.containerApp.template?.scale?.rules?.map(rule => rule.name), ['rule1', 'rule2']);
     });
 });
