@@ -53,7 +53,7 @@ suite('managed environment tree items', () => {
             const treeItem = item.getTreeItem();
             const isExpress = environmentMode === 'Express';
 
-            assert.strictEqual(treeItem.description, isExpress ? '(Express)' : '(Standard)');
+            assert.strictEqual(treeItem.description, isExpress ? 'Express' : 'Standard');
             assert.strictEqual(item.isExpress, isExpress);
             assert.strictEqual(treeItem.label, name);
             assert.strictEqual(treeItem.id, id);
