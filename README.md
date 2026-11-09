@@ -39,8 +39,6 @@ _Draft support has only been added for these actions: Scaling commands, Update C
     ![deployDraft](resources/readme/deployDraft.png)
 1. Once your deployment has completed your changes should accurately be reflected in the Azure view!
 
-`Azure Container Apps: Choose Revision Mode` is available for Standard Container Apps. Express Container Apps only support single revision mode, so this command excludes Express environments from its picker and is hidden from Express app context menus.
-
 ## Troubleshooting
 
 ### "unable to get local issuer certificate" on a corporate network

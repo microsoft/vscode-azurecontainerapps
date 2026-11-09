@@ -5,7 +5,7 @@
 
 import { KnownActiveRevisionsMode } from '@azure/arm-appcontainers';
 import { Environment } from '@azure/ms-rest-azure-env';
-import { createTestActionContext, UserCancelledError, type AzureResourceQuickPickWizardContext } from '@microsoft/vscode-azext-utils';
+import { createTestActionContext, UserCancelledError, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { AzExtResourceType, type AzureResource, type AzureSubscription, type ResourceModelBase } from '@microsoft/vscode-azureresources-api';
 import * as assert from 'assert';
 import { extensions, type TreeItem } from 'vscode';
@@ -15,9 +15,11 @@ import { ext } from '../src/extensionVariables';
 import { ContainerAppItem } from '../src/tree/ContainerAppItem';
 import { ManagedEnvironmentItem } from '../src/tree/ManagedEnvironmentItem';
 import { RevisionsItem } from '../src/tree/revisionManagement/RevisionsItem';
-import { getPickContainerAppSteps } from '../src/utils/pickItem/pickContainerApp';
-import { getPickEnvironmentSteps } from '../src/utils/pickItem/pickEnvironment';
+import { RevisionItem } from '../src/tree/revisionManagement/RevisionItem';
+import { getPickContainerAppStep, getPickContainerAppSteps, pickContainerApp, pickContainerAppWithoutPrompt } from '../src/utils/pickItem/pickContainerApp';
+import { getPickEnvironmentSteps, pickEnvironment } from '../src/utils/pickItem/pickEnvironment';
 import { type ContainerAppPickItemOptions } from '../src/utils/pickItem/PickItemOptions';
+import { pickRevision } from '../src/utils/pickItem/pickRevision';
 import { getTestApi } from './utils/testApiAccess';
 
 suite('Choose revision mode', () => {
@@ -88,11 +90,12 @@ suite('Choose revision mode', () => {
         });
     }
 
-    function app(isExpress: boolean, mode = KnownActiveRevisionsMode.Single): ContainerAppItem {
+    function app(isExpress: boolean, mode = KnownActiveRevisionsMode.Single, name = 'test-app'): ContainerAppItem {
         return new ContainerAppItem(subscription, {
-            id: `${baseId}/containerApps/test-app`,
-            name: 'test-app', resourceGroup: 'test', location: 'eastus',
+            id: `${baseId}/containerApps/${name}`,
+            name, resourceGroup: 'test', location: 'eastus',
             managedEnvironmentId: `${baseId}/managedEnvironments/test-environment`,
+            environmentId: `${baseId}/managedEnvironments/test-environment`,
             revisionsMode: mode,
             configuration: { activeRevisionsMode: mode },
             template: { containers: [] }
@@ -246,5 +249,184 @@ suite('Choose revision mode', () => {
         const context = await createTestActionContext();
         const item = new RevisionsItem(subscription, app(false, KnownActiveRevisionsMode.Multiple).containerApp);
         await context.ui.runWithInputs(['Multiple'], () => chooseRevisionMode(context, item));
+    });
+
+    function installHierarchy(environments: ManagedEnvironmentItem[], apps: ContainerAppItem[], wrapped = false) {
+        const provider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
+        const subscriptionNode = { subscription };
+        const group = {};
+        const children = new Map<object | undefined, object[]>([
+            [undefined, [subscriptionNode]], [subscriptionNode, [group]], [group, environments],
+        ]);
+        const treeItems = new Map<object, () => TreeItem>([
+            [subscriptionNode, () => ({ label: subscription.name, collapsibleState: 1 })],
+            [group, () => ({ label: 'Environments', contextValue: 'azureResourceTypeGroup;ContainerAppsEnvironment', collapsibleState: 1 })],
+        ]);
+        const wrappers = new Map<object, object>();
+        const originals = new Map<object, object>();
+        const visited: (object | undefined)[] = [];
+        function add(parent: object, items: { getTreeItem(): TreeItem }[]): void {
+            children.set(parent, items);
+            for (const item of items) {
+                treeItems.set(item, () => item.getTreeItem());
+            }
+        }
+        add(group, environments);
+        for (const environment of environments) {
+            add(environment, apps);
+        }
+        provider.getChildren = async function (element) {
+            assert.strictEqual(this, provider, 'Discovery uses the original tree provider');
+            assert.ok(element === undefined || (typeof element === 'object' && element !== null));
+            const parent = element ? originals.get(element) ?? element : undefined;
+            visited.push(parent);
+            return (children.get(parent) ?? []).map(item => {
+                if (!wrapped) {
+                    return item;
+                }
+                let wrapper = wrappers.get(item);
+                if (!wrapper) {
+                    wrapper = { branchItem: item, unwrap: () => item };
+                    wrappers.set(item, wrapper);
+                    originals.set(wrapper, item);
+                }
+                // Subscription steps read subscription from the host node.
+                return item === subscriptionNode ? item : wrapper;
+            });
+        };
+        provider.getTreeItem = function (element) {
+            assert.strictEqual(this, provider, 'Tree rendering uses the original tree provider');
+            assert.ok(typeof element === 'object' && element !== null);
+            const getTreeItem = treeItems.get(originals.get(element) ?? element);
+            assert.ok(getTreeItem);
+            return getTreeItem();
+        };
+        return { add, visited };
+    }
+
+    for (const environmentMode of [undefined, 'WorkloadProfiles', 'Express']) {
+        for (const wrapped of [false, true]) {
+            test(`preserves the full unfiltered ${environmentMode ?? 'legacy'} app picker with ${wrapped ? 'wrapped' : 'bare'} nodes`, async () => {
+                const parent = environment('test-environment', environmentMode);
+                const expected = app(environmentMode === 'Express');
+                const { visited } = installHierarchy([parent], [expected], wrapped);
+                const context = await createTestActionContext();
+                const result = await context.ui.runWithInputs(['test-environment', 'test-app'], () =>
+                    pickContainerApp(context, { title: 'Unfiltered command', showLoadingPrompt: false }));
+                assert.strictEqual(result, expected);
+                assert.ok(visited.includes(parent), 'App discovery starts at the selected environment');
+            });
+        }
+
+        test(`preserves named no-prompt selection for ${environmentMode ?? 'legacy'} resources`, async () => {
+            const parent = environment('test-environment', environmentMode);
+            const expected = app(environmentMode === 'Express');
+            installHierarchy([parent], [expected]);
+            assert.strictEqual(await pickContainerAppWithoutPrompt({
+                ...await createTestActionContext(), subscriptionId: subscription.subscriptionId,
+            }, expected.containerApp, { showLoadingPrompt: false }), expected);
+        });
+    }
+
+    test('preserves unfiltered environment selection with command title options', async () => {
+        const expected = environment('test-environment', 'Express');
+        installHierarchy([expected], []);
+        const context = await createTestActionContext();
+        assert.strictEqual(await context.ui.runWithInputs(['test-environment'], () =>
+            pickEnvironment(context, { title: 'Delete Container Apps Environment', showLoadingPrompt: false })), expected);
+    });
+
+    test('forwards standalone environment filter and message without changing subscription discovery', async () => {
+        installHierarchy([environment('test-environment', 'Express')], []);
+        const context = await createTestActionContext();
+        context.ui.showQuickPick = async (items, options) => {
+            assert.deepStrictEqual(await items, []);
+            assert.strictEqual(options?.noPicksMessage, 'No matching environments');
+            throw new UserCancelledError();
+        };
+        await assert.rejects(pickEnvironment(context, {
+            filter: () => false, noPicksMessage: 'No matching environments', showLoadingPrompt: false,
+        }), UserCancelledError);
+    });
+
+    async function promptStep(step: AzureWizardPromptStep<AzureResourceQuickPickWizardContext>, expectedLabels: string[]): Promise<void> {
+        const context: AzureResourceQuickPickWizardContext = { ...await createTestActionContext(), pickedNodes: [] };
+        context.ui.showQuickPick = async items => {
+            assert.deepStrictEqual((await items).map(item => item.label), expectedLabels);
+            throw new UserCancelledError();
+        };
+        await assert.rejects(step.prompt(context), UserCancelledError);
+    }
+
+    for (const resource of ['environment', 'app']) {
+        test(`preserves regex ${resource} preselection and prompts when multiple matches remain`, async () => {
+            const items = resource === 'environment'
+                ? [environment('match-one'), environment('match-two'), environment('unrelated')]
+                : [app(false, KnownActiveRevisionsMode.Single, 'match-one'), app(true, KnownActiveRevisionsMode.Single, 'match-two'), app(false)];
+            const provider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
+            provider.getChildren = async () => items;
+            provider.getTreeItem = element => {
+                const item = items.find(item => item === element);
+                assert.ok(item);
+                return item.getTreeItem();
+            };
+            const step = resource === 'environment'
+                ? getPickEnvironmentSteps(true, undefined, /^match-/)[2]
+                : getPickContainerAppStep(/^match-/);
+            await promptStep(step, ['match-one', 'match-two']);
+        });
+
+        test(`does not auto-select a command-bearing named ${resource}`, async () => {
+            const item = resource === 'environment' ? environment('selected-resource') : app(false, KnownActiveRevisionsMode.Single, 'selected-resource');
+            const provider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
+            provider.getChildren = async () => [item];
+            provider.getTreeItem = () => ({
+                ...item.getTreeItem(), command: { command: 'test.command', title: 'Command-bearing resource' },
+            });
+            const step = resource === 'environment'
+                ? getPickEnvironmentSteps(true, undefined, 'selected-resource')[2]
+                : getPickContainerAppStep('selected-resource');
+            await promptStep(step, ['selected-resource']);
+        });
+    }
+
+    test('preserves the default app empty message', async () => {
+        assert.deepStrictEqual(await pickerPicks([], undefined, 3), {
+            labels: [], noPicksMessage: 'Selected container apps environment has no apps',
+        });
+    });
+
+    test('cannot auto-select a named app rejected by its filter', async () => {
+        const expected = app(true);
+        const provider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
+        provider.getChildren = async () => [expected];
+        provider.getTreeItem = () => expected.getTreeItem();
+        await promptStep(getPickContainerAppStep('test-app', { filter: () => false }), []);
+    });
+
+    test('retains the original context filter when an optional filter accepts every item', async () => {
+        const provider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
+        const expected = app(false);
+        const unrelated = environment('unrelated');
+        provider.getChildren = async () => [expected, unrelated];
+        provider.getTreeItem = element => element === expected ? expected.getTreeItem() : unrelated.getTreeItem();
+        await promptStep(getPickContainerAppStep(undefined, { filter: () => true }), ['test-app']);
+    });
+
+    test('preserves downstream app-to-revision discovery and name preselection', async () => {
+        const parent = environment('test-environment', 'WorkloadProfiles');
+        const selectedApp = app(false, KnownActiveRevisionsMode.Multiple);
+        const { add, visited } = installHierarchy([parent], [selectedApp]);
+        const group = new RevisionsItem(subscription, selectedApp.containerApp);
+        const revision = new RevisionItem(subscription, selectedApp.containerApp, {
+            id: `${selectedApp.id}/revisions/selected-revision`, name: 'selected-revision', template: { containers: [] },
+        });
+        add(selectedApp, [group]);
+        add(group, [revision]);
+        const context = await createTestActionContext();
+        assert.strictEqual(await context.ui.runWithInputs(['test-environment', 'test-app'], () =>
+            pickRevision(context, undefined, { selectByRevisionName: 'selected-revision', showLoadingPrompt: false })), revision);
+        assert.ok(visited.includes(selectedApp));
+        assert.ok(visited.includes(group));
     });
 });
