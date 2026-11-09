@@ -5,6 +5,7 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { nonNullProp, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { revisionRestartUnsupportedContextValue } from '../../constants';
 import { ext } from "../../extensionVariables";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
@@ -15,7 +16,10 @@ import { pickRevision } from "../../utils/pickItem/pickRevision";
 
 export async function executeRevisionOperation(context: IActionContext, node: ContainerAppItem | RevisionItem | undefined, operation: RevisionOperation): Promise<void> {
     if (!node) {
-        node = await pickContainerApp(context, { excludeExpress: operation === 'restartRevision' });
+        node = await pickContainerApp(context, operation === 'restartRevision' ? {
+            filter: treeItem => !treeItem.contextValue?.split(';').includes(revisionRestartUnsupportedContextValue),
+            noPicksMessage: localize('noStandardContainerApps', 'Selected container apps environment has no Standard apps'),
+        } : undefined);
 
         if (node.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
             node = await pickRevision(context, node);

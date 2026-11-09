@@ -41,10 +41,6 @@ _Draft support has only been added for these actions: Scaling commands, Update C
 
 ## Troubleshooting
 
-### Restart and Express Container Apps
-
-Revision restart is not supported for Express Container Apps. The extension hides Restart from their context menus and excludes them from the `Azure Container Apps: Restart` picker. Standard Container Apps retain revision restart support.
-
 ### "unable to get local issuer certificate" on a corporate network
 
 If you're on a corporate network that performs HTTPS/SSL inspection (for example Zscaler, Netskope, Cisco Umbrella, or an internal certificate authority), Azure operations may fail with errors like `unable to get local issuer certificate` or `self-signed certificate in certificate chain`. This happens because the extension's Azure calls run in the Node.js extension host, which does not use the operating system certificate store by default.

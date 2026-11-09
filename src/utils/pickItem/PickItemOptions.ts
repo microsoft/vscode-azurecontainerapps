@@ -3,6 +3,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { type PickFilter } from '@microsoft/vscode-azext-utils';
+
 export interface RevisionDraftPickItemOptions extends PickItemOptions {
     // Automatically select the RevisionDraftItem if one exists
     autoSelectDraft?: boolean;
@@ -14,7 +16,8 @@ export interface RevisionPickItemOptions extends PickItemOptions {
 }
 
 export interface ContainerAppPickItemOptions extends PickItemOptions {
-    excludeExpress?: boolean;
+    filter?: PickFilter['isFinalPick'];
+    noPicksMessage?: string;
 }
 
 export interface PickItemOptions {

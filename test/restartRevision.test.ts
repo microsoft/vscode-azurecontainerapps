@@ -18,6 +18,7 @@ import { ext } from '../src/extensionVariables';
 import { ContainerAppItem, type ContainerAppModel } from '../src/tree/ContainerAppItem';
 import { RevisionItem } from '../src/tree/revisionManagement/RevisionItem';
 import { getPickContainerAppStep } from '../src/utils/pickItem/pickContainerApp';
+import { type ContainerAppPickItemOptions } from '../src/utils/pickItem/PickItemOptions';
 
 suite('Restart revision availability', () => {
     const subscription: AzureSubscription = {
@@ -43,6 +44,10 @@ suite('Restart revision availability', () => {
     const revision: Revision = { id: `${app.id}/revisions/app--revision`, name: 'app--revision', active: true };
     const standardPick = createPick('standard-app');
     const expressPick = createPick('express-app', true);
+    const restartPickOptions: ContainerAppPickItemOptions = {
+        filter: treeItem => !treeItem.contextValue?.split(';').includes(revisionRestartUnsupportedContextValue),
+        noPicksMessage: 'No Standard apps',
+    };
     let originalRgApi: typeof ext.rgApiV2;
     let originalDraftFileSystem: typeof ext.revisionDraftFileSystem;
     let originalContext: typeof ext.context;
@@ -82,7 +87,7 @@ suite('Restart revision availability', () => {
         setPickerChildren([expressPick, standardPick]);
         const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
 
-        await context.ui.runWithInputs(['standard-app'], () => getPickContainerAppStep(undefined, { excludeExpress: true }).prompt(context));
+        await context.ui.runWithInputs(['standard-app'], () => getPickContainerAppStep(undefined, restartPickOptions).prompt(context));
 
         assert.strictEqual(context.pickedNodes.at(-1), standardPick);
     });
@@ -92,7 +97,7 @@ suite('Restart revision availability', () => {
         const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
 
         await assert.rejects(
-            context.ui.runWithInputs([TestInput.UseDefaultValue], () => getPickContainerAppStep(undefined, { excludeExpress: true }).prompt(context)),
+            context.ui.runWithInputs([TestInput.UseDefaultValue], () => getPickContainerAppStep(undefined, restartPickOptions).prompt(context)),
             /No quick pick items found/,
         );
         assert.deepStrictEqual(context.pickedNodes, ['environment']);
@@ -103,7 +108,7 @@ suite('Restart revision availability', () => {
         const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
 
         await assert.rejects(
-            context.ui.runWithInputs(['express-app'], () => getPickContainerAppStep(undefined, { excludeExpress: true }).prompt(context)),
+            context.ui.runWithInputs(['express-app'], () => getPickContainerAppStep(undefined, restartPickOptions).prompt(context)),
             /Did not find quick pick item matching "express-app".*Picks: "standard-app"/,
         );
     });
@@ -123,7 +128,7 @@ suite('Restart revision availability', () => {
         setPickerChildren([pick]);
         const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
 
-        await context.ui.runWithInputs(['express'], () => getPickContainerAppStep(undefined, { excludeExpress: true }).prompt(context));
+        await context.ui.runWithInputs(['express'], () => getPickContainerAppStep(undefined, restartPickOptions).prompt(context));
 
         assert.strictEqual(context.pickedNodes.at(-1), pick);
     });
@@ -132,7 +137,7 @@ suite('Restart revision availability', () => {
         setPickerChildren([expressPick, standardPick]);
         const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
 
-        await getPickContainerAppStep('standard-app', { excludeExpress: true }).prompt(context);
+        await getPickContainerAppStep('standard-app', restartPickOptions).prompt(context);
 
         assert.strictEqual(context.pickedNodes.at(-1), standardPick);
     });
@@ -142,10 +147,66 @@ suite('Restart revision availability', () => {
         const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
 
         await assert.rejects(
-            context.ui.runWithInputs([TestInput.UseDefaultValue], () => getPickContainerAppStep(undefined, { excludeExpress: true }).prompt(context)),
+            context.ui.runWithInputs([TestInput.UseDefaultValue], () => getPickContainerAppStep(undefined, restartPickOptions).prompt(context)),
             /No quick pick items found/,
         );
     });
+
+    test('passes tree items and elements to a caller-defined filter', async () => {
+        setPickerChildren([expressPick, standardPick]);
+        const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
+
+        await context.ui.runWithInputs(['express-app'], () => getPickContainerAppStep(undefined, {
+            filter: (treeItem, element) => {
+                assert.strictEqual(treeItem, element);
+                return element === expressPick;
+            },
+        }).prompt(context));
+
+        assert.strictEqual(context.pickedNodes.at(-1), expressPick);
+    });
+
+    test('applies the callback to expandable ancestor choices', async () => {
+        const excluded = new TreeItem('excluded', TreeItemCollapsibleState.Collapsed);
+        const included = new TreeItem('included', TreeItemCollapsibleState.Collapsed);
+        setPickerChildren([excluded, included]);
+        const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
+
+        await context.ui.runWithInputs(['included'], () => getPickContainerAppStep(undefined, {
+            filter: (_treeItem, element) => element === included,
+        }).prompt(context));
+
+        assert.strictEqual(context.pickedNodes.at(-1), included);
+    });
+
+    test('does not auto-select a named app rejected by the callback', async () => {
+        setPickerChildren([expressPick]);
+        const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
+
+        await assert.rejects(
+            context.ui.runWithInputs([TestInput.UseDefaultValue], () => getPickContainerAppStep('express-app', restartPickOptions).prompt(context)),
+            /No quick pick items found/,
+        );
+        assert.deepStrictEqual(context.pickedNodes, ['environment']);
+    });
+
+    for (const noPicksMessage of [undefined, 'No apps match this filter']) {
+        test(`uses the ${noPicksMessage ? 'custom' : 'default'} no-picks message`, async () => {
+            setPickerChildren([expressPick, standardPick]);
+            const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
+            context.ui.showQuickPick = async (picks, options) => {
+                assert.deepStrictEqual(picks, []);
+                assert.strictEqual(options?.noPicksMessage, noPicksMessage ?? 'Selected container apps environment has no apps');
+                throw new Error('Empty picks verified');
+            };
+
+            await assert.rejects(
+                getPickContainerAppStep(undefined, { filter: () => false, noPicksMessage }).prompt(context),
+                /Empty picks verified/,
+            );
+            assert.deepStrictEqual(context.pickedNodes, ['environment']);
+        });
+    }
 
     test('blocks direct Express app restart before accessing Azure or operation state', async () => {
         const context = await createTestActionContext();

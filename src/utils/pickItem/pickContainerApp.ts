@@ -4,9 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
-import { type ResourceGroupsTreeDataProvider } from "@microsoft/vscode-azureresources-api";
-import { revisionRestartUnsupportedContextValue } from "../../constants";
+import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type ContextValueFilterQuickPickOptions, type IActionContext, type ISubscriptionActionContext, type PickFilter, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
@@ -21,26 +19,31 @@ export function getPickContainerAppStep(containerAppName?: string | RegExp, opti
         containerAppFilter = ContainerAppItem.contextValueRegExp;
     }
 
-    const treeDataProvider = ext.rgApiV2.resources.azureResourceTreeDataProvider;
-    const pickerTreeDataProvider: ResourceGroupsTreeDataProvider = options?.excludeExpress ? {
-        getTreeItem: element => treeDataProvider.getTreeItem(element),
-        getChildren: async element => {
-            const children = await treeDataProvider.getChildren(element) ?? [];
-            const treeItems = await Promise.all(children.map(child => treeDataProvider.getTreeItem(child)));
-            // Remove excluded apps before the shared picker considers expandable ancestor choices.
-            return children.filter((_child, index) => !treeItems[index].contextValue?.split(';').includes(revisionRestartUnsupportedContextValue));
-        },
-    } : treeDataProvider;
+    return new ContainerAppQuickPickStep(containerAppFilter, !!containerAppName, options);
+}
 
-    return new ContextValueQuickPickStep(pickerTreeDataProvider, {
-        contextValueFilter: { include: containerAppFilter },
-        skipIfOne: !!containerAppName,
-    }, {
-        placeHolder: localize('selectContainerApp', 'Select a container app'),
-        noPicksMessage: options?.excludeExpress
-            ? localize('noStandardContainerApps', 'Selected container apps environment has no Standard apps')
-            : localize('noContainerApps', 'Selected container apps environment has no apps'),
-    });
+class ContainerAppQuickPickStep extends ContextValueQuickPickStep<AzureResourceQuickPickWizardContext, ContextValueFilterQuickPickOptions> {
+    declare protected readonly pickFilter: PickFilter;
+
+    constructor(containerAppFilter: RegExp, skipIfOne: boolean, options?: ContainerAppPickItemOptions) {
+        super(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+            contextValueFilter: { include: containerAppFilter },
+            skipIfOne,
+        }, {
+            placeHolder: localize('selectContainerApp', 'Select a container app'),
+            noPicksMessage: options?.noPicksMessage ?? localize('noContainerApps', 'Selected container apps environment has no apps'),
+        });
+
+        const filter = options?.filter;
+        if (filter) {
+            const pickFilter = this.pickFilter;
+            this.pickFilter = {
+                isFinalPick: (treeItem, element) => pickFilter.isFinalPick(treeItem, element) && filter(treeItem, element),
+                // The shared picker falls back to expandable ancestors when no final picks remain.
+                isAncestorPick: (treeItem, element) => pickFilter.isAncestorPick(treeItem, element) && filter(treeItem, element),
+            };
+        }
+    }
 }
 
 /**
