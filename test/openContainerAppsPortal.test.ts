@@ -8,11 +8,22 @@ import { Environment } from '@azure/ms-rest-azure-env';
 import { type AzureSubscription } from '@microsoft/vscode-azureresources-api';
 import * as assert from 'assert';
 import { createContainerAppsPortalUrl } from '../src/commands/openContainerAppsPortal';
+import { RevisionDraftFileSystem } from '../src/commands/revisionDraft/RevisionDraftFileSystem';
+import { ext } from '../src/extensionVariables';
 import { ContainerAppItem } from '../src/tree/ContainerAppItem';
 import { ManagedEnvironmentItem } from '../src/tree/ManagedEnvironmentItem';
 import { createPortalUrl } from '../src/utils/createPortalUrl';
 
 suite('Container Apps Portal navigation', () => {
+    let originalFileSystem: RevisionDraftFileSystem;
+    suiteSetup(() => {
+        originalFileSystem = ext.revisionDraftFileSystem;
+        ext.revisionDraftFileSystem = new RevisionDraftFileSystem();
+    });
+    suiteTeardown(() => {
+        ext.revisionDraftFileSystem = originalFileSystem;
+    });
+
     const subscription: AzureSubscription = {
         subscriptionId: '00000000-0000-0000-0000-000000000001',
         tenantId: '11111111-2222-3333-4444-555555555555',
@@ -47,10 +58,12 @@ suite('Container Apps Portal navigation', () => {
             name,
             subscription: targetSubscription,
             azureResourceType: { type: 'Microsoft.App/managedEnvironments' },
+            raw: { id, name },
         }, {
             id,
             name,
             resourceGroup,
+            location: 'eastus',
             environmentMode: isExpress ? 'Express' : 'WorkloadProfiles',
         });
     }
