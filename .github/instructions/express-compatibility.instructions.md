@@ -21,6 +21,8 @@ See [ManagedEnvironmentCreateStep](../../src/commands/createManagedEnvironment/M
 
 The [Express feature matrix](https://learn.microsoft.com/en-us/azure/container-apps/express-overview#supported-features) documents single-revision deployment as built in and lists multiple revisions, traffic splitting, and deployment labels as unsupported. Updates replace the active revision automatically. Treat single-revision mode as an Express service constraint, not just a creation default. Standard supports both Single and Multiple modes.
 
+Express does not support revision restart. Hide Restart in Express menus, filter Express apps out of the Restart picker, and reject direct invocation. Keep Standard restart behavior in both revision modes.
+
 Do not equate single-revision mode with an absence of revision history. In the [general Container Apps revision model](https://learn.microsoft.com/en-us/azure/container-apps/revisions), Single controls which revision is active, while inactive revisions can remain. The Express feature matrix does not establish its historical revision retention policy or say that registry cleanup exists because old revisions are not retained.
 
 Registry credentials and secrets are application-scoped configuration, not snapshots owned by individual revisions. Standard revisions can depend on that shared configuration, so do not prune it based only on the latest template. Express's single-revision restriction also does not change `configuration.registries` or `configuration.secrets` from arrays into singular fields, or justify clearing unrelated entries in extension code.
