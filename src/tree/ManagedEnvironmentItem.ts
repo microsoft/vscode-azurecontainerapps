@@ -8,21 +8,26 @@ import { getResourceGroupFromId, uiUtils } from "@microsoft/vscode-azext-azureut
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureResource, type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { createContainerAppsAPIClient } from "../utils/azureClients";
+import { createContainerAppsAPIClient, createContainerAppsPreviewAPIClient } from "../utils/azureClients";
+import { localize } from "../utils/localize";
 import { treeUtils } from "../utils/treeUtils";
 import { ContainerAppItem } from "./ContainerAppItem";
 import { type ContainerAppsItem, type TreeElementBase } from "./ContainerAppsBranchDataProvider";
 
-type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel;
+type ManagedEnvironmentModel = ManagedEnvironment & ResourceModel & {
+    environmentMode?: string;
+};
 
 export class ManagedEnvironmentItem implements TreeElementBase {
     static readonly contextValue: string = 'managedEnvironmentItem';
     static readonly contextValueRegExp: RegExp = new RegExp(ManagedEnvironmentItem.contextValue);
     viewProperties: ViewPropertiesModel;
     id: string;
+    readonly isExpress: boolean;
 
 
     constructor(public readonly subscription: AzureSubscription, public readonly resource: AzureResource, public readonly managedEnvironment: ManagedEnvironmentModel) {
+        this.isExpress = managedEnvironment.environmentMode === 'Express';
         this.id = managedEnvironment.id;
         this.viewProperties = {
             data: managedEnvironment,
@@ -53,7 +58,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
             context.valuesToMask.push(...containerApps.map(ca => ca.name), ...containerApps.map(ca => ca.id));
 
             return containerApps
-                .map(ca => new ContainerAppItem(this.subscription, ca))
+                .map(ca => new ContainerAppItem(this.subscription, ca, this.isExpress))
                 .sort((a, b) => treeUtils.sortById(a, b));
         });
 
@@ -63,6 +68,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     getTreeItem(): TreeItem {
         return {
             label: this.managedEnvironment.name,
+            description: this.isExpress ? localize('express', '(Express)') : undefined,
             id: this.id,
             iconPath: treeUtils.getIconPath('managed-environment'),
             contextValue: this.contextValue,
@@ -84,8 +90,21 @@ export class ManagedEnvironmentItem implements TreeElementBase {
 
     static async Get(context: IActionContext, subscription: AzureSubscription, resourceGroup: string, name: string): Promise<ManagedEnvironmentModel> {
         const subContext = createSubscriptionContext(subscription);
-        const client: ContainerAppsAPIClient = await createContainerAppsAPIClient([context, subContext]);
-        return ManagedEnvironmentItem.CreateManagedEnvironmentModel(await client.managedEnvironments.get(resourceGroup, name));
+        const client: ContainerAppsAPIClient = await createContainerAppsPreviewAPIClient([context, subContext]);
+
+        let environmentMode: string | undefined;
+        const result = await client.managedEnvironments.get(resourceGroup, name, {
+            onResponse: (response) => {
+                const rawBody = response.bodyAsText;
+                if (rawBody) {
+                    environmentMode = (JSON.parse(rawBody) as { properties?: { environmentMode?: string } })?.properties?.environmentMode;
+                }
+            },
+        });
+
+        const model = ManagedEnvironmentItem.CreateManagedEnvironmentModel(result);
+        model.environmentMode = environmentMode;
+        return model;
     }
 
     private static CreateManagedEnvironmentModel(managedEnvironment: ManagedEnvironment): ManagedEnvironmentModel {

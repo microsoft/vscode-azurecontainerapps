@@ -11,7 +11,7 @@ import deepEqual from "deep-eql";
 import { TreeItemCollapsibleState, type TreeItem, type Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
-import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
+import { expressContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { createContainerAppsAPIClient, createContainerAppsClient } from "../utils/azureClients";
@@ -47,7 +47,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         return this._containerApp;
     }
 
-    constructor(public readonly subscription: AzureSubscription, private _containerApp: ContainerAppModel) {
+    constructor(public readonly subscription: AzureSubscription, private _containerApp: ContainerAppModel, public readonly isExpress: boolean = false) {
         this.id = this.containerApp.id;
         this.resourceGroup = this.containerApp.resourceGroup;
         this.name = this.containerApp.name;
@@ -67,6 +67,10 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Single ? revisionModeSingleContextValue : revisionModeMultipleContextValue);
         values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
 
+        if (this.isExpress) {
+            values.push(expressContextValue);
+        }
+
         return createContextValue(values);
     }
 
@@ -77,6 +81,10 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
 
         if (this.containerApp.provisioningState && this.containerApp.provisioningState !== 'Succeeded') {
             return this.containerApp.provisioningState;
+        }
+
+        if (this.isExpress) {
+            return localize('express', '(Express)');
         }
 
         return undefined;

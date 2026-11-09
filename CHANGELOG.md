@@ -1,4 +1,29 @@
 # Change Log
+## 0.11.2 - 2026-06-30
+### Fixed
+* [[1099](https://github.com/microsoft/vscode-azurecontainerapps/issues/1099)] Fixed an internal error that appeared on some deployments when creating new container app resources
+
+### Engineering
+* [[1081](https://github.com/microsoft/vscode-azurecontainerapps/pull/1081)] Fix long running tests in support of migration to esbuild
+* [[1093](https://github.com/microsoft/vscode-azurecontainerapps/pull/1093)] Add `feedBaseUrl` passthrough to 1ES build template parameters
+* [[1094](https://github.com/microsoft/vscode-azurecontainerapps/pull/1094)] Remove redundant `npmFeed` parameter from AzDO build pipeline
+
+## 0.11.1 - 2026-05-28
+### Added
+* [[1069](https://github.com/microsoft/vscode-azurecontainerapps/pull/1069)] Add ACA "flat" tree item provider and "reveal app" command
+
+### Changed
+* [[1047](https://github.com/microsoft/vscode-azurecontainerapps/pull/1047)] Close revision draft editor tab immediately on discard
+* [[1062](https://github.com/microsoft/vscode-azurecontainerapps/pull/1062)] Relax the polling timeout for container app start verification
+
+### Fixed
+* [[1086](https://github.com/microsoft/vscode-azurecontainerapps/pull/1086)] Apply compatibility fixes to extension in preparation for upcoming VS Code stable release
+
+### Engineering
+* [[1080](https://github.com/microsoft/vscode-azurecontainerapps/pull/1080)] Migrate AzDO CI/release pipelines to azdo-pipelines v2
+
+### Security
+* Bump 23 dependencies across build, test, and tooling infrastructure
 
 ## 0.11.0 - 2026-03-03
 ### Added

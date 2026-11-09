@@ -9,15 +9,14 @@ import { IParsedError, parseError, randomUtils, runWithTestActionContext } from 
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
-import { createContainerApp } from '../../../src/commands/createContainerApp/createContainerApp';
-import { createManagedEnvironment } from '../../../src/commands/createManagedEnvironment/createManagedEnvironment';
-import { deployContainerApp } from '../../../src/commands/deployContainerApp/deployContainerApp';
 import { DeployWorkspaceProjectResults } from '../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults';
 import { ContainerAppItem } from '../../../src/tree/ContainerAppItem';
 import { settingUtils } from '../../../src/utils/settingUtils';
 import { longRunningTestsEnabled } from '../../global.test';
 import { assertStringPropsMatch, getWorkspaceFolderUri } from '../../testUtils';
+import { getCachedTestApi } from '../../utils/testApiAccess';
 import { resourceGroupsToDelete } from '../global.nightly.test';
+import { testRegion } from '../testRegion';
 import { dwpTestUtils } from './dwpTestUtils';
 
 suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.Suite) {
@@ -60,7 +59,7 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
         await runWithTestActionContext('deployContainerApp.deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(testInputs, async () => {
                 try {
-                    results = await deployContainerApp(context, containerAppItem) ?? {};
+                    results = await (getCachedTestApi().deployContainerAppInternal(context, containerAppItem)) ?? {};
                 } catch (e) {
                     const perr: IParsedError = parseError(e);
                     console.error(perr.message);
@@ -87,8 +86,8 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
     let managedEnvironment: ManagedEnvironment | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
         const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-        await context.ui.runWithInputs([resourceName, 'East US'], async () => {
-            managedEnvironment = await createManagedEnvironment(context);
+        await context.ui.runWithInputs([resourceName, testRegion.displayName], async () => {
+            managedEnvironment = await (getCachedTestApi().createManagedEnvironmentInternal(context));
         });
     });
 
@@ -96,7 +95,7 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createContainerApp', async context => {
         const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
         await context.ui.runWithInputs([managedEnvironment?.name ?? '', resourceName], async () => {
-            containerAppItem = await createContainerApp(context);
+            containerAppItem = await (getCachedTestApi().createContainerAppInternal(context));
         });
     });
 

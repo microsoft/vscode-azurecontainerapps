@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "node_modules/@microsoft/vscode-azext-utils";
+import type { IActionContext } from "@microsoft/vscode-azext-utils";
 import { DeployWorkspaceProjectResults } from "../../../../src/commands/deployWorkspaceProject/getDeployWorkspaceProjectResults";
 import { DeploymentConfigurationSettings } from "../../../../src/commands/deployWorkspaceProject/settings/DeployWorkspaceProjectSettingsV2";
 import { type StringOrRegExpProps } from "../../../typeUtils";

@@ -28,7 +28,7 @@ export async function addWorkspaceProjectWalkthrough(context: IActionContext): P
                 '- Git is not installed on your system.\n' +
                 '- Git is installed but not added to your system PATH.\n' +
                 '- Git is installed but is broken or permission-blocked.\n\n' +
-                'Please ensure Git is installed and properly configured.'));
+                'Please ensure Git is installed and properly configured.'), { cause: e });
         }
         throw e;
     }

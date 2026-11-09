@@ -7,6 +7,7 @@ import { type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { type AuthorizationManagementClient } from "@azure/arm-authorization";
 import { type ContainerRegistryManagementClient, type Registry } from '@azure/arm-containerregistry';
 import { type OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
+import { type ResourceManagementClient } from '@azure/arm-resources';
 import { ContainerRegistryClient, KnownContainerRegistryAudience } from '@azure/container-registry';
 import { LogsQueryClient } from "@azure/monitor-query";
 import { AzExtClientType, createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
@@ -24,6 +25,25 @@ export async function createContainerAppsAPIClient(context: AzExtClientContext):
     return createAzureClient(context, (await import('@azure/arm-appcontainers')).ContainerAppsAPIClient as unknown as AzExtClientType<ContainerAppsAPIClient>);
 }
 
+const previewApiVersion = '2026-03-02-preview';
+
+export async function createContainerAppsPreviewAPIClient(context: AzExtClientContext): Promise<ContainerAppsAPIClient> {
+    const client = await createContainerAppsAPIClient(context);
+    client.apiVersion = previewApiVersion;
+    client.pipeline.addPolicy({
+        name: 'PreviewApiVersionPolicy',
+        sendRequest(request, next) {
+            const [base, query] = request.url.split('?');
+            if (query) {
+                const newQuery = query.split('&').map(p => p.startsWith('api-version=') ? `api-version=${previewApiVersion}` : p).join('&');
+                request.url = `${base}?${newQuery}`;
+            }
+            return next(request);
+        },
+    });
+    return client;
+}
+
 export async function createContainerRegistryManagementClient(context: AzExtClientContext): Promise<ContainerRegistryManagementClient> {
     return createAzureClient(context, (await import('@azure/arm-containerregistry')).ContainerRegistryManagementClient);
 }
@@ -35,6 +55,10 @@ export function createContainerRegistryClient(context: AzExtClientContext, regis
 
 export async function createOperationalInsightsManagementClient(context: AzExtClientContext): Promise<OperationalInsightsManagementClient> {
     return createAzureClient(context, (await import('@azure/arm-operationalinsights')).OperationalInsightsManagementClient);
+}
+
+export async function createResourceManagementClient(context: AzExtClientContext): Promise<ResourceManagementClient> {
+    return createAzureClient(context, (await import('@azure/arm-resources')).ResourceManagementClient);
 }
 
 export async function createAuthorizationManagementClient(context: AzExtClientContext): Promise<AuthorizationManagementClient> {

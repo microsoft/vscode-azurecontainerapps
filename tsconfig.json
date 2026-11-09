@@ -8,21 +8,18 @@
             "es2022",
             "dom"
         ],
+        "types": [
+            "mocha",
+        ],
         "sourceMap": true,
         "rootDir": ".",
+        "strict": false,
         "noUnusedLocals": true,
         "noImplicitThis": true,
         "noImplicitReturns": true,
         "skipLibCheck": true,
         "strictNullChecks": true,
         "noUnusedParameters": true,
-        "baseUrl": "./",
-        "paths": {
-            "*": [
-                "node_modules/vscode/*",
-                "*"
-            ]
-        },
         "jsx": "react-jsx",
     },
     "exclude": [

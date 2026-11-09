@@ -35,7 +35,19 @@ import { toggleIngressVisibility } from './ingress/toggleIngressVisibility/toggl
 import { startStreamingLogs } from './logStream/startStreamingLogs';
 import { stopStreamingLogs } from './logStream/stopStreamingLogs';
 import { openConsoleInPortal } from './openConsoleInPortal';
+import { openExpressPortal } from './openExpressPortal';
 import { revealInEnvironment } from './revealInEnvironment';
+import { copySandboxId } from './sandboxes/copySandboxId';
+import { openSandboxInPortal } from './sandboxes/openSandboxInPortal';
+import { createSandbox } from './sandboxes/createSandbox';
+import { createSandboxGroup } from './sandboxes/createSandboxGroup';
+import { deleteSandbox } from './sandboxes/deleteSandbox';
+import { deleteSandboxGroup } from './sandboxes/deleteSandboxGroup';
+import { openSandboxShell } from './sandboxes/openSandboxShell';
+import { runSandboxCommand } from './sandboxes/runSandboxCommand';
+import { setAutoSuspend } from './sandboxes/setAutoSuspend';
+import { snapshotSandbox } from './sandboxes/snapshotSandbox';
+import { resumeSandbox, stopSandbox } from './sandboxes/stopResumeSandbox';
 import { activateRevision } from './revision/activateRevision';
 import { chooseRevisionMode } from './revision/chooseRevisionMode/chooseRevisionMode';
 import { deactivateRevision } from './revision/deactivateRevision';
@@ -67,6 +79,7 @@ export function registerCommands(): void {
     registerCommandWithTreeNodeUnwrapping('containerApps.deleteContainerApp', deleteContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.editContainerApp', editContainerApp);
     registerCommandWithTreeNodeUnwrapping('containerApps.openConsoleInPortal', openConsoleInPortal);
+    registerCommandWithTreeNodeUnwrapping('containerApps.openExpressPortal', openExpressPortal);
     registerCommandWithTreeNodeUnwrapping('containerApps.revealInEnvironment', revealInEnvironment);
     registerCommandWithTreeNodeUnwrapping('containerApps.toggleEnvironmentVariableVisibility',
         async (context: IActionContext, item: EnvironmentVariableItem) => {
@@ -128,6 +141,20 @@ export function registerCommands(): void {
     // log streaming
     registerCommandWithTreeNodeUnwrapping('containerApps.startStreamingLogs', startStreamingLogs);
     registerCommandWithTreeNodeUnwrapping('containerApps.stopStreamingLogs', stopStreamingLogs);
+
+    // sandboxes
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.createGroup', createSandboxGroup);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.deleteGroup', deleteSandboxGroup);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.create', createSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openShell', openSandboxShell);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.runCommand', runSandboxCommand);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.stop', stopSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.resume', resumeSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.snapshot', snapshotSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.delete', deleteSandbox);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.setAutoSuspend', setAutoSuspend);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.copyId', copySandboxId);
+    registerCommandWithTreeNodeUnwrapping('containerApps.sandboxes.openInPortal', openSandboxInPortal);
 
     // Suppress "Report an Issue" button for all errors in favor of the command
     registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
