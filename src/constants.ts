@@ -91,6 +91,3 @@ export const unsavedChangesTrueContextValue: string = 'unsavedChanges:true';
 export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
 
 export const activityInfoContext: string = 'activity:info';
-
-export const expressContextValue: string = 'express';
-export const expressPortalBaseUrl: string = 'https://containerapps.azure.com/apps';
