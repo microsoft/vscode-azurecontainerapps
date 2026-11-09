@@ -28,8 +28,6 @@ You can re-run the command with your saved workspace settings to quickly re-depl
 
 _Draft support has only been added for these actions: Scaling commands, Update Container Image..., Edit Container App (Advanced)_
 
-The `Add Scale Rule...` wizard offers HTTP scaling for Express apps. Standard apps also offer Azure queue scaling.
-
 1. Make a supported edit to your container app. In this example we will be editing the scaling range.
 1. Changes made to your container app will be reflected by the appended "*" and the "Unsaved changes" tag added to the container app
 
