@@ -10,7 +10,7 @@ import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vsc
 import { TreeItemCollapsibleState, type TreeItem, type Uri } from "vscode";
 import { DeleteAllContainerAppsStep } from "../commands/deleteContainerApp/DeleteAllContainerAppsStep";
 import { type IDeleteContainerAppWizardContext } from "../commands/deleteContainerApp/IDeleteContainerAppWizardContext";
-import { expressContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
+import { expressContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue, revisionRestartUnsupportedContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../constants";
 import { ext } from "../extensionVariables";
 import { createActivityContext } from "../utils/activityUtils";
 import { areTemplateValuesEqual } from "../utils/areTemplateValuesEqual";
@@ -68,7 +68,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
         values.push(this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
 
         if (this.isExpress) {
-            values.push(expressContextValue);
+            values.push(expressContextValue, revisionRestartUnsupportedContextValue);
         }
 
         return createContextValue(values);
@@ -110,7 +110,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
                 const revision: Revision = await client.containerAppsRevisions.getRevision(this.resourceGroup, this.name, nonNullProp(this.containerApp, 'latestRevisionName'));
                 children.push(...RevisionItem.getTemplateChildren(this.subscription, this.containerApp, revision));
             } else {
-                children.push(new RevisionsItem(this.subscription, this.containerApp));
+                children.push(new RevisionsItem(this.subscription, this.containerApp, this.isExpress));
             }
 
             children.push(new ConfigurationItem(this.subscription, this.containerApp));

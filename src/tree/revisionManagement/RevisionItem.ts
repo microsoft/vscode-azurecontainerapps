@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, type Revision
 import { createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type IconPath, type TreeItem } from "vscode";
-import { revisionDraftFalseContextValue, revisionDraftTrueContextValue } from "../../constants";
+import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionRestartUnsupportedContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -30,7 +30,7 @@ export class RevisionItem implements RevisionsItemModel {
     id: string;
     revisionsMode: KnownActiveRevisionsMode;
 
-    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision) {
+    constructor(readonly subscription: AzureSubscription, readonly containerApp: ContainerAppModel, readonly revision: Revision, public readonly isExpress: boolean = false) {
         this.id = nonNullProp(this.revision, 'id');
         this.revisionsMode = containerApp.revisionsMode;
         this.viewProperties = {
@@ -47,6 +47,10 @@ export class RevisionItem implements RevisionsItemModel {
 
         values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
+
+        if (this.isExpress) {
+            values.push(revisionRestartUnsupportedContextValue);
+        }
 
         return createContextValue(values);
     }

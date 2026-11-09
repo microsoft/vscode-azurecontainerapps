@@ -15,11 +15,15 @@ import { pickRevision } from "../../utils/pickItem/pickRevision";
 
 export async function executeRevisionOperation(context: IActionContext, node: ContainerAppItem | RevisionItem | undefined, operation: RevisionOperation): Promise<void> {
     if (!node) {
-        node = await pickContainerApp(context);
+        node = await pickContainerApp(context, { excludeExpress: operation === 'restartRevision' });
 
         if (node.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
             node = await pickRevision(context, node);
         }
+    }
+
+    if (operation === 'restartRevision' && node.isExpress) {
+        throw new Error(localize('expressRestartUnsupported', 'Restart is not supported for Express Container Apps.'));
     }
 
     const item: ContainerAppItem | RevisionItem = nonNullValue(node);

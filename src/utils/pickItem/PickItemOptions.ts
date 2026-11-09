@@ -13,6 +13,10 @@ export interface RevisionPickItemOptions extends PickItemOptions {
     selectByRevisionName?: string;
 }
 
+export interface ContainerAppPickItemOptions extends PickItemOptions {
+    excludeExpress?: boolean;
+}
+
 export interface PickItemOptions {
     title?: string;
     showLoadingPrompt?: boolean;

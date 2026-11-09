@@ -563,7 +563,7 @@
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /containerAppItem(.*)revisionMode:single/i && !(viewItem =~ /(^|;)revisionRestart:unsupported(;|$)/i)",
                     "group": "1@2"
                 },
                 {
@@ -653,7 +653,7 @@
                 },
                 {
                     "command": "containerApps.restartRevision",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /revisionItem(.*)revisionState:active/i && !(viewItem =~ /(^|;)revisionRestart:unsupported(;|$)/i)",
                     "group": "2@1"
                 },
                 {
