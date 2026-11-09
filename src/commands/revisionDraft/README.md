@@ -10,4 +10,4 @@ Until the addition of revision drafts, the view has always reflected only one so
 
 ## Adding HTTP scale rules
 
-Express environments retain existing HTTP scale rules when adding another rule to a revision draft. Standard environments keep the single-HTTP-rule replacement behavior. Resolve the mode from the app's managed environment, including when editing an existing draft or a selected revision.
+Express environments retain existing HTTP scale rules when adding another rule to a revision draft. Standard environments keep the single-HTTP-rule replacement behavior in both Single and Multiple revision modes. Resolve the mode from the app's managed environment, including when editing an existing draft or a selected Standard revision.

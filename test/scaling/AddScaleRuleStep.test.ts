@@ -109,37 +109,38 @@ suite('AddScaleRuleStep', () => {
         });
     }
 
-    for (const revisionsMode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
-        test(`preserves existing Express rules in ${revisionsMode} revision mode`, async () => {
-            const rules = [httpRule('rule1'), queueRule, httpRule('rule2'), customRule];
-            const item = createItem(rules, revisionsMode);
-            const originalItem = JSON.parse(JSON.stringify(item.containerApp));
-            const step = new TestAddScaleRuleStep(item);
+    test('preserves existing Express rules in Single revision mode', async () => {
+        const rules = [httpRule('rule1'), queueRule, httpRule('rule2'), customRule];
+        const item = createItem(rules);
+        const originalItem = JSON.parse(JSON.stringify(item.containerApp));
+        const step = new TestAddScaleRuleStep(item);
 
-            await step.execute(await createContext(item));
+        await step.execute(await createContext(item));
 
-            assert.deepStrictEqual(step.updatedTemplate?.scale, {
-                minReplicas: 0,
-                maxReplicas: 10,
-                rules: [...rules, { name: 'rule3', http: { metadata: { concurrentRequests: '30' } } }]
+        assert.deepStrictEqual(step.updatedTemplate?.scale, {
+            minReplicas: 0,
+            maxReplicas: 10,
+            rules: [...rules, { name: 'rule3', http: { metadata: { concurrentRequests: '30' } } }]
+        });
+        assert.deepStrictEqual(step.updatedTemplate?.containers, item.revision.template?.containers);
+        assert.deepStrictEqual(item.containerApp, originalItem);
+        assert.strictEqual(environmentRequests, 1);
+    });
+
+    for (const mode of ['WorkloadProfiles', undefined]) {
+        for (const revisionsMode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
+            test(`preserves HTTP replacement in ${revisionsMode} revision mode when environment mode is ${mode}`, async () => {
+                environmentMode = mode;
+                const item = createItem([httpRule('rule1'), queueRule, customRule], revisionsMode);
+                const step = new TestAddScaleRuleStep(item);
+
+                await step.execute(await createContext(item));
+
+                assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['queue', 'custom', 'rule3']);
+                assert.deepStrictEqual(step.updatedTemplate?.containers, item.revision.template?.containers);
+                assert.strictEqual(environmentRequests, 1);
             });
-            assert.deepStrictEqual(step.updatedTemplate?.containers, item.revision.template?.containers);
-            assert.deepStrictEqual(item.containerApp, originalItem);
-            assert.strictEqual(environmentRequests, 1);
-        });
-    }
-
-    for (const mode of ['Standard', undefined]) {
-        test(`preserves single HTTP replacement when environment mode is ${mode}`, async () => {
-            environmentMode = mode;
-            const item = createItem([httpRule('rule1'), queueRule, customRule]);
-            const step = new TestAddScaleRuleStep(item);
-
-            await step.execute(await createContext(item));
-
-            assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['queue', 'custom', 'rule3']);
-            assert.strictEqual(environmentRequests, 1);
-        });
+        }
     }
 
     test('does not request the environment for the first HTTP rule', async () => {
