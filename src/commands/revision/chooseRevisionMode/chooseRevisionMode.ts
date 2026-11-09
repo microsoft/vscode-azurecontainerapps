@@ -16,10 +16,14 @@ import { ChooseRevisionModeStep } from "./ChooseRevisionModeStep";
 import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export async function chooseRevisionMode(context: IActionContext, item?: ContainerAppItem | RevisionsItem): Promise<void> {
-    item ??= await pickContainerApp(context);
+    item ??= await pickContainerApp(context, { excludeExpress: true });
 
     let hasRevisionDraft: boolean | undefined;
     if (ContainerAppItem.isContainerAppItem(item)) {
+        if (item.isExpress) {
+            throw new Error(localize('expressRevisionModeNotSupported', 'Express Container Apps only support single revision mode.'));
+        }
+
         // A revision draft can exist but may be identical to the source, distinguishing the difference in single revisions mode
         // improves the user experience by allowing us to skip the confirm step, silently discarding drafts instead
         hasRevisionDraft = item.hasUnsavedChanges();

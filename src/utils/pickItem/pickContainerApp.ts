@@ -8,7 +8,7 @@ import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureR
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
-import { type PickItemOptions } from "./PickItemOptions";
+import { type ContainerAppPickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
 export function getPickContainerAppStep(containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
@@ -31,16 +31,16 @@ export function getPickContainerAppStep(containerAppName?: string | RegExp): Azu
 /**
  * Get all the steps required to pick a `ContainerAppItem`
  */
-export function getPickContainerAppSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+export function getPickContainerAppSteps(options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     return [
-        ...getPickEnvironmentSteps(),
+        ...getPickEnvironmentSteps(false, undefined, undefined, options?.excludeExpress),
         getPickContainerAppStep()
     ];
 }
 
-export async function pickContainerApp(context: IActionContext, options?: PickItemOptions): Promise<ContainerAppItem> {
+export async function pickContainerApp(context: IActionContext, options?: ContainerAppPickItemOptions): Promise<ContainerAppItem> {
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
-        ...getPickContainerAppSteps()
+        ...getPickContainerAppSteps(options)
     ];
 
     return await runQuickPickWizard(context, {
@@ -53,13 +53,13 @@ export async function pickContainerApp(context: IActionContext, options?: PickIt
 export async function pickContainerAppWithoutPrompt(
     context: Partial<ISubscriptionActionContext> & IActionContext,
     containerApp: ContainerAppModel,
-    options?: PickItemOptions
+    options?: ContainerAppPickItemOptions
 ): Promise<ContainerAppItem> {
     const environmentName: string = parseAzureResourceId(nonNullProp(containerApp, 'environmentId')).resourceName;
 
     return await runQuickPickWizard(context, {
         promptSteps: [
-            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName),
+            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName, options?.excludeExpress),
             getPickContainerAppStep(containerApp.name)
         ],
         title: options?.title,
