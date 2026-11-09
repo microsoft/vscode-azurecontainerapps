@@ -3,9 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { parseAzureResourceId } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { type QuickPickItem } from 'vscode';
 import { ScaleRuleTypes } from '../../../../constants';
+import { ManagedEnvironmentItem } from '../../../../tree/ManagedEnvironmentItem';
 import { localize } from '../../../../utils/localize';
 import { SecretListStep } from '../../../secret/SecretListStep';
 import { type IAddScaleRuleContext } from './IAddScaleRuleContext';
@@ -18,7 +20,10 @@ export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleCo
     public hideStepCount: boolean = true;
 
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
-        const qpItems: QuickPickItem[] = Object.values(ScaleRuleTypes).map(type => {
+        const { resourceGroup, resourceName } = parseAzureResourceId(context.containerApp.managedEnvironmentId);
+        const environment = await ManagedEnvironmentItem.Get(context, context.subscription, resourceGroup, resourceName);
+        const ruleTypes = Object.values(ScaleRuleTypes).filter(type => environment.environmentMode !== 'Express' || type === ScaleRuleTypes.HTTP);
+        const qpItems: QuickPickItem[] = ruleTypes.map(type => {
             return { label: type };
         });
 
@@ -50,4 +55,3 @@ export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleCo
         return { promptSteps };
     }
 }
-
