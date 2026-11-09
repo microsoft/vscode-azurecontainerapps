@@ -22,6 +22,7 @@ export class ScaleRuleTypeListStep extends AzureWizardPromptStep<IAddScaleRuleCo
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
         const { resourceGroup, resourceName } = parseAzureResourceId(context.containerApp.managedEnvironmentId);
         const environment = await ManagedEnvironmentItem.Get(context, context.subscription, resourceGroup, resourceName);
+        // Only offer HTTP rules for Express; keep all rule types for other environments.
         const ruleTypes = Object.values(ScaleRuleTypes).filter(type => environment.environmentMode !== 'Express' || type === ScaleRuleTypes.HTTP);
         const qpItems: QuickPickItem[] = ruleTypes.map(type => {
             return { label: type };
