@@ -8,7 +8,7 @@ import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureR
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
-import { type ContainerAppPickItemOptions, type PickItemOptions } from "./PickItemOptions";
+import { type ContainerAppPickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
 export function getPickContainerAppStep(containerAppName?: string | RegExp, options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
@@ -51,7 +51,7 @@ class ContainerAppQuickPickStep extends ContextValueQuickPickStep<AzureResourceQ
  */
 export function getPickContainerAppSteps(options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     return [
-        ...getPickEnvironmentSteps(),
+        ...getPickEnvironmentSteps(false, undefined, undefined, options?.environmentOptions),
         getPickContainerAppStep(undefined, options)
     ];
 }
@@ -71,14 +71,14 @@ export async function pickContainerApp(context: IActionContext, options?: Contai
 export async function pickContainerAppWithoutPrompt(
     context: Partial<ISubscriptionActionContext> & IActionContext,
     containerApp: ContainerAppModel,
-    options?: PickItemOptions
+    options?: ContainerAppPickItemOptions
 ): Promise<ContainerAppItem> {
     const environmentName: string = parseAzureResourceId(nonNullProp(containerApp, 'environmentId')).resourceName;
 
     return await runQuickPickWizard(context, {
         promptSteps: [
-            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName),
-            getPickContainerAppStep(containerApp.name)
+            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName, options?.environmentOptions),
+            getPickContainerAppStep(containerApp.name, options)
         ],
         title: options?.title,
         showLoadingPrompt: options?.showLoadingPrompt

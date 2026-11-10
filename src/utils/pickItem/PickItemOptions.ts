@@ -15,7 +15,11 @@ export interface RevisionPickItemOptions extends PickItemOptions {
     selectByRevisionName?: string;
 }
 
-export interface ContainerAppPickItemOptions extends PickItemOptions {
+export interface ContainerAppPickItemOptions extends FilteredPickItemOptions {
+    environmentOptions?: FilteredPickItemOptions;
+}
+
+export interface FilteredPickItemOptions extends PickItemOptions {
     filter?: PickFilter['isFinalPick'];
     noPicksMessage?: string;
 }
