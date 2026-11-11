@@ -6,9 +6,9 @@
 import { KnownActiveRevisionsMode, type Container, type EnvironmentVar, type Revision } from "@azure/arm-appcontainers";
 import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
-import deepEqual from "deep-eql";
 import { ThemeIcon, type TreeItem } from "vscode";
 import { ext } from "../../extensionVariables";
+import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { localize } from "../../utils/localize";
 import { getParentResource } from "../../utils/revisionDraftUtils";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -90,8 +90,8 @@ export class EnvironmentVariableItem extends RevisionDraftDescendantBase {
 
         const currentContainers: Container[] = this.parentResource.template?.containers ?? [];
         const currentContainer: Container | undefined = currentContainers[this.containersIdx];
-        const currentEnv: EnvironmentVar | undefined = currentContainer.env?.find(env => env.name === this.envVariable.name);
+        const currentEnv: EnvironmentVar | undefined = currentContainer?.env?.find(env => env.name === this.envVariable.name);
 
-        return !currentEnv || !deepEqual(this.envVariable, currentEnv);
+        return !currentEnv || !areTemplateValuesEqual(this.envVariable, currentEnv);
     }
 }

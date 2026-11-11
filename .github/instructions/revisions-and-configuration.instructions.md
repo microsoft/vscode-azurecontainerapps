@@ -19,8 +19,10 @@ applyTo: "src/commands/revision/**/*.ts,src/commands/revisionDraft/**/*.ts,src/c
   notifications. These are virtual files, not paths to write into the workspace.
 - Single-mode drafts start from the app template; multiple-mode revision drafts
   may start from the chosen revision. Keep dirty checks and menu context values
-  consistent across app, revision draft, container, and scaling nodes. Preserve
-  meaningful nested changes and array order when adjusting comparisons.
+  consistent across app, revision draft, container, and scaling nodes. Follow
+  [Express compatibility instructions](express-compatibility.instructions.md)
+  for template comparisons, staged registry configuration, and revision-mode
+  constraints.
 - `deployRevisionDraft` validates unsaved changes, prompts, executes the ARM
   update, and only then discards the draft and refreshes the environment tree.
   Preserve drafts on failure/cancellation and single/multiple-mode behavior.

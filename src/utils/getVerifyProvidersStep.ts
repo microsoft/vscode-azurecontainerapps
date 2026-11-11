@@ -5,7 +5,7 @@
 
 import { VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
-import { logAnalyticsProvider, managedEnvironmentProvider, registryProvider } from "../constants";
+import { managedEnvironmentProvider, registryProvider } from "../constants";
 
 /**
  * Use to obtain a `VerifyProvidersStep` that registers all known container app providers to the user's subscription
@@ -13,7 +13,6 @@ import { logAnalyticsProvider, managedEnvironmentProvider, registryProvider } fr
 export function getVerifyProvidersStep<T extends ISubscriptionActionContext>(): VerifyProvidersStep<T> {
     return new VerifyProvidersStep<T>([
         managedEnvironmentProvider,
-        logAnalyticsProvider,
         registryProvider
     ]);
 }

@@ -11,8 +11,9 @@ When creating or updating resources, execute steps should occupy certain priorit
 
 #### Steps
 
-- LogAnalyticsCreateStep: 220
 - ManagedEnvironmentCreateStep: 250
+- LogAnalyticsCreateStep: 220 (on-demand connection only)
+- LogAnalyticsConnectStep: 260 (on-demand connection only)
 
 ### 2. Azure Container Registry
 

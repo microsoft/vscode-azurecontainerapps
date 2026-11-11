@@ -25,7 +25,7 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
         const scName: string = 'current';
 
         const requestOptions = {
-            customHeaders: {
+            headers: {
                 /* eslint-disable-next-line @typescript-eslint/naming-convention */
                 'x-ms-github-auxiliary': nonNullProp(context, 'gitHubAccessToken')
             }
@@ -34,7 +34,7 @@ export class GitHubRepositoryDisconnectStep extends AzureWizardExecuteStep<IDisc
         const disconnecting: string = localize('disconnectingRepository', 'Disconnecting "{0}"...', repo);
         progress.report({ message: disconnecting });
 
-        await client.containerAppsSourceControls.beginDeleteAndWait(rgName, caName, scName, { requestOptions });
+        await client.containerAppsSourceControls.delete(rgName, caName, scName, { requestOptions });
         ext.state.notifyChildrenChanged(context.containerApp.id);
 
         const disconnected: string = localize('disconnectedRepository', 'Disconnected repository "{0}" from container app "{1}".', `${owner}/${repo}`, context.containerApp.name);

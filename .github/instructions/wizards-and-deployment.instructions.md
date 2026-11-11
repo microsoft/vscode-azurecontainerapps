@@ -13,8 +13,8 @@ applyTo: "src/commands/createContainerApp/**/*.ts,src/commands/createManagedEnvi
   list/create steps in a parent wizard.
 - `ManagedEnvironmentListStep` populates related resource group, Log Analytics
   workspace, and location for existing environments. Preserve new versus reused
-  environment paths and the actual Log Analytics choices in the relevant flow;
-  do not assume every deployment creates a new workspace.
+  environment paths. For logging defaults and optional workspace attachment,
+  follow [Express compatibility instructions](express-compatibility.instructions.md).
 - Consult `src/commands/EXECUTE_PRIORITY.md` and the actual step priorities:
   provider/resource group -> environment -> registry -> credentials -> build/image
   -> app -> later configuration/draft deployment. Changing array order alone
@@ -34,14 +34,9 @@ applyTo: "src/commands/createContainerApp/**/*.ts,src/commands/createManagedEnvi
   Dockerfile paths, archive/upload handling, failure logs, and temporary archive
   cleanup in `RunStep`. Do not include source contents or SAS URLs in telemetry.
 - Registry access has distinct Docker-login and managed-identity branches.
-  Managed identity currently enables the environment's system identity, grants
-  AcrPull on the registry, and uses `identity: 'system-environment'`; do not
-  silently substitute an app identity. Admin-user enablement has a confirmation.
-  Preserve credential/secret references and existing entries when updating apps.
-- `RegistryCredentialsAndSecretsConfigurationStep` collects existing secrets and
-  registry entries before app mutation. Coordinate changes with
-  `getContainerEnvelopeWithSecrets`, image-edit draft paths, and app creation;
-  do not assume a template-only draft carries app-level credentials.
+  Follow [Express compatibility instructions](express-compatibility.instructions.md)
+  for mode-specific identity eligibility, access assessment, attachments, and
+  atomic image/credential updates. Admin-user enablement has a confirmation.
 - Build success, ARM update completion, and healthy startup are separate.
   `ContainerAppStartVerificationStep` checks the deployed revision/image and
   accepts running or scaled-to-zero status; preserve bounded polling, failure
