@@ -113,7 +113,7 @@ export class ContainerAppItem implements ContainerAppsItem, RevisionsDraftModel 
                 children.push(new RevisionsItem(this.subscription, this.containerApp, this.isExpress));
             }
 
-            children.push(new ConfigurationItem(this.subscription, this.containerApp));
+            children.push(new ConfigurationItem(this.subscription, this.containerApp, this.isExpress));
             children.push(new LogsGroupItem(this.subscription, this.containerApp));
             return children;
         });

@@ -24,7 +24,7 @@ export class ConfigurationItem implements ContainerAppsItem {
     id: string;
 
     // this is called "Settings" in the Portal
-    constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
+    constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel, private readonly isExpress: boolean = false) {
         this.id = `${containerApp.id}/Configurations`;
         this.viewProperties = {
             data: nonNullProp(containerApp, 'configuration'),
@@ -37,7 +37,9 @@ export class ConfigurationItem implements ContainerAppsItem {
             const children: TreeElementBase[] = [];
             children.push(this.containerApp.configuration?.ingress ? new IngressEnabledItem(this.subscription, this.containerApp) : new IngressDisabledItem(this.subscription, this.containerApp));
             children.push(new SecretsItem(this.subscription, this.containerApp));
-            children.push(new ActionsItem(this.id, ext.prefix, this.subscription, this.containerApp));
+            if (!this.isExpress) {
+                children.push(new ActionsItem(this.id, ext.prefix, this.subscription, this.containerApp));
+            }
             children.push(this.containerApp.configuration?.dapr?.enabled ? new DaprEnabledItem(this.containerApp, this.containerApp.configuration.dapr) : createDaprDisabledItem(this.containerApp));
             return children;
         });

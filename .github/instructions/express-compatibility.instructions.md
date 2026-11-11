@@ -31,6 +31,19 @@ The extension currently creates both app types with `activeRevisionsMode: Single
 
 See [ContainerAppCreateStep](../../src/commands/createContainerApp/ContainerAppCreateStep.ts), [ChooseRevisionModeStep](../../src/commands/revision/chooseRevisionMode/ChooseRevisionModeStep.ts), and the [application-scoped secrets model](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets).
 
+## Portal GitHub connection
+
+The Portal-backed **Connect to a GitHub Repository** action uses SourceControl
+resources, which the service rejects on Express. The service error captured in
+[issue #1188](https://github.com/microsoft/vscode-azurecontainerapps/issues/1188)
+establishes this restriction. Hide the Actions node for Express, exclude Express
+environments and apps from the connection picker, and reject direct invocation.
+When an invocation supplies only an app and subscription, load its environment
+before deciding eligibility. Preserve the Standard connection flow.
+
+This restriction applies to the Portal's SourceControl integration, not to
+GitHub Actions workflows that deploy container images independently.
+
 ## ACR pull identities
 
 Express requires a user-assigned managed identity attached directly to the container app for managed-identity image pulls. Attaching it only to the environment is no longer sufficient. Do not offer the app's system-assigned identity or environment identities as eligible Express pull identities.
