@@ -5,8 +5,11 @@
 
 import { KnownActiveRevisionsMode, type ContainerAppsAPIClient } from "@azure/arm-appcontainers";
 import { nonNullProp, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type ResourceModelBase } from '@microsoft/vscode-azureresources-api';
+import { revisionRestartUnsupportedContextValue } from '../../constants';
 import { ext } from "../../extensionVariables";
 import { type ContainerAppItem } from "../../tree/ContainerAppItem";
+import { ManagedEnvironmentItem } from '../../tree/ManagedEnvironmentItem';
 import { RevisionItem } from "../../tree/revisionManagement/RevisionItem";
 import { createContainerAppsClient } from "../../utils/azureClients";
 import { localize } from "../../utils/localize";
@@ -15,11 +18,25 @@ import { pickRevision } from "../../utils/pickItem/pickRevision";
 
 export async function executeRevisionOperation(context: IActionContext, node: ContainerAppItem | RevisionItem | undefined, operation: RevisionOperation): Promise<void> {
     if (!node) {
-        node = await pickContainerApp(context);
+        node = await pickContainerApp(context, operation === 'restartRevision' ? {
+            environmentOptions: {
+                filter: (_treeItem, element) => {
+                    const environment: unknown = (element as { branchItem?: ResourceModelBase })?.branchItem ?? element;
+                    return !ManagedEnvironmentItem.isManagedEnvironmentItem(environment) || !environment.isExpress;
+                },
+                noPicksMessage: localize('noStandardContainerAppsEnvironment', 'Current subscription has no Standard container apps environments'),
+            },
+            filter: treeItem => !treeItem.contextValue?.split(';').includes(revisionRestartUnsupportedContextValue),
+            noPicksMessage: localize('noStandardContainerApps', 'Selected container apps environment has no Standard apps'),
+        } : undefined);
 
         if (node.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple) {
             node = await pickRevision(context, node);
         }
+    }
+
+    if (operation === 'restartRevision' && node.isExpress) {
+        throw new Error(localize('expressRestartUnsupported', 'Restart is not supported for Express Container Apps.'));
     }
 
     const item: ContainerAppItem | RevisionItem = nonNullValue(node);

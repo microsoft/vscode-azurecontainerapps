@@ -21,7 +21,7 @@ applyTo: "src/commands/revision/**/*.ts,src/commands/revisionDraft/**/*.ts,src/c
   may start from the chosen revision. Keep dirty checks and menu context values
   consistent across app, revision draft, container, and scaling nodes. Follow
   [Express compatibility instructions](express-compatibility.instructions.md)
-  for template comparisons, staged registry configuration, and revision-mode
+  for template comparisons, staged registry configuration, and revision
   constraints.
 - `deployRevisionDraft` validates unsaved changes, prompts, executes the ARM
   update, and only then discards the draft and refreshes the environment tree.

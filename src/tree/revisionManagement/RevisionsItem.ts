@@ -24,7 +24,7 @@ export class RevisionsItem implements ContainerAppsItem {
 
     id: string;
 
-    constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel) {
+    constructor(public readonly subscription: AzureSubscription, public readonly containerApp: ContainerAppModel, public readonly isExpress: boolean = false) {
         this.id = RevisionsItem.getRevisionsItemId(containerApp.id);
     }
 
@@ -49,7 +49,7 @@ export class RevisionsItem implements ContainerAppsItem {
                 if (revision.name === revisionDraftBaseName) {
                     revisionDraftBase = revision;
                 }
-                return new RevisionItem(this.subscription, this.containerApp, revision);
+                return new RevisionItem(this.subscription, this.containerApp, revision, this.isExpress);
             });
         }))?.reverse() ?? [];
 
