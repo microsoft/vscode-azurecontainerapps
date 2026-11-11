@@ -11,6 +11,7 @@ import * as assert from 'assert';
 import { RevisionDraftFileSystem } from '../../src/commands/revisionDraft/RevisionDraftFileSystem';
 import { AddScaleRuleStep } from '../../src/commands/scaling/scaleRule/addScaleRule/AddScaleRuleStep';
 import { type IAddScaleRuleContext } from '../../src/commands/scaling/scaleRule/addScaleRule/IAddScaleRuleContext';
+import { ScaleRuleNameStep } from '../../src/commands/scaling/scaleRule/addScaleRule/ScaleRuleNameStep';
 import { ScaleRuleTypes } from '../../src/constants';
 import { ext } from '../../src/extensionVariables';
 import { type ContainerAppModel } from '../../src/tree/ContainerAppItem';
@@ -90,6 +91,36 @@ suite('AddScaleRuleStep', () => {
     }
 
     for (const revisionsMode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
+        test(`rejects draft-only rule names in the prompt in ${revisionsMode} revision mode`, async () => {
+            const item = createItem([], revisionsMode);
+            const draft: Template = {
+                containers: item.revision.template?.containers,
+                scale: { minReplicas: 2, maxReplicas: 5, rules: [httpRule('rule2'), queueRule, customRule] }
+            };
+            const originalDraft = structuredClone(draft);
+            ext.revisionDraftFileSystem.parseRevisionDraft = baseItem => {
+                assert.strictEqual(baseItem, item);
+                return draft;
+            };
+            const context = await createContext(item);
+            delete context.newRuleName;
+            context.ui.showInputBox = async options => {
+                const validateInput = options?.validateInput;
+                assert.ok(validateInput);
+                for (const name of ['rule2', ' rule2 ', 'queue', 'custom']) {
+                    assert.strictEqual(await validateInput(name), `The scale rule "${name.trim()}" already exists in container app "app". Please enter a unique name.`);
+                }
+                assert.strictEqual(await validateInput('rule3'), undefined);
+                assert.ok(options.asyncValidationTask, 'Live-name validation must still be registered');
+                return 'rule3';
+            };
+
+            await new ScaleRuleNameStep(item).prompt(context);
+
+            assert.strictEqual(context.newRuleName, 'rule3');
+            assert.deepStrictEqual(draft, originalDraft);
+        });
+
         test(`preserves existing HTTP and unrelated rules in ${revisionsMode} revision mode`, async () => {
             const rules = [httpRule('rule1'), queueRule, httpRule('rule2'), customRule];
             const item = createItem(rules, revisionsMode);
@@ -137,6 +168,23 @@ suite('AddScaleRuleStep', () => {
             await step.execute(await createContext(item));
 
             assert.deepStrictEqual(step.updatedTemplate?.scale?.rules?.map(rule => rule.name), ['rule1', 'rule3']);
+        });
+    }
+
+    for (const draft of [undefined, {}, { scale: {} }, { scale: { rules: [] } }] satisfies (Template | undefined)[]) {
+        test(`accepts a new name with ${JSON.stringify(draft) ?? 'no draft'}`, async () => {
+            const item = createItem([]);
+            ext.revisionDraftFileSystem.parseRevisionDraft = () => draft;
+            const context = await createContext(item);
+            context.ui.showInputBox = async options => {
+                assert.ok(options?.validateInput);
+                assert.strictEqual(await options.validateInput('rule3'), undefined);
+                return 'rule3';
+            };
+
+            await new ScaleRuleNameStep(item).prompt(context);
+
+            assert.strictEqual(context.newRuleName, 'rule3');
         });
     }
 

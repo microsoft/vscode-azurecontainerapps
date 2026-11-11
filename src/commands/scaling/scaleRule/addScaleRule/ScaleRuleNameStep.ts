@@ -5,6 +5,8 @@
 
 import { KnownActiveRevisionsMode, type ContainerApp, type ContainerAppsAPIClient, type Revision, type ScaleRule } from '@azure/arm-appcontainers';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { ext } from '../../../../extensionVariables';
+import { type RevisionsItemModel } from '../../../../tree/revisionManagement/RevisionItem';
 import { createContainerAppsAPIClient } from '../../../../utils/azureClients';
 import { localize } from '../../../../utils/localize';
 import { type IAddScaleRuleContext } from './IAddScaleRuleContext';
@@ -12,10 +14,14 @@ import { type IAddScaleRuleContext } from './IAddScaleRuleContext';
 export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContext> {
     public hideStepCount: boolean = true;
 
+    constructor(readonly baseItem: RevisionsItemModel) {
+        super();
+    }
+
     public async prompt(context: IAddScaleRuleContext): Promise<void> {
         context.newRuleName = (await context.ui.showInputBox({
             prompt: localize('scaleRuleNamePrompt', 'Enter a name for the new scale rule.'),
-            validateInput: this.validateInput,
+            validateInput: (name: string) => this.validateInput(context, name),
             asyncValidationTask: (name: string) => this.validateNameAvailable(context, name)
         })).trim();
     }
@@ -24,11 +30,16 @@ export class ScaleRuleNameStep extends AzureWizardPromptStep<IAddScaleRuleContex
         return !context.newRuleName;
     }
 
-    private validateInput(name: string | undefined): string | undefined {
+    private validateInput(context: IAddScaleRuleContext, name: string | undefined): string | undefined {
         name = name ? name.trim() : '';
 
         if (!/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(name)) {
             return localize('invalidChar', `A name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character.`);
+        }
+
+        const draftRules = ext.revisionDraftFileSystem.parseRevisionDraft(this.baseItem)?.scale?.rules;
+        if (draftRules?.some(rule => rule.name === name)) {
+            return localize('scaleRuleExists', 'The scale rule "{0}" already exists in container app "{1}". Please enter a unique name.', name, context.containerApp.name);
         }
 
         return undefined;
