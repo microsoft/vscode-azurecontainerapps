@@ -25,39 +25,19 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
     });
     const service = createSandboxService(subscriptionContext, node.ref);
 
-    const picks: (vscode.QuickPickItem & { seconds?: number; disable?: boolean })[] = [
+    const picks: (vscode.QuickPickItem & { seconds?: number })[] = [
+        { label: localize('autoSuspend1m', '1 minute'), seconds: 60 },
+        { label: localize('autoSuspend2m', '2 minutes'), seconds: 120 },
         { label: localize('autoSuspend5m', '5 minutes'), seconds: 300 },
-        { label: localize('autoSuspend15m', '15 minutes'), seconds: 900 },
+        { label: localize('autoSuspend10m', '10 minutes'), seconds: 600 },
         { label: localize('autoSuspend30m', '30 minutes'), seconds: 1800 },
-        { label: localize('autoSuspend1h', '1 hour'), seconds: 3600 },
-        { label: localize('autoSuspendCustom', 'Custom...'), seconds: undefined },
-        { label: localize('autoSuspendDisablePick', 'Disable auto-suspend'), disable: true },
+        { label: localize('autoSuspend60m', '60 minutes'), seconds: 3600 },
+        { label: localize('autoSuspendDisable', 'Disable auto-suspend') }
     ];
 
     const pick = await context.ui.showQuickPick(picks, {
         placeHolder: localize('autoSuspendPlaceholder', 'Select an idle timeout before the sandbox is auto-suspended'),
     });
-
-    let policy: { enabled: boolean; idleTimeoutSeconds?: number };
-    if (pick.disable) {
-        policy = { enabled: false };
-    } else {
-        let seconds = pick.seconds;
-        if (seconds === undefined) {
-            const input = await context.ui.showInputBox({
-                prompt: localize('autoSuspendCustomPrompt', 'Enter the idle timeout in seconds'),
-                validateInput: (value: string): string | undefined => {
-                    const n = Number((value ?? '').trim());
-                    if (!Number.isInteger(n) || n <= 0) {
-                        return localize('autoSuspendInvalid', 'Enter a positive whole number of seconds.');
-                    }
-                    return undefined;
-                },
-            });
-            seconds = Number(input.trim());
-        }
-        policy = { enabled: true, idleTimeoutSeconds: seconds };
-    }
 
     await runSandboxActivity(
         localize('updateAutoSuspendActivity', 'Update auto-suspend for sandbox "{0}"', node.label),
@@ -65,8 +45,8 @@ export async function setAutoSuspend(context: IActionContext, node?: SandboxItem
         async () => {
             const sandbox = await service.getSandbox(node.ref.sandboxId);
             await service.setLifecyclePolicy(node.ref.sandboxId, updateAutoSuspendPolicy(sandbox.lifecycle, {
-                enabled: policy.enabled,
-                interval: policy.idleTimeoutSeconds,
+                enabled: pick.seconds !== undefined,
+                interval: pick.seconds,
             }));
         },
     );

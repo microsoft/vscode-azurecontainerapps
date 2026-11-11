@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import { ext } from '../../extensionVariables';
 import { getSandboxGroupResourceId, getSandboxResourceId, type SandboxRef } from '../../sandboxes/sandboxTypes';
 import { createActivityContext } from '../../utils/activityUtils';
+import { localize } from '../../utils/localize';
 
 /** Refreshes the sandbox group branch in the Azure Resources view after a mutation. */
 export function refreshSandboxesTree(): void {
@@ -44,6 +45,20 @@ export async function runSandboxActivity(activityTitle: string, progressTitle: s
         activityTitle,
     };
     const activity = new ExecuteActivity(activityContext, async () => {
+        ext.outputChannel.appendLog(progressTitle);
+        try {
+            await runWithProgress();
+        } catch (error) {
+            ext.outputChannel.appendLog(localize('sandboxActivityFailed', 'Failed: {0}', activityTitle));
+            throw error;
+        }
+        ext.outputChannel.appendLog(localize('sandboxActivitySucceeded', 'Completed: {0}', activityTitle));
+    });
+
+    await activityContext.registerActivity(activity);
+    await activity.run();
+
+    async function runWithProgress(): Promise<void> {
         if (activityContext.suppressNotification) {
             await task();
         } else {
@@ -52,8 +67,5 @@ export async function runSandboxActivity(activityTitle: string, progressTitle: s
                 title: progressTitle,
             }, task);
         }
-    });
-
-    await activityContext.registerActivity(activity);
-    await activity.run();
+    }
 }

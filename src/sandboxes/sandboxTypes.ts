@@ -33,11 +33,13 @@ export function getSandboxResourceId(ref: SandboxRef): string {
 export interface CreateSandboxOptions {
     disk: string;
     resources: SandboxResources;
+    /** Optional display name stored as the `name` label. */
+    name?: string;
 }
 
 /** A supported sandbox resource tier. */
 export interface SandboxResourceTier {
-    name: 'XS' | 'S' | 'M' | 'L' | 'XL';
+    name: 'XS' | 'S' | 'M' | 'L' | 'XL' | '2XL' | '3XL';
     cpuCores: string;
     memoryGb: string;
     diskGib: string;
@@ -51,6 +53,8 @@ export const sandboxResourceTiers: readonly SandboxResourceTier[] = [
     { name: 'S', cpuCores: '0.5', memoryGb: '1', diskGib: '10', resources: { cpu: '500m', memory: '1024Mi', disk: '10240Mi' } },
     { name: 'L', cpuCores: '2', memoryGb: '4', diskGib: '40', resources: { cpu: '2000m', memory: '4096Mi', disk: '40960Mi' } },
     { name: 'XL', cpuCores: '4', memoryGb: '8', diskGib: '80', resources: { cpu: '4000m', memory: '8192Mi', disk: '81920Mi' } },
+    { name: '2XL', cpuCores: '8', memoryGb: '16', diskGib: '160', resources: { cpu: '8000m', memory: '16384Mi', disk: '163840Mi' } },
+    { name: '3XL', cpuCores: '16', memoryGb: '32', diskGib: '320', resources: { cpu: '16000m', memory: '32768Mi', disk: '327680Mi' } },
 ];
 
 /** Parses an ARM sandbox-group id into a data-plane reference. */

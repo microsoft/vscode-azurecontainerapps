@@ -3,9 +3,9 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerApp } from "@azure/arm-appcontainers";
+import { type ContainerApp, type ManagedEnvironment } from "@azure/arm-appcontainers";
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createGenericElement, nonNullProp, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandling, createGenericElement, nonNullProp, nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { ThemeIcon, TreeItemCollapsibleState, type TreeItem } from "vscode";
 import { createContainerAppsClient } from '../utils/azureClients';
@@ -37,14 +37,19 @@ export class LogsGroupItem implements TreeElementBase {
     }
 
     async getChildren(): Promise<TreeElementBase[]> {
-        const result = await callWithTelemetryAndErrorHandling('logsGroupItem.getChildren', async context => {
-            const environmentId = nonNullProp(this.containerApp, 'managedEnvironmentId');
-            context.valuesToMask.push(this.subscription.subscriptionId, environmentId, nonNullProp(this.containerApp, 'id'));
-            const client = await createContainerAppsClient(context, this.subscription);
-            const environment = await client.managedEnvironments.get(getResourceGroupFromId(environmentId), nonNullValue(environmentId.split('/').pop(), 'environmentName'));
-            return this.getLogItems(hasLogDestination(environment.appLogsConfiguration));
+        const hasDestination = await callWithTelemetryAndErrorHandling('logsGroupItem.getChildren', async context => {
+            const environment = await this.getEnvironment(context);
+            return hasLogDestination(environment.appLogsConfiguration);
         });
-        return result ?? [];
+        // Only a confirmed missing destination should offer workspace attachment.
+        return this.getLogItems(hasDestination !== false);
+    }
+
+    protected async getEnvironment(context: IActionContext): Promise<ManagedEnvironment> {
+        const environmentId = nonNullProp(this.containerApp, 'managedEnvironmentId');
+        context.valuesToMask.push(this.subscription.subscriptionId, environmentId, nonNullProp(this.containerApp, 'id'));
+        const client = await createContainerAppsClient(context, this.subscription);
+        return client.managedEnvironments.get(getResourceGroupFromId(environmentId), nonNullValue(environmentId.split('/').pop(), 'environmentName'));
     }
 
     private getLogItems(hasLogDestination: boolean): TreeElementBase[] {
