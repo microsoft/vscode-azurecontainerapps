@@ -4,25 +4,31 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { KnownActiveRevisionsMode, type Revision } from '@azure/arm-appcontainers';
+import { createHttpHeaders, type Pipeline, type PipelineRequest } from '@azure/core-rest-pipeline';
 import { Environment } from '@azure/ms-rest-azure-env';
-import { TestInput, UserCancelledError, createTestActionContext } from '@microsoft/vscode-azext-utils';
+import { TestInput, TreeElementStateManager, UserCancelledError, createTestActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtResourceType, type AzureResource, type AzureSubscription, type ResourceGroupsTreeDataProvider } from '@microsoft/vscode-azureresources-api';
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import { TreeItem, TreeItemCollapsibleState, Uri } from 'vscode';
-import { executeRevisionOperation } from '../src/commands/revision/changeRevisionActiveState';
+import { executeRevisionOperation, type RevisionOperation } from '../src/commands/revision/changeRevisionActiveState';
+import { getRevisionCommandPickOptions } from '../src/commands/revision/getRevisionCommandPickOptions';
+import { editRevisionDraft } from '../src/commands/revisionDraft/editRevisionDraft';
 import { RevisionDraftFileSystem } from '../src/commands/revisionDraft/RevisionDraftFileSystem';
-import { revisionRestartUnsupportedContextValue } from '../src/constants';
+import { expressContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue, revisionRestartUnsupportedContextValue } from '../src/constants';
 import { ext } from '../src/extensionVariables';
 import { ContainerAppItem, type ContainerAppModel } from '../src/tree/ContainerAppItem';
 import { ManagedEnvironmentItem } from '../src/tree/ManagedEnvironmentItem';
+import { RevisionDraftItem } from '../src/tree/revisionManagement/RevisionDraftItem';
 import { RevisionItem } from '../src/tree/revisionManagement/RevisionItem';
 import { getPickContainerAppStep, pickContainerApp, pickContainerAppWithoutPrompt } from '../src/utils/pickItem/pickContainerApp';
 import { getPickEnvironmentSteps, pickEnvironment } from '../src/utils/pickItem/pickEnvironment';
 import { type ContainerAppPickItemOptions } from '../src/utils/pickItem/PickItemOptions';
 
-suite('Restart revision availability', () => {
+suite('Revision command availability', () => {
+    const operations: RevisionOperation[] = ['activateRevision', 'deactivateRevision', 'restartRevision'];
+    const commands = [...operations, 'editRevisionDraft'] as const;
     const subscription: AzureSubscription = {
         subscriptionId: 'subscription',
         tenantId: 'tenant',
@@ -53,12 +59,17 @@ suite('Restart revision availability', () => {
     let originalRgApi: typeof ext.rgApiV2;
     let originalDraftFileSystem: typeof ext.revisionDraftFileSystem;
     let originalContext: typeof ext.context;
+    let originalState: typeof ext.state;
+    let pipelinePrototype: Pipeline | undefined;
+    let originalSendRequest: Pipeline['sendRequest'];
 
     setup(() => {
         originalRgApi = ext.rgApiV2;
         originalDraftFileSystem = ext.revisionDraftFileSystem;
         originalContext = ext.context;
+        originalState = ext.state;
         ext.revisionDraftFileSystem = new RevisionDraftFileSystem();
+        ext.state = new TreeElementStateManager();
         ext.context = { ...originalContext, extensionUri: Uri.file(path.join(__dirname, '..')) };
     });
 
@@ -66,6 +77,12 @@ suite('Restart revision availability', () => {
         ext.rgApiV2 = originalRgApi;
         ext.revisionDraftFileSystem = originalDraftFileSystem;
         ext.context = originalContext;
+        ext.state.dispose();
+        ext.state = originalState;
+        if (pipelinePrototype) {
+            pipelinePrototype.sendRequest = originalSendRequest;
+            pipelinePrototype = undefined;
+        }
     });
 
     function setPickerChildren(children?: TreeItem[]): void {
@@ -128,46 +145,79 @@ suite('Restart revision availability', () => {
         ext.rgApiV2 = { ...originalRgApi, resources: { ...originalRgApi?.resources, azureResourceTreeDataProvider: provider } };
     }
 
-    for (const wrapped of [false, true]) {
-        test(`Restart excludes Express environments and retains Standard/legacy ${wrapped ? 'wrapped' : 'bare'} models`, async () => {
-            setPickerHierarchy([
-                environment('express-environment', 'Express'),
-                environment('standard', 'WorkloadProfiles'),
-                environment('legacy'),
-                environment('express', 'WorkloadProfiles'),
-            ], [], wrapped);
-            const context = await createTestActionContext();
-            context.ui.showQuickPick = async picks => {
-                assert.deepStrictEqual((await picks).map(pick => pick.label), ['standard', 'legacy', 'express']);
-                throw new UserCancelledError();
-            };
+    for (const command of commands) {
+        for (const wrapped of [false, true]) {
+            test(`${command} excludes Express environments and retains Standard/legacy ${wrapped ? 'wrapped' : 'bare'} models`, async () => {
+                setPickerHierarchy([
+                    environment('express-environment', 'Express'),
+                    environment('standard', 'WorkloadProfiles'),
+                    environment('legacy'),
+                    environment('express', 'WorkloadProfiles'),
+                ], [], wrapped);
+                const context = await createTestActionContext();
+                context.ui.showQuickPick = async picks => {
+                    assert.deepStrictEqual((await picks).map(pick => pick.label), ['standard', 'legacy', 'express']);
+                    throw new UserCancelledError();
+                };
 
-            await assert.rejects(executeRevisionOperation(context, undefined, 'restartRevision'), UserCancelledError);
-        });
+                await assert.rejects(command === 'editRevisionDraft'
+                    ? editRevisionDraft(context) : executeRevisionOperation(context, undefined, command), UserCancelledError);
+            });
 
-        test(`Restart rejects Express-only environment fallback with ${wrapped ? 'wrapped' : 'bare'} models`, async () => {
-            setPickerHierarchy([environment('express-environment', 'Express')], [], wrapped);
-            const context = await createTestActionContext();
-            context.ui.showQuickPick = async (picks, options) => {
-                assert.deepStrictEqual(await picks, []);
-                assert.strictEqual(options?.noPicksMessage, 'Current subscription has no Standard container apps environments');
-                throw new UserCancelledError();
-            };
+            test(`${command} rejects Express-only environment fallback with ${wrapped ? 'wrapped' : 'bare'} models`, async () => {
+                setPickerHierarchy([environment('express-environment', 'Express')], [], wrapped);
+                const context = await createTestActionContext();
+                context.ui.showQuickPick = async (picks, options) => {
+                    assert.deepStrictEqual(await picks, []);
+                    assert.strictEqual(options?.noPicksMessage, 'Current subscription has no Standard container apps environments');
+                    throw new UserCancelledError();
+                };
 
-            await assert.rejects(executeRevisionOperation(context, undefined, 'restartRevision'), UserCancelledError);
-        });
+                await assert.rejects(command === 'editRevisionDraft'
+                    ? editRevisionDraft(context) : executeRevisionOperation(context, undefined, command), UserCancelledError);
+            });
+        }
     }
 
-    test('preserves Express environments for other revision operations', async () => {
-        setPickerHierarchy([environment('express-environment', 'Express')]);
-        const context = await createTestActionContext();
-        context.ui.showQuickPick = async picks => {
-            assert.deepStrictEqual((await picks).map(pick => pick.label), ['express-environment']);
-            throw new UserCancelledError();
-        };
+    for (const command of commands) {
+        test(`${command} filters app mode and Express ancestry without hiding a Standard app named express`, async () => {
+            const single = new ContainerAppItem(subscription, { ...app, name: 'single' });
+            const multiple = new ContainerAppItem(subscription, { ...app, name: 'multiple', revisionsMode: KnownActiveRevisionsMode.Multiple });
+            const namedExpress = new ContainerAppItem(subscription, { ...app, name: 'express', revisionsMode: KnownActiveRevisionsMode.Multiple });
+            const express = new ContainerAppItem(subscription, { ...app, name: 'express-app', revisionsMode: KnownActiveRevisionsMode.Multiple }, true);
+            const parent = environment('standard', 'WorkloadProfiles');
+            setPickerHierarchy([parent], [single, multiple, namedExpress, express]);
+            const context = await createTestActionContext();
+            let prompts = 0;
+            context.ui.showQuickPick = async picks => {
+                const choices = await picks;
+                if (prompts++ === 0) {
+                    return choices[0];
+                }
+                assert.deepStrictEqual(choices.map(pick => pick.label), command === 'restartRevision'
+                    ? ['single', 'multiple', 'express'] : ['multiple', 'express']);
+                throw new UserCancelledError();
+            };
 
-        await assert.rejects(executeRevisionOperation(context, undefined, 'activateRevision'), UserCancelledError);
-    });
+            await assert.rejects(command === 'editRevisionDraft'
+                ? editRevisionDraft(context) : executeRevisionOperation(context, undefined, command), UserCancelledError);
+        });
+
+        test(`${command} does not offer a Single app as an expandable fallback`, async () => {
+            setPickerChildren([createPick('single')]);
+            const context = Object.assign(await createTestActionContext(), { pickedNodes: ['environment'] });
+            const options = getRevisionCommandPickOptions(command);
+            if (command === 'restartRevision') {
+                await context.ui.runWithInputs(['single'], () => getPickContainerAppStep(undefined, options).prompt(context));
+            } else {
+                await assert.rejects(
+                    context.ui.runWithInputs([TestInput.UseDefaultValue], () => getPickContainerAppStep(undefined, options).prompt(context)),
+                    /No quick pick items found/,
+                );
+                assert.deepStrictEqual(context.pickedNodes, ['environment']);
+            }
+        });
+    }
 
     test('scopes environment and app callbacks to their respective picker steps', async () => {
         const parent = environment('standard', 'WorkloadProfiles');
@@ -449,6 +499,123 @@ suite('Restart revision availability', () => {
             /Restart is not supported for Express Container Apps/,
         );
         assert.ok(node.getTreeItem().contextValue?.split(';').includes(revisionRestartUnsupportedContextValue));
+    });
+
+    for (const operation of ['activateRevision', 'deactivateRevision'] as const) {
+        for (const mode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
+            for (const kind of ['app', 'revision'] as const) {
+                test(`blocks direct Express ${mode} ${kind} ${operation} before accessing Azure or operation state`, async () => {
+                    ext.state.runWithTemporaryDescription = () => assert.fail('Must not enter operation state');
+                    const model = { ...app, revisionsMode: mode };
+                    const node = kind === 'app'
+                        ? new ContainerAppItem(subscription, model, true)
+                        : new RevisionItem(subscription, model, revision, true);
+
+                    await assert.rejects(executeRevisionOperation(await createTestActionContext(), node, operation),
+                        /Express Container Apps do not support revision activation or deactivation. Use Start or Stop instead/);
+                });
+            }
+        }
+
+        test(`blocks direct Standard Single ${operation} before accessing Azure or operation state`, async () => {
+            ext.state.runWithTemporaryDescription = () => assert.fail('Must not enter operation state');
+            const context = await createTestActionContext();
+            for (const node of [new ContainerAppItem(subscription, app), new RevisionItem(subscription, app, revision)]) {
+                await assert.rejects(executeRevisionOperation(context, node, operation),
+                    /You must be in multiple revisions mode to run this command/);
+            }
+        });
+    }
+
+    for (const operation of operations) {
+        for (const mode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
+            if (operation !== 'restartRevision' && mode === KnownActiveRevisionsMode.Single) {
+                continue;
+            }
+
+            test(`dispatches Standard ${mode} ${operation} to the selected revision and refreshes after mocked ARM success`, async () => {
+                const requests: PipelineRequest[] = [];
+                const refreshed: string[] = [];
+                const { ContainerAppsAPIClient } = await import('@azure/arm-appcontainers');
+                const client = new ContainerAppsAPIClient({ getToken: async () => null }, subscription.subscriptionId);
+                pipelinePrototype = Object.getPrototypeOf(client.pipeline);
+                assert.ok(pipelinePrototype);
+                originalSendRequest = pipelinePrototype.sendRequest;
+                pipelinePrototype.sendRequest = async (_httpClient, request) => {
+                    requests.push(request);
+                    return { request, status: 200, headers: createHttpHeaders() };
+                };
+                ext.state.runWithTemporaryDescription = async (_id, _description, callback) => callback();
+                ext.state.notifyChildrenChanged = id => { refreshed.push(id); };
+                const model = { ...app, revisionsMode: mode };
+                const selectedRevision = { ...revision, name: 'app--selected', id: `${app.id}/revisions/app--selected` };
+                const node = mode === KnownActiveRevisionsMode.Single
+                    ? new ContainerAppItem(subscription, model)
+                    : new RevisionItem(subscription, model, selectedRevision);
+
+                await executeRevisionOperation(await createTestActionContext(), node, operation);
+
+                assert.strictEqual(requests.length, 1);
+                assert.strictEqual(requests[0].method, 'POST');
+                const revisionName = mode === KnownActiveRevisionsMode.Single ? app.latestRevisionName : selectedRevision.name;
+                assert.strictEqual(new URL(requests[0].url).pathname, `${app.id}/revisions/${revisionName}/${operation.replace('Revision', '')}`);
+                assert.deepStrictEqual(refreshed, [app.id]);
+            });
+        }
+    }
+
+    test('rejects advanced draft editing in Single mode before reading the draft filesystem', async () => {
+        ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft = () => assert.fail('Must not read drafts');
+        const node = new RevisionDraftItem(subscription, app, revision);
+
+        await assert.rejects(editRevisionDraft(await createTestActionContext(), node),
+            /You must be in multiple revisions mode to run this command/);
+    });
+
+    test('retains the missing draft error for a Multiple mode app', async () => {
+        const node = new RevisionDraftItem(subscription, { ...app, revisionsMode: KnownActiveRevisionsMode.Multiple }, revision);
+
+        await assert.rejects(editRevisionDraft(await createTestActionContext(), node), /No revision draft exists/);
+    });
+
+    test('opens the existing Multiple mode draft', async () => {
+        const node = new RevisionDraftItem(subscription, { ...app, revisionsMode: KnownActiveRevisionsMode.Multiple }, revision);
+        ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft = () => true;
+        let opened = false;
+        ext.revisionDraftFileSystem.editRevisionDraft = async item => {
+            assert.strictEqual(item, node);
+            opened = true;
+        };
+
+        await editRevisionDraft(await createTestActionContext(), node);
+        assert.ok(opened);
+    });
+
+    for (const mode of [KnownActiveRevisionsMode.Single, KnownActiveRevisionsMode.Multiple]) {
+        test(`exposes ${mode} revision and draft mode contexts for menu filtering`, async () => {
+            const model = { ...app, revisionsMode: mode };
+            const node = new RevisionItem(subscription, model, revision, true);
+            const draft = new RevisionDraftItem(subscription, model, revision);
+            draft.hasUnsavedChanges = async () => false;
+            const modeContext = mode === KnownActiveRevisionsMode.Multiple ? revisionModeMultipleContextValue : revisionModeSingleContextValue;
+
+            assert.ok(node.getTreeItem().contextValue?.split(';').includes(modeContext));
+            assert.ok(node.getTreeItem().contextValue?.split(';').includes(expressContextValue));
+            assert.ok((await draft.getTreeItem()).contextValue?.split(';').includes(modeContext));
+        });
+    }
+
+    test('matches activation and advanced draft menu eligibility to the direct guards', () => {
+        const manifest: { contributes: { menus: Record<string, { command: string; when: string }[]> } } = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+        const menus = manifest.contributes.menus['view/item/context'];
+        for (const command of ['containerApps.activateRevision', 'containerApps.deactivateRevision', 'containerApps.editRevisionDraft']) {
+            const contributions = menus.filter(menu => menu.command === command);
+            assert.strictEqual(contributions.length, 1);
+            assert.ok(contributions[0].when.includes('viewItem =~ /(^|;)revisionMode:multiple(;|$)/i'));
+            if (command !== 'containerApps.editRevisionDraft') {
+                assert.ok(contributions[0].when.includes('!(viewItem =~ /(^|;)express(;|$)/i)'));
+            }
+        }
     });
 
     test('keeps Standard revision contexts free of the Express marker', () => {

@@ -23,6 +23,8 @@ The [Express feature matrix](https://learn.microsoft.com/en-us/azure/container-a
 
 Express does not support revision restart. Hide Restart in Express menus, filter Express environments and apps out of the Restart picker, and reject direct invocation. Keep Standard restart behavior in both revision modes. The [service error captured in issue #1175](https://github.com/microsoft/vscode-azurecontainerapps/issues/1175) reports this restriction explicitly; the feature matrix alone does not establish revision restart support.
 
+Activate, Deactivate, and Edit Draft (Advanced) select only Standard apps in Multiple revision mode. Keep their palette filters, direct invocation guards, and tree menus aligned. Express activation and deactivation are unsupported; use app Start and Stop instead. Standard Single mode manages revision activation automatically.
+
 Do not equate single-revision mode with an absence of revision history. In the [general Container Apps revision model](https://learn.microsoft.com/en-us/azure/container-apps/revisions), Single controls which revision is active, while inactive revisions can remain. The Express feature matrix does not establish its historical revision retention policy or say that registry cleanup exists because old revisions are not retained.
 
 Registry credentials and secrets are application-scoped configuration, not snapshots owned by individual revisions. Standard revisions can depend on that shared configuration, so do not prune it based only on the latest template. Express's single-revision restriction also does not change `configuration.registries` or `configuration.secrets` from arrays into singular fields, or justify clearing unrelated entries in extension code.
