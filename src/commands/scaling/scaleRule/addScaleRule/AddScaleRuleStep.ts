@@ -25,7 +25,7 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         this.revisionDraftTemplate.scale.rules ||= [];
 
         context.scaleRule = this.buildRule(context);
-        this.integrateRule(context, this.revisionDraftTemplate.scale.rules, context.scaleRule);
+        this.revisionDraftTemplate.scale.rules.push(context.scaleRule);
         await this.updateRevisionDraftWithTemplate(context);
 
         const resourceName = getParentResourceFromItem(this.baseItem).name;
@@ -57,22 +57,4 @@ export class AddScaleRuleStep<T extends IAddScaleRuleContext> extends RevisionDr
         }
         return scaleRule;
     }
-
-    private integrateRule(context: T, scaleRules: ScaleRule[], scaleRule: ScaleRule): void {
-        switch (context.newRuleType) {
-            case ScaleRuleTypes.HTTP: {
-                // Portal only allows one HTTP rule per revision
-                const idx: number = scaleRules.findIndex((rule) => rule.http);
-                if (idx !== -1) {
-                    scaleRules.splice(idx, 1);
-                }
-                break;
-            }
-            case ScaleRuleTypes.Queue:
-            default:
-        }
-        scaleRules.push(scaleRule);
-    }
 }
-
-
