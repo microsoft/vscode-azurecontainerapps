@@ -70,7 +70,7 @@ export class ManagedEnvironmentItem implements TreeElementBase {
     getTreeItem(): TreeItem {
         return {
             label: this.managedEnvironment.name,
-            description: this.isExpress ? localize('express', 'Express') : undefined,
+            description: this.isExpress ? localize('express', 'Express') : localize('standard', 'Standard'),
             id: this.id,
             iconPath: treeUtils.getIconPath('managed-environment'),
             contextValue: this.contextValue,
