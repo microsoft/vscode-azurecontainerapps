@@ -25,7 +25,7 @@ Do not equate single-revision mode with an absence of revision history. In the [
 
 Registry credentials and secrets are application-scoped configuration, not snapshots owned by individual revisions. Standard revisions can depend on that shared configuration, so do not prune it based only on the latest template. Express's single-revision restriction also does not change `configuration.registries` or `configuration.secrets` from arrays into singular fields, or justify clearing unrelated entries in extension code.
 
-The extension currently creates both app types with `activeRevisionsMode: Single`. The Choose Revision Mode command filters out Express environments and rejects directly supplied Express apps before opening the revision-mode wizard. Keep that restriction scoped to this command so other app pickers can still select Express apps.
+The extension currently creates both app types with `activeRevisionsMode: Single`. That alone is not enforcement of the Express restriction. The shared revision-mode picker still offers both modes without an Express-specific check. Do not treat that picker as evidence that Multiple works on Express, or describe it as already gated.
 
 See [ContainerAppCreateStep](../../src/commands/createContainerApp/ContainerAppCreateStep.ts), [ChooseRevisionModeStep](../../src/commands/revision/chooseRevisionMode/ChooseRevisionModeStep.ts), and the [application-scoped secrets model](https://learn.microsoft.com/en-us/azure/container-apps/manage-secrets).
 
