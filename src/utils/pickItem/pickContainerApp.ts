@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
-import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type IActionContext, type ISubscriptionActionContext, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
+import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureResourceQuickPickWizardContext, type AzureWizardPromptStep, type ContextValueFilterQuickPickOptions, type IActionContext, type ISubscriptionActionContext, type PickFilter, type QuickPickWizardContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
-import { type PickItemOptions } from "./PickItemOptions";
+import { type ContainerAppPickItemOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
-export function getPickContainerAppStep(containerAppName?: string | RegExp): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
+export function getPickContainerAppStep(containerAppName?: string | RegExp, options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
     let containerAppFilter: RegExp | undefined;
     if (containerAppName) {
         containerAppFilter = containerAppName instanceof RegExp ? containerAppName : new RegExp(`^${containerAppName}$`);
@@ -19,28 +19,46 @@ export function getPickContainerAppStep(containerAppName?: string | RegExp): Azu
         containerAppFilter = ContainerAppItem.contextValueRegExp;
     }
 
-    return new ContextValueQuickPickStep(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
-        contextValueFilter: { include: containerAppFilter },
-        skipIfOne: !!containerAppName,
-    }, {
-        placeHolder: localize('selectContainerApp', 'Select a container app'),
-        noPicksMessage: localize('noContainerApps', 'Selected container apps environment has no apps'),
-    });
+    return new ContainerAppQuickPickStep(containerAppFilter, !!containerAppName, options);
+}
+
+class ContainerAppQuickPickStep extends ContextValueQuickPickStep<AzureResourceQuickPickWizardContext, ContextValueFilterQuickPickOptions> {
+    declare protected readonly pickFilter: PickFilter;
+
+    constructor(containerAppFilter: RegExp, skipIfOne: boolean, options?: ContainerAppPickItemOptions) {
+        super(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
+            contextValueFilter: { include: containerAppFilter },
+            skipIfOne,
+        }, {
+            placeHolder: localize('selectContainerApp', 'Select a container app'),
+            noPicksMessage: options?.noPicksMessage ?? localize('noContainerApps', 'Selected container apps environment has no apps'),
+        });
+
+        const filter = options?.filter;
+        if (filter) {
+            const pickFilter = this.pickFilter;
+            this.pickFilter = {
+                isFinalPick: (treeItem, element) => pickFilter.isFinalPick(treeItem, element) && filter(treeItem, element),
+                // The shared picker falls back to expandable ancestors when no final picks remain.
+                isAncestorPick: (treeItem, element) => pickFilter.isAncestorPick(treeItem, element) && filter(treeItem, element),
+            };
+        }
+    }
 }
 
 /**
  * Get all the steps required to pick a `ContainerAppItem`
  */
-export function getPickContainerAppSteps(): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
+export function getPickContainerAppSteps(options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     return [
-        ...getPickEnvironmentSteps(),
-        getPickContainerAppStep()
+        ...getPickEnvironmentSteps(false, undefined, undefined, options?.environmentOptions),
+        getPickContainerAppStep(undefined, options)
     ];
 }
 
-export async function pickContainerApp(context: IActionContext, options?: PickItemOptions): Promise<ContainerAppItem> {
+export async function pickContainerApp(context: IActionContext, options?: ContainerAppPickItemOptions): Promise<ContainerAppItem> {
     const promptSteps: AzureWizardPromptStep<QuickPickWizardContext>[] = [
-        ...getPickContainerAppSteps()
+        ...getPickContainerAppSteps(options)
     ];
 
     return await runQuickPickWizard(context, {
@@ -53,14 +71,14 @@ export async function pickContainerApp(context: IActionContext, options?: PickIt
 export async function pickContainerAppWithoutPrompt(
     context: Partial<ISubscriptionActionContext> & IActionContext,
     containerApp: ContainerAppModel,
-    options?: PickItemOptions
+    options?: ContainerAppPickItemOptions
 ): Promise<ContainerAppItem> {
     const environmentName: string = parseAzureResourceId(nonNullProp(containerApp, 'environmentId')).resourceName;
 
     return await runQuickPickWizard(context, {
         promptSteps: [
-            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName),
-            getPickContainerAppStep(containerApp.name)
+            ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName, options?.environmentOptions),
+            getPickContainerAppStep(containerApp.name, options)
         ],
         title: options?.title,
         showLoadingPrompt: options?.showLoadingPrompt

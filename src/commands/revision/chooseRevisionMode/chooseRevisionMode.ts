@@ -4,8 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizard, createSubscriptionContext, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type ResourceModelBase } from "@microsoft/vscode-azureresources-api";
 import { ext } from "../../../extensionVariables";
 import { ContainerAppItem } from "../../../tree/ContainerAppItem";
+import { ManagedEnvironmentItem } from "../../../tree/ManagedEnvironmentItem";
 import { type RevisionsItem } from "../../../tree/revisionManagement/RevisionsItem";
 import { createActivityContext } from "../../../utils/activityUtils";
 import { localize } from "../../../utils/localize";
@@ -16,10 +18,22 @@ import { ChooseRevisionModeStep } from "./ChooseRevisionModeStep";
 import { type IChooseRevisionModeContext } from "./IChooseRevisionModeContext";
 
 export async function chooseRevisionMode(context: IActionContext, item?: ContainerAppItem | RevisionsItem): Promise<void> {
-    item ??= await pickContainerApp(context);
+    item ??= await pickContainerApp(context, {
+        environmentOptions: {
+            filter: (_treeItem, element) => {
+                const environment: unknown = (element as { branchItem?: ResourceModelBase })?.branchItem ?? element;
+                return !ManagedEnvironmentItem.isManagedEnvironmentItem(environment) || !environment.isExpress;
+            },
+            noPicksMessage: localize('noStandardContainerAppsEnvironment', 'Current subscription has no Standard container apps environments'),
+        },
+    });
 
     let hasRevisionDraft: boolean | undefined;
     if (ContainerAppItem.isContainerAppItem(item)) {
+        if (item.isExpress) {
+            throw new Error(localize('expressRevisionModeNotSupported', 'Express Container Apps only support single revision mode.'));
+        }
+
         // A revision draft can exist but may be identical to the source, distinguishing the difference in single revisions mode
         // improves the user experience by allowing us to skip the confirm step, silently discarding drafts instead
         hasRevisionDraft = item.hasUnsavedChanges();

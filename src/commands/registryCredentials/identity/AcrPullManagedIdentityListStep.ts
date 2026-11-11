@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { createManagedServiceIdentityClient, parseAzureResourceId, uiUtils } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardPromptStep, nonNullProp, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep, nonNullProp, type ConfirmationViewProperty, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../utils/localize';
 import { updateLoadingViewProgress } from '../../../webviews/SharedViewState';
 import { AcrPullEnableStep } from './AcrPullEnableStep';
@@ -42,6 +42,14 @@ export class AcrPullManagedIdentityListStep<T extends ManagedIdentityRegistryCre
 
     public shouldPrompt(context: T): boolean {
         return !context.managedIdentity && !context.newManagedIdentityName;
+    }
+
+    public confirmationViewProperty(context: T): ConfirmationViewProperty {
+        return {
+            name: localize('registryIdentity', 'Registry identity'),
+            value: context.managedIdentity?.name ?? localize('newRegistryIdentity', 'Create new user-assigned identity'),
+            contextPropertyName: 'managedIdentity',
+        };
     }
 
     public async getSubWizard(context: T): Promise<IWizardOptions<T> | undefined> {

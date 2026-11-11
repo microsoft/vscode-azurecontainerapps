@@ -13,7 +13,10 @@ import { pickContainerApp } from "../utils/pickItem/pickContainerApp";
 
 export async function openContainerAppsPortal(context: IActionContext, node?: ContainerAppItem | ManagedEnvironmentItem): Promise<void> {
     const item = node ?? await pickContainerApp(context);
+    await env.openExternal(createContainerAppsPortalUrl(item));
+}
 
+export function createContainerAppsPortalUrl(item: ContainerAppItem | ManagedEnvironmentItem): Uri {
     const isEnvironment = ManagedEnvironmentItem.isManagedEnvironmentItem(item);
     const isContainerApp = ContainerAppItem.isContainerAppItem(item);
     if (!isEnvironment && !isContainerApp) {
@@ -22,6 +25,6 @@ export async function openContainerAppsPortal(context: IActionContext, node?: Co
 
     const resource = isEnvironment ? item.managedEnvironment : item.containerApp;
     const resourceType = isEnvironment ? 'environments' : 'apps';
-    const url = `${containerAppsPortalBaseUrl}/${resourceType}/${item.subscription.subscriptionId}/${resource.resourceGroup}/${resource.name}/overview`;
-    await env.openExternal(Uri.parse(url));
+    const url = `${containerAppsPortalBaseUrl}/${resourceType}/${item.subscription.subscriptionId}/${resource.resourceGroup}/${resource.name}/overview?tenant=${item.subscription.tenantId}`;
+    return Uri.parse(url);
 }
