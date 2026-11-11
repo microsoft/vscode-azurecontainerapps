@@ -98,4 +98,5 @@ export const unsavedChangesFalseContextValue: string = 'unsavedChanges:false';
 export const activityInfoContext: string = 'activity:info';
 
 export const expressContextValue: string = 'express';
+export const revisionRestartUnsupportedContextValue: string = 'revisionRestart:unsupported';
 export const containerAppsPortalBaseUrl: string = 'https://containerapps.azure.com';

@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { type ExecResult, type LifecyclePolicy, type PublicDiskImage, type Sandbox, type Snapshot } from '@azure/containerapps-sandbox';
+import { SandboxGroupClient, type ExecResult, type LifecyclePolicy, type PublicDiskImage, type Sandbox, type Snapshot } from '@azure/containerapps-sandbox';
+import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import * as assert from 'assert';
-import { AzureSandboxService, ensureSandboxRunning, type SandboxServiceClient } from '../../src/sandboxes/SandboxService';
+import { AzureSandboxService, ensureSandboxRunning, sandboxErrorResponsePolicy, type SandboxServiceClient } from '../../src/sandboxes/SandboxService';
 
 const sandbox: Sandbox = {
     id: 'sandbox-1',
@@ -182,4 +183,100 @@ suite('AzureSandboxService', () => {
             /SandboxGroup Data Owner[\s\S]*group-1[\s\S]*request-1/,
         );
     });
+
+    const diskSizeMessage = 'Sandbox disk size (5120 MiB) is smaller than disk image minimum size (6162 MiB). Requested disk must be >= the disk image size.';
+
+    for (const { format, body } of [
+        { format: 'Azure error', body: { error: { code: 'BadRequest', message: diskSizeMessage } } },
+        { format: 'problem details', body: { title: 'Bad Request', status: 400, detail: diskSizeMessage, errorCode: 'BadRequest' } },
+    ]) {
+        for (const contentType of ['application/json', 'text/plain']) {
+            test(`surfaces HTTP 400 disk validation errors through the SDK (${format}, ${contentType})`, async () => {
+                const client = new SandboxGroupClient(
+                    { getToken: async () => ({ token: 'test-token', expiresOnTimestamp: Date.now() + 60_000 }) },
+                    'https://sandbox.example.com',
+                    'subscription-1',
+                    'resource-group-1',
+                    'group-1',
+                    {
+                        additionalPolicies: [{ policy: sandboxErrorResponsePolicy, position: 'perCall' }],
+                        httpClient: {
+                            sendRequest: async request => {
+                                const headers = createHttpHeaders();
+                                headers.set('content-type', contentType);
+                                return {
+                                    request,
+                                    status: 400,
+                                    headers,
+                                    bodyAsText: JSON.stringify(body),
+                                };
+                            },
+                        },
+                    },
+                );
+                const service = new AzureSandboxService(client);
+
+                await assert.rejects(
+                    () => service.createSandbox({
+                        disk: 'azure-dev',
+                        resources: { cpu: '250m', memory: '512Mi', disk: '5120Mi' },
+                    }),
+                    (error: Error) => {
+                        assert.strictEqual(error.message, diskSizeMessage);
+                        assert.ok(error.cause instanceof Error);
+                        return true;
+                    },
+                );
+            });
+        }
+    }
+
+    for (const { name, payload } of [
+        { name: 'SDK details', payload: { details: { error: { message: diskSizeMessage } } } },
+        { name: 'nested parsed body', payload: { response: { parsedBody: { error: { message: diskSizeMessage } } } } },
+        { name: 'top-level parsed body', payload: { response: { parsedBody: { message: diskSizeMessage } } } },
+    ]) {
+        test(`preserves structured validation messages from ${name}`, async () => {
+            const original = Object.assign(new Error('Unexpected status code: 400'), { statusCode: 400, requestId: 'request-1' }, payload);
+            const service = new AzureSandboxService(createClient({
+                beginCreate: () => ({ pollUntilDone: async () => { throw original; } }),
+            }));
+
+            await assert.rejects(
+                () => service.createSandbox({ disk: 'azure-dev', resources: { cpu: '250m', memory: '512Mi', disk: '5120Mi' } }),
+                (error: Error) => {
+                    assert.strictEqual(error.message, `${diskSizeMessage}\n\nRequest ID: request-1`);
+                    assert.strictEqual(error.cause, original);
+                    return true;
+                },
+            );
+        });
+    }
+
+    test('retains not-found guidance and adds service details', async () => {
+        const service = new AzureSandboxService(createClient({
+            get: async () => {
+                throw { statusCode: 404, details: { error: { message: 'Sandbox no longer exists.' } } };
+            },
+        }));
+
+        await assert.rejects(
+            () => service.getSandbox('sandbox-1'),
+            /could not be found[\s\S]*Details: Sandbox no longer exists\./,
+        );
+    });
+
+    for (const bodyAsText of ['<html>Bad Request</html>', '', '{"error":{}}']) {
+        test(`preserves the original error for an uninformative body (${bodyAsText})`, async () => {
+            const original = Object.assign(new Error('Unexpected status code: 400'), {
+                statusCode: 400,
+                response: { bodyAsText },
+            });
+            const service = new AzureSandboxService(createClient({
+                get: async () => { throw original; },
+            }));
+
+            await assert.rejects(() => service.getSandbox('sandbox-1'), error => error === original);
+        });
+    }
 });

@@ -35,13 +35,18 @@ export async function createSandboxInGroup(context: IActionContext, subscription
     const service = createSandboxService(subscriptionContext, ref);
     const disk = await promptForDiskImage(context, service);
     const resourceTier = await promptForResourceTier(context);
+    const name = await promptForName(context);
 
     let sandbox: Sandbox | undefined;
     await runSandboxActivity(
-        localize('createSandboxActivity', 'Create sandbox in group "{0}"', ref.groupName),
-        localize('creatingSandbox', 'Creating sandbox in group "{0}"...', ref.groupName),
+        name
+            ? localize('createSandboxNamedActivity', 'Create sandbox "{0}" in group "{1}"', name, ref.groupName)
+            : localize('createSandboxActivity', 'Create sandbox in group "{0}"', ref.groupName),
+        name
+            ? localize('creatingSandboxNamed', 'Creating sandbox "{0}" in group "{1}"...', name, ref.groupName)
+            : localize('creatingSandbox', 'Creating sandbox in group "{0}"...', ref.groupName),
         async () => {
-            sandbox = await service.createSandbox({ disk, resources: resourceTier.resources });
+            sandbox = await service.createSandbox({ disk, resources: resourceTier.resources, name });
         },
     );
 
@@ -51,6 +56,15 @@ export async function createSandboxInGroup(context: IActionContext, subscription
         sandboxId: nonNullValue(sandbox).id,
     });
     void vscode.window.showInformationMessage(localize('sandboxCreated', 'Created a new sandbox in group "{0}".', ref.groupName));
+}
+
+/** Optionally prompts for a name label that the tree shows instead of the sandbox ID. */
+async function promptForName(context: IActionContext): Promise<string | undefined> {
+    const name = await context.ui.showInputBox({
+        prompt: localize('enterSandboxName', 'Enter a name label for the sandbox, or leave blank and press Enter to continue without a label.'),
+        placeHolder: localize('sandboxNamePlaceholder', 'e.g. my-dev-sandbox'),
+    });
+    return name.trim() || undefined;
 }
 
 /** Lets the user choose one of the resource tiers supported by the sandbox service. */
