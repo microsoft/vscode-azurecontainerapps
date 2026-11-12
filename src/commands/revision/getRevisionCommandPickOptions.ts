@@ -20,13 +20,15 @@ export function getRevisionCommandPickOptions(operation: RevisionOperation | 'ed
             },
             noPicksMessage: localize('noStandardContainerAppsEnvironment', 'Current subscription has no Standard container apps environments'),
         },
-        filter: treeItem => {
-            const values = treeItem.contextValue?.split(';') ?? [];
-            return !values.includes(revisionRestartUnsupportedContextValue)
-                && (!requiresMultipleRevisions || values.includes(revisionModeMultipleContextValue));
+        containerAppOptions: {
+            filter: treeItem => {
+                const values = treeItem.contextValue?.split(';') ?? [];
+                return !values.includes(revisionRestartUnsupportedContextValue)
+                    && (!requiresMultipleRevisions || values.includes(revisionModeMultipleContextValue));
+            },
+            noPicksMessage: requiresMultipleRevisions
+                ? localize('noMultipleRevisionContainerApps', 'Selected container apps environment has no Standard apps in multiple revisions mode')
+                : localize('noStandardContainerApps', 'Selected container apps environment has no Standard apps'),
         },
-        noPicksMessage: requiresMultipleRevisions
-            ? localize('noMultipleRevisionContainerApps', 'Selected container apps environment has no Standard apps in multiple revisions mode')
-            : localize('noStandardContainerApps', 'Selected container apps environment has no Standard apps'),
     };
 }
