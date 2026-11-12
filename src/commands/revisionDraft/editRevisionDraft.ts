@@ -9,9 +9,10 @@ import { ext } from "../../extensionVariables";
 import { type RevisionDraftItem } from "../../tree/revisionManagement/RevisionDraftItem";
 import { localize } from "../../utils/localize";
 import { pickContainerApp } from "../../utils/pickItem/pickContainerApp";
+import { getRevisionCommandPickOptions } from '../revision/getRevisionCommandPickOptions';
 
 export async function editRevisionDraft(context: IActionContext, node?: RevisionDraftItem): Promise<void> {
-    const containerAppsItem = node ?? await pickContainerApp(context);
+    const containerAppsItem = node ?? await pickContainerApp(context, getRevisionCommandPickOptions('editRevisionDraft'));
 
     if (containerAppsItem.containerApp.revisionsMode !== KnownActiveRevisionsMode.Multiple) {
         throw new Error(localize('revisionsModeError', 'You must be in multiple revisions mode to run this command.'));

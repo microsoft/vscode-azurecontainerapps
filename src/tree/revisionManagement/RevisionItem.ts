@@ -7,7 +7,7 @@ import { KnownActiveRevisionsMode, KnownRevisionProvisioningState, type Revision
 import { createContextValue, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription, type ViewPropertiesModel } from "@microsoft/vscode-azureresources-api";
 import { ThemeColor, ThemeIcon, TreeItemCollapsibleState, type IconPath, type TreeItem } from "vscode";
-import { revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionRestartUnsupportedContextValue } from "../../constants";
+import { expressContextValue, revisionDraftFalseContextValue, revisionDraftTrueContextValue, revisionModeMultipleContextValue, revisionModeSingleContextValue, revisionRestartUnsupportedContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 import { type ContainerAppModel } from "../ContainerAppItem";
@@ -47,9 +47,10 @@ export class RevisionItem implements RevisionsItemModel {
 
         values.push(ext.revisionDraftFileSystem.doesContainerAppsItemHaveRevisionDraft(this) ? revisionDraftTrueContextValue : revisionDraftFalseContextValue);
         values.push(this.revision.active ? revisionStateActiveContextValue : revisionStateInactiveContextValue);
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple ? revisionModeMultipleContextValue : revisionModeSingleContextValue);
 
         if (this.isExpress) {
-            values.push(revisionRestartUnsupportedContextValue);
+            values.push(expressContextValue, revisionRestartUnsupportedContextValue);
         }
 
         return createContextValue(values);

@@ -8,10 +8,10 @@ import { ContextValueQuickPickStep, nonNullProp, runQuickPickWizard, type AzureR
 import { ext } from "../../extensionVariables";
 import { ContainerAppItem, type ContainerAppModel } from "../../tree/ContainerAppItem";
 import { localize } from "../localize";
-import { type ContainerAppPickItemOptions } from "./PickItemOptions";
+import { type ContainerAppPickItemOptions, type PickStepFilterOptions } from "./PickItemOptions";
 import { getPickEnvironmentSteps } from "./pickEnvironment";
 
-export function getPickContainerAppStep(containerAppName?: string | RegExp, options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
+export function getPickContainerAppStep(containerAppName?: string | RegExp, options?: PickStepFilterOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext> {
     let containerAppFilter: RegExp | undefined;
     if (containerAppName) {
         containerAppFilter = containerAppName instanceof RegExp ? containerAppName : new RegExp(`^${containerAppName}$`);
@@ -25,7 +25,7 @@ export function getPickContainerAppStep(containerAppName?: string | RegExp, opti
 class ContainerAppQuickPickStep extends ContextValueQuickPickStep<AzureResourceQuickPickWizardContext, ContextValueFilterQuickPickOptions> {
     declare protected readonly pickFilter: PickFilter;
 
-    constructor(containerAppFilter: RegExp, skipIfOne: boolean, options?: ContainerAppPickItemOptions) {
+    constructor(containerAppFilter: RegExp, skipIfOne: boolean, options?: PickStepFilterOptions) {
         super(ext.rgApiV2.resources.azureResourceTreeDataProvider, {
             contextValueFilter: { include: containerAppFilter },
             skipIfOne,
@@ -52,7 +52,7 @@ class ContainerAppQuickPickStep extends ContextValueQuickPickStep<AzureResourceQ
 export function getPickContainerAppSteps(options?: ContainerAppPickItemOptions): AzureWizardPromptStep<AzureResourceQuickPickWizardContext>[] {
     return [
         ...getPickEnvironmentSteps(false, undefined, undefined, options?.environmentOptions),
-        getPickContainerAppStep(undefined, options)
+        getPickContainerAppStep(undefined, options?.containerAppOptions)
     ];
 }
 
@@ -78,7 +78,7 @@ export async function pickContainerAppWithoutPrompt(
     return await runQuickPickWizard(context, {
         promptSteps: [
             ...getPickEnvironmentSteps(true, context.subscriptionId, environmentName, options?.environmentOptions),
-            getPickContainerAppStep(containerApp.name, options)
+            getPickContainerAppStep(containerApp.name, options?.containerAppOptions)
         ],
         title: options?.title,
         showLoadingPrompt: options?.showLoadingPrompt

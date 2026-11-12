@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { type ContainerAppsAPIClient, type KnownActiveRevisionsMode, type Revision, type Template } from "@azure/arm-appcontainers";
+import { KnownActiveRevisionsMode, type ContainerAppsAPIClient, type Revision, type Template } from "@azure/arm-appcontainers";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { callWithTelemetryAndErrorHandling, createContextValue, createSubscriptionContext, nonNullProp, type IActionContext, type TreeElementBase } from "@microsoft/vscode-azext-utils";
 import { type AzureSubscription } from "@microsoft/vscode-azureresources-api";
 import { TreeItemCollapsibleState, type TreeItem } from "vscode";
-import { unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
+import { revisionModeMultipleContextValue, revisionModeSingleContextValue, unsavedChangesFalseContextValue, unsavedChangesTrueContextValue } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { areTemplateValuesEqual } from "../../utils/areTemplateValuesEqual";
 import { createContainerAppsAPIClient } from "../../utils/azureClients";
@@ -48,6 +48,7 @@ export class RevisionDraftItem implements RevisionsItemModel, RevisionsDraftMode
 
     private async getContextValues(): Promise<string> {
         const values: string[] = [RevisionDraftItem.contextValue];
+        values.push(this.containerApp.revisionsMode === KnownActiveRevisionsMode.Multiple ? revisionModeMultipleContextValue : revisionModeSingleContextValue);
         values.push(await this.hasUnsavedChanges() ? unsavedChangesTrueContextValue : unsavedChangesFalseContextValue);
         return createContextValue(values);
     }
