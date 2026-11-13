@@ -43,6 +43,7 @@ export async function editScaleRange(context: IActionContext, node?: ScaleItem):
         subscription,
         scaleMinRange: scale.minReplicas ?? 0,
         scaleMaxRange: scale.maxReplicas ?? 0,
+        wasMinReplicasNull: scale.minReplicas === null,
         isDraftCommand: true,
     };
 
