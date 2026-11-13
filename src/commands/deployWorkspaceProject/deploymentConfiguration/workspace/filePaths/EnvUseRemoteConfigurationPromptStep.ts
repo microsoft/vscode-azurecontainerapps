@@ -5,9 +5,9 @@
 
 import { type EnvironmentVar } from "@azure/arm-appcontainers";
 import { ActivityChildItem, ActivityChildType, activityInfoContext, activityInfoIcon, AzureWizardPromptStep, createContextValue, nonNullProp, nonNullValueAndProp, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
-import deepEqual from "deep-eql";
 import * as path from "path";
 import { ext } from "../../../../../extensionVariables";
+import { areTemplateValuesEqual } from "../../../../../utils/areTemplateValuesEqual";
 import { localize } from "../../../../../utils/localize";
 import { EnvFileListStep } from "../../../../image/imageSource/EnvFileListStep";
 import { type WorkspaceDeploymentConfigurationContext } from "../WorkspaceDeploymentConfigurationContext";
@@ -41,7 +41,7 @@ export class EnvUseRemoteConfigurationPromptStep<T extends WorkspaceDeploymentCo
         const fullPath: string = path.join(rootPath, envPath);
         const configVars: EnvironmentVar[] = await EnvFileListStep.parseEnvironmentVariablesFromEnvPath(fullPath);
         const currentVars: EnvironmentVar[] = context.containerApp?.template?.containers?.[0]?.env ?? [];
-        this.shouldPromptEnvVars = !deepEqual(configVars, currentVars);
+        this.shouldPromptEnvVars = !areTemplateValuesEqual(configVars, currentVars);
     }
 
     public async prompt(context: T): Promise<void> {

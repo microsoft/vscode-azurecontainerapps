@@ -86,10 +86,14 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
     let managedEnvironment: ManagedEnvironment | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
         const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-        await context.ui.runWithInputs([resourceName, testRegion.displayName], async () => {
+        await context.ui.runWithInputs(['Standard', resourceName, testRegion.displayName], async () => {
             managedEnvironment = await (getCachedTestApi().createManagedEnvironmentInternal(context));
         });
     });
+
+    if (managedEnvironment?.name) {
+        resourceGroupsToDelete.add(managedEnvironment.name);
+    }
 
     let containerAppItem: ContainerAppItem | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createContainerApp', async context => {
@@ -98,10 +102,6 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
             containerAppItem = await (getCachedTestApi().createContainerAppInternal(context));
         });
     });
-
-    if (managedEnvironment?.name) {
-        resourceGroupsToDelete.add(managedEnvironment.name);
-    }
 
     assert.ok(containerAppItem, 'Failed to setup the starting container app item.');
     return containerAppItem;
