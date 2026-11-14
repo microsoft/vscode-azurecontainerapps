@@ -12,12 +12,12 @@ import { getContainerEnvelopeWithSecrets, type ContainerAppModel } from "../../.
 import { localize } from "../../../utils/localize";
 import { type IngressContext } from "../../ingress/IngressContext";
 import { enabledIngressDefaults } from "../../ingress/ingressDefaults";
-import { RegistryCredentialType } from "../../registryCredentials/RegistryCredentialsAddConfigurationListStep";
 import { getContainerAppIdentity } from "../../registryCredentials/identity/getContainerAppIdentity";
 import { updateContainerApp } from "../../updateContainerApp";
 import { ContainerAppStartVerificationStep } from "./ContainerAppStartVerificationStep";
 import { type ImageSourceContext } from "./ImageSourceContext";
 import { getContainerNameForImage } from "./containerRegistry/getContainerNameForImage";
+import { isRetryableRegistryError } from "./isRetryableRegistryError";
 
 export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 680;
@@ -77,7 +77,7 @@ export class ContainerAppUpdateStep<T extends ImageSourceContext & IngressContex
             },
             {
                 onFailedAttempt: (err: retry.FailedAttemptError) => {
-                    if (context.newRegistryCredentialType !== RegistryCredentialType.DockerLogin || !/authentication\srequired/i.test(err.message)) {
+                    if (!isRetryableRegistryError(err, context.newRegistryCredentialType)) {
                         throw err;
                     }
                 },

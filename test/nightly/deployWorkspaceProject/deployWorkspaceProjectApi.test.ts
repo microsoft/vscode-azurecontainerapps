@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LocationListStep, parseAzureResourceGroupId, ResourceGroupCreateStep, type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizard, IParsedError, parseError, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
@@ -49,12 +49,7 @@ suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
         let results: DeployWorkspaceProjectResults = {};
         await runWithTestActionContext('deployWorkspaceProjectApi', async context => {
             await context.ui.runWithInputs([], async () => {
-                try {
-                    results = await (getCachedTestApi().deployWorkspaceProjectApiInternal(context, deploymentSettings));
-                } catch (e) {
-                    const perr: IParsedError = parseError(e);
-                    console.error(perr.message);
-                }
+                results = await (getCachedTestApi().deployWorkspaceProjectApiInternal(context, deploymentSettings));
             });
         });
 

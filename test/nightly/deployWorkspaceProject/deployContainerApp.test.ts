@@ -5,7 +5,7 @@
 
 import { type ManagedEnvironment } from '@azure/arm-appcontainers';
 import { parseAzureResourceId } from '@microsoft/vscode-azext-azureutils';
-import { IParsedError, parseError, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
+import { randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
@@ -58,12 +58,7 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
         let results: DeployWorkspaceProjectResults = {};
         await runWithTestActionContext('deployContainerApp.deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(testInputs, async () => {
-                try {
-                    results = await (getCachedTestApi().deployContainerAppInternal(context, containerAppItem)) ?? {};
-                } catch (e) {
-                    const perr: IParsedError = parseError(e);
-                    console.error(perr.message);
-                }
+                results = await (getCachedTestApi().deployContainerAppInternal(context, containerAppItem)) ?? {};
             });
         });
 
