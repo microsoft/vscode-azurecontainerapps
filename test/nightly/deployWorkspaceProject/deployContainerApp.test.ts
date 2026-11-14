@@ -5,7 +5,7 @@
 
 import { type ManagedEnvironment } from '@azure/arm-appcontainers';
 import { parseAzureResourceId } from '@microsoft/vscode-azext-azureutils';
-import { IParsedError, parseError, randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
+import { randomUtils, runWithTestActionContext } from '@microsoft/vscode-azext-utils';
 import * as assert from 'assert';
 import * as path from 'path';
 import { workspace, type Uri, type WorkspaceFolder } from 'vscode';
@@ -58,12 +58,7 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
         let results: DeployWorkspaceProjectResults = {};
         await runWithTestActionContext('deployContainerApp.deployWorkspaceProject', async context => {
             await context.ui.runWithInputs(testInputs, async () => {
-                try {
-                    results = await (getCachedTestApi().deployContainerAppInternal(context, containerAppItem)) ?? {};
-                } catch (e) {
-                    const perr: IParsedError = parseError(e);
-                    console.error(perr.message);
-                }
+                results = await (getCachedTestApi().deployContainerAppInternal(context, containerAppItem)) ?? {};
             });
         });
 
@@ -86,10 +81,14 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
     let managedEnvironment: ManagedEnvironment | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createManagedEnvironment', async context => {
         const resourceName: string = 'dwp-item' + randomUtils.getRandomHexString(4);
-        await context.ui.runWithInputs([resourceName, testRegion.displayName], async () => {
+        await context.ui.runWithInputs(['Standard', resourceName, testRegion.displayName], async () => {
             managedEnvironment = await (getCachedTestApi().createManagedEnvironmentInternal(context));
         });
     });
+
+    if (managedEnvironment?.name) {
+        resourceGroupsToDelete.add(managedEnvironment.name);
+    }
 
     let containerAppItem: ContainerAppItem | undefined;
     await runWithTestActionContext('deployContainerApp.deployWorkspaceProject.createContainerApp', async context => {
@@ -98,10 +97,6 @@ async function createContainerAppItem(): Promise<ContainerAppItem> {
             containerAppItem = await (getCachedTestApi().createContainerAppInternal(context));
         });
     });
-
-    if (managedEnvironment?.name) {
-        resourceGroupsToDelete.add(managedEnvironment.name);
-    }
 
     assert.ok(containerAppItem, 'Failed to setup the starting container app item.');
     return containerAppItem;
