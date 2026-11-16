@@ -19,7 +19,9 @@ parameters:
   - name: enableLongRunningTests
     displayName: Enable Long Running Tests
     type: boolean
-    default: true
+    # Temporarily disabled: live Azure tests are failing from service-side throttling (OIDC 429) and environment provisioning errors.
+    # Revert to `true` once those settle.
+    default: false
 
 resources:
   repositories:
