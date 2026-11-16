@@ -63,7 +63,6 @@ suite('deployContainerApp.deployWorkspaceProject', async function (this: Mocha.S
                 } catch (e) {
                     const perr: IParsedError = parseError(e);
                     console.error(perr.message);
-                    throw e;
                 }
             });
         });

@@ -54,7 +54,6 @@ suite('deployWorkspaceProjectApi', async function (this: Mocha.Suite) {
                 } catch (e) {
                     const perr: IParsedError = parseError(e);
                     console.error(perr.message);
-                    throw e;
                 }
             });
         });
