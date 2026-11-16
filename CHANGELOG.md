@@ -1,4 +1,23 @@
 # Change Log
+## 0.13.0 - 2026-11-16
+
+### Overview
+This release adds support for creating and updating Azure Container Apps Express environments and apps. It also adds user-assigned managed identity support for pulling images from Azure Container Registry.
+
+### Added
+* [[1141](https://github.com/microsoft/vscode-azurecontainerapps/pull/1141)] Add support for creating and updating **Express** environments and container apps. Add **Open in Container Apps Portal** for apps and environments.
+* [[1143](https://github.com/microsoft/vscode-azurecontainerapps/pull/1143)] Support **user-assigned managed identities** for Azure Container Registry image pulls.
+
+### Changed
+* [[1142](https://github.com/microsoft/vscode-azurecontainerapps/pull/1142)] Stop automatically provisioning **Log Analytics workspaces** when creating environments. Attach one manually from an app's **Logs** node.
+* [[1181](https://github.com/microsoft/vscode-azurecontainerapps/pull/1181)] Exclude Express apps from **Choose Revision Mode**.
+* [[1183](https://github.com/microsoft/vscode-azurecontainerapps/pull/1183)] Hide unsupported **Restart Revision** actions for Express apps.
+* [[1184](https://github.com/microsoft/vscode-azurecontainerapps/pull/1184)] Offer only HTTP scale rules for Express apps.
+* [[1191](https://github.com/microsoft/vscode-azurecontainerapps/pull/1191)] Limit **Activate Revision**, **Deactivate Revision**, and **Edit Draft (Advanced)** to Standard apps in Multiple revision mode.
+
+### Engineering
+* Deprecate `DeployWorkspaceProjectResults.logAnalyticsWorkspaceId` and stop returning it from deployments.
+
 ## 0.12.0 - 2026-11-09
 ### Added
 * [[1140](https://github.com/microsoft/vscode-azurecontainerapps/pull/1140)] Add Azure Container Apps sandbox management, including sandbox groups and sandboxes in the resource tree
